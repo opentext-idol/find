@@ -23,7 +23,7 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name = "searches")
+@Table(name = SavedSearch.Table.NAME)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "search_type")
 @EntityListeners(AuditingEntityListener.class)
@@ -32,66 +32,66 @@ import java.util.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @TypeDefs(@TypeDef(name = SavedSearch.JADIRA_TYPE_NAME, typeClass = PersistentDateTime.class))
 @Access(AccessType.FIELD)
-public abstract class SavedSearch {
+public abstract class SavedSearch<T extends SavedSearch<T>> {
     public static final String JADIRA_TYPE_NAME = "jadira";
 
     @Id
-    @Column(name = "search_id")
+    @Column(name = Table.Column.ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = Table.Column.USER_ID)
     @JsonIgnore
     private UserEntity user;
 
     private String title;
 
-    @Column(name = "query_text")
+    @Column(name = Table.Column.QUERY_TEXT)
     private String queryText;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "search_indexes", joinColumns = {
-            @JoinColumn(name = "search_id")
+    @CollectionTable(name = IndexesTable.NAME, joinColumns = {
+            @JoinColumn(name = IndexesTable.Column.SEARCH_ID)
     })
     private Set<EmbeddableIndex> indexes;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "search_parametric_values", joinColumns = {
-            @JoinColumn(name = "search_id")
+    @CollectionTable(name = ParametricValuesTable.NAME, joinColumns = {
+            @JoinColumn(name = ParametricValuesTable.Column.SEARCH_ID)
     })
     private Set<FieldAndValue> parametricValues;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "search_related_concepts", joinColumns = {
-            @JoinColumn(name = "search_id")
+    @CollectionTable(name = RelatedConceptsTable.NAME, joinColumns = {
+            @JoinColumn(name = RelatedConceptsTable.Column.SEARCH_ID)
     })
-    @Column(name = "concept")
+    @Column(name = RelatedConceptsTable.Column.CONCEPT)
     private Set<String> relatedConcepts;
 
-    @Column(name = "start_date")
+    @Column(name = Table.Column.START_DATE)
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime minDate;
 
-    @Column(name = "end_date")
+    @Column(name = Table.Column.END_DATE)
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime maxDate;
 
     @CreatedDate
-    @Column(name = "created_date")
+    @Column(name = Table.Column.CREATED_DATE)
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime dateCreated;
 
     @LastModifiedDate
-    @Column(name = "modified_date")
+    @Column(name = Table.Column.MODIFIED_DATE)
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime dateModified;
 
     @Transient
     private DateRange dateRange;
 
-    @Column(name = "active")
+    @Column(name = Table.Column.ACTIVE)
     @JsonIgnore
     private Boolean active;
 
@@ -111,7 +111,7 @@ public abstract class SavedSearch {
     }
 
     @Access(AccessType.PROPERTY)
-    @Column(name = "date_range_type")
+    @Column(name = Table.Column.DATE_RANGE_TYPE)
     @JsonIgnore
     public Integer getDateRangeInt() {
         if(this.dateRange == null) {
@@ -123,6 +123,30 @@ public abstract class SavedSearch {
 
     public void setDateRangeInt(final Integer dateRangeInt) {
         this.dateRange = DateRange.getType(dateRangeInt);
+    }
+
+    /**
+     * Merge client-mutable SavedSearch-implementation specific fields from the other search into this one.
+     */
+    protected abstract void mergeInternal(T other);
+
+    /**
+     * Merge client-mutable fields from the other search into this one.
+     */
+    public void merge(final T other) {
+        if (other != null) {
+            mergeInternal(other);
+
+            title = other.getTitle() == null ? title : other.getTitle();
+            queryText = other.getQueryText() == null ? queryText : other.getQueryText();
+            minDate = other.getMinDate() == null ? minDate : other.getMinDate();
+            maxDate = other.getMaxDate() == null ? maxDate : other.getMaxDate();
+            dateRange = other.getDateRange() == null ? dateRange : other.getDateRange();
+
+            indexes = other.getIndexes() == null ? indexes : other.getIndexes();
+            parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
+            relatedConcepts = other.getRelatedConcepts() == null ? relatedConcepts : other.getRelatedConcepts();
+        }
     }
 
     // WARNING: This logic is duplicated in the client-side QueryTextModel
@@ -179,7 +203,7 @@ public abstract class SavedSearch {
 
     @Getter
     @NoArgsConstructor
-    public static abstract class Builder<T extends SavedSearch> {
+    public static abstract class Builder<T extends SavedSearch<T>> {
         private Long id;
         private String title = "";
         private String queryText = "";
@@ -193,7 +217,7 @@ public abstract class SavedSearch {
         private DateRange dateRange;
         private Boolean active = true;
 
-        public Builder(final SavedSearch search) {
+        public Builder(final SavedSearch<T> search) {
             id = search.id;
             title = search.title;
             queryText = search.queryText;
@@ -268,6 +292,56 @@ public abstract class SavedSearch {
         public Builder<T> setActive(final Boolean active) {
             this.active = active;
             return this;
+        }
+    }
+
+    public interface Table {
+        String NAME = "searches";
+
+        interface Column {
+            String ID = "search_id";
+            String USER_ID = "user_id";
+            String QUERY_TEXT = "query_text";
+            String START_DATE = "start_date";
+            String END_DATE = "end_date";
+            String CREATED_DATE = "created_date";
+            String MODIFIED_DATE = "modified_date";
+            String ACTIVE = "active";
+            String DATE_RANGE_TYPE = "date_range_type";
+            String TOTAL_RESULTS = "total_results";
+        }
+    }
+
+    public interface IndexesTable {
+        String NAME = "search_indexes";
+
+        interface Column {
+            String SEARCH_ID = "search_id";
+        }
+    }
+
+    public interface ParametricValuesTable {
+        String NAME = "search_parametric_values";
+
+        interface Column {
+            String SEARCH_ID = "search_id";
+        }
+    }
+
+    public interface StoredStateTable {
+        String NAME = "search_stored_state";
+
+        interface Column {
+            String STATE_TOKEN = "state_token";
+        }
+    }
+
+    public interface RelatedConceptsTable {
+        String NAME = "search_related_concepts";
+
+        interface Column {
+            String SEARCH_ID = "search_id";
+            String CONCEPT = "concept";
         }
     }
 }

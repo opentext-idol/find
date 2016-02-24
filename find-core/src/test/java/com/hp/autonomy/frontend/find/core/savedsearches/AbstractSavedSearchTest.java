@@ -17,12 +17,12 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public abstract class AbstractSavedSearchTest<T extends SavedSearch> {
+public abstract class AbstractSavedSearchTest<T extends SavedSearch<T>> {
     protected abstract SavedSearch.Builder<T> createBuilder();
 
     @Test
     public void toQueryTextWithNoConceptClusters() {
-        final SavedSearch search = createBuilder()
+        final SavedSearch<T> search = createBuilder()
                 .setQueryText("cats")
                 .build();
 
@@ -36,7 +36,7 @@ public abstract class AbstractSavedSearchTest<T extends SavedSearch> {
         phrases.add("county");
         phrases.add("luke skywalker");
 
-        final SavedSearch search = createBuilder()
+        final SavedSearch<T> search = createBuilder()
                 .setQueryText("orange jedi")
                 .setRelatedConcepts(phrases)
                 .build();
@@ -50,7 +50,7 @@ public abstract class AbstractSavedSearchTest<T extends SavedSearch> {
 
     @Test
     public void toFieldTextWithNoParametricValues() {
-        final SavedSearch search = createBuilder()
+        final SavedSearch<T> search = createBuilder()
                 .setParametricValues(Collections.<FieldAndValue>emptySet())
                 .build();
 
@@ -61,7 +61,7 @@ public abstract class AbstractSavedSearchTest<T extends SavedSearch> {
     public void toFieldTextWithOneFieldAndValue() {
         final FieldAndValue fieldAndValue = new FieldAndValue("SPECIES", "cat");
 
-        final SavedSearch search = createBuilder()
+        final SavedSearch<T> search = createBuilder()
                 .setParametricValues(Collections.singleton(fieldAndValue))
                 .build();
 
@@ -81,7 +81,7 @@ public abstract class AbstractSavedSearchTest<T extends SavedSearch> {
         final FieldAndValue fieldAndValue3 = new FieldAndValue("COLOUR", "white");
         parametricValues.add(fieldAndValue3);
 
-        final SavedSearch search = createBuilder()
+        final SavedSearch<T> search = createBuilder()
                 .setParametricValues(parametricValues)
                 .build();
 
