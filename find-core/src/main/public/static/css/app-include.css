@@ -226,12 +226,12 @@ html, body {
     border-radius: 5px;
     height: 32px;
     left: 50%;
-    margin: -16px 0 0 -100px;
+    margin: -16px 0 0 -150px;
     padding: 5px;
     position: absolute;
     text-align: center;
     top: 50%;
-    width: 200px;
+    width: 300px;
 }
 
 .input-append,
@@ -421,17 +421,10 @@ html, body {
     font-weight: bolder;
 }
 
-.find-logo-large {
-    font-size: 90px;
-    color: #425563;
-    display: inline-block;
-    vertical-align: middle;
-}
-
 .find-logo-small {
     background: url('../img/Find_Logo_sml.png') no-repeat;
-    background-size: 100px 20px;
-    width: 100px;
+    background-size: 325px 20px;
+    width: 325px;
     height: 20px;
 }
 
@@ -441,7 +434,7 @@ html, body {
 
 .find-logo-large {
     background-image: url('../img/Find_Logo_lge.png');
-    width: 240px;
+    width: 797px;
     height: 45px;
     display: inline-block;
     vertical-align: middle;
@@ -1204,6 +1197,10 @@ input:-moz-placeholder::before {
 .document-detail-flex-container {
     display: flex;
     min-height: 100%;
+}
+
+.document-detail-tabs-content .table > tbody > tr:first-child > td {
+    border: none;
 }
 
 #cboxLoadedContent .table > tbody > tr > th,

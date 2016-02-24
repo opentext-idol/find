@@ -1,17 +1,17 @@
-# HPE Find
+# HPE BI for Human Information
 [![Build Status](https://travis-ci.org/hpautonomy/find.svg?branch=master)](https://travis-ci.org/hpautonomy/find)
 
-HPE Find is a web application which can be backed by either [Haven OnDemand](https://www.havenondemand.com) or HPE IDOL.
+HPE BI for Human Information is a web application which is backed by HPE IDOL.
 
-A live preview of HPE Find can be found at [find.idolondemand.com](http://find.idolondemand.com).
+**Please note that BI for Human Information does not yet support integration with Haven OnDemand (HOD).**
 
 ## Key Features
-* Querying HPE IDOL or Haven OnDemand text indexes
+* Querying HPE IDOL text indexes
 * Viewing search results
 * Suggested related searches
 
-## Building HPE Find
-Building HPE Find requires the following to be installed
+## Building HPE BI for Human Information
+Building HPE BI for Human Information requires the following to be installed
 
 * [Git](https://git-scm.com/)
 * [Apache Maven 3](http://maven.apache.org)
@@ -40,13 +40,13 @@ run in the maven process-sources phase.
 During development, the develop profile should be used. Running with the production profile will minify the Javascript 
 and CSS, and bless the CSS for older versions of Internet Explorer.
 
-## HPE Find setup
+## HPE BI for Human Information setup
 Separate executable war files are provided for running against IDOL or HOD. These can either be deployed on an instance
 of [Tomcat](http://tomcat.apache.org) or run as an executable jar file, for example:
 
     java -Dhp.find.home=/opt/find -jar find.war
 
-HPE Find requires some Java system properties to be set in order to work.
+HPE BI for Human Information requires some Java system properties to be set in order to work.
 
 * With Tomcat on Linux, you can modify JAVA_OPTS in /etc/default/tomcat7.
 * With Tomcat on Windows, this can be done with the Tomcat Manager (if installed), or by modifying the JAVA_OPTS environment variable.
@@ -57,6 +57,8 @@ The properties you'll need to set are:
 * **-Dhp.find.home** This is the directory where the webapp will store log files and the config.json file.
 * **-Dhp.find.persistentState** Optional property. The persistence mode for the application, which determines where 
 sessions, token proxies and caches are stored. Possible options are REDIS or INMEMORY. Defaults to INMEMORY.
+* **-Dhp.find.databaseType** Optional property. The database implementation used to persist non-transient data in the application.
+Possible options are H2PERSISTENT or H2INMEMORY (see http://www.h2database.com). Defaults to H2PERSISTENT.
 
 When running against HOD, you may also need:
 
@@ -66,7 +68,7 @@ to Haven OnDemand.
 to Haven OnDemand. Defaults to 80 if find.https.proxyHost is defined.
 
 ## Vagrant
-HPE Find includes a Vagrant file, which will provision an Ubuntu 12.04 VM running a Redis server, which will by default 
+HPE BI for Human Information includes a Vagrant file, which will provision an Ubuntu 12.04 VM running a Redis server, which will by default
 be used to store sessions. 
 
 The Vagrantfile requires several plugins, which will be installed if they are not installed already.
@@ -75,9 +77,8 @@ The VM has the IP address 192.168.242.242, and can be accessed via DNS with the 
 
 The Redis runs on port 6379.
 
-## Configuring HPE Find
-Earlier versions of Find had a settings page, but this is currently unavailable. To configure Find, create a config.json
-file in your Find home directory.
+## Configuring HPE BI for Human Information
+To configure BI for Human Information, create a config.json file in your BI for Human Information home directory.
 
 Below is an example config file for running against HOD:
 
@@ -143,7 +144,7 @@ And for running against IDOL:
     }
 
 ## Hard Coded fields
-Find looks for the following fields in Idol/HoD documents:
+BI for Human Information looks for the following fields in Idol/HoD documents:
 * content_type
 * url
 * offset
@@ -164,7 +165,7 @@ Summary is a context summary (see Idol documentation).
 The list of databases is retrieved by querying idol using GetStatus (internal databases are not displayed).
 Parametric fields are retrieved using GetQueryTagValues. They are configured in the Idol configuration file.
 
-For viewing documents, Find requires that a reference field be configured in the Find config file.
+For viewing documents, BI for Human Information requires that a reference field be configured in the BI for Human Information config file.
 When a document is selected to be viewed, the content for the document in question is read (using the GetContent action).
 The configured field is then read from the document content (first occurrence if the field appears multiple times) and is used as the reference in the subsequent view action.
 An error is thrown if the reference field is not configured or could not be found.
@@ -177,6 +178,6 @@ OriginalBaseUrl=true
 Yes.
 
 ## License
-Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
 
 Licensed under the MIT License (the "License"); you may not use this project except in compliance with the License.

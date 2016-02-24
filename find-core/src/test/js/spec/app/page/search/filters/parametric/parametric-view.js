@@ -50,6 +50,20 @@ define([
                 expect(this.view.$('.parametric-error')).toHaveClass('hide');
             });
 
+            it('hides the empty message', function() {
+                expect(this.view.$('.parametric-empty')).toHaveClass('hide');
+            });
+
+            describe('then the parametric collection is reset to empty', function() {
+                beforeEach(function() {
+                    this.parametricCollection.reset();
+                });
+
+                it('shows the empty message', function() {
+                    expect(this.view.$('.parametric-empty')).not.toHaveClass('hide');
+                });
+            });
+
             describe('then the parametric collection is fetched', function() {
                 beforeEach(function() {
                     this.parametricCollection.reset();
@@ -58,6 +72,10 @@ define([
 
                 it('displays the loading spinner', function() {
                     expect(this.view.$('.parametric-processing-indicator')).not.toHaveClass('hide');
+                });
+
+                it('hides the empty message', function() {
+                    expect(this.view.$('.parametric-empty')).toHaveClass('hide');
                 });
 
                 describe('then the request fails', function() {
@@ -71,6 +89,10 @@ define([
 
                     it('displays the error message', function() {
                         expect(this.view.$('.parametric-error')).not.toHaveClass('hide');
+                    });
+
+                    it('hides the empty message', function() {
+                        expect(this.view.$('.parametric-empty')).toHaveClass('hide');
                     });
                 });
 
@@ -96,6 +118,10 @@ define([
 
                     it('hides the error message', function() {
                         expect(this.view.$('.parametric-error')).toHaveClass('hide');
+                    });
+
+                    it('hides the empty message', function() {
+                        expect(this.view.$('.parametric-empty')).toHaveClass('hide');
                     });
                 });
             });

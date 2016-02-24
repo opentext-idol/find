@@ -35,6 +35,7 @@ define([
         events: {
             'click .preview-mode-open-detail-button': 'openDocumentDetail',
             'click .close-preview-mode': function() {
+                this.pauseMedia();
                 this.trigger('close-preview');
             }
         },
@@ -96,7 +97,14 @@ define([
             $('.main-content').off('scroll', this.scrollFollow);
         },
 
+        pauseMedia: function () {
+            if (this.model.get('media') === 'video' || this.model.get('media') === 'audio') {
+                this.$('.preview-media-player').get(0).pause();
+            }
+        },
+
         openDocumentDetail: function () {
+            this.pauseMedia();
             vent.navigateToDetailRoute(this.model);
         }
     });
