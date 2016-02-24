@@ -22,7 +22,6 @@ define([
     'find/app/page/search/snapshots/snapshot-data-view',
     'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
-    'find/app/util/search-data-util',
     'parametric-refinement/selected-values-collection',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/topic-map-view',
@@ -34,7 +33,7 @@ define([
 ], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel, SearchFiltersCollection,
             ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsView, ResultsViewAugmentation, ResultsViewContainer,
             ResultsViewSelection, RelatedConceptsView, relatedConceptsClickHandlers, SpellCheckView, SnapshotDataView, Collapsible,
-            addChangeListener, searchDataUtil, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView,
+            addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView,
             SunburstView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
@@ -93,21 +92,20 @@ define([
             var searchType = this.savedSearchModel.get('type');
 
             this.queryModel = new QueryModel({
-                autoCorrect: searchType === SavedSearchModel.Type.QUERY
+                autoCorrect: searchType === SavedSearchModel.Type.QUERY,
+                stateTokens: searchType === SavedSearchModel.Type.SNAPSHOT ? this.savedSearchModel.get('stateTokens') : []
             }, {queryState: this.queryState});
 
             this.listenTo(this.queryModel, 'change:indexes', function() {
                 this.queryState.selectedParametricValues.reset();
             });
 
-            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText'], this.fetchEntities);
-            
             // There are 2 conditions where we want to reset the date we last fetched new docs on the date filter model
 
             // Either:
             //      We have a change in the query model that is not related to the date filters
             this.listenTo(this.queryModel, 'change', function(model) {
-                if(!_.has(model.changed, 'minDate') && !_.has(model.changed, 'maxDate')) {
+                if (!_.has(model.changed, 'minDate') && !_.has(model.changed, 'maxDate')) {
                     this.queryState.datesFilterModel.resetDateLastFetched();
                 }
             });
@@ -118,7 +116,7 @@ define([
                 var changeToNewDocFilter = value === DatesFilterModel.DateRange.NEW;
                 var removeNewDocFilter = !value && model.previous('dateRange') === DatesFilterModel.DateRange.NEW;
 
-                if(!changeToNewDocFilter && !removeNewDocFilter) {
+                if (!changeToNewDocFilter && !removeNewDocFilter) {
                     this.queryState.datesFilterModel.resetDateLastFetched();
                 }
             });
@@ -127,8 +125,6 @@ define([
                 queryState: this.queryState,
                 indexesCollection: this.indexesCollection
             });
-
-            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'], this.fetchEntities);
 
             this.savedSearchControlView = new SavedSearchControlView({
                 savedSearchModel: this.savedSearchModel,
@@ -140,36 +136,21 @@ define([
                 queryState: this.queryState
             });
 
-            var parametricCollection = new ParametricCollection();
+            this.parametricCollection = new ParametricCollection();
 
             var resultsViewConstructorArguments = {
                 documentsCollection: this.documentsCollection,
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
-                parametricCollection: parametricCollection,
+                parametricCollection: this.parametricCollection,
                 queryModel: this.queryModel,
                 queryTextModel: this.queryState.queryTextModel
             };
-
-            var resultsViews = [];
 
             var relatedConceptsClickHandler;
             var topicMapClickHandler;
 
             if (searchType === SavedSearchModel.Type.QUERY) {
-                // TODO: Should this be supported for snapshots?
-                this.sunburstView = new SunburstView(resultsViewConstructorArguments);
-
-                resultsViews = resultsViews.concat([{
-                    content: this.sunburstView,
-                    id: 'sunburst',
-                    uniqueId: _.uniqueId('results-view-item-'),
-                    selector: {
-                        displayNameKey: 'sunburst',
-                        icon: 'hp-favorite'
-                    }
-                }]);
-
                 this.spellCheckView = new SpellCheckView({
                     documentsCollection: this.documentsCollection,
                     queryModel: this.queryModel
@@ -190,7 +171,7 @@ define([
                     queryModel: this.queryModel,
                     queryState: this.queryState,
                     indexesCollection: this.indexesCollection,
-                    parametricCollection: parametricCollection
+                    parametricCollection: this.parametricCollection
                 });
 
                 this.filtersCollection = new this.SearchFiltersCollection([], {
@@ -243,17 +224,23 @@ define([
 
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], relatedConceptsView);
 
-            this.topicMapView = new TopicMapView(_.extend({
-                clickHandler: topicMapClickHandler
-            }, resultsViewConstructorArguments));
-
             this.resultsView = new this.ResultsView(_.extend({
                 mode: searchType === SavedSearchModel.Type.QUERY ? ResultsView.Mode.QUERY : ResultsView.Mode.STATE_TOKEN
             }, resultsViewConstructorArguments));
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({resultsView: this.resultsView});
 
-            resultsViews = [{
+            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle', function(toggle) {
+                this.rightSideContainerHideToggle(toggle);
+            }, this);
+
+            this.topicMapView = new TopicMapView(_.extend({
+                clickHandler: topicMapClickHandler
+            }, resultsViewConstructorArguments));
+
+            this.sunburstView = new SunburstView(resultsViewConstructorArguments);
+
+            var resultsViews = [{
                 content: this.resultsViewAugmentation,
                 id: 'list',
                 uniqueId: _.uniqueId('results-view-item-'),
@@ -269,11 +256,15 @@ define([
                     displayNameKey: 'topic-map',
                     icon: 'hp-grid'
                 }
-            }].concat(resultsViews);
-
-            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle' , function(toggle) {
-                this.rightSideContainerHideToggle(toggle);
-            }, this);
+            }, {
+                content: this.sunburstView,
+                id: 'sunburst',
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'sunburst',
+                    icon: 'hp-favorite'
+                }
+            }];
 
             var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
@@ -291,6 +282,9 @@ define([
             });
 
             this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
+
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'stateTokens'], this.fetchData);
+            this.fetchData();
         },
 
         render: function() {
@@ -322,32 +316,27 @@ define([
             }
 
             this.updateCompareModalButton();
-            this.fetchEntities();
         },
 
         updateCompareModalButton: function() {
             this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
         },
 
-        fetchEntities: function() {
-            if (this.savedSearchModel.get('type') === SavedSearchModel.Type.QUERY) {
-                if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
-                    this.entityCollection.fetch({
-                        data: {
-                            databases: this.queryModel.get('indexes'),
-                            queryText: this.queryModel.get('queryText'),
-                            fieldText: this.queryModel.get('fieldText'),
-                            minDate: this.queryModel.getIsoDate('minDate'),
-                            maxDate: this.queryModel.getIsoDate('maxDate')
-                        }
-                    });
-                }
-            } else {
-                this.entityCollection.fetch({
-                    data: _.extend({
-                        stateTokens: this.savedSearchModel.get('stateTokens')
-                    }, searchDataUtil.buildQuery(this.savedSearchModel))
-                });
+        fetchData: function() {
+            this.parametricCollection.reset();
+
+            if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+                var data = {
+                    databases: this.queryModel.get('indexes'),
+                    queryText: this.queryModel.get('queryText'),
+                    fieldText: this.queryModel.get('fieldText'),
+                    minDate: this.queryModel.getIsoDate('minDate'),
+                    maxDate: this.queryModel.getIsoDate('maxDate'),
+                    stateTokens: this.queryModel.get('stateTokens')
+                };
+
+                this.entityCollection.fetch({data: data});
+                this.parametricCollection.fetch({data: data});
             }
         },
 

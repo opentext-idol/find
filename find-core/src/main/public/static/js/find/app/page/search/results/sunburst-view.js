@@ -1,49 +1,51 @@
 define([
     'backbone',
+    'find/app/model/find-base-collection',
     'underscore',
-    "jquery",
+    'jquery',
     'i18n!find/nls/bundle',
     'sunburst/js/sunburst',
     'text!find/templates/app/page/search/results/sunburst-view.html',
     'text!find/templates/app/page/loading-spinner.html',
     'chosen'
+], function(Backbone, BaseCollection, _, $, i18n, Sunburst, template, loadingSpinnerTemplate) {
 
-], function (Backbone, _, $, i18n, Sunburst, template, loadingSpinnerTemplate) {
-    "use strict";
+    'use strict';
 
-    var Collection = Backbone.Collection.extend({
+    var Collection = BaseCollection.extend({
         url: '../api/public/parametric/second-parametric',
 
         parse: function(results) {
             return _.chain(results)
-                .map(function (result) {
+                .map(function(result) {
+                    var children = _.chain(result.field)
+                        .map(function(child) {
+                            return {
+                                text: child.value,
+                                count: Number(child.count)
+                            };
+                        })
+                        .sortBy('count')
+                        .last(10)
+                        .value();
+
                     return {
                         text: result.value,
                         count: Number(result.count),
-                        children: _.chain(result.field)
-                            .map(function(child) {
-                                return {
-                                    text: child.value,
-                                    count: Number(child.count)
-                                }
-                            })
-                            .sortBy('count')
-                            .last(10)
-                            .value()
-                    }
+                        children: children
+                    };
                 })
                 .sortBy('count')
                 .last(10)
-                .value()
+                .value();
         }
     });
 
     return Backbone.View.extend({
-
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.queryModel = options.queryModel;
             this.parametricCollection = options.parametricCollection;
             this.secondParametricCollection = new Collection();
@@ -52,6 +54,7 @@ define([
         getParametricCollection: function(first, second) {
             if (!second) this.$sunburst.empty();
             this.$loadingSpinner.removeClass('hide');
+
             this.secondParametricCollection.fetch({
                 data: {
                     databases: _.escape(this.queryModel.get('indexes')),
@@ -59,33 +62,35 @@ define([
                     fieldText: this.queryModel.get('fieldText') ? this.queryModel.get('fieldText').toString() : '',
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
-                    fieldNames: second ? _.escape([first, second]) : first
+                    fieldNames: second ? _.escape([first, second]) : first,
+                    stateTokens: this.queryModel.get('stateTokens')
                 }
             });
         },
 
-        update: function () {
+        update: function() {
             this.$sunburst.empty();
             var color = d3.scale.category20c();
 
             if (!this.secondParametricCollection.isEmpty()) {
                 var nameAttr = 'text';
                 var sizeAttr = 'count';
+
                 this.sunburst = new Sunburst(this.$sunburst, {
                     data: {
                         text: i18n['search.sunburst.title'],
                         children: this.secondParametricCollection.toJSON(),
                         count: this.secondParametricCollection.chain()
                             .invoke('get', sizeAttr)
-                            .reduce(function (a, b) {
-                                return a + b
+                            .reduce(function(a, b) {
+                                return a + b;
                             })
                             .value()
                     },
                     i18n: i18n,
                     nameAttr: nameAttr,
                     sizeAttr: sizeAttr,
-                    colorFn: function (d) {
+                    colorFn: function(d) {
                         if (!d.parent) {
                             return color(d.parent);
                         }
@@ -98,7 +103,7 @@ define([
                         var satShift = idx / d.parent.children.length;
                         return d.color = d3.hsl(par.h, (par.s + satShift) % 1, par.l + 0.05);
                     },
-                    labelFormatter: function (d, prevClicked) {
+                    labelFormatter: function(d, prevClicked) {
                         var zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
                         var hoveringCenter = prevClicked ? d === prevClicked.parent : d.depth === 0;
                         var icon = !zoomedOnRoot && hoveringCenter ? '<i class="icon-zoom-out"></i>' : '';
@@ -107,6 +112,7 @@ define([
                             + d[sizeAttr];
                     }
                 });
+
                 this.$loadingSpinner.addClass('hide');
                 this.$sunburst.removeClass('hide');
             }
@@ -119,18 +125,17 @@ define([
                 .trigger('chosen:updated');
         },
 
-        populateDropDown: function ($dropdown, fields) {
+        populateDropDown: function($dropdown, fields) {
             this.emptyDropdown($dropdown);
 
-            _.forEach(fields, function (field) {
-                $dropdown.append("<option value='" + field + "'>" + field + "</option>")
-            }, this);
-
-            $dropdown.chosen({
-                width: '20%'
+            var html = _.map(fields, function(field) {
+                return '<option value="' + field + '">' + field + '</option>';
             });
 
-            $dropdown.trigger('chosen:updated');
+            $dropdown
+                .append(html)
+                .chosen({width: '20%'})
+                .trigger('chosen:updated');
         },
 
         resetView: function() {
@@ -139,18 +144,20 @@ define([
             this.$sunburst.empty().addClass('hide');
         },
 
-        firstPass: function () {
+        firstPass: function() {
             this.$sunburst.addClass('hide');
             var val = this.$firstChosen.val();
             this.getParametricCollection(val);
             var secondCollection = this.parametricCollection.pluck('name');
-            this.populateDropDown(this.$secondChosen, _.reject(secondCollection, function (name) {
-                return name === val
+
+            this.populateDropDown(this.$secondChosen, _.reject(secondCollection, function(name) {
+                return name === val;
             }, this));
-            this.$secondChosen.removeClass('hide')
+
+            this.$secondChosen.removeClass('hide');
         },
 
-        render: function () {
+        render: function() {
             this.$el.html(this.template({i18n: i18n}));
 
             this.$loadingSpinner = $(this.loadingTemplate);
@@ -179,7 +186,6 @@ define([
 
             this.listenTo(this.secondParametricCollection, 'sync', this.update);
         }
-    })
+    });
+
 });
-
-

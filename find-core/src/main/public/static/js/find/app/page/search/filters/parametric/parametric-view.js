@@ -39,18 +39,31 @@ define([
         },
 
         initialize: function(options) {
-            this.queryModel = options.queryModel;
-
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
-            this.parametricCollection = options.parametricCollection;
-
-            this.model = new Backbone.Model({processing: false, error: false});
+            this.model = new Backbone.Model({processing: Boolean(options.parametricCollection.currentRequest), error: false});
             this.listenTo(this.model, 'change:processing', this.updateProcessing);
             this.listenTo(this.model, 'change:error', this.updateError);
 
+            this.listenTo(options.parametricCollection, 'request', function() {
+                this.model.set({processing: true, error: false});
+            });
+
+            this.listenTo(options.parametricCollection, 'error', function(collection, xhr) {
+                if (xhr.status !== 0) {
+                    // The request was not aborted, so there isn't another request in flight
+                    this.model.set({error: true, processing: false});
+                } else {
+                    this.model.set({processing: Boolean(collection.currentRequest)});
+                }
+            });
+
+            this.listenTo(options.parametricCollection, 'sync', function() {
+                this.model.set({processing: false});
+            });
+
             this.displayCollection = new DisplayCollection([], {
-                parametricCollection: this.parametricCollection,
+                parametricCollection: options.parametricCollection,
                 selectedParametricValues: this.selectedParametricValues
             });
 
@@ -58,37 +71,6 @@ define([
                 collection: this.displayCollection,
                 ItemView: FieldView
             });
-
-            function fetch() {
-                this.parametricCollection.reset();
-                this.model.set({processing: true, error: false});
-
-                if(!this.queryModel.get('queryText') || this.queryModel.get('indexes').length === 0) {
-                    this.model.set('processing', false);
-                } else {
-                    this.parametricCollection.fetch({
-                        data: {
-                            databases: this.queryModel.get('indexes'),
-                            queryText: this.queryModel.get('queryText'),
-                            fieldText: this.queryModel.get('fieldText'),
-                            minDate: this.queryModel.getIsoDate('minDate'),
-                            maxDate: this.queryModel.getIsoDate('maxDate')
-                        },
-                        error: _.bind(function (collection, xhr) {
-                            if (xhr.status !== 0) {
-                                // The request was not aborted, so there isn't another request in flight
-                                this.model.set({error: true, processing: false});
-                            }
-                        }, this),
-                        success: _.bind(function () {
-                            this.model.set({processing: false});
-                        }, this)
-                    });
-                }
-            }
-
-            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'], fetch);
-            fetch.call(this);
         },
 
         render: function() {
@@ -101,6 +83,12 @@ define([
             this.updateProcessing();
 
             return this;
+        },
+
+        remove: function() {
+            this.fieldNamesListView.remove();
+            this.displayCollection.stopListening();
+            Backbone.View.prototype.remove.call(this);
         },
 
         updateProcessing: function() {

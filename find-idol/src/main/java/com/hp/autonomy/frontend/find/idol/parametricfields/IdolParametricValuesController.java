@@ -41,7 +41,7 @@ public class IdolParametricValuesController extends ParametricValuesController<I
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    @RequestMapping(method = RequestMethod.GET, value = SECOND_PARAMETRIC_PARAM)
+    @RequestMapping(method = RequestMethod.GET, value = SECOND_PARAMETRIC_PATH)
     @ResponseBody
     public List<RecursiveField> getSecondParametricValues(
             @RequestParam(value = FIELD_NAMES_PARAM) final List<String> fieldNames,
@@ -49,10 +49,19 @@ public class IdolParametricValuesController extends ParametricValuesController<I
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(DATABASES_PARAM) final List<String> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
-            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate
+            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+            @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws AciErrorException, InterruptedException {
+        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilder.build(
+                queryText,
+                fieldText,
+                databases,
+                minDate,
+                maxDate,
+                stateTokens == null ? Collections.<String>emptyList() : stateTokens,
+                Collections.<String>emptyList()
+        );
 
-        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate, Collections.<String>emptyList(), Collections.<String>emptyList());
         final IdolParametricRequest parametricRequest = buildParametricRequest(fieldNames == null ? Collections.<String>emptyList() : fieldNames, queryRestrictions);
         return parametricValuesService.getDependentParametricValues(parametricRequest);
     }
