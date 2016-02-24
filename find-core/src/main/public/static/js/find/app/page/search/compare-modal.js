@@ -2,11 +2,11 @@ define([
     'js-whatever/js/modal',
     'jquery',
     'find/app/page/search/search-to-compare-view',
-    'find/app/util/fetch-comparison',
+    'find/app/model/comparisons/comparison-model',
     'text!find/templates/app/page/search/compare-modal-footer.html',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
-], function(Modal, $, SearchToCompare, fetchComparison, compareModalFooter, loadingSpinnerTemplate, i18n) {
+], function(Modal, $, SearchToCompare, ComparisonModel, compareModalFooter, loadingSpinnerTemplate, i18n) {
 
     return Modal.extend({
         footerTemplate: _.template(compareModalFooter),
@@ -38,7 +38,7 @@ define([
                         second: options.savedSearchCollection.get({cid: this.selectedId})
                     };
 
-                    var comparisonModel = fetchComparison(searchModels.first, searchModels.second);
+                    var comparisonModel = ComparisonModel.fromModels(searchModels.first, searchModels.second);
 
                     this.xhr = comparisonModel.save({}, {
                         success: _.bind(function() {
