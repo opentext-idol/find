@@ -6,6 +6,7 @@ import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.SimilarDocumentsView;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
@@ -15,6 +16,7 @@ import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.ParametricFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
@@ -23,7 +25,9 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assume.assumeThat;
 
 @RelatedTo("CSA-2090")
 public class SimilarDocumentsITCase extends FindTestBase {
@@ -88,6 +92,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
             verifyThat("opened in new tab", secondWindow, not(firstWindow));
             verifyThat(getDriver().getTitle(), containsString(seedTitle));
             verifyThat("not using viewserver", getDriver().getCurrentUrl(), not(containsString("viewDocument")));
+            //TODO check if 500
 
             if (secondWindow != null) {
                 secondWindow.close();
@@ -144,11 +149,28 @@ public class SimilarDocumentsITCase extends FindTestBase {
         new HSODPromotionService(searchApp).setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), "Have Mercy", 3);
 
         findWindow.activate();
-        findService.search(new SearchQuery(trigger));
+        FindResultsPage resultsPage = findService.search(new SearchQuery(trigger));
 
-        for(int i = 0; i <= getElementFactory().getFindPage().getResultsPage().promotions().size(); i++){
+        for(int i = 0; i <= resultsPage.promotions().size(); i++){
             verifySimilarDocsNotEmpty(i);
         }
+    }
+
+    @Test
+    public void testSimilarDocumentsFromSimilarDocuments(){
+        findService.search("Self Defence Family");
+
+        SimilarDocumentsView similarDocumentsView = findService.goToSimilarDocuments(1);
+        assumeThat(similarDocumentsView.getResults().size(), not(0));
+
+        FindSearchResult doc = similarDocumentsView.getResult(1);
+        String docTitle = doc.getTitleString();
+
+        doc.similarDocuments().click();
+        Waits.loadOrFadeWait();
+        similarDocumentsView = getElementFactory().getSimilarDocumentsView();
+
+        verifyThat(similarDocumentsView.seedLink(), containsText(docTitle));
     }
 
     private void verifySimilarDocsNotEmpty(int i) {
