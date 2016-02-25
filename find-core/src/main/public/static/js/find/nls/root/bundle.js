@@ -208,6 +208,7 @@ define([
         'settings.iod.domain': 'Domain',
         'settings.locale.title': 'Locale',
         'settings.locale.default': 'Default locale',
+        'settings.logoutFromSettings': 'Logout from Settings',
         'settings.password': 'Password',
         'settings.password.description': 'Password will be stored encrypted',
         'settings.password.redacted': '(redacted)',
