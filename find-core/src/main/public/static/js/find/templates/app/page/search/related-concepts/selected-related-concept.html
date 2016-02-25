@@ -1,0 +1,21 @@
+<% if(concepts.length > 1) { %>
+    <div class="selected-related-concept-cluster selected-related-concept" data-id="<%-clusterId%>">
+        <div class="btn-group selected-related-concept-dropdown-container">
+            <span class="dropdown-toggle clickable" aria-expanded="false" data-toggle="dropdown">
+                <i class="hp-icon hp-chevron-down selected-related-concept-cluster-chevron"></i>
+                <span><%- concepts[0] %></span>
+            </span>
+            <ul class="dropdown-menu" role="menu">
+                <% _.each(concepts, function(concept) { %>
+                    <li><a><%- concept %></a></li>
+                <% }); %>
+            </ul>
+        </div>
+        <i class="clickable hp-icon hp-close concept-remove-icon"></i>
+    </div>
+<% } else if(concepts.length) { %>
+    <span class="selected-related-concept" data-id="<%-clusterId%>">
+        <span><%- concepts[0] %></span>
+         <i class="clickable hp-icon hp-close concept-remove-icon"></i>
+    </span>
+<% } %>

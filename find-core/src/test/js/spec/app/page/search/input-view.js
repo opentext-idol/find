@@ -12,7 +12,7 @@ define([
         beforeEach(function() {
             this.model = new Backbone.Model({
                 inputText: 'cat',
-                relatedConcepts: ['lion', 'tiger']
+                relatedConcepts: [['lion'], ['tiger']]
             });
 
             this.view = new InputView({
@@ -53,9 +53,9 @@ define([
         });
 
         it('updates the model concepts when a related concept is removed', function() {
-            this.view.$('[data-id="lion"] .concept-remove-icon').click();
+            this.view.$('[data-id="0"] .concept-remove-icon').click();
 
-            expect(this.model.get('relatedConcepts')).toEqual(['tiger']);
+            expect(this.model.get('relatedConcepts')).toEqual([['tiger']]);
         });
     });
 

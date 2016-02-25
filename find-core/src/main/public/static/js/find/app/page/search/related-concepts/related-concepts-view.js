@@ -96,9 +96,9 @@ define([
                 if (this.queryTextModel.get('inputText') === '') {
                     this.queryTextModel.set('inputText', queryText);
                 } else {
-                    var concepts = this.queryTextModel.get('relatedConcepts');
-                    var newConcepts = _.union(concepts, [queryText]);
-                    this.queryTextModel.set('relatedConcepts', newConcepts);
+                    var concepts = this.queryTextModel.get('relatedConcepts').slice(0);
+                    concepts.push([queryText]);
+                    this.queryTextModel.set('relatedConcepts', concepts);
                 }
             },
             'click [data-entity-cluster]': function (e) {
@@ -120,8 +120,10 @@ define([
                 })
                 .value();
 
-            var concepts = this.queryTextModel.get('relatedConcepts');
-            return _.union(concepts, currentlyClickedClusterConcepts);
+            var concepts = this.queryTextModel.get('relatedConcepts').slice(0);
+            concepts.push(currentlyClickedClusterConcepts);
+
+            return concepts;
         },
 
         initialize: function (options) {

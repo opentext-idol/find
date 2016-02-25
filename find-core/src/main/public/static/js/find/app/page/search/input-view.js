@@ -5,16 +5,13 @@ define([
     'find/app/util/string-blank',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/input-view.html',
+    'text!find/templates/app/page/search/related-concepts/selected-related-concept.html',
     'typeahead'
-], function(Backbone, $, _, stringBlank, i18n, template) {
+], function(Backbone, $, _, stringBlank, i18n, template, relatedConceptTemplate) {
 
     var html = _.template(template)({i18n: i18n});
     
-    var relatedConceptsTemplate = _.template(
-        '<span class="selected-related-concept" data-id="<%-concept%>">' +
-            '<%-concept%> <i class="clickable hp-icon hp-fw hp-close concept-remove-icon"></i>' +
-        '</span> '
-    );
+    var conceptsTemplate = _.template(relatedConceptTemplate);
 
     return Backbone.View.extend({
         events: {
@@ -27,9 +24,15 @@ define([
                 this.search(this.$input.typeahead('val'));
             },
             'click .concept-remove-icon': function(e) {
-                var id = $(e.currentTarget).closest("span").attr('data-id');
+                var id = $(e.currentTarget).closest('.selected-related-concept').data('id');
 
                 this.removeRelatedConcept(id);
+            },
+            'hide.bs.dropdown .selected-related-concept-dropdown-container': function(e) {
+                this.toggleRelatedConceptClusterDropdown(false, $(e.currentTarget));
+            },
+            'show.bs.dropdown .selected-related-concept-dropdown-container': function(e) {
+                this.toggleRelatedConceptClusterDropdown(true, $(e.currentTarget));
             },
             'click .see-all-documents': function() {
                 this.search('*');
@@ -90,9 +93,10 @@ define([
             if (this.$additionalConcepts) {
                 this.$additionalConcepts.empty();
 
-                _.each(this.model.get('relatedConcepts'), function(concept) {
-                    this.$additionalConcepts.append(relatedConceptsTemplate({
-                        concept: concept
+                _.each(this.model.get('relatedConcepts'), function(conceptCluster, index) {
+                    this.$additionalConcepts.append(conceptsTemplate({
+                        concepts: conceptCluster,
+                        clusterId: index
                     }));
                 }, this);
 
@@ -100,9 +104,16 @@ define([
             }
         },
 
+        toggleRelatedConceptClusterDropdown: function (open, $target) {
+            var $icon = $target.find('.selected-related-concept-cluster-chevron');
+            $icon.toggleClass('hp-chevron-up', open);
+            $icon.toggleClass('hp-chevron-down', !open);
+        },
+
         removeRelatedConcept: function(id){
-            var newConcepts = _.without(this.model.get('relatedConcepts'), id);
-            this.model.set('relatedConcepts', newConcepts);
+            var concepts = this.model.get('relatedConcepts').slice(0);
+            concepts.splice(id, 1);
+            this.model.set('relatedConcepts', concepts);
         }
     });
 

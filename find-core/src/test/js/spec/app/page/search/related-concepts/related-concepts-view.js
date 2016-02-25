@@ -29,7 +29,7 @@ define([
 
             this.queryTextModel = new Backbone.Model({
                 inputText: 'orange',
-                relatedConcepts: ['blood']
+                relatedConcepts: [['blood']]
             });
         });
 
@@ -184,10 +184,8 @@ define([
 
                     it('appends the clicked concept to the query text model related concepts', function() {
                         expect(this.queryTextModel.get('relatedConcepts')).toEqual([
-                            'blood',
-                            'fruit',
-                            'juice',
-                            'squeeze'
+                            ['blood'],
+                            ['fruit', 'juice', 'squeeze']
                         ]);
                     });
                 });
@@ -199,8 +197,8 @@ define([
 
                     it('appends the clicked concept to the query text model related concepts', function() {
                         expect(this.queryTextModel.get('relatedConcepts')).toEqual([
-                            'blood',
-                            'fruit'
+                            ['blood'],
+                            ['fruit']
                         ]);
                     });
                 });

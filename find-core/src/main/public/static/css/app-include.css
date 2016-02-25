@@ -769,12 +769,47 @@ input.find-input {
 }
 
 .selected-related-concept {
-    padding: 2px;
+    padding: 1px 6px;
+    border: solid 2px #fff;
+    border-radius: 0;
     font-size: 100%;
     font-weight: normal;
+    margin-left: 5px;
+}
+
+.selected-related-concept {
     color: #fff;
-    border: solid 1px #00b388;
-    border-radius: 0;
+}
+
+.selected-related-concept-cluster {
+    color: #425563;
+    background-color: #fff;
+    display: inline;
+    border-left: 0;
+    border-right: 0;
+}
+
+.selected-related-concept-cluster ul {
+    margin-left: -6px;
+}
+
+.selected-related-concept-cluster ul a:hover {
+    cursor: default;
+    background: inherit;
+    color: inherit;
+}
+
+.selected-related-concept-cluster > .btn-group {
+    vertical-align: inherit;
+}
+
+.selected-related-concept-cluster > .btn-group .dropdown-toggle {
+    box-shadow: inset 0 0 0 0;
+}
+
+.selected-related-concept-cluster-chevron {
+    vertical-align: middle;
+    font-weight: bold;
 }
 
 .reverse-animated-container .see-all-documents,
