@@ -4,6 +4,7 @@ import com.autonomy.abc.config.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
@@ -386,17 +387,18 @@ public class FindITCase extends FindTestBase {
     }
 
     private void verifyDocumentViewer(DocumentViewer docViewer) {
+        final Frame frame = new Frame(getWindow(), docViewer.frame());
+
         verifyThat("document visible", docViewer, displayed());
         verifyThat("next button visible", docViewer.nextButton(), displayed());
         verifyThat("previous button visible", docViewer.prevButton(), displayed());
 
-        String handle = getDriver().getWindowHandle();
-        getDriver().switchTo().frame(docViewer.frame());
+        frame.activate();
 
         //TODO these aren't working properly - did Fred not fix these?
         verifyThat("no backend error", getDriver().findElements(new Locator().withTagName("h1").containingText("500")), empty());
         verifyThat("no view server error", getDriver().findElements(new Locator().withTagName("h2").containingCaseInsensitive("error")), empty());
-        getDriver().switchTo().window(handle);
+        frame.deactivate();
     }
 
     @Test

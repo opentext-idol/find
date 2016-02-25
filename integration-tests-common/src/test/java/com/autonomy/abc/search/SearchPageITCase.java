@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
@@ -452,13 +453,10 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	private void checkViewResult() {
-		final String handle = getDriver().getWindowHandle();
 		DocumentViewer docViewer = DocumentViewer.make(getDriver());
+		Frame frame = new Frame(getWindow(), docViewer.frame());
 
-		getDriver().switchTo().frame(docViewer.frame());
-		verifyThat(getDriver().findElement(By.xpath(".//*")), not(hasTextThat(isEmptyOrNullString())));
-
-		getDriver().switchTo().window(handle);
+		verifyThat(frame.getText(), not(isEmptyOrNullString()));
 		docViewer.close();
 	}
 
@@ -476,16 +474,13 @@ public class SearchPageITCase extends ABCTestBase {
 
 		for (int j = 1; j <=2; j++) {
 			for (int i = 1; i <= 3; i++) {
-				final String handle = getDriver().getWindowHandle();
 				searchPage.searchResultCheckbox(i).click();
 				final String docTitle = searchPage.getSearchResult(i).getTitleString();
 				ElementUtil.scrollIntoViewAndClick(searchPage.promotionBucketElementByTitle(docTitle), getDriver());
 
 				DocumentViewer viewer = DocumentViewer.make(getDriver());
-				getDriver().switchTo().frame(viewer.frame());
-				verifyThat("view frame displays", getDriver().findElement(By.xpath(".//*")), containsText(docTitle));
-
-				getDriver().switchTo().window(handle);
+				Frame frame = new Frame(getWindow(), viewer.frame());
+				verifyThat("view frame displays", frame.getText(), containsString(docTitle));
 				viewer.close();
 			}
 

@@ -3,6 +3,7 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
@@ -213,13 +214,13 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     private void checkDocumentViewable(String title) {
-        final String handle = getDriver().getWindowHandle();
-        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        final DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        final Frame frame = new Frame(getWindow(), docViewer.frame());
 
-        getDriver().switchTo().frame(docViewer.frame());
-        verifyThat("document '" + title + "' is viewable", getDriver().findElement(By.xpath(".//*")), not(hasTextThat(isEmptyOrNullString())));
+        frame.activate();
+        verifyThat("document '" + title + "' is viewable", frame.getText(), not(isEmptyOrNullString()));
 
-        getDriver().switchTo().window(handle);
+        frame.deactivate();
         docViewer.close();
     }
 

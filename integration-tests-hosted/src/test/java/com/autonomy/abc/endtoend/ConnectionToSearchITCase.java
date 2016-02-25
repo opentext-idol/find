@@ -6,6 +6,8 @@ import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.control.Frame;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
@@ -50,13 +52,13 @@ public class ConnectionToSearchITCase extends HostedTestBase {
         verifyThat("index shows up on search page", searchPage.indexesTree().getSelected(), hasItem(index));
         verifyThat("index has search results", searchPage.getHeadingResultsCount(), greaterThan(0));
 
-        final String handle = getDriver().getWindowHandle();
         searchPage.getSearchResult(1).title().click();
         DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+        Frame frame = new Frame(getWindow(), documentViewer.frame());
         verifyThat("search result in correct index", documentViewer.getIndex(), is(index));
-        getDriver().switchTo().frame(documentViewer.frame());
-        verifyThat("search result is viewable", getDriver().findElement(By.xpath(".//*")).getText(), containsString(searchTerm));
-        getDriver().switchTo().window(handle);
+
+        verifyThat("search result is viewable", frame.getText(), containsString(searchTerm));
+
         documentViewer.close();
 
         ConnectionsDetailPage connectionsDetailPage = connectionService.goToDetails(connector);
