@@ -40,6 +40,7 @@ import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 @RelatedTo("CSA-2090")
 //TODO have this extend FindITCase but change the setUp()?
@@ -82,7 +83,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         for(int i = 1; i <= 5; i++){
             similarDocuments = findService.goToSimilarDocuments(i);
-            verifyThat(similarDocuments.seedLink(), not(nullValue()));
+            WebElement seedLink = similarDocuments.seedLink();
+            verifyThat(seedLink, displayed());
+            verifyThat(seedLink.getText(), not(isEmptyOrNullString()));
             similarDocuments.backButton().click();
         }
     }
