@@ -14,7 +14,19 @@ public enum NavBarTabId {
     INDEXES("Indexes"),
     PROMOTIONS("Promotions"),
     KEYWORDS("Keywords"),
-    GETTING_STARTED("Getting Started"),
+    DOCUMENTATION("Documentation"),
+    GETTING_STARTED("Getting Started"){
+        @Override
+        public void click(WebDriver driver) {
+            nestedClick(driver, DOCUMENTATION);
+        }
+    },
+    TUTORIALS("Tutorials"){
+        @Override
+        public void click(WebDriver driver) {
+            nestedClick(driver, DOCUMENTATION);
+        }
+    },
     USER_MGMT("User Management"),
     DEVELOPERS("Haven OnDemand Developers"){
         @Override
