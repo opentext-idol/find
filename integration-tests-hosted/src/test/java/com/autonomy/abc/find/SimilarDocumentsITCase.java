@@ -11,6 +11,7 @@ import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.SimilarDocumentsView;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
@@ -23,6 +24,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -34,7 +36,9 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
 
 @RelatedTo("CSA-2090")
@@ -152,15 +156,22 @@ public class SimilarDocumentsITCase extends FindTestBase {
         HSODApplication searchApp = new HSODApplication();
         Window searchWindow = launchInNewWindow(searchApp);
         searchWindow.activate();
+        Waits.loadOrFadeWait();
 
         String trigger = "Riga";
-        new HSODPromotionService(searchApp).setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), "Have Mercy", 3);
+        HSODPromotionService promotionService = new HSODPromotionService(searchApp);
+        try {
+            promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), "Have Mercy", 3);
 
         findWindow.activate();
         results = findService.search(new SearchQuery(trigger));
 
-        for(int i = 0; i <= results.promotions().size(); i++){
+            for (int i = 1; i <= results.promotions().size(); i++) {
             verifySimilarDocsNotEmpty(i);
+        }
+        } finally {
+            searchWindow.activate();
+            promotionService.deleteAll();
         }
     }
 
@@ -234,6 +245,25 @@ public class SimilarDocumentsITCase extends FindTestBase {
             previousDate = currentDate;
 
             documentViewer.close();
+        }
+    }
+
+    @Test
+    public void testDocumentMetadata(){
+        findService.search(new SearchQuery("stars").withFilter(new IndexFilter(Index.DEFAULT)));
+        similarDocuments = findService.goToSimilarDocuments(1);
+
+        for(FindSearchResult searchResult : similarDocuments.getResults(5)){
+            String url = searchResult.getReference();
+
+            try {
+                DocumentViewer docViewer = searchResult.openDocumentPreview();
+                verifyThat(docViewer.getIndex(), is(Index.DEFAULT));
+                verifyThat(docViewer.getReference(), is(url));
+                docViewer.close();
+            } catch (WebDriverException e) {
+                fail("Could not click on title - most likely CSA-1767");
+            }
         }
     }
 }
