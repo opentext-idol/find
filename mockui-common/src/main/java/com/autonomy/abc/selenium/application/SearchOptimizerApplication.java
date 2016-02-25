@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.SafeClassLoader;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 public abstract class SearchOptimizerApplication<T extends SOElementFactory> implements Application<T> {
     private final static Map<ApplicationType, Factory<? extends SearchOptimizerApplication>> FACTORY_MAP = new EnumMap<>(ApplicationType.class);
+    private LoginService loginService;
 
     static {
         FACTORY_MAP.put(ApplicationType.HOSTED, new SafeClassLoader<>(SearchOptimizerApplication.class, "com.autonomy.abc.selenium.hsod.HSODApplication"));
@@ -31,6 +33,14 @@ public abstract class SearchOptimizerApplication<T extends SOElementFactory> imp
 
     public SearchService searchService() {
         return new SearchService(this);
+    }
+
+    @Override
+    public LoginService loginService() {
+        if (loginService == null) {
+            loginService = new LoginService(this);
+        }
+        return loginService;
     }
 
     public <S extends AppPage> S switchTo(Class<S> pageType) {

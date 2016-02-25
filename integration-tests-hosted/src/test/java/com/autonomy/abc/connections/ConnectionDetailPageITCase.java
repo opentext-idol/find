@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
+import com.autonomy.abc.selenium.users.User;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,11 +27,13 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     private ConnectionService connectionService;
     private ConnectionsDetailPage connectionsDetailPage;
     private Connector connector;
+    private User testUser;
 
     public ConnectionDetailPageITCase(TestConfig config) {
         super(config);
         // requires a separate account where indexes can safely be added and deleted
-        setInitialUser(config.getUser("index_tests"));
+        testUser = config.getUser("index_tests");
+        setInitialUser(testUser);
     }
 
     @Before
@@ -125,7 +128,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
 
         verifyIndexNameForConnector();
 
-        indexService.deleteIndexViaAPICalls(indexOne, getCurrentUser(), getConfig().getApiUrl());
+        indexService.deleteIndexViaAPICalls(indexOne, testUser, getConfig().getApiUrl());
 
         indexService.goToIndexes();
 

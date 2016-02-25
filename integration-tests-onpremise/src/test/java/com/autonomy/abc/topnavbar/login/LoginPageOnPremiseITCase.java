@@ -53,7 +53,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 		assertThat(usersPage, modalIsDisplayed());
 		usersPage.createNewUser("admin", "qwerty", "Admin");
 		usersPage.closeModal();
-		logout();
+		getApplication().loginService().logout();
 		loginPage = getElementFactory().getLoginPage();
 	}
 

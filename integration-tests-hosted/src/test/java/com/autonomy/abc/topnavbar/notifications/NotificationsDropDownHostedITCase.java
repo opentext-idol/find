@@ -190,7 +190,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             HSODApplication secondApplication = new HSODApplication().inWindow(secondSession.getActiveWindow());
             HSODElementFactory secondFactory = secondApplication.elementFactory();
 
-            loginTo(secondFactory.getLoginPage(), secondSession.getDriver(), user);
+            secondApplication.loginService().login(user);
             secondFactory.getPromotionsPage();
 
             secondApplication.keywordService().addSynonymGroup("Messi", "Campbell");

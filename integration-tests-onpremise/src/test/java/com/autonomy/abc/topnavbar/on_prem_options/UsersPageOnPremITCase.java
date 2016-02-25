@@ -116,7 +116,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
     @Test
     //TO BE MOVED BACK TO COMMON IF FUNCTIONALITY IS IMPLEMENTED
     public void testWontDeleteSelf() {
-        assertThat(usersPage.deleteButton(getCurrentUser()), disabled());
+        assertThat(usersPage.deleteButton(getLoginService().getCurrentUser()), hasClass("not-clickable"));
     }
 
     @Test

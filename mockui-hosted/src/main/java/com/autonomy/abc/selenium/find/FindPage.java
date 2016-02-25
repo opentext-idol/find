@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 public class FindPage extends AppElement implements AppPage,
+        LoginService.LogoutHandler,
         IndexFilter.Filterable,
         DatePickerFilter.Filterable,
         StringDateFilter.Filterable,

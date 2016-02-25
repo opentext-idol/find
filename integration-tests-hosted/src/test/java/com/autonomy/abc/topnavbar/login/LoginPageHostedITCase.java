@@ -4,36 +4,33 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.application.Application;
 import com.autonomy.abc.selenium.devconsole.DevConsole;
-import com.autonomy.abc.selenium.devconsole.DevConsoleElementFactory;
 import com.autonomy.abc.selenium.devconsole.DevConsoleHomePage;
 import com.autonomy.abc.selenium.devconsole.HSODLandingPage;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.HSODFind;
-import com.autonomy.abc.selenium.find.HSODFindElementFactory;
+import com.autonomy.abc.selenium.hsod.HSODApplication;
+import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.WebElement;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 /*
  * TODO Possibly make sure a gritter with 'Signed in' comes up, correct colour circle etc. May be difficult to do considering it occurs during tryLogIn()
  */
 public class LoginPageHostedITCase extends HostedTestBase {
+    private HSODApplication searchApp;
     private HSODFind findApp;
-    private HSODFindElementFactory findFactory;
     private DevConsole devConsole;
-    private DevConsoleElementFactory devFactory;
 
     public LoginPageHostedITCase(TestConfig config) {
         super(config);
@@ -42,10 +39,12 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
+        searchApp = getApplication();
         findApp = new HSODFind(getMainSession().getActiveWindow());
-        findFactory = findApp.elementFactory();
         devConsole = new DevConsole(getMainSession().getActiveWindow());
-        devFactory = devConsole.elementFactory();
+
+        // wait before doing anything
+        getElementFactory().getLoginPage();
     }
 
     @Test   @Ignore("No account")
@@ -63,7 +62,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         testLogin("twitter");
     }
 
-    @Test   @Ignore("No account")
+    @Test
     public void testFacebookLogin(){
         testLogin("facebook");
     }
@@ -85,7 +84,8 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
     private void testLogin(String account) {
         try {
-            loginAs(getConfig().getUser(account));
+            searchApp.loginService().login(getConfig().getUser(account));
+            verifyOn(searchApp, PromotionsPage.class);
         } catch (Exception e) {
             throw new AssertionError("unable to log in as " + account, e);
         }
@@ -94,128 +94,96 @@ public class LoginPageHostedITCase extends HostedTestBase {
     // these tests check that logging in/out of one app also logs in/out of another
     @Test
     public void testLogInSearchOptimizerToFind(){
-        User user = getConfig().getDefaultUser();
-        loginAs(user);
-
-        getDriver().navigate().to(getConfig().getAppUrl(findApp));
-        verifyThat(findFactory.getFindPage(), displayed());
+        verifyLogin(searchApp, PromotionsPage.class);
+        verifyRedirect(findApp, FindPage.class);
     }
 
     @Test
     public void testLoginFindToSearchOptimizer(){
-        getElementFactory().getLoginPage();
-
-        getDriver().navigate().to(getConfig().getAppUrl(findApp));
-        loginTo(findFactory.getLoginPage(), getDriver(), getConfig().getDefaultUser());
-
-        getDriver().navigate().to(getAppUrl());
-        verifyThat(getElementFactory().getPromotionsPage(), displayed());
+        verifyLogin(findApp, FindPage.class);
+        verifyRedirect(searchApp, PromotionsPage.class);
     }
 
     @Test
     public void testLogOutSearchOptimizerToFind(){
-        loginAs(getConfig().getDefaultUser());
-
-        logout();
-
-        getDriver().navigate().to(getConfig().getAppUrl(findApp));
-        findFactory.getLoginPage();
-
-        verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
+        loginLogout(searchApp, PromotionsPage.class);
+        verifyRedirect(findApp, LoginPage.class);
     }
 
     @Test
     @RelatedTo("CSA-1674")
     public void testLogOutSearchOptimizerRedirect() {
-        loginAs(getConfig().getDefaultUser());
-        logout();
-
-        HSODLandingPage page = null;
-        try {
-            page = devFactory.getHSODPage();
-        } catch (Exception e) {
-            /* noop */
-        }
-
-        verifyThat(page, not(nullValue()));
-        if (page != null) {
-            verifyThat(page.loginButton(), displayed());
-        }
+        loginLogout(searchApp, PromotionsPage.class);
+        verifyOn(devConsole, HSODLandingPage.class);
+        verifyThat(devConsoleLoginButton(), displayed());
     }
 
     @Test
     @KnownBug("CSA-1854")
     public void testLogOutFindToSearchOptimizer(){
-        getElementFactory().getLoginPage();
-
-        getDriver().navigate().to(getConfig().getAppUrl(findApp));
-        loginTo(findFactory.getLoginPage(), getDriver(), getConfig().getDefaultUser());
-
-        FindPage findPage = findFactory.getFindPage();
-        findPage.logOut();
-
-        findFactory.getLoginPage();
+        loginLogout(findApp, FindPage.class);
+        verifyOn(findApp, LoginPage.class);
         verifyThat(getDriver().getCurrentUrl(), containsString("find"));
 
-        getDriver().navigate().to(getAppUrl());
-        getElementFactory().getLoginPage();
+        verifyRedirect(searchApp, LoginPage.class);
         verifyThat(getDriver().getCurrentUrl(), containsString("search"));
 
-        verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
     }
 
     @Test
     //Assume that logging into Search/Find are the same
     public void testLoginSSOtoDevConsole(){
-        loginAs(getConfig().getDefaultUser());
-
-        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
-        DevConsoleHomePage devConsole = devFactory.getHomePage();
-
-        verifyThat(devConsole.loginButton(), not(displayed()));
+        verifyLogin(searchApp, PromotionsPage.class);
+        verifyRedirect(devConsole, DevConsoleHomePage.class);
+        verifyThat(devConsoleLoginButton(), not(displayed()));
     }
 
     @Test
     public void testLoginDevConsoletoSSO() {
-        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
-
-        DevConsoleHomePage homePage = devFactory.getHomePage();
-        homePage.loginButton().click();
-
-        loginTo(devFactory.getLoginPage(), getDriver(), getConfig().getDefaultUser());
-
-        getDriver().navigate().to(getAppUrl());
-        verifyThat(getElementFactory().getPromotionsPage(), displayed());
+        verifyLogin(devConsole, DevConsoleHomePage.class);
+        verifyRedirect(searchApp, PromotionsPage.class);
     }
 
     @Test
     public void testLogoutSSOtoDevConsole() {
-        loginAs(getConfig().getDefaultUser());
-
-        logout();
-
-        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
-        verifyThat(devFactory.getHomePage().loginButton(), displayed());
+        loginLogout(searchApp, PromotionsPage.class);
+        verifyRedirect(devConsole, DevConsoleHomePage.class);
+        verifyThat(devConsoleLoginButton(), displayed());
     }
 
     @Test
     public void testLogoutDevConsoletoSSO() {
-        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
-
-        devFactory.getHomePage().loginButton().click();
-        loginTo(devFactory.getLoginPage(), getDriver(), getConfig().getDefaultUser());
-
-        logOutDevConsole();
-
-        getDriver().navigate().to(getAppUrl());
-        verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
+        loginLogout(devConsole, DevConsoleHomePage.class);
+        verifyRedirect(searchApp, LoginPage.class);
     }
 
-    // TODO: move this
-    private void logOutDevConsole(){
-        getDriver().findElement(By.className("navigation-icon-user")).click();
-        getDriver().findElement(By.id("loginLogout")).click();
-        Waits.loadOrFadeWait();
-        new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("loginLogout")));
+    private <T extends AppPage> void verifyLogin(Application<?> app, Class<T> pageType) {
+        getWindow().goTo(getConfig().getAppUrl(app));
+        app.loginService().login(getConfig().getDefaultUser());
+        verifyOn(app, pageType);
+    }
+
+    private <T extends AppPage> void loginLogout(Application<?> app, Class<T> pageType) {
+        verifyLogin(app, pageType);
+        app.loginService().logout();
+    }
+
+    private <T extends AppPage> void verifyRedirect(Application<?> app, Class<T> pageType) {
+        getWindow().goTo(getConfig().getAppUrl(app));
+        verifyOn(app, pageType);
+    }
+
+    private <T extends AppPage> void verifyOn(Application<?> app, Class<T> pageType) {
+        T page = null;
+        try {
+            page = app.elementFactory().loadPage(pageType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        verifyThat("on " + pageType.getSimpleName(), page, not(nullValue()));
+    }
+
+    private WebElement devConsoleLoginButton() {
+        return devConsole.elementFactory().getTopNavBar().loginButton();
     }
 }
