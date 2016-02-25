@@ -64,7 +64,7 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .authenticationProvider(new DefaultLoginAuthenticationProvider(configService, CONFIG_ROLE))
+                .authenticationProvider(new DefaultLoginAuthenticationProvider(configService, role(CONFIG_ROLE)))
                 .authenticationProvider(communityAuthenticationProvider());
     }
 
