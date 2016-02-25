@@ -10,8 +10,9 @@ define([
     'find/app/model/config',
     'find/app/vent',
     'find/app/router',
-    'i18n!find/nls/bundle'
-], function(SettingsPage, ValidateOnSaveModal, Confirm, configModel, vent, router, i18n) {
+    'i18n!find/nls/bundle',
+    'text!find/templates/app/page/settings-page.html'
+], function(SettingsPage, ValidateOnSaveModal, Confirm, configModel, vent, router, i18n, template) {
 
     var urlRoot = /\bconfig\/[\/]*$/.test(window.location.pathname) ? '../api/config/config/' : '../api/useradmin/config/';
 
@@ -21,6 +22,7 @@ define([
         router: router,
         routeRoot: 'find/settings',
         scrollSelector: '.body',
+        template: _.template(template),
         vent: vent,
         validateUrl: urlRoot + 'config-validation',
         groupClass: 'col-md-4',

@@ -1,0 +1,12 @@
+<% var uniqueId = _.uniqueId('settings'); %>
+
+<h2><%-strings.title%></h2>
+<p class="settings-description"></p>
+
+<div class="settings-control">
+    <button type="submit" form="settings-form-<%-uniqueId%>" class="btn button-warning"><%-strings.saveButton%></button>
+    <button type="button" class="btn button-accent settings-restore"><%-strings.restoreButton%></button>
+    <span class="settings-required-flag"><i class="fa fa-asterisk"></i></span> <%-strings.requiredFields%>
+</div>
+
+<form id="settings-form-<%-uniqueId%>" class="form-inline main-page-contents"></form>
