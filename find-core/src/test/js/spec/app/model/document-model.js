@@ -4,13 +4,17 @@ define([
 
     var THUMBNAIL = 'VGhlIGJhc2UgNjQgZW5jb2RlZCB0aHVtYm5haWw=';
     var TITLE = 'My Document';
+    var TRANSCRIPT = 'test transcript';
+    var SOURCETYPE = 'news';
 
     function baseResponse() {
         return {
             fieldMap: {
                 authors: {type: 'STRING', displayName: 'Author', values: ['Humbert', 'Gereon']},
                 thumbnail: {type: 'STRING', values: [THUMBNAIL]},
-                datePublished: {type: 'DATE', displayName: 'Date Published', values: [1456161196000]}
+                datePublished: {type: 'DATE', displayName: 'Date Published', values: [1456161196000]},
+                sourceType: {type: 'STRING', values: [SOURCETYPE]},
+                transcript: {type: 'STRING', values: [TRANSCRIPT]}
             }
         };
     }
@@ -68,9 +72,17 @@ define([
                 expect(this.parse(fullResponse()).thumbnail).toBe(THUMBNAIL);
             });
 
+            it('parses the sourceType from the field map', function() {
+                expect(this.parse(fullResponse()).sourceType).toBe(SOURCETYPE);
+            });
+
+            it('parses the transcript from the field map', function() {
+                expect(this.parse(fullResponse()).transcript).toBe(TRANSCRIPT);
+            });
+
             it('parses the field map into an array, converting date values to formatted strings', function() {
                 var fields = this.parse(fullResponse()).fields;
-                expect(fields.length).toBe(3);
+                expect(fields.length).toBe(5);
 
                 var datePublishedField = _.findWhere(fields, {displayName: 'Date Published'});
                 expect(datePublishedField).toBeDefined();
