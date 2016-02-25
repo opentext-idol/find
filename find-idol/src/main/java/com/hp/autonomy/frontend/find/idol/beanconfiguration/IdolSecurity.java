@@ -64,7 +64,7 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, UserConfiguration.CONFIG_ROLE));
+        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, UserConfiguration.role(UserConfiguration.CONFIG_ROLE)));
 
         for (final AuthenticationProvider authenticationProvider : idolSecurityCustomizer.getAuthenticationProviders()) {
             auth.authenticationProvider(authenticationProvider);
