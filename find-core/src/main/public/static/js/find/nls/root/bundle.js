@@ -69,6 +69,7 @@ define([
         'search.compare.comparedSaved': 'Compare saved searches',
         'search.compare.selectedSearch': 'Selected: ',
         'search.compare.selectSearchToCompare': 'Choose another saved search to compare',
+        'search.compare.error.default': 'An error occurred fetching comparison',
         'search.databases': 'Databases',
         'search.dates': 'Dates',
         'search.dates.timeInterval.CUSTOM': 'Custom',

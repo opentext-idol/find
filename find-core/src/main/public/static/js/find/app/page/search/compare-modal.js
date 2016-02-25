@@ -45,10 +45,8 @@ define([
                             this.comparisonSuccessCallback(comparisonModel, searchModels);
                             this.hide()
                         }, this),
-                        error: _.bind(function(model, xhr) {
-                            if(xhr.status !== 0) {
-                                this.$errorMessage.text(xhr.responseJSON.message);
-                            }
+                        error: _.bind(function() {
+                            this.$errorMessage.text(i18n['search.compare.error.default']);
                             this.$loadingSpinner.addClass('hide');
                             this.$confirmButton.prop('disabled', false);
                         }, this)
