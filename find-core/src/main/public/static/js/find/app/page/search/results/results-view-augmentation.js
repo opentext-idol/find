@@ -3,14 +3,11 @@ define([
     'jquery',
     'underscore',
     'text!find/templates/app/page/search/results/results-view-augmentation.html'
-], function(Backbone, $, _, template) {
+], function(Backbone, $, _, viewHtml) {
 
     return Backbone.View.extend({
-
-        // to be overridden
+        // abstract
         PreviewModeView: null,
-
-        template: _.template(template),
 
         initialize: function(options) {
             this.resultsView = options.resultsView;
@@ -18,9 +15,7 @@ define([
             this.listenTo(this.resultsView, 'preview', function(model) {
                 this.removePreviewModeView();
 
-                this.previewModeView = new this.PreviewModeView({
-                    model: model
-                });
+                this.previewModeView = new this.PreviewModeView({model: model});
 
                 this.listenTo(this.previewModeView, 'close-preview', function() {
                     this.togglePreviewMode(false);
@@ -38,7 +33,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template());
+            this.$el.html(viewHtml);
 
             this.resultsView.setElement(this.$('.main-results-content')).render();
         },
@@ -58,8 +53,9 @@ define([
         },
 
         remove: function () {
-            Backbone.View.prototype.remove.call(this);
+            this.resultsView.remove();
             this.removePreviewModeView();
+            Backbone.View.prototype.remove.call(this);
         },
 
         removePreviewModeView: function() {

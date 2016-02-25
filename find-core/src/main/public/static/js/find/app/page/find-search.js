@@ -6,15 +6,17 @@
 define([
     'js-whatever/js/base-page',
     'backbone',
-    'find/app/model/search-page-model',
     'find/app/model/dates-filter-model',
     'parametric-refinement/selected-values-collection',
     'find/app/model/indexes-collection',
     'find/app/model/documents-collection',
+    'find/app/model/comparisons/comparison-documents-collection',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
-    'find/app/model/saved-searches/saved-search-collection',
+    'find/app/model/saved-searches/saved-query-collection',
+    'find/app/model/saved-searches/saved-snapshot-collection',
     'find/app/util/model-any-changed-attribute-listener',
+    'find/app/util/merge-collection',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/query-text-model',
     'find/app/model/document-model',
@@ -25,16 +27,19 @@ define([
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, SearchPageModel, DatesFilterModel, SelectedParametricValuesCollection,
-            IndexesCollection, DocumentsCollection, InputView, TabbedSearchView, SavedSearchCollection,
-            addChangeListener, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView,
+], function(BasePage, Backbone, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
+            ComparisonDocumentsCollection, InputView, TabbedSearchView, SavedQueryCollection, SavedSnapshotCollection,
+            addChangeListener, MergeCollection, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView,
             databaseNameResolver, router, vent, i18n, _, template) {
+
     'use strict';
 
     var reducedClasses = 'reverse-animated-container col-md-offset-1 col-lg-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8';
-    var expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-4 col-lg-offset-3 col-xs-12 col-sm-12 col-md-5 col-lg-6';
+    var expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-3 col-lg-offset-3 col-md-6 col-lg-6 col-xs-12 col-sm-12';
     var QUERY_TEXT_MODEL_ATTRIBUTES = ['inputText', 'relatedConcepts'];
 
+    var html = _.template(template)({i18n: i18n});
+    
     function selectInitialIndexes(indexesCollection) {
         var privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
         var selectedIndexes;
@@ -54,19 +59,34 @@ define([
         className: 'search-page',
         template: _.template(template),
 
+        // Callback to bind the search bar to the active tab; will be removed and added as the user changes tabs
+        searchChangeCallback: null,
+
         // Abstract
         ServiceView: null,
+        ComparisonView: null,
         documentDetailOptions: null,
 
         initialize: function() {
-            this.savedSearchCollection = new SavedSearchCollection();
-            this.savedSearchCollection.fetch({remove: false});
+            this.savedQueryCollection = new SavedQueryCollection();
+            this.savedQueryCollection.fetch({remove: false});
+
+            this.savedSnapshotCollection = new SavedSnapshotCollection();
+            this.savedSnapshotCollection.fetch({remove: false});
+
+            this.savedSearchCollection = new MergeCollection([], {
+                collections: [this.savedQueryCollection, this.savedSnapshotCollection]
+            });
 
             this.indexesCollection = new IndexesCollection();
             this.indexesCollection.fetch();
 
-            // Model representing high level search page state
-            this.searchModel = new SearchPageModel();
+            this.selectedTabModel = new Backbone.Model({
+                selectedSearchCid: null
+            });
+
+            // Model representing search bar text and related concepts
+            this.searchModel = new QueryTextModel();
 
             // Model mapping saved search cids to query state
             this.queryStates = new Backbone.Model();
@@ -74,7 +94,7 @@ define([
             // Map of saved search cid to ServiceView
             this.serviceViews = {};
 
-            this.listenTo(this.searchModel, 'change:selectedSearchCid', this.selectContentView);
+            this.listenTo(this.selectedTabModel, 'change', this.selectContentView);
 
             this.listenTo(this.searchModel, 'change', function() {
                 // Bind search model to routing
@@ -85,17 +105,14 @@ define([
                 }
 
                 // Create a tab if the user has run a search but has no open tabs
-                if (this.searchModel.get('selectedSearchCid') === null && this.searchModel.get('inputText')) {
-                    this.createNewTab();
+                if (this.selectedTabModel.get('selectedSearchCid') === null && this.searchModel.get('inputText')) {
+                    this.createNewTab(this.searchModel.get('inputText'));
                 }
             });
 
-            addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
-                var selectedSearchCid = this.searchModel.get('selectedSearchCid');
-
-                if (selectedSearchCid) {
-                    var queryTextModel = this.serviceViews[selectedSearchCid].queryTextModel;
-                    queryTextModel.set(this.searchModel.pick('inputText', 'relatedConcepts'));
+            this.listenTo(this.savedSearchCollection, 'add', function (model) {
+                if (this.selectedTabModel.get('selectedCid') === null) {
+                    this.selectedTabModel.set('selectedCid', model.cid);
                 }
             });
 
@@ -105,18 +122,14 @@ define([
                 this.queryStates.unset(cid);
                 delete this.serviceViews[cid];
 
-                if (this.searchModel.get('selectedSearchCid') === cid) {
-                    var lastModel = this.savedSearchCollection.last();
+                if (this.selectedTabModel.get('selectedSearchCid') === cid) {
+                    var lastModel = this.savedQueryCollection.last();
 
                     if (lastModel) {
-                        this.searchModel.set('selectedSearchCid', lastModel.cid);
+                        this.selectedTabModel.set('selectedSearchCid', lastModel.cid);
                     } else {
                         // If the user closes their last tab, run a search for *
-                        this.searchModel.set({
-                            selectedSearchCid: null,
-                            inputText: '*',
-                            relatedConcepts: []
-                        });
+                        this.createNewTab();
                     }
                 }
             });
@@ -125,7 +138,7 @@ define([
 
             this.tabView = new TabbedSearchView({
                 savedSearchCollection: this.savedSearchCollection,
-                searchModel: this.searchModel,
+                model: this.selectedTabModel,
                 queryStates: this.queryStates
             });
 
@@ -159,16 +172,17 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template);
+            this.$el.html(html);
 
             this.inputView.setElement(this.$('.input-view-container')).render();
-            this.tabView.setElement(this.$('.tabbed-search-row')).render();
+            this.tabView.setElement(this.$('.search-tabs-container')).render();
 
-            if (this.searchModel.get('selectedSearchCid') === null) {
+            if (this.selectedTabModel.get('selectedSearchCid') === null) {
                 this.reducedState();
             } else {
                 this.expandedState();
             }
+
             _.each(this.serviceViews, function(data) {
                 this.$('.query-service-view-container').append(data.view.$el);
                 data.view.render();
@@ -177,34 +191,44 @@ define([
             this.selectContentView();
         },
 
-        createNewTab: function() {
+        createNewTab: function(queryText) {
             var newSearch = new SavedSearchModel({
-                queryText: this.searchModel.get('inputText'),
-                relatedConcepts: this.searchModel.get('relatedConcepts'),
-                title: i18n['search.newSearch']
+                queryText: queryText || '*',
+                relatedConcepts: [],
+                title: i18n['search.newSearch'],
+                type: SavedSearchModel.Type.QUERY
             });
 
-            this.savedSearchCollection.add(newSearch);
-            this.searchModel.set('selectedSearchCid', newSearch.cid);
+            this.savedQueryCollection.add(newSearch);
+            this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
         },
 
         selectContentView: function() {
-            var cid = this.searchModel.get('selectedSearchCid');
+            var cid = this.selectedTabModel.get('selectedSearchCid');
 
             _.each(this.serviceViews, function(data) {
                 data.view.$el.addClass('hide');
                 this.stopListening(data.queryTextModel);
             }, this);
 
+            if (this.searchChangeCallback) {
+                this.stopListening(this.searchModel, 'change', this.searchChangeCallback);
+                this.searchChangeCallback = null;
+            }
+
             if (cid) {
                 var viewData;
                 var savedSearchModel = this.savedSearchCollection.get(cid);
+                var searchType = savedSearchModel.get('type');
 
                 if (this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
                 } else {
                     var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
-                    var documentsCollection = new DocumentsCollection();
+
+                    var documentsCollection = searchType === SavedSearchModel.Type.QUERY ? new DocumentsCollection() : new ComparisonDocumentsCollection([], {
+                        stateMatchIds: savedSearchModel.get('stateTokens')
+                    });
 
                     var queryState = {
                         queryTextModel: queryTextModel,
@@ -215,8 +239,8 @@ define([
                     var initialSelectedIndexes;
                     var savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
 
-                    // TODO: Check if the saved indexes still exists?
-                    if (savedSelectedIndexes.length === 0) {
+                    // TODO: Check if the saved indexes still exist?
+                    if (savedSelectedIndexes.length === 0 && searchType === SavedSearchModel.Type.QUERY) {
                         if (this.indexesCollection.isEmpty()) {
                             initialSelectedIndexes = [];
 
@@ -240,10 +264,13 @@ define([
                         view: new this.ServiceView({
                             indexesCollection: this.indexesCollection,
                             documentsCollection: documentsCollection,
-                            searchModel: this.searchModel,
+                            selectedTabModel: this.selectedTabModel,
                             savedSearchCollection: this.savedSearchCollection,
+                            savedSnapshotCollection: this.savedSnapshotCollection,
+                            savedQueryCollection: this.savedQueryCollection,
                             queryState: queryState,
-                            savedSearchModel: savedSearchModel
+                            savedSearchModel: savedSearchModel,
+                            comparisonSuccessCallback: _.bind(this.comparisonSuccessCallback, this)
                         })
                     };
 
@@ -251,11 +278,30 @@ define([
                     viewData.view.render();
                 }
 
-                addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
-                    this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
-                });
+                if (searchType === SavedSearchModel.Type.QUERY) {
+                    // Bind the tab content to the search bar
+                    addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
+                        this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                    });
 
-                this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                    this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+
+                    // Bind the search bar to the tab content
+                    this.searchChangeCallback = addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
+                        viewData.queryTextModel.set(this.searchModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                    });
+                } else {
+                    // Don't bind the search bar to the tab content for snapshots; clear the search bar instead
+                    this.searchModel.set({
+                        inputText: '',
+                        relatedConcepts: []
+                    });
+
+                    this.searchChangeCallback = addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
+                        this.createNewTab(this.searchModel.get('inputText'));
+                    });
+                }
+
                 viewData.view.$el.removeClass('hide');
             }
         },
@@ -266,7 +312,7 @@ define([
             if(inputText) {
                 return 'find/search/query/' + encodeURIComponent(inputText);
             } else {
-                return 'find/search/query'
+                return 'find/search/query';
             }
         },
 
@@ -302,34 +348,14 @@ define([
         },
 
         // If we already have the document model in one of our collections, then don't bother fetching it
-        populateDocumentModelForDetailView: function(options) {
-            var model;
-            _.find(this.serviceViews, function(serviceView) {
-                var document = serviceView.documentsCollection.find(function(collectionModel) {
-                    return collectionModel.get('reference') === options.reference &&
-                        databaseNameResolver.resolveDatabaseNameForDocumentModel(collectionModel) === options.database;
-                });
-
-                if(document) {
-                    // stop looping once we find the model
-                    model = document;
-                    return true;
-                } else {
-                    return false;
-                }
+        populateDocumentModelForDetailView: function (options) {
+            new DocumentModel().fetch({
+                data: {
+                    reference: options.reference,
+                    database: options.database
+                },
+                success: _.bind(this.renderDocumentDetail, this)
             });
-
-            if (model) {
-                this.renderDocumentDetail(model)
-            } else {
-                (new DocumentModel()).fetch({
-                    data: {
-                        reference: options.reference,
-                        database: options.database
-                    },
-                    success: _.bind(this.renderDocumentDetail, this)
-                });
-            }
         },
 
         renderDocumentDetail: function(model) {
@@ -349,6 +375,36 @@ define([
                 this.stopListening(this.documentDetailView);
                 this.documentDetailView = null;
             }
+        },
+
+        clearComparison: function() {
+            if(this.comparisonView) {
+                this.comparisonView.remove();
+                this.stopListening(this.comparisonView);
+                this.comparisonView = null;
+            }
+        },
+
+        comparisonSuccessCallback: function(model, searchModels) {
+            this.clearComparison();
+
+            this.$('.service-view-container').addClass('hide');
+            this.$('.comparison-service-view-container').removeClass('hide');
+
+            this.comparisonView = new this.ComparisonView({
+                model: model,
+                searchModels: searchModels,
+                escapeCallback: _.bind(this.comparisonEscapeCallback, this)
+            });
+
+            this.comparisonView.setElement(this.$('.comparison-service-view-container')).render();
+        },
+
+        comparisonEscapeCallback: function() {
+            this.clearComparison();
+
+            this.$('.service-view-container').addClass('hide');
+            this.$('.query-service-view-container').removeClass('hide');
         }
     });
 });

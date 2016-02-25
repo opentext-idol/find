@@ -1,13 +1,17 @@
 <div class="find-navbar navbar navbar-static-top">
-    <span class="find-logo-small navbar-brand m-l-sm m-t-sm"></span>
+    <span class="find-logo-small m-l-sm m-t-sm">
+        <%-data.i18n['app.name.split.firstLine']%>
+        <br/>
+        <%-data.i18n['app.name.split.secondLine']%>
+    </span>
 
-    <span class="nav navbar-nav navbar-right navbar-username"><%- data.username %></span>
+    <span class="nav navbar-nav navbar-right navbar-username shorten"><%- data.username %></span>
     <ul class="nav navbar-nav navbar-right drop-list">
         <li class="dropdown navbar-top-link">
             <a class="dropdown-toggle clickable" data-toggle="dropdown"><i class="hp-icon hp-settings hp-fw"></i></a>
             <ul class="dropdown-menu" role="menu">
                 <li class="not-clickable">
-                    <a class="bold username"><%- data.username %></a>
+                    <a class="bold username shorten"><%- data.username %></a>
                 </li>
                 <li class="divider"></li>
                 <%= data.menuItems(data) %>

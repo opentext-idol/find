@@ -7,16 +7,20 @@ define([
     'backbone',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/model/indexes-collection',
+    'find/app/model/entity-collection',
     'jasmine-jquery'
-], function(Backbone, RelatedConceptsView, IndexesCollection) {
+], function(Backbone, RelatedConceptsView, IndexesCollection, EntityCollection) {
 
     describe('Related concepts view', function() {
         function createView() {
+            this.clickHandler = jasmine.createSpy('clickHandler');
+
             this.view = new RelatedConceptsView({
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
+                queryTextModel: this.queryTextModel,
+                clickHandler: this.clickHandler
             });
 
             this.view.render();
@@ -24,7 +28,7 @@ define([
 
         beforeEach(function() {
             this.indexesCollection = new IndexesCollection();
-            this.entityCollection = new Backbone.Collection();
+            this.entityCollection = new EntityCollection;
             this.queryModel = new Backbone.Model();
 
             this.queryTextModel = new Backbone.Model({
@@ -182,10 +186,11 @@ define([
                         this.view.$('.related-concepts-list > li:nth-child(1) h4 > a *').click();
                     });
 
-                    it('appends the clicked concept to the query text model related concepts', function() {
-                        expect(this.queryTextModel.get('relatedConcepts')).toEqual([
-                            ['blood'],
-                            ['fruit', 'juice', 'squeeze']
+                    it('calls the clickHandler with every item in the cluster', function() {
+                        expect(this.clickHandler).toHaveBeenCalledWith([
+                            'fruit',
+                            'juice',
+                            'squeeze'
                         ]);
                     });
                 });
@@ -195,10 +200,9 @@ define([
                         this.view.$('.related-concepts-list > li:nth-child(1) li:nth-child(1) .entity-text').click();
                     });
 
-                    it('appends the clicked concept to the query text model related concepts', function() {
-                        expect(this.queryTextModel.get('relatedConcepts')).toEqual([
-                            ['blood'],
-                            ['fruit']
+                    it('calls the click handler with an array containing the clicked item', function() {
+                        expect(this.clickHandler).toHaveBeenCalledWith([
+                            'fruit'
                         ]);
                     });
                 });

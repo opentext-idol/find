@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
+@RequestMapping(ComparisonController.BASE_PATH)
 public class ComparisonController<S extends Serializable, R extends SearchResult, E extends Exception> {
     public static final String BASE_PATH = "/api/public/comparison";
     public static final String COMPARE_PATH = "compare";
@@ -40,7 +42,7 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
         this.documentsService = documentsService;
     }
 
-    @RequestMapping(value = BASE_PATH + '/' + COMPARE_PATH, method = RequestMethod.POST)
+    @RequestMapping(value = COMPARE_PATH, method = RequestMethod.POST)
     public ComparisonStateTokens getCompareStateTokens(@RequestBody final ComparisonRequest<S> body) throws E {
         // If either query state token is null then try and fetch one using the query restrictions
         final String firstStateToken = body.getFirstQueryStateToken() != null ? body.getFirstQueryStateToken() : documentsService.getStateToken(body.getFirstRestrictions(), STATE_TOKEN_MAX_RESULTS);
@@ -49,14 +51,24 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
         return comparisonService.getCompareStateTokens(firstStateToken, secondStateToken);
     }
 
-    @RequestMapping(value = BASE_PATH + '/' + RESULTS_PATH, method = RequestMethod.GET)
-    public Documents<R> getResults(@RequestParam(value = STATE_MATCH_PARAM) final List<String> stateMatchIds,
-                                   @RequestParam(value = STATE_DONT_MATCH_PARAM) final List<String> stateDontMatchIds,
-                                   @RequestParam(value = RESULTS_START_PARAM, required = false, defaultValue = "1") final int resultsStart,
-                                   @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
-                                   @RequestParam(SUMMARY_PARAM) final String summary,
-                                   @RequestParam(value = SORT_PARAM, required = false) final String sort,
-                                   @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight) throws E {
-        return comparisonService.getResults(stateMatchIds, stateDontMatchIds, resultsStart, maxResults, summary, sort, highlight);
+    @RequestMapping(value = RESULTS_PATH, method = RequestMethod.GET)
+    public Documents<R> getResults(
+            @RequestParam(value = STATE_MATCH_PARAM) final List<String> stateMatchIds,
+            @RequestParam(value = STATE_DONT_MATCH_PARAM, required = false) final List<String> stateDontMatchIds,
+            @RequestParam(value = RESULTS_START_PARAM, required = false, defaultValue = "1") final int resultsStart,
+            @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
+            @RequestParam(SUMMARY_PARAM) final String summary,
+            @RequestParam(value = SORT_PARAM, required = false) final String sort,
+            @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight
+    ) throws E {
+        return comparisonService.getResults(
+                stateMatchIds,
+                stateDontMatchIds == null ? Collections.<String>emptyList() : stateDontMatchIds,
+                resultsStart,
+                maxResults,
+                summary,
+                sort,
+                highlight
+        );
     }
 }

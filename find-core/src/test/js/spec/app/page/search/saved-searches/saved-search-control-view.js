@@ -81,6 +81,9 @@ define([
                 relatedConcepts: ['Copenhagen']
             });
 
+            this.documentsCollection = new Backbone.Collection();
+            this.documentsCollection.totalResults = 50;
+
             var selectedIndexes = new DatabasesCollection([
                 {name: 'Wikipedia', domain: 'PUBLIC'}
             ]);
@@ -104,28 +107,31 @@ define([
 
             this.savedSearchModel = new SavedSearchModel({
                 title: 'New Search',
+                type: SavedSearchModel.Type.QUERY,
                 queryText: '*'
             });
 
             spyOn(this.savedSearchModel, 'destroy');
             spyOn(this.savedSearchModel, 'save').and.returnValue($.Deferred());
 
-            this.savedSearchCollection = new Backbone.Collection([this.savedSearchModel]);
-            spyOn(this.savedSearchCollection, 'create');
-
-            this.view = new SavedSearchControlView({
-                savedSearchModel: this.savedSearchModel,
-                queryModel: this.queryModel,
-                savedSearchCollection: this.savedSearchCollection,
-                queryState: {
-                    selectedIndexes: selectedIndexes,
-                    selectedParametricValues: selectedParametricValues,
-                    datesFilterModel: datesFilterModel,
-                    queryTextModel: queryTextModel
-                }
+            this.selectedTabModel = new Backbone.Model({
+                selectedSearchCid: this.savedSearchModel.cid
             });
 
-            this.view.render();
+            this.savedQueryCollection = new Backbone.Collection();
+            this.savedSearchCollection = new Backbone.Collection();
+            this.savedSnapshotCollection = new Backbone.Collection();
+
+            this.viewOptions = {
+                savedSearchModel: this.savedSearchModel,
+                queryModel: this.queryModel,
+                documentsCollection: this.documentsCollection,
+                savedQueryCollection: this.savedQueryCollection,
+                savedSearchCollection: this.savedSearchCollection,
+                savedSnapshotCollection: this.savedSnapshotCollection,
+                queryState: this.queryState,
+                selectedTabModel: this.selectedTabModel
+            };
         });
 
         afterEach(function() {
@@ -133,6 +139,14 @@ define([
         });
 
         describe('when the saved search is new', function() {
+            beforeEach(function() {
+                this.savedQueryCollection.add(this.savedSearchModel);
+                this.savedSearchCollection.add(this.savedSearchModel);
+
+                this.view = new SavedSearchControlView(this.viewOptions);
+                this.view.render();
+            });
+
             testHidesTheSaveButton();
             testHidesTheResetButton();
 
@@ -142,6 +156,14 @@ define([
 
             it('sets the text of the show save as button to "Save Search"', function() {
                 expect(this.view.$('.show-save-as-button')).toHaveText(i18n['search.savedSearchControl.openEdit.create']);
+            });
+
+            it('shows the "Save As" button', function() {
+                expect(this.view.$('.show-save-as-button')).toHaveLength(1);
+            });
+
+            it('does not show the "Open as Query" button', function() {
+                expect(this.view.$('.open-as-query-option')).toHaveLength(0);
             });
 
             describe('then the "Save Search" button is clicked', function() {
@@ -155,6 +177,7 @@ define([
 
                 describe('then the user enters and saves a title', function() {
                     var TITLE = 'Star Wars';
+                    var TYPE = SavedSearchModel.Type.QUERY;
 
                     beforeEach(function() {
                         this.view.$('.search-title-input-container .search-title-input').val(TITLE).trigger('input');
@@ -164,6 +187,7 @@ define([
                     it('saves the model with the title', function() {
                         expect(this.savedSearchModel.save.calls.count()).toBe(1);
                         expect(this.savedSearchModel.save.calls.argsFor(0)[0].title).toBe(TITLE);
+                        expect(this.savedSearchModel.save.calls.argsFor(0)[0].type).toBe(TYPE);
                     });
                 });
 
@@ -183,17 +207,97 @@ define([
             });
         });
 
-        describe('when the search is saved', function() {
+        describe('when the search is saved as a snapshot', function() {
+            beforeEach(function() {
+                this.savedSearchModel.set(_.extend({
+                    id: 3,
+                    title: 'Quantum Cats',
+                    type: SavedSearchModel.Type.SNAPSHOT
+                }, SavedSearchModel.attributesFromQueryState(this.queryState)));
+
+                this.savedSnapshotCollection.add(this.savedSearchModel);
+                this.savedSearchCollection.add(this.savedSearchModel);
+
+                this.view = new SavedSearchControlView(this.viewOptions);
+                this.view.render();
+            });
+
+            testShowsTheRenameButton();
+
+            it('does not show the "Save As" button', function() {
+                expect(this.view.$('.show-save-as-button')).toHaveLength(0);
+            });
+
+            it('displays the "Open as Query" button', function() {
+                expect(this.view.$('.open-as-query-option')).toHaveLength(1);
+            });
+
+            describe('when the open as query button is clicked', function() {
+                beforeEach(function() {
+                    this.view.$('.open-as-query-option').click();
+                });
+
+                it('adds a new saved query to the collection', function() {
+                    expect(this.savedQueryCollection.length).toBe(1);
+                });
+
+                it('creates a new saved search model', function() {
+                    expect(this.savedQueryCollection.at(0).isNew()).toBe(true);
+                });
+
+                it('copies the query restriction parameters to the new model', function() {
+                    var model = this.savedQueryCollection.at(0);
+                    expect(model.get('queryText')).toBe('cat');
+                    expect(model.get('indexes').length).toBe(1);
+                });
+
+                it('switches to the new query tab', function() {
+                    expect(this.selectedTabModel.get('selectedSearchCid')).toBe(this.savedQueryCollection.at(0).cid);
+                });
+            });
+
+            describe('when the snapshot is renamed', function() {
+                var NEW_TITLE = 'The new title for my snapshot';
+
+                beforeEach(function() {
+                    clickShowRename.call(this);
+                    this.view.$('.search-title-input').val(NEW_TITLE).trigger('input');
+                    this.view.$('.search-title-form').submit();
+                });
+
+                it('saves the model with the new title', function() {
+                    expect(this.savedSearchModel.save).toHaveBeenCalled();
+                });
+            });
+        });
+
+        describe('when the search is saved as a query', function() {
             beforeEach(function() {
                 this.savedSearchModel.set(_.extend({
                     id: 3,
                     title: 'Quantum Cats'
                 }, SavedSearchModel.attributesFromQueryState(this.queryState)));
+
+                this.savedQueryCollection.add(this.savedSearchModel);
+                this.savedSearchCollection.add(this.savedSearchModel);
+
+                spyOn(this.savedQueryCollection, 'create');
+
+                this.view = new SavedSearchControlView(this.viewOptions);
+                this.view.render();
             });
 
             testHidesTheSaveButton();
             testHidesTheResetButton();
             testShowsTheRenameButton();
+
+            it('does not show the "Open as Query" button', function() {
+                expect(this.view.$('.open-as-query-option')).toHaveLength(0);
+            });
+
+            it('shows the "Save As" button', function() {
+                expect(this.view.$('.show-save-as-button')).toHaveLength(1);
+            });
 
             it('sets the text of the show save as button to "Save As"', function() {
                 expect(this.view.$('.show-save-as-button')).toHaveText(i18n['search.savedSearchControl.openEdit.edit']);
@@ -241,8 +345,8 @@ define([
                     });
 
                     it('creates a new model in the collection with the new title', function() {
-                        expect(this.savedSearchCollection.create.calls.count()).toBe(1);
-                        expect(this.savedSearchCollection.create.calls.argsFor(0)[0].title).toBe(NEW_TITLE);
+                        expect(this.savedQueryCollection.create.calls.count()).toBe(1);
+                        expect(this.savedQueryCollection.create.calls.argsFor(0)[0].title).toBe(NEW_TITLE);
                     });
                 });
 

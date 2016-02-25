@@ -3,22 +3,28 @@
     <div class="left-side-container side-container">
         <i class="hp-icon hp-previous-chapter hp-lg container-toggle clickable"></i>
         <div class="side-panel-content">
-            <div class="indexes-container"></div>
-            <div class="date-container"></div>
-            <div class="parametric-container"></div>
+            <% if (searchType === SearchType.QUERY) { %>
+                <div class="indexes-container"></div>
+                <div class="date-container"></div>
+                <div class="parametric-container"></div>
+            <% } else { %>
+                <div class="snapshot-view-container"></div>
+            <% } %>
         </div>
     </div>
     <div class="middle-container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="filter-display-container"></div>
+        <% if (searchType === SearchType.QUERY) { %>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filter-display-container"></div>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="spellcheck-container m-b-sm hidden"></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="spellcheck-container m-b-sm hidden"></div>
+                </div>
             </div>
-        </div>
+        <% } %>
         <div class="row">
             <div class="col-md-12">
                 <button class="btn button-primary compare-modal-button"><%-i18n['search.compare']%></button>

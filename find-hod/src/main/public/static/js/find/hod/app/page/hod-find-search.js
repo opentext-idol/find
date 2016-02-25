@@ -7,12 +7,14 @@ define([
     'underscore',
     'find/app/page/find-search',
     'find/hod/app/page/search/hod-service-view',
+    'find/hod/app/page/search/saved-searches/comparison/hod-comparison-view',
     'find/app/util/database-name-resolver'
-], function(_, FindSearch, ServiceView, databaseNameResolver) {
+], function(_, FindSearch, ServiceView, ComparisonView, databaseNameResolver) {
     'use strict';
 
     return FindSearch.extend({
         ServiceView: ServiceView,
+        ComparisonView: ComparisonView,
 
         documentDetailOptions: function (domain, index, reference) {
             var database = databaseNameResolver.constructDatabaseString(domain, index);

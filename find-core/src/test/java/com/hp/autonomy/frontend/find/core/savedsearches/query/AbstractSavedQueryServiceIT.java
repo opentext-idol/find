@@ -99,6 +99,7 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
     public void checkUserAuditDataInserted() {
         final SavedQuery savedQuery = new SavedQuery.Builder()
                 .setTitle("title")
+                .setQueryText("*")
                 .build();
 
         savedQueryService.create(savedQuery);
@@ -110,34 +111,42 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
 
     @Test
     public void checkTimeAuditDataInsertedUpdated() {
-        SavedQuery savedQuery = new SavedQuery.Builder()
+        final SavedQuery savedQuery = savedQueryService.create(new SavedQuery.Builder()
                 .setTitle("title")
-                .build();
+                .setQueryText("*")
+                .build());
 
-        savedQuery = savedQueryService.create(savedQuery);
         assertNotNull(savedQuery.getId());
         assertThat(savedQuery.getDateCreated(), isA(DateTime.class));
         assertThat(savedQuery.getDateModified(), isA(DateTime.class));
         assertTrue(savedQuery.getDateCreated().isEqual(savedQuery.getDateModified().toInstant()));
+
         // Safe to assume completed in a day
         // TODO: mock out the datetime service used by spring auditing to check this properly
         assertTrue(savedQuery.getDateCreated().plusHours(1).isAfterNow());
 
         savedQuery.setQueryText("*");
-        savedQuery = savedQueryService.update(savedQuery);
-        assertThat(savedQuery.getDateCreated(), isA(DateTime.class));
-        assertThat(savedQuery.getDateModified(), isA(DateTime.class));
-        assertTrue(savedQuery.getDateModified().isAfter(savedQuery.getDateCreated().toInstant()));
+
+        final SavedQuery updatedQuery = savedQueryService.update(new SavedQuery.Builder()
+                .setId(savedQuery.getId())
+                .setTitle("new title")
+                .build());
+
+        assertThat(updatedQuery.getDateCreated(), isA(DateTime.class));
+        assertThat(updatedQuery.getDateModified(), isA(DateTime.class));
+        assertTrue(updatedQuery.getDateModified().isAfter(savedQuery.getDateCreated().toInstant()));
     }
 
     @Test
     public void checkUserNotDuplicated() {
         final SavedQuery savedQuery1 = new SavedQuery.Builder()
                 .setTitle("title1")
+                .setQueryText("*")
                 .build();
 
         final SavedQuery savedQuery2 = new SavedQuery.Builder()
                 .setTitle("title2")
+                .setQueryText("*")
                 .build();
 
         savedQueryService.create(savedQuery1);

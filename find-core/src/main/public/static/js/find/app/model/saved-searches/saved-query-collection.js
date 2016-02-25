@@ -5,7 +5,12 @@ define([
 
     return Backbone.Collection.extend({
         url: '../api/public/saved-query',
-        model: SavedSearchModel
+
+        model: SavedSearchModel.extend({
+            defaults: _.defaults({
+                type: SavedSearchModel.Type.QUERY
+            }, SavedSearchModel.prototype.defaults)
+        })
     });
 
 });

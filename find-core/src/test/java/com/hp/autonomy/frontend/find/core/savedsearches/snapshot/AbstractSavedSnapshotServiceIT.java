@@ -37,6 +37,7 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
                 .setResultCount(resultCount)
                 .setStateToken(Collections.singletonList("abc"))
                 .setConceptClusters(conceptClusters)
+                .setQueryText("*")
                 .setTitle(title)
                 .build();
 

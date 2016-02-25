@@ -10,8 +10,6 @@ define([
 
     'use strict';
 
-    var html = _.template(template)({i18n: i18n});
-
     var SavedState = {
         NEW: 'NEW',
         MODIFIED: 'MODIFIED',
@@ -44,11 +42,22 @@ define([
     }
 
     return Backbone.View.extend({
+        template: _.template(template),
         titleInput: null,
 
         events: {
             'click .show-save-as-button': toggleTitleEditState(TitleEditState.SAVE_AS),
             'click .show-rename-button': toggleTitleEditState(TitleEditState.RENAME),
+            'click .open-as-query-option': function() {
+                var newSearch = new SavedSearchModel(_.defaults({
+                    id: null,
+                    title: i18n['search.newSearch'],
+                    type: SavedSearchModel.Type.QUERY
+                }, this.savedSearchModel.attributes));
+
+                this.savedQueryCollection.add(newSearch);
+                this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
+            },
             'click .save-search-button': function() {
                 this.model.set({error: null, loading: true});
 
@@ -114,9 +123,12 @@ define([
         },
 
         initialize: function(options) {
+            this.savedQueryCollection = options.savedQueryCollection;
+            this.savedSnapshotCollection = options.savedSnapshotCollection;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
             this.queryState = options.queryState;
+            this.selectedTabModel = options.selectedTabModel;
 
             this.model = new Backbone.Model({
                 // Is the saved search new, modified or up to date with the server?
@@ -159,7 +171,11 @@ define([
         },
 
         render: function() {
-            this.$el.html(html);
+            this.$el.html(this.template({
+                i18n: i18n,
+                searchType: this.savedSearchModel.get('type'),
+                SearchType: SavedSearchModel.Type
+            }));
 
             this.renderTitleInput();
 
@@ -175,16 +191,20 @@ define([
             this.$('.search-reset-option, .save-search-button').toggleClass('hide', savedState !== SavedState.MODIFIED);
             this.$('.show-rename-button').toggleClass('hide', savedState === SavedState.NEW);
 
-            var createOrEdit = savedState === SavedState.NEW ? 'create' : 'edit';
-            this.$('.show-save-as-button').text(i18n['search.savedSearchControl.openEdit.' + createOrEdit]);
+            if (this.savedSearchModel.get('type') === SavedSearchModel.Type.QUERY) {
+                var createOrEdit = savedState === SavedState.NEW ? 'create' : 'edit';
+                this.$('.show-save-as-button').text(i18n['search.savedSearchControl.openEdit.' + createOrEdit]);
+            }
         },
 
         updateForTitleEditState: function() {
             var titleEditState = this.model.get('titleEditState');
 
-            this.$('.show-save-as-button')
-                .toggleClass('active', TitleEditState.SAVE_AS === titleEditState)
-                .attr('aria-pressed', TitleEditState.SAVE_AS === titleEditState);
+            if (this.savedSearchModel.get('type') === SavedSearchModel.Type.QUERY) {
+                this.$('.show-save-as-button')
+                    .toggleClass('active', TitleEditState.SAVE_AS === titleEditState)
+                    .attr('aria-pressed', TitleEditState.SAVE_AS === titleEditState);
+            }
 
             this.$('.show-rename-button')
                 .toggleClass('active', TitleEditState.RENAME === titleEditState)
@@ -199,10 +219,12 @@ define([
             if (titleEditState !== TitleEditState.OFF && this.titleInput === null) {
                 this.titleInput = new SearchTitleInput({
                     savedSearchModel: this.savedSearchModel,
-                    saveCallback: _.bind(function(title, success, error) {
+                    saveCallback: _.bind(function(newAttributes, success, error) {
                         var savedState = this.model.get('savedState');
                         var titleEditState = this.model.get('titleEditState');
-                        var attributes = _.extend({title: title}, SavedSearchModel.attributesFromQueryState(this.queryState));
+                        var searchType = newAttributes.type;
+
+                        var attributes = _.extend(newAttributes, SavedSearchModel.attributesFromQueryState(this.queryState));
 
                         var saveOptions = {
                             error: error,
@@ -210,8 +232,10 @@ define([
                             wait: true
                         };
 
-                        if (titleEditState === TitleEditState.SAVE_AS && savedState !== SavedState.NEW) {
-                            this.savedSearchCollection.create(attributes, saveOptions);
+                        if (titleEditState === TitleEditState.SAVE_AS && searchType === SavedSearchModel.Type.SNAPSHOT) {
+                            this.savedSnapshotCollection.create(attributes, saveOptions);
+                        } else if (titleEditState === TitleEditState.SAVE_AS && savedState !== SavedState.NEW) {
+                            this.savedQueryCollection.create(attributes, saveOptions);
                         } else {
                             this.savedSearchModel.save(attributes, saveOptions);
                         }

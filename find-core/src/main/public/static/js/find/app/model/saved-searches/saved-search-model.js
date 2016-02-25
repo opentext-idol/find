@@ -38,6 +38,15 @@ define([
         'dateNewDocsLastFetched'
     ];
 
+    /**
+     * @readonly
+     * @enum {String}
+     */
+    var Type = {
+        QUERY: 'QUERY',
+        SNAPSHOT: 'SNAPSHOT'
+    };
+
     function pickFieldAndValue(model) {
         return model.pick('field', 'value');
     }
@@ -151,6 +160,8 @@ define([
             return this.get('indexes');
         }
     }, {
+        Type: Type,
+
         /**
          * Build saved search model attributes from the given query state models.
          * @param {QueryState} queryState

@@ -5,22 +5,30 @@
 
 define([
     'find/app/page/search/saved-searches/search-title-input',
+    'find/app/model/saved-searches/saved-search-model',
     'i18n!find/nls/bundle',
     'backbone',
     'underscore',
     'jquery'
-], function(SearchTitleInput, i18n, Backbone, _, $) {
+], function(SearchTitleInput, SavedSearchModel, i18n, Backbone, _, $) {
 
     describe('Search title input', function() {
         var INITIAL_TITLE = 'Initial Title';
+        var INITIAL_SEARCH_TYPE = SavedSearchModel.Type.SNAPSHOT;
+
+        beforeEach(function() {
+            this.saveCallback = jasmine.createSpy('saveCallback');
+        });
 
         describe('for a new saved search model', function() {
             beforeEach(function() {
                 this.savedSearchModel = new Backbone.Model({
-                    title: INITIAL_TITLE
+                    title: INITIAL_TITLE,
+                    type: INITIAL_SEARCH_TYPE
                 });
 
                 this.view = new SearchTitleInput({
+                    saveCallback: this.saveCallback,
                     savedSearchModel: this.savedSearchModel
                 });
 
@@ -30,15 +38,34 @@ define([
             it('displays no title', function() {
                 expect(this.view.$('.search-title-input')).toHaveValue('');
             });
+
+            describe('when the user adds a title, selects a type and clicks save', function() {
+                var NEW_TITLE = 'My new title';
+                var NEW_TYPE = SavedSearchModel.Type.QUERY;
+
+                beforeEach(function() {
+                    this.view.$('.search-title-input').val(NEW_TITLE).trigger('input');
+                    this.view.$('[value="' + NEW_TYPE + '"]').trigger('ifChecked');
+                    this.view.$el.submit();
+                });
+
+                it('calls the save callback with the title and type, a success callback and an error callback', function() {
+                    expect(this.saveCallback).toHaveBeenCalled();
+
+                    expect(this.saveCallback.calls.argsFor(0)).toEqual([{
+                        title: NEW_TITLE,
+                        type: NEW_TYPE
+                    }, jasmine.any(Function), jasmine.any(Function)]);
+                });
+            });
         });
 
         describe('with an existing saved search model', function() {
             beforeEach(function() {
-                this.saveCallback = jasmine.createSpy('saveCallback');
-
                 this.savedSearchModel = new Backbone.Model({
                     id: 1,
-                    title: INITIAL_TITLE
+                    title: INITIAL_TITLE,
+                    type: INITIAL_SEARCH_TYPE
                 });
 
                 this.view = new SearchTitleInput({
@@ -116,9 +143,13 @@ define([
                     expect(this.listener).not.toHaveBeenCalled();
                 });
 
-                it('calls the save callback with the trimmed title, a success and an error callback', function() {
+                it('calls the save callback with the trimmed title and type, a success and an error callback', function() {
                     expect(this.saveCallback).toHaveBeenCalled();
-                    expect(this.saveCallback.calls.argsFor(0)).toEqual([NEW_TITLE, jasmine.any(Function), jasmine.any(Function)]);
+
+                    expect(this.saveCallback.calls.argsFor(0)).toEqual([{
+                        title: NEW_TITLE,
+                        type: INITIAL_SEARCH_TYPE
+                    }, jasmine.any(Function), jasmine.any(Function)]);
                 });
 
                 it('disables the input', function() {

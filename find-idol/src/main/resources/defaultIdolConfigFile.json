@@ -94,12 +94,22 @@
     },
     "mmapUrl": {
       "names": [
-        "HPSW_APP_NOINDEX_MMAPPROXY"
+        "MMAP_PROXY_URL"
       ]
     },
     "thumbnail": {
       "names": [
-        "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
+        "PREVIEW_THUMBNAIL_BASE64"
+      ]
+    },
+    "sourceType": {
+      "names": [
+        "SOURCETYPE"
+      ]
+    },
+    "transcript": {
+      "names": [
+        "TRANSCRIPTION_CONTENT"
       ]
     }
   }

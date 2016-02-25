@@ -7,6 +7,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshotSe
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +37,13 @@ public class HodSavedSnapshotController extends SavedSnapshotController<Resource
     }
 
     @Override
-    protected String getStateToken(final SavedSnapshot snapshot) throws HodErrorException {
-        final HodQueryRestrictions.Builder queryRestrictionsBuilder = new HodQueryRestrictions.Builder()
+    protected QueryRestrictions<ResourceIdentifier> buildStateTokenQueryRestrictions(final SavedSnapshot snapshot) throws HodErrorException {
+        return new HodQueryRestrictions.Builder()
                 .setDatabases(this.getDatabases(snapshot.getIndexes()))
                 .setQueryText(snapshot.toQueryText())
                 .setFieldText(snapshot.toFieldText())
                 .setMaxDate(snapshot.getMaxDate())
-                .setMinDate(snapshot.getMinDate());
-
-        return documentsService.getStateToken(queryRestrictionsBuilder.build(), Integer.MAX_VALUE);
+                .setMinDate(snapshot.getMinDate())
+                .build();
     }
 }

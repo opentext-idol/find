@@ -1,3 +1,9 @@
-<a href role="tab" data-toggle="tab" class="tab-title text-center" data-search-cid="<%- searchCid %>">
-    <span class="tab-title"><%- data.title %> <i class="fa fa-circle hide"></i></span>
+<a role="tab" class="text-center search-tab-anchor shorten" data-search-cid="<%- searchCid %>">
+    <div class="search-tab-title shorten"><%- data.title %> <i class="fa fa-circle hide"></i></div>
+    <div>
+        <span class="label label-secondary search-type">
+            <i class="hp-icon <%- isSnapshot ? 'hp-camera':'hp-search'%>"></i>
+            <%- i18n['search.savedSearchControl.searchType.' + data.type] %>
+        </span>
+    </div>
 </a>

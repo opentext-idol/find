@@ -123,17 +123,17 @@ define([
             _.bindAll(this, 'handlePopover');
 
             this.mode = options.mode;
+            this.isComparisonView = options.isComparisonView;
 
             this.loadData = this.stateTokenMode() ? this.stateTokenLoadData : this.normalLoadData;
             this.refreshResults = this.stateTokenMode() ? this.stateTokenRefreshResults : this.normalRefreshResults;
-            this.checkScroll = this.stateTokenMode() ? this.stateTokenCheckScroll : this.normalCheckScroll;
+            this.checkScroll = _.bind(this.stateTokenMode() ? this.stateTokenCheckScroll : this.normalCheckScroll, this);
             this.clearLoadingSpinner = this.stateTokenMode ? this.stateTokenClearLoadingSpinner : this.normalClearLoadingSpinner;
 
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
-
             this.documentsCollection = options.documentsCollection;
 
             if(!this.stateTokenMode()) {
@@ -198,6 +198,10 @@ define([
         render: function() {
             this.$el.html(this.template({i18n:i18n}));
 
+            if(!this.isComparisonView) {
+                this.$('.main-results-content').addClass('preview-mode');
+            }
+
             this.$loadingSpinner = $(this.loadingTemplate);
 
             this.$el.find('.results').after(this.$loadingSpinner);
@@ -247,9 +251,7 @@ define([
                 this.$('.main-results-content .results').append(this.handleError(i18n['app.feature.search'], xhr));
             });
 
-            if(!this.stateTokenMode()) {
-                this.listenTo(this.queryModel, 'change', this.refreshResults);
-            }
+            this.listenTo(this.queryModel, 'change', this.refreshResults);
 
             this.listenTo(this.entityCollection, 'reset', function() {
                 if (!this.entityCollection.isEmpty()) {
@@ -269,14 +271,15 @@ define([
                 }
             });
 
-            $('.main-content').scroll(_.bind(this.checkScroll, this));
+            // Do not bind here since the same function must be passed to the off method
+            $('.main-content').scroll(this.checkScroll);
 
             /*colorbox fancy button override*/
             $('#colorbox').append(_.template(colorboxControlsTemplate));
             $('.nextBtn').on('click', this.handleNextResult);
             $('.prevBtn').on('click', this.handlePrevResult);
 
-            if(this.documentsCollection.isEmpty()) {
+            if (this.documentsCollection.isEmpty()) {
                 this.refreshResults();
             }
         },
@@ -389,7 +392,7 @@ define([
             //prevent preview mode opening when clicking similar documents
             $similarDocumentsTrigger.on('click', function(e) {
                 e.stopPropagation();
-            })
+            });
         },
 
         handlePopover: function($content, $target) {
@@ -500,13 +503,13 @@ define([
 
         normalCheckScroll: function() {
             var triggerPoint = 500;
+
             if (this.documentsCollection.size() > 0 && this.queryModel.get('queryText') && this.resultsFinished && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
                 this.infiniteScroll();
             }
         },
 
         stateTokenCheckScroll: function() {
-            var triggerPoint = 500;
             if (this.documentsCollection.size() > 0) {
                 this.infiniteScroll();
             }
@@ -514,6 +517,13 @@ define([
 
         removeHighlighting: function() {
             this.$('.main-results-container').removeClass('selected-document');
+        },
+
+        remove: function() {
+            $('.main-content').off('scroll', this.checkScroll);
+            this.sortView.remove();
+            this.resultsNumberView.remove();
+            Backbone.View.prototype.remove.call(this);
         },
 
         stateTokenMode: function() {

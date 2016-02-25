@@ -5,12 +5,14 @@
 
 define([
     'find/app/page/find-search',
-    'find/idol/app/page/search/idol-service-view'
-], function(FindSearch, ServiceView) {
+    'find/idol/app/page/search/idol-service-view',
+    'find/idol/app/page/search/saved-searches/comparison/idol-comparison-view'
+], function(FindSearch, ServiceView, ComparisonView) {
     'use strict';
 
     return FindSearch.extend({
         ServiceView: ServiceView,
+        ComparisonView: ComparisonView,
 
         documentDetailOptions: function (database, reference) {
             return {

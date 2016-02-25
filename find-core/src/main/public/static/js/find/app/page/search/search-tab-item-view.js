@@ -6,14 +6,17 @@
 define([
     'js-whatever/js/list-item-view',
     'underscore',
+    'i18n!find/nls/bundle',
+    'find/app/model/saved-searches/saved-search-model',
     'text!find/templates/app/page/search/search-tab-item-view.html'
-], function(ListItemView, _, template) {
+], function(ListItemView, _, i18n, SavedSearchModel, template) {
 
     'use strict';
 
     var templateFunction = _.template(template);
 
     return ListItemView.extend({
+        className: 'search-tab',
         tagName: 'li',
         queryState: null,
 
@@ -24,7 +27,9 @@ define([
             ListItemView.prototype.initialize.call(this, _.defaults({
                 template: templateFunction,
                 templateOptions: {
-                    searchCid: cid
+                    i18n: i18n,
+                    searchCid: cid,
+                    isSnapshot: this.model.get('type') === SavedSearchModel.Type.SNAPSHOT
                 }
             }, options));
 
@@ -46,8 +51,8 @@ define([
 
         updateSavedness: function() {
             var changed = this.queryState ? !this.model.equalsQueryState(this.queryState) : false;
-            this.$('.tab-title').toggleClass('bold', this.model.isNew() || changed);
-            this.$('.tab-title i').toggleClass('hide', !this.model.isNew() && !changed);
+            this.$('.search-tab-anchor').toggleClass('bold', this.model.isNew() || changed);
+            this.$('.search-tab-anchor .fa-circle').toggleClass('hide', !this.model.isNew() && !changed);
         },
 
         updateQueryStateListeners: function() {
