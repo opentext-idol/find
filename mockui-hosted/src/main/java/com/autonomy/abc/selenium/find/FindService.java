@@ -12,6 +12,10 @@ public class FindService {
         findPage = elementFactory.getFindPage();
     }
 
+    public FindResultsPage search(String query){
+        return search(new SearchQuery(query));
+    }
+
     public FindResultsPage search(final SearchQuery query) {
         findPage.search(query.getSearchTerm());
         findPage.filterBy(new AggregateSearchFilter(query.getFilters()));

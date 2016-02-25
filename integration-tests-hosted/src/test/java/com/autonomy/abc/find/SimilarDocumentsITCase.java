@@ -2,22 +2,48 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
+import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.SimilarDocumentsView;
+import com.autonomy.abc.selenium.hsod.HSODApplication;
+import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.promotions.HSODPromotionService;
+import com.autonomy.abc.selenium.promotions.Promotion;
+import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.ParametricFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.util.PageUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static org.hamcrest.Matchers.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.thoughtworks.selenium.SeleneseTestBase.fail;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assume.assumeThat;
+import static org.openqa.selenium.lift.Matchers.displayed;
+
+@RelatedTo("CSA-2090")
+//TODO have this extend FindITCase but change the setUp()?
 public class SimilarDocumentsITCase extends FindTestBase {
     private FindResultsPage results;
     private FindService findService;
@@ -51,6 +77,20 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
+    @KnownBug("CSA-3678")
+    public void testTitle(){
+        findService.search(new SearchQuery("Bill Murray").withFilter(new ParametricFilter("Source Connector","SimpsonsArchive")));
+
+        for(int i = 1; i <= 5; i++){
+            similarDocuments = findService.goToSimilarDocuments(i);
+            WebElement seedLink = similarDocuments.seedLink();
+            verifyThat(seedLink, displayed());
+            verifyThat(seedLink.getText(), not(isEmptyOrNullString()));
+            similarDocuments.backButton().click();
+        }
+    }
+
+    @Test
     public void testPreviewSeed() throws InterruptedException {
         findService.search(new SearchQuery("bart").withFilter(new IndexFilter("simpsonsarchive")));
 
@@ -65,6 +105,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
             verifyThat("opened in new tab", secondWindow, not(firstWindow));
             verifyThat(getDriver().getTitle(), containsString(seedTitle));
             verifyThat("not using viewserver", getDriver().getCurrentUrl(), not(containsString("viewDocument")));
+            //TODO check if 500
 
             if (secondWindow != null) {
                 secondWindow.close();
@@ -96,5 +137,137 @@ public class SimilarDocumentsITCase extends FindTestBase {
             }
         }
         return secondWindow;
+    }
+
+    @Test
+    @KnownBug("CCUK-3676")
+    public void testPublicIndexesSimilarDocs(){
+        findService.search(new SearchQuery("Hammer").withFilter(IndexFilter.PUBLIC));
+
+        for(int i = 1; i <= 5; i++){
+            verifySimilarDocsNotEmpty(i);
+        }
+    }
+
+    @Test
+    @KnownBug("CCUK-3542")
+    public void testPromotedDocuments(){
+        Window findWindow = getWindow();
+
+        HSODApplication searchApp = new HSODApplication();
+        Window searchWindow = launchInNewWindow(searchApp);
+        searchWindow.activate();
+        Waits.loadOrFadeWait();
+
+        String trigger = "Riga";
+        HSODPromotionService promotionService = new HSODPromotionService(searchApp);
+        try {
+            promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), "Have Mercy", 3);
+
+            findWindow.activate();
+            results = findService.search(trigger);
+
+            for (int i = 1; i <= results.promotions().size(); i++) {
+                verifySimilarDocsNotEmpty(i);
+            }
+        } finally {
+            searchWindow.activate();
+            promotionService.deleteAll();
+        }
+    }
+
+    @Test
+    public void testSimilarDocumentsFromSimilarDocuments(){
+        findService.search("Self Defence Family");
+
+        similarDocuments = findService.goToSimilarDocuments(1);
+        assumeThat(similarDocuments.getResults().size(), not(0));
+
+        String previousTitle = similarDocuments.seedLink().getText();
+        for(int i = 0; i < 5; i++) {
+            //Generate a random number between 1 and 5
+            int number = (int) (Math.random() * 5 + 1);
+
+            FindSearchResult doc = similarDocuments.getResult(number);
+            String docTitle = doc.getTitleString();
+
+            doc.similarDocuments().click();
+            Waits.loadOrFadeWait();
+            similarDocuments = getElementFactory().getSimilarDocumentsView();
+
+            verifyThat("Going from " + previousTitle + " to " + docTitle + " worked successfully",similarDocuments.seedLink(), containsText(docTitle));
+
+            previousTitle = docTitle;
+        }
+        //TODO what is meant to happen when clicking back
+    }
+
+    private void verifySimilarDocsNotEmpty(int i) {
+        similarDocuments = findService.goToSimilarDocuments(i);
+        verifyThat(similarDocuments.resultsContainer().getText(), not(isEmptyOrNullString()));
+        similarDocuments.backButton().click();
+    }
+
+    @Test  @Ignore("HOW IS SCROLLING SO DIFFICULT I DON'T UNDERSTAND")
+    public void testInfiniteScroll(){
+        results = findService.search("Heaven is Earth");
+
+        similarDocuments = findService.goToSimilarDocuments(1);
+        assumeThat(similarDocuments.getResults().size(), is(30));
+
+        for(int i = 1; i <= 5; i++) {
+            verifyThat(similarDocuments.getVisibleResultsCount(), is(30 * i));
+            PageUtil.scrollToBottom(getDriver());
+            results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        }
+    }
+
+    @Test
+    public void testSortByDate() throws ParseException {
+        findService.search(new SearchQuery("Fade").withFilter(new IndexFilter("news_eng")));
+        similarDocuments = findService.goToSimilarDocuments(1);
+
+        similarDocuments.sortByDate();
+
+        List<FindSearchResult> searchResults = similarDocuments.getResults();
+
+        Date previousDate = null;
+        for(int i = 1; i <= 10; i++){
+            DocumentViewer documentViewer = searchResults.get(i).openDocumentPreview();
+            String date = documentViewer.getField("Date Created");
+            if(date == null) {
+                date = documentViewer.getField("Date");
+            }
+
+            SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMMM dd, yyyy HH:mm a");
+            Date currentDate = formatter.parse(date);
+
+            if(previousDate != null){
+                verifyThat(currentDate, lessThanOrEqualTo(previousDate));
+            }
+
+            previousDate = currentDate;
+
+            documentViewer.close();
+        }
+    }
+
+    @Test
+    public void testDocumentMetadata(){
+        findService.search(new SearchQuery("stars").withFilter(new IndexFilter(Index.DEFAULT)));
+        similarDocuments = findService.goToSimilarDocuments(1);
+
+        for(FindSearchResult searchResult : similarDocuments.getResults(5)){
+            String url = searchResult.getReference();
+
+            try {
+                DocumentViewer docViewer = searchResult.openDocumentPreview();
+                verifyThat(docViewer.getIndex(), is(Index.DEFAULT));
+                verifyThat(docViewer.getReference(), is(url));
+                docViewer.close();
+            } catch (WebDriverException e) {
+                fail("Could not click on title - most likely CSA-1767");
+            }
+        }
     }
 }

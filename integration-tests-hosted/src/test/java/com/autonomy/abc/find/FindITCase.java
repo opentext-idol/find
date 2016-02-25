@@ -16,6 +16,7 @@ import com.autonomy.abc.selenium.search.ParametricFilter;
 import com.autonomy.abc.selenium.search.SearchResult;
 import com.autonomy.abc.selenium.search.StringDateFilter;
 import com.autonomy.abc.selenium.util.Locator;
+import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
@@ -35,7 +36,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Actions;
 
 import java.util.*;
 
@@ -682,9 +682,7 @@ public class FindITCase extends FindTestBase {
     }
 
     private void scrollToBottom() {
-        for(int i = 0; i < 10; i++){
-            new Actions(getDriver()).sendKeys(Keys.PAGE_DOWN).perform();
-        }
+        PageUtil.scrollToBottom(getDriver());
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
