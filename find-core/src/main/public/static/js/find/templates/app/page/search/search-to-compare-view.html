@@ -2,7 +2,7 @@
     <span class="uppercase bold">
         <%-i18n['search.compare.selectedSearch']%>
     </span>
-    <%- selectedSearchTitle %>
+    <span class="primary-model-title"><%- selectedSearchTitle %></span>
 </p>
 <p class="m-b-md">
     <%-i18n['search.compare.selectSearchToCompare']%>
@@ -11,7 +11,7 @@
     <% _.each(searches, function(search) { %>
         <li>
             <div class="hpebox saved-search-box" data-search-cid="<%-search.cid%>">
-                <div class="hpebox-content shorten clickable">
+                <div class="hpebox-content shorten clickable secondary-model-title">
                     <%-search.get('title')%>
                 </div>
             </div>
