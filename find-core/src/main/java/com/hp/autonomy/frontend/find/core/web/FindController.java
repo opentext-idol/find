@@ -31,6 +31,7 @@ public abstract class FindController {
     public static final String PUBLIC_PATH = "/public/";
     public static final String LOGIN_PATH = "/login";
     private static final String DEFAULT_LOGIN_PAGE = "/loginPage";
+    private static final String CONFIG_PATH = "/config";
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
@@ -87,5 +88,12 @@ public abstract class FindController {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         return new ModelAndView(ViewNames.LOGIN.viewName(), attributes);
+    }
+
+    @RequestMapping(value = CONFIG_PATH, method = RequestMethod.GET)
+    public ModelAndView config() {
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
+        return new ModelAndView(ViewNames.CONFIG.viewName(), attributes);
     }
 }
