@@ -42,6 +42,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
 
 @RelatedTo("CSA-2090")
+//TODO have this extend FindITCase but change the setUp()?
 public class SimilarDocumentsITCase extends FindTestBase {
     private FindResultsPage results;
     private FindService findService;
@@ -81,10 +82,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         for(int i = 1; i <= 5; i++){
             similarDocuments = findService.goToSimilarDocuments(i);
-            String title = similarDocuments.getTitle();
-
-            verifyThat(title.charAt(40), not('\"'));
-
+            verifyThat(similarDocuments.seedLink(), not(nullValue()));
             similarDocuments.backButton().click();
         }
     }
@@ -163,12 +161,12 @@ public class SimilarDocumentsITCase extends FindTestBase {
         try {
             promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), "Have Mercy", 3);
 
-        findWindow.activate();
-        results = findService.search(new SearchQuery(trigger));
+            findWindow.activate();
+            results = findService.search(trigger);
 
             for (int i = 1; i <= results.promotions().size(); i++) {
-            verifySimilarDocsNotEmpty(i);
-        }
+                verifySimilarDocsNotEmpty(i);
+            }
         } finally {
             searchWindow.activate();
             promotionService.deleteAll();
@@ -182,18 +180,21 @@ public class SimilarDocumentsITCase extends FindTestBase {
         similarDocuments = findService.goToSimilarDocuments(1);
         assumeThat(similarDocuments.getResults().size(), not(0));
 
+        String previousTitle = similarDocuments.seedLink().getText();
         for(int i = 0; i < 5; i++) {
             //Generate a random number between 1 and 5
             int number = (int) (Math.random() * 5 + 1);
 
             FindSearchResult doc = similarDocuments.getResult(number);
-        String docTitle = doc.getTitleString();
+            String docTitle = doc.getTitleString();
 
-        doc.similarDocuments().click();
-        Waits.loadOrFadeWait();
+            doc.similarDocuments().click();
+            Waits.loadOrFadeWait();
             similarDocuments = getElementFactory().getSimilarDocumentsView();
 
-            verifyThat(similarDocuments.seedLink(), containsText(docTitle));
+            verifyThat("Going from " + previousTitle + " to " + docTitle + " worked successfully",similarDocuments.seedLink(), containsText(docTitle));
+
+            previousTitle = docTitle;
         }
         //TODO what is meant to happen when clicking back
     }
