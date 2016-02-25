@@ -206,4 +206,34 @@ public class SimilarDocumentsITCase extends FindTestBase {
             results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         }
     }
+
+    @Test
+    public void testSortByDate() throws ParseException {
+        findService.search(new SearchQuery("Fade").withFilter(new IndexFilter("news_eng")));
+        similarDocuments = findService.goToSimilarDocuments(1);
+
+        similarDocuments.sortByDate();
+
+        List<FindSearchResult> searchResults = similarDocuments.getResults();
+
+        Date previousDate = null;
+        for(int i = 1; i <= 10; i++){
+            DocumentViewer documentViewer = searchResults.get(i).openDocumentPreview();
+            String date = documentViewer.getField("Date Created");
+            if(date == null) {
+                date = documentViewer.getField("Date");
+            }
+
+            SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMMM dd, yyyy HH:mm a");
+            Date currentDate = formatter.parse(date);
+
+            if(previousDate != null){
+                verifyThat(currentDate, lessThanOrEqualTo(previousDate));
+            }
+
+            previousDate = currentDate;
+
+            documentViewer.close();
+        }
+    }
 }
