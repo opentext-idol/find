@@ -63,6 +63,8 @@ define([
             response.url = getFieldValue(response.fieldMap.url);
             response.offset = getFieldValue(response.fieldMap.offset);
             response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);
+            response.sourceType = getFieldValue(response.fieldMap.sourceType);
+            response.transcript = getFieldValue(response.fieldMap.transcript);
 
             response.authors = getFieldValues(response.fieldMap.authors);
 

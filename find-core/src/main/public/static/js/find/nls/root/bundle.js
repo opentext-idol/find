@@ -91,6 +91,7 @@ define([
         'search.document.detail.tabs.similarDates.before': 'Before Document',
         'search.document.detail.tabs.similarDates.temporalSummaryHtml': 'Between <strong>{0}</strong> before and <strong>{1}</strong> after the document',
         'search.document.detail.tabs.similarSources': 'Similar sources',
+        'search.document.detail.tabs.transcript': 'Transcript',
         'search.document.domain': 'Domain',
         'search.document.index': 'Index',
         'search.document.openInNewTab': 'Open in New Tab',

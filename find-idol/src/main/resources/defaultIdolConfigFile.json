@@ -101,6 +101,16 @@
       "names": [
         "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
       ]
+    },
+    "sourceType": {
+      "names": [
+        "SOURCETYPE"
+      ]
+    },
+    "transcript": {
+      "names": [
+        "TRANSCRIPTION_CONTENT"
+      ]
     }
   }
 }

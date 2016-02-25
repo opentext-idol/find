@@ -24,7 +24,7 @@ define([
                 sort: 'relevance',
                 summary: 'context',
                 indexes: this.indexesCollection.pluck('id'),
-                fieldText: 'MATCH{' + this.model.get('sourcetype') + '}:SOURCETYPE'
+                fieldText: 'MATCH{' + this.model.get('sourceType') + '}:SOURCETYPE'
             }
         }
     });

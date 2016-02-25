@@ -12,8 +12,9 @@ define([
     'find/app/page/search/document/similar-documents-tab',
     'find/app/page/search/document/similar-dates-tab',
     'find/app/page/search/document/metadata-tab',
-    'find/app/page/search/document/similar-sources-tab'
-], function(Backbone, _, i18n, TabContentView, AuthorsTab, SimilarDocumentsTab, SimilarDatesTab, MetadataTab, SimilarSourcesTab) {
+    'find/app/page/search/document/similar-sources-tab',
+    'find/app/page/search/document/transcript-tab'
+], function(Backbone, _, i18n, TabContentView, AuthorsTab, SimilarDocumentsTab, SimilarDatesTab, MetadataTab, SimilarSourcesTab, TranscriptTab) {
     'use strict';
 
     return [
@@ -63,7 +64,17 @@ define([
             title: i18n['search.document.detail.tabs.similarSources'],
 
             shown: function (documentModel) {
-                return _.some(documentModel.get('fields'), function(field) { return field.id === 'SOURCETYPE' })
+                return documentModel.has('sourceType');
+            }
+        },
+
+        {
+            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: TranscriptTab}),
+
+            title: i18n['search.document.detail.tabs.transcript'],
+
+            shown: function (documentModel) {
+                return documentModel.isMedia() && documentModel.has('transcript');
             }
         }
     ];
