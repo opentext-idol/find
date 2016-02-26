@@ -51,10 +51,18 @@ public class FindPage extends AppElement implements AppPage,
         return results;
     }
 
+    /**
+     * @deprecated use FindTopNavBar instead
+     */
+    @Deprecated
     public String getSearchBoxTerm(){
         return input.getValue();
     }
 
+    /**
+     * @deprecated use FindService instead
+     */
+    @Deprecated
     public void search(String searchTerm){
         input.clear();
         input.setAndSubmit(searchTerm);
@@ -152,6 +160,9 @@ public class FindPage extends AppElement implements AppPage,
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("parametric-processing-indicator")));
     }
 
+    /**
+     * @deprecated use loginService instead
+     */
     public void logOut(){
         WebElement cog = getDriver().findElement(By.className("hp-settings"));
         if(!cog.isDisplayed()){
