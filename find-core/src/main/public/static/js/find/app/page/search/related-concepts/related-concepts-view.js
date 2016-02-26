@@ -41,10 +41,11 @@ define([
     }
 
     function popoverHandler($content, $target) {
-        var entityCluster = $target.data().entityCluster;
-        var relatedConcepts = _.union(this.queryTextModel.get('relatedConcepts'), this.entityCollection.getClusterEntities(entityCluster));
+        var entityCluster = $target.data('entityCluster');
+        var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : this.entityCollection.getClusterEntities(entityCluster);
+        var relatedConcepts = _.union(this.queryTextModel.get('relatedConcepts'), clusterEntities);
 
-        var queryText = searchDataUtil.makeQueryText(this.queryTextModel.get('inputText'), _.union(relatedConcepts, this.queryTextModel.get('relatedConcepts')));
+        var queryText = searchDataUtil.makeQueryText(this.queryTextModel.get('inputText'), relatedConcepts);
 
         var topResultsCollection = new DocumentsCollection([], {
             indexesCollection: this.indexesCollection
