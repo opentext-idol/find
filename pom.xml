@@ -26,7 +26,7 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.12.3</haven.search.components.version>
+        <haven.search.components.version>0.12.4</haven.search.components.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <npm.binExtension/>
     </properties>
