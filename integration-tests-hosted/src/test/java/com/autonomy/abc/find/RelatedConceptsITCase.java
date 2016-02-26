@@ -134,4 +134,21 @@ public class RelatedConceptsITCase extends FindTestBase {
         }
         throw new NoSuchElementException("no new related concepts");
     }
+
+    @Test
+    public void testAddRemoveConcepts() {
+        findService.search("jungle");
+        List<String> concepts = new ArrayList<>();
+        String firstConcept = clickFirstNewConcept(concepts);
+        String secondConcept = clickFirstNewConcept(concepts);
+        verifyThat(navBar.getAlsoSearchingForTerms(), hasSize(2));
+
+        navBar.additionalConcept(firstConcept).removeAndWait();
+        List<String> alsoSearchingFor = navBar.getAlsoSearchingForTerms();
+
+        verifyThat(alsoSearchingFor, hasSize(1));
+        verifyThat(alsoSearchingFor, not(hasItem(firstConcept)));
+        verifyThat(alsoSearchingFor, hasItem(secondConcept));
+        verifyThat(navBar.getSearchBoxTerm(), is("jungle"));
+    }
 }

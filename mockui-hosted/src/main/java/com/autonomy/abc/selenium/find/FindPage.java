@@ -29,14 +29,12 @@ public class FindPage extends AppElement implements AppPage,
         ParametricFilter.Filterable {
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
-    private final FormInput input;
     private final FindResultsPage results;
 
     private FindPage(WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
-        input = new FormInput(driver.findElement(By.className("find-input")), driver);
         results = new FindResultsPage(driver);
     }
 

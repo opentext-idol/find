@@ -7,7 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HPRemovable extends RemovableBase {
-    private final static By CLOSE_LOCATOR = By.cssSelector("hp-close");
+    private final static By CLOSE_LOCATOR = By.className("hp-close");
     private WebDriver driver;
 
     public HPRemovable(WebElement element, WebDriver driver) {

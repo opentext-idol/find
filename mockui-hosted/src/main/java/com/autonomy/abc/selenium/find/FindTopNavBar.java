@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.element.HPRemovable;
 import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -52,6 +53,13 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
             removables.add(new HPRemovable(concept, driver));
         }
         return removables;
+    }
+
+    public Removable additionalConcept(String conceptText) {
+        WebElement concept = inputContainer.findElement(new Locator()
+                .havingClass("selected-related-concept")
+                .containingCaseInsensitive(conceptText));
+        return new HPRemovable(concept, driver);
     }
 
     public List<String> getAlsoSearchingForTerms() {
