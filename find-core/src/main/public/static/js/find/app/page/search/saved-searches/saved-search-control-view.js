@@ -50,7 +50,7 @@ define([
             'click .show-save-as-button': toggleTitleEditState(TitleEditState.SAVE_AS),
             'click .show-rename-button': toggleTitleEditState(TitleEditState.RENAME),
             'click .popover-control': function(e) {
-                this.$('.popover-control[aria-pressed="false"]').toggleClass('disabled not-clickable');
+                this.$('.popover-control[aria-pressed="false"], .save-search-button').toggleClass('disabled not-clickable');
                 $(e.currentTarget).removeClass('disabled not-clickable');
             },
             'click .open-as-query-option': function() {
