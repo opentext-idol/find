@@ -28,7 +28,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -229,13 +228,12 @@ public class SimilarDocumentsITCase extends FindTestBase {
         Date previousDate = null;
         for(int i = 1; i <= 10; i++){
             DocumentViewer documentViewer = searchResults.get(i).openDocumentPreview();
-            String date = documentViewer.getField("Date Created");
+            String date = documentViewer.getField("Date");
             if(date == null) {
-                date = documentViewer.getField("Date");
+                date = documentViewer.getField("Date Created");
             }
 
-            SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMMM dd, yyyy HH:mm a");
-            Date currentDate = formatter.parse(date);
+            Date currentDate = SimilarDocumentsView.DATE_FORMAT.parse(date);
 
             if(previousDate != null){
                 verifyThat(currentDate, lessThanOrEqualTo(previousDate));
