@@ -37,6 +37,7 @@ public class IdolQueryRestrictionsDeserializer extends QueryRestrictionsDeserial
                 .setLanguageType(parseAsText(objectMapper, node, "languageType"))
                 .setStateMatchId(parseStringArray(node, "stateMatchId"))
                 .setStateDontMatchId(parseStringArray(node, "stateDontMatchId"))
+                .setAnyLanguage(parseAsBoolean(objectMapper, node, "anyLanguage"))
                 .build();
     }
 
