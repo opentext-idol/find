@@ -28,8 +28,8 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 @RelatedTo("CSA-1567")
 public class FindSessionITCase extends FindTestBase {
-    FindResultsPage results;
-    FindService findService;
+    private FindResultsPage results;
+    private FindService findService;
 
     public FindSessionITCase(TestConfig config) {
         super(config);
@@ -64,7 +64,11 @@ public class FindSessionITCase extends FindTestBase {
         Frame frame = new Frame(getWindow(), docViewer.frame());
         frame.activate();
 
-        verifyThat("Authentication Fail frame displayed correctly", frame.content(), allOf(containsText("403"), containsText("Authentication Failed"), containsText("You do not have permission to view this page")));
+        verifyThat("Authentication Fail frame displayed correctly", frame.content(), allOf(
+                containsText("403"),
+                containsText("Authentication Failed"),
+                containsText("You do not have permission to view this page")
+        ));
 
         frame.deactivate();
     }
