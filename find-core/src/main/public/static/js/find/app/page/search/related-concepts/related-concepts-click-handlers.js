@@ -22,7 +22,7 @@ define([
          */
         updateQuery: function(options) {
             return function(newConcepts) {
-                var concepts = options.queryTextModel.get('relatedConcepts').slice(0);
+                var concepts = _.clone(options.queryTextModel.get('relatedConcepts'));
                 concepts.push(newConcepts);
                 options.queryTextModel.set('relatedConcepts', concepts);
             };
@@ -35,7 +35,7 @@ define([
          */
         newQuery: function(options) {
             return function(newConcepts) {
-                var concepts = options.savedSearchModel.get('relatedConcepts').slice(0);
+                var concepts = _.clone(options.savedSearchModel.get('relatedConcepts'));
                 concepts.push(newConcepts);
 
                 var newSearch = new SavedSearchModel(_.defaults({

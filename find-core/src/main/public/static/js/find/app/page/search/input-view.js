@@ -111,7 +111,7 @@ define([
         },
 
         removeRelatedConcept: function(id){
-            var concepts = this.model.get('relatedConcepts').slice(0);
+            var concepts = _.clone(this.model.get('relatedConcepts'));
             concepts.splice(id, 1);
             this.model.set('relatedConcepts', concepts);
         }
