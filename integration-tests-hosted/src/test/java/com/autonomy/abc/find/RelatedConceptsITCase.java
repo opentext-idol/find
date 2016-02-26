@@ -10,10 +10,15 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
@@ -22,6 +27,8 @@ import static org.hamcrest.core.Is.is;
 public class RelatedConceptsITCase extends FindTestBase {
     private FindService findService;
     private FindResultsPage results;
+    private FindTopNavBar navBar;
+
 
     public RelatedConceptsITCase(TestConfig config) {
         super(config);
@@ -31,6 +38,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     public void setUp() {
         findService = getApplication().findService();
         results = getElementFactory().getResultsPage();
+        navBar = getElementFactory().getTopNavBar();
     }
 
     //TODO ALL RELATED CONCEPTS TESTS - probably better to check if text is not("Loading...") rather than not("")
@@ -50,7 +58,6 @@ public class RelatedConceptsITCase extends FindTestBase {
         String concept = topRelatedConcept.getText();
 
         topRelatedConcept.click();
-        FindTopNavBar navBar = getElementFactory().getTopNavBar();
         assertThat(navBar.getAlsoSearchingForTerms(), hasItem(concept));
         assertThat(navBar.getSearchBoxTerm(), is(search));
     }
@@ -99,5 +106,32 @@ public class RelatedConceptsITCase extends FindTestBase {
         button.click();
         verifyThat(results.highlightedSausages(""), empty());
         verifyThat(button, not(hasClass("active")));
+    }
+
+    @Test
+    public void testMultipleAdditionalConcepts() {
+        findService.search("bongo");
+
+        List<String> relatedConcepts = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            String newConcept = clickFirstNewConcept(relatedConcepts);
+            verifyThat(navBar.getAlsoSearchingForTerms(), hasItem(newConcept));
+        }
+        verifyThat(navBar.getSearchBoxTerm(), is("bongo"));
+        verifyThat(navBar.getAlsoSearchingForTerms(), hasSize(relatedConcepts.size()));
+        verifyThat(navBar.getAlsoSearchingForTerms(), containsItems(relatedConcepts));
+    }
+
+    private String clickFirstNewConcept(List<String> existingConcepts) {
+        for (WebElement concept : results.relatedConcepts()) {
+            String conceptText = concept.getText();
+            if (!existingConcepts.contains(conceptText)) {
+                concept.click();
+                existingConcepts.add(conceptText);
+                results.unhover();
+                return conceptText;
+            }
+        }
+        throw new NoSuchElementException("no new related concepts");
     }
 }
