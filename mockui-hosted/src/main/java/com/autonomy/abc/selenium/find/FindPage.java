@@ -163,6 +163,7 @@ public class FindPage extends AppElement implements AppPage,
     /**
      * @deprecated use loginService instead
      */
+    @Deprecated
     public void logOut(){
         WebElement cog = getDriver().findElement(By.className("hp-settings"));
         if(!cog.isDisplayed()){
@@ -179,6 +180,10 @@ public class FindPage extends AppElement implements AppPage,
         return findElement(By.className("hp-logo-footer"));
     }
 
+    /**
+     * @deprecated use FindTopNavBar instead
+     */
+    @Deprecated
     public List<String> getAlsoSearchingForTerms() {
         return ElementUtil.getTexts(findElements(By.className("selected-related-concept")));
     }
