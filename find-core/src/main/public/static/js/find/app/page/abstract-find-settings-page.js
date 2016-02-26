@@ -19,6 +19,7 @@ define([
     return SettingsPage.extend({
         SaveModalConstructor: ValidateOnSaveModal,
         configModel: configModel,
+        groupClass: 'col-md-4',
         router: router,
         routeRoot: 'find/settings',
         scrollSelector: '.body',
@@ -26,7 +27,7 @@ define([
         urlRoot: urlRoot,
         vent: vent,
         validateUrl: urlRoot + 'config-validation',
-        groupClass: 'col-md-4',
+        widgetGroupParent: 'form .row',
         strings: {
             cancelButton: i18n['settings.cancel'],
             cancelCancel: i18n['app.cancel'],

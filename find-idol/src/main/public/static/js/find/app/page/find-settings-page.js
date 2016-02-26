@@ -4,14 +4,30 @@
  */
 
 define([
-    'find/app/page/abstract-find-settings-page'
-], function(SettingsPage) {
+    'find/app/page/abstract-find-settings-page',
+    'find/app/page/settings/community-widget',
+    'i18n!find/nls/bundle'
+], function(SettingsPage, CommunityWidget, i18n) {
 
     return SettingsPage.extend({
         initializeWidgets: function() {
             this.widgetGroups = [
                 [
-
+                    new CommunityWidget({
+                        configItem: 'login',
+                        description: i18n['settings.community.description'],
+                        isOpened: true,
+                        securityTypesUrl: this.urlRoot + 'securitytypes',
+                        serverName: i18n['settings.community.serverName'],
+                        title: i18n['settings.community.title'],
+                        strings: _.extend(this.serverStrings(), {
+                            fetchSecurityTypes: i18n['settings.community.login.fetchTypes'],
+                            iconClass: '',
+                            invalidSecurityType: i18n['settings.community.login.invalidType'],
+                            loginTypeLabel: i18n['settings.community.login.type'],
+                            validateFailed: i18n['settings.test.failed']
+                        })
+                    })
                 ], [
 
                 ]
