@@ -66,6 +66,18 @@ define([
             this.updateRelatedConcepts();
         },
 
+        focus: function() {
+            _.defer(_.bind(function () {
+                this.$input.focus();
+            }, this));
+        },
+
+        unFocus: function() {
+            _.defer(_.bind(function () {
+                this.$input.blur();
+            }, this));
+        },
+
         search: function (query) {
             if (query === this.model.get('inputText')) {
                 this.model.refresh();
