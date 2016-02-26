@@ -76,4 +76,56 @@ public class IdolConfiguration {
     public UserService userService(final ConfigService<IdolFindConfig> configService, final AciService aciService, final AciResponseJaxbProcessorFactory processorFactory) {
         return new UserServiceImpl(configService, aciService, processorFactory);
     }
+
+    @Bean
+    @Autowired
+    public CommunityService communityService(final AciService aciService, final IdolAnnotationsProcessorFactory idolAnnotationsProcessorFactory) {
+        final CommunityServiceImpl communityService = new CommunityServiceImpl();
+        communityService.setAciService(aciService);
+        communityService.setProcessorFactory(idolAnnotationsProcessorFactory);
+
+        return communityService;
+    }
+
+    @Bean
+    public CommunityAuthenticationValidator communityAuthenticationValidator(
+        @Qualifier("validatorAciService") final AciService testAciService,
+        final IdolAnnotationsProcessorFactory processorFactory
+    ) {
+        final CommunityAuthenticationValidator communityAuthenticationValidator = new CommunityAuthenticationValidator();
+
+        communityAuthenticationValidator.setAciService(testAciService);
+        communityAuthenticationValidator.setProcessorFactory(processorFactory);
+
+        return communityAuthenticationValidator;
+    }
+
+    @Bean
+    public ServerConfigValidator serverConfigValidator(
+        @Qualifier("validatorAciService") final AciService testAciService,
+        final IdolAnnotationsProcessorFactory processorFactory
+    ) {
+        final ServerConfigValidator serverConfigValidator = new ServerConfigValidator();
+
+        serverConfigValidator.setAciService(testAciService);
+        serverConfigValidator.setProcessorFactory(processorFactory);
+
+        return serverConfigValidator;
+    }
+
+    @Bean
+    public ViewConfigValidator viewConfigValidator(
+        @Qualifier("validatorAciService") final AciService testAciService,
+        final IdolAnnotationsProcessorFactory processorFactory
+    ) {
+        return new ViewConfigValidator(testAciService, processorFactory);
+    }
+
+    @Bean
+    public QueryManipulationValidator queryManipulationValidator(
+        @Qualifier("validatorAciService") final AciService testAciService,
+        final IdolAnnotationsProcessorFactory processorFactory
+    ) {
+        return new QueryManipulationValidator(testAciService, processorFactory);
+    }
 }
