@@ -3,6 +3,7 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.config.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
@@ -17,6 +18,7 @@ import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
+@RelatedTo("CSA-2091")
 public class RelatedConceptsITCase extends FindTestBase {
     private FindService findService;
     private FindResultsPage results;
@@ -69,7 +71,7 @@ public class RelatedConceptsITCase extends FindTestBase {
         findService.search("Tiger");
         results.highlightRelatedConceptsButton().click();
 
-        for(WebElement relatedConceptLink : results.relatedConcepts()){
+        for(WebElement relatedConceptLink : results.relatedConcepts()) {
             String relatedConcept = relatedConceptLink.getText();
             for (WebElement relatedConceptElement : results.highlightedSausages(relatedConcept)) {
                 if (relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
@@ -79,5 +81,23 @@ public class RelatedConceptsITCase extends FindTestBase {
                 verifyThat(relatedConceptElement, hasClass("clickable"));
             }
         }
+    }
+
+    @Test
+    @RelatedTo("CCUK-3599")
+    public void testRelatedConceptsHighlightButton() {
+        findService.search("pancakes");
+        WebElement button = results.highlightRelatedConceptsButton();
+
+        verifyThat(results.highlightedSausages(""), empty());
+        verifyThat(button, not(hasClass("active")));
+
+        button.click();
+        verifyThat(results.highlightedSausages(""), not(empty()));
+        verifyThat(button, hasClass("active"));
+
+        button.click();
+        verifyThat(results.highlightedSausages(""), empty());
+        verifyThat(button, not(hasClass("active")));
     }
 }
