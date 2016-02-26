@@ -384,6 +384,8 @@ define([
 
         clearComparison: function() {
             if(this.comparisonView) {
+                // Setting the element to nothing prevents the containing element from being removed when the view is removed
+                this.comparisonView.setElement();
                 this.comparisonView.remove();
                 this.stopListening(this.comparisonView);
                 this.comparisonView = null;
