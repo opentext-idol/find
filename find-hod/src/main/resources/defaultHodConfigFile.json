@@ -32,6 +32,11 @@
         "database": 0,
         "sentinels": []
     },
+    "map": {
+        "enabled": false,
+        "attribution": null,
+        "tileUrlTemplate": null
+    },
     "fieldsInfo": {
         "contentType": {
             "names": [

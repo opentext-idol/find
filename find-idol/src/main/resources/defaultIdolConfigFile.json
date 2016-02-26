@@ -50,6 +50,11 @@
     ],
     "referenceField": "DREREFERENCE"
   },
+  "map": {
+    "enabled": false,
+    "attribution": null,
+    "tileUrlTemplate": null
+  },
   "mmap": {
     "enabled": false,
     "baseUrl": ""
@@ -111,6 +116,18 @@
       "names": [
         "TRANSCRIPTION_CONTENT"
       ]
+    },
+    "latitude": {
+      "names": [
+        "LAT"
+      ],
+      "type": "NUMBER"
+    },
+    "longitude": {
+      "names": [
+        "LON"
+      ],
+      "type": "NUMBER"
     }
   }
 }

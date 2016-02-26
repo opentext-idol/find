@@ -8,19 +8,30 @@ define([
     'underscore',
     'moment'
 ], function(Backbone, _, moment) {
-    
+
     var MEDIA_TYPES = ['audio', 'image', 'video'];
     var WEB_TYPES = ['text/html', 'text/xhtml'];
 
+    var fieldTypeParsers = {
+        STRING: _.identity,
+        NUMBER: Number,
+        BOOLEAN: function(value) {
+            return value.toLowerCase() === 'true';
+        },
+        DATE: function(value) {
+            return moment(value).format('LLLL');
+        }
+    };
+
     function getMediaType(contentType) {
-        return contentType && _.find(MEDIA_TYPES, function (mediaType) {
+        return contentType && _.find(MEDIA_TYPES, function(mediaType) {
             return contentType.indexOf(mediaType) === 0;
         });
-    };
+    }
 
     function getFieldValues(fieldData) {
         if (fieldData && fieldData.values.length) {
-            return fieldData.values;
+            return _.map(fieldData.values, fieldTypeParsers[fieldData.type]);
         }
 
         return [];
@@ -59,26 +70,26 @@ define([
 
             response.thumbnail = getFieldValue(response.fieldMap.thumbnail);
             response.contentType = getFieldValue(response.fieldMap.contentType);
-            response.media = getMediaType(response.contentType);
             response.url = getFieldValue(response.fieldMap.url);
             response.offset = getFieldValue(response.fieldMap.offset);
             response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);
+            response.longitude = getFieldValue(response.fieldMap.longitude);
+            response.latitude = getFieldValue(response.fieldMap.latitude);
             response.sourceType = getFieldValue(response.fieldMap.sourceType);
             response.transcript = getFieldValue(response.fieldMap.transcript);
 
+            response.media = getMediaType(response.contentType);
+
             response.authors = getFieldValues(response.fieldMap.authors);
 
-            response.fields = _.map(response.fieldMap, function (value) {
-                if (value.type === 'DATE') {
-                    value.values = _.map(value.values, function(value) {
-                        return moment(value).format('LLLL');
-                    });
-                }
-
-                return value;
-            });
-
-            _.sortBy(response.fields, 'displayName');
+            response.fields = _.chain(response.fieldMap)
+                .map(function(fieldData) {
+                    return _.defaults({
+                        values: getFieldValues(fieldData)
+                    }, fieldData);
+                })
+                .sortBy('displayName')
+                .value();
 
             delete response.fieldMap;
             return response;

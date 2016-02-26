@@ -6,100 +6,143 @@
 define([
     'backbone',
     'jquery',
+    'find/app/configuration',
     'i18n!find/nls/bundle',
     'find/app/page/search/document/document-detail-tabs',
     'find/app/model/document-model'
-], function (Backbone, $, i18n, DocumentDetailTabs, DocumentModel) {
+], function(Backbone, $, configuration, i18n, documentDetailTabs, DocumentModel) {
 
-    describe('Tabs should filter based on the document model', function () {
+    function filterTabs(model) {
+        return _.filter(documentDetailTabs, function(tab) {
+            return tab.shown(model);
+        });
+    }
 
-        describe('Should show all tabs', function () {
-            var tabs;
-            beforeEach(function () {
-                var basicModel = new DocumentModel({
+    function byTitleKey(tabs, titleKey) {
+        return _.findWhere(tabs, {title: i18n[titleKey]});
+    }
+
+    describe('Document detail tabs', function() {
+        describe('with the location tab enabled', function() {
+            beforeEach(function() {
+                configuration.and.returnValue({
+                    map: {
+                        enabled: true
+                    }
+                });
+            });
+
+            it('displays every tab for a complete model with map enabled', function() {
+                var model = new DocumentModel({
                     authors: ['Humbert', 'Gereon'],
                     media: true,
                     sourceType: 'news',
                     thumbnail: 'VGhlIGJhc2UgNjQgZW5jb2RlZCB0aHVtYm5haWw=',
                     transcript: 'test transcript',
+                    longitude: 123.5,
+                    latitude: -23,
                     url: true
                 });
 
-                tabs = _.filter(DocumentDetailTabs, function (tab) {
-                    return tab.shown(basicModel);
-                })
+                expect(filterTabs(model).length).toBe(documentDetailTabs.length);
             });
 
-
-            it('should display every tab', function () {
-                expect(tabs.length).toBe(6);
-            });
-        });
-
-        describe('Should show specific tabs', function () {
-
-            beforeEach(function () {
-
-            });
-
-
-            it('should display default tabs', function () {
-                var basicModel = new DocumentModel();
-
-                var tabs = _.filter(DocumentDetailTabs, function (tab) {
-                    return tab.shown(basicModel);
+            it('displays default tabs for an empty model', function() {
+                var model = new DocumentModel({
+                    authors: [],
+                    latitude: undefined,
+                    longitude: undefined
                 });
 
-                expect(tabs.length).toBe(3);
+                expect(filterTabs(model).length).toBe(3);
             });
 
-            it('should display author tab', function () {
-                var basicModel = new DocumentModel({
+            it('displays the author tab when an authors attribute is present', function() {
+                var model = new DocumentModel({
                     authors: ['Humbert', 'Gereon']
                 });
 
-                var tabs = _.filter(DocumentDetailTabs, function (tab) {
-                    return tab.shown(basicModel);
-                });
-
+                var tabs = filterTabs(model);
                 expect(tabs.length).toBe(4);
-                expect(_.find(tabs, function(tab) {
-                    return tab.title === i18n['search.document.detail.tabs.authors'];
-                }))
+                expect(byTitleKey(tabs, 'search.document.detail.tabs.authors')).toBeDefined();
             });
 
-            it('should display similar sources tab', function () {
-                var basicModel = new DocumentModel({
+            it('displays similar sources tab when a source attribute is present', function() {
+                var model = new DocumentModel({
                     sourceType: 'News'
                 });
 
-                var tabs = _.filter(DocumentDetailTabs, function (tab) {
-                    return tab.shown(basicModel);
-                });
-
+                var tabs = filterTabs(model);
                 expect(tabs.length).toBe(4);
-                expect(_.find(tabs, function(tab) {
-                    return tab.title === i18n['search.document.detail.tabs.similarSources'];
-                }))
+                expect(byTitleKey(tabs, 'search.document.detail.tabs.similarSources')).toBeDefined();
             });
 
-            it('should display transcript tab', function () {
-                var basicModel = new DocumentModel({
+            it('displays the transcript tab when the model has transcript, media and url attributes', function() {
+                var model = new DocumentModel({
                     media: true,
                     url: true,
                     transcript: 'test transcript'
                 });
 
-                var tabs = _.filter(DocumentDetailTabs, function (tab) {
-                    return tab.shown(basicModel);
+                var tabs = filterTabs(model);
+                expect(tabs.length).toBe(4);
+                expect(byTitleKey(tabs, 'search.document.detail.tabs.transcript')).toBeDefined();
+            });
+
+            it('displays the location tab if the longitude and latitude attributes are present and within the required ranges', function() {
+                var model = new DocumentModel({
+                    longitude: 123.4,
+                    latitude: -23
                 });
 
+                var tabs = filterTabs(model);
                 expect(tabs.length).toBe(4);
-                expect(_.find(tabs, function(tab) {
-                    return tab.title === i18n['search.document.detail.tabs.transcript'];
-                }))
+                expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeDefined();
+            });
+
+            it('does not display the location tab if only the longitude attribute is present', function() {
+                var model = new DocumentModel({
+                    longitude: 123.4,
+                    latitude: undefined
+                });
+
+                var tabs = filterTabs(model);
+                expect(tabs.length).toBe(3);
+                expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeUndefined();
+            });
+
+            it('does not display the location tab if the latitude is less than -90', function() {
+                var model = new DocumentModel({
+                    longitude: 123.4,
+                    latitude: -123
+                });
+
+                var tabs = filterTabs(model);
+                expect(tabs.length).toBe(3);
+                expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeUndefined();
             });
         });
 
+        describe('with the location tab disabled', function() {
+            beforeEach(function() {
+                configuration.and.returnValue({
+                    map: {
+                        enabled: false
+                    }
+                });
+            });
+
+            it('does not display the location tab even if longitude and latitude attributes are present', function() {
+                var model = new DocumentModel({
+                    longitude: 123.4,
+                    latitude: 73
+                });
+
+                var tabs = filterTabs(model);
+                expect(tabs.length).toBe(3);
+                expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeUndefined();
+            });
+        });
     });
+
 });

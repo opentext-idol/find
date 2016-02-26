@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.MapConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +33,9 @@ public abstract class FindController {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
+
+    @Autowired
+    private ConfigService<? extends MapConfig> mapConfigService;
 
     @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
     private String gitCommit;
@@ -62,6 +66,7 @@ public abstract class FindController {
         config.put(MvcConstants.USERNAME.value(), username);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
+        config.put(MvcConstants.MAP.value(), mapConfigService.getConfig().getMap());
         config.putAll(getPublicConfig());
 
         final Map<String, Object> attributes = new HashMap<>();

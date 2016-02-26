@@ -4,9 +4,9 @@
  */
 
 define([
-    'backbone'
-], function(Backbone) {
+    'js-testing/backbone-mock-factory'
+], function(mockFactory) {
 
-    return _.extend(jasmine.createSpyObj('vent', ['navigate', 'navigateToDetailRoute']), Backbone.Events);
+    return mockFactory.getView();
 
 });

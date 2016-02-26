@@ -25,6 +25,7 @@ require.config({
         'js-whatever': '../bower_components/hp-autonomy-js-whatever/src',
         json2: '../bower_components/json/json2',
         'login-page': '../bower_components/hp-autonomy-login-page/src',
+        leaflet: '../bower_components/leaflet/dist/leaflet-src',
         moment: '../bower_components/moment/moment',
         raphael: '../bower_components/raphael/raphael',
         settings: '../bower_components/hp-autonomy-settings-page/src',
