@@ -46,7 +46,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         promotionService = getApplication().promotionService();
 
         promotionService.deleteAll();
-        searchWindow = getMainSession().getActiveWindow();
+        searchWindow = getWindow();
         HSODFind findApp = new HSODFind();
         findWindow = launchInNewWindow(findApp);
         findFactory = findApp.elementFactory();
@@ -130,7 +130,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
     }
 
     private void refreshFind() {
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         findPage = findFactory.getFindPage();
         service = findPage.getResultsPage();
         service.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);

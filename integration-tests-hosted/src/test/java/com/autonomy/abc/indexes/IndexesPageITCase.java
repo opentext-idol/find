@@ -221,7 +221,7 @@ public class IndexesPageITCase extends HostedTestBase {
     public void testDeletingDefaultIndex(){
         indexService.deleteIndexViaAPICalls(Index.DEFAULT, testUser, getConfig().getApiUrl());
 
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         indexesPage = getElementFactory().getIndexesPage();
 
         verifyThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getDisplayName()));
@@ -231,7 +231,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Ignore("Breaking too many tests")
     public void testDeletingSearchDefaultIndex(){
         indexService.deleteIndexViaAPICalls(new Index("search_default_index"), testUser, getConfig().getApiUrl());
-        getDriver().navigate().refresh();
+        getWindow().refresh();
 
         verifyThat(getApplication().switchTo(PromotionsPage.class), containsText("There are no promotions..."));
     }
@@ -242,7 +242,7 @@ public class IndexesPageITCase extends HostedTestBase {
         Index index = new Index("index");
         indexService.setUpIndex(index);
 
-        Window searchWindow = getMainSession().getActiveWindow();
+        Window searchWindow = getWindow();
         HSODFind findApp = new HSODFind();
         Window findWindow = launchInNewWindow(findApp);
 
@@ -266,7 +266,7 @@ public class IndexesPageITCase extends HostedTestBase {
         Index index = new Index("index");
         indexService.setUpIndex(index);
 
-        Window searchWindow = getMainSession().getActiveWindow();
+        Window searchWindow = getWindow();
         HSODFind findApp = new HSODFind();
         Window findWindow = launchInNewWindow(findApp);
 

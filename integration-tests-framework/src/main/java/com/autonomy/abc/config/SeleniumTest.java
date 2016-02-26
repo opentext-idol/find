@@ -141,4 +141,10 @@ public abstract class SeleniumTest<A extends Application<? extends F>, F extends
         newApp.inWindow(session.getActiveWindow());
         return session;
     }
+
+    protected void redirectTo(Application<?> someApp) {
+        String newUrl = config.getAppUrl(someApp);
+        getWindow().goTo(newUrl);
+        someApp.inWindow(getWindow());
+    }
 }

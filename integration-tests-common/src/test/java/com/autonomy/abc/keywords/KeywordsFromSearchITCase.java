@@ -38,6 +38,7 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
@@ -81,7 +82,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         searchPage.blacklistLink().click();
         Waits.loadOrFadeWait();
-        assertThat("link directed to blacklist wizard", getDriver().getCurrentUrl(), containsString("keywords/create"));
+        assertThat("link directed to blacklist wizard", getWindow(), urlContains("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link directed to blacklist wizard", createKeywordsPage.getText(), containsString("Select terms to blacklist"));
 
@@ -112,7 +113,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         searchPage.createSynonymsLink().click();
         Waits.loadOrFadeWait();
-        assertThat("link directed to synonym group wizard", getDriver().getCurrentUrl(), containsString("keywords/create"));
+        assertThat("link directed to synonym group wizard", getWindow(), urlContains("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link directed to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
 
@@ -160,7 +161,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         searchPage.createSynonymsLink().click();
         Waits.loadOrFadeWait();
-        assertThat("link directed to synonym group wizard", getDriver().getCurrentUrl(), containsString("keywords/create"));
+        assertThat("link directed to synonym group wizard", getWindow(), urlContains("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link directed to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
 
@@ -379,7 +380,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         searchPage.createSynonymsLink().click();
         Waits.loadOrFadeWait();
-        assertThat(getDriver().getCurrentUrl(), containsString("keywords/create"));
+        assertThat(getWindow(), urlContains("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
         createKeywordsPage.getTriggerForm().addTrigger("한국");
@@ -409,7 +410,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         search(phrase, Language.ENGLISH);
         searchPage.createSynonymsLink().click();
 
-        assertThat(getDriver().getCurrentUrl(), containsString("keywords/create"));
+        assertThat(getWindow(), urlContains("keywords/create"));
 
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
@@ -451,7 +452,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         search(blacklistOne, Language.ENGLISH);
         checkNoResults();
 
-        getDriver().navigate().refresh();
+        getWindow().refresh();
 
         keywordsPage = keywordService.goToKeywords();
         assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistOne));

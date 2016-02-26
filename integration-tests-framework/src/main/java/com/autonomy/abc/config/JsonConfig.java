@@ -2,11 +2,11 @@ package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.UserConfigParser;
+import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openqa.selenium.Dimension;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,7 +71,7 @@ class JsonConfig {
         return this.selenium.browsers;
     }
 
-    Dimension getResolution() {
+    Resolution getResolution() {
         return this.selenium.resolution;
     }
 
@@ -147,13 +147,13 @@ class JsonConfig {
     private static class SeleniumConfig {
         private final URL url;
         private final List<Browser> browsers;
-        private final Dimension resolution;
+        private final Resolution resolution;
         private final int timeout;
 
         private SeleniumConfig(JsonNode node) throws MalformedURLException {
             url = getUrlOrNull(node.path("url"));
             browsers = readBrowsers(node.path("browsers"));
-            resolution = readDimension(node.path("resolution"));
+            resolution = readResolution(node.path("resolution"));
             timeout = node.path("timeout").asInt(-1);
         }
 
@@ -179,13 +179,13 @@ class JsonConfig {
             return browsers;
         }
 
-        private Dimension readDimension(JsonNode dimensionNode) {
-            if (dimensionNode.isMissingNode()) {
+        private Resolution readResolution(JsonNode resolutionNode) {
+            if (resolutionNode.isMissingNode()) {
                 return null;
             }
-            int width = dimensionNode.get(0).asInt();
-            int height = dimensionNode.get(1).asInt();
-            return new Dimension(width, height);
+            int width = resolutionNode.get(0).asInt();
+            int height = resolutionNode.get(1).asInt();
+            return new Resolution(width, height);
         }
 
         @Override

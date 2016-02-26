@@ -159,7 +159,7 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     private void tryGoToLeastPopularPromotion() {
         analyticsPage.promotions().toggleSortDirection();
         analyticsPage.promotions().get(0).click();
-        if (getDriver().getCurrentUrl().contains("detail")) {
+        if (getWindow().getUrl().contains("detail")) {
             promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
             LOGGER.info("gone to least popular promotion");
         } else {

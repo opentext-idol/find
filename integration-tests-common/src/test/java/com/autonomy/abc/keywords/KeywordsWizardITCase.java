@@ -37,6 +37,8 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.ControlMatchers.url;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
@@ -78,7 +80,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(),containsString("keywords/create"));
+        assertThat(getWindow(), urlContains("keywords/create"));
         assertThat("Create new keywords button should not be visible", !keywordsPage.createNewKeywordsButton().isDisplayed());
         assertThat("Create Synonyms button should be visible", createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).isDisplayed());
         assertThat("Create Blacklisted button should be visible", createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).isDisplayed());
@@ -156,7 +158,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
     @Test
     public void testWizardCancelButtonsWorksAfterClickingTheNavBarToggleButton() {
-        assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
+        assertThat(getWindow(), urlContains("keywords/create"));
 
         getElementFactory().getSideNavBar().toggle();
         createKeywordsPage.cancelWizardButton().click();
@@ -164,7 +166,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
+        assertThat(getWindow(), urlContains("keywords/create"));
 
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
         createKeywordsPage.continueWizardButton().click();
@@ -175,7 +177,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
+        assertThat(getWindow(), urlContains("keywords/create"));
 
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
         createKeywordsPage.continueWizardButton().click();
@@ -272,7 +274,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
             verifyThat(createKeywordsPage.finishWizardButton(), disabled());
         } catch (WebDriverException e) {
             LOGGER.info("cannot click finish wizard button, or timed out");
-            assertThat(getDriver().getCurrentUrl(), not(endsWith("keywords")));
+            assertThat(getWindow(), url(not(endsWith("keywords"))));
         }
 
         triggerForm.addTrigger(other);
@@ -284,7 +286,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.cancelWizardButton().click();
         Waits.loadOrFadeWait();
-        assertThat(getDriver().getCurrentUrl(), endsWith("keywords"));
+        assertThat(getWindow(), url(endsWith("keywords")));
         assertThat(keywordsPage.getBlacklistedTerms(), hasSize(1));
     }
 

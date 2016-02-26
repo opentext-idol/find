@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -40,8 +41,8 @@ public class LoginPageHostedITCase extends HostedTestBase {
     @Before
     public void setUp() {
         searchApp = getApplication();
-        findApp = new HSODFind(getMainSession().getActiveWindow());
-        devConsole = new DevConsole(getMainSession().getActiveWindow());
+        findApp = new HSODFind(getWindow());
+        devConsole = new DevConsole(getWindow());
 
         // wait before doing anything
         getElementFactory().getLoginPage();
@@ -123,10 +124,10 @@ public class LoginPageHostedITCase extends HostedTestBase {
     public void testLogOutFindToSearchOptimizer(){
         loginLogout(findApp, FindPage.class);
         verifyOn(findApp, LoginPage.class);
-        verifyThat(getDriver().getCurrentUrl(), containsString("find"));
+        verifyThat(getWindow(), urlContains("find"));
 
         verifyRedirect(searchApp, LoginPage.class);
-        verifyThat(getDriver().getCurrentUrl(), containsString("search"));
+        verifyThat(getWindow(), urlContains("search"));
 
     }
 
@@ -158,7 +159,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     }
 
     private <T extends AppPage> void verifyLogin(Application<?> app, Class<T> pageType) {
-        getWindow().goTo(getConfig().getAppUrl(app));
+        redirectTo(app);
         app.loginService().login(getConfig().getDefaultUser());
         verifyOn(app, pageType);
     }
@@ -169,7 +170,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     }
 
     private <T extends AppPage> void verifyRedirect(Application<?> app, Class<T> pageType) {
-        getWindow().goTo(getConfig().getAppUrl(app));
+        redirectTo(app);
         verifyOn(app, pageType);
     }
 

@@ -3,6 +3,7 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
@@ -149,7 +151,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     private void verifyRefreshing() {
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
         verifyThat(editReferencesPage.saveButton(), not(disabled()));
         verifyThat(editReferencesPage.promotionsBucketItems(), not(empty()));
@@ -208,17 +210,14 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         verifyThat(editReferencesPage.saveButton(), disabled());
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
-        verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
+        verifyThat(getWindow(), urlContains("promotions/edit"));
     }
 
     private void checkDocumentViewable(String title) {
-        final String handle = getDriver().getWindowHandle();
-        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        final DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        final Frame frame = new Frame(getWindow(), docViewer.frame());
 
-        getDriver().switchTo().frame(docViewer.frame());
-        verifyThat("document '" + title + "' is viewable", getDriver().findElement(By.xpath(".//*")), not(hasTextThat(isEmptyOrNullString())));
-
-        getDriver().switchTo().window(handle);
+        verifyThat("document '" + title + "' is viewable", frame.getText(), not(isEmptyOrNullString()));
         docViewer.close();
     }
 
@@ -272,14 +271,14 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         verifyThat(editReferencesPage.saveButton(), disabled());
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
-        verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
+        verifyThat(getWindow(), urlContains("promotions/edit"));
 
         editReferencesPage.searchResultCheckbox(6).click();
         final String newPromotedDoc = editReferencesPage.getSearchResult(6).getTitleString();
 
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-        verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail"));
+        verifyThat(getWindow(), urlContains("promotions/detail"));
 
         List<String> newTitles = new ArrayList<>();
         try {

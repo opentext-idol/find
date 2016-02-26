@@ -68,7 +68,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         List<String> promotedTitles = promotionService.setUpPromotion(promotion, searchTerm, 3);
         assertThat(searchPage.getPromotedDocumentTitles(true), containsInAnyOrder(promotedTitles.toArray()));
 
-        Window searchOptimizerWindow = getMainSession().getActiveWindow();
+        Window searchOptimizerWindow = getWindow();
         HSODFind findApp = new HSODFind();
         Window findWindow = launchInNewWindow(findApp);
         findWindow.activate();

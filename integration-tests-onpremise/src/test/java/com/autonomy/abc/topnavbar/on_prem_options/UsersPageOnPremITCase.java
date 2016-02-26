@@ -19,6 +19,8 @@ import org.openqa.selenium.UnhandledAlertException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.url;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
@@ -49,13 +51,13 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
 
         getDriver().get(getAppUrl() + "settings");
         Waits.loadOrFadeWait();
-        assertThat(getDriver().getCurrentUrl(), not(containsString("settings")));
-        assertThat(getDriver().getCurrentUrl(), containsString("overview"));
+        assertThat(getWindow(), url(not(containsString("settings"))));
+        assertThat(getWindow(), urlContains("overview"));
 
         getDriver().get(getAppUrl() + "users");
         Waits.loadOrFadeWait();
-        assertThat(getDriver().getCurrentUrl(), not(containsString("users")));
-        assertThat(getDriver().getCurrentUrl(), containsString("overview"));
+        assertThat(getWindow(), url(not(containsString("users"))));
+        assertThat(getWindow(), urlContains("overview"));
     }
 
     @Test
@@ -66,11 +68,11 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
         logoutAndNavigateToWebApp();
         loginAs(initialUser);
         Waits.loadOrFadeWait();
-        assertThat("old password does not work", getDriver().getCurrentUrl(), containsString("login"));
+        assertThat("old password does not work", getWindow(), urlContains("login"));
 
         loginAs(updatedUser);
         Waits.loadOrFadeWait();
-        assertThat("new password works", getDriver().getCurrentUrl(), not(containsString("login")));
+        assertThat("new password works", getWindow(), url(not(containsString("login"))));
     }
 
     @Test
@@ -131,7 +133,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
         logoutAndNavigateToWebApp();
         loginAs(getConfig().getDefaultUser());
         Waits.loadOrFadeWait();
-        assertThat(getDriver().getCurrentUrl(), not(containsString("login")));
+        assertThat(getWindow(), url(not(containsString("login"))));
 
         executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function() {alert(\"error\");});");
         Waits.loadOrFadeWait();

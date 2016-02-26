@@ -4,6 +4,7 @@ import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.GritterNotice;
@@ -102,7 +103,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
         editContent.setValueAndWait(secondContent);
         verifyThat(editContent.getValue(), is(secondContent));
 
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
         verifyThat("new value stays after page refresh", promotionsDetailPage.staticPromotedDocumentContent().getValue(), is(secondContent));
     }
@@ -140,16 +141,15 @@ public class StaticPromotionsITCase extends HostedTestBase {
 
     @Test
     public void testPromotionViewable() {
-        final String handle = getDriver().getWindowHandle();
         searchPage.promotedDocumentTitle(1).click();
         DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+        Frame frame = new Frame(getWindow(), documentViewer.frame());
         verifyThat("document has a reference", documentViewer.getField("Reference"), not(isEmptyOrNullString()));
 
-        getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
-        // these fail on Chrome - seems to be an issue with ChromeDriver
-        verifyThat(getDriver().findElement(By.cssSelector("h1")), containsText(title));
-        verifyThat(getDriver().findElement(By.cssSelector("p")), containsText(content));
-        getDriver().switchTo().window(handle);
+        frame.activate();
+        verifyThat(frame.content().findElement(By.cssSelector("h1")), containsText(title));
+        verifyThat(frame.content().findElement(By.cssSelector("p")), containsText(content));
+        frame.deactivate();
         documentViewer.close();
     }
 

@@ -69,7 +69,7 @@ public class PromotionDetailPageITCase extends ABCTestBase {
         searchService.search(new SearchQuery(updateTrigger).withFilter(new LanguageFilter(Language.FRENCH)));
         verifyThat("promoted query updated in search results", searchPage.getPromotedDocumentTitles(false).get(0), is(updatePromotedResult));
 
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
         verifyThat("correct promoted result after page refresh", searchPage.getPromotedDocumentTitles(false).get(0), is(updatePromotedResult));

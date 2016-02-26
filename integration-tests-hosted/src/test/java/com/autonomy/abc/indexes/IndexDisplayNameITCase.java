@@ -77,7 +77,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
 
     @Test
     public void testFindIndex(){
-        Window searchWindow = getMainSession().getActiveWindow();
+        Window searchWindow = getWindow();
         HSODFind findApp = new HSODFind();
         Window findWindow = launchInNewWindow(findApp);
 

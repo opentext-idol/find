@@ -141,11 +141,11 @@ public class IndexFieldsITCase extends HostedTestBase {
             viewer.close();
         }
         // clear the filters
-        getDriver().navigate().refresh();
+        getWindow().refresh();
     }
 
     private void verifyFind() {
-        Window first = getMainSession().getActiveWindow();
+        Window first = getWindow();
         HSODFind findApp = new HSODFind();
         Window second = launchInNewWindow(findApp);
         try {

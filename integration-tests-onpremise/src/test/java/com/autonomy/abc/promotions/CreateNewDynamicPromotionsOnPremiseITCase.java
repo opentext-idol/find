@@ -19,6 +19,7 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
@@ -71,7 +72,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 		searchPage.promoteThisQueryButton().click();
 		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		Waits.loadOrFadeWait();
-		assertThat("Wrong URL", getDriver().getCurrentUrl(), containsString("promotions/create-dynamic/"));
+		assertThat(getWindow(), urlContains("promotions/create-dynamic/"));
 		assertThat("Wrong stage of wizard", dynamicPromotionsPage.spotlightType(promotionType), is(displayed()));
 		assertThat("Continue button should be disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.continueButton(), "disabled"));
 
@@ -181,7 +182,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		Waits.loadOrFadeWait();
 
-		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("promotions/create-dynamic/"));
+		assertThat(getWindow(), urlContains("promotions/create-dynamic/"));
 		assertThat(dynamicPromotionsPage.spotlightType(Promotion.SpotlightType.HOTWIRE), displayed());
 		assertThat(dynamicPromotionsPage.getCurrentStepTitle(), containsString("Spotlight type"));
 		assertThat(dynamicPromotionsPage.continueButton(), disabled());
