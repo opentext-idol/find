@@ -3,10 +3,10 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-define([
-    'backbone'
-], function(Backbone) {
+package com.hp.autonomy.frontend.find.core.configuration;
 
-    return _.extend(jasmine.createSpyObj('vent', ['navigate', 'navigateToDetailRoute']), Backbone.Events);
+public interface MapConfig {
 
-});
+    MapConfiguration getMap();
+
+}

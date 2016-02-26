@@ -6,6 +6,7 @@
 define([
     'backbone'
 ], function(Backbone) {
+
     'use strict';
 
     return Backbone.View.extend({
@@ -33,6 +34,12 @@ define([
 
         render: function() {
             this.contentView.setElement(this.$el).render();
+        },
+
+        remove: function() {
+            this.contentView.remove();
+            Backbone.View.prototype.remove.call(this);
         }
     });
+
 });

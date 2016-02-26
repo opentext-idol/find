@@ -38,7 +38,10 @@ define([
 
     describe('DocumentDetailView', function() {
         beforeEach(function() {
-            configuration.and.returnValue({mmapBaseUrl: ANY_OLD_URL});
+            configuration.and.returnValue({
+                mmapBaseUrl: ANY_OLD_URL,
+                map: {enabled: false}
+            });
         });
 
         afterEach(function() {
