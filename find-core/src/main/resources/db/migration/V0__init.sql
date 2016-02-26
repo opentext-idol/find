@@ -65,25 +65,14 @@ CREATE TABLE search_stored_state
 CREATE INDEX ix__search_stored_state__search_id ON search_stored_state (search_id);
 ALTER TABLE search_stored_state ADD CONSTRAINT fk__search_stored_state__searches FOREIGN KEY (search_id) REFERENCES searches (search_id);
 
-CREATE TABLE search_concept_clusters
+CREATE TABLE search_concept_cluster_phrases
 (
-  search_concept_cluster_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  search_concept_cluster_phrase_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   search_id BIGINT NOT NULL,
-  primary_phrase NVARCHAR(21844) NOT NULL
+  phrase NVARCHAR(21844) NOT NULL,
+  primary_phrase BIT NOT NULL,
+  cluster_id INT NOT NULL
 );
 
-CREATE INDEX ix__search_concept_clusters__search_id ON search_concept_clusters (search_id);
-ALTER TABLE search_concept_clusters ADD CONSTRAINT fk__search_concept_clusters__searches FOREIGN KEY (search_id) REFERENCES searches (search_id);
-
-CREATE TABLE concept_cluster_phrases
-(
-  concept_cluster_phrase_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  search_concept_cluster_id BIGINT NOT NULL,
-  phrase NVARCHAR(21844) NOT NULL
-);
-
-CREATE INDEX ix__concept_cluster_phrases__search_concept_cluster_id ON concept_cluster_phrases (search_concept_cluster_id);
-
-ALTER TABLE concept_cluster_phrases ADD CONSTRAINT fk__concept_cluster_phrases__search_concept_clusters
-  FOREIGN KEY (search_concept_cluster_id)
-  REFERENCES search_concept_clusters (search_concept_cluster_id);
+CREATE INDEX ix__search_concept_cluster_phrases__search_id ON search_concept_cluster_phrases (search_id);
+ALTER TABLE search_concept_cluster_phrases ADD CONSTRAINT fk__search_concept_cluster_phrases__searches FOREIGN KEY (search_id) REFERENCES searches (search_id);

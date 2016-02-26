@@ -30,7 +30,7 @@ import java.util.List;
 public class SavedSnapshot extends SavedSearch<SavedSnapshot> {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = StoredStateTable.NAME, joinColumns = {
-            @JoinColumn(name = "search_id")
+            @JoinColumn(name = StoredStateTable.Column.SEARCH_ID)
     })
     @Column(name = StoredStateTable.Column.STATE_TOKEN)
     private List<String> stateTokens;

@@ -28,8 +28,8 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T>> imple
     protected abstract Set<T> getAllForUserId(Long userId);
 
     @Override
-    public T create(final T query) {
-        return crudRepository.save(query);
+    public T create(final T search) {
+        return crudRepository.save(search);
     }
 
     @Override

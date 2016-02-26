@@ -7,13 +7,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
@@ -33,17 +27,19 @@ public abstract class AbstractSavedSearchTest<T extends SavedSearch<T>> {
 
     @Test
     public void toQueryTextWithConceptClusters() {
-        final List<ConceptCluster> conceptClusters = new LinkedList<>();
+        final Set<ConceptClusterPhrase> conceptClusterPhrases = new HashSet<>();
 
-        final ConceptCluster countyCluster = new ConceptCluster("county", Collections.singletonList("california"));
-        conceptClusters.add(countyCluster);
+        final ConceptClusterPhrase countyClusterPhrase = new ConceptClusterPhrase("county", true, 0);
+        final ConceptClusterPhrase californiaClusterPhrase = new ConceptClusterPhrase("california", false, 0);
+        conceptClusterPhrases.add(countyClusterPhrase);
+        conceptClusterPhrases.add(californiaClusterPhrase);
 
-        final ConceptCluster lukeCluster = new ConceptCluster("luke skywalker", Collections.<String>emptyList());
-        conceptClusters.add(lukeCluster);
+        final ConceptClusterPhrase lukeClusterPhrase = new ConceptClusterPhrase("luke skywalker", true, 1);
+        conceptClusterPhrases.add(lukeClusterPhrase);
 
         final SavedSearch<T> search = createBuilder()
                 .setQueryText("orange jedi")
-                .setConceptClusters(conceptClusters)
+                .setConceptClusterPhrases(conceptClusterPhrases)
                 .build();
 
         final String queryText = search.toQueryText();

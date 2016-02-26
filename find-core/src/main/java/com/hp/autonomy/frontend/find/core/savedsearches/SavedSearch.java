@@ -19,34 +19,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import javax.persistence.*;
+import java.util.*;
 
 @Entity
 @Table(name = SavedSearch.Table.NAME)
@@ -89,13 +63,11 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     })
     private Set<FieldAndValue> parametricValues;
 
-    @OneToMany(
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            mappedBy = ConceptCluster.SEARCH_FIELD
-    )
-    private Collection<ConceptCluster> conceptClusters;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = ConceptClusterPhraseTable.NAME, joinColumns = {
+            @JoinColumn(name = ConceptClusterPhraseTable.Column.SEARCH_ID)
+    })
+    private Set<ConceptClusterPhrase> conceptClusterPhrases;
 
     @Column(name = Table.Column.START_DATE)
     @Type(type = JADIRA_TYPE_NAME)
@@ -128,7 +100,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         queryText = builder.queryText;
         indexes = builder.indexes;
         parametricValues = builder.parametricValues;
-        conceptClusters = builder.conceptClusters;
+        conceptClusterPhrases = builder.conceptClusterPhrases;
         minDate = builder.minDate;
         maxDate = builder.maxDate;
         dateCreated = builder.dateCreated;
@@ -158,9 +130,9 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             indexes = other.getIndexes() == null ? indexes : other.getIndexes();
             parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
 
-            if (other.getConceptClusters() != null) {
-                conceptClusters.clear();
-                conceptClusters.addAll(other.getConceptClusters());
+            if (other.getConceptClusterPhrases() != null) {
+                conceptClusterPhrases.clear();
+                conceptClusterPhrases.addAll(other.getConceptClusterPhrases());
             }
         }
     }
@@ -182,17 +154,13 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
 
     // WARNING: This logic is duplicated in the client-side QueryTextModel
     public String toQueryText() {
-        if (CollectionUtils.isEmpty(conceptClusters)) {
+        if (CollectionUtils.isEmpty(conceptClusterPhrases)) {
             return queryText;
         } else {
             final Collection<String> quotedConcepts = new LinkedList<>();
 
-            for (final ConceptCluster cluster : conceptClusters) {
-                quotedConcepts.add(wrapQuotes(cluster.getPrimaryPhrase()));
-
-                for (final String phrase : cluster.getPhrases()) {
-                    quotedConcepts.add(wrapQuotes(phrase));
-                }
+            for (final ConceptClusterPhrase clusterPhrase : conceptClusterPhrases) {
+                quotedConcepts.add(wrapQuotes(clusterPhrase.getPhrase()));
             }
 
             return '(' + queryText + ") " + StringUtils.join(quotedConcepts, ' ');
@@ -244,7 +212,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         private String queryText;
         private Set<EmbeddableIndex> indexes;
         private Set<FieldAndValue> parametricValues;
-        private Collection<ConceptCluster> conceptClusters;
+        private Set<ConceptClusterPhrase> conceptClusterPhrases;
         private DateTime minDate;
         private DateTime maxDate;
         private DateTime dateCreated;
@@ -258,7 +226,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             queryText = search.queryText;
             indexes = search.indexes;
             parametricValues = search.parametricValues;
-            conceptClusters = search.conceptClusters;
+            conceptClusterPhrases = search.conceptClusterPhrases;
             minDate = search.minDate;
             maxDate = search.maxDate;
             dateCreated = search.dateCreated;
@@ -294,8 +262,8 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             return this;
         }
 
-        public Builder<T> setConceptClusters(final Collection<ConceptCluster> conceptClusters) {
-            this.conceptClusters = conceptClusters;
+        public Builder<T> setConceptClusterPhrases(final Set<ConceptClusterPhrase> conceptClusterPhrases) {
+            this.conceptClusterPhrases = conceptClusterPhrases;
             return this;
         }
 
@@ -367,7 +335,20 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         String NAME = "search_stored_state";
 
         interface Column {
+            String SEARCH_ID = "search_id";
             String STATE_TOKEN = "state_token";
+        }
+    }
+
+    public interface ConceptClusterPhraseTable {
+        String NAME = "search_concept_cluster_phrases";
+
+        interface Column {
+            String ID = "search_concept_cluster_phrase_id";
+            String SEARCH_ID = "search_id";
+            String PHRASE = "phrase";
+            String PRIMARY = "primary_phrase";
+            String CLUSTER_ID = "cluster_id";
         }
     }
 }
