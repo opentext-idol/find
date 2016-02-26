@@ -8,12 +8,16 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SimilarDocumentsView implements AppPage {
     private WebDriver driver;
     private WebElement container;
+
+    //TODO find somewhere more suitable for this
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEE, MMMMM dd, yyyy HH:mm a");
 
     private SimilarDocumentsView(WebDriver driver) {
         this.driver = driver;
