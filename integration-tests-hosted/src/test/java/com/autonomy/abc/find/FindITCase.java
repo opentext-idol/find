@@ -153,37 +153,6 @@ public class FindITCase extends FindTestBase {
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
-    //TODO ALL RELATED CONCEPTS TESTS - probably better to check if text is not("Loading...") rather than not("")
-    @Test
-    public void testRelatedConceptsHasResults(){
-        findService.search("Danye West");
-        for (WebElement concept : results.relatedConcepts()) {
-            assertThat(concept, hasTextThat(not(isEmptyOrNullString())));
-        }
-    }
-
-    @Test
-    public void testRelatedConceptsNavigateOnClick(){
-        String search = "Red";
-        findService.search(search);
-        WebElement topRelatedConcept = results.relatedConcepts().get(0);
-        String concept = topRelatedConcept.getText();
-
-        topRelatedConcept.click();
-        assertThat(navBar.getAlsoSearchingForTerms(), hasItem(concept));
-        assertThat(navBar.getSearchBoxTerm(), is(search));
-    }
-
-    @Test
-    @KnownBug({"CCUK-3498", "CSA-2066"})
-    public void testRelatedConceptsHover(){
-        findService.search("Find");
-        WebElement popover = results.hoverOverRelatedConcept(0);
-        verifyThat(popover, hasTextThat(not(isEmptyOrNullString())));
-        verifyThat(popover.getText(), not(containsString("QueryText-Placeholder")));
-        verifyThat(popover.getText(), not(containsString(Errors.Search.RELATED_CONCEPTS)));
-        results.unhover();
-    }
 
     @Test
     @KnownBug("CSA-1767 - footer not hidden properly")
@@ -577,23 +546,6 @@ public class FindITCase extends FindTestBase {
             }
             verifyThat(searchElement, not(hasTagName("a")));
             verifyThat(searchElement, hasClass("search-text"));
-        }
-    }
-
-    // TODO: testMultiWordSearchTermInResults
-    @Test
-    public void testRelatedConceptsInResults(){
-        findService.search("Tiger");
-
-        for(WebElement relatedConceptLink : results.relatedConcepts()){
-            String relatedConcept = relatedConceptLink.getText();
-            for (WebElement relatedConceptElement : getDriver().findElements(By.xpath("//*[contains(@class,'middle-container')]//*[not(self::h4) and contains(text(),'" + relatedConcept + "')]"))) {
-                if (relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
-                    verifyThat(relatedConceptElement, containsTextIgnoringCase(relatedConcept));
-                }
-                verifyThat(relatedConceptElement, hasTagName("a"));
-                verifyThat(relatedConceptElement, hasClass("clickable"));
-            }
         }
     }
 
