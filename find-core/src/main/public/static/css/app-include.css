@@ -827,6 +827,7 @@ input.find-input {
     color:#fff;
     padding: 3px;
     font-weight: lighter;
+    vertical-align: top;
 }
 
 .selected-related-concept {
@@ -836,10 +837,31 @@ input.find-input {
     font-size: 100%;
     font-weight: normal;
     margin-left: 5px;
+    color: #fff;
+    display: inline-flex;
 }
 
-.selected-related-concept {
-    color: #fff;
+.selected-related-concept-text {
+    width: 80px;
+}
+
+.concept-remove-icon {
+    line-height: inherit;
+}
+
+.additional-concepts {
+    overflow: hidden;
+    width: 350px;
+    float: left;
+    white-space: nowrap;
+}
+
+.left-scroll,
+.right-scroll,
+.left-scroll:hover,
+.right-scroll:hover {
+    box-shadow: none;
+>>>>>>> 4317d13... [CCUK-3667] added scrolling feature for overflowing related concepts [rev:jon.soul]
 }
 
 .selected-related-concept-cluster {
