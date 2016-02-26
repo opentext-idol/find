@@ -9,10 +9,12 @@ import com.autonomy.aci.client.services.AciService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsDeserializer;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolAuthenticationMixins;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
@@ -31,26 +33,29 @@ public class IdolConfiguration {
     @Autowired
     private TextEncryptor textEncryptor;
 
-    @Autowired
-    private FilterProvider filterProvider;
-
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
     @Autowired
     public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder, final QueryRestrictionsDeserializer<?> queryRestrictionsDeserializer) {
         return builder
                 .createXmlMapper(false)
-                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
-                .mixIn(ServerConfig.class, ConfigurationFilterMixin.class)
-                .mixIn(ViewConfig.class, ConfigurationFilterMixin.class)
-                .mixIn(IdolFindConfig.class, ConfigurationFilterMixin.class)
+                .mixIn(Authentication.class, IdolAuthenticationMixins.class)
                 .deserializerByType(QueryRestrictions.class, queryRestrictionsDeserializer)
                 .build();
     }
 
+
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
     @Autowired
-    public IdolFindConfigFileService configFileService(final ObjectMapper objectMapper) {
+    public IdolFindConfigFileService configFileService(final Jackson2ObjectMapperBuilder builder, final FilterProvider filterProvider) {
+        final ObjectMapper objectMapper = builder.createXmlMapper(false).build();
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        objectMapper.addMixIn(Authentication.class, IdolAuthenticationMixins.class);
+        objectMapper.addMixIn(ServerConfig.class, ConfigurationFilterMixin.class);
+        objectMapper.addMixIn(ViewConfig.class, ConfigurationFilterMixin.class);
+        objectMapper.addMixIn(IdolFindConfig.class, ConfigurationFilterMixin.class);
+
         final IdolFindConfigFileService configService = new IdolFindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");
         configService.setConfigFileName("config.json");
