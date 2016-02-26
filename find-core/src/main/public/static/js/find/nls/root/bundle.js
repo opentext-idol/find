@@ -123,6 +123,8 @@ define([
         'settings.community.login.invalidType': 'You must test connection and choose a valid login type.',
         'settings.community.serverName': 'community',
         'settings.community.title': 'Community',
+        'settings.content.description': 'Specify where your content is indexed.',
+        'settings.content.title': 'Content',
         'settings.database': 'Database',
         'settings.databaseCheckbox': 'Use username for database name',
         'settings.description': "This page is for editing the Find config file.  The config file location is stored in the Java system property {0}.  The current location is {1}.",

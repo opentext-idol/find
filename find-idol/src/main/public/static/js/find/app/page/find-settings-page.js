@@ -5,14 +5,22 @@
 
 define([
     'find/app/page/abstract-find-settings-page',
+    'find/app/page/settings/aci-widget',
     'find/app/page/settings/community-widget',
     'i18n!find/nls/bundle'
-], function(SettingsPage, CommunityWidget, i18n) {
+], function(SettingsPage, AciWidget, CommunityWidget, i18n) {
 
     return SettingsPage.extend({
         initializeWidgets: function() {
             this.widgetGroups = [
                 [
+                    new AciWidget({
+                        configItem: 'content',
+                        description: i18n['settings.content.description'],
+                        isOpened: true,
+                        title: i18n['settings.content.title'],
+                        strings: this.serverStrings()
+                    }),
                     new CommunityWidget({
                         configItem: 'login',
                         description: i18n['settings.community.description'],
