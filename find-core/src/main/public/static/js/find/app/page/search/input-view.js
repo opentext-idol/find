@@ -72,6 +72,18 @@ define([
             this.updateRelatedConcepts();
         },
 
+        focus: function() {
+            _.defer(_.bind(function () {
+                this.$input.focus();
+            }, this));
+        },
+
+        unFocus: function() {
+            _.defer(_.bind(function () {
+                this.$input.blur();
+            }, this));
+        },
+
         search: function(query) {
             this.model.set({
                 inputText: $.trim(query),
