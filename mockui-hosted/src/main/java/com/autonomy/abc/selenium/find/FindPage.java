@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -160,6 +161,7 @@ public class FindPage extends AppElement implements AppPage,
 
         cog.click();
         getDriver().findElement(By.className("navigation-logout")).click();
+        Waits.loadOrFadeWait();
     }
 
     // this can be used to check whether on the landing page,
