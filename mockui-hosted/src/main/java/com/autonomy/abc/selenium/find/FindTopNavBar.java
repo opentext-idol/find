@@ -16,18 +16,20 @@ import java.util.List;
 public class FindTopNavBar implements LoginService.LogoutHandler {
     private WebDriver driver;
     private WebElement header;
+    private WebElement inputContainer;
     private FormInput input;
 
     FindTopNavBar(WebDriver driver) {
         this.driver = driver;
         this.header = driver.findElement(By.className("header"));
-        this.input = new FormInput(driver.findElement(By.className("find-input")), driver);
+        this.inputContainer = driver.findElement(By.className("input-view-container"));
+        this.input = new FormInput(inputContainer.findElement(By.className("find-input")), driver);
     }
 
     @Override
     public void logOut() {
-        findElement(By.className("hp-settings")).click();
-        findElement(By.className("navigation-logout")).click();
+        header.findElement(By.className("hp-settings")).click();
+        header.findElement(By.className("navigation-logout")).click();
         Waits.loadOrFadeWait();
     }
 
@@ -41,7 +43,7 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
     }
 
     public String getCurrentUsername() {
-        return findElement(By.className("navbar-username")).getText();
+        return header.findElement(By.className("navbar-username")).getText();
     }
 
     public List<Removable> additionalConcepts() {
@@ -57,14 +59,6 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
     }
 
     private List<WebElement> additionalConceptElements() {
-        return findElements(By.className(".selected-related-concept"));
-    }
-
-    private WebElement findElement(By locator) {
-        return header.findElement(locator);
-    }
-
-    private List<WebElement> findElements(By locator) {
-        return header.findElements(locator);
+        return inputContainer.findElements(By.className("selected-related-concept"));
     }
 }

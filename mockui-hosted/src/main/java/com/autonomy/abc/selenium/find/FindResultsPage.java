@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -196,5 +197,16 @@ public class FindResultsPage extends AppElement {
 
     public FindSearchResult searchResult(int searchResultNumber) {
         return new FindSearchResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ")")), getDriver());
+    }
+
+    public WebElement highlightRelatedConceptsButton() {
+        return findElement(By.className("highlight-related-concepts"));
+    }
+
+    public List<WebElement> highlightedSausages(String highlightedTerm) {
+        return findElements(new Locator()
+                        .havingClass("entity-label")
+                        .containingCaseInsensitive(highlightedTerm)
+        );
     }
 }
