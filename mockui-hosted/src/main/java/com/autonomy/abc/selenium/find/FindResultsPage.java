@@ -6,7 +6,6 @@ import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -140,7 +139,7 @@ public class FindResultsPage extends AppElement {
     }
 
     public List<String> getDisplayedDocumentsDocumentTypes(){
-        List<String> documentTypes = new ArrayList<String>();
+        List<String> documentTypes = new ArrayList<>();
         for(FindSearchResult result : getResults()){
             documentTypes.add(result.icon().getAttribute("class"));
         }
@@ -158,41 +157,21 @@ public class FindResultsPage extends AppElement {
             this.container = container;
         }
 
-        public String getContainer() {
-            return container;
+        private String asCssClass() {
+            return "." + container + "-container";
         }
     }
 
     public void waitForSearchLoadIndicatorToDisappear(final Container container){
         try {
-            new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("." + container.getContainer() + "-container .loading-spinner")));
+            new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(container.asCssClass() + " .loading-spinner")));
         } catch (Exception e) {
             //Noop
         }
 
-        new WebDriverWait(getDriver(), 60).withMessage("Container " + container + " failed to load").until(new ExpectedCondition<Boolean>() {
-
-            @Override
-            public Boolean apply(WebDriver driver) {
-                List<WebElement> indicators = findElement(By.className(container.getContainer() + "-container")).findElements(By.className("loading-spinner"));
-
-                if (indicators.size() == 0) {
-                    return true;
-                }
-
-                for (WebElement indicator : indicators) {
-                    if (container == Container.RIGHT) {
-                        if (!indicator.findElement(By.xpath("..")).getAttribute("class").contains("hide")) {
-                            return false;
-                        }
-                    } else if (!indicator.getAttribute("class").contains("hide")) {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        });
+        new WebDriverWait(getDriver(), 60)
+                .withMessage("Container " + container + " failed to load")
+                .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(container.asCssClass() + " .fa-spinner")));
     }
 
     public FindSearchResult searchResult(int searchResultNumber) {
