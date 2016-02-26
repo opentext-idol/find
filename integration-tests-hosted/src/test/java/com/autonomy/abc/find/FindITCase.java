@@ -395,9 +395,14 @@ public class FindITCase extends FindTestBase {
 
         frame.activate();
 
-        //TODO these aren't working properly - did Fred not fix these?
-        verifyThat("no backend error", getDriver().findElements(new Locator().withTagName("h1").containingText("500")), empty());
-        verifyThat("no view server error", getDriver().findElements(new Locator().withTagName("h2").containingCaseInsensitive("error")), empty());
+        Locator errorHeader = new Locator()
+                .withTagName("h1")
+                .containingText("500");
+        Locator errorBody = new Locator()
+                .withTagName("h2")
+                .containingCaseInsensitive("error");
+        verifyThat("no backend error", frame.content().findElements(errorHeader), empty());
+        verifyThat("no view server error", frame.content().findElements(errorBody), empty());
         frame.deactivate();
     }
 

@@ -217,10 +217,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         final DocumentViewer docViewer = DocumentViewer.make(getDriver());
         final Frame frame = new Frame(getWindow(), docViewer.frame());
 
-        frame.activate();
         verifyThat("document '" + title + "' is viewable", frame.getText(), not(isEmptyOrNullString()));
-
-        frame.deactivate();
         docViewer.close();
     }
 
