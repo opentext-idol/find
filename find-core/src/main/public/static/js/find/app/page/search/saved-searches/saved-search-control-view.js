@@ -5,8 +5,9 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'find/app/util/confirm-view',
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
-    'i18n!find/nls/bundle'
-], function(Backbone, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, template, i18n) {
+    'i18n!find/nls/bundle',
+    'find/app/util/popover'
+], function(Backbone, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, template, i18n, popover) {
 
     'use strict';
 
@@ -48,6 +49,10 @@ define([
         events: {
             'click .show-save-as-button': toggleTitleEditState(TitleEditState.SAVE_AS),
             'click .show-rename-button': toggleTitleEditState(TitleEditState.RENAME),
+            'click .popover-control': function(e) {
+                this.$('.popover-control[aria-pressed="false"]').toggleClass('disabled not-clickable');
+                $(e.currentTarget).removeClass('disabled not-clickable');
+            },
             'click .open-as-query-option': function() {
                 var newSearch = new SavedSearchModel(_.defaults({
                     id: null,
@@ -178,11 +183,17 @@ define([
             }));
 
             this.renderTitleInput();
-
             this.updateErrorMessage();
             this.updateForSavedState();
             this.updateForTitleEditState();
             this.updateLoading();
+            this.createPopover();
+        },
+
+        createPopover: function() {
+            popover(this.$('.popover-control'), 'click', function(content, target) {
+                content.html('<span class="search-controls-message text-danger"></span><div class="search-title-input-container"></div>')
+            });
         },
 
         updateForSavedState: function() {
@@ -245,7 +256,7 @@ define([
                 this.renderTitleInput();
 
                 this.listenTo(this.titleInput, 'remove', function() {
-                    this.model.set('titleEditState', TitleEditState.OFF);
+                    this.$('.popover-control.active').click();
                 });
             }
         },
