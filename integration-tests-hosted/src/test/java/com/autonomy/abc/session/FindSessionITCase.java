@@ -15,12 +15,15 @@ import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.core.AllOf.allOf;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 @RelatedTo("CSA-1567")
@@ -50,6 +53,8 @@ public class FindSessionITCase extends FindTestBase {
 
     @Test
     public void testDocumentPreview(){
+        assumeThat(((RemoteWebDriver) getDriver()).getCapabilities().getBrowserName(), is("firefox"));
+
         results = findService.search("The Season");
         FindSearchResult searchResult = results.searchResult(1);
 
