@@ -55,7 +55,7 @@ define([
             // Create the icon by hand rather than using the default because the leaflet.Icon.Default.imagePath method
             // does not work after JS concatenation
             var icon = leaflet.icon(_.defaults({
-                iconUrl: '../static-HEAD/bower_components/leaflet/dist/images/marker-icon.png'
+                iconUrl: '../static-' + configuration().commit + '/bower_components/leaflet/dist/images/marker-icon.png'
             }, leaflet.Icon.Default.options));
 
             leaflet
