@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.analytics.Container;
 import com.autonomy.abc.selenium.analytics.ContainerItem;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
@@ -164,10 +164,10 @@ public class AnalyticsITCase extends HostedTestBase {
 
         try {
             findWindow.activate();
-            FindPage findPage = findApp.elementFactory().getFindPage();
+            FindService findService = findApp.findService();
             for (int unused = 0; unused < repeats; unused++) {
-                findPage.search(term);
-                findPage.search("");
+                findService.search(term);
+                findService.search("");
                 Waits.loadOrFadeWait();
             }
         } finally {

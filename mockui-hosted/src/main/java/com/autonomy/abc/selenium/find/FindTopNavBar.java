@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.element.HPRemovable;
 import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -27,6 +28,12 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
     public void logOut() {
         findElement(By.className("hp-settings")).click();
         findElement(By.className("navigation-logout")).click();
+        Waits.loadOrFadeWait();
+    }
+
+    void search(String term) {
+        input.clear();
+        input.setAndSubmit(term);
     }
 
     public String getSearchBoxTerm() {

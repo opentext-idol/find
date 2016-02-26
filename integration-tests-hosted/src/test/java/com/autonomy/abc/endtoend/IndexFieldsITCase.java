@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
@@ -45,6 +46,8 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     private IndexService indexService;
     private SearchService searchService;
+    private FindService findService;
+
     private SearchPage searchPage;
     private FindPage findPage;
 
@@ -148,6 +151,7 @@ public class IndexFieldsITCase extends HostedTestBase {
         Window first = getWindow();
         HSODFind findApp = new HSODFind();
         Window second = launchInNewWindow(findApp);
+        findService = findApp.findService();
         try {
             second.activate();
             findPage = findApp.elementFactory().getFindPage();
@@ -168,7 +172,7 @@ public class IndexFieldsITCase extends HostedTestBase {
         logger.info("finding " + query);
         boolean quick = true;
         try {
-            findPage.search(query);
+            findService.search(query);
         } catch (TimeoutException e) {
             quick = false;
             findPage.getResultsPage().waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);

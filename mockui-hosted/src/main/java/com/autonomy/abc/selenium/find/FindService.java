@@ -17,9 +17,10 @@ public class FindService {
     }
 
     public FindResultsPage search(final SearchQuery query) {
-        findPage.search(query.getSearchTerm());
+        elementFactory.getTopNavBar().search(query.getSearchTerm());
+        findPage.waitForIndexes();
         findPage.filterBy(new AggregateSearchFilter(query.getFilters()));
-        return findPage.getResultsPage();
+        return elementFactory.getResultsPage();
     }
 
     public SimilarDocumentsView goToSimilarDocuments(final int resultNumber) {

@@ -83,7 +83,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
 
         try {
             FindPage findPage = findApp.elementFactory().getFindPage();
-            findPage.search("This woman's work");
+            findApp.findService().search("This woman's work");
 
             verifyIndexOrDefault(findPage.indexesTree().privateIndexes());
         } finally {

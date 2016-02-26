@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.search.*;
-import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -24,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 
 public class FindPage extends AppElement implements AppPage,
-        LoginService.LogoutHandler,
         IndexFilter.Filterable,
         DatePickerFilter.Filterable,
         StringDateFilter.Filterable,
@@ -52,22 +50,11 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     /**
-     * @deprecated use FindTopNavBar instead
+     * waits until the list of indexes has been retrieved
+     * from HOD if necessary
      */
-    @Deprecated
-    public String getSearchBoxTerm(){
-        return input.getValue();
-    }
-
-    /**
-     * @deprecated use FindService instead
-     */
-    @Deprecated
-    public void search(String searchTerm){
-        input.clear();
-        input.setAndSubmit(searchTerm);
+    void waitForIndexes() {
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
     public List<String> getSelectedPublicIndexes() {
@@ -160,32 +147,10 @@ public class FindPage extends AppElement implements AppPage,
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("parametric-processing-indicator")));
     }
 
-    /**
-     * @deprecated use loginService instead
-     */
-    @Deprecated
-    public void logOut(){
-        WebElement cog = getDriver().findElement(By.className("hp-settings"));
-        if(!cog.isDisplayed()){
-            search("hp");
-        }
-
-        cog.click();
-        getDriver().findElement(By.className("navigation-logout")).click();
-    }
-
     // this can be used to check whether on the landing page,
     // as opposed to main reuslts page
     public WebElement footerLogo() {
         return findElement(By.className("hp-logo-footer"));
-    }
-
-    /**
-     * @deprecated use FindTopNavBar instead
-     */
-    @Deprecated
-    public List<String> getAlsoSearchingForTerms() {
-        return ElementUtil.getTexts(findElements(By.className("selected-related-concept")));
     }
 
     public WebElement rightContainerToggleButton() {
