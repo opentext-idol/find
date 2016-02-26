@@ -11,6 +11,7 @@ define([
         return {
             fieldMap: {
                 authors: {type: 'STRING', displayName: 'Author', values: ['Humbert', 'Gereon']},
+                longitude: {type: 'NUMBER', displayName: 'Longitude', values: ['52.5']},
                 thumbnail: {type: 'STRING', values: [THUMBNAIL]},
                 datePublished: {type: 'DATE', displayName: 'Date Published', values: [1456161196000]},
                 sourceType: {type: 'STRING', values: [SOURCETYPE]},
@@ -79,10 +80,15 @@ define([
             it('parses the transcript from the field map', function() {
                 expect(this.parse(fullResponse()).transcript).toBe(TRANSCRIPT);
             });
-
-            it('parses the field map into an array, converting date values to formatted strings', function() {
+            
+            it('parses the field map into an array, converting date values to formatted strings and number values to javascript numbers', function() {
                 var fields = this.parse(fullResponse()).fields;
-                expect(fields.length).toBe(5);
+                expect(fields.length).toBe(6);
+
+                var longitudeField = _.findWhere(fields, {displayName: 'Longitude'});
+                expect(longitudeField).toBeDefined();
+                expect(longitudeField.values.length).toBe(1);
+                expect(longitudeField.values[0]).toBe(52.5);
 
                 var datePublishedField = _.findWhere(fields, {displayName: 'Date Published'});
                 expect(datePublishedField).toBeDefined();

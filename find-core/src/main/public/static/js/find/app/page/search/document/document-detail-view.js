@@ -71,10 +71,10 @@ define([
         filterTabs: function(tabsToFilter) {
             return _.chain(tabsToFilter)
                 .filter(function(tab) {
-                    return tab.shown(this.model)
+                    return tab.shown(this.model);
                 }, this)
                 .map(function(tab, index) {
-                    return _.extend({ index: index }, tab)
+                    return _.extend({ index: index }, tab);
                 })
                 .value();
         },
@@ -118,6 +118,14 @@ define([
             }, this);
 
             if (this.tabs.length !== 0) this.tabs[0].view.render();
+        },
+
+        remove: function() {
+            _.each(this.tabs, function(tab) {
+                tab.view && tab.view.remove();
+            });
+
+            Backbone.View.prototype.remove.call(this);
         }
     });
 });

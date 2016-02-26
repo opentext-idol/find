@@ -174,6 +174,24 @@ EmbeddedImages=true
 StripScript=true
 OriginalBaseUrl=true
 
+## Location
+Maps of document location metadata can be displayed in the UI if enabled in the configuration file. A sample "map" configuration
+is shown below:
+
+    {
+        "enabled": true,
+        "attribution": "Copyright 2014-2016 Global Maps Incorporated",
+        "tileUrlTemplate": "http://tile.osm.org/{z}/{x}/{y}.png"
+    }
+
+Set the "enabled" property to true to display maps in the UI. A "tileUrlTemplate" property must be supplied. This must
+be the URL for an Open Street Map (OSM) tile server, where the {z}, {x} and {y} parameters are integer coordinates describing
+the tile position.
+
+Although any OSM-compatible tile server should be compatible with HPE BI for Human Information, beware of license and
+usage restrictions. In particular, the tile server provided by OpenStreetMap itself should not be used except for limited 
+testing purposes.
+
 ## Is it any good?
 Yes.
 

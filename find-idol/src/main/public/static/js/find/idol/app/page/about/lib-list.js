@@ -55,6 +55,12 @@ define(function() {
             license: 'Public Domain',
             edited: false
         }, {
+            name: 'Leaflet',
+            url: 'http://leafletjs.com',
+            version: '0.7.7',
+            license: 'BSD',
+            edited: false
+        }, {
             name: 'Moment.js',
             url: 'http://momentjs.com',
             version: '2.10.3',
@@ -73,6 +79,6 @@ define(function() {
             license: 'MIT',
             edited: false
         }
-    ]
+    ];
 
 });

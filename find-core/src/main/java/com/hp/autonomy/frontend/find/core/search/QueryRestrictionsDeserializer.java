@@ -33,14 +33,21 @@ public abstract class QueryRestrictionsDeserializer<S extends Serializable> exte
         return objectMapper;
     }
 
-    protected String parseAsText(final ObjectMapper objectMapper, @SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName) throws JsonProcessingException {
-        final JsonNode jsonNode = node.get(fieldName);
-        return jsonNode != null ? objectMapper.treeToValue(jsonNode, String.class) : null;
+    protected <T> T parseAs(final ObjectMapper objectMapper, @SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName, final Class<T> type) throws JsonProcessingException {
+        final JsonNode childNode = node.get(fieldName);
+        return childNode == null ? null : objectMapper.treeToValue(childNode, type);
     }
 
-    protected DateTime parseDate(final ObjectMapper objectMapper, @SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName) throws IOException {
-        final JsonNode childNode = node.get(fieldName);
-        return childNode != null ? objectMapper.treeToValue(childNode, DateTime.class) : null;
+    protected String parseAsText(final ObjectMapper objectMapper, final JsonNode node, final String fieldName) throws JsonProcessingException {
+        return parseAs(objectMapper, node, fieldName, String.class);
+    }
+
+    protected DateTime parseDate(final ObjectMapper objectMapper, final JsonNode node, final String fieldName) throws IOException {
+        return parseAs(objectMapper, node, fieldName, DateTime.class);
+    }
+
+    protected boolean parseAsBoolean(final ObjectMapper objectMapper, final JsonNode node, final String fieldName) throws JsonProcessingException {
+        return parseAs(objectMapper, node, fieldName, Boolean.class);
     }
 
     protected List<S> parseDatabaseArray(@SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName) {

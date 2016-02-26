@@ -122,9 +122,21 @@ html, body {
     height: 100%;
 }
 
+dl.dl-inline > dt,
+dl.dl-inline > dd {
+    display: inline-block;
+}
+
+dl.dl-inline > dt:not(:last-child),
+dl.dl-inline > dd:not(:last-child) {
+    margin-right: 5px;
+}
+
+dt,
 .bold {
     font-family: Metric-Bold;
 }
+
 .label-secondary {
     background-color: #8d9092;
 }
@@ -1219,6 +1231,13 @@ input:-moz-placeholder::before {
 
 .document-detail-tabs-content .table > tbody > tr:first-child > td {
     border: none;
+}
+
+.location-tab-map {
+    min-height: 400px;
+    max-height: 750px;
+    height: 100%;
+    width: 100%;
 }
 
 #cboxLoadedContent .table > tbody > tr > th,

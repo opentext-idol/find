@@ -14,12 +14,15 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.PasswordsConfig;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
+import com.hp.autonomy.frontend.find.core.configuration.MapConfig;
+import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.hod.configuration.HodSearchCapable;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jasypt.util.text.TextEncryptor;
@@ -29,7 +32,7 @@ import java.util.Set;
 @JsonDeserialize(builder = HodFindConfig.Builder.class)
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class HodFindConfig extends AbstractConfig<HodFindConfig> implements AuthenticationConfig<HodFindConfig>, HodSearchCapable, PasswordsConfig<HodFindConfig>, HodSsoConfig {
+public class HodFindConfig extends AbstractConfig<HodFindConfig> implements AuthenticationConfig<HodFindConfig>, HodSearchCapable, PasswordsConfig<HodFindConfig>, HodSsoConfig, MapConfig {
     private final Authentication<?> login;
     private final HsodConfig hsod;
     private final IodConfig iod;
@@ -37,6 +40,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private final Set<String> allowedOrigins;
     private final RedisConfig redis;
     private final FieldsInfo fieldsInfo;
+    private final MapConfiguration map;
 
     private HodFindConfig(final Builder builder) {
         login = builder.login;
@@ -46,6 +50,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         redis = builder.redis;
         fieldsInfo = builder.fieldsInfo;
         queryManipulation = builder.queryManipulation;
+        map = builder.map;
     }
 
     @Override
@@ -59,6 +64,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
                     .setQueryManipulation(queryManipulation == null ? config.queryManipulation : queryManipulation.merge(config.queryManipulation))
                     .setHsod(hsod == null ? config.hsod : hsod.merge(config.hsod))
                     .setFieldsInfo(fieldsInfo == null ? config.fieldsInfo : fieldsInfo.merge(config.fieldsInfo))
+                    .setMap(map == null ? config.map : map.merge(config.map))
                     .build();
         } else {
             return this;
@@ -97,6 +103,10 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         redis.basicValidate();
         queryManipulation.basicValidate();
 
+        if (map != null) {
+            map.basicValidate("map");
+        }
+
         if (!"default".equalsIgnoreCase(login.getMethod())) {
             login.basicValidate();
         }
@@ -134,10 +144,10 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     }
 
     @JsonPOJOBuilder(withPrefix = "set")
+    @NoArgsConstructor
     @Setter
     @Accessors(chain = true)
     public static class Builder {
-
         private Authentication<?> login;
         private HsodConfig hsod;
         private IodConfig iod;
@@ -145,9 +155,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         private RedisConfig redis;
         private QueryManipulationConfig queryManipulation;
         private FieldsInfo fieldsInfo;
-
-        public Builder() {
-        }
+        private MapConfiguration map;
 
         public Builder(final HodFindConfig config) {
             login = config.login;
@@ -157,6 +165,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
             redis = config.redis;
             queryManipulation = config.queryManipulation;
             fieldsInfo = config.fieldsInfo;
+            map = config.map;
         }
 
         public HodFindConfig build() {
