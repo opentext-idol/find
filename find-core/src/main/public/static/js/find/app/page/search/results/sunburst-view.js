@@ -12,6 +12,9 @@ define([
 
     'use strict';
 
+    var emptyOptionHtml = '<option value=""></option>';
+    var optionTemplate = _.template('<option value="<%-field%>"><%-field%></option>');
+
     var SUNBURST_NAME_ATTR = 'text';
     var SUNBURST_SIZE_ATTR = 'count';
 
@@ -101,7 +104,7 @@ define([
         emptyDropdown: function($dropdown) {
             $dropdown
                 .empty()
-                .append($dropdown.hasClass('first-parametric') ? '' : '<option value=""></option>')
+                .append($dropdown.hasClass('first-parametric') ? '' : emptyOptionHtml)
                 .trigger('chosen:updated');
         },
 
@@ -109,7 +112,7 @@ define([
             this.emptyDropdown($dropdown);
 
             var html = _.map(fields, function(field) {
-                return '<option value="' + field + '">' + field + '</option>';
+                return optionTemplate({field: field});
             });
 
             $dropdown
@@ -129,13 +132,11 @@ define([
 
         firstPass: function() {
             this.$sunburst.addClass('hide');
+
             var val = this.$firstChosen.val();
             this.fetchDependentFields(val);
-            var secondCollection = this.parametricCollection.pluck('name');
 
-            this.populateDropDown(this.$secondChosen, _.reject(secondCollection, function(name) {
-                return name === val;
-            }, this));
+            this.populateDropDown(this.$secondChosen, _.without(this.parametricCollection.pluck('name'), val));
 
             this.$secondChosen.removeClass('hide');
         },
