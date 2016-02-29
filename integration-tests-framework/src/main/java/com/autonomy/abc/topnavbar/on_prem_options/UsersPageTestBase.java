@@ -3,6 +3,7 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
 import com.autonomy.abc.selenium.external.GoogleAuth;
@@ -52,14 +53,28 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     }
 
     @After
-    public void tearDown(){
+    public void emailTearDown() {
         if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+            Window firstWindow = getWindow();
+            Window secondWindow = getMainSession().openWindow("about:blank");
             try {
                 emailHandler.markAllEmailAsRead(getDriver());
             } catch (TimeoutException e) {
                 LoggerFactory.getLogger(UsersPageTestBase.class).warn("Could not tear down");
+            } finally {
+                secondWindow.close();
+                firstWindow.activate();
             }
         }
+    }
+
+    @After
+    public void userTearDown() {
+        if (loginService.getCurrentUser() != getInitialUser()) {
+            logoutAndNavigateToWebApp();
+            loginAs(getInitialUser());
+        }
+        userService.deleteOtherUsers();
     }
 
     protected User singleSignUp() {
