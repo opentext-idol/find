@@ -7,15 +7,9 @@ import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.FindParametricCheckbox;
-import com.autonomy.abc.selenium.find.FindResultsPage;
-import com.autonomy.abc.selenium.find.FindSearchResult;
+import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.ParametricFilter;
-import com.autonomy.abc.selenium.search.SearchResult;
-import com.autonomy.abc.selenium.search.StringDateFilter;
+import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -54,7 +48,9 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class FindITCase extends FindTestBase {
     private FindPage findPage;
+    private FindTopNavBar navBar;
     private FindResultsPage results;
+    private FindService findService;
 
     public FindITCase(TestConfig config) {
         super(config);
@@ -63,38 +59,41 @@ public class FindITCase extends FindTestBase {
     @Before
     public void setUp(){
         findPage = getElementFactory().getFindPage();
+        navBar = getElementFactory().getTopNavBar();
         results = findPage.getResultsPage();
+        findService = getApplication().findService();
     }
 
     @Test
     public void testSendKeys() throws InterruptedException {
         String searchTerm = "Fred is a chimpanzee";
-        findPage.search(searchTerm);
-        assertThat(findPage.getSearchBoxTerm(), is(searchTerm));
+        findService.search(searchTerm);
+        assertThat(navBar.getSearchBoxTerm(), is(searchTerm));
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
     @Test
     public void testPdfContentTypeValue(){
-        findPage.search("red star");
-        findPage.filterBy(new ParametricFilter("Content Type", "APPLICATION/PDF"));
-        for(String type : results.getDisplayedDocumentsDocumentTypes()){
-            assertThat(type,containsString("pdf"));
-        }
+        checkContentTypeFilter("APPLICATION/PDF", "pdf");
     }
 
     @Test
     public void testHtmlContentTypeValue(){
-        findPage.search("red star");
-        findPage.filterBy(new ParametricFilter("Content Type", "TEXT/HTML"));
+        checkContentTypeFilter("TEXT/HTML", "html");
+    }
+
+    private void checkContentTypeFilter(String filterType, String extension) {
+        SearchQuery query = new SearchQuery("red star")
+                .withFilter(new ParametricFilter("Content Type", filterType));
+        findService.search(query);
         for(String type : results.getDisplayedDocumentsDocumentTypes()){
-            assertThat(type,containsString("html"));
+            assertThat(type, containsString(extension));
         }
     }
 
     @Test
     public void testFilteringByParametricValues(){
-        findPage.search("Alexis");
+        findService.search("Alexis");
         findPage.waitForParametricValuesToLoad();
 
         int expectedResults = plainTextCheckbox().getResultsCount();
@@ -140,7 +139,7 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
-        findPage.search("wolf");
+        findService.search("wolf");
         results.parametricTypeCheckbox("Content Type", "TEXT/HTML").check();
         Waits.loadOrFadeWait();
         results.parametricTypeCheckbox("Content Type", "TEXT/HTML").uncheck();
@@ -150,49 +149,17 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testSearch(){
-        findPage.search("Red");
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        findService.search("Red");
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
-    //TODO ALL RELATED CONCEPTS TESTS - probably better to check if text is not("Loading...") rather than not("")
-    @Test
-    public void testRelatedConceptsHasResults(){
-        findPage.search("Danye West");
-        for (WebElement concept : results.relatedConcepts()) {
-            assertThat(concept, hasTextThat(not(isEmptyOrNullString())));
-        }
-    }
-
-    @Test
-    public void testRelatedConceptsNavigateOnClick(){
-        String search = "Red";
-        findPage.search(search);
-        WebElement topRelatedConcept = results.relatedConcepts().get(0);
-        String concept = topRelatedConcept.getText();
-
-        topRelatedConcept.click();
-        assertThat(findPage.getAlsoSearchingForTerms(), hasItem(concept));
-        assertThat(findPage.getSearchBoxTerm(), is(search));
-    }
-
-    @Test
-    @KnownBug({"CCUK-3498", "CSA-2066"})
-    public void testRelatedConceptsHover(){
-        findPage.search("Find");
-        WebElement popover = results.hoverOverRelatedConcept(0);
-        verifyThat(popover, hasTextThat(not(isEmptyOrNullString())));
-        verifyThat(popover.getText(), not(containsString("QueryText-Placeholder")));
-        verifyThat(popover.getText(), not(containsString(Errors.Search.RELATED_CONCEPTS)));
-        results.unhover();
-    }
 
     @Test
     @KnownBug("CSA-1767 - footer not hidden properly")
     @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
     public void testMetadata(){
-        findPage.search("stars");
-        findPage.filterBy(new IndexFilter(Index.DEFAULT));
+        findService.search(new SearchQuery("stars")
+                .withFilter(new IndexFilter(Index.DEFAULT)));
 
         for(FindSearchResult searchResult : results.getResults(5)){
             String url = searchResult.getReference();
@@ -213,11 +180,9 @@ public class FindITCase extends FindTestBase {
     public void testAuthor(){
         String author = "FIFA.COM";
 
-        findPage.search("football");
-        findPage.filterBy(new IndexFilter("Fifa"));
-        findPage.filterBy(new ParametricFilter("Author", author));
-
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        findService.search(new SearchQuery("football")
+                .withFilter(new IndexFilter("Fifa"))
+                .withFilter(new ParametricFilter("Author", author)));
 
         assertThat(results.resultsDiv(), not(containsText(Errors.Find.GENERAL)));
 
@@ -232,7 +197,7 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testFilterByIndex(){
-        findPage.search("Sam");
+        findService.search("Sam");
 
         SearchResult searchResult = results.searchResult(1);
         String titleString = searchResult.getTitleString();
@@ -249,7 +214,7 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
-        findPage.search("Happy");
+        findService.search("Happy");
 
         // TODO: what if this index has no results?
         //This breaks if using default index
@@ -264,7 +229,7 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testQuicklyDoubleClickingIndexDoesNotLeadToError(){
-        findPage.search("index");
+        findService.search("index");
         // async filters
         new IndexFilter(Index.DEFAULT).apply(findPage);
         IndexFilter.PRIVATE.apply(findPage);
@@ -288,7 +253,7 @@ public class FindITCase extends FindTestBase {
     }
 
     private void preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum period){
-        findPage.search("Rugby");
+        findService.search("Rugby");
 
         results.toggleDateSelection(period);
         List<String> preDefinedResults = results.getResultTitles();
@@ -340,7 +305,7 @@ public class FindITCase extends FindTestBase {
 
         Set<String> parametricFields = new HashSet<>();
 
-        findPage.search("Something");
+        findService.search("Something");
 
         for (String indexName : findPage.getPrivateIndexNames()) {
             RetrieveIndexFieldsResponse retrieveIndexFieldsResponse = retrieveIndexFieldsService.retrieveIndexFields(tokenProxy,
@@ -361,7 +326,7 @@ public class FindITCase extends FindTestBase {
     @Test
     @KnownBug("CSA-1767 - footer not hidden properly")
     public void testViewDocumentsOpenFromFind(){
-        findPage.search("Review");
+        findService.search("Review");
 
         for(FindSearchResult result : results.getResults(5)){
             try {
@@ -376,9 +341,8 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testViewDocumentsOpenWithArrows(){
-        findPage.search("Review");
+        findService.search("Review");
 
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
         for(int i = 0; i < 5; i++) {
             verifyDocumentViewer(docViewer);
@@ -408,12 +372,11 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testDateRemainsWhenClosingAndReopeningDateFilters(){
-        findPage.search("Corbyn");
-
         Date start = getDate(FindResultsPage.DateEnum.MONTH);
         Date end = getDate(FindResultsPage.DateEnum.WEEK);
 
-        findPage.filterBy(new StringDateFilter().from(start).until(end));
+        findService.search(new SearchQuery("Corbyn")
+                .withFilter(new StringDateFilter().from(start).until(end)));
         Waits.loadOrFadeWait();
         for (int unused = 0; unused < 3; unused++) {
             results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
@@ -426,7 +389,7 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testFileTypes(){
-        findPage.search("love ");
+        findService.search("love ");
 
         for(FileType f : FileType.values()) {
             findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
@@ -444,15 +407,15 @@ public class FindITCase extends FindTestBase {
         String termOne = "musketeers";
         String termTwo = "\"dearly departed\"";
 
-        findPage.search(termOne);
+        findService.search(termOne);
         List<String> musketeersSearchResults = results.getResultTitles();
         int numberOfMusketeersResults = musketeersSearchResults.size();
 
-        findPage.search(termTwo);
+        findService.search(termTwo);
         List<String> dearlyDepartedSearchResults = results.getResultTitles();
         int numberOfDearlyDepartedResults = dearlyDepartedSearchResults.size();
 
-        findPage.search(termOne + " AND " + termTwo);
+        findService.search(termOne + " AND " + termTwo);
         List<String> andResults = results.getResultTitles();
         int numberOfAndResults = andResults.size();
 
@@ -462,26 +425,26 @@ public class FindITCase extends FindTestBase {
         assertThat(musketeersSearchResults, hasItems(andResultsArray));
         assertThat(dearlyDepartedSearchResults, hasItems(andResultsArray));
 
-        findPage.search(termOne + " OR " + termTwo);
+        findService.search(termOne + " OR " + termTwo);
         List<String> orResults = results.getResultTitles();
         Set<String> concatenatedResults = new HashSet<>(ListUtils.union(musketeersSearchResults, dearlyDepartedSearchResults));
         assertThat(orResults.size(), is(concatenatedResults.size()));
         assertThat(orResults, containsInAnyOrder(concatenatedResults.toArray()));
 
-        findPage.search(termOne + " XOR " + termTwo);
+        findService.search(termOne + " XOR " + termTwo);
         List<String> xorResults = results.getResultTitles();
         concatenatedResults.removeAll(andResults);
         assertThat(xorResults.size(), is(concatenatedResults.size()));
         assertThat(xorResults, containsInAnyOrder(concatenatedResults.toArray()));
 
-        findPage.search(termOne + " NOT " + termTwo);
+        findService.search(termOne + " NOT " + termTwo);
         List<String> notTermTwo = results.getResultTitles();
         Set<String> t1NotT2 = new HashSet<>(concatenatedResults);
         t1NotT2.removeAll(dearlyDepartedSearchResults);
         assertThat(notTermTwo.size(), is(t1NotT2.size()));
         assertThat(notTermTwo, containsInAnyOrder(t1NotT2.toArray()));
 
-        findPage.search(termTwo + " NOT " + termOne);
+        findService.search(termTwo + " NOT " + termOne);
         List<String> notTermOne = results.getResultTitles();
         Set<String> t2NotT1 = new HashSet<>(concatenatedResults);
         t2NotT1.removeAll(musketeersSearchResults);
@@ -498,12 +461,12 @@ public class FindITCase extends FindTestBase {
         List<String> stopWords = Arrays.asList("a", "the", "of", "SOUNDEX"); //According to IDOL team SOUNDEX isn't considered a boolean operator without brackets
 
         for (final String searchTerm : boolOperators) {
-            findPage.search(searchTerm);
+            findService.search(searchTerm);
             verifyThat("Correct error message for searchterm: " + searchTerm, findPage.getText(), containsString(Errors.Search.OPERATORS));
         }
 
         for (final String searchTerm : stopWords) {
-            findPage.search(searchTerm);
+            findService.search(searchTerm);
             verifyThat("Correct error message for searchterm: " + searchTerm, findPage.getText(), containsString(Errors.Search.STOPWORDS));
         }
     }
@@ -513,8 +476,7 @@ public class FindITCase extends FindTestBase {
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
         final List<String> hiddenBooleansProximities = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "PARAGRAPHING", "NEARLY", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
         for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
-            findPage.search(hiddenBooleansProximity);
-            Waits.loadOrFadeWait();
+            findService.search(hiddenBooleansProximity);
             verifyThat(hiddenBooleansProximity + " searched for successfully", findPage.getText(), not(containsString("An error has occurred")));
         }
     }
@@ -525,7 +487,7 @@ public class FindITCase extends FindTestBase {
         List<String> testSearchTerms = Arrays.asList("(",")",") (",")war"); //"()" appears to be fine
 
         for(String searchTerm : testSearchTerms){
-            findPage.search(searchTerm);
+            findService.search(searchTerm);
 
             assertThat(results, containsText(Errors.Search.OPERATORS));
         }
@@ -537,8 +499,7 @@ public class FindITCase extends FindTestBase {
     public void testSearchQuotationMarks() {
         List<String> testSearchTerms = Arrays.asList("\"", "", "\"word", "\" word", "\" wo\"rd\""); //"\"\"" seems okay and " "
         for (String searchTerm : testSearchTerms){
-            findPage.search(searchTerm);
-            Waits.loadOrFadeWait();
+            findService.search(searchTerm);
             assertThat(results, containsText(Errors.Search.QUOTES));
         }
     }
@@ -547,15 +508,15 @@ public class FindITCase extends FindTestBase {
     @Test
     public void testWhitespaceSearch() {
         try {
-            findPage.search(" ");
+            findService.search(" ");
         } catch (TimeoutException e) { /* Expected behaviour */ }
 
         assertThat(findPage.footerLogo(), displayed());
 
-        findPage.search("Kevin Costner");
+        findService.search("Kevin Costner");
         List<String> resultTitles = results.getResultTitles();
 
-        findPage.search(" ");
+        findService.search(" ");
 
         assertThat(results.getResultTitles(), is(resultTitles));
         assertThat(findPage.parametricContainer().getText(), not(isEmptyOrNullString()));
@@ -564,7 +525,7 @@ public class FindITCase extends FindTestBase {
     @Test
     @KnownBug("CSA-1577")
     public void testClickingCustomDateFilterDoesNotRefreshResults(){
-        findPage.search("O Captain! My Captain!");
+        findService.search("O Captain! My Captain!");
         // may not happen the first time
         for (int unused = 0; unused < 5; unused++) {
             results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
@@ -577,7 +538,7 @@ public class FindITCase extends FindTestBase {
     public void testSearchTermInResults(){
         String searchTerm = "Tiger";
 
-        findPage.search(searchTerm);
+        findService.search(searchTerm);
 
         for(WebElement searchElement : getDriver().findElements(By.xpath("//*[not(self::h4) and contains(text(),'" + searchTerm + "')]"))){
             if(searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
@@ -588,27 +549,10 @@ public class FindITCase extends FindTestBase {
         }
     }
 
-    // TODO: testMultiWordSearchTermInResults
-    @Test
-    public void testRelatedConceptsInResults(){
-        findPage.search("Tiger");
-
-        for(WebElement relatedConceptLink : results.relatedConcepts()){
-            String relatedConcept = relatedConceptLink.getText();
-            for (WebElement relatedConceptElement : getDriver().findElements(By.xpath("//*[contains(@class,'middle-container')]//*[not(self::h4) and contains(text(),'" + relatedConcept + "')]"))) {
-                if (relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
-                    verifyThat(relatedConceptElement, containsTextIgnoringCase(relatedConcept));
-                }
-                verifyThat(relatedConceptElement, hasTagName("a"));
-                verifyThat(relatedConceptElement, hasClass("clickable"));
-            }
-        }
-    }
-
     @Test
     @KnownBug({"CSA-1726", "CSA-1763"})
     public void testPublicIndexesVisibleNotSelectedByDefault(){
-        findPage.search("Marina and the Diamonds");
+        findService.search("Marina and the Diamonds");
 
         verifyThat("public indexes are visible", findPage.indexesTree().publicIndexes(), not(emptyIterable()));
         verifyThat(findPage.getSelectedPublicIndexes(), empty());
@@ -617,7 +561,7 @@ public class FindITCase extends FindTestBase {
     @Test
     @KnownBug("CSA-2082")
     public void testAutoScroll(){
-        findPage.search("my very easy method just speeds up naming ");
+        findService.search("my very easy method just speeds up naming ");
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
@@ -635,7 +579,7 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testViewportSearchResultNumbers(){
-        findPage.search("Messi");
+        findService.search("Messi");
 
         results.getResult(1).openDocumentPreview();
         verifyDocViewerTotalDocuments(30);
@@ -652,8 +596,8 @@ public class FindITCase extends FindTestBase {
     @Test
     @KnownBug("CCUK-3647")
     public void testLessThan30ResultsDoesntAttemptToLoadMore() {
-        findPage.search("roland garros");
-        findPage.filterBy(new IndexFilter("fifa"));
+        findService.search(new SearchQuery("roland garros")
+                .withFilter((new IndexFilter("fifa"))));
 
         results.getResult(1).openDocumentPreview();
         verifyDocViewerTotalDocuments(lessThanOrEqualTo(30));
@@ -664,8 +608,8 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testBetween30And60Results(){
-        findPage.search("idol");
-        findPage.filterBy(new IndexFilter("sitesearch"));
+        findService.search(new SearchQuery("idol")
+                .withFilter(new IndexFilter("sitesearch")));
 
         scrollToBottom();
         results.getResult(1).openDocumentPreview();
@@ -678,7 +622,7 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testNoResults(){
-        findPage.search("thissearchwillalmostcertainlyreturnnoresults");
+        findService.search("thissearchwillalmostcertainlyreturnnoresults");
 
         verifyThat(results.resultsDiv(), containsText("No results found"));
 
@@ -706,14 +650,15 @@ public class FindITCase extends FindTestBase {
     @Test
     @KnownBug("CCUK-3624")
     public void testRefreshEmptyQuery() throws InterruptedException {
-        findPage.search("something");
-        findPage.search("");
+        findService.search("something");
+        findService.search("");
         Thread.sleep(5000);
 
         getWindow().refresh();
         findPage = getElementFactory().getFindPage();
+        navBar = getElementFactory().getTopNavBar();
 
-        verifyThat(findPage.getSearchBoxTerm(), is(""));
+        verifyThat(navBar.getSearchBoxTerm(), is(""));
         verifyThat("taken back to landing page after refresh", findPage.footerLogo(), displayed());
     }
 

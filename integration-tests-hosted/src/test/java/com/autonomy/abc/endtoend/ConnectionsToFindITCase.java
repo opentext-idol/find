@@ -74,7 +74,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         findWindow.activate();
 
         FindPage find = findApp.elementFactory().getFindPage();
-        find.search(trigger);
+        findApp.findService().search(trigger);
 
         verifyThat("Promoted documents show in Find", find.getResultsPage().getPromotionsTitles(), containsInAnyOrder(promotedTitles.toArray()));
 
