@@ -38,8 +38,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final CommunityAuthentication login;
     private final ServerConfig content;
     private final QueryManipulation queryManipulation;
-    @JsonProperty("view")
-    private final ViewConfig viewConfig;
+    private final ViewConfig view;
     private final MMAP mmap;
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
@@ -54,7 +53,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .setContent(content == null ? other.content : content.merge(other.content))
                 .setLogin(login == null ? other.login : login.merge(other.login))
                 .setQueryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
-                .setView(viewConfig == null ? other.viewConfig : viewConfig.merge(other.viewConfig))
+                .setView(view == null ? other.view : view.merge(other.view))
                 .setMmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
                 .setFieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
                 .setMap(map == null ? other.map : map.merge(other.map))
@@ -113,6 +112,11 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         return content.toAciServerDetails();
     }
 
+    @Override
+    public ViewConfig getViewConfig() {
+        return view;
+    }
+
     @Setter
     @Accessors(chain = true)
     @NoArgsConstructor
@@ -130,7 +134,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             login = config.login;
             content = config.content;
             queryManipulation = config.queryManipulation;
-            view = config.viewConfig;
+            view = config.view;
             mmap = config.mmap;
             fieldsInfo = config.fieldsInfo;
             map = config.map;
