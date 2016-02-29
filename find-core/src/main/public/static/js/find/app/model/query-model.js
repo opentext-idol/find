@@ -58,7 +58,7 @@ define([
             this.listenTo(this.queryState.selectedParametricValues, 'add remove reset', _.debounce(_.bind(function() {
                 var fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
                 this.set('fieldText', fieldTextNode ? fieldTextNode : null);
-            }, this)));
+            }, this), DEBOUNCE_WAIT_MILLISECONDS));
 
             var fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
 
