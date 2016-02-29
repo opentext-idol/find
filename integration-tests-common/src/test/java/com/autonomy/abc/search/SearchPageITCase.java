@@ -1049,7 +1049,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchService.deleteDocument(deletedDoc);
 
 		verifyThat(searchPage.getHeadingResultsCount(), is(--results));
-		verifyThat(searchPage.getSearchResult(1).getTitleString(), not(is(deletedDoc)));
+		verifyThat(searchPage.getSearchResult(1).getTitleString(), is(not(deletedDoc)));
 	}
 
 	@Test
