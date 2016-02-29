@@ -4,10 +4,7 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.FindResultsPage;
-import com.autonomy.abc.selenium.find.HSODFind;
-import com.autonomy.abc.selenium.find.HSODFindElementFactory;
+import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.IndexFilter;
@@ -28,14 +25,17 @@ import static org.hamcrest.Matchers.isIn;
 
 @RelatedTo("CSA-1566")
 public class PromotionsToFindITCase extends HostedTestBase {
+    private final static Logger LOGGER = LoggerFactory.getLogger(PromotionsToFindITCase.class);
+
     private Window searchWindow;
     private Window findWindow;
-
     private HSODFindElementFactory findFactory;
-    private FindPage findPage;
-    private FindResultsPage service;
+
     private PromotionService<?> promotionService;
-    private final static Logger LOGGER = LoggerFactory.getLogger(PromotionsToFindITCase.class);
+    private FindService findService;
+
+    private FindPage findPage;
+    private FindResultsPage resultsPage;
 
     public PromotionsToFindITCase(TestConfig config) {
         super(config);
@@ -44,14 +44,16 @@ public class PromotionsToFindITCase extends HostedTestBase {
     @Before
     public void setUp(){
         promotionService = getApplication().promotionService();
-
         promotionService.deleteAll();
         searchWindow = getWindow();
+
         HSODFind findApp = new HSODFind();
         findWindow = launchInNewWindow(findApp);
         findFactory = findApp.elementFactory();
+        findService = findApp.findService();
         findPage = findFactory.getFindPage();
-        service = findPage.getResultsPage();
+        resultsPage = findPage.getResultsPage();
+
         searchWindow.activate();
     }
 
@@ -67,7 +69,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         LOGGER.info("set up pin to position");
 
         findWindow.activate();
-        findPage.search(searchTrigger);
+        findService.search(searchTrigger);
         verifyPinToPosition(promotionTitles, 1, 5);
 
         searchWindow.activate();
@@ -87,7 +89,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         LOGGER.info("added secondary trigger");
 
         findWindow.activate();
-        findPage.search(secondaryTrigger);
+        findService.search(secondaryTrigger);
         verifyPinToPosition(promotionTitles, 6, 10);
 
         findPage.filterBy(new IndexFilter(Index.DEFAULT));
@@ -102,7 +104,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         LOGGER.info("set up spotlight promotion");
 
         findWindow.activate();
-        findPage.search(searchTrigger);
+        findService.search(searchTrigger);
 
         verifyPinToPosition(promotionTitles, 6, 10);
         verifySpotlight(spotlightPromotionTitles);
@@ -114,7 +116,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         findWindow.activate();
         refreshFind();
 
-        verifyThat(singlePromoted, isIn(service.getResultTitles(6, 11)));
+        verifyThat(singlePromoted, isIn(resultsPage.getResultTitles(6, 11)));
 
         List<String> allPromotions = new ArrayList<>(promotionTitles);
         allPromotions.add(singlePromoted);
@@ -125,19 +127,19 @@ public class PromotionsToFindITCase extends HostedTestBase {
         LOGGER.info("deleted spotlight promotion");
 
         findWindow.activate();
-        findPage.search("Other");
-        findPage.search(searchTrigger);
+        findService.search("Other");
+        findService.search(searchTrigger);
     }
 
     private void refreshFind() {
         getWindow().refresh();
         findPage = findFactory.getFindPage();
-        service = findPage.getResultsPage();
-        service.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        resultsPage = findPage.getResultsPage();
+        resultsPage.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
     private void verifySpotlight(List<String> promotionTitles) {
-        verifyResultsContainPromoted(service.getPromotionsTitles(), promotionTitles);
+        verifyResultsContainPromoted(resultsPage.getPromotionsTitles(), promotionTitles);
     }
 
     private void verifyResultsContainPromoted(List<String> search, List<String> promotion){
@@ -145,7 +147,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
     }
 
     private void verifyPinToPosition(List<String> promotionTitles, int start, int end) {
-        verifyResultsContainPromoted(service.getResultTitles(start, end), promotionTitles);
+        verifyResultsContainPromoted(resultsPage.getResultTitles(start, end), promotionTitles);
     }
 
     @After

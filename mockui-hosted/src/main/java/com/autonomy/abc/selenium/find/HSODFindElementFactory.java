@@ -19,9 +19,13 @@ public class HSODFindElementFactory extends ElementFactoryBase {
         return loadPage(LoginPage.class);
     }
 
+    public FindTopNavBar getTopNavBar() {
+        return new FindTopNavBar(getDriver());
+    }
+
     @Override
     public LoginService.LogoutHandler getLogoutHandler() {
-        return getFindPage();
+        return getTopNavBar();
     }
 
     public FindPage getFindPage() {

@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
@@ -38,6 +39,7 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -248,12 +250,12 @@ public class IndexesPageITCase extends HostedTestBase {
 
         try {
             findWindow.activate();
-            FindPage findPage = findApp.elementFactory().getFindPage();
 
-            findPage.search("search");
-            findPage.filterBy(new IndexFilter(index));
+            SearchQuery query = new SearchQuery("search")
+                    .withFilter(new IndexFilter(index));
+            findApp.findService().search(query);
 
-            verifyThat(findPage.getResultsPage().resultsDiv().getText(), is("No results found"));
+            verifyThat(findApp.elementFactory().getResultsPage().resultsDiv(), hasTextThat(is("No results found")));
         } finally {
             findWindow.close();
             searchWindow.activate();
@@ -269,12 +271,13 @@ public class IndexesPageITCase extends HostedTestBase {
         Window searchWindow = getWindow();
         HSODFind findApp = new HSODFind();
         Window findWindow = launchInNewWindow(findApp);
+        FindService findService = findApp.findService();
 
         try {
             findWindow.activate();
             FindPage findPage = findApp.elementFactory().getFindPage();
 
-            findPage.search("Exeter");
+            findService.search("Exeter");
             verifyNoError(findPage);
             verifyThat("Index displayed properly", findPage.indexElement(index), not(hasClass("disabled-index")));
 
@@ -282,13 +285,13 @@ public class IndexesPageITCase extends HostedTestBase {
             indexService.deleteIndex(index);
 
             findWindow.activate();
-            findPage.search("Plymouth");
+            findService.search("Plymouth");
             verifyNoError(findPage);
             verifyThat("Deleted index disabled", findPage.indexElement(index), hasClass("disabled-index"));
 
             findWindow.refresh();
             findPage = findApp.elementFactory().getFindPage();
-            findPage.search("Plymouth");
+            findService.search("Plymouth");
 
             verifyNoError(findPage);
 

@@ -3,10 +3,12 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.config.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.find.*;
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.FindSearchResult;
+import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
@@ -43,6 +45,7 @@ public class FindAndSearchITCase extends FindTestBase {
     private FindResultsPage findResultsPage;
     private SearchPage searchPage;
 
+    private FindService findService;
     private HSODPromotionService promotionService;
     private KeywordService keywordService;
     private Window searchWindow;
@@ -56,6 +59,7 @@ public class FindAndSearchITCase extends FindTestBase {
     @Before
     public void setUp(){
         findWindow = getWindow();
+        findService = getApplication().findService();
         findPage = getElementFactory().getFindPage();
         findResultsPage = findPage.getResultsPage();
 
@@ -71,7 +75,7 @@ public class FindAndSearchITCase extends FindTestBase {
 
     private void findSearch(String term) {
         findWindow.activate();
-        findPage.search(term);
+        findService.search(term);
     }
 
     private void deleteAllPromotions() {
@@ -294,8 +298,7 @@ public class FindAndSearchITCase extends FindTestBase {
             searchWindow.activate();
             promotionService.setUpStaticPromotion(new StaticPromotion("loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonnnnggggggggggggggggggggggg", "content", trigger));
 
-            findWindow.activate();
-            findPage.search(trigger);
+            findSearch(trigger);
 
             WebElement toggleRelatedConcepts = findPage.rightContainerToggleButton();
 
