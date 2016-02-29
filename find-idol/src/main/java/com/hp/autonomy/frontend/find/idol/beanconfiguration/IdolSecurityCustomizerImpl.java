@@ -45,7 +45,7 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
         final AuthenticationSuccessHandler successHandler = new LoginSuccessHandler(UserConfiguration.role(UserConfiguration.CONFIG_ROLE), "/config", FindController.PUBLIC_PATH);
 
         http.formLogin()
-            .loginPage("/login")
+            .loginPage("/loginPage")
             .loginProcessingUrl("/authenticate")
             .successHandler(successHandler)
             .failureUrl("/loginPage?error=auth");
