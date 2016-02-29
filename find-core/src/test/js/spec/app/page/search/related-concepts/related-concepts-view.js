@@ -33,7 +33,7 @@ define([
 
             this.queryTextModel = new Backbone.Model({
                 inputText: 'orange',
-                relatedConcepts: ['blood']
+                relatedConcepts: [['blood']]
             });
         });
 

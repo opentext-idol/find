@@ -64,11 +64,10 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     private Set<FieldAndValue> parametricValues;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = RelatedConceptsTable.NAME, joinColumns = {
-            @JoinColumn(name = RelatedConceptsTable.Column.SEARCH_ID)
+    @CollectionTable(name = ConceptClusterPhraseTable.NAME, joinColumns = {
+            @JoinColumn(name = ConceptClusterPhraseTable.Column.SEARCH_ID)
     })
-    @Column(name = RelatedConceptsTable.Column.CONCEPT)
-    private Set<String> relatedConcepts;
+    private Set<ConceptClusterPhrase> conceptClusterPhrases;
 
     @Column(name = Table.Column.START_DATE)
     @Type(type = JADIRA_TYPE_NAME)
@@ -101,28 +100,13 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         queryText = builder.queryText;
         indexes = builder.indexes;
         parametricValues = builder.parametricValues;
-        relatedConcepts = builder.relatedConcepts;
+        conceptClusterPhrases = builder.conceptClusterPhrases;
         minDate = builder.minDate;
         maxDate = builder.maxDate;
         dateCreated = builder.dateCreated;
         dateModified = builder.dateModified;
         dateRange = builder.dateRange;
         active = builder.active;
-    }
-
-    @Access(AccessType.PROPERTY)
-    @Column(name = Table.Column.DATE_RANGE_TYPE)
-    @JsonIgnore
-    public Integer getDateRangeInt() {
-        if(this.dateRange == null) {
-            return null;
-        } else {
-            return this.dateRange.getId();
-        }
-    }
-
-    public void setDateRangeInt(final Integer dateRangeInt) {
-        this.dateRange = DateRange.getType(dateRangeInt);
     }
 
     /**
@@ -145,19 +129,38 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
 
             indexes = other.getIndexes() == null ? indexes : other.getIndexes();
             parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
-            relatedConcepts = other.getRelatedConcepts() == null ? relatedConcepts : other.getRelatedConcepts();
+
+            if (other.getConceptClusterPhrases() != null) {
+                conceptClusterPhrases.clear();
+                conceptClusterPhrases.addAll(other.getConceptClusterPhrases());
+            }
         }
+    }
+
+    @Access(AccessType.PROPERTY)
+    @Column(name = Table.Column.DATE_RANGE_TYPE)
+    @JsonIgnore
+    public Integer getDateRangeInt() {
+        if(this.dateRange == null) {
+            return null;
+        } else {
+            return this.dateRange.getId();
+        }
+    }
+
+    public void setDateRangeInt(final Integer dateRangeInt) {
+        this.dateRange = DateRange.getType(dateRangeInt);
     }
 
     // WARNING: This logic is duplicated in the client-side QueryTextModel
     public String toQueryText() {
-        if (CollectionUtils.isEmpty(relatedConcepts)) {
+        if (CollectionUtils.isEmpty(conceptClusterPhrases)) {
             return queryText;
         } else {
             final Collection<String> quotedConcepts = new LinkedList<>();
 
-            for (final String phrase : relatedConcepts) {
-                quotedConcepts.add(wrapQuotes(phrase));
+            for (final ConceptClusterPhrase clusterPhrase : conceptClusterPhrases) {
+                quotedConcepts.add(wrapQuotes(clusterPhrase.getPhrase()));
             }
 
             return '(' + queryText + ") " + StringUtils.join(quotedConcepts, ' ');
@@ -209,7 +212,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         private String queryText;
         private Set<EmbeddableIndex> indexes;
         private Set<FieldAndValue> parametricValues;
-        private Set<String> relatedConcepts;
+        private Set<ConceptClusterPhrase> conceptClusterPhrases;
         private DateTime minDate;
         private DateTime maxDate;
         private DateTime dateCreated;
@@ -223,7 +226,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             queryText = search.queryText;
             indexes = search.indexes;
             parametricValues = search.parametricValues;
-            relatedConcepts = search.relatedConcepts;
+            conceptClusterPhrases = search.conceptClusterPhrases;
             minDate = search.minDate;
             maxDate = search.maxDate;
             dateCreated = search.dateCreated;
@@ -259,8 +262,8 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             return this;
         }
 
-        public Builder<T> setRelatedConcepts(final Set<String> relatedConcepts) {
-            this.relatedConcepts = relatedConcepts;
+        public Builder<T> setConceptClusterPhrases(final Set<ConceptClusterPhrase> conceptClusterPhrases) {
+            this.conceptClusterPhrases = conceptClusterPhrases;
             return this;
         }
 
@@ -307,8 +310,8 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             String CREATED_DATE = "created_date";
             String MODIFIED_DATE = "modified_date";
             String ACTIVE = "active";
-            String DATE_RANGE_TYPE = "date_range_type";
             String TOTAL_RESULTS = "total_results";
+            String DATE_RANGE_TYPE = "date_range_type";
         }
     }
 
@@ -332,16 +335,20 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         String NAME = "search_stored_state";
 
         interface Column {
+            String SEARCH_ID = "search_id";
             String STATE_TOKEN = "state_token";
         }
     }
 
-    public interface RelatedConceptsTable {
-        String NAME = "search_related_concepts";
+    public interface ConceptClusterPhraseTable {
+        String NAME = "search_concept_cluster_phrases";
 
         interface Column {
+            String ID = "search_concept_cluster_phrase_id";
             String SEARCH_ID = "search_id";
-            String CONCEPT = "concept";
+            String PHRASE = "phrase";
+            String PRIMARY = "primary_phrase";
+            String CLUSTER_ID = "cluster_id";
         }
     }
 }

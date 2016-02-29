@@ -147,15 +147,12 @@ define([
             router.on('route:emptySearch', this.reducedState, this);
 
             // Bind routing to search model
-            router.on('route:search', function(text, concepts) {
+            router.on('route:search', function(text) {
                 this.removeDocumentDetailView();
-
-                // The concepts string starts with a leading /
-                var conceptsArray = concepts ? _.tail(concepts.split('/')) : [];
 
                 this.searchModel.set({
                     inputText: text || '',
-                    relatedConcepts: conceptsArray
+                    relatedConcepts: []
                 });
 
                 this.$('.service-view-container').addClass('hide');
@@ -310,10 +307,10 @@ define([
         },
 
         generateURL: function() {
-            var components = [this.searchModel.get('inputText')].concat(this.searchModel.get('relatedConcepts'));
+            var inputText = this.searchModel.get('inputText');
 
-            if(_.compact(components).length) {
-                return 'find/search/query/' + _.map(components, encodeURIComponent).join('/');
+            if(inputText) {
+                return 'find/search/query/' + encodeURIComponent(inputText);
             } else {
                 return 'find/search/query';
             }

@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -12,12 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.isA;
@@ -34,13 +33,16 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
         final String title = "Any old saved search";
         final String queryText = "orange";
 
-        final Set<String> relatedConcepts = new HashSet<>();
-        relatedConcepts.add("manhattan");
-        relatedConcepts.add("mid-town");
+        final Set<ConceptClusterPhrase> conceptClusterPhrases = new HashSet<>();
+        final ConceptClusterPhrase manhattanClusterPhraseOne = new ConceptClusterPhrase("manhattan", true, 0);
+        final ConceptClusterPhrase manhattanClusterPhraseTwo = new ConceptClusterPhrase("mid-town", false, 0);
+        conceptClusterPhrases.add(manhattanClusterPhraseOne);
+        conceptClusterPhrases.add(manhattanClusterPhraseTwo);
 
         final SavedQuery savedQuery = new SavedQuery.Builder()
                 .setTitle(title)
                 .setQueryText(queryText)
+                .setConceptClusterPhrases(conceptClusterPhrases)
                 .build();
 
         final SavedQuery createdEntity = savedQueryService.create(savedQuery);
@@ -48,13 +50,18 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
         assertThat(createdEntity.getQueryText(), is(queryText));
         assertThat(createdEntity.getTitle(), is(title));
         assertThat(createdEntity.getId(), isA(Long.class));
+        assertThat(createdEntity.getConceptClusterPhrases(), hasSize(2));
+
+        conceptClusterPhrases.clear();
+        final ConceptClusterPhrase jerseyClusterPhraseOne = new ConceptClusterPhrase("jersey", true, 0);
+        conceptClusterPhrases.add(jerseyClusterPhraseOne);
 
         // Mimic how the update method is likely to be called - with a new entity without a user
         final SavedQuery updateEntity = new SavedQuery.Builder()
                 .setId(createdEntity.getId())
                 .setTitle(title)
                 .setQueryText(queryText)
-                .setRelatedConcepts(relatedConcepts)
+                .setConceptClusterPhrases(conceptClusterPhrases)
                 .build();
 
         final SavedQuery updatedEntity = savedQueryService.update(updateEntity);
@@ -63,15 +70,25 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
         assertThat(updatedEntity.getId(), is(createdEntity.getId()));
         assertThat(updatedEntity.getTitle(), is(title));
 
-        final Collection<String> updatedConcepts = updatedEntity.getRelatedConcepts();
-        assertThat(updatedConcepts, containsInAnyOrder("manhattan", "mid-town"));
+        final Set<ConceptClusterPhrase> updatedConceptClusters = updatedEntity.getConceptClusterPhrases();
+        assertThat(updatedConceptClusters, hasSize(1));
+
+        final ConceptClusterPhrase updatedConceptCluster = updatedConceptClusters.iterator().next();
+        assertThat(updatedConceptCluster.getClusterId(), is(jerseyClusterPhraseOne.getClusterId()));
+        assertThat(updatedConceptCluster.getPhrase(), is(jerseyClusterPhraseOne.getPhrase()));
+        assertThat(updatedConceptCluster.isPrimary(), is(jerseyClusterPhraseOne.isPrimary()));
 
         final Set<SavedQuery> fetchedEntities = savedQueryService.getAll();
         assertThat(fetchedEntities, hasSize(1));
 
         final SavedQuery fetchedEntity = fetchedEntities.iterator().next();
         assertThat(fetchedEntity.getTitle(), is(title));
-        assertThat(fetchedEntity.getRelatedConcepts(), containsInAnyOrder("manhattan", "mid-town"));
+        assertThat(fetchedEntity.getConceptClusterPhrases(), hasSize(1));
+
+        final ConceptClusterPhrase fetchedConceptClusterPhrase = fetchedEntity.getConceptClusterPhrases().iterator().next();
+        assertThat(fetchedConceptClusterPhrase.getClusterId(), is(jerseyClusterPhraseOne.getClusterId()));
+        assertThat(fetchedConceptClusterPhrase.getPhrase(), is(jerseyClusterPhraseOne.getPhrase()));
+        assertThat(fetchedConceptClusterPhrase.isPrimary(), is(jerseyClusterPhraseOne.isPrimary()));
 
         savedQueryService.deleteById(updatedEntity.getId());
 

@@ -12,7 +12,7 @@ define([
 ], function(Backbone, DatabasesCollection, SavedSearchModel, DatesFilterModel, moment) {
 
     var INPUT_TEXT = 'johnny';
-    var RELATED_CONCEPTS = ['depp'];
+    var RELATED_CONCEPTS = [['depp']];
     var MAX_DATE = 555555555;
     var MIN_DATE = 444444444;
 
@@ -78,7 +78,7 @@ define([
             });
 
             it('returns false when the related concepts are different', function() {
-                this.queryTextModel.set('relatedConcepts', ['pirate'].concat(RELATED_CONCEPTS));
+                this.queryTextModel.set('relatedConcepts', [['pirate']].concat(RELATED_CONCEPTS));
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });

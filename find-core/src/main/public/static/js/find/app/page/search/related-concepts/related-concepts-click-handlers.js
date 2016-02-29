@@ -22,8 +22,9 @@ define([
          */
         updateQuery: function(options) {
             return function(newConcepts) {
-                var existingConcepts = options.queryTextModel.get('relatedConcepts');
-                options.queryTextModel.set('relatedConcepts', _.union(existingConcepts, newConcepts));
+                var concepts = _.clone(options.queryTextModel.get('relatedConcepts'));
+                concepts.push(newConcepts);
+                options.queryTextModel.set('relatedConcepts', concepts);
             };
         },
 
@@ -34,11 +35,14 @@ define([
          */
         newQuery: function(options) {
             return function(newConcepts) {
+                var concepts = _.clone(options.savedSearchModel.get('relatedConcepts'));
+                concepts.push(newConcepts);
+
                 var newSearch = new SavedSearchModel(_.defaults({
                     id: null,
                     title: i18n['search.newSearch'],
                     type: SavedSearchModel.Type.QUERY,
-                    relatedConcepts: _.union(options.savedSearchModel.get('relatedConcepts'), newConcepts)
+                    relatedConcepts: concepts
                 }, options.savedSearchModel.attributes));
 
                 options.savedQueryCollection.add(newSearch);

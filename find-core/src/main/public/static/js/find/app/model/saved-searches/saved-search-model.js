@@ -20,7 +20,7 @@ define([
      * @typedef {Object} SavedSearchModelAttributes
      * @property {String} title
      * @property {String} queryText
-     * @property {String[]} relatedConcepts
+     * @property {String[][]} relatedConcepts
      * @property {{name: String, domain: String}[]} indexes
      * @property {{field: String, value: String}[]} parametricValues
      * @property {Moment} minDate
@@ -76,10 +76,26 @@ define([
         }
     }
 
+    var arrayEqualityPredicate = _.partial(arraysEqual, _, _, _.isEqual);
+
     // TODO: Remove this when toResourceIdentifiers consistently returns null for domains against IDOL
     function selectedIndexToResourceIdentifier(selectedIndex) {
         // Selected indexes against IDOL are either null, undefined or the empty string; normalize to null here
         return {name: selectedIndex.name, domain: selectedIndex.domain || null};
+    }
+
+    function relatedConceptsToClusterModel(relatedConcepts, clusterId) {
+        if(!relatedConcepts.length) {
+            return null;
+        }
+
+        return _.map(relatedConcepts, function(concept, index) {
+            return {
+                clusterId: clusterId,
+                phrase: concept,
+                primary: index === 0
+            };
+        });
     }
 
     return Backbone.Model.extend({
@@ -96,7 +112,24 @@ define([
                 return value && moment(value);
             });
 
-            return _.defaults(dateAttributes, response);
+            var relatedConcepts = _.chain(response.conceptClusterPhrases)
+                .groupBy('clusterId')
+                .map(function(clusterPhrases) {
+                    return _.chain(clusterPhrases)
+                        .sortBy('primary')
+                        .reverse()
+                        .pluck('phrase')
+                        .value();
+                })
+                .value();
+
+            return _.defaults(dateAttributes, { relatedConcepts: relatedConcepts }, response);
+        },
+
+        toJSON: function() {
+            return _.defaults({
+                conceptClusterPhrases: _.flatten(this.get('relatedConcepts').map(relatedConceptsToClusterModel))
+            }, Backbone.Model.prototype.toJSON.call(this));
         },
 
         destroy: function(options) {
@@ -116,7 +149,7 @@ define([
 
             return this.get('queryText') === queryState.queryTextModel.get('inputText')
                     && this.equalsQueryStateDateFilters(queryState)
-                    && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'))
+                    && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'), arrayEqualityPredicate)
                     && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                     && arraysEqual(this.get('parametricValues'), queryState.selectedParametricValues.map(pickFieldAndValue), _.isEqual);
         },
