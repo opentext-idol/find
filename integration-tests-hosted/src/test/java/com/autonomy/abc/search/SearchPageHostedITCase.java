@@ -2,9 +2,13 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.documentPreview.SharedPreviewTests;
+import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
@@ -121,4 +125,13 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		documentViewer.close();
 	}
 
+	@Test
+	@KnownBug("CSA-1767 - footer not hidden properly")
+	@RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
+	public void testDocumentPreview(){
+		Index index = new Index("fifa");
+		searchService.search(new SearchQuery("document preview").withFilter(new IndexFilter(index)));
+
+		SharedPreviewTests.testDocumentPreviews(getMainSession(), searchPage.getSearchResults().subList(0, 5), index);
+	}
 }
