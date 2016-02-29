@@ -86,7 +86,7 @@ public class PromotionsITCase extends ABCTestBase {
 	}
 
 	@Test
-	@KnownBug("CCUK-3394")
+	@KnownBug({"CCUK-3394", "CCUK-3649"})
 	public void testCorrectDocumentsInPromotion() {
 		List<String> promotedDocTitles = setUpCarsPromotion(16);
 		List<String> promotedList = promotionsDetailPage.getPromotedTitles();
