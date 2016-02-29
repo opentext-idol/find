@@ -52,8 +52,14 @@ define([
                 .tileLayer(configuration().map.tileUrlTemplate)
                 .addTo(map);
 
+            // Create the icon by hand rather than using the default because the leaflet.Icon.Default.imagePath method
+            // does not work after JS concatenation
+            var icon = leaflet.icon(_.defaults({
+                iconUrl: '../static-' + configuration().commit + '/bower_components/leaflet/dist/images/marker-icon.png'
+            }, leaflet.Icon.Default.options));
+
             leaflet
-                .marker([latitude, longitude])
+                .marker([latitude, longitude], {icon: icon})
                 .addTo(map)
                 .on('click', setInitialView);
 

@@ -333,6 +333,7 @@ define([
             // TODO: somebody else needs to own this
             $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').removeClass('hide');
             $('.container-fluid, .find-logo-small').removeClass('reduced');
+            this.inputView.unFocus();
         },
 
         // Set view to initial state (large central search bar)
@@ -348,6 +349,7 @@ define([
             // TODO: somebody else needs to own this
             $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').addClass('hide');
             $('.container-fluid, .find-logo-small').addClass('reduced');
+            this.inputView.focus();
         },
 
         // If we already have the document model in one of our collections, then don't bother fetching it
@@ -382,6 +384,8 @@ define([
 
         clearComparison: function() {
             if(this.comparisonView) {
+                // Setting the element to nothing prevents the containing element from being removed when the view is removed
+                this.comparisonView.setElement();
                 this.comparisonView.remove();
                 this.stopListening(this.comparisonView);
                 this.comparisonView = null;
