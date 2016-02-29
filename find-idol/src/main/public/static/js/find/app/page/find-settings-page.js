@@ -8,8 +8,9 @@ define([
     'find/app/page/settings/aci-widget',
     'find/app/page/settings/community-widget',
     'find/app/page/settings/query-manipulation-widget',
+    'find/app/page/settings/view-widget',
     'i18n!find/nls/bundle'
-], function(SettingsPage, AciWidget, CommunityWidget, QueryManipulationWidget, i18n) {
+], function(SettingsPage, AciWidget, CommunityWidget, QueryManipulationWidget, ViewWidget, i18n) {
 
     return SettingsPage.extend({
         initializeWidgets: function() {
@@ -50,6 +51,19 @@ define([
                             enable: 'Enable Query Manipulation',
                             enabled: 'Query Manipulation is enabled',
                             loading: 'Loading...'
+                        })
+                    })
+                ], [
+                    new ViewWidget({
+                        configItem: 'view',
+                        description: 'View documents by either a custom field, or using a connector',
+                        isOpened: true,
+                        serverName: 'view',
+                        title: 'View',
+                        strings: _.extend(this.serverStrings(), {
+                            referenceFieldLabel: i18n['settings.view.referenceFieldLabel'],
+                            referenceFieldBlank: i18n['settings.view.referenceFieldBlank'],
+                            referenceFieldPlaceholder: i18n['settings.view.referenceFieldPlaceholder']
                         })
                     })
                 ]
