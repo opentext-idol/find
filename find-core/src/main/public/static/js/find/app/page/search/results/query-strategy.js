@@ -12,8 +12,7 @@ define([], function () {
 
     function requestParams(queryModel, infiniteScroll) {
         return {
-            text: queryModel.get('queryText'),
-            auto_correct: false
+            text: queryModel.get('queryText')
         };
     }
 
