@@ -7,8 +7,9 @@ define([
     'find/app/page/abstract-find-settings-page',
     'find/app/page/settings/aci-widget',
     'find/app/page/settings/community-widget',
+    'find/app/page/settings/query-manipulation-widget',
     'i18n!find/nls/bundle'
-], function(SettingsPage, AciWidget, CommunityWidget, i18n) {
+], function(SettingsPage, AciWidget, CommunityWidget, QueryManipulationWidget, i18n) {
 
     return SettingsPage.extend({
         initializeWidgets: function() {
@@ -37,7 +38,20 @@ define([
                         })
                     })
                 ], [
-
+                    new QueryManipulationWidget({
+                        configItem: 'queryManipulation',
+                        description: 'Enable query manipulation with QMS',
+                        isOpened: true,
+                        serverName: 'qms',
+                        title: 'Query Manipulation',
+                        strings: _.extend(this.serverStrings(), {
+                            disable: 'Disable Query Manipulation',
+                            disabled: 'Query Manipulation is disabled',
+                            enable: 'Enable Query Manipulation',
+                            enabled: 'Query Manipulation is enabled',
+                            loading: 'Loading...'
+                        })
+                    })
                 ]
             ];
         }

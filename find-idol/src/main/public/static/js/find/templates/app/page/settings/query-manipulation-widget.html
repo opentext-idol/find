@@ -1,0 +1,24 @@
+<% var uniqueId = _.uniqueId('settings-'); %>
+<div class="row">
+    <div class="form-group m-t-sm col-sm-12">
+        <label for="<%-uniqueId%>-blacklist" class="control-label">Blacklist Name</label>
+        <input type="text" class="form-control blacklist-input" id="<%-uniqueId%>-blacklist">
+    </div>
+</div>
+<div class="row">
+    <div class="form-group m-t-sm col-sm-12">
+        <label class="control-label">
+            <input type="checkbox" class="form-control expand-query-input">
+            Expand Query
+        </label>
+    </div>
+</div>
+<div class="row">
+    <div class="form-group m-t-sm col-sm-12">
+        <label for="<%-uniqueId%>-typeahead" class="control-label">Typeahead Mode</label>
+        <select id="<%-uniqueId%>-typeahead" class="form-control typeahead-input">
+            <option value="Dictionary">Dictionary</option>
+            <option value="Index">Index</option>
+        </select>
+    </div>
+</div>
