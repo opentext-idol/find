@@ -17,9 +17,11 @@ define([
                 response.date = moment(response.date);
             }
 
-            response.contentType = response.fieldMap['contentType'];
-            response.url = response.fieldMap['url'];
-            response.offset = response.fieldMap['offset'];
+            _.each(['contentType', 'url', 'offset'], function (importantField) {
+                if (response.fieldMap[importantField]) {
+                    response[importantField] = response.fieldMap[importantField].values[0];
+                }
+            });
 
             response.fields = _.map(response.fieldMap, function (value) {
                 if (value.type === 'DATE') {
@@ -33,7 +35,7 @@ define([
 
             response.fieldMap = null;
 
-            _.sortBy(response.fields, 'displayName');
+            _.sortBy(response.fields, 'id');
 
             return response;
         }
