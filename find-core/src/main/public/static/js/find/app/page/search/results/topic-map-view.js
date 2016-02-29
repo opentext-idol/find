@@ -70,7 +70,7 @@ define([
 
         renderAmountSlider: function() {
             var max = this.entityCollection.filter(function(entity) {
-                return entity.get(this.clusteringMode) > this.relevance.value;
+                return entity.get(this.clusteringMode) >= this.relevance.value;
             }, this).length;
 
             this.$amountSlider.slider({
