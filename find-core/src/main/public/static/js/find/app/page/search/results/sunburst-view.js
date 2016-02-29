@@ -111,7 +111,7 @@ define([
         populateDropDown: function($dropdown, fields) {
             this.emptyDropdown($dropdown);
 
-            var html = _.map(fields, function(field) {
+            var html = _.map(fields.sort(), function(field) {
                 return optionTemplate({field: field});
             });
 
