@@ -2,20 +2,15 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.documentPreview.SharedPreviewTests;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.FindParametricCheckbox;
-import com.autonomy.abc.selenium.find.FindResultsPage;
-import com.autonomy.abc.selenium.find.FindSearchResult;
+import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.ParametricFilter;
-import com.autonomy.abc.selenium.search.SearchResult;
-import com.autonomy.abc.selenium.search.StringDateFilter;
+import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -55,6 +50,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 public class FindITCase extends FindTestBase {
     private FindPage findPage;
     private FindResultsPage results;
+    private FindService findService;
 
     public FindITCase(TestConfig config) {
         super(config);
@@ -64,6 +60,7 @@ public class FindITCase extends FindTestBase {
     public void setUp(){
         findPage = getElementFactory().getFindPage();
         results = findPage.getResultsPage();
+        findService = getApplication().findService();
     }
 
     @Test
@@ -369,7 +366,7 @@ public class FindITCase extends FindTestBase {
                 verifyDocumentViewer(docViewer);
                 docViewer.close();
             } catch (WebDriverException e){
-                fail("Could not click on title - most likely CSA-1767");
+                fail("Could not click on preview button - most likely CSA-1767");
             }
         }
     }
@@ -715,6 +712,18 @@ public class FindITCase extends FindTestBase {
 
         verifyThat(findPage.getSearchBoxTerm(), is(""));
         verifyThat("taken back to landing page after refresh", findPage.footerLogo(), displayed());
+    }
+
+    @Test
+    public void testDocumentPreview(){
+        Index index = new Index("fifa");
+        findService.search(new SearchQuery("document preview").withFilter(new IndexFilter(index)));
+
+        for(int i = 1; i <= 5; i++) {
+            DocumentViewer documentViewer = results.getResult(i).openDocumentPreview();
+            SharedPreviewTests.testDocumentPreview(getMainSession(), documentViewer, index);
+            documentViewer.close();
+        }
     }
 
     private enum FileType {
