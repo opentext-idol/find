@@ -203,12 +203,8 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return new InlineEdit(findElement(By.className("promotion-query-edit")), getDriver());
     }
 
-    public void viewDocument(String title) {
-        for(WebElement document : promotedList()){
-            if(document.getText().equals(title)){
-                document.click();
-            }
-        }
+    public void viewDocument(int index) {
+        promotedList().get(index).click();
     }
 
     public PromotionsDetailTriggerForm getTriggerForm() {
