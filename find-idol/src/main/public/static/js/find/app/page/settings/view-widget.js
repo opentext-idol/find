@@ -34,6 +34,15 @@ define([
             this.$connectorHost = this.$('.connector-container input[name=host]');
             this.$connectorPort = this.$('.connector-container input[name=port]');
             this.$connectorProtocol = this.$('.connector-container select[name=protocol]');
+
+            var toggleInputs = _.bind(function () {
+                this.$('.connector-container').toggle(this.$modeSelect.val() === 'CONNECTOR');
+                this.$('.field-form-group').toggle(this.$modeSelect.val() === 'FIELD');
+            }, this);
+
+            this.$modeSelect.on('input', toggleInputs);
+
+            toggleInputs();
         },
 
         updateConfig: function(config) {
