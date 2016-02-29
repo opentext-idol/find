@@ -14,7 +14,9 @@ define([
                     reference: 'my-document',
                     title: title,
                     fieldMap: {
-                        url: 'http://example.com'
+                        url: {
+                            values: ['http://example.com']
+                        }
                     }
                 };
 
