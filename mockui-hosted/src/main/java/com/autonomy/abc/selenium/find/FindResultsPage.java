@@ -22,6 +22,10 @@ public class FindResultsPage extends AppElement {
         return findElements(By.cssSelector(".related-concepts-list a"));
     }
 
+    public List<String> getRelatedConcepts() {
+        return ElementUtil.getTexts(relatedConcepts());
+    }
+
     public WebElement hoverOverRelatedConcept(int i) {
         WebElement concept = relatedConcepts().get(i);
         ElementUtil.hover(concept, getDriver());

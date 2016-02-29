@@ -18,6 +18,7 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsAnyOf;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
@@ -122,19 +123,6 @@ public class RelatedConceptsITCase extends FindTestBase {
         verifyThat(navBar.getAlsoSearchingForTerms(), containsItems(relatedConcepts));
     }
 
-    private String clickFirstNewConcept(List<String> existingConcepts) {
-        for (WebElement concept : results.relatedConcepts()) {
-            String conceptText = concept.getText();
-            if (!existingConcepts.contains(conceptText)) {
-                concept.click();
-                existingConcepts.add(conceptText);
-                results.unhover();
-                return conceptText;
-            }
-        }
-        throw new NoSuchElementException("no new related concepts");
-    }
-
     @Test
     public void testAddRemoveConcepts() {
         findService.search("jungle");
@@ -150,5 +138,45 @@ public class RelatedConceptsITCase extends FindTestBase {
         verifyThat(alsoSearchingFor, not(hasItem(firstConcept)));
         verifyThat(alsoSearchingFor, hasItem(secondConcept));
         verifyThat(navBar.getSearchBoxTerm(), is("jungle"));
+    }
+
+    @Test
+    @KnownBug("CCUK-3566")
+    public void testTermNotInRelatedConcepts() {
+        final String query = "world cup";
+        findService.search(query);
+        List<String> addedConcepts = new ArrayList<>();
+
+        verifyThat(results.getRelatedConcepts(), not(hasItem(equalToIgnoringCase(query))));
+
+        for (int i = 0; i < 5; i++) {
+            clickFirstNewConcept(addedConcepts);
+            verifyThat(results.getRelatedConcepts(), not(hasItem(equalToIgnoringCase(query))));
+        }
+    }
+
+    @Test
+    @KnownBug("CCUK-3566")
+    public void testAdditionalConceptsNotAlsoRelated() {
+        findService.search("matt");
+        List<String> addedConcepts = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            clickFirstNewConcept(addedConcepts);
+            verifyThat(results.getRelatedConcepts(), not(containsAnyOf(addedConcepts)));
+        }
+    }
+
+    private String clickFirstNewConcept(List<String> existingConcepts) {
+        for (WebElement concept : results.relatedConcepts()) {
+            String conceptText = concept.getText();
+            if (!existingConcepts.contains(conceptText)) {
+                concept.click();
+                existingConcepts.add(conceptText);
+                results.unhover();
+                return conceptText;
+            }
+        }
+        throw new NoSuchElementException("no new related concepts");
     }
 }
