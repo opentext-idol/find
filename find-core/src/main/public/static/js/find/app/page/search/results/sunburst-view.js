@@ -1,6 +1,6 @@
 define([
     'backbone',
-    'find/app/model/find-base-collection',
+    'find/app/model/dependent-parametric-collection',
     'underscore',
     'jquery',
     'i18n!find/nls/bundle',
@@ -8,38 +8,9 @@ define([
     'text!find/templates/app/page/search/results/sunburst-view.html',
     'text!find/templates/app/page/loading-spinner.html',
     'chosen'
-], function(Backbone, BaseCollection, _, $, i18n, Sunburst, template, loadingSpinnerTemplate) {
+], function(Backbone, DependentParametricCollection, _, $, i18n, Sunburst, template, loadingSpinnerTemplate) {
 
     'use strict';
-
-    var Collection = BaseCollection.extend({
-        url: '../api/public/parametric/second-parametric',
-
-        parse: function(results) {
-            return _.chain(results)
-                .map(function(result) {
-                    var children = _.chain(result.field)
-                        .map(function(child) {
-                            return {
-                                text: child.value,
-                                count: Number(child.count)
-                            };
-                        })
-                        .sortBy('count')
-                        .last(10)
-                        .value();
-
-                    return {
-                        text: result.value,
-                        count: Number(result.count),
-                        children: children
-                    };
-                })
-                .sortBy('count')
-                .last(10)
-                .value();
-        }
-    });
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -48,7 +19,7 @@ define([
         initialize: function(options) {
             this.queryModel = options.queryModel;
             this.parametricCollection = options.parametricCollection;
-            this.secondParametricCollection = new Collection();
+            this.secondParametricCollection = new DependentParametricCollection();
         },
 
         getParametricCollection: function(first, second) {
