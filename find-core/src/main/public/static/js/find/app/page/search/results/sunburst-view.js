@@ -12,22 +12,67 @@ define([
 
     'use strict';
 
+    var SUNBURST_NAME_ATTR = 'text';
+    var SUNBURST_SIZE_ATTR = 'count';
+
+    var sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
+    var sunburstLabelTemplate = _.template('<div style="font-size:14px;font-weight:bold;"><%=icon%><%-name%></div><%-size%>');
+
+    function drawSunburst($el, data) {
+        var color = d3.scale.category20c();
+
+        return new Sunburst($el, {
+            data: {
+                text: i18n['search.sunburst.title'],
+                children: data,
+                count: _.reduce(_.pluck(data, SUNBURST_SIZE_ATTR), function(a, b) {return a + b;})
+            },
+            i18n: i18n,
+            nameAttr: SUNBURST_NAME_ATTR,
+            sizeAttr: SUNBURST_SIZE_ATTR,
+            colorFn: function(d) {
+                if (!d.parent) {
+                    return color(d.parent);
+                }
+
+                if (!d.parent.parent) {
+                    return d.color = d3.hsl(d[SUNBURST_SIZE_ATTR] ? color(d[SUNBURST_NAME_ATTR]) : 'black');
+                }
+
+                var parentColour = d.parent.color;
+                var index = d.parent.children.indexOf(d);
+                var saturationShift = index / d.parent.children.length;
+                return d.color = d3.hsl(parentColour.h, (parentColour.s + saturationShift) % 1, parentColour.l + 0.05);
+            },
+            labelFormatter: function(d, prevClicked) {
+                var zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
+                var hoveringCenter = prevClicked ? d === prevClicked.parent : d.depth === 0;
+
+                return sunburstLabelTemplate({
+                    name: d[SUNBURST_NAME_ATTR],
+                    size: d[SUNBURST_SIZE_ATTR],
+                    icon: !zoomedOnRoot && hoveringCenter ? sunburstLabelIcon : ''
+                });
+            }
+        });
+    }
+
     return Backbone.View.extend({
         template: _.template(template),
-        loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
+        loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
             this.parametricCollection = options.parametricCollection;
-            this.secondParametricCollection = new DependentParametricCollection();
+            this.dependentParametricCollection = new DependentParametricCollection();
         },
 
-        getParametricCollection: function(first, second) {
+        fetchDependentFields: function(first, second) {
             if (!second) this.$sunburst.empty();
             this.toggleLoadingSpinner(true);
             this.toggleError('');
 
-            this.secondParametricCollection.fetch({
+            this.dependentParametricCollection.fetch({
                 data: {
                     databases: _.escape(this.queryModel.get('indexes')),
                     queryText: this.queryModel.get('queryText'),
@@ -42,51 +87,12 @@ define([
 
         update: function() {
             this.$sunburst.empty();
-            var color = d3.scale.category20c();
 
-            if (!this.secondParametricCollection.isEmpty()) {
-                var nameAttr = 'text';
-                var sizeAttr = 'count';
-
-                this.sunburst = new Sunburst(this.$sunburst, {
-                    data: {
-                        text: i18n['search.sunburst.title'],
-                        children: this.secondParametricCollection.toJSON(),
-                        count: this.secondParametricCollection.chain()
-                            .invoke('get', sizeAttr)
-                            .reduce(function(a, b) {
-                                return a + b;
-                            })
-                            .value()
-                    },
-                    i18n: i18n,
-                    nameAttr: nameAttr,
-                    sizeAttr: sizeAttr,
-                    colorFn: function(d) {
-                        if (!d.parent) {
-                            return color(d.parent);
-                        }
-                        if (!d.parent.parent) {
-                            return d.color = d3.hsl(d[sizeAttr] ? color(d[nameAttr]) : 'black');
-                        }
-
-                        var par = d.parent.color;
-                        var idx = d.parent.children.indexOf(d);
-                        var satShift = idx / d.parent.children.length;
-                        return d.color = d3.hsl(par.h, (par.s + satShift) % 1, par.l + 0.05);
-                    },
-                    labelFormatter: function(d, prevClicked) {
-                        var zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
-                        var hoveringCenter = prevClicked ? d === prevClicked.parent : d.depth === 0;
-                        var icon = !zoomedOnRoot && hoveringCenter ? '<i class="icon-zoom-out"></i>' : '';
-
-                        return '<div style="font-size:14px;font-weight:bold;">' + icon + _.escape(d[nameAttr]) + '</div>'
-                            + d[sizeAttr];
-                    }
-                });
-
+            if (!this.dependentParametricCollection.isEmpty()) {
+                drawSunburst(this.$sunburst, this.dependentParametricCollection.toJSON());
+                
                 this.$sunburst.removeClass('hide');
-                this.toggleError('')
+                this.toggleError('');
             }
 
             this.toggleLoadingSpinner(false);
@@ -124,7 +130,7 @@ define([
         firstPass: function() {
             this.$sunburst.addClass('hide');
             var val = this.$firstChosen.val();
-            this.getParametricCollection(val);
+            this.fetchDependentFields(val);
             var secondCollection = this.parametricCollection.pluck('name');
 
             this.populateDropDown(this.$secondChosen, _.reject(secondCollection, function(name) {
@@ -144,13 +150,16 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({i18n: i18n}));
+            this.$el.html(this.template({
+                i18n: i18n,
+                loadingHtml: this.loadingHtml
+            }));
+
+            this.$loadingSpinner = this.$('.sunburst-loading')
+                .addClass('hide');
 
             this.$error = this.$('.sunburst-view-error');
-            this.$loadingSpinner = $(this.loadingTemplate);
             this.$sunburst = this.$('.sunburst');
-            this.$sunburst.after(this.$loadingSpinner);
-            this.$loadingSpinner.addClass('hide');
             this.$sunburst.addClass('hide');
             this.$firstChosen = this.$('.first-parametric');
             this.$secondChosen = this.$('.second-parametric');
@@ -162,7 +171,7 @@ define([
 
             this.$secondChosen.change(_.bind(function() {
                 this.$sunburst.addClass('hide');
-                this.getParametricCollection(this.$firstChosen.val(), this.$secondChosen.val());
+                this.fetchDependentFields(this.$firstChosen.val(), this.$secondChosen.val());
             }, this));
 
             this.listenTo(this.parametricCollection, 'request', this.resetView);
@@ -179,7 +188,7 @@ define([
                 }
             });
 
-            this.listenTo(this.secondParametricCollection, 'sync', this.update);
+            this.listenTo(this.dependentParametricCollection, 'sync', this.update);
         }
     });
 
