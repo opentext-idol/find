@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -134,16 +135,15 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public List<String> getPromotedTitles() {
-        waitForPromotedTitlesToLoad();
+        try {
+            waitForPromotedTitlesToLoad();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
         return ElementUtil.getTexts(promotedList());
     }
 
-    /**
-     * Get the documents in this promotion as WebElements
-     * NB: bypasses the "Unknown Document" check
-     * @return promoted document titles as WebElements
-     */
-    public List<WebElement> promotedList() {
+    private List<WebElement> promotedList() {
         return new WebDriverWait(getDriver(), 10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".promoted-documents-list h3")));
     }
 
