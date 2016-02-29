@@ -1,0 +1,8 @@
+<% var uid = _.uniqueId('referenceField'); %>
+
+<div class="form-group m-t-sm">
+    <label for="<%-uid%>"><%-strings.referenceFieldLabel%>:</label>
+    <input class="reference-field form-control" id="<%-uid%>" name="referenceField" placeholder="<%-strings.referenceFieldPlaceholder%>">
+    <span class="settings-required-flag"><i class="fa fa-asterisk"></i></span>
+    <span class="settings-client-validation settings-info hide"><%-strings.referenceFieldBlank%></span>
+</div>
