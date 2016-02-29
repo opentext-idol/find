@@ -138,12 +138,19 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return ElementUtil.getTexts(promotedList());
     }
 
-    private List<WebElement> promotedList() {
+    /**
+     * Get the documents in this promotion as WebElements
+     * NB: bypasses the "Unknown Document" check
+     * @return promoted document titles as WebElements
+     */
+    public List<WebElement> promotedList() {
         return new WebDriverWait(getDriver(), 10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".promoted-documents-list h3")));
     }
 
     private void waitForPromotedTitlesToLoad() {
-        new WebDriverWait(getDriver(), 20).until(ExpectedConditions.refreshed(new ExpectedCondition<Boolean>() {
+        new WebDriverWait(getDriver(), 20)
+                .withMessage("loading documents in a promotion")
+                .until(ExpectedConditions.refreshed(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver input) {
                 List<WebElement> docs = input.findElements(By.cssSelector(".promoted-documents-list h3"));
@@ -178,6 +185,10 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public Removable removablePromotedDocument(final String title) {
         return new LabelBox(promotedDocument(title), getDriver());
+    }
+
+    public Removable removablePromotedDocument(final int index) {
+        return new LabelBox(ElementUtil.ancestor(promotedList().get(index), 2), getDriver());
     }
 
     public Editable staticPromotedDocumentTitle() {

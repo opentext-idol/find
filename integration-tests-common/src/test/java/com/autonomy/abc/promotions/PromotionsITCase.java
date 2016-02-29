@@ -95,20 +95,18 @@ public class PromotionsITCase extends ABCTestBase {
 
 	@Test
 	public void testDeletePromotedDocuments() {
-		List<String> promotedDocTitles = setUpCarsPromotion(4);
-		int numberOfDocuments = promotionsDetailPage.getPromotedTitles().size();
-		verifyThat(numberOfDocuments, is(4));
+		final int desiredSize = 4;
+		setUpCarsPromotion(desiredSize);
+		int promotedSize = promotionsDetailPage.promotedList().size();
+		verifyThat(promotedSize, is(desiredSize));
 
-		for (final String title : promotedDocTitles) {
-			promotionsDetailPage.removablePromotedDocument(title).removeAndWait();
-			numberOfDocuments--;
-
-			if (numberOfDocuments == 1) {
-				assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(1));
-				verifyThat("remove document button is not visible when a single document", promotionsPage, not(containsElement(By.className("remove-document-reference"))));
-				break;
-			}
+		while (promotedSize > 1) {
+			promotionsDetailPage.removablePromotedDocument(0).removeAndWait();
+			promotedSize--;
 		}
+
+		assertThat(promotionsDetailPage.promotedList(), hasSize(1));
+		verifyThat("remove document button is not visible when a single document", promotionsPage, not(containsElement(By.className("remove-document-reference"))));
 	}
 
 	@Test
