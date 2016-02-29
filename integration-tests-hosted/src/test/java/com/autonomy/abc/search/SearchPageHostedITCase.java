@@ -132,10 +132,6 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		Index index = new Index("fifa");
 		searchService.search(new SearchQuery("document preview").withFilter(new IndexFilter(index)));
 
-		for(int i = 1; i <= 5; i++) {
-			DocumentViewer documentViewer = searchPage.getSearchResult(i).openDocumentPreview();
-			SharedPreviewTests.testDocumentPreview(getMainSession(), documentViewer, index);
-			documentViewer.close();
-		}
+		SharedPreviewTests.testDocumentPreviews(getMainSession(), searchPage.getSearchResults().subList(0, 5), index);
 	}
 }

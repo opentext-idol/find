@@ -669,11 +669,7 @@ public class FindITCase extends FindTestBase {
         Index index = new Index("fifa");
         findService.search(new SearchQuery("document preview").withFilter(new IndexFilter(index)));
 
-        for(int i = 1; i <= 5; i++) {
-            DocumentViewer documentViewer = results.getResult(i).openDocumentPreview();
-            SharedPreviewTests.testDocumentPreview(getMainSession(), documentViewer, index);
-            documentViewer.close();
-        }
+        SharedPreviewTests.testDocumentPreviews(getMainSession(), results.getResults(5), index);
     }
 
     private enum FileType {

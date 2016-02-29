@@ -2,6 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.documentPreview.SharedPreviewTests;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
@@ -23,7 +24,6 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -35,7 +35,6 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
@@ -246,21 +245,10 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    public void testDocumentMetadata(){
+    public void testDocumentPreview(){
         findService.search(new SearchQuery("stars").withFilter(new IndexFilter(Index.DEFAULT)));
         similarDocuments = findService.goToSimilarDocuments(1);
 
-        for(FindSearchResult searchResult : similarDocuments.getResults(5)){
-            String url = searchResult.getReference();
-
-            try {
-                DocumentViewer docViewer = searchResult.openDocumentPreview();
-                verifyThat(docViewer.getIndex(), is(Index.DEFAULT));
-                verifyThat(docViewer.getReference(), is(url));
-                docViewer.close();
-            } catch (WebDriverException e) {
-                fail("Could not click on title - most likely CSA-1767");
-            }
-        }
+        SharedPreviewTests.testDocumentPreviews(getMainSession(), similarDocuments.getResults(5), Index.DEFAULT);
     }
 }
