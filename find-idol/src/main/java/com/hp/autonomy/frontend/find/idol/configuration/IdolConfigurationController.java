@@ -29,7 +29,7 @@ import java.util.Map;
 
 @RestController
 @Slf4j
-@RequestMapping({"/api/admin/config", "/api/config/config"})
+@RequestMapping({"/api/useradmin/config", "/api/config/config"})
 public class IdolConfigurationController {
 
     @Autowired
