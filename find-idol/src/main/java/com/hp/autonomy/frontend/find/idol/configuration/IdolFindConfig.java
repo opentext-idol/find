@@ -102,6 +102,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     }
 
     @Override
+    @JsonIgnore
     public ViewConfig getViewConfig() {
         return view;
     }
