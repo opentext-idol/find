@@ -5,7 +5,6 @@ import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.search.SearchResult;
 import com.autonomy.abc.selenium.util.Waits;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -23,12 +22,13 @@ public class SharedPreviewTests {
         }
 
         verifyThat(documentViewer.getReference(), not(isEmptyOrNullString()));
+        //this isn't being used on HSOD; CSA-1986 needs to be completed
         verifyThat(documentViewer.getContentType(), not(isEmptyOrNullString()));
 
         String frameText = new Frame(session.getActiveWindow(), documentViewer.frame()).getText();
 
         verifyThat(frameText, not(isEmptyOrNullString()));
-        verifyThat(frameText, not(containsString("500")));
+        verifyThat(frameText, not(containsString("server error")));
 
         testOpenInNewTabFromViewer(session, documentViewer);
     }

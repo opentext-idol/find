@@ -101,6 +101,6 @@ public class DocumentViewer extends AppElement implements AppPage {
     }
 
     public void openInNewTab() {
-        findElement(By.className("view-server-button")).click();
+        findElement(By.xpath("//*[text()='Open in New Tab']")).click();
     }
 }
