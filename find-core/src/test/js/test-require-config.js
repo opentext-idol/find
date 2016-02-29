@@ -21,6 +21,7 @@ require.config({
             'find/app/util/database-name-resolver': 'mock/database-name-resolver',
             'find/lib/backbone/backbone-extensions': 'backbone',
             'find/app/util/confirm-view': 'mock/util/confirm-view',
+            'find/app/model/comparisons/comparison-model': 'mock/model/comparisons/comparison-model',
             'find/app/page/search/document/location-tab': 'mock/page/search/document/location-tab'
         },
         'find/app/page/search/service-view': {

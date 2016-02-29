@@ -42,6 +42,7 @@ require.config({
         },
         bootstrap: ['jquery'],
         'bootstrap-datetimepicker': ['jquery'],
+        chosen: ['jquery'],
         colorbox: ['jquery'],
         iCheck: ['jquery'],
         peg: {
