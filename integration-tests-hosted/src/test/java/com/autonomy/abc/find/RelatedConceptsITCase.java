@@ -4,12 +4,14 @@ import com.autonomy.abc.config.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
@@ -42,16 +44,17 @@ public class RelatedConceptsITCase extends FindTestBase {
         navBar = getElementFactory().getTopNavBar();
     }
 
-    //TODO ALL RELATED CONCEPTS TESTS - probably better to check if text is not("Loading...") rather than not("")
     @Test
     public void testRelatedConceptsHasResults(){
         findService.search("Danye West");
         for (WebElement concept : results.relatedConcepts()) {
             assertThat(concept, hasTextThat(not(isEmptyOrNullString())));
+            assertThat(concept, not(containsTextIgnoringCase("loading")));
         }
     }
 
     @Test
+    @RelatedTo("CCUK-3598")
     public void testRelatedConceptsNavigateOnClick(){
         String search = "Red";
         findService.search(search);
@@ -124,6 +127,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
+    @Category(CoreFeature.class)
     public void testAddRemoveConcepts() {
         findService.search("jungle");
         List<String> concepts = new ArrayList<>();
@@ -167,10 +171,43 @@ public class RelatedConceptsITCase extends FindTestBase {
         }
     }
 
+    @Test
+    @KnownBug("CCUK-3706")
+    public void testAddSausageToQuery() {
+        findService.search("sausage");
+        results.highlightRelatedConceptsButton().click();
+
+        List<String> addedConcepts = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            WebElement firstSausage = results.highlightedSausages("").get(0);
+            LOGGER.info("clicking sausage " + firstSausage.getText());
+            addedConcepts.add(firstSausage.getText());
+            firstSausage.click();
+
+            verifyThat(navBar.getSearchBoxTerm(), is("sausage"));
+            verifyThat(navBar.getAlsoSearchingForTerms(), containsItems(addedConcepts));
+        }
+    }
+
+    @Test
+    public void testRefreshAddedConcepts() {
+        findService.search("fresh");
+        List<String> concepts = new ArrayList<>();
+        clickFirstNewConcept(concepts);
+        clickFirstNewConcept(concepts);
+
+        getWindow().refresh();
+        navBar = getElementFactory().getTopNavBar();
+
+        verifyThat(navBar.getSearchBoxTerm(), is("fresh"));
+        verifyThat(navBar.getAlsoSearchingForTerms(), containsItems(concepts));
+    }
+
     private String clickFirstNewConcept(List<String> existingConcepts) {
         for (WebElement concept : results.relatedConcepts()) {
             String conceptText = concept.getText();
             if (!existingConcepts.contains(conceptText)) {
+                LOGGER.info("clicking concept " + conceptText);
                 concept.click();
                 existingConcepts.add(conceptText);
                 results.unhover();
