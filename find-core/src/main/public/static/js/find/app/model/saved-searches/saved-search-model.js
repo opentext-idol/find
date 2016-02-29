@@ -104,7 +104,11 @@ define([
             title: null,
             indexes: [],
             parametricValues: [],
-            relatedConcepts: []
+            relatedConcepts: [],
+            minDate: null,
+            maxDate: null,
+            dateRange: null,
+            dateNewDocsLastFetched: null
         },
 
         parse: function(response) {
