@@ -202,6 +202,7 @@ public class PromotionsITCase extends ABCTestBase {
 			setUp = true;
 		} catch (TimeoutException e) {
 			/* failed to set up promotion */
+			e.printStackTrace();
 		}
 		assertThat("added promotion successfully", setUp);
 		assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(size));

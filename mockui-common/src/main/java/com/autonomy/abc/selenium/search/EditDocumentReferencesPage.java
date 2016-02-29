@@ -20,7 +20,9 @@ public class EditDocumentReferencesPage extends SearchBase implements AppPage {
     }
 
     private static void waitForLoad(WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("promotions-bucket-well")));
+        new WebDriverWait(driver, 30)
+                .withMessage("loading edit document references page")
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("promotions-bucket-well")));
     }
 
     @Override
