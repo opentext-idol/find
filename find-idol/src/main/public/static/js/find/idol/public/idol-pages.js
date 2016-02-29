@@ -7,8 +7,9 @@ define([
     'find/app/find-pages',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
+    'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
-], function(FindPages, FindSearch, AboutPage, i18n) {
+], function(FindPages, FindSearch, AboutPage, SettingsPage, i18n) {
 
     'use strict';
 
@@ -25,6 +26,12 @@ define([
                     icon: 'hp-icon hp-fw hp-info',
                     pageName: 'about',
                     title: i18n['app.about']
+                }, {
+                    // TODO this shouldn't appear for users who can't use it
+                    constructor: SettingsPage,
+                    icon: 'hp-icon hp-fw hp-settings',
+                    pageName: 'settings',
+                    title: i18n['app.settings']
                 }
             ];
         }
