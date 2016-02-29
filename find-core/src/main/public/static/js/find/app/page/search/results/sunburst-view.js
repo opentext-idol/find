@@ -74,12 +74,12 @@ define([
 
             this.dependentParametricCollection.fetch({
                 data: {
-                    databases: _.escape(this.queryModel.get('indexes')),
+                    databases: this.queryModel.get('indexes'),
                     queryText: this.queryModel.get('queryText'),
                     fieldText: this.queryModel.get('fieldText') ? this.queryModel.get('fieldText').toString() : '',
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
-                    fieldNames: second ? _.escape([first, second]) : first,
+                    fieldNames: second ? [first, second] : [first],
                     stateTokens: this.queryModel.get('stateTokens')
                 }
             });
