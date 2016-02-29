@@ -2,9 +2,11 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.documentPreview.SharedPreviewTests;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Frame;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.*;
@@ -153,27 +155,6 @@ public class FindITCase extends FindTestBase {
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
-
-    @Test
-    @KnownBug("CSA-1767 - footer not hidden properly")
-    @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
-    public void testMetadata(){
-        findService.search(new SearchQuery("stars")
-                .withFilter(new IndexFilter(Index.DEFAULT)));
-
-        for(FindSearchResult searchResult : results.getResults(5)){
-            String url = searchResult.getReference();
-
-            try {
-                DocumentViewer docViewer = searchResult.openDocumentPreview();
-                verifyThat(docViewer.getIndex(), is(Index.DEFAULT));
-                verifyThat(docViewer.getReference(), is(url));
-                docViewer.close();
-            } catch (WebDriverException e) {
-                fail("Could not click on title - most likely CSA-1767");
-            }
-        }
-    }
 
     @Test
     @KnownBug("CCUK-3641")
@@ -334,7 +315,7 @@ public class FindITCase extends FindTestBase {
                 verifyDocumentViewer(docViewer);
                 docViewer.close();
             } catch (WebDriverException e){
-                fail("Could not click on title - most likely CSA-1767");
+                fail("Could not click on preview button - most likely CSA-1767");
             }
         }
     }
@@ -660,6 +641,35 @@ public class FindITCase extends FindTestBase {
 
         verifyThat(navBar.getSearchBoxTerm(), is(""));
         verifyThat("taken back to landing page after refresh", findPage.footerLogo(), displayed());
+    }
+
+    @Test
+    public void testOpenDocumentFromSearch(){
+        findService.search("Refuse to Feel");
+
+        for(int i = 1; i <= 5; i++){
+            Window original = getWindow();
+            FindSearchResult result = results.getResult(i);
+            String reference = result.getReference();
+            result.title().click();
+            Waits.loadOrFadeWait();
+            Window newWindow = getMainSession().switchWindow(getMainSession().countWindows() - 1);
+
+            verifyThat(getDriver().getCurrentUrl(), containsString(reference));
+
+            newWindow.close();
+            original.activate();
+        }
+    }
+
+    @Test
+    @KnownBug("CSA-1767 - footer not hidden properly")
+    @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
+    public void testDocumentPreview(){
+        Index index = new Index("fifa");
+        findService.search(new SearchQuery("document preview").withFilter(new IndexFilter(index)));
+
+        SharedPreviewTests.testDocumentPreviews(getMainSession(), results.getResults(5), index);
     }
 
     private enum FileType {

@@ -77,6 +77,10 @@ public class DocumentViewer extends AppElement implements AppPage {
         return getField("Author");
     }
 
+    public String getContentType() {
+        return getField("Content Type");
+    }
+
     public int getCurrentDocumentNumber() {
         String[] current = findElement(By.id("cboxCurrent")).getText().split(" ");
         return Integer.parseInt(current[current.length - 3]);
@@ -94,5 +98,9 @@ public class DocumentViewer extends AppElement implements AppPage {
 
     private void waitForDocumentLoad() {
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
+    }
+
+    public void openInNewTab() {
+        findElement(By.xpath("//*[text()='Open in New Tab']")).click();
     }
 }
