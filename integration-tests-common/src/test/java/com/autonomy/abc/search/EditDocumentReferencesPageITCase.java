@@ -2,6 +2,7 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.documentPreview.SharedPreviewTests;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
@@ -17,10 +18,7 @@ import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -31,7 +29,6 @@ import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
-import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
@@ -316,7 +313,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     @Test
-    @KnownBug({"CSA-1761", "CCUK-3710"})
+    @KnownBug({"CSA-1761", "CCUK-3710", "CCUK-3728"})
     public void testAddedDocumentsNotUnknown(){
         setUpPromotion("smiles", "fun happiness", 2);
 
@@ -331,14 +328,10 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
 
-        verifyThat(promotedTitles, hasItem(title));
         verifyThat(promotedTitles, not(hasItem("Unknown Document")));
-
-        promotionsDetailPage.viewDocument(0);
-
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#cboxLoadedContent .icon-spin")));
-
-        verifyThat(getDriver().findElement(By.id("cboxLoadedContent")), displayed());
-        verifyThat(getDriver().findElement(By.id("cboxLoadedContent")), not(containsText("500")));
+        if (verifyThat(promotedTitles, hasItem(title))) {
+            promotionsDetailPage.viewDocument(title);
+            SharedPreviewTests.testDocumentPreview(getMainSession(), DocumentViewer.make(getDriver()));
+        }
     }
 }

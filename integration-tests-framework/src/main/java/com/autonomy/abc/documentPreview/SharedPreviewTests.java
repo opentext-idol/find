@@ -27,18 +27,18 @@ public class SharedPreviewTests {
 
     public static void testDocumentPreview(Session session, DocumentViewer documentViewer, Index index){
         if(index == null){
-            verifyThat(documentViewer.getIndex(), not(nullValue()));
+            verifyThat("index is displayed", documentViewer.getIndex(), not(nullValue()));
         } else {
             verifyThat(documentViewer.getIndex(), is(index));
         }
 
-        verifyThat(documentViewer.getReference(), not(isEmptyOrNullString()));
+        verifyThat("reference is displayed", documentViewer.getReference(), not(isEmptyOrNullString()));
         //this isn't being used on HSOD; CSA-1986 needs to be completed
-        verifyThat(documentViewer.getContentType(), not(isEmptyOrNullString()));
+        verifyThat("content type is displayed", documentViewer.getContentType(), not(isEmptyOrNullString()));
 
         String frameText = new Frame(session.getActiveWindow(), documentViewer.frame()).getText();
 
-        verifyThat(frameText, not(isEmptyOrNullString()));
+        verifyThat("frame has content", frameText, not(isEmptyOrNullString()));
         verifyThat(frameText, not(containsString("server error")));
 
         testOpenInNewTabFromViewer(session, documentViewer);
