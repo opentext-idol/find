@@ -9,7 +9,7 @@ define([
 ], function(EnableView, template) {
 
     return EnableView.extend({
-        className: 'form-group',
+        className: 'm-t-sm',
         template: _.template(template),
 
         updateFormatting: function() {
