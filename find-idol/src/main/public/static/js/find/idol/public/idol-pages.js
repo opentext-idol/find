@@ -26,12 +26,6 @@ define([
                     icon: 'hp-icon hp-fw hp-info',
                     pageName: 'about',
                     title: i18n['app.about']
-                }, {
-                    // TODO this shouldn't appear for users who can't use it
-                    constructor: SettingsPage,
-                    icon: 'hp-icon hp-fw hp-settings',
-                    pageName: 'settings',
-                    title: i18n['app.settings']
                 }
             ];
         }

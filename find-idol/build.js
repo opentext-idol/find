@@ -11,10 +11,10 @@
     mainConfigFile: '${static-resources-dir}/static/js/require-config.js',
     modules: [
         {
-            name: "main",
+            name: "admin",
             include: [
                 'require-config',
-                'find/app/admin-app'
+                'find/idol/admin/admin-idol-app'
             ]
         }, {
             name: "login",

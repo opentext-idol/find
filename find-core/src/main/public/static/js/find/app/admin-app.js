@@ -18,10 +18,6 @@ define([
         initialize: function() {
             this.pages = new Pages();
 
-            this.navigation = new Navigation({
-                pages: this.pages
-            });
-
             BaseApp.prototype.initialize.apply(this, arguments);
         },
 
