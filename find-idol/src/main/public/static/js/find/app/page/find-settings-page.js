@@ -56,14 +56,16 @@ define([
                 ], [
                     new ViewWidget({
                         configItem: 'view',
-                        description: 'View documents by either a custom field, or using a connector',
+                        description: i18n['settings.view.description'],
                         isOpened: true,
                         serverName: 'view',
-                        title: 'View',
+                        title: i18n['settings.view'],
                         strings: _.extend(this.serverStrings(), {
+                            connector: i18n['settings.view.connector'],
                             referenceFieldLabel: i18n['settings.view.referenceFieldLabel'],
                             referenceFieldBlank: i18n['settings.view.referenceFieldBlank'],
-                            referenceFieldPlaceholder: i18n['settings.view.referenceFieldPlaceholder']
+                            referenceFieldPlaceholder: i18n['settings.view.referenceFieldPlaceholder'],
+                            viewingMode: i18n['settings.view.viewingMode']
                         })
                     })
                 ]

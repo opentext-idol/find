@@ -72,8 +72,18 @@ define([
                 validateFailed: i18n['settings.test.failed'],
                 validateHostBlank: i18n['settings.test.hostBlank'],
                 validatePasswordBlank: i18n['settings.test.passwordBlank'],
+                validatePortInvalid: i18n['settings.test.portInvalid'],
                 validateUsernameBlank: i18n['settings.test.usernameBlank'],
-                validateSuccess: i18n['settings.test.ok']
+                validateSuccess: i18n['settings.test.ok'],
+                CONNECTION_ERROR: i18n['settings.CONNECTION_ERROR'],
+                FETCH_PORT_ERROR: i18n['settings.FETCH_PORT_ERROR'],
+                FETCH_SERVICE_PORT_ERROR: i18n['settings.FETCH_SERVICE_PORT_ERROR'],
+                INCORRECT_SERVER_TYPE: i18n['settings.INCORRECT_SERVER_TYPE'],
+                INDEX_PORT_ERROR: i18n['settings.INDEX_PORT_ERROR'],
+                REQUIRED_FIELD_MISSING: i18n['settings.REQUIRED_FIELD_MISSING'],
+                REGULAR_EXPRESSION_MATCH_ERROR: i18n['settings.REGULAR_EXPRESSION_MATCH_ERROR'],
+                SERVICE_AND_INDEX_PORT_ERROR: i18n['settings.SERVICE_AND_INDEX_PORT_ERROR'],
+                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR']
             };
         },
 
