@@ -29,6 +29,7 @@ import java.util.Map;
 public abstract class FindController {
 
     public static final String PUBLIC_PATH = "/public/";
+    public static final String PRIVATE_PATH = "/private/";
     public static final String LOGIN_PATH = "/login";
     private static final String DEFAULT_LOGIN_PAGE = "/loginPage";
     private static final String CONFIG_PATH = "/config";
@@ -68,6 +69,15 @@ public abstract class FindController {
 
     @RequestMapping(value = PUBLIC_PATH, method = RequestMethod.GET)
     public ModelAndView mainPage() throws JsonProcessingException {
+        return getPageModelAndView(ViewNames.PUBLIC);
+    }
+
+    @RequestMapping(value = PRIVATE_PATH, method = RequestMethod.GET)
+    public ModelAndView adminPage() throws JsonProcessingException {
+        return getPageModelAndView(ViewNames.PRIVATE);
+    }
+
+    private ModelAndView getPageModelAndView(final ViewNames viewName) throws JsonProcessingException {
         final String username = authenticationInformationRetriever.getAuthentication().getName();
         final Map<String, Object> config = new HashMap<>();
         config.put(MvcConstants.USERNAME.value(), username);
@@ -80,7 +90,7 @@ public abstract class FindController {
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(config));
 
-        return new ModelAndView(ViewNames.PUBLIC.viewName(), attributes);
+        return new ModelAndView(viewName.viewName(), attributes);
     }
 
     @RequestMapping(value = LOGIN_PATH, method = RequestMethod.GET)

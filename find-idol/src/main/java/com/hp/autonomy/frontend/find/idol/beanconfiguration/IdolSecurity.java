@@ -9,7 +9,6 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider;
-import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
 import com.hp.autonomy.frontend.configuration.authentication.Role;
 import com.hp.autonomy.frontend.configuration.authentication.Roles;
 import com.hp.autonomy.frontend.find.core.web.FindController;
@@ -74,8 +73,6 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        final AuthenticationSuccessHandler successHandler = new LoginSuccessHandler(UserConfiguration.role(UserConfiguration.CONFIG_ROLE), "/config", FindController.PUBLIC_PATH);
-
         final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
         entryPoints.put(new AntPathRequestMatcher("/api/**"), new Http403ForbiddenEntryPoint());
         entryPoints.put(AnyRequestMatcher.INSTANCE, new LoginUrlAuthenticationEntryPoint("/loginPage"));

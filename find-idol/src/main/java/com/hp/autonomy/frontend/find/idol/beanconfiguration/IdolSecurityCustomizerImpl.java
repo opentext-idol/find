@@ -42,7 +42,13 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     public void customize(final HttpSecurity http, final AuthenticationManager authenticationManager) throws Exception {
-        final AuthenticationSuccessHandler successHandler = new LoginSuccessHandler(UserConfiguration.role(UserConfiguration.CONFIG_ROLE), "/config", FindController.PUBLIC_PATH);
+        final AuthenticationSuccessHandler successHandler = new IdolLoginSuccessHandler(
+                "/config",
+                FindController.PUBLIC_PATH,
+                FindController.PRIVATE_PATH,
+                UserConfiguration.role(UserConfiguration.CONFIG_ROLE),
+                UserConfiguration.role(UserConfiguration.ADMIN_ROLE)
+        );
 
         http.formLogin()
             .loginPage("/loginPage")
