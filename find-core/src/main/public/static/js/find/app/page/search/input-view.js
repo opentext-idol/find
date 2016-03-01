@@ -5,13 +5,20 @@ define([
     'find/app/util/string-blank',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/input-view.html',
-    'typeahead'
+    'typeahead',
+    'bootstrap'
 ], function (Backbone, $, _, stringBlank, i18n, template) {
 
     var html = _.template(template)({i18n: i18n});
-    var relatedConceptsTemplate = _.template('<span class="selected-related-concept" data-id="<%-concept%>"><%-concept%> ' +
+    var relatedConceptsTemplate = _.template('<span class="selected-related-concept" data-id="<%-concept%>" data-toggle="tooltip" title="<%-concept%>">' +
+        '<span class="selected-related-concept-text shorten"><%-concept%></span> ' +
         '<i class="clickable hp-icon hp-fw hp-close concept-remove-icon"></i>' +
         '</span> ');
+    var scrollingButtons = _.template('<span class="scrolling-buttons">' +
+        '<button class="btn btn-xs btn-white left-scroll"><i class="hp-icon hp-chevron-left"></i></button> ' +
+        '<button class="btn btn-xs btn-white right-scroll"><i class="hp-icon hp-chevron-right"></i></button> ' +
+        '</span>');
+
 
     return Backbone.View.extend({
         events: {
@@ -24,9 +31,23 @@ define([
                 this.search(this.$input.typeahead('val'));
             },
             'click .concept-remove-icon': function (e) {
-                var id = $(e.currentTarget).closest("span").attr('data-id');
+                var id = $(e.currentTarget).closest("span.selected-related-concept").attr('data-id');
 
+                $(e.currentTarget).closest('[data-toggle="tooltip"]').tooltip('destroy');
                 this.removeRelatedConcept(id);
+
+            },
+            'click .right-scroll': function(e) {
+                e.preventDefault();
+
+                var $additionalConcepts = this.$('.additional-concepts');
+                $additionalConcepts.scrollLeft($additionalConcepts.scrollLeft() + 85);
+            },
+            'click .left-scroll': function(e) {
+                e.preventDefault();
+
+                var $additionalConcepts = this.$('.additional-concepts');
+                $additionalConcepts.scrollLeft($additionalConcepts.scrollLeft() - 85);
             }
         },
 
@@ -66,6 +87,18 @@ define([
             this.updateRelatedConcepts();
         },
 
+        focus: function() {
+            _.defer(_.bind(function () {
+                this.$input.focus();
+            }, this));
+        },
+
+        unFocus: function() {
+            _.defer(_.bind(function () {
+                this.$input.blur();
+            }, this));
+        },
+
         search: function (query) {
             if (query === this.model.get('inputText')) {
                 this.model.refresh();
@@ -88,14 +121,32 @@ define([
         updateRelatedConcepts: function () {
             if (this.$additionalConcepts) {
                 this.$additionalConcepts.empty();
+                this.$('.scrolling-buttons').remove();
 
                 _.each(this.model.get('relatedConcepts'), function (concept) {
                     this.$additionalConcepts.append(relatedConceptsTemplate({
                         concept: concept
-                    }))
+                    }));
                 }, this);
 
+                this.$('[data-toggle="tooltip"]').tooltip({
+                    container: 'body',
+                    placement: 'bottom'
+                });
+
                 this.$alsoSearchingFor.toggleClass('hide', _.isEmpty(this.model.get('relatedConcepts')));
+
+                //calculate the total width of all the related concepts
+                var relatedConceptsWidth = 0;
+
+                this.$('.selected-related-concept').each(function() {
+                    relatedConceptsWidth += parseInt($(this).width(), 10);
+                });
+
+                //add scrolling template if total width of rc's is bigger than their container
+                if (this.$additionalConcepts.width() < relatedConceptsWidth) {
+                    this.$additionalConcepts.after(scrollingButtons);
+                }
             }
         },
 

@@ -1,0 +1,19 @@
+<%  var openedClass = isOpened ? 'in' : ''; %>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <a class="accordion-toggle settings-widget-title" data-toggle="collapse" data-target=".collapse-<%- configItem%>">
+            <h4 class="panel-title"><i class="fa fa-<%- iconClass%>"></i> <%-title%></h4>
+        </a>
+    </div>
+    <% if (description) { %>
+        <div class="panel-collapse collapse collapse-<%- configItem%> <%- openedClass %>">
+            <div class="panel-body">
+                <p><%-description%></p>
+            </div>
+        </div>
+    <% } %>
+    <div class="panel-collapse collapse collapse-<%- configItem%> <%- openedClass %>">
+        <div class="panel-body widget-content"></div>
+    </div>
+</div>

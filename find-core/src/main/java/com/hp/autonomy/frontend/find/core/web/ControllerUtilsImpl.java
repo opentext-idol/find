@@ -55,7 +55,7 @@ public class ControllerUtilsImpl implements ControllerUtils {
 
     @Override
     public ModelAndView buildErrorModelAndView(final ErrorModelAndViewInfo errorInfo) {
-        final ModelAndView modelAndView = new ModelAndView(ViewNames.ERROR.name());
+        final ModelAndView modelAndView = new ModelAndView(ViewNames.ERROR.viewName());
         modelAndView.addObject(ErrorAttributes.MAIN_MESSAGE.value(), getMessage(errorInfo.getMainMessageCode(), null));
         modelAndView.addObject(ErrorAttributes.SUB_MESSAGE.value(), getMessage(errorInfo.getSubMessageCode(), errorInfo.getSubMessageArguments()));
         modelAndView.addObject(ErrorAttributes.BASE_URL.value(), getBaseUrl(errorInfo.getRequest()));

@@ -13,6 +13,7 @@ import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
 import com.hp.autonomy.types.requests.Documents;
+import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -125,7 +126,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     public R getDocumentContent(@RequestParam(REFERENCE_PARAM) final String reference,
                                 @RequestParam(DATABASE_PARAM) final S database) throws E {
         final GetContentRequestIndex<S> getContentRequestIndex = new GetContentRequestIndex<>(database, Collections.singleton(reference));
-        final GetContentRequest<S> getContentRequest = new GetContentRequest<>(Collections.singleton(getContentRequestIndex));
+        final GetContentRequest<S> getContentRequest = new GetContentRequest<>(Collections.singleton(getContentRequestIndex), PrintParam.Fields.name());
         final List<R> results = documentsService.getDocumentContent(getContentRequest);
 
         return results.isEmpty() ? this.<R>throwException("No content found for document with reference " + reference + " in database " + database) : results.get(0);

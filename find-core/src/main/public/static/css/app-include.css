@@ -665,15 +665,39 @@ input.find-input {
     color:#fff;
     padding: 3px;
     font-weight: lighter;
+    vertical-align: top;
 }
 
 .selected-related-concept {
-    padding: 2px;
+    padding: 0 2px;
     font-size: 100%;
     font-weight: normal;
     color: #fff;
     border: solid 1px #00b388;
     border-radius: 0;
+    display: inline-flex;
+}
+
+.selected-related-concept-text {
+    width: 80px;
+}
+
+.concept-remove-icon {
+    line-height: inherit;
+}
+
+.additional-concepts {
+    overflow: hidden;
+    width: 350px;
+    float: left;
+    white-space: nowrap;
+}
+
+.left-scroll,
+.right-scroll,
+.left-scroll:hover,
+.right-scroll:hover {
+    box-shadow: none;
 }
 
 .service-view-container {
@@ -709,13 +733,24 @@ input.find-input {
     color: #676a6c;
 }
 
-.find-navbar .dropdown-toggle {
+.find-navbar .dropdown-toggle,
+.find-navbar a {
     color: #fff;
 }
 
 .find-navbar .dropdown-toggle:hover,
 .find-navbar .nav li.open a.dropdown-toggle {
     background-color: #949494;
+}
+
+.find-navbar .navbar-brand {
+    padding: 25px 15px;
+    height: 70px;
+}
+
+.find-navbar .nav > li > a {
+    padding-bottom: 24px;
+    padding-top: 24px;
 }
 
 .list-indexes {

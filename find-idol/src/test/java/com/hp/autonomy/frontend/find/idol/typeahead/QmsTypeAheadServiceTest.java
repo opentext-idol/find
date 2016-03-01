@@ -11,7 +11,7 @@ import com.autonomy.aci.client.transport.AciParameter;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.typeahead.GetSuggestionsFailedException;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
-import com.hp.autonomy.searchcomponents.idol.configuration.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.types.idol.TypeAheadResponseData;
 import com.hp.autonomy.types.requests.qms.actions.typeahead.params.ModeParam;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class QmsTypeAheadServiceTest {
     @Mock
-    private ConfigService<? extends HavenSearchCapable> configService;
+    private ConfigService<? extends IdolSearchCapable> configService;
 
     @Mock
     private GetSuggestionsAciExecutor executor;
@@ -43,7 +43,7 @@ public class QmsTypeAheadServiceTest {
     private AciResponseJaxbProcessorFactory processorFactory;
 
     @Mock
-    private HavenSearchCapable config;
+    private IdolSearchCapable config;
 
     private QmsTypeAheadService qmsTypeAheadService;
 

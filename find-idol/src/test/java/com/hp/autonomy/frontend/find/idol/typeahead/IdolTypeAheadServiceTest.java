@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.idol.typeahead;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.typeahead.GetSuggestionsFailedException;
 import com.hp.autonomy.frontend.find.core.typeahead.TypeAheadService;
-import com.hp.autonomy.searchcomponents.idol.configuration.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class IdolTypeAheadServiceTest {
     @Mock
-    private ConfigService<? extends HavenSearchCapable> configService;
+    private ConfigService<? extends IdolSearchCapable> configService;
 
     @Mock
     private TypeAheadService termExpandTypeAheadService;
@@ -31,7 +31,7 @@ public class IdolTypeAheadServiceTest {
     private TypeAheadService qmsTypeAheadService;
 
     @Mock
-    private HavenSearchCapable config;
+    private IdolSearchCapable config;
 
     private TypeAheadService typeAheadService;
 

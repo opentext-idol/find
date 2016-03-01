@@ -6,12 +6,9 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
-import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
@@ -37,6 +34,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -44,6 +42,7 @@ import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.cache.interceptor.SimpleCacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
@@ -65,12 +64,11 @@ public class HodConfiguration extends CachingConfigurerSupport {
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
+    @Primary
     @Autowired
     public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder) {
         return builder.createXmlMapper(false)
                 .mixIn(Authentication.class, HodAuthenticationMixins.class)
-                .mixIn(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class)
-                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
                 .build();
     }
 
@@ -115,11 +113,13 @@ public class HodConfiguration extends CachingConfigurerSupport {
         return builder.build();
     }
 
-    private HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder() {
+    @Bean
+    public HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder(final HttpClient httpClient, @Qualifier("hodSearchResultObjectMapper") final ObjectMapper hodSearchResultObjectMapper) {
         final String endpoint = environment.getProperty("find.iod.api", "https://api.havenondemand.com");
 
         return new HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple>(endpoint)
-                .setHttpClient(httpClient())
+                .setHttpClient(httpClient)
+                .setObjectMapper(hodSearchResultObjectMapper)
                 .setTokenRepository(tokenRepository);
     }
 
@@ -129,15 +129,17 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig(final TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService) {
-        return hodServiceConfigBuilder()
+    public HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig(
+            final HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder,
+            final TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService) {
+        return hodServiceConfigBuilder
                 .setTokenProxyService(tokenProxyService)
                 .build();
     }
 
     @Bean
-    public AuthenticationService authenticationService() {
-        return new AuthenticationServiceImpl(hodServiceConfigBuilder().build());
+    public AuthenticationService authenticationService(final HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder) {
+        return new AuthenticationServiceImpl(hodServiceConfigBuilder.build());
     }
 
     @Bean

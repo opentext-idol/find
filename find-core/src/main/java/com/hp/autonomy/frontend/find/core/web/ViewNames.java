@@ -7,21 +7,20 @@ package com.hp.autonomy.frontend.find.core.web;
 
 public enum ViewNames
 {
+    APP("app"),
+    CONFIG("config"),
     ERROR("error"),
     LOGIN("login"),
-    PUBLIC("public"),
     SSO("sso"),
     SSO_LOGOUT("sso-logout");
 
-    private final String value;
+    private final String viewName;
 
-    ViewNames(final String value)
-    {
-        this.value = value;
+    ViewNames(final String viewName) {
+        this.viewName = viewName;
     }
 
-    public String value()
-    {
-        return value;
+    public String viewName() {
+        return viewName;
     }
 }

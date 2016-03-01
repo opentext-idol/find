@@ -11,12 +11,6 @@
     mainConfigFile: '${static-resources-dir}/static/js/require-config.js',
     modules: [
         {
-            name: "main",
-            include: [
-                'require-config',
-                'find/app/admin-app'
-            ]
-        }, {
             name: "login",
             include: [
                 'require-config',

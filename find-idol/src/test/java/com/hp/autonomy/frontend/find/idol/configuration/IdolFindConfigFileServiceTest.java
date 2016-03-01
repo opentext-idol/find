@@ -24,7 +24,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IdolFindConfigFileServiceTest {
@@ -73,12 +78,13 @@ public class IdolFindConfigFileServiceTest {
         assertTrue(generatedConfigFile.exists());
 
         final String configFileContents = FileUtils.readFileToString(generatedConfigFile);
-        assertFalse(configFileContents.contains("indexProtocol"));
-        assertFalse(configFileContents.contains("indexPort"));
-        assertFalse(configFileContents.contains("serviceProtocol"));
-        assertFalse(configFileContents.contains("servicePort"));
-        assertFalse(configFileContents.contains("productType"));
-        assertFalse(configFileContents.contains("indexErrorMessage"));
+        assertThat(configFileContents, not(containsString("indexProtocol")));
+        assertThat(configFileContents, not(containsString("indexPort")));
+        assertThat(configFileContents, not(containsString("serviceProtocol")));
+        assertThat(configFileContents, not(containsString("servicePort")));
+        assertThat(configFileContents, not(containsString("productType")));
+        assertThat(configFileContents, not(containsString("indexErrorMessage")));
+        assertThat(configFileContents, not(containsString("productTypeRegex")));
     }
 
     @Test

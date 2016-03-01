@@ -1,5 +1,5 @@
 # HPE Find
-[![Build Status](https://travis-ci.org/hpautonomy/find.svg?branch=master)](https://travis-ci.org/hpautonomy/find)
+[![Build Status](https://travis-ci.org/hpe-idol/find.svg?branch=master)](https://travis-ci.org/hpautonomy/find)
 
 HPE Find is an end user search interface for [Haven OnDemand](https://www.havenondemand.com) and [HPE IDOL](http://www8.hp.com/uk/en/software-solutions/information-data-analytics-idol/index.html)
 

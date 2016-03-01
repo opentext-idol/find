@@ -44,9 +44,11 @@ public class ConfigFileConfiguration {
                 "serviceProtocol",
                 "servicePort",
                 "productType",
+                "productTypeRegex",
                 "indexErrorMessage",
                 "plaintextPassword",
-                "currentPassword"
+                "currentPassword",
+                "fieldsInfo"
         );
 
         final SimpleBeanPropertyFilter.SerializeExceptFilter filter = new SimpleBeanPropertyFilter.SerializeExceptFilter(set);

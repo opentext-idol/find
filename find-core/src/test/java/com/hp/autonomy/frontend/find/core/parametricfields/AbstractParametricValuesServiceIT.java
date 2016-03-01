@@ -31,6 +31,6 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
                         .param(ParametricValuesController.FIELD_TEXT_PARAM, ""))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", CoreMatchers.not(empty())));
+                .andExpect(jsonPath("$.parametricValues", CoreMatchers.not(empty())));
     }
 }

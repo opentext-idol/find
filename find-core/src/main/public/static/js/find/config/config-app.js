@@ -9,8 +9,9 @@ define([
     'find/app/util/test-browser',
     'i18n!find/nls/bundle',
     'text!find/templates/config/config.html',
+    'text!find/templates/config/empty-navbar.html',
     'underscore'
-], function(SettingsPage, EmptyNavbar, testBrowser, i18n, template, _) {
+], function(SettingsPage, EmptyNavbar, testBrowser, i18n, template, emptyNavbar, _) {
     return function () {
         jQuery.ajaxSetup({ cache: false });
 
@@ -22,6 +23,8 @@ define([
         this.settingsPage.render();
 
         this.navigation = new (EmptyNavbar.extend({
+            template: _.template(emptyNavbar),
+
             events: {
                 'click a': function(e) {
                     if(!this.options.settingsPage.hasSavedSettings) {
@@ -33,8 +36,8 @@ define([
             }
         }))({
             strings: {
-                appName: 'Find',
-                logout: 'Logout from Settings'
+                appName: i18n['app.name'],
+                logout: i18n['settings.logoutFromSettings']
             },
             logoutUri: '../logout',
             settingsPage: this.settingsPage,

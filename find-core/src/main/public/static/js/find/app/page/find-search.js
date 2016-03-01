@@ -118,6 +118,7 @@ define([
             // TODO: somebody else needs to own this
             $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').show();
             $('.container-fluid, .find-logo-small').removeClass('reduced');
+            this.inputView.unFocus();
         },
 
         reducedState: function () {
@@ -132,6 +133,7 @@ define([
             // TODO: somebody else needs to own this
             $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').hide();
             $('.container-fluid, .find-logo-small').addClass('reduced');
+            this.inputView.focus();
         },
 
         suggest: function (suggestOptions) {
