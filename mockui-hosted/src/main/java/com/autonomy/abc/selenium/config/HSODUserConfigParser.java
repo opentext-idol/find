@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.config;
 
-import com.autonomy.abc.selenium.external.GoogleAuth;
 import com.autonomy.abc.selenium.users.HSODNewUser;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
@@ -9,6 +8,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
+import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 
 import java.util.Map;
 
