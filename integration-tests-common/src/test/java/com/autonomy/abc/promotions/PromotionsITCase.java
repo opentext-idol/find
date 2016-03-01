@@ -30,6 +30,7 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ElementMatchers.containsElement;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
@@ -86,29 +87,27 @@ public class PromotionsITCase extends ABCTestBase {
 	}
 
 	@Test
-	@KnownBug("CCUK-3394")
+	@KnownBug({"CCUK-3394", "CCUK-3649"})
 	public void testCorrectDocumentsInPromotion() {
 		List<String> promotedDocTitles = setUpCarsPromotion(16);
 		List<String> promotedList = promotionsDetailPage.getPromotedTitles();
-		verifyThat(promotedDocTitles, everyItem(isIn(promotedList)));
+		verifyThat(promotedList, containsItems(promotedDocTitles));
 	}
 
 	@Test
 	public void testDeletePromotedDocuments() {
-		List<String> promotedDocTitles = setUpCarsPromotion(4);
-		int numberOfDocuments = promotionsDetailPage.getPromotedTitles().size();
-		verifyThat(numberOfDocuments, is(4));
+		final int desiredSize = 4;
+		setUpCarsPromotion(desiredSize);
+		int promotedSize = promotionsDetailPage.getPromotedTitles().size();
+		verifyThat(promotedSize, is(desiredSize));
 
-		for (final String title : promotedDocTitles) {
-			promotionsDetailPage.removablePromotedDocument(title).removeAndWait();
-			numberOfDocuments--;
-
-			if (numberOfDocuments == 1) {
-				assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(1));
-				verifyThat("remove document button is not visible when a single document", promotionsPage, not(containsElement(By.className("remove-document-reference"))));
-				break;
-			}
+		while (promotedSize > 1) {
+			promotionsDetailPage.removablePromotedDocument(0).removeAndWait();
+			promotedSize--;
 		}
+
+		assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(1));
+		verifyThat("remove document button is not visible when a single document", promotionsPage, not(containsElement(By.className("remove-document-reference"))));
 	}
 
 	@Test
@@ -202,6 +201,7 @@ public class PromotionsITCase extends ABCTestBase {
 			setUp = true;
 		} catch (TimeoutException e) {
 			/* failed to set up promotion */
+			e.printStackTrace();
 		}
 		assertThat("added promotion successfully", setUp);
 		assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(size));
@@ -467,7 +467,7 @@ public class PromotionsITCase extends ABCTestBase {
 	}
 
 	@Test
-	@KnownBug("CCUK-3457")
+	@KnownBug({"CCUK-3457", "CCUK-3649"})
 	public void testPromotingItemsWithBrackets(){
 		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "imagine dragons");
 		SearchQuery query = new SearchQuery("\"Selenium (software)\"").withFilter(new IndexFilter("wiki_eng"));

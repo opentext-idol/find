@@ -44,4 +44,8 @@ public abstract class ABCTestBase extends SeleniumTest<SearchOptimizerApplicatio
 	protected final void setInitialUser(User user) {
 		initialUser = user;
 	}
+
+	protected final User getInitialUser() {
+		return initialUser;
+	}
 }

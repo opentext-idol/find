@@ -27,13 +27,18 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public SearchPage(final WebDriver driver) {
 		// specify data-pagename to avoid invisible elements from other pages showing up
-		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".wrapper-content [data-pagename='search']"))), driver);
-		waitForLoad();
+		super(waitForLoad(driver), driver);
+	}
+
+	private static WebElement waitForLoad(WebDriver driver) {
+		return new WebDriverWait(driver, 30)
+				.withMessage("loading search page")
+				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".wrapper-content [data-pagename='search']")));
 	}
 
 	@Override
 	public void waitForLoad() {
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-page-contents")));
+		waitForLoad(getDriver());
 	}
 
 	/* title */

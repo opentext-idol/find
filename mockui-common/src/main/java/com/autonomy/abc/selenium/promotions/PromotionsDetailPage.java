@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -134,7 +135,11 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public List<String> getPromotedTitles() {
-        waitForPromotedTitlesToLoad();
+        try {
+            waitForPromotedTitlesToLoad();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
         return ElementUtil.getTexts(promotedList());
     }
 
@@ -143,7 +148,9 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     private void waitForPromotedTitlesToLoad() {
-        new WebDriverWait(getDriver(), 20).until(ExpectedConditions.refreshed(new ExpectedCondition<Boolean>() {
+        new WebDriverWait(getDriver(), 20)
+                .withMessage("loading documents in a promotion")
+                .until(ExpectedConditions.refreshed(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver input) {
                 List<WebElement> docs = input.findElements(By.cssSelector(".promoted-documents-list h3"));
@@ -178,6 +185,10 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public Removable removablePromotedDocument(final String title) {
         return new LabelBox(promotedDocument(title), getDriver());
+    }
+
+    public Removable removablePromotedDocument(final int index) {
+        return new LabelBox(ElementUtil.ancestor(promotedList().get(index), 2), getDriver());
     }
 
     public Editable staticPromotedDocumentTitle() {
