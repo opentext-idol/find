@@ -36,6 +36,10 @@ define([
             this.$blacklist = this.$('.blacklist-input');
             this.$typeahead = this.$('.typeahead-input');
             this.$expandQuery = this.$('.expand-query-input');
+
+            this.listenTo(this.enableView, 'change', function() {
+                this.$('.settings-required-flag').toggleClass('hide', !this.enableView.getConfig());
+            })
         },
 
         getConfig: function() {
