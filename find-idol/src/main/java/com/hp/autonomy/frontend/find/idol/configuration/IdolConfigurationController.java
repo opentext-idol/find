@@ -61,7 +61,7 @@ public class IdolConfigurationController {
     }
 
     @RequestMapping(value = "/securitytypes", method = RequestMethod.GET)
-    public Map<String, ?> getSecurityTypes(@RequestParam final int port, @RequestParam final String host, @RequestParam final AciServerDetails.TransportProtocol protocol) {
+    public Map<String, List<String>> getSecurityTypes(@RequestParam final int port, @RequestParam final String host, @RequestParam final AciServerDetails.TransportProtocol protocol) {
         if (port <= 0 || host == null || protocol == null) {
             throw new IllegalArgumentException("Host, port and protocol must be supplied.");
         }
