@@ -91,11 +91,11 @@ define([
             e.preventDefault();
 
             new Confirm({
-                cancelClass: 'btn-default',
+                cancelClass: 'button-secondary',
                 cancelIcon: 'hp-icon hp-fw hp-close',
                 cancelText: this.strings.cancelCancel,
                 okText: this.strings.cancelOk,
-                okClass: 'btn-primary',
+                okClass: 'button-primary',
                 okIcon: 'hp-icon hp-fw hp-reset',
                 message: this.strings.cancelMessage,
                 title: this.strings.cancelTitle,
