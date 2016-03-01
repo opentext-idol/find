@@ -11,7 +11,6 @@ public enum ViewNames
     CONFIG("config"),
     ERROR("error"),
     LOGIN("login"),
-    PRIVATE("private"),
     SSO("sso"),
     SSO_LOGOUT("sso-logout");
 
