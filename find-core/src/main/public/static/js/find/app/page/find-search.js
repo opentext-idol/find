@@ -327,10 +327,11 @@ define([
 
             this.removeDocumentDetailView();
 
-            // TODO: somebody else needs to own this
-            $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').removeClass('hide');
-            $('.container-fluid, .find-logo-small').removeClass('reduced');
             this.inputView.unFocus();
+            this.$('.find-banner-container').addClass('hide');
+
+            // TODO: somebody else needs to own this
+            $('.container-fluid, .find-logo-small').removeClass('reduced');
         },
 
         // Set view to initial state (large central search bar)
@@ -343,10 +344,11 @@ define([
 
             this.removeDocumentDetailView();
 
-            // TODO: somebody else needs to own this
-            $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').addClass('hide');
-            $('.container-fluid, .find-logo-small').addClass('reduced');
             this.inputView.focus();
+            this.$('.find-banner-container').removeClass('hide');
+
+            // TODO: somebody else needs to own this
+            $('.container-fluid, .find-logo-small').addClass('reduced');
         },
 
         // If we already have the document model in one of our collections, then don't bother fetching it

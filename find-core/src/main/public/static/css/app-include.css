@@ -1013,7 +1013,7 @@ input:-moz-placeholder::before {
     height: 70px;
 }
 
-.find-banner-container.reduced {
+.find-banner-container {
     background: #49B59B url('../img/Find_banner.png');
     height: 125px;
     z-index: 1;
