@@ -39,16 +39,18 @@ define([
 
         events: {
             'click .preview-mode-open-detail-button': 'openDocumentDetail',
-            'click .close-preview-mode': function() {
-                this.pauseMedia();
-                this.trigger('close-preview');
-            }
+            'click .close-preview-mode': 'triggerClose'
         },
 
         $iframe: null,
 
         initialize: function() {
             this.scrollFollow = _.bind(scrollFollow, this);
+        },
+
+        triggerClose: function () {
+            this.pauseMedia();
+            this.trigger('close-preview');
         },
 
         render: function() {
@@ -90,6 +92,8 @@ define([
                 this.$iframe.attr('src', src);
                 this.$iframe.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
             }
+
+            this.listenTo(this.model, 'remove destroy', this.triggerClose);
 
             _.defer(this.scrollFollow);
 
