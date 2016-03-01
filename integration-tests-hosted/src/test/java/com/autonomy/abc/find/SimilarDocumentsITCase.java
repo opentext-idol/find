@@ -201,16 +201,18 @@ public class SimilarDocumentsITCase extends FindTestBase {
         similarDocuments.backButton().click();
     }
 
-    @Test  @Ignore("HOW IS SCROLLING SO DIFFICULT I DON'T UNDERSTAND")
+    @Test
     public void testInfiniteScroll(){
-        results = findService.search("Heaven is Earth");
+        results = findService.search(new SearchQuery("Heaven is Earth").withFilter(IndexFilter.ALL));
 
         similarDocuments = findService.goToSimilarDocuments(1);
         assumeThat(similarDocuments.getResults().size(), is(30));
 
-        for(int i = 1; i <= 5; i++) {
-            verifyThat(similarDocuments.getVisibleResultsCount(), is(30 * i));
-            PageUtil.scrollToBottom(getDriver());
+        for(int i = 30; i <= 150; i += 30) {
+            verifyThat(similarDocuments.getVisibleResultsCount(), is(i));
+            DocumentViewer documentViewer = similarDocuments.getResult(i).openDocumentPreview();
+            verifyThat(documentViewer.getTotalDocumentsNumber(), is(i));
+            documentViewer.close();
             results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         }
     }
