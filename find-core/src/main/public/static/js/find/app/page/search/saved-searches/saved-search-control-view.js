@@ -192,7 +192,7 @@ define([
 
         createPopover: function() {
             popover(this.$('.popover-control'), 'click', function(content, target) {
-                content.html('<span class="search-controls-message text-danger"></span><div class="search-title-input-container"></div>')
+                content.html('<div class="search-title-input-container"></div>')
             });
         },
 
@@ -262,8 +262,7 @@ define([
         },
 
         updateErrorMessage: function() {
-            var error = this.model.get('error');
-            this.$('.search-controls-message').text(error || '');
+            this.$('.search-controls-error-message').text(this.model.get('error') || '');
         },
 
         updateLoading: function() {
