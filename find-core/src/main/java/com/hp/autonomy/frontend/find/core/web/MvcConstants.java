@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.core.web;
 public enum MvcConstants {
     CONFIG("configJson"),
     GIT_COMMIT("commit"),
+    MAIN_JS("mainJs"),
     RELEASE_VERSION("version"),
     USERNAME("username");
 
