@@ -6,9 +6,23 @@
 define([
     'backbone',
     'find/app/util/search-data-util',
-    'find/app/model/comparisons/comparison-documents-collection'
-], function(Backbone, searchDataUtil, ComparisonDocumentsCollection) {
+    'find/app/model/comparisons/comparison-documents-collection',
+    'find/app/model/saved-searches/saved-search-model'
+], function(Backbone, searchDataUtil, ComparisonDocumentsCollection, SavedSearchModel) {
 
+    var convertSearchModelToComparisonModel = function(model, prefix) {
+        var data = {};
+
+        data[prefix + 'Text'] = searchDataUtil.makeQueryText(model.get('queryText'), model.get('relatedConcepts'));
+
+        if(model.get('type') === SavedSearchModel.Type.SNAPSHOT) {
+            data[prefix + 'QueryStateToken'] = model.get('stateTokens')[0];
+        } else {
+            data[prefix + 'Restrictions'] = searchDataUtil.buildQuery(model);
+        }
+
+        return data;
+    };
 
     var ComparisonModel = Backbone.Model.extend({
         url: '../api/public/comparison/compare',
@@ -16,16 +30,19 @@ define([
         parse: function(response) {
             return {
                 documentsInBoth: new ComparisonDocumentsCollection([], {
+                    text: '(' + this.get('firstText') + ') OR (' + this.get('secondText') + ')',
                     stateMatchIds: _.compact([response.firstQueryStateToken, response.secondQueryStateToken]),
                     stateDontMatchIds: _.compact([response.documentsOnlyInFirstStateToken, response.documentsOnlyInSecondStateToken])
                 }),
 
                 documentsOnlyInFirst: new ComparisonDocumentsCollection([], {
+                    text: this.get('firstText'),
                     stateMatchIds: _.compact([response.firstQueryStateToken]),
                     stateDontMatchIds: _.compact([response.secondQueryStateToken])
                 }),
 
                 documentsOnlyInSecond: new ComparisonDocumentsCollection([], {
+                    text: this.get('secondText'),
                     stateMatchIds: _.compact([response.secondQueryStateToken]),
                     stateDontMatchIds: _.compact([response.firstQueryStateToken])
                 })
@@ -33,13 +50,10 @@ define([
         }
     }, {
         fromModels: function(primaryModel, secondaryModel) {
-            var primaryStateMatchId = primaryModel.get('stateMatchId');
-            var secondaryStateMatchId = secondaryModel.get('stateMatchId');
-
             var comparisonModelArguments = {};
 
-            primaryStateMatchId ? comparisonModelArguments.firstQueryStateToken = primaryStateMatchId : comparisonModelArguments.firstRestrictions = searchDataUtil.buildQuery(primaryModel);
-            secondaryStateMatchId ? comparisonModelArguments.secondQueryStateToken = secondaryStateMatchId : comparisonModelArguments.secondRestrictions = searchDataUtil.buildQuery(secondaryModel);
+            _.extend(comparisonModelArguments, convertSearchModelToComparisonModel(primaryModel, 'first'));
+            _.extend(comparisonModelArguments, convertSearchModelToComparisonModel(secondaryModel, 'second'));
 
             return new ComparisonModel(comparisonModelArguments);
         }

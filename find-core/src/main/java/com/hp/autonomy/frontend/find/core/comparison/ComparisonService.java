@@ -17,6 +17,7 @@ public interface ComparisonService<R extends SearchResult, E extends Exception> 
 
     Documents<R> getResults(final List<String> stateMatchIds,
                             final List<String> stateDontMatchIds,
+                            final String text,
                             final int resultsStart,
                             final int maxResults,
                             final String summary,

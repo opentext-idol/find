@@ -491,6 +491,7 @@ define([
 
             this.documentsCollection.fetch({
                 data: {
+                    text: this.queryModel.get('queryText'),
                     start: this.start,
                     max_results: this.maxResults,
                     summary: 'context',
