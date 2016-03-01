@@ -15,14 +15,19 @@ define([
     'use strict';
 
     function scrollFollow() {
-        if (this.$el.offsetParent().offset().top < 0) {
-            this.$el.css('margin-top', Math.abs(this.$el.offsetParent().offset().top) + 15);
-        } else {
-            this.$el.css('margin-top', 0);
-        }
+        // Check to see if the window has scrolled to the bottom, if it has dont move the preview down. (fix for BIFHI-197)
+        var scrollPos = this.el.scrollHeight + this.$el.offset().top - $(window).height();
 
-        if(this.$iframe) {
-            this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height());
+        if (scrollPos < -50 || scrollPos > 0) {
+            if (this.$el.offsetParent().offset().top < 0) {
+                this.$el.css('margin-top', Math.abs(+this.$el.offsetParent().offset().top) + 15);
+            } else {
+                this.$el.css('margin-top', 0);
+            }
+
+            if (this.$iframe) {
+                this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height());
+            }
         }
     }
 
