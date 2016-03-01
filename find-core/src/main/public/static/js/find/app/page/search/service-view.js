@@ -374,7 +374,8 @@ define([
                 this.filterDisplayView,
                 this.snapshotDataView,
                 this.indexesViewWrapper,
-                this.dateViewWrapper
+                this.dateViewWrapper,
+                this.sunburstView
             ]);
 
             Backbone.View.prototype.remove.call(this);
