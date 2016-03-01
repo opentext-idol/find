@@ -42,7 +42,7 @@ define([
                         configItem: 'queryManipulation',
                         description: i18n['settings.queryManipulation.description'],
                         isOpened: true,
-                        title: i18n['settings.queryManipulation.blacklist'],
+                        title: i18n['settings.queryManipulation'],
                         strings: _.extend(this.serverStrings(), {
                             blacklist: i18n['settings.queryManipulation.blacklist'],
                             disable: i18n['settings.queryManipulation.disable'],
