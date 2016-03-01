@@ -903,6 +903,11 @@ input.find-input {
     background-color: #e2e2e2;
 }
 
+.search-title-form .radio-inline,
+.search-title-form .checkbox-inline {
+    padding: 0;
+}
+
 @media only screen and (max-width: 1210px) {
     .find-input {
         height:25px;
@@ -1023,12 +1028,7 @@ input:-moz-placeholder::before {
     border-radius: 0;
 }
 
-.popover, .popover-title {
-    background-color:#353535;
-}
-
 .popover-content p {
-    color: #fff;
     font-size: 12px;
 }
 
@@ -1038,10 +1038,6 @@ input:-moz-placeholder::before {
 
 .popover-title {
     display: none;
-}
-
-.popover.bottom > .arrow:after {
-    border-bottom-color:#353535;
 }
 
 @media (min-width: 980px) {
