@@ -7,8 +7,9 @@ define([
     'find/app/find-pages',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
+    'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
-], function(FindPages, FindSearch, AboutPage, i18n) {
+], function(FindPages, FindSearch, AboutPage, SettingsPage, i18n) {
 
     'use strict';
 

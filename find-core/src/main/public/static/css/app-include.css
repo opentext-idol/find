@@ -733,13 +733,24 @@ input.find-input {
     color: #676a6c;
 }
 
-.find-navbar .dropdown-toggle {
+.find-navbar .dropdown-toggle,
+.find-navbar a {
     color: #fff;
 }
 
 .find-navbar .dropdown-toggle:hover,
 .find-navbar .nav li.open a.dropdown-toggle {
     background-color: #949494;
+}
+
+.find-navbar .navbar-brand {
+    padding: 25px 15px;
+    height: 70px;
+}
+
+.find-navbar .nav > li > a {
+    padding-bottom: 24px;
+    padding-top: 24px;
 }
 
 .list-indexes {

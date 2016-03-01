@@ -10,11 +10,11 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider;
-import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
 import com.hp.autonomy.frontend.configuration.authentication.OneToOneOrZeroSimpleAuthorityMapper;
 import com.hp.autonomy.frontend.configuration.authentication.Role;
 import com.hp.autonomy.frontend.configuration.authentication.Roles;
 import com.hp.autonomy.frontend.find.core.web.FindController;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -54,9 +54,11 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AuthenticationInformationRetriever<?> authenticationInformationRetriever;
+
     @Override
-    public void configure(final WebSecurity web)
-    {
+    public void configure(final WebSecurity web) {
         web.ignoring().antMatchers("/static-*/**");
     }
 
@@ -64,18 +66,24 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .authenticationProvider(new DefaultLoginAuthenticationProvider(configService, CONFIG_ROLE))
+                .authenticationProvider(new DefaultLoginAuthenticationProvider(configService, role(CONFIG_ROLE)))
                 .authenticationProvider(communityAuthenticationProvider());
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        final AuthenticationSuccessHandler successHandler = new LoginSuccessHandler(role(CONFIG_ROLE), "/config", FindController.PUBLIC_PATH);
+        final AuthenticationSuccessHandler successHandler = new IdolLoginSuccessHandler(
+            "/config",
+            FindController.PUBLIC_PATH,
+            FindController.PRIVATE_PATH,
+            role(CONFIG_ROLE),
+            role(ADMIN_ROLE),
+            authenticationInformationRetriever);
 
         final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
         entryPoints.put(new AntPathRequestMatcher("/api/**"), new Http403ForbiddenEntryPoint());
-        entryPoints.put(AnyRequestMatcher.INSTANCE, new LoginUrlAuthenticationEntryPoint("/login"));
+        entryPoints.put(AnyRequestMatcher.INSTANCE, new LoginUrlAuthenticationEntryPoint("/loginPage"));
         final AuthenticationEntryPoint authenticationEntryPoint = new DelegatingAuthenticationEntryPoint(entryPoints);
 
         http
@@ -87,10 +95,10 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
                     .and()
                 .logout()
                     .logoutUrl("/logout")
-                    .logoutSuccessUrl("/login")
+                    .logoutSuccessUrl("/loginPage")
                     .and()
                 .formLogin()
-                    .loginPage("/login")
+                    .loginPage("/loginPage")
                     .loginProcessingUrl("/authenticate")
                     .successHandler(successHandler)
                     .failureUrl("/loginPage?error=auth")
