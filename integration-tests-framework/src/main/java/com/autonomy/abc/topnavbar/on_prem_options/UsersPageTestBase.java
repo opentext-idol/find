@@ -128,8 +128,10 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
         //Hosted notifications are dealt with within the sign up method and there is no real way to ensure that a user's been created at the moment
     }
 
-    protected void logoutAndNavigateToWebApp(){
-        loginService.logout();
+    protected void logoutAndNavigateToWebApp() {
+        if (loginService.getCurrentUser() != null) {
+            loginService.logout();
+        }
         getDriver().get(getAppUrl());
     }
 
