@@ -28,7 +28,6 @@ define([
                         description: i18n['settings.community.description'],
                         isOpened: true,
                         securityTypesUrl: this.urlRoot + 'securitytypes',
-                        serverName: i18n['settings.community.serverName'],
                         title: i18n['settings.community.title'],
                         strings: _.extend(this.serverStrings(), {
                             fetchSecurityTypes: i18n['settings.community.login.fetchTypes'],
@@ -43,7 +42,6 @@ define([
                         configItem: 'queryManipulation',
                         description: 'Enable query manipulation with QMS',
                         isOpened: true,
-                        serverName: 'qms',
                         title: 'Query Manipulation',
                         strings: _.extend(this.serverStrings(), {
                             disable: 'Disable Query Manipulation',
@@ -58,7 +56,6 @@ define([
                         configItem: 'view',
                         description: i18n['settings.view.description'],
                         isOpened: true,
-                        serverName: 'view',
                         title: i18n['settings.view'],
                         strings: _.extend(this.serverStrings(), {
                             connector: i18n['settings.view.connector'],
