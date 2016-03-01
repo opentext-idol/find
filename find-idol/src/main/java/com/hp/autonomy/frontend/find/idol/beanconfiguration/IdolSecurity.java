@@ -14,6 +14,7 @@ import com.hp.autonomy.frontend.configuration.authentication.OneToOneOrZeroSimpl
 import com.hp.autonomy.frontend.configuration.authentication.Role;
 import com.hp.autonomy.frontend.configuration.authentication.Roles;
 import com.hp.autonomy.frontend.find.core.web.FindController;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -53,9 +54,11 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AuthenticationInformationRetriever<?> authenticationInformationRetriever;
+
     @Override
-    public void configure(final WebSecurity web)
-    {
+    public void configure(final WebSecurity web) {
         web.ignoring().antMatchers("/static-*/**");
     }
 
@@ -75,8 +78,8 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
             FindController.PUBLIC_PATH,
             FindController.PRIVATE_PATH,
             role(CONFIG_ROLE),
-            role(ADMIN_ROLE)
-        );
+            role(ADMIN_ROLE),
+            authenticationInformationRetriever);
 
         final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
         entryPoints.put(new AntPathRequestMatcher("/api/**"), new Http403ForbiddenEntryPoint());

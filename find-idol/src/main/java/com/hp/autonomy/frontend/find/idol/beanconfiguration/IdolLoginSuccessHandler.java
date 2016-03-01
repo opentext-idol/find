@@ -5,9 +5,9 @@
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,25 +20,27 @@ public class IdolLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
     private final String adminUrl;
     private final String roleDefault;
     private final String roleAdmin;
+    private final AuthenticationInformationRetriever<?> authenticationInformationRetriever;
 
     public IdolLoginSuccessHandler(
         final String configUrl,
         final String applicationUrl,
         final String adminUrl,
         final String roleDefault,
-        final String roleAdmin
+        final String roleAdmin,
+        final AuthenticationInformationRetriever<?> authenticationInformationRetriever
     ) {
-        super();
         this.configUrl = configUrl;
         this.applicationUrl = applicationUrl;
         this.adminUrl = adminUrl;
         this.roleDefault = roleDefault;
         this.roleAdmin = roleAdmin;
+        this.authenticationInformationRetriever = authenticationInformationRetriever;
     }
 
     @Override
     protected String determineTargetUrl(final HttpServletRequest request, final HttpServletResponse response) {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Authentication authentication = authenticationInformationRetriever.getAuthentication();
 
         for(final GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             final String authority = grantedAuthority.getAuthority();

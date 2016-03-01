@@ -32,11 +32,14 @@ import java.util.Map;
 @RequestMapping({"/api/useradmin/config", "/api/config/config"})
 public class IdolConfigurationController {
 
-    @Autowired
-    private CommunityService communityService;
+    private final CommunityService communityService;
+    private final ConfigFileService<IdolFindConfig> configService;
 
     @Autowired
-    private ConfigFileService<IdolFindConfig> configService;
+    public IdolConfigurationController(final CommunityService communityService, final ConfigFileService<IdolFindConfig> configService) {
+        this.communityService = communityService;
+        this.configService = configService;
+    }
 
     @RequestMapping(value = "/config", method = RequestMethod.GET)
     public Object config() {
