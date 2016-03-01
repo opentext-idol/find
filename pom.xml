@@ -14,7 +14,7 @@
 
     <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>find</artifactId>
-    <version>11.0.0</version>
+    <version>11.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
