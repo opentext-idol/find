@@ -54,12 +54,10 @@ public class SavedQuery extends SavedSearch<SavedQuery> {
     @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder extends SavedSearch.Builder<SavedQuery> {
-
         private DateTime dateNewDocsLastFetched;
 
         public Builder(final SavedQuery query) {
             super(query);
-
             dateNewDocsLastFetched = query.dateNewDocsLastFetched;
         }
 

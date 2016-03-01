@@ -28,27 +28,25 @@ define([
         },
 
         update: function() {
-            if (!this.entityCollection.isEmpty()) {
-                this.$topicMap.topicmap('renderData', {
-                    "name": "topic map",
-                    "size": 1.0,
-                    "sentiment": null,
-                    "children": _.chain(this.entityCollection.models)
-                        .filter(function(entity) {
-                            return entity.get(this.clusteringMode) >= this.relevance.value;
-                        }, this)
-                        .first(this.topicAmount)
-                        .map(function(entity) {
-                            return {
-                                "name": entity.get('text'),
-                                "size": entity.get(this.clusteringMode),
-                                "sentiment": null,
-                                "children": null
-                            };
-                        }, this)
-                        .value()
-                }, false);
-            }
+            this.$topicMap.topicmap('renderData', {
+                "name": "topic map",
+                "size": 1.0,
+                "sentiment": null,
+                "children": _.chain(this.entityCollection.models)
+                    .filter(function(entity) {
+                        return entity.get(this.clusteringMode) >= this.relevance.value;
+                    }, this)
+                    .first(this.topicAmount)
+                    .map(function(entity) {
+                        return {
+                            "name": entity.get('text'),
+                            "size": entity.get(this.clusteringMode),
+                            "sentiment": null,
+                            "children": null
+                        };
+                    }, this)
+                    .value()
+            }, false);
         },
 
         renderRelevanceSlider: function() {
@@ -70,7 +68,7 @@ define([
 
         renderAmountSlider: function() {
             var max = this.entityCollection.filter(function(entity) {
-                return entity.get(this.clusteringMode) > this.relevance.value;
+                return entity.get(this.clusteringMode) >= this.relevance.value;
             }, this).length;
 
             this.$amountSlider.slider({

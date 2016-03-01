@@ -78,7 +78,7 @@ define([
 
             var queryTextModel = new Backbone.Model({
                 inputText: 'cat',
-                relatedConcepts: ['Copenhagen']
+                relatedConcepts: [['Copenhagen']]
             });
 
             this.documentsCollection = new Backbone.Collection();
@@ -552,7 +552,7 @@ define([
 
                         it('restores the original query state', function() {
                             expect(this.queryState.queryTextModel.get('inputText')).toBe('cat');
-                            expect(this.queryState.queryTextModel.get('relatedConcepts')).toEqual(['Copenhagen']);
+                            expect(this.queryState.queryTextModel.get('relatedConcepts')).toEqual([['Copenhagen']]);
                         });
                     });
                 });

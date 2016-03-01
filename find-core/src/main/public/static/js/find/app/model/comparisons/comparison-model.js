@@ -10,7 +10,7 @@ define([
 ], function(Backbone, searchDataUtil, ComparisonDocumentsCollection) {
 
 
-    return Backbone.Model.extend({
+    var ComparisonModel = Backbone.Model.extend({
         url: '../api/public/comparison/compare',
 
         parse: function(response) {
@@ -41,8 +41,10 @@ define([
             primaryStateMatchId ? comparisonModelArguments.firstQueryStateToken = primaryStateMatchId : comparisonModelArguments.firstRestrictions = searchDataUtil.buildQuery(primaryModel);
             secondaryStateMatchId ? comparisonModelArguments.secondQueryStateToken = secondaryStateMatchId : comparisonModelArguments.secondRestrictions = searchDataUtil.buildQuery(secondaryModel);
 
-            return new this(comparisonModelArguments);
+            return new ComparisonModel(comparisonModelArguments);
         }
     });
+
+    return ComparisonModel;
 
 });

@@ -17,7 +17,7 @@ define([
             return inputText;
         }
 
-        return '(' + inputText + ') ' + _.map(relatedConcepts, wrapQuotes).join(' ');
+        return '(' + inputText + ') ' + _.map(_.flatten(_.uniq(relatedConcepts)), wrapQuotes).join(' ');
     };
 
     var buildIndexes = function(selectedIndexesArray) {

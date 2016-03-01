@@ -510,7 +510,9 @@ define([
         },
 
         stateTokenCheckScroll: function() {
-            if (this.documentsCollection.size() > 0) {
+            var triggerPoint = 500;
+
+            if (this.documentsCollection.size() > 0 && this.resultsFinished && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
                 this.infiniteScroll();
             }
         },
