@@ -91,7 +91,7 @@ define([
                 this.$iframe.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
             }
 
-            this.scrollFollow();
+            _.defer(this.scrollFollow);
 
             $('.main-content').scroll(this.scrollFollow);
         },
