@@ -8,18 +8,21 @@ define([
     'underscore',
     'find/app/model/document-model',
     'text!find/templates/app/page/colorbox-controls.html',
-    'text!find/templates/app/page/view/media-player.html',
+    'text!find/templates/app/page/view/document-content.html',
+    'text!find/templates/app/page/view/audio-player.html',
+    'text!find/templates/app/page/view/video-player.html',
     'text!find/templates/app/page/view/view-document.html',
     'i18n!find/nls/bundle'
-], function ($, _, DocumentModel, colorboxControlsTemplate, mediaPlayerTemplateString, viewDocumentTemplateString, i18n) {
+], function ($, _, DocumentModel, colorboxControlsTemplate, documentContentTemplateString, audioPlayerTemplateString, videoPlayerTemplateString, viewDocumentTemplateString, i18n) {
     "use strict";
 
     var SIZE = '90%';
     var window = $(window);
-    var mediaTypes = ['audio', 'video'];
     var isUrlRegex = /^https?:\/\//;
 
-    var mediaPlayerTemplate = _.template(mediaPlayerTemplateString);
+    var documentContentTemplate = _.template(documentContentTemplateString);
+    var audioPlayerTemplate = _.template(audioPlayerTemplateString);
+    var videoPlayerTemplate = _.template(videoPlayerTemplateString);
     var viewDocumentTemplate = _.template(viewDocumentTemplateString);
 
     function fancyButtonOverride() {
@@ -40,7 +43,7 @@ define([
         $.colorbox.resize({width: SIZE, height: SIZE});
     }
 
-    function colorboxArguments(options) {
+    function colorboxArguments(options, isUrl) {
         var args = {
             current: '{current} of {total}',
             height: '70%',
@@ -70,28 +73,38 @@ define([
 
         var contentType = options.model.get('contentType') || '';
 
-        var media = _.find(mediaTypes, function (mediaType) {
+        var identifyMedia = function (mediaType) {
             return contentType.indexOf(mediaType) === 0;
-        });
+        };
 
         var url = options.model.get('url');
 
-        if (media && url) {
-            args.html = mediaPlayerTemplate({
-                media: media,
+        var content;
+        if (identifyMedia('audio') && url) {
+            content = audioPlayerTemplate({
+                url: url,
+                offset: options.model.get('offset')
+            });
+        } else if (identifyMedia('video') && url) {
+            content = videoPlayerTemplate({
                 url: url,
                 offset: options.model.get('offset')
             });
         } else {
-            args.html = viewDocumentTemplate({
-                src: options.href,
-                i18n: i18n,
-                model: options.model,
-                arrayFields: DocumentModel.ARRAY_FIELDS,
-                dateFields: DocumentModel.DATE_FIELDS,
-                fields: ['index', 'reference', 'contentType', 'url']
+            content = documentContentTemplate({
+                i18n: i18n
             });
         }
+
+        args.html = viewDocumentTemplate({
+            src: isUrl ?  options.model.get('reference') : options.href,
+            i18n: i18n,
+            model: options.model,
+            content: content,
+            arrayFields: DocumentModel.ARRAY_FIELDS,
+            dateFields: DocumentModel.DATE_FIELDS,
+            fields: ['index', 'reference', 'contentType', 'url']
+        });
 
         return args;
     }
@@ -101,14 +114,15 @@ define([
     }
 
     function nearNativeOrTab(options, reference, targetNode, triggerNode) {
-        var colorboxArgs = colorboxArguments(options);
+        var isUrl = isURL(reference);
+        var colorboxArgs = colorboxArguments(options, isUrl);
 
         if (triggerNode) {
             triggerNode.colorbox(colorboxArgs);
         }
 
         // web documents should open the original document in a new tab
-        if (isURL(reference)) {
+        if (isUrl) {
             targetNode.attr({
                 href: reference,
                 target: "_blank"

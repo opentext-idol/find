@@ -66,7 +66,7 @@
                             <executable>npm</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>install</argument>
+                                <argument>update</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -80,7 +80,7 @@
                             <executable>${basedir}/node_modules/.bin/bower${npm.binExtension}</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>install</argument>
+                                <argument>update</argument>
                             </arguments>
                         </configuration>
                     </execution>

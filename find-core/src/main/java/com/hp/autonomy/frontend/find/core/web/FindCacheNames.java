@@ -13,13 +13,9 @@ import java.util.Map;
 public class FindCacheNames {
 
     public static final String DOCUMENTS = "documents";
-    public static final String INDEXES = "indexes";
-    public static final String PARAMETRIC_FIELDS = "parametric-fields";
-    public static final String PARAMETRIC_VALUES = "parametric-values";
     public static final String PROMOTED_DOCUMENTS = "promoted-documents";
     public static final String SIMILAR_DOCUMENTS = "similar-documents";
     public static final String TYPE_AHEAD = "type-ahead";
-    public static final String VISIBLE_INDEXES = "visible-indexes";
 
     /**
      * Caches' TTLs in seconds.

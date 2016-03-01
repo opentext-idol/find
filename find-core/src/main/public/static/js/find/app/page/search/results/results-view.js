@@ -4,14 +4,11 @@ define([
     'underscore',
     'find/app/model/promotions-collection',
     'find/app/model/similar-documents-collection',
-    'find/app/util/popover',
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
     'find/app/util/viewing-colourbox',
     'find/app/vent',
     'js-whatever/js/escape-regex',
-    'text!find/templates/app/page/search/results-popover.html',
-    'text!find/templates/app/page/search/popover-message.html',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/search/results/results-container.html',
     'text!find/templates/app/page/loading-spinner.html',
@@ -20,8 +17,8 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'colorbox'
-], function (Backbone, $, _, PromotionsCollection, SimilarDocumentsCollection, popover,
-             viewClient, documentMimeTypes, viewingColourbox, vent, escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
+], function (Backbone, $, _, PromotionsCollection, SimilarDocumentsCollection,
+             viewClient, documentMimeTypes, viewingColourbox, vent, escapeRegex, template, resultsTemplate,
              loadingSpinnerTemplate, entityTemplate, moment, i18n, i18n_indexes) {
     "use strict";
 
@@ -73,10 +70,8 @@ define([
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         resultsTemplate: _.template(resultsTemplate),
-        popoverMessageTemplate: _.template(popoverMessageTemplate),
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
-        popoverTemplate: _.template(popoverTemplate),
         entityTemplate: _.template(entityTemplate),
 
         events: {
@@ -93,6 +88,9 @@ define([
 
         initialize: function (options) {
             this.queryStrategy = options.queryStrategy;
+
+            this.highlightToggle = options.highlightToggle;
+            this.listenTo(this.highlightToggle, 'change', this.refreshHighlighting);
 
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
@@ -125,6 +123,19 @@ define([
                     this.$('.main-results-content .results').empty();
                 }
             }
+        },
+
+        refreshHighlighting: function () {
+            this.$('.main-results-content .promotions').empty();
+            this.$('.main-results-content .results').empty();
+
+            this.promotionsCollection.each(function(model) {
+                this.formatResult(model, true);
+            }, this);
+
+            this.documentsCollection.each(function(model) {
+                this.formatResult(model, false);
+            }, this);
         },
 
         clearLoadingSpinner: function () {
@@ -207,7 +218,8 @@ define([
 
             var href;
 
-            if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
+            var isStaticContentPromotion = model.get('promotionCategory') === 'STATIC_CONTENT_PROMOTION';
+            if (isStaticContentPromotion) {
                 href = viewClient.getStaticContentPromotionHref(reference);
             } else {
                 href = viewClient.getHref(reference, model);
@@ -222,7 +234,7 @@ define([
                 href: href,
                 promotion: isPromotion,
                 reference: reference,
-                staticPromotion: model.get('promotionType') === 'STATIC_CONTENT_PROMOTION',
+                staticPromotion: isStaticContentPromotion,
                 summary: summary,
                 title: model.get('title')
             }));
@@ -247,27 +259,29 @@ define([
         },
 
         addLinksToSummary: function (summary) {
-            // Find highlighted query terms
-            var queryTextRegex = /<HavenSearch-QueryText-Placeholder>(.*?)<\/HavenSearch-QueryText-Placeholder>/g;
-            var queryText = [];
-            var resultsArray;
-            //noinspection AssignmentResultUsedJS
-            while ((resultsArray = queryTextRegex.exec(summary)) !== null) {
-                queryText.push(resultsArray[1]);
-            }
+            if (summary) {
+                // Find highlighted query terms
+                var queryTextRegex = /<HavenSearch-QueryText-Placeholder>(.*?)<\/HavenSearch-QueryText-Placeholder>/g;
+                var queryText = [];
+                var resultsArray;
+                //noinspection AssignmentResultUsedJS
+                while ((resultsArray = queryTextRegex.exec(summary)) !== null) {
+                    queryText.push(resultsArray[1]);
+                }
 
-            // Protect us from XSS (but leave injected highlight tags alone)
-            var otherText = summary.split(/<HavenSearch-QueryText-Placeholder>.*?<\/HavenSearch-QueryText-Placeholder>/);
-            var escapedSummaryElements = [];
-            escapedSummaryElements.push(_.escape(otherText[0]));
-            for (var i = 0; i < queryText.length; i++) {
-                escapedSummaryElements.push('<span class="search-text">' + _.escape(queryText[i]) + '</span>');
-                escapedSummaryElements.push(_.escape(otherText[i + 1]));
+                // Protect us from XSS (but leave injected highlight tags alone)
+                var otherText = summary.split(/<HavenSearch-QueryText-Placeholder>.*?<\/HavenSearch-QueryText-Placeholder>/);
+                var escapedSummaryElements = [];
+                escapedSummaryElements.push(_.escape(otherText[0]));
+                for (var i = 0; i < queryText.length; i++) {
+                    escapedSummaryElements.push('<span class="search-text">' + _.escape(queryText[i]) + '</span>');
+                    escapedSummaryElements.push(_.escape(otherText[i + 1]));
+                }
+                var escapedSummary = escapedSummaryElements.join('');
             }
-            var escapedSummary = escapedSummaryElements.join('');
 
             // Create an array of the entity titles, longest first
-            if (this.entityCollection) {
+            if (this.entityCollection && this.highlightToggle.get('highlightConcepts')) {
                 var entities = this.entityCollection.map(function (entity) {
                     return {
                         text: entity.get('text'),
@@ -359,11 +373,17 @@ define([
                 sort: this.queryModel.get('sort')
             }, this.queryStrategy.requestParams(this.queryModel, infiniteScroll));
 
+            var self = this;
             this.documentsCollection.fetch({
                 data: requestData,
                 reset: false,
                 remove: !infiniteScroll
-            }, this);
+            }).done(function () {
+                var invalidDatabases = self.documentsCollection.invalidDatabases;
+                if (invalidDatabases) {
+                    self.queryModel.set('invalidDatabases', invalidDatabases);
+                }
+            });
 
             if (this.queryStrategy.displayPromotions() && !infiniteScroll) {
                 this.promotionsFinished = false;

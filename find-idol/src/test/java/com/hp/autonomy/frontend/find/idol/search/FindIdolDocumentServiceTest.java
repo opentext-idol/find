@@ -8,9 +8,9 @@ package com.hp.autonomy.frontend.find.idol.search;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentServiceTest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.idol.QueryResponseData;
 import com.hp.autonomy.types.requests.Documents;
 import org.junit.Before;
@@ -30,7 +30,7 @@ public class FindIdolDocumentServiceTest extends IdolDocumentServiceTest {
     public void setUp() {
         when(havenSearchConfig.getQueryManipulation()).thenReturn(new QueryManipulation.Builder().build());
         when(configService.getConfig()).thenReturn(havenSearchConfig);
-        idolDocumentService = new FindIdolDocumentService(configService, parameterHandler, contentAciService, qmsAciService, aciResponseProcessorFactory);
+        idolDocumentService = new FindIdolDocumentService(configService, parameterHandler, contentAciService, qmsAciService, aciResponseProcessorFactory, databasesService);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class FindIdolDocumentServiceTest extends IdolDocumentServiceTest {
         blacklistError.setErrorString(FindIdolDocumentService.MISSING_RULE_ERROR);
         when(qmsAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenThrow(blacklistError).thenReturn(responseData);
 
-        final Documents<SearchResult> results = idolDocumentService.queryTextIndex(mockQueryParams());
+        final Documents<IdolSearchResult> results = idolDocumentService.queryTextIndex(mockQueryParams());
         assertThat(results.getDocuments(), is(not(empty())));
     }
 

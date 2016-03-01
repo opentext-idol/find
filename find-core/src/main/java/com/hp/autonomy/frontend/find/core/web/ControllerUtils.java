@@ -6,9 +6,8 @@
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Common logic within controller classes
@@ -18,13 +17,7 @@ public interface ControllerUtils {
 
     String convertToJson(final Object object) throws JsonProcessingException;
 
-    @SuppressWarnings("MethodWithTooManyParameters")
-    ModelAndView buildErrorModelAndView(
-            HttpServletRequest request,
-            String mainMessageCode,
-            String subMessageCode,
-            Object[] subMessageArguments,
-            Integer statusCode,
-            boolean contactSupport
-    );
+    String getMessage(String code, Object[] args) throws NoSuchMessageException;
+
+    ModelAndView buildErrorModelAndView(final ErrorModelAndViewInfo errorInfo);
 }

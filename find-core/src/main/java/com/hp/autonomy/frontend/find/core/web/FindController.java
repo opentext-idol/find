@@ -10,9 +10,10 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,7 +32,6 @@ public class FindController {
     public static final String LOGIN_PATH = "/login";
     private static final String DEFAULT_LOGIN_PAGE = "/loginPage";
 
-    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
 
@@ -43,6 +43,10 @@ public class FindController {
 
     @Autowired
     private ControllerUtils controllerUtils;
+
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
+    private AuthenticationInformationRetriever<? extends Authentication> authenticationInformationRetriever;
 
     @RequestMapping("/")
     public void index(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
@@ -57,7 +61,7 @@ public class FindController {
 
     @RequestMapping(value = PUBLIC_PATH, method = RequestMethod.GET)
     public ModelAndView mainPage() throws JsonProcessingException {
-        final String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final String username = authenticationInformationRetriever.getAuthentication().getName();
         final Map<String, Object> config = new HashMap<>();
         config.put(MvcConstants.USERNAME.value(), username);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);

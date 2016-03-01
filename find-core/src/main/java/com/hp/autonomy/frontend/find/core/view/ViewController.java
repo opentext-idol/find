@@ -19,15 +19,16 @@ import java.io.Serializable;
 
 @Controller
 @RequestMapping(ViewController.VIEW_PATH)
-public abstract class ViewController<V extends ViewServerService<S, E>, S extends Serializable, E extends Exception> {
+public abstract class ViewController<S extends Serializable, E extends Exception> {
     public static final String VIEW_PATH = "/api/public/view";
     public static final String VIEW_DOCUMENT_PATH = "/viewDocument";
+    public static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
     public static final String REFERENCE_PARAM = "reference";
     public static final String DATABASE_PARAM = "database";
 
-    protected final V viewServerService;
+    protected final ViewServerService<S, E> viewServerService;
 
-    protected ViewController(final V viewServerService) {
+    protected ViewController(final ViewServerService<S, E> viewServerService) {
         this.viewServerService = viewServerService;
     }
 
@@ -40,5 +41,16 @@ public abstract class ViewController<V extends ViewServerService<S, E>, S extend
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         ViewContentSecurityPolicy.addContentSecurityPolicy(response);
         viewServerService.viewDocument(reference, database, response.getOutputStream());
+    }
+
+    @RequestMapping(value = VIEW_STATIC_CONTENT_PROMOTION_PATH, method = RequestMethod.GET)
+    public void viewStaticContentPromotion(
+            @RequestParam(REFERENCE_PARAM) final String reference,
+            final HttpServletResponse response
+    ) throws IOException, E {
+        response.setContentType(MediaType.TEXT_HTML_VALUE);
+        ViewContentSecurityPolicy.addContentSecurityPolicy(response);
+
+        viewServerService.viewStaticContentPromotion(reference, response.getOutputStream());
     }
 }

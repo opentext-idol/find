@@ -8,8 +8,9 @@
         "name": "SingleUserAuthentication"
     },
     "hsod": {
-        "landingPageUrl": "https://search.int.havenondemand.com",
-        "externalUrl": "http://localhost:8080/find"
+        "landingPageUrl": "https://search.havenondemand.com",
+        "externalUrl": "http://localhost:8080/find",
+        "findAppUrl": "https://find.havenapps.io"
     },
     "iod": {
         "apiKey": "",

@@ -16,6 +16,9 @@ define([
         parse: function(response) {
             this.autoCorrection = response.autoCorrection;
             this.totalResults = response.totalResults;
+            if (response.warnings) {
+                this.invalidDatabases = response.warnings.invalidDatabases;
+            }
 
             return response.documents;
         },

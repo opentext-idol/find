@@ -260,10 +260,6 @@ html, body {
     background-color: #efefef;
 }
 
-.small-container {
-    width: initial;
-}
-
 .right-side-container {
     font-size: 14px;
     background-color: #efefef;
@@ -275,9 +271,21 @@ html, body {
 }
 
 .right-side-container,
+.left-side-container {
+    width: 20%;
+}
+
+.left-side-container.small-container,
+.right-side-container.small-container {
+    width: 50px;
+}
+
+.right-side-container,
 .left-side-container,
 .middle-container {
-    padding-top: 10px;
+    padding: 10px 15px;
+    display: table-cell;
+    vertical-align: top;
 }
 
 .right-side-container h4,
@@ -306,6 +314,8 @@ html, body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    word-break: break-all;
+    width: 100%;
 }
 
 .filter-display-container h4 {
@@ -530,7 +540,7 @@ input.find-input {
     font-size: 23px !important;
     border: 2px solid #CCC !important;
     transition: all 1s ease;
-    padding: 10px;
+    padding-left: 10px;
     font-family: inherit;
     font-style: italic;
 }
@@ -630,7 +640,7 @@ input.find-input {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
-    max-height: 41px;
+    max-height: 43px;
 }
 
 .related-concepts-list {
@@ -668,6 +678,9 @@ input.find-input {
 
 .service-view-container {
     height: 100%;
+    width: 100%;
+    display: table;
+    table-layout: fixed;
 }
 
 .service-view-container .hp-check {
@@ -712,7 +725,6 @@ input.find-input {
 .disabled-index {
     color: #aaa;
     cursor: not-allowed;
-    pointer-events: none;
 }
 
 .indexes-list-group .controls {
@@ -745,6 +757,29 @@ input:-moz-placeholder::before {
     font-family: fontAwesome;
     content: '\f105';
     color: #425563;
+}
+
+.find-input-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 30px;
+}
+
+.find-input-button,
+.find-input-button:hover {
+    box-shadow: none;
+    border: 0;
+    border-left: 1px solid #ccc;
+}
+
+.reverse-animated-container .find-input-button {
+    height: 45px;
+}
+
+.reverse-animated-container .find-input-button,
+.reverse-animated-container .find-input-button:hover {
+    border: 2px solid #ccc;
 }
 
 .find-navbar {
@@ -986,15 +1021,5 @@ input:-moz-placeholder::before {
     .flex-container {
         display: flex;
         min-height: 100%;
-    }
-}
-
-@media (max-width: 980px) {
-    .side-container {
-        width: 100%;
-    }
-
-    .small-container {
-        width: 100%;
     }
 }

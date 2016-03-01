@@ -1,6 +1,7 @@
 define([
     'backbone',
-    'find/app/page/find-search'
+    'find/app/page/find-search',
+    'jasmine-jquery'
 ], function (BackBone, FindSearch) {
 
     describe('Find Search', function() {
@@ -27,7 +28,7 @@ define([
 
             var $serviceViewContainer = this.findSearch.$el.find('.service-view-container');
 
-            expect($serviceViewContainer.css('display')).toEqual('none');
+            expect($serviceViewContainer).toHaveClass('hide');
         });
 
         it("should animate the input view when the queryText is not the empty string", function() {

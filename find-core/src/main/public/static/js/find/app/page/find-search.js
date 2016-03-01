@@ -67,6 +67,8 @@ define([
                 indexesCollection: this.indexesCollection
             });
 
+            router.on('route:emptySearch', this.reducedState, this);
+
             router.on('route:search', function(text, concepts) {
                 this.queryTextModel.set({
                     inputText: text || '',
@@ -78,6 +80,7 @@ define([
             }, this);
 
             router.on('route:suggest', function () {
+                this.expandedState();
                 var suggestOptions = this.suggestOptions.apply(this, arguments);
                 this.suggest(suggestOptions);
             }, this);
@@ -108,7 +111,7 @@ define([
             /*fancy animation*/
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
-            this.$('.query-service-view-container').show();
+            this.$('.query-service-view-container').removeClass('hide');
             this.$('.app-logo').hide();
             this.$('.hp-logo-footer').addClass('hidden');
 
@@ -121,15 +124,14 @@ define([
             /*fancy reverse animation*/
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
-            this.$('.query-service-view-container').hide();
+            this.$('.query-service-view-container').addClass('hide');
+            this.$('.suggest-service-view-container').addClass('hide');
             this.$('.app-logo').show();
             this.$('.hp-logo-footer').removeClass('hidden');
 
             // TODO: somebody else needs to own this
             $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').hide();
             $('.container-fluid, .find-logo-small').addClass('reduced');
-
-            vent.navigate('find/search/query', {trigger: false});
         },
 
         suggest: function (suggestOptions) {
@@ -151,10 +153,11 @@ define([
                         document: model
                     }, suggestOptions.suggestParams));
 
+                    var queryPathSuffix = self.generateURL();
                     var suggestServiceView = new self.SuggestServiceView({
                         queryModel: queryModel,
                         indexesCollection: self.indexesCollection,
-                        backUrl: 'find/search/query/' + self.generateURL()
+                        backUrl: queryPathSuffix ? 'find/search/query/' + queryPathSuffix : 'find/search/query'
                     });
 
                     self.$('.query-service-view-container').addClass('hide');

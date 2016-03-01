@@ -47,3 +47,22 @@
 #colorbox {
     overflow: initial;
 }
+
+#cboxLoadedContent audio {
+    display: block;
+    position: absolute;
+    bottom: 0;
+}
+
+#cboxLoadedContent video {
+    display: block;
+}
+
+#cboxAudioImage {
+    color: #01a982;
+    font-size: 30px;
+    position: relative;
+    top: 50%;
+    text-align: center;
+    transform: translateY(-50%);
+}

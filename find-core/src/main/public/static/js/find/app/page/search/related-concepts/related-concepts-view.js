@@ -72,6 +72,10 @@ define([
                     var newConcepts = _.union(concepts, [queryText]);
                     this.queryTextModel.set('relatedConcepts', newConcepts);
                 }
+            },
+            'click .highlight-related-concepts' : function(e) {
+                this.highlightToggle.set('highlightConcepts', !this.highlightToggle.get('highlightConcepts'));
+                $(e.target).toggleClass('active', this.highlightToggle.get('highlightConcepts'));
             }
         },
 
@@ -80,6 +84,7 @@ define([
             this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
+            this.highlightToggle = options.highlightToggle;
 
             // Each instance of this view gets its own bound, de-bounced popover handler
             var handlePopover = _.debounce(_.bind(popoverHandler, this), 500);
@@ -90,12 +95,21 @@ define([
                 } else {
                     this.$list.empty();
 
+                    var $highlight = this.$(".highlight-related-concepts");
                     if (this.entityCollection.isEmpty()) {
                         this.selectViewState(['none']);
+                        $highlight.hide();
                     } else {
                         this.selectViewState(['list']);
+                        $highlight.show();
 
-                        var entities = _.first(this.entityCollection.models, 8);
+                        var entities = this.entityCollection.chain()
+                            .filter(function(model) {
+                                return model.get('cluster') >= 0
+                                    && model.get('text') !== this.queryTextModel.get('inputText'); // TODO: we may want to remove this if we reintroduce the hierarchical view
+                            }, this)
+                            .first(8)
+                            .value();
 
                         _.each(entities, function (entity) {
                             this.$list.append(this.listItemTemplate({concept: entity.get('text')}));
@@ -108,6 +122,8 @@ define([
 
             /*suggested links*/
             this.listenTo(this.entityCollection, 'request', function() {
+                this.$(".highlight-related-concepts").hide();
+
                 if (this.indexesCollection.isEmpty()) {
                     this.selectViewState(['notLoading']);
                 } else {
@@ -119,6 +135,8 @@ define([
                 this.selectViewState(['error']);
 
                 this.$error.text(i18n['search.error.relatedConcepts']);
+
+                this.$(".highlight-related-concepts").hide();
             });
         },
 

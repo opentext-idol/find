@@ -5,53 +5,52 @@
 
 package com.hp.autonomy.frontend.find.hod.search;
 
-import com.google.common.collect.ImmutableSet;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
+import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthentication;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
+import com.hp.autonomy.searchcomponents.core.caching.CacheNames;
+import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
-import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationCapable;
+import com.hp.autonomy.searchcomponents.hod.databases.Database;
+import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import com.hp.autonomy.types.requests.Documents;
+import com.hp.autonomy.types.requests.Warnings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class FindHodDocumentService extends HodDocumentsService {
-    private static final ImmutableSet<String> PUBLIC_INDEX_NAMES = ImmutableSet.of(
-            ResourceIdentifier.WIKI_CHI.getName(),
-            ResourceIdentifier.WIKI_ENG.getName(),
-            ResourceIdentifier.WIKI_FRA.getName(),
-            ResourceIdentifier.WIKI_GER.getName(),
-            ResourceIdentifier.WIKI_ITA.getName(),
-            ResourceIdentifier.WIKI_SPA.getName(),
-            ResourceIdentifier.WORLD_FACTBOOK.getName(),
-            ResourceIdentifier.NEWS_ENG.getName(),
-            ResourceIdentifier.NEWS_FRA.getName(),
-            ResourceIdentifier.NEWS_GER.getName(),
-            ResourceIdentifier.NEWS_ITA.getName(),
-            ResourceIdentifier.ARXIV.getName(),
-            ResourceIdentifier.PATENTS.getName()
-    );
+    private final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService;
+    private final ConfigService<HodFindConfig> findConfigService;
+    private final CacheManager cacheManager;
 
+    @SuppressWarnings("ConstructorWithTooManyParameters")
     @Autowired
-    public FindHodDocumentService(final FindSimilarService<HodSearchResult> findSimilarService, final ConfigService<? extends QueryManipulationCapable> configService, final QueryTextIndexService<HodSearchResult> queryTextIndexService, final GetContentService<HodSearchResult> getContentService) {
-        super(findSimilarService, configService, queryTextIndexService, getContentService);
+    public FindHodDocumentService(final FindSimilarService<HodSearchResult> findSimilarService, final ConfigService<HodFindConfig> configService, final QueryTextIndexService<HodSearchResult> queryTextIndexService, final GetContentService<HodSearchResult> getContentService, final AuthenticationInformationRetriever<HodAuthentication> authenticationRetriever, final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService, final CacheManager cacheManager) {
+        super(findSimilarService, configService, queryTextIndexService, getContentService, authenticationRetriever);
+        this.databasesService = databasesService;
+        findConfigService = configService;
+        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -67,54 +66,56 @@ public class FindHodDocumentService extends HodDocumentsService {
     }
 
     @Override
-    @Cacheable(FindCacheNames.SIMILAR_DOCUMENTS)
-    public Documents<HodSearchResult> findSimilar(final SuggestRequest<ResourceIdentifier> suggestRequest) throws HodErrorException {
-        final Documents<HodSearchResult> results = super.findSimilar(suggestRequest);
-        final List<HodSearchResult> resultsWithDomain = new LinkedList<>();
-        addDomainToSearchResults(resultsWithDomain, suggestRequest.getQueryRestrictions().getDatabases(), results.getDocuments());
-        return new Documents<>(resultsWithDomain, results.getTotalResults(), results.getExpandedQuery(), results.getSuggestion(), results.getAutoCorrection());
+    protected Documents<HodSearchResult> queryTextIndex(final SearchRequest<ResourceIdentifier> searchRequest, final boolean fetchPromotions) throws HodErrorException {
+        try {
+            return super.queryTextIndex(searchRequest, fetchPromotions);
+        } catch (final HodErrorException e) {
+            if (e.getErrorCode() == HodErrorCode.INDEX_NAME_INVALID) {
+                final Boolean publicIndexesEnabled = findConfigService.getConfig().getIod().getPublicIndexesEnabled();
+                final HodDatabasesRequest databasesRequest = new HodDatabasesRequest.Builder().setPublicIndexesEnabled(publicIndexesEnabled).build();
+
+                final Cache cache = cacheManager.getCache(CacheNames.DATABASES);
+                if (cache != null) {
+                    cache.clear();
+                }
+                final Set<Database> updatedDatabases = databasesService.getDatabases(databasesRequest);
+
+                final QueryRestrictions<ResourceIdentifier> queryRestrictions = searchRequest.getQueryRestrictions();
+                final Set<ResourceIdentifier> badIndexes = new HashSet<>(queryRestrictions.getDatabases());
+
+                for (final Database database : updatedDatabases) {
+                    final ResourceIdentifier resourceIdentifier = new ResourceIdentifier(database.getDomain(), database.getName());
+                    badIndexes.remove(resourceIdentifier);
+                }
+
+                final List<ResourceIdentifier> goodIndexes = new ArrayList<>(queryRestrictions.getDatabases());
+                goodIndexes.removeAll(badIndexes);
+
+                searchRequest.setQueryRestrictions(new HodQueryRestrictionsBuilder().build(
+                        queryRestrictions.getQueryText(),
+                        queryRestrictions.getFieldText(),
+                        goodIndexes,
+                        queryRestrictions.getMinDate(),
+                        queryRestrictions.getMaxDate()
+                ));
+                final Documents<HodSearchResult> resultDocuments = super.queryTextIndex(searchRequest, fetchPromotions);
+                final Warnings warnings = new Warnings(badIndexes);
+                return new Documents<>(
+                        resultDocuments.getDocuments(),
+                        resultDocuments.getTotalResults(),
+                        resultDocuments.getExpandedQuery(),
+                        resultDocuments.getSuggestion(),
+                        resultDocuments.getAutoCorrection(),
+                        warnings);
+            } else {
+                throw e;
+            }
+        }
     }
 
     @Override
-    public List<HodSearchResult> getDocumentContent(final GetContentRequest<ResourceIdentifier> request) throws HodErrorException {
-        final List<HodSearchResult> results = super.getDocumentContent(request);
-        final List<HodSearchResult> resultsWithDomain = new LinkedList<>();
-        addDomainToSearchResults(resultsWithDomain, Collections.singleton(request.getIndexesAndReferences().iterator().next().getIndex()), results);
-        return resultsWithDomain;
-    }
-
-    private void addDomainToSearchResults(final Collection<HodSearchResult> resultsWithDomain, final Iterable<ResourceIdentifier> indexIdentifiers, final Iterable<HodSearchResult> documents) {
-        for (final HodSearchResult hodSearchResult : documents) {
-            resultsWithDomain.add(addDomain(indexIdentifiers, hodSearchResult));
-        }
-    }
-
-    // Add a domain to a FindDocument, given the collection of indexes which were queried against to return it from HOD
-    private HodSearchResult addDomain(final Iterable<ResourceIdentifier> indexIdentifiers, final HodSearchResult document) {
-        // HOD does not return the domain for documents yet, but it does return the index
-        final String index = document.getIndex();
-        String domain = null;
-
-        // It's most likely that the returned documents will be in one of the indexes we are querying (hopefully the
-        // names are unique between the domains...)
-        for (final ResourceIdentifier indexIdentifier : indexIdentifiers) {
-            if (index.equals(indexIdentifier.getName())) {
-                domain = indexIdentifier.getDomain();
-                break;
-            }
-        }
-
-        if (domain == null) {
-            // If not, it might be a public index
-            domain = PUBLIC_INDEX_NAMES.contains(index) ? ResourceIdentifier.PUBLIC_INDEXES_DOMAIN : getDomain();
-        }
-
-        return new HodSearchResult.Builder(document)
-                .setDomain(domain)
-                .build();
-    }
-
-    private String getDomain() {
-        return ((HodAuthentication) SecurityContextHolder.getContext().getAuthentication()).getPrincipal().getApplication().getDomain();
+    @Cacheable(FindCacheNames.SIMILAR_DOCUMENTS)
+    public Documents<HodSearchResult> findSimilar(final SuggestRequest<ResourceIdentifier> suggestRequest) throws HodErrorException {
+        return super.findSimilar(suggestRequest);
     }
 }

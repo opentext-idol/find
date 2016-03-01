@@ -7,11 +7,11 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentsControllerTest;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.Before;
 import org.junit.Test;
 
-public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<String, SearchResult, AciErrorException> {
+public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<String, IdolSearchResult, AciErrorException> {
     @Before
     public void setUp() {
         documentsController = new IdolDocumentsController(documentsService, new IdolQueryRestrictionsBuilder());
@@ -19,8 +19,8 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
     }
 
     @Override
-    protected SearchResult sampleResult() {
-        return new SearchResult.Builder().build();
+    protected IdolSearchResult sampleResult() {
+        return new IdolSearchResult.Builder().build();
     }
 
     @Test(expected = AciErrorException.class)
