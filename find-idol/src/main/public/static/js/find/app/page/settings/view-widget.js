@@ -5,8 +5,9 @@
 
 define([
     'find/app/page/settings/aci-widget',
+    'i18n!find/nls/bundle',
     'text!find/templates/app/page/settings/view-widget.html'
-], function(AciWidget, template) {
+], function(AciWidget, i18n, template) {
 
     return AciWidget.extend({
         viewTemplate: _.template(template),
@@ -76,10 +77,10 @@ define([
         handleValidation: function(config, response) {
             if (_.isEqual(config, this.lastValidationConfig)) {
                 if (response.data && response.data.validation === 'CONNECTOR_VALIDATION_ERROR') {
-                    this.updateInputValidation(this.$('.connector-container .form-group'), false)
+                    this.updateInputValidation(this.$('.connector-container .form-group'), false, this.getValidationFailureMessage(response.data.connectorValidation))
                 }
                 else if(response.data === "REFERENCE_FIELD_BLANK") {
-                    this.updateInputValidation(this.$referenceField, false);
+                    this.updateInputValidation(this.$referenceField, false, this.strings.referenceFieldBlank);
                 }
                 else {
                     AciWidget.prototype.handleValidation.apply(this, arguments);
@@ -90,28 +91,30 @@ define([
         validateInputs: function() {
             var isValid = AciWidget.prototype.validateInputs.apply(this, arguments);
 
-            var mode = this.$modeSelect.val();
+            if (isValid) {
+                var mode = this.$modeSelect.val();
 
-            if (mode === 'FIELD') {
-                if (this.$referenceField.val() === '') {
-                    this.updateInputValidation(this.$referenceField, false);
-                    return false;
+                if (mode === 'FIELD') {
+                    if (this.$referenceField.val() === '') {
+                        this.updateInputValidation(this.$referenceField, false);
+                        return false;
+                    }
                 }
-            }
-            else if (mode ===  'CONNECTOR') {
-                if (this.$connectorHost.val() === '') {
-                    this.updateInputValidation(this.$connectorHost, false, this.strings.validateHostBlank);
-                    return false;
+                else if (mode === 'CONNECTOR') {
+                    if (this.$connectorHost.val() === '') {
+                        this.updateInputValidation(this.$connectorHost, false, this.strings.validateHostBlank);
+                        return false;
+                    }
+
+                    var port = Number(this.$connectorPort.val());
+
+                    if (port <= 0 || port > 65535) {
+                        this.updateInputValidation(this.$connectorPort, false, this.strings.validatePortInvalid);
+                        return false;
+                    }
+
+                    return true;
                 }
-
-                var port = Number(this.$connectorPort.val());
-
-                if (port <= 0 || port > 65535) {
-                    this.updateInputValidation(this.$connectorPort, false, this.strings.validatePortInvalid);
-                    return false;
-                }
-
-                return true;
             }
 
             return isValid;
