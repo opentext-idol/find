@@ -6,26 +6,43 @@
 define([
     'backbone',
     'find/app/util/search-data-util',
-    'find/app/model/comparisons/comparison-documents-collection'
-], function(Backbone, searchDataUtil, ComparisonDocumentsCollection) {
+    'find/app/model/comparisons/comparison-documents-collection',
+    'find/app/model/saved-searches/saved-search-model'
+], function(Backbone, searchDataUtil, ComparisonDocumentsCollection, SavedSearchModel) {
 
+    var getComparisonAttributesFromSavedSearch = function(savedSearchModel, prefix) {
+        var data = {};
 
-    return Backbone.Model.extend({
+        data[prefix + 'Text'] = searchDataUtil.makeQueryText(savedSearchModel.get('queryText'), savedSearchModel.get('relatedConcepts'));
+
+        if(savedSearchModel.get('type') === SavedSearchModel.Type.SNAPSHOT) {
+            data[prefix + 'QueryStateToken'] = _.first(savedSearchModel.get('stateTokens'));
+        } else {
+            data[prefix + 'Restrictions'] = searchDataUtil.buildQuery(savedSearchModel);
+        }
+
+        return data;
+    };
+
+    var ComparisonModel = Backbone.Model.extend({
         url: '../api/public/comparison/compare',
 
         parse: function(response) {
             return {
                 documentsInBoth: new ComparisonDocumentsCollection([], {
+                    text: '(' + this.get('firstText') + ') OR (' + this.get('secondText') + ')',
                     stateMatchIds: _.compact([response.firstQueryStateToken, response.secondQueryStateToken]),
                     stateDontMatchIds: _.compact([response.documentsOnlyInFirstStateToken, response.documentsOnlyInSecondStateToken])
                 }),
 
                 documentsOnlyInFirst: new ComparisonDocumentsCollection([], {
+                    text: this.get('firstText'),
                     stateMatchIds: _.compact([response.firstQueryStateToken]),
                     stateDontMatchIds: _.compact([response.secondQueryStateToken])
                 }),
 
                 documentsOnlyInSecond: new ComparisonDocumentsCollection([], {
+                    text: this.get('secondText'),
                     stateMatchIds: _.compact([response.secondQueryStateToken]),
                     stateDontMatchIds: _.compact([response.firstQueryStateToken])
                 })
@@ -33,16 +50,15 @@ define([
         }
     }, {
         fromModels: function(primaryModel, secondaryModel) {
-            var primaryStateMatchId = primaryModel.get('stateMatchId');
-            var secondaryStateMatchId = secondaryModel.get('stateMatchId');
+            var comparisonModelAttributes = {};
 
-            var comparisonModelArguments = {};
+            _.extend(comparisonModelAttributes, getComparisonAttributesFromSavedSearch(primaryModel, 'first'));
+            _.extend(comparisonModelAttributes, getComparisonAttributesFromSavedSearch(secondaryModel, 'second'));
 
-            primaryStateMatchId ? comparisonModelArguments.firstQueryStateToken = primaryStateMatchId : comparisonModelArguments.firstRestrictions = searchDataUtil.buildQuery(primaryModel);
-            secondaryStateMatchId ? comparisonModelArguments.secondQueryStateToken = secondaryStateMatchId : comparisonModelArguments.secondRestrictions = searchDataUtil.buildQuery(secondaryModel);
-
-            return new this(comparisonModelArguments);
+            return new ComparisonModel(comparisonModelAttributes);
         }
     });
+
+    return ComparisonModel;
 
 });

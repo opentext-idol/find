@@ -25,6 +25,7 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
 
     public static final int STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
 
+    public static final String TEXT_PARAM = "text";
     public static final String STATE_MATCH_PARAM = "state_match_ids";
     public static final String STATE_DONT_MATCH_PARAM = "state_dont_match_ids";
     public static final String RESULTS_START_PARAM = "start";
@@ -55,6 +56,7 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
     public Documents<R> getResults(
             @RequestParam(value = STATE_MATCH_PARAM) final List<String> stateMatchIds,
             @RequestParam(value = STATE_DONT_MATCH_PARAM, required = false) final List<String> stateDontMatchIds,
+            @RequestParam(value = TEXT_PARAM, required = false, defaultValue = "*") final String text,
             @RequestParam(value = RESULTS_START_PARAM, required = false, defaultValue = "1") final int resultsStart,
             @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
             @RequestParam(SUMMARY_PARAM) final String summary,
@@ -64,6 +66,7 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
         return comparisonService.getResults(
                 stateMatchIds,
                 stateDontMatchIds == null ? Collections.<String>emptyList() : stateDontMatchIds,
+                text,
                 resultsStart,
                 maxResults,
                 summary,

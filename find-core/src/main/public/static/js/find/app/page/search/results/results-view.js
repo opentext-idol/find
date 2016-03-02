@@ -491,6 +491,7 @@ define([
 
             this.documentsCollection.fetch({
                 data: {
+                    text: this.queryModel.get('queryText'),
                     start: this.start,
                     max_results: this.maxResults,
                     summary: 'context',
@@ -510,7 +511,9 @@ define([
         },
 
         stateTokenCheckScroll: function() {
-            if (this.documentsCollection.size() > 0) {
+            var triggerPoint = 500;
+
+            if (this.documentsCollection.size() > 0 && this.resultsFinished && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
                 this.infiniteScroll();
             }
         },

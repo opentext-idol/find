@@ -15,14 +15,19 @@ define([
     'use strict';
 
     function scrollFollow() {
-        if (this.$el.offsetParent().offset().top < 0) {
-            this.$el.css('margin-top', Math.abs(this.$el.offsetParent().offset().top) + 15);
-        } else {
-            this.$el.css('margin-top', 0);
-        }
+        // Check to see if the window has scrolled to the bottom, if it has dont move the preview down. (fix for BIFHI-197)
+        var scrollPos = this.el.scrollHeight + this.$el.offset().top - $(window).height();
 
-        if(this.$iframe) {
-            this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height());
+        if (scrollPos < -50 || scrollPos > 0) {
+            if (this.$el.offsetParent().offset().top < 0) {
+                this.$el.css('margin-top', Math.abs(+this.$el.offsetParent().offset().top) + 15);
+            } else {
+                this.$el.css('margin-top', 0);
+            }
+
+            if (this.$iframe) {
+                this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height());
+            }
         }
     }
 
@@ -34,16 +39,18 @@ define([
 
         events: {
             'click .preview-mode-open-detail-button': 'openDocumentDetail',
-            'click .close-preview-mode': function() {
-                this.pauseMedia();
-                this.trigger('close-preview');
-            }
+            'click .close-preview-mode': 'triggerClose'
         },
 
         $iframe: null,
 
         initialize: function() {
             this.scrollFollow = _.bind(scrollFollow, this);
+        },
+
+        triggerClose: function () {
+            this.pauseMedia();
+            this.trigger('close-preview');
         },
 
         render: function() {
@@ -86,7 +93,9 @@ define([
                 this.$iframe.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
             }
 
-            this.scrollFollow();
+            this.listenTo(this.model, 'remove destroy', this.triggerClose);
+
+            _.defer(this.scrollFollow);
 
             $('.main-content').scroll(this.scrollFollow);
         },
