@@ -377,7 +377,13 @@ define([
             this.documentsCollection.fetch({
                 data: requestData,
                 reset: false,
-                remove: !infiniteScroll
+                remove: !infiniteScroll,
+                error: function (collection){
+                    // if returns an error remove previous models from documentsCollection
+                    if (collection){
+                        collection.reset({documents: []}, {parse: true});
+                    }
+                }
             }).done(function () {
                 var invalidDatabases = self.documentsCollection.invalidDatabases;
                 if (invalidDatabases) {
