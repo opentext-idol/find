@@ -30,20 +30,10 @@ define([
     var endRegex = '($|' + boundaryChars + ')';
 
     function infiniteScroll() {
-        var totalResults = this.documentsCollection.totalResults;
-
         if (!this.endOfResults) {
-            if (this.maxResults < totalResults && this.maxResults + SCROLL_INCREMENT > totalResults) {
-                this.start = this.maxResults;
-                this.maxResults = totalResults;
-                this.endOfResults = true;
-            } else {
-                this.start += SCROLL_INCREMENT;
-                this.maxResults += SCROLL_INCREMENT;
-                if (this.maxResults === totalResults) {
-                    this.endOfResults = true;
-                }
-            }
+            this.start = this.maxResults + 1;
+            this.maxResults += SCROLL_INCREMENT;
+
             this.loadData(true);
         }
     }
@@ -176,6 +166,8 @@ define([
             this.listenTo(this.documentsCollection, 'sync', function() {
                 this.resultsFinished = true;
                 this.clearLoadingSpinner();
+
+                this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
 
                 if (this.endOfResults) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noMoreResults"]}));
@@ -377,7 +369,13 @@ define([
             this.documentsCollection.fetch({
                 data: requestData,
                 reset: false,
-                remove: !infiniteScroll
+                remove: !infiniteScroll,
+                error: function (collection){
+                    // if returns an error remove previous models from documentsCollection
+                    if (collection){
+                        collection.reset({documents: []}, {parse: true});
+                    }
+                }
             }).done(function () {
                 var invalidDatabases = self.documentsCollection.invalidDatabases;
                 if (invalidDatabases) {
@@ -398,8 +396,8 @@ define([
             var triggerPoint = 500;
             var resultsPresent = this.documentsCollection.size() > 0 && this.queryStrategy.validateQuery(this.queryModel);
             if (resultsPresent && this.resultsFinished && this.el.scrollHeight > 0 && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
-                    this.infiniteScroll();
-                }
+                this.infiniteScroll();
             }
+        }
     });
 });
