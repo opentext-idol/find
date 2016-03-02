@@ -227,6 +227,7 @@ define([
                     var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
 
                     var documentsCollection = searchType === SavedSearchModel.Type.QUERY ? new DocumentsCollection() : new ComparisonDocumentsCollection([], {
+                        text: queryTextModel.makeQueryText(),
                         stateMatchIds: savedSearchModel.get('stateTokens')
                     });
 
