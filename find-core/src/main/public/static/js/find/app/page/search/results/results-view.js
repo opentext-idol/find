@@ -463,7 +463,13 @@ define([
                     sort: this.queryModel.get('sort')
                 },
                 reset: false,
-                remove: !infiniteScroll
+                remove: !infiniteScroll,
+                error: function (collection){
+                    // if returns an error remove previous models from documentsCollection
+                    if (collection){
+                        collection.reset({documents: []}, {parse: true});
+                    }
+                }
             }, this);
 
             if (!infiniteScroll) {
