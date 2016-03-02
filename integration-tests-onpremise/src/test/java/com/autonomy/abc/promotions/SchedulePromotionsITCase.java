@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
@@ -67,7 +68,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 			fail("Schedule Page has not loaded");
 		}
 
-		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("schedule"));
+		assertThat(getWindow(), urlContains("schedule"));
 		assertThat("Wrong wizard text", schedulePage.getText().contains("Schedule your promotion"));
 		assertThat("Finish button not visible", schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed(), is(true));
 		assertThat("Always active isn't selected", schedulePage.alwaysActive().getAttribute("class"), containsString("progressive-disclosure-selection"));
@@ -183,7 +184,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
-		assertThat("Wrong URL", getDriver().getCurrentUrl(),containsString("schedule"));
+		assertThat(getWindow(), urlContains("schedule"));
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("Schedule your promotion"));
 		assertThat("Finish button not visible", schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed(), is(true));
 		assertThat("Finish button should be enabled", ElementUtil.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"), is(false));

@@ -2,11 +2,11 @@ package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.UserConfigParser;
+import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openqa.selenium.Dimension;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,16 +47,8 @@ class JsonConfig {
     private JsonConfig(JsonConfig overrides, JsonConfig defaults) {
         app = defaults.app.overrideUsing(overrides.app);
         selenium = defaults.selenium.overrideUsing(overrides.selenium);
-        users = new HashMap<>();
-        users.putAll(defaults.users);
-        if (overrides.users != null) {
-            users.putAll(overrides.users);
-        }
-        newUsers = new HashMap<>();
-        newUsers.putAll(defaults.newUsers);
-        if (overrides.newUsers != null) {
-            newUsers.putAll(overrides.newUsers);
-        }
+        users = mapOverride(defaults.users, overrides.users);
+        newUsers = mapOverride(defaults.newUsers, overrides.newUsers);
     }
 
     static JsonConfig readFile(File jsonFile) throws IOException {
@@ -75,23 +67,11 @@ class JsonConfig {
         return this.selenium.url;
     }
 
-    URL getWebappUrl() {
-        return this.app.url;
-    }
-
-    URL getFindUrl() {
-        return this.app.findUrl;
-    }
-
-    URL getApiUrl() {
-        return this.app.apiUrl;
-    }
-
     List<Browser> getBrowsers() {
         return this.selenium.browsers;
     }
 
-    Dimension getResolution() {
+    Resolution getResolution() {
         return this.selenium.resolution;
     }
 
@@ -119,33 +99,47 @@ class JsonConfig {
         return this.app.type;
     }
 
+    URL getAppUrl(String appName) {
+        return app.urls.get(appName);
+    }
+
     private static class AppConfig {
         private final ApplicationType type;
-        private final URL url;
-        private final URL findUrl;
-        private final URL apiUrl;
+        private final Map<String, URL> urls;
 
         private AppConfig(JsonNode node) throws MalformedURLException {
-            String typeString = node.path("type").asText();
-            type = (typeString.isEmpty() ? null : ApplicationType.fromString(typeString));
-            url = getUrlOrNull(node.path("url"));
-            findUrl = getUrlOrNull(node.path("find"));
-            apiUrl = getUrlOrNull(node.path("api"));
+            type = readType(node.path("type"));
+            urls = readUrls(node.fields());
         }
 
         private AppConfig(AppConfig overrides, AppConfig defaults) {
             type = override(defaults.type, overrides.type);
-            url = override(defaults.url, overrides.url);
-            findUrl = override(defaults.findUrl, overrides.findUrl);
-            apiUrl = override(defaults.apiUrl, overrides.apiUrl);
+            urls = mapOverride(defaults.urls, overrides.urls);
         }
 
         private AppConfig overrideUsing(AppConfig overrides) {
             return overrides == null ? this : new AppConfig(overrides, this);
         }
+
+        private ApplicationType readType(JsonNode node) {
+            String typeString = node.asText();
+            return typeString.isEmpty() ? null : ApplicationType.fromString(typeString);
+        }
+
+        private Map<String, URL> readUrls(Iterator<Map.Entry<String, JsonNode>> entries) throws MalformedURLException {
+            Map<String, URL> urls = new HashMap<>();
+            while (entries.hasNext()) {
+                Map.Entry<String, JsonNode> entry = entries.next();
+                if (!entry.getKey().equals("type")) {
+                    urls.put(entry.getKey(), getUrlOrNull(entry.getValue()));
+                }
+            }
+            return urls;
+        }
+
         @Override
         public String toString() {
-            return "{type=" + type + ", url=" + url + ", find=" + findUrl + "}";
+            return "{type=" + type + ", urls=" + urls + "}";
         }
 
     }
@@ -153,13 +147,13 @@ class JsonConfig {
     private static class SeleniumConfig {
         private final URL url;
         private final List<Browser> browsers;
-        private final Dimension resolution;
+        private final Resolution resolution;
         private final int timeout;
 
         private SeleniumConfig(JsonNode node) throws MalformedURLException {
             url = getUrlOrNull(node.path("url"));
             browsers = readBrowsers(node.path("browsers"));
-            resolution = readDimension(node.path("resolution"));
+            resolution = readResolution(node.path("resolution"));
             timeout = node.path("timeout").asInt(-1);
         }
 
@@ -185,13 +179,13 @@ class JsonConfig {
             return browsers;
         }
 
-        private Dimension readDimension(JsonNode dimensionNode) {
-            if (dimensionNode.isMissingNode()) {
+        private Resolution readResolution(JsonNode resolutionNode) {
+            if (resolutionNode.isMissingNode()) {
                 return null;
             }
-            int width = dimensionNode.get(0).asInt();
-            int height = dimensionNode.get(1).asInt();
-            return new Dimension(width, height);
+            int width = resolutionNode.get(0).asInt();
+            int height = resolutionNode.get(1).asInt();
+            return new Resolution(width, height);
         }
 
         @Override
@@ -207,6 +201,17 @@ class JsonConfig {
 
     private static <T> T override(T first, T second) {
         return second == null ? first : second;
+    }
+
+    private static <K, V> Map<K, V> mapOverride(Map<K, V> first, Map<K, V> second) {
+        Map<K, V> newMap = new HashMap<>();
+        if (first != null) {
+            newMap.putAll(first);
+        }
+        if (second != null) {
+            newMap.putAll(second);
+        }
+        return newMap;
     }
 
     @Override

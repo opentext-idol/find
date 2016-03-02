@@ -5,20 +5,22 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.indexes.IndexesPage;
+import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
-import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -26,40 +28,42 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static junit.framework.TestCase.fail;
+import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class IndexesPageITCase extends HostedTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(IndexesPageITCase.class);
     private IndexService indexService;
     private IndexesPage indexesPage;
+    private User testUser;
 
     public IndexesPageITCase(TestConfig config) {
         super(config);
         // requires a separate account where indexes can safely be added and deleted
-        setInitialUser(config.getUser("index_tests"));
+        testUser = config.getUser("index_test");
+        setInitialUser(testUser);
     }
 
     @Before
     public void setUp() {
         indexService = getApplication().indexService();
-
         indexesPage = indexService.goToIndexes();
     }
 
@@ -172,26 +176,22 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1544")
-    public void testNoInvalidIndexNameNotifications(){
+    @KnownBug({"CSA-1544", "CSA-2043"})
+    public void testNoInvalidIndexNameNotifications() throws InterruptedException {
         ConnectionService connectionService = getApplication().connectionService();
 
         Connector hassleRecords = new WebConnector("http://www.hasslerecords.com","hassle records").withDepth(1);
         String errorMessage = "Index name invalid";
 
         connectionService.setUpConnection(hassleRecords);
+        connectionService.deleteConnection(hassleRecords, true);
 
-        try {
-            new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining(errorMessage));
-
-            fail("Index name should be valid - likely failed due to double encoding of requests");
-        } catch (TimeoutException e){
-            LOGGER.info("Timeout exception");
-        }
+        //Wait to see whether any error messages come up
+        Thread.sleep(10000);
 
         getElementFactory().getTopNavBar().notificationsDropdown();
         for(String message : getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages()){
-            assertThat(message,not(errorMessage));
+            assertThat(message, not(errorMessage));
         }
     }
 
@@ -213,7 +213,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1735")
     public void testNavigatingToNonExistingIndexByURL(){
-        getDriver().get(config.getWebappUrl().split("searchoptimizer")[0] + "search/#/index/doesntexistmate");
+        getDriver().get(getAppUrl().split("searchoptimizer")[0] + "search/#/index/doesntexistmate");
         verifyThat(PageUtil.getWrapperContent(getDriver()), containsText(Errors.Index.INVALID_INDEX));
     }
 
@@ -221,9 +221,9 @@ public class IndexesPageITCase extends HostedTestBase {
     @KnownBug("CSA-1886")
     @Ignore("Breaking too many tests")
     public void testDeletingDefaultIndex(){
-        indexService.deleteIndexViaAPICalls(Index.DEFAULT, getCurrentUser(), config.getApiUrl());
+        indexService.deleteIndexViaAPICalls(Index.DEFAULT, testUser, getConfig().getApiUrl());
 
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         indexesPage = getElementFactory().getIndexesPage();
 
         verifyThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getDisplayName()));
@@ -232,8 +232,8 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @Ignore("Breaking too many tests")
     public void testDeletingSearchDefaultIndex(){
-        indexService.deleteIndexViaAPICalls(new Index("search_default_index"), getCurrentUser(), config.getApiUrl());
-        getDriver().navigate().refresh();
+        indexService.deleteIndexViaAPICalls(new Index("search_default_index"), testUser, getConfig().getApiUrl());
+        getWindow().refresh();
 
         verifyThat(getApplication().switchTo(PromotionsPage.class), containsText("There are no promotions..."));
     }
@@ -244,21 +244,76 @@ public class IndexesPageITCase extends HostedTestBase {
         Index index = new Index("index");
         indexService.setUpIndex(index);
 
-        Window searchWindow = getMainSession().getActiveWindow();
-        Window findWindow = getMainSession().openWindow(config.getFindUrl());
+        Window searchWindow = getWindow();
+        HSODFind findApp = new HSODFind();
+        Window findWindow = launchInNewWindow(findApp);
 
         try {
             findWindow.activate();
-            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
 
-            findPage.search("search");
-            findPage.filterBy(new IndexFilter(index));
+            SearchQuery query = new SearchQuery("search")
+                    .withFilter(new IndexFilter(index));
+            findApp.findService().search(query);
 
-            verifyThat(findPage.getResultsPage().resultsDiv().getText(), is("No results found"));
+            verifyThat(findApp.elementFactory().getResultsPage().resultsDiv(), hasTextThat(is("No results found")));
         } finally {
             findWindow.close();
             searchWindow.activate();
         }
+    }
+
+    @Test
+    @KnownBug("CCUK-3620")
+    public void testFindBehavesAfterDeletingIndex() {
+        Index index = new Index("index");
+        indexService.setUpIndex(index);
+
+        Window searchWindow = getWindow();
+        HSODFind findApp = new HSODFind();
+        Window findWindow = launchInNewWindow(findApp);
+        FindService findService = findApp.findService();
+
+        try {
+            findWindow.activate();
+            FindPage findPage = findApp.elementFactory().getFindPage();
+
+            findService.search("Exeter");
+            verifyNoError(findPage);
+            verifyThat("Index displayed properly", findPage.indexElement(index), not(hasClass("disabled-index")));
+
+            searchWindow.activate();
+            indexService.deleteIndex(index);
+
+            findWindow.activate();
+            findService.search("Plymouth");
+            verifyNoError(findPage);
+            verifyThat("Deleted index disabled", findPage.indexElement(index), hasClass("disabled-index"));
+
+            findWindow.refresh();
+            findPage = findApp.elementFactory().getFindPage();
+            findService.search("Plymouth");
+
+            verifyNoError(findPage);
+
+            WebElement indexElement = null;
+            try {
+                indexElement = findPage.indexElement(index);
+                verifyThat(indexElement, not(displayed()));
+            } catch (NoSuchElementException e) {
+                verifyThat(indexElement, nullValue());
+            }
+
+            for (IndexNodeElement node : findPage.indexesTree()) {
+                verifyThat(node.getName(), not(index.getName()));
+            }
+        } finally {
+            findWindow.close();
+            searchWindow.activate();
+        }
+    }
+
+    private void verifyNoError(FindPage findPage) {
+        verifyThat(findPage.getResultsPage().resultsDiv(), not(containsText(Errors.Find.GENERAL)));
     }
 
     @After

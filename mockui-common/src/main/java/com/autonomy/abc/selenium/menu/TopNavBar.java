@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.menu;
 
+import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -10,14 +11,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public abstract class TopNavBar extends AppElement {
+public abstract class TopNavBar extends AppElement implements LoginService.LogoutHandler {
     private WebElement searchbox;
 
     public TopNavBar(WebDriver driver) {
         super(new WebDriverWait(driver, 30).withMessage("top nav bar to be visible").until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top.affix-element"))), driver);
     }
-
-    public abstract void logOut();
 
     public NotificationsDropDown getNotifications(){
         return new NotificationsDropDown(getDriver());

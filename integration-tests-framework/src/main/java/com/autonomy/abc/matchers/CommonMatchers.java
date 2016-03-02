@@ -4,18 +4,19 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.core.Is.is;
 
 public class CommonMatchers {
     private CommonMatchers() {}
 
-    public static <T> Matcher<List<T>> containsItems(final List<? extends T> list) {
-        return new TypeSafeMatcher<List<T>>() {
+    public static <T> Matcher<Collection<T>> containsItems(final Collection<? extends T> list) {
+        return new TypeSafeMatcher<Collection<T>>() {
             @Override
-            protected boolean matchesSafely(List<T> container) {
+            protected boolean matchesSafely(Collection<T> container) {
                 return everyItem(isIn(container)).matches(list);
             }
 
@@ -26,7 +27,7 @@ public class CommonMatchers {
         };
     }
 
-    public static <T> Matcher<Iterable<? super T>> containsItems(final List<? extends T> list, final Comparator<? super T> comparator) {
+    public static <T> Matcher<Iterable<? super T>> containsItems(final Collection<? extends T> list, final Comparator<? super T> comparator) {
         return new TypeSafeMatcher<Iterable<? super T>>() {
             @Override
             protected boolean matchesSafely(Iterable<? super T> item) {
@@ -82,5 +83,9 @@ public class CommonMatchers {
                         .appendDescriptionOf(matcher);
             }
         };
+    }
+
+    public static <T> Matcher<Iterable<? extends T>> containsAnyOf(final Collection<? super T> collection) {
+        return hasItemThat(is(isIn(collection)));
     }
 }

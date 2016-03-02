@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
 
@@ -57,7 +58,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         SharedTriggerTests.addRemoveTriggers(triggerForm, dynamicPromotionsPage.cancelButton(), dynamicPromotionsPage.finishButton());
 
         dynamicPromotionsPage.cancelButton().click();
-        assertThat("Wizard has not cancelled", getDriver().getCurrentUrl(), not(containsString("create")));
+        assertThat(getWindow(), url(not(containsString("create"))));
     }
 
     @Test
@@ -128,7 +129,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         getElementFactory().getSideNavBar().toggle();
         dynamicPromotionsPage.cancelButton().click();
         Waits.loadOrFadeWait();
-        assertThat("Wizard has not cancelled", getDriver().getCurrentUrl(), not(containsString("dynamic")));
+        assertThat(getWindow(), url(not(containsString("dynamic"))));
 
         Waits.loadOrFadeWait();
         assertThat("\"undefined\" returned as query text when wizard cancelled", searchPage.getHeadingSearchTerm(), not(containsString("undefined")));
@@ -143,7 +144,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         dynamicPromotionsPage.cancelButton().click();
         Waits.loadOrFadeWait();
 
-        assertThat("Wizard has not cancelled", getDriver().getCurrentUrl(), not(containsString("dynamic")));
+        assertThat(getWindow(), url(not(containsString("dynamic"))));
         Waits.loadOrFadeWait();
         assertThat("\"undefined\" returned as query text when wizard cancelled", searchPage.getHeadingSearchTerm(), not(containsString("undefined")));
         searchPage.promoteThisQueryButton().click();
@@ -156,7 +157,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         getElementFactory().getSideNavBar().toggle();
         dynamicPromotionsPage.cancelButton().click();
         Waits.loadOrFadeWait();
-        assertThat("Wizard has not cancelled", getDriver().getCurrentUrl(), not(containsString("dynamic")));
+        assertThat(getWindow(), url(not(containsString("dynamic"))));
     }
 
     private void clickTopPromotions() {

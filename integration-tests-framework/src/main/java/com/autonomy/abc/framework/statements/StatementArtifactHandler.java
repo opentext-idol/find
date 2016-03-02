@@ -1,7 +1,7 @@
 package com.autonomy.abc.framework.statements;
 
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SeleniumTest;
 import com.autonomy.abc.framework.ArtifactSaveVisitor;
 import com.autonomy.abc.framework.TestState;
 import com.autonomy.abc.framework.TestStatement;
@@ -9,11 +9,11 @@ import com.autonomy.abc.selenium.control.Session;
 
 public class StatementArtifactHandler implements StatementHandler, ArtifactSaveVisitor.ArtifactSaver {
     private final ArtifactSaveVisitor saveVisitor = new ArtifactSaveVisitor();
-    private final ABCTestBase testBase;
+    private final SeleniumTest<?, ?> testBase;
     private final String timestamp;
     private TestStatement currentStatement;
 
-    public StatementArtifactHandler(ABCTestBase test) {
+    public StatementArtifactHandler(SeleniumTest<?, ?> test) {
         testBase = test;
         timestamp = TestState.get().getTimestamp();
     }

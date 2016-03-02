@@ -1,8 +1,9 @@
 {
   "app": {
     "type": "Hosted",
-    "url": "http://search.staging.havenapps.io/searchoptimizer/p",
+    "search": "http://search.staging.havenapps.io/searchoptimizer/p",
     "find": "http://find.staging.havenapps.io",
+    "devconsole": "http://www.havenondemand.com",
     "api" : "https://api.havenondemand.com"
   },
   "selenium": {

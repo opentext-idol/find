@@ -17,7 +17,7 @@ public class FindSearchResult extends SearchResult {
     }
 
     @Override
-    public WebElement getIcon() {
+    public WebElement icon() {
         return findElement(By.cssSelector(".content-type i"));
     }
 

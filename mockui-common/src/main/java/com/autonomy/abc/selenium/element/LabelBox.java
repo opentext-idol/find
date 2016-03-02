@@ -10,30 +10,18 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class LabelBox implements Removable {
+public class LabelBox extends RemovableBase {
+    private final static By CLOSE_LOCATOR = By.cssSelector(".fa-close, .fa-times, .fa-remove");
+
     private AppElement element;
 
     public LabelBox(AppElement element) {
+        super(element, CLOSE_LOCATOR);
         this.element = element;
     }
 
     public LabelBox(WebElement element, WebDriver driver) {
         this(new AppElement(element, driver));
-    }
-
-    @Override
-    public boolean isRemovable() {
-        return element.findElements(By.cssSelector(".fa-close, .fa-times, .fa-remove")).size() > 0;
-    }
-
-    @Override
-    public boolean isRefreshing() {
-        return element.findElements(By.className("fa-refresh")).size() > 0;
-    }
-
-    @Override
-    public void removeAsync() {
-        element.findElement(By.cssSelector(".fa-close, .fa-times, .fa-remove")).click();
     }
 
     @Override
@@ -56,15 +44,5 @@ public class LabelBox implements Removable {
                 }
             }
         });
-    }
-
-    @Override
-    public void click() {
-        element.click();
-    }
-
-    @Override
-    public String getText(){
-        return element.getText();
     }
 }

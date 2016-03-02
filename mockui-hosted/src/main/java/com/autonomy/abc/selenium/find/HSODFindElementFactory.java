@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.navigation.ElementFactoryBase;
 import com.autonomy.abc.selenium.navigation.PageMapper;
+import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
@@ -13,12 +14,30 @@ public class HSODFindElementFactory extends ElementFactoryBase {
         super(driver, new PageMapper<>(Page.class));
     }
 
+    @Override
     public LoginPage getLoginPage() {
         return loadPage(LoginPage.class);
     }
 
+    public FindTopNavBar getTopNavBar() {
+        return new FindTopNavBar(getDriver());
+    }
+
+    @Override
+    public LoginService.LogoutHandler getLogoutHandler() {
+        return getTopNavBar();
+    }
+
     public FindPage getFindPage() {
         return loadPage(FindPage.class);
+    }
+
+    public FindResultsPage getResultsPage() {
+        return getFindPage().getResultsPage();
+    }
+
+    public SimilarDocumentsView getSimilarDocumentsView() {
+        return loadPage(SimilarDocumentsView.class);
     }
 
     private enum Page implements PageMapper.Page {
@@ -28,7 +47,8 @@ public class HSODFindElementFactory extends ElementFactoryBase {
                 return new HSOLoginPage(context, new FindHasLoggedIn(context));
             }
         }, HSOLoginPage.class),
-        MAIN(new FindPage.Factory(), FindPage.class);
+        MAIN(new FindPage.Factory(), FindPage.class),
+        SIMILAR_DOCUMENTS(new SimilarDocumentsView.Factory(), SimilarDocumentsView.class);
 
         private final Class<? extends AppPage> pageType;
         private ParametrizedFactory<WebDriver, ? extends AppPage> factory;

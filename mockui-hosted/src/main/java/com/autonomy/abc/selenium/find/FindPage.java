@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.find;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.search.*;
@@ -28,14 +29,12 @@ public class FindPage extends AppElement implements AppPage,
         ParametricFilter.Filterable {
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
-    private final FormInput input;
     private final FindResultsPage results;
 
     private FindPage(WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
-        input = new FormInput(driver.findElement(By.className("find-input")), driver);
         results = new FindResultsPage(driver);
     }
 
@@ -48,15 +47,12 @@ public class FindPage extends AppElement implements AppPage,
         return results;
     }
 
-    public String getSearchBoxTerm(){
-        return input.getValue();
-    }
-
-    public void search(String searchTerm){
-        input.clear();
-        input.setAndSubmit(searchTerm);
+    /**
+     * waits until the list of indexes has been retrieved
+     * from HOD if necessary
+     */
+    void waitForIndexes() {
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
     public List<String> getSelectedPublicIndexes() {
@@ -149,24 +145,22 @@ public class FindPage extends AppElement implements AppPage,
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("parametric-processing-indicator")));
     }
 
-    public void logOut(){
-        WebElement cog = getDriver().findElement(By.className("hp-settings"));
-        if(!cog.isDisplayed()){
-            search("hp");
-        }
-
-        cog.click();
-        getDriver().findElement(By.className("navigation-logout")).click();
-    }
-
     // this can be used to check whether on the landing page,
     // as opposed to main reuslts page
     public WebElement footerLogo() {
         return findElement(By.className("hp-logo-footer"));
     }
 
-    public List<String> getAlsoSearchingForTerms() {
-        return ElementUtil.getTexts(findElements(By.className("selected-related-concept")));
+    public WebElement rightContainerToggleButton() {
+        return findElement(By.cssSelector(".right-container-icon .container-toggle"));
+    }
+
+    public WebElement leftContainerToggleButton(){
+        return findElement(By.cssSelector(".left-side-container .container-toggle"));
+    }
+
+    public WebElement indexElement(Index index) {
+        return ElementUtil.ancestor(getResultsPage().resultsDiv().findElement(By.xpath("//*[@class='database-name' and text()='" + index.getDisplayName() + "']")), 2);
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {

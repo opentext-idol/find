@@ -2,7 +2,9 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.documentPreview.SharedPreviewTests;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
@@ -16,19 +18,17 @@ import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
-import static org.openqa.selenium.lift.Matchers.displayed;
+import static org.junit.Assume.assumeThat;
 
 public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
@@ -75,7 +75,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
         final List<String> promotionsBucketList = editReferencesPage.promotionsBucketList();
 
-        verifyThat(promotionsBucketList.size(), is(promotedDocs.size()));
         for (final String docTitle : promotionsBucketList) {
             verifyThat(promotedDocs, hasItem(equalToIgnoringCase(docTitle)));
         }
@@ -117,22 +116,21 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
     @Test
     public void testAddRemoveDocsToEditBucket() {
-        final int promotedCount = 4;
-        setUpPromotion("yoda", "green dude", promotedCount);
-        verifyThat(editReferencesPage.promotionsBucketList().size(), is(promotedCount));
+        setUpPromotion("yoda", "green dude", 4);
+        int currentSize = editReferencesPage.promotionsBucketList().size();
 
         editDocumentSearch("unrelated");
 
         for (int i = 1; i < 7; i++) {
             ElementUtil.scrollIntoView(editReferencesPage.searchResultCheckbox(i), getDriver());
             editReferencesPage.searchResultCheckbox(i).click();
-            verifyThat(editReferencesPage.promotionsBucketList().size(), is(i + 4));
+            verifyThat(editReferencesPage.promotionsBucketList(), hasSize(++currentSize));
         }
 
         for (int j = 6; j > 0; j--) {
             ElementUtil.scrollIntoView(editReferencesPage.searchResultCheckbox(j), getDriver());
             editReferencesPage.searchResultCheckbox(j).click();
-            verifyThat(editReferencesPage.promotionsBucketList().size(), is(j - 1 + 4));
+            verifyThat(editReferencesPage.promotionsBucketList(), hasSize(--currentSize));
         }
     }
 
@@ -140,6 +138,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     @KnownBug("CSA-1755")
     public void testRefreshEditPromotionPage() throws InterruptedException {
         String originalDoc = setUpPromotion("Luke", "jedi master", 1).get(0);
+        assumeThat(editReferencesPage.promotionsBucketItems(), not(empty()));
         verifyRefreshing();
 
         editDocumentSearch("solo");
@@ -149,8 +148,9 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     private void verifyRefreshing() {
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
+        Waits.loadOrFadeWait();
         verifyThat(editReferencesPage.saveButton(), not(disabled()));
         verifyThat(editReferencesPage.promotionsBucketItems(), not(empty()));
     }
@@ -167,6 +167,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     @Test
     public void testEditDocumentReferencesCancel() {
         String originalDoc = setUpPromotion("house", "home", 1).get(0);
+        assumeThat(editReferencesPage.promotionsBucketList(), not(empty()));
 
         editReferencesPage.deleteDocFromWithinBucket(originalDoc);
         editDocumentSearch("mansion");
@@ -195,41 +196,40 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     public void testDeleteItemsFromWithinTheBucket() {
         setUpPromotion("cheese", "cheddar brie", 4);
         final List<String> bucketList = editReferencesPage.promotionsBucketList();
-        verifyThat(bucketList, hasSize(4));
+        assumeThat(bucketList, hasSize(4));
         verifyThat(editReferencesPage.saveButton(), not(disabled()));
 
-
+        int bucketSize = bucketList.size();
         for (final String bucketDocTitle : bucketList) {
-            final int docIndex = bucketList.indexOf(bucketDocTitle);
             editReferencesPage.deleteDocFromWithinBucket(bucketDocTitle);
             verifyThat(editReferencesPage.promotionsBucketList(), not(hasItem(bucketDocTitle)));
-            verifyThat(editReferencesPage.promotionsBucketList(), hasSize(3 - docIndex));
+            verifyThat(editReferencesPage.promotionsBucketList(), hasSize(--bucketSize));
         }
 
         verifyThat(editReferencesPage.saveButton(), disabled());
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
-        verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
+        verifyThat(getWindow(), urlContains("promotions/edit"));
     }
 
     private void checkDocumentViewable(String title) {
-        final String handle = getDriver().getWindowHandle();
-        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        final DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        final Frame frame = new Frame(getWindow(), docViewer.frame());
 
-        getDriver().switchTo().frame(docViewer.frame());
-        verifyThat("document '" + title + "' is viewable", getDriver().findElement(By.xpath(".//*")), not(hasTextThat(isEmptyOrNullString())));
-
-        getDriver().switchTo().window(handle);
+        verifyThat("document '" + title + "' is viewable", frame.getText(), not(isEmptyOrNullString()));
         docViewer.close();
     }
 
     @Test
+    @KnownBug("CCUK-3710")
     public void testViewFromBucketAndFromSearchResults() throws InterruptedException {
         setUpPromotion("apple", "potato", 35);
 
-        for (int i = 0; i < 5; i++){
-            final String docTitle = editReferencesPage.promotionsBucketWebElements().get(i).getText();
-            editReferencesPage.promotionBucketElementByTitle(docTitle).click();
-            checkDocumentViewable(docTitle);
+        if (verifyThat(editReferencesPage.promotionsBucketList(), not(empty()))) {
+            for (int i = 0; i < 5; i++) {
+                final String docTitle = editReferencesPage.promotionsBucketWebElements().get(i).getText();
+                editReferencesPage.promotionBucketElementByTitle(docTitle).click();
+                checkDocumentViewable(docTitle);
+            }
         }
 
         editDocumentSearch("fox");
@@ -261,7 +261,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         setUpPromotion("fred", "white fluffy", 4);
         editDocumentSearch("fred");
         final List<String> bucketList = editReferencesPage.promotionsBucketList();
-        verifyThat(bucketList, hasSize(4));
+        assumeThat(bucketList, hasSize(4));
 
         for (final String docTitle : bucketList) {
             verifyThat("search result checkbox is initially checked", editReferencesPage.searchCheckboxForTitle(docTitle).isChecked(), is(true));
@@ -272,14 +272,14 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         verifyThat(editReferencesPage.saveButton(), disabled());
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
-        verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
+        verifyThat(getWindow(), urlContains("promotions/edit"));
 
         editReferencesPage.searchResultCheckbox(6).click();
         final String newPromotedDoc = editReferencesPage.getSearchResult(6).getTitleString();
 
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-        verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail"));
+        verifyThat(getWindow(), urlContains("promotions/detail"));
 
         List<String> newTitles = new ArrayList<>();
         try {
@@ -296,7 +296,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     public void testDeletedDocumentsRemainDeleted() {
         setUpPromotion("dog", "woof bark", 8);
         final List<String> bucketList = editReferencesPage.promotionsBucketList();
-        verifyThat(bucketList, hasSize(8));
+        assumeThat(bucketList, hasSize(8));
 
         for (int i = 0; i < 4; i++) {
             editReferencesPage.deleteDocFromWithinBucket(bucketList.get(i));
@@ -314,7 +314,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1761")
+    @KnownBug({"CSA-1761", "CCUK-3710", "CCUK-3728"})
     public void testAddedDocumentsNotUnknown(){
         setUpPromotion("smiles", "fun happiness", 2);
 
@@ -329,14 +329,10 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
 
-        verifyThat(promotedTitles, hasItem(title));
         verifyThat(promotedTitles, not(hasItem("Unknown Document")));
-
-        promotionsDetailPage.viewDocument(title);
-
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#cboxLoadedContent .icon-spin")));
-
-        verifyThat(getDriver().findElement(By.id("cboxLoadedContent")), displayed());
-        verifyThat(getDriver().findElement(By.id("cboxLoadedContent")), not(containsText("500")));
+        if (verifyThat(promotedTitles, hasItem(title))) {
+            promotionsDetailPage.viewDocument(title);
+            SharedPreviewTests.testDocumentPreview(getMainSession(), DocumentViewer.make(getDriver()));
+        }
     }
 }

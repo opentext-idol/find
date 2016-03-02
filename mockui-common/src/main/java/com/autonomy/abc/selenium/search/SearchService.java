@@ -28,7 +28,7 @@ public class SearchService extends ServiceBase<SOElementFactory> {
 
     //Is this service for the search page or for searching?
     public void deleteDocument(String documentTitle){
-        ElementUtil.ancestor(searchPage.findElement(By.xpath("//a[text()=\"" + documentTitle + "\"]")), 2).findElement(By.className("delete")).click();
+        ElementUtil.ancestor(searchPage.findElement(By.linkText(documentTitle)), 2).findElement(By.className("delete")).click();
         new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining("was deleted"));
         searchPage.waitForSearchLoadIndicatorToDisappear();
     }

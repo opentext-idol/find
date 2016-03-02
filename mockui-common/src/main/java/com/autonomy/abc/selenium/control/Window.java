@@ -1,5 +1,7 @@
 package com.autonomy.abc.selenium.control;
 
+import org.openqa.selenium.WebDriver;
+
 public class Window {
     private final Session parent;
     private final String handle;
@@ -39,5 +41,18 @@ public class Window {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Window && handle.equals(((Window) obj).getHandle());
+    }
+
+    public void refresh(){
+        this.activate();
+        parent.getDriver().navigate().refresh();
+    }
+
+    public void resize(Resolution resolution) {
+        resolution.applyTo(this.asWebDriverWindow());
+    }
+
+    private WebDriver.Window asWebDriverWindow() {
+        return parent.getDriver().manage().window();
     }
 }

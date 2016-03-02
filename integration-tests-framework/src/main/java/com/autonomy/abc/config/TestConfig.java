@@ -1,6 +1,8 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.selenium.application.Application;
 import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.users.NewUser;
@@ -46,20 +48,13 @@ public class TestConfig {
 		this.browser = jsonConfig.getBrowsers().get(index);
 	}
 
-	public String getWebappUrl() {
-		return jsonConfig.getWebappUrl().toString();
+	public String getAppUrl(Application<?> application) {
+		return jsonConfig.getAppUrl(application.getName().toLowerCase()).toString();
 	}
 
-	public String getFindUrl() {
-		return jsonConfig.getFindUrl().toString();
-	}
-
+	// TODO: HodApiApplication
 	public String getApiUrl() {
-		return jsonConfig.getApiUrl().toString();
-	}
-
-	public String getDevConsoleUrl(){
-		return jsonConfig.getApiUrl().toString().replace("api", "www");
+		return jsonConfig.getAppUrl("api").toString();
 	}
 
 	public User getDefaultUser() {
@@ -173,8 +168,9 @@ public class TestConfig {
 		return "parameter-set: [" + getIndex() + "]; browser: " + getBrowser() + "; platform: " + getPlatform() + "; effective config: " + jsonConfig;
 	}
 
-	Dimension getResolution() {
-		return jsonConfig.getResolution();
+	Resolution getResolution() {
+		Resolution fromConfig = jsonConfig.getResolution();
+		return fromConfig == null ? Resolution.MAXIMIZED : fromConfig;
 	}
 
 	public int getTimeout() {

@@ -28,6 +28,8 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.url;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
@@ -108,7 +110,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         verifyThat("pin position is not an input box", createPromotionsPage.positionInputValue(), is(3));
 
         wizard.cancel();
-        verifyThat(getDriver().getCurrentUrl(), not(containsString("create")));
+        verifyThat(getWindow(), url(not(containsString("create"))));
     }
 
     @Test
@@ -158,7 +160,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         SharedTriggerTests.addRemoveTriggers(triggerForm, createPromotionsPage.cancelButton(), createPromotionsPage.finishButton());
 
         createPromotionsPage.cancelButton().click();
-        assertThat(getDriver().getCurrentUrl(), not(containsString("create")));
+        assertThat(getWindow(), url(not(containsString("create"))));
     }
 
     @Test
@@ -211,7 +213,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage.waitForSearchLoadIndicatorToDisappear();
 
         verifyThat(searchPage.getTopPromotedLinkTitle(), is(promotedDocTitle));
-        if (config.getType().equals(ApplicationType.ON_PREM)) {
+        if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
             verifyThat(searchPage.getTopPromotedSpotlightType(), is(spotlightType.getOption()));
         }
 
@@ -223,7 +225,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         Waits.loadOrFadeWait();
         verifyThat(searchPage, containsText(promotedDocTitle));
 
-        if (config.getType().equals(ApplicationType.ON_PREM)) {
+        if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
             promotionsDetailPage = promotionService.goToDetails(searchTrigger);
             verifyThat(promotionsDetailPage, containsText("Spotlight for: " + searchTrigger));
             verifyThat(promotionsDetailPage.spotlightTypeDropdown().getValue(), is(spotlightType.getOption()));
@@ -237,13 +239,13 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testAddSpotlightHotwire() {
-        assumeThat(config.getType(), is(ApplicationType.ON_PREM));
+        assumeThat(getConfig().getType(), is(ApplicationType.ON_PREM));
         addSpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "grapes");
     }
 
     @Test
     public void testAddSpotlightTopPromotions() {
-        assumeThat(config.getType(), is(ApplicationType.ON_PREM));
+        assumeThat(getConfig().getType(), is(ApplicationType.ON_PREM));
         addSpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "oranges");
     }
 
@@ -288,7 +290,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     private void toggleAndCancel() {
         getElementFactory().getSideNavBar().toggle();
         createPromotionsPage.cancelButton().click();
-        verifyThat(getDriver().getCurrentUrl(), containsString("search/modified"));
+        verifyThat(getWindow(), urlContains("search/modified"));
         verifyThat(searchPage.promotedItemsCount(), is(1));
         getElementFactory().getSideNavBar().toggle();
         ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
@@ -298,14 +300,14 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testWizardCancelButtonAfterClickingNavBarToggleButton() {
-        verifyThat(getDriver().getCurrentUrl(), endsWith("promotions/create"));
+        verifyThat(getWindow(), url(endsWith("promotions/create")));
         toggleAndCancel();
         SpotlightPromotion spotlight = new SpotlightPromotion("whatever");
         wizard = spotlight.makeWizard(createPromotionsPage);
         wizard.getCurrentStep().apply();
         wizard.next();
         // TODO: refactor tests
-        if (config.getType() == ApplicationType.ON_PREM) {
+        if (getConfig().getType() == ApplicationType.ON_PREM) {
             verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
             toggleAndCancel();
 

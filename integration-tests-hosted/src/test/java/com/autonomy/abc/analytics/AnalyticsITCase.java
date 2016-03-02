@@ -7,12 +7,14 @@ import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.analytics.Container;
 import com.autonomy.abc.selenium.analytics.ContainerItem;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
@@ -114,6 +116,29 @@ public class AnalyticsITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-1806")
+    public void testClickingPopularTerms() {
+        ContainerItem item = analytics.popularTerms().get(0);
+        String term = item.getTerm();
+        item.click();
+        SearchPage searchPage = getElementFactory().getSearchPage();
+        searchPage.waitForSearchLoadIndicatorToDisappear();
+
+        verifyThat(searchPage.getHeadingSearchTerm(), equalToIgnoringCase(term + "~"));
+        verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0));
+    }
+
+    @Test
+    public void testClickingZeroHitTerms() {
+        ContainerItem item = analytics.zeroHitTerms().get(0);
+        String term = item.getTerm();
+        item.click();
+        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
+
+        verifyThat(keywordsPage.searchFilterBox().getValue(), equalToIgnoringCase(term));
+    }
+
+    @Test
     @KnownBug("CSA-2054")
     public void testZeroHitTerms() {
         final String zeroHitTerm = "zerohitterm";
@@ -133,15 +158,16 @@ public class AnalyticsITCase extends HostedTestBase {
     }
 
     private void repeatedFind(String term, int repeats) {
-        Window searchWindow = getMainSession().getActiveWindow();
-        Window findWindow = getMainSession().openWindow(config.getFindUrl());
+        Window searchWindow = getWindow();
+        HSODFind findApp = new HSODFind();
+        Window findWindow = launchInNewWindow(findApp);
 
         try {
             findWindow.activate();
-            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
+            FindService findService = findApp.findService();
             for (int unused = 0; unused < repeats; unused++) {
-                findPage.search(term);
-                findPage.search("");
+                findService.search(term);
+                findService.search("");
                 Waits.loadOrFadeWait();
             }
         } finally {

@@ -25,6 +25,8 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.url;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.hasAttribute;
 import static com.autonomy.abc.matchers.ElementMatchers.modalIsDisplayed;
 import static org.hamcrest.Matchers.containsString;
@@ -53,7 +55,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 		assertThat(usersPage, modalIsDisplayed());
 		usersPage.createNewUser("admin", "qwerty", "Admin");
 		usersPage.closeModal();
-		logout();
+		getApplication().loginService().logout();
 		loginPage = getElementFactory().getLoginPage();
 	}
 
@@ -61,20 +63,20 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	public void testLoginAsNewlyCreatedAdmin() {
         loginPage.loginWith(new OPAccount("admin", "qwerty"));
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".initial-loading-indicator")));
-		assertThat("Overview page has not loaded", getDriver().getCurrentUrl().contains("overview"));
+		assertThat("Overview page has not loaded", getWindow(), urlContains("overview"));
 	}
 
 	@Test
 	public void testLoginNotCaseSensitive() {
         loginPage.loginWith(new OPAccount("ADmIn", "qwerty"));
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".initial-loading-indicator")));
-		assertThat("Overview page has not loaded - login should not be case sensitive", getDriver().getCurrentUrl().contains("overview"));
+		assertThat("Overview page has not loaded - login should not be case sensitive", getWindow(), urlContains("overview"));
 	}
 
 	@Test
 	public void testPasswordCaseSensitive() {
 		loginPage.loginWith(new OPAccount("admin", "QWERTY"));
-		assertThat("Navigated away from login page with invalid password", getDriver().getCurrentUrl().contains("login"));
+		assertThat("Navigated away from login page with invalid password", getWindow(), urlContains("login"));
 		loginPage = getElementFactory().getLoginPage();
 		assertThat("Correct error message not showing", loginPage.getText().contains("Please check your username and password"));
 	}
@@ -82,7 +84,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	@Test
 	public void testIncorrectPassword() {
 		loginPage.loginWith(new OPAccount("admin", "WroNG"));
-		assertThat("Navigated away from login page with invalid password", getDriver().getCurrentUrl().contains("login"));
+		assertThat("Navigated away from login page with invalid password", getWindow(), urlContains("login"));
 		loginPage = getElementFactory().getLoginPage();
 		assertThat("Correct error message not showing", loginPage.getText().contains("Please check your username and password"));
 	}
@@ -91,7 +93,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	public void testInvalidUsernames() {
 		for (final String invalidUserName : Arrays.asList("aadmin", " ", "admin.", "admin*", "admin/")) {
 			loginPage.loginWith(new OPAccount(invalidUserName, "qwerty"));
-			assertThat("Navigated away from login page with invalid username " + invalidUserName, getDriver().getCurrentUrl().contains("login"));
+			assertThat("Navigated away from login page with invalid username " + invalidUserName, getWindow(), urlContains("login"));
 			loginPage = getElementFactory().getLoginPage();
 			assertThat("Correct error message not showing", loginPage.getText().contains("Please check your username and password"));
 		}
@@ -117,7 +119,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	public void testSQLInjection() throws IOException {
 		for (final String password : loadTextFileLineByLineIntoList("C://dev//res//sqlInj.txt")) {
 			loginPage.loginWith(new OPAccount("admin", password));
-			assertThat("Navigated away from login page with invalid password", getDriver().getCurrentUrl().contains("login"));
+			assertThat("Navigated away from login page with invalid password", getWindow(), urlContains("login"));
 			loginPage = getElementFactory().getLoginPage();
 			assertThat("Correct error message not showing", loginPage.getText().contains("Please check your username and password"));
 		}
@@ -125,23 +127,23 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 
 	@Test
 	public void testLogoutNoAccessViaUrl() {
-		getDriver().get(config.getWebappUrl() + "overview");
+		getDriver().get(getAppUrl() + "overview");
 		Waits.loadOrFadeWait();
-		assertThat(getDriver().getCurrentUrl(), not(containsString("overview")));
-		assertThat(getDriver().getCurrentUrl(), containsString("login"));
+		assertThat(getWindow(), url(not(containsString("overview"))));
+		assertThat(getWindow(), urlContains("login"));
 
-		getDriver().get(config.getWebappUrl() + "keywords");
+		getDriver().get(getAppUrl() + "keywords");
 		Waits.loadOrFadeWait();
-		assertThat(getDriver().getCurrentUrl(), not(containsString("keywords")));
-		assertThat(getDriver().getCurrentUrl(), containsString("login"));
+		assertThat(getWindow(), url(not(containsString("keywords"))));
+		assertThat(getWindow(), urlContains("login"));
 	}
 
 	@Test
 	public void testDefaultLoginDisabled() {
-		getDriver().get(config.getWebappUrl().substring(0, config.getWebappUrl().length() - 2) + "login?defaultLogin=admin");
+		getDriver().get(getAppUrl().substring(0, getAppUrl().length() - 2) + "login?defaultLogin=admin");
 		Waits.loadOrFadeWait();
 		loginPage = getElementFactory().getLoginPage();
 		verifyThat(loginPage.usernameInput(), not(hasAttribute("readonly")));
-		assertThat(getDriver().getCurrentUrl(), containsString("defaultLogin"));
+		assertThat(getWindow(), urlContains("defaultLogin"));
 	}
 }

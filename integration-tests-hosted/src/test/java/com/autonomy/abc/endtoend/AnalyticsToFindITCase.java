@@ -5,9 +5,9 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindSearchResult;
+import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
@@ -26,8 +26,8 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 @RelatedTo("CSA-1590")
 public class AnalyticsToFindITCase extends HostedTestBase {
-    private FindPage findPage;
-    private FindResultsPage service;
+    private FindService findService;
+    private FindResultsPage resultsPage;
     private Window searchWindow;
     private Window findWindow;
     
@@ -44,10 +44,13 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         promotionService = getApplication().promotionService();
         keywordService = getApplication().keywordService();
 
-        searchWindow = getMainSession().getActiveWindow();
-        findWindow = getMainSession().openWindow(config.getFindUrl());
-        findPage = new HSODFind(findWindow).elementFactory().getFindPage();
-        service = findPage.getResultsPage();
+        searchWindow = getWindow();
+        HSODFind findApp = new HSODFind();
+        findWindow = launchInNewWindow(findApp);
+
+        findService = findApp.findService();
+        resultsPage = findApp.elementFactory().getResultsPage();
+
         searchWindow.activate();
     }
 
@@ -66,19 +69,19 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         keywordService.addSynonymGroup(Language.ENGLISH, trigger, synonym);
 
         findWindow.activate();
-        findPage.search(trigger);
+        findService.search(trigger);
 
-        List<String> triggerResults = service.getResultTitles();
+        List<String> triggerResults = resultsPage.getResultTitles();
 
-        findPage.search(synonym);
+        findService.search(synonym);
 
-        List<String> findPromotions = service.getPromotionsTitles();
+        List<String> findPromotions = resultsPage.getPromotionsTitles();
 
         verifyThat(findPromotions.size(), not(0));
         verifyThat(findPromotions, containsInAnyOrder(createdPromotions.toArray()));
-        verifyThat(service.getResultTitles(), contains(triggerResults.toArray()));
+        verifyThat(resultsPage.getResultTitles(), contains(triggerResults.toArray()));
 
-        for(FindSearchResult promotion : service.promotions()){
+        for(FindSearchResult promotion : resultsPage.promotions()){
             promotionShownCorrectly(promotion);
         }
     }

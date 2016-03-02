@@ -7,6 +7,7 @@ import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.framework.categories.SlowTest;
 import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Dropdown;
@@ -29,6 +30,8 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ElementMatchers.containsElement;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.PromotionsMatchers.promotionsList;
@@ -79,34 +82,32 @@ public class PromotionsITCase extends ABCTestBase {
 	@Test
 	public void testNewPromotionButtonLink() {
 		promotionsPage.promoteExistingButton().click();
-		verifyThat("correct URL", getDriver().getCurrentUrl().endsWith("promotions/new"));
+		verifyThat(getWindow(), url(endsWith("promotions/new")));
 		verifyThat("correct title", getElementFactory().getTopNavBar(), containsText("Create New Promotion"));
 	}
 
 	@Test
-	@KnownBug("CCUK-3394")
+	@KnownBug({"CCUK-3394", "CCUK-3649"})
 	public void testCorrectDocumentsInPromotion() {
 		List<String> promotedDocTitles = setUpCarsPromotion(16);
 		List<String> promotedList = promotionsDetailPage.getPromotedTitles();
-		verifyThat(promotedDocTitles, everyItem(isIn(promotedList)));
+		verifyThat(promotedList, containsItems(promotedDocTitles));
 	}
 
 	@Test
 	public void testDeletePromotedDocuments() {
-		List<String> promotedDocTitles = setUpCarsPromotion(4);
-		int numberOfDocuments = promotionsDetailPage.getPromotedTitles().size();
-		verifyThat(numberOfDocuments, is(4));
+		final int desiredSize = 4;
+		setUpCarsPromotion(desiredSize);
+		int promotedSize = promotionsDetailPage.getPromotedTitles().size();
+		verifyThat(promotedSize, is(desiredSize));
 
-		for (final String title : promotedDocTitles) {
-			promotionsDetailPage.removablePromotedDocument(title).removeAndWait();
-			numberOfDocuments--;
-
-			if (numberOfDocuments == 1) {
-				assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(1));
-				verifyThat("remove document button is not visible when a single document", promotionsPage, not(containsElement(By.className("remove-document-reference"))));
-				break;
-			}
+		while (promotedSize > 1) {
+			promotionsDetailPage.removablePromotedDocument(0).removeAndWait();
+			promotedSize--;
 		}
+
+		assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(1));
+		verifyThat("remove document button is not visible when a single document", promotionsPage, not(containsElement(By.className("remove-document-reference"))));
 	}
 
 	@Test
@@ -139,7 +140,7 @@ public class PromotionsITCase extends ABCTestBase {
 	@Test
 	public void testEditPromotionType() {
 		// cannot edit promotion type for hosted
-		assumeThat(config.getType(), equalTo(ApplicationType.ON_PREM));
+		assumeThat(getConfig().getType(), equalTo(ApplicationType.ON_PREM));
 		setUpCarsPromotion(1);
 		verifyThat(promotionsDetailPage.getPromotionType(), is("Sponsored"));
 
@@ -200,6 +201,7 @@ public class PromotionsITCase extends ABCTestBase {
 			setUp = true;
 		} catch (TimeoutException e) {
 			/* failed to set up promotion */
+			e.printStackTrace();
 		}
 		assertThat("added promotion successfully", setUp);
 		assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(size));
@@ -216,7 +218,7 @@ public class PromotionsITCase extends ABCTestBase {
 	public void testPromotionFilter() throws InterruptedException {
 		// hosted does not have foreign content indexed
 		SearchQuery[] searches;
-		if (config.getType().equals(ApplicationType.ON_PREM)) {
+		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
 			searches = new SearchQuery[]{
 					getQuery("chien", Language.FRENCH),
 					getQuery("الكلب", Language.ARABIC),
@@ -355,7 +357,7 @@ public class PromotionsITCase extends ABCTestBase {
 	@Test
 	@RelatedTo("IOD-4827")
 	public void testPromotionLanguages() {
-		assumeThat(config.getType(), equalTo(ApplicationType.ON_PREM));
+		assumeThat(getConfig().getType(), equalTo(ApplicationType.ON_PREM));
 		Language[] languages = {Language.FRENCH, Language.SWAHILI, Language.AFRIKAANS};
 		//Afrikaans dog thing isn't actually a dog but it wasn't working so yolo
 		String[] searchTerms = {"chien", "mbwa", "bergaalwyn"};
@@ -376,12 +378,10 @@ public class PromotionsITCase extends ABCTestBase {
 		setUpPromotion(getQuery("chien", Language.FRENCH), new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"));
 
 		promotionService.goToPromotions();
-		final String url = getDriver().getCurrentUrl();
-		final Window mainWindow = getMainSession().getActiveWindow();
-		final Window secondWindow = getMainSession().openWindow(url);
+		final Window mainWindow = getWindow();
+		final Window secondWindow = getMainSession().openWindow(mainWindow.getUrl());
 
 		secondWindow.activate();
-		getDriver().get(url);
 		final PromotionsPage secondPromotionsPage = getElementFactory().getPromotionsPage();
 		assertThat("Navigated to promotions menu", secondPromotionsPage.promoteExistingButton().isDisplayed());
 
@@ -428,30 +428,28 @@ public class PromotionsITCase extends ABCTestBase {
 	public void testSpotlightViewable() {
 		List<String> promotedDocs = setUpCarsPromotion(3);
 		SearchPage searchPage = searchService.search("wheels");
-		final String handle = getDriver().getWindowHandle();
-
 		WebElement promotedResult = searchPage.promotedDocumentTitle(1);
 		String firstTitle = promotedResult.getText();
 		String secondTitle = searchPage.promotedDocumentTitle(2).getText();
 		verifyThat(firstTitle, isIn(promotedDocs));
+
 		promotedResult.click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
-		verifyFrame(documentViewer.getReference(), documentViewer.frame());
+		Frame frame = new Frame(getWindow(), documentViewer.frame());
 
-		getDriver().switchTo().window(handle);
+		verifyFrame(documentViewer.getReference(), frame);
+
 		documentViewer.next();
+		frame = new Frame(getWindow(), documentViewer.frame());
 
 		verifyThat(secondTitle, isIn(promotedDocs));
-		verifyFrame(documentViewer.getReference(), documentViewer.frame());
+		verifyFrame(documentViewer.getReference(), frame);
 
-		getDriver().switchTo().window(handle);
 		documentViewer.previous();
-		getDriver().switchTo().frame(documentViewer.frame());
-		verifyThat("first document loads again", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
+		frame = new Frame(getWindow(), documentViewer.frame());
+		verifyThat("first document loads again", frame.getText(), not(isEmptyOrNullString()));
 
-		getDriver().switchTo().window(handle);
 		documentViewer.close();
-
 		searchPage.showMorePromotions();
 		promotedResult = searchPage.promotedDocumentTitle(3);
 		String thirdTitle = promotedResult.getText();
@@ -459,18 +457,17 @@ public class PromotionsITCase extends ABCTestBase {
 
 		promotedResult.click();
 		documentViewer = DocumentViewer.make(getDriver());
-		verifyFrame(documentViewer.getReference(), documentViewer.frame());
-		getDriver().switchTo().window(handle);
+		frame = new Frame(getWindow(), documentViewer.frame());
+		verifyFrame(documentViewer.getReference(), frame);
 	}
 
-	private void verifyFrame(String reference, WebElement frame) {
+	private void verifyFrame(String reference, Frame frame) {
 		verifyThat("Document has a reference", reference, not(isEmptyOrNullString()));
-		getDriver().switchTo().frame(frame);
-		verifyThat("Document loads", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
+		verifyThat("Document loads", frame.getText(), not(isEmptyOrNullString()));
 	}
 
 	@Test
-	@KnownBug("CCUK-3457")
+	@KnownBug({"CCUK-3457", "CCUK-3649"})
 	public void testPromotingItemsWithBrackets(){
 		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "imagine dragons");
 		SearchQuery query = new SearchQuery("\"Selenium (software)\"").withFilter(new IndexFilter("wiki_eng"));

@@ -27,13 +27,18 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public SearchPage(final WebDriver driver) {
 		// specify data-pagename to avoid invisible elements from other pages showing up
-		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".wrapper-content [data-pagename='search']"))), driver);
-		waitForLoad();
+		super(waitForLoad(driver), driver);
+	}
+
+	private static WebElement waitForLoad(WebDriver driver) {
+		return new WebDriverWait(driver, 30)
+				.withMessage("loading search page")
+				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".wrapper-content [data-pagename='search']")));
 	}
 
 	@Override
 	public void waitForLoad() {
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-page-contents")));
+		waitForLoad(getDriver());
 	}
 
 	/* title */
@@ -126,6 +131,20 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* promoted results */
+	public List<SOSearchResult> getPromotedResults() {
+		waitForPromotionsLoadIndicatorToDisappear();
+		List<SOSearchResult> results = new ArrayList<>();
+		for(WebElement result : findElements(By.cssSelector(".promotions-list li"))){
+			results.add(new SOSearchResult(result, getDriver()));
+		}
+		return results;
+	}
+
+	public SOSearchResult getPromotedResult(final int resultNumber) {
+		waitForPromotionsLoadIndicatorToDisappear();
+		return new SOSearchResult(findElement(By.cssSelector(".promotions-list li:nth-child(" + resultNumber + ")")), getDriver());
+	}
+
 	public WebElement promotionsSummary() {
 		return findElement(By.className("promotions-summary"));
 	}
@@ -233,10 +252,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-results li:nth-child(" + resultNumber + ") label")));
 	}
 
-	public WebElement docLogo(final int searchResultNumber) {
-		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o"));
-	}
-
 	public int countPinToPositionLabels() {
 		return findElements(By.cssSelector(".injected-promotion .fa-thumb-tack")).size();
 	}
@@ -327,13 +342,5 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 			}
 		}
 		return promotedDocTitles;
-	}
-
-	public List<SOSearchResult> getSearchResults() {
-		List<SOSearchResult> results = new ArrayList<>();
-		for(WebElement result : findElements(By.cssSelector(".search-results li"))){
-			results.add(new SOSearchResult(result, getDriver()));
-		}
-		return results;
 	}
 }

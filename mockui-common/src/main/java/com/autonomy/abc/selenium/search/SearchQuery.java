@@ -18,11 +18,11 @@ public class SearchQuery {
         return this;
     }
 
-    List<SearchFilter> getFilters() {
+    public List<SearchFilter> getFilters() {
         return Collections.unmodifiableList(filters);
     }
 
-    String getSearchTerm() {
+    public String getSearchTerm() {
         return term;
     }
 

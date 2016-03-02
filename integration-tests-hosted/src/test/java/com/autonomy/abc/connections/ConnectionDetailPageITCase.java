@@ -5,18 +5,18 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.connections.*;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
+import com.autonomy.abc.selenium.users.User;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -26,11 +26,13 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     private ConnectionService connectionService;
     private ConnectionsDetailPage connectionsDetailPage;
     private Connector connector;
+    private User testUser;
 
     public ConnectionDetailPageITCase(TestConfig config) {
         super(config);
         // requires a separate account where indexes can safely be added and deleted
-        setInitialUser(config.getUser("index_tests"));
+        testUser = config.getUser("index_tests");
+        setInitialUser(testUser);
     }
 
     @Before
@@ -46,23 +48,22 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
         connectionService.setUpConnection(connector);
         connectionsDetailPage = connectionService.goToDetails(connector);
 
-        verifyThat(getDriver().getWindowHandles().size(), is(1));
+        verifyThat(getMainSession().countWindows(), is(1));
 
-        List<String> windowHandles = null;
-
+        Window secondWindow = null;
         try {
             connectionsDetailPage.webConnectorURL().click();
+            new WebDriverWait(getDriver(), 5)
+                    .until(getMainSession().windowCountIs(2));
 
-            Thread.sleep(2000);
-            windowHandles = new ArrayList<>(getDriver().getWindowHandles());
+            verifyThat(getMainSession().countWindows(), is(2));
+            secondWindow = getMainSession().switchWindow(1);
 
-            verifyThat(windowHandles.size(), is(2));
-            getDriver().switchTo().window(windowHandles.get(1));
-            verifyThat(getDriver().getCurrentUrl(), containsString(connectorURL));
+            verifyThat(secondWindow, urlContains(connectorURL));
         } finally {
-            if(windowHandles != null && windowHandles.size() > 1) {
-                getDriver().close();
-                getDriver().switchTo().window(windowHandles.get(0));
+            if(secondWindow != null) {
+                secondWindow.close();
+                getMainSession().switchWindow(0);
             }
         }
     }
@@ -125,11 +126,11 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
 
         verifyIndexNameForConnector();
 
-        indexService.deleteIndexViaAPICalls(indexOne, getCurrentUser(), config.getApiUrl());
+        indexService.deleteIndexViaAPICalls(indexOne, testUser, getConfig().getApiUrl());
 
         indexService.goToIndexes();
 
-        getDriver().navigate().refresh();
+        getWindow().refresh();
 
         verifyThat(getElementFactory().getIndexesPage().getIndexDisplayNames(), not(hasItem(indexOne.getName())));
 

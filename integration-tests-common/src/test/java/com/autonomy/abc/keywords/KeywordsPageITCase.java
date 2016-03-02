@@ -33,6 +33,7 @@ import java.util.*;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.Matchers.*;
@@ -397,9 +398,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordsPage.selectLanguage(Language.URDU);
 		Waits.loadOrFadeWait();
 
-		final String url = getDriver().getCurrentUrl();
-		Window mainWindow = getMainSession().getActiveWindow();
-		Window secondWindow = getMainSession().openWindow(url);
+		Window mainWindow = getWindow();
+		Window secondWindow = getMainSession().openWindow(mainWindow.getUrl());
 
 		final KeywordsPage secondKeywordsPage = getElementFactory().getKeywordsPage();
 		assertThat(secondKeywordsPage.countSynonymLists(), is(1));
@@ -478,11 +478,11 @@ public class KeywordsPageITCase extends ABCTestBase {
 	@Test
 	@KnownBug("CCUK-3245")
 	public void testAddingForbiddenKeywordsFromUrl() {
-		String blacklistUrl = getConfig().getWebappUrl() + "/keywords/create/blacklisted/English/";
-		String synonymsUrl = getConfig().getWebappUrl() + "/keywords/create/synonyms/English/";
+		String blacklistUrl = getAppUrl() + "/keywords/create/blacklisted/English/";
+		String synonymsUrl = getAppUrl() + "/keywords/create/synonyms/English/";
 		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			blacklistUrl = getConfig().getWebappUrl() + "keywords/create/blacklisted/englishUTF8/";
-			synonymsUrl = getConfig().getWebappUrl() + "keywords/create/synonyms/englishUTF8/";
+			blacklistUrl = getAppUrl() + "keywords/create/blacklisted/englishUTF8/";
+			synonymsUrl = getAppUrl() + "keywords/create/synonyms/englishUTF8/";
 		}
 		//TODO check that OR has been added in lower case?
 		for (final String forbidden : Arrays.asList("(", "\"", "OR")) {
@@ -627,7 +627,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		verifyThat(notifications.notificationNumber(1), hasTextThat(startsWith("Created a new synonym group containing: ")));
 
 		verifyClickNotification();
-		if(!getDriver().getCurrentUrl().contains("keywords")){
+		if(!getWindow().getUrl().contains("keywords")){
 			keywordsPage = keywordService.goToKeywords();
 		}
 
@@ -680,7 +680,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("blacklist"));
 
-		assertThat(getDriver().getCurrentUrl(), containsString("promotions"));
+		assertThat(getWindow(), urlContains("promotions"));
 	}
 
 	@Test

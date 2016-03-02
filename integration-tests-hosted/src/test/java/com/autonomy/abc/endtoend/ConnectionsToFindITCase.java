@@ -68,12 +68,13 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         List<String> promotedTitles = promotionService.setUpPromotion(promotion, searchTerm, 3);
         assertThat(searchPage.getPromotedDocumentTitles(true), containsInAnyOrder(promotedTitles.toArray()));
 
-        Window searchOptimizerWindow = getMainSession().getActiveWindow();
-        Window findWindow = getMainSession().openWindow(config.getFindUrl());
+        Window searchOptimizerWindow = getWindow();
+        HSODFind findApp = new HSODFind();
+        Window findWindow = launchInNewWindow(findApp);
         findWindow.activate();
 
-        FindPage find = new HSODFind(findWindow).elementFactory().getFindPage();
-        find.search(trigger);
+        FindPage find = findApp.elementFactory().getFindPage();
+        findApp.findService().search(trigger);
 
         verifyThat("Promoted documents show in Find", find.getResultsPage().getPromotionsTitles(), containsInAnyOrder(promotedTitles.toArray()));
 

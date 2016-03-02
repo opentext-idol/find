@@ -1,5 +1,6 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
@@ -10,7 +11,7 @@ import org.openqa.selenium.WebDriver;
 import java.util.Set;
 
 class WindowFactory implements ParametrizedFactory<Session, Window> {
-    private final Dimension resolution;
+    private final Resolution resolution;
 
     WindowFactory(TestConfig config) {
         resolution = config.getResolution();
@@ -22,11 +23,7 @@ class WindowFactory implements ParametrizedFactory<Session, Window> {
         String handle = createNewWindow(driver);
         Window window = context.registerWindow(handle);
         window.activate();
-        if (resolution == null) {
-            driver.manage().window().maximize();
-        } else {
-            driver.manage().window().setSize(resolution);
-        }
+        window.resize(resolution);
         return window;
     }
 

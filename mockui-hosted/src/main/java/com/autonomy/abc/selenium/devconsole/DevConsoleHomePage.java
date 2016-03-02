@@ -19,10 +19,6 @@ public class DevConsoleHomePage extends AppElement implements AppPage {
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".haven-splash-header-mega.wow")));
     }
 
-    public WebElement loginButton(){
-        return findElement(By.id("loginLogout"));
-    }
-
     public static class Factory implements ParametrizedFactory<WebDriver, DevConsoleHomePage> {
         public DevConsoleHomePage create(WebDriver context) {
             return new DevConsoleHomePage(context);
