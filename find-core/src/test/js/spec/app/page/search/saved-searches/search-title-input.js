@@ -7,10 +7,8 @@ define([
     'find/app/page/search/saved-searches/search-title-input',
     'find/app/model/saved-searches/saved-search-model',
     'i18n!find/nls/bundle',
-    'backbone',
-    'underscore',
-    'jquery'
-], function(SearchTitleInput, SavedSearchModel, i18n, Backbone, _, $) {
+    'backbone'
+], function(SearchTitleInput, SavedSearchModel, i18n, Backbone) {
 
     describe('Search title input', function() {
         var INITIAL_TITLE = 'Initial Title';
@@ -39,23 +37,32 @@ define([
                 expect(this.view.$('.search-title-input')).toHaveValue('');
             });
 
-            describe('when the user adds a title, selects a type and clicks save', function() {
+            describe('when the user adds a title, selects a type', function() {
                 var NEW_TITLE = 'My new title';
                 var NEW_TYPE = SavedSearchModel.Type.QUERY;
 
                 beforeEach(function() {
                     this.view.$('.search-title-input').val(NEW_TITLE).trigger('input');
                     this.view.$('[value="' + NEW_TYPE + '"]').trigger('ifChecked');
-                    this.view.$el.submit();
                 });
 
-                it('calls the save callback with the title and type, a success callback and an error callback', function() {
-                    expect(this.saveCallback).toHaveBeenCalled();
+                it('the confirm button is enabled', function() {
+                    expect(this.view.$('.save-title-confirm-button')).not.toHaveClass('disabled');
+                });
 
-                    expect(this.saveCallback.calls.argsFor(0)).toEqual([{
-                        title: NEW_TITLE,
-                        type: NEW_TYPE
-                    }, jasmine.any(Function), jasmine.any(Function)]);
+                describe('and clicks save', function() {
+                    beforeEach(function() {
+                        this.view.$el.submit();
+                    });
+
+                    it('calls the save callback with the title and type, a success callback and an error callback', function() {
+                        expect(this.saveCallback).toHaveBeenCalled();
+
+                        expect(this.saveCallback.calls.argsFor(0)).toEqual([{
+                            title: NEW_TITLE,
+                            type: NEW_TYPE
+                        }, jasmine.any(Function), jasmine.any(Function)]);
+                    });
                 });
             });
         });
@@ -97,108 +104,105 @@ define([
                 });
             });
 
-            describe('when the save button is clicked with a blank title', function() {
+            describe('when the title is blank', function() {
                 beforeEach(function() {
                     this.view.$('.search-title-input').val('').trigger('input');
-                    this.view.$('.save-title-confirm-button').click();
                 });
 
-                it('displays an error message', function() {
-                    var $errorMessage = this.view.$('.search-title-error-message');
-                    expect($errorMessage).toHaveText(i18n['search.savedSearchControl.titleBlank']);
-                    expect($errorMessage).not.toHaveClass('hide');
-                });
-
-                it('does not call the save callback', function() {
-                    expect(this.saveCallback).not.toHaveBeenCalled();
+                it('the confirm button is disabled', function() {
+                    expect(this.view.$('.save-title-confirm-button')).toHaveClass('disabled');
                 });
             });
 
-            describe('when the save button is clicked when the title has not changed', function() {
+            describe('when the title has not changed', function() {
                 beforeEach(function() {
                     var savedTitle = 'My Search';
                     this.savedSearchModel.set('title', savedTitle);
                     this.view.$('.search-title-input').val(savedTitle).trigger('input');
-                    this.view.$('.save-title-confirm-button').click();
                 });
 
-                it('fires a "remove" event', function() {
-                    expect(this.listener.calls.count()).toBe(1);
-                });
-
-                it('does not call the save callback', function() {
-                    expect(this.saveCallback).not.toHaveBeenCalled();
+                it('the confirm button is disabled', function() {
+                    expect(this.view.$('.save-title-confirm-button')).toHaveClass('disabled');
                 });
             });
 
-            describe('when the save button is clicked when there is a new title', function() {
+            describe('when there is a new title', function() {
                 var NEW_TITLE = 'My Search';
 
-                beforeEach(function() {
+                beforeEach(function () {
                     this.view.$('.search-title-input').val('  ' + NEW_TITLE).trigger('input');
-                    this.view.$('.save-title-confirm-button').click();
                 });
 
-                it('does not fire a "remove" event', function() {
-                    expect(this.listener).not.toHaveBeenCalled();
+                it('the confirm button is enabled', function() {
+                    expect(this.view.$('.save-title-confirm-button')).not.toHaveClass('disabled');
                 });
 
-                it('calls the save callback with the trimmed title and type, a success and an error callback', function() {
-                    expect(this.saveCallback).toHaveBeenCalled();
-
-                    expect(this.saveCallback.calls.argsFor(0)).toEqual([{
-                        title: NEW_TITLE,
-                        type: INITIAL_SEARCH_TYPE
-                    }, jasmine.any(Function), jasmine.any(Function)]);
-                });
-
-                it('disables the input', function() {
-                    expect(this.view.$('.search-title-input')).toHaveProp('disabled', true);
-                });
-
-                it('disables the save button', function() {
-                    expect(this.view.$('.save-title-confirm-button')).toHaveProp('disabled', true);
-                });
-
-                it('disables the cancel button', function() {
-                    expect(this.view.$('.save-title-cancel-button')).toHaveProp('disabled', true);
-                });
-
-                describe('then the save fails', function() {
+                describe('and the save button is clicked', function () {
                     beforeEach(function() {
-                        this.saveCallback.calls.argsFor(0)[2]({status: 404});
+                        this.view.$('.save-title-confirm-button').click();
                     });
 
-                    it('enables the input', function() {
-                        expect(this.view.$('.search-title-input')).toHaveProp('disabled', false);
-                    });
-
-                    it('enables the save button', function() {
-                        expect(this.view.$('.save-title-confirm-button')).toHaveProp('disabled', false);
-                    });
-
-                    it('enables the cancel button', function() {
-                        expect(this.view.$('.save-title-cancel-button')).toHaveProp('disabled', false);
-                    });
-
-                    it('displays an error message', function() {
-                        var $errorMessage = this.view.$('.search-title-error-message');
-                        expect($errorMessage).toHaveText(i18n['search.savedSearchControl.error']);
-                        expect($errorMessage).not.toHaveClass('hide');
-                    });
-
-                    it('does not fire a "remove" event', function() {
+                    it('does not fire a "remove" event', function () {
                         expect(this.listener).not.toHaveBeenCalled();
                     });
-                });
 
-                describe('then the save succeeds', function() {
-                    beforeEach(function() {
-                        this.saveCallback.calls.argsFor(0)[1]();
+                    it('calls the save callback with the trimmed title and type, a success and an error callback', function () {
+                        expect(this.saveCallback).toHaveBeenCalled();
+
+                        expect(this.saveCallback.calls.argsFor(0)).toEqual([{
+                            title: NEW_TITLE,
+                            type: INITIAL_SEARCH_TYPE
+                        }, jasmine.any(Function), jasmine.any(Function)]);
                     });
 
-                    it('fires a "remove" event', function() {
-                        expect(this.listener).toHaveBeenCalled();
+                    it('disables the input', function () {
+                        expect(this.view.$('.search-title-input')).toHaveProp('disabled', true);
+                    });
+
+                    it('disables the save button', function () {
+                        expect(this.view.$('.save-title-confirm-button')).toHaveProp('disabled', true);
+                    });
+
+                    it('disables the cancel button', function () {
+                        expect(this.view.$('.save-title-cancel-button')).toHaveProp('disabled', true);
+                    });
+
+                    describe('then the save fails', function () {
+                        beforeEach(function () {
+                            this.saveCallback.calls.argsFor(0)[2]({status: 404});
+                        });
+
+                        it('enables the input', function () {
+                            expect(this.view.$('.search-title-input')).toHaveProp('disabled', false);
+                        });
+
+                        it('enables the save button', function () {
+                            expect(this.view.$('.save-title-confirm-button')).toHaveProp('disabled', false);
+                        });
+
+                        it('enables the cancel button', function () {
+                            expect(this.view.$('.save-title-cancel-button')).toHaveProp('disabled', false);
+                        });
+
+                        it('displays an error message', function () {
+                            var $errorMessage = this.view.$('.search-title-error-message');
+                            expect($errorMessage).toHaveText(i18n['search.savedSearchControl.error']);
+                            expect($errorMessage).not.toHaveClass('hide');
+                        });
+
+                        it('does not fire a "remove" event', function () {
+                            expect(this.listener).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('then the save succeeds', function () {
+                        beforeEach(function () {
+                            this.saveCallback.calls.argsFor(0)[1]();
+                        });
+
+                        it('fires a "remove" event', function () {
+                            expect(this.listener).toHaveBeenCalled();
+                        });
                     });
                 });
             });

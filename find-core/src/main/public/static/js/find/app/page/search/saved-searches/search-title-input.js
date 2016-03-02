@@ -46,31 +46,21 @@ define([
                 var title = this.model.get('title').trim();
                 var type = this.model.get('type');
 
-                if (title === '') {
-                    this.model.set({
-                        error: i18n['search.savedSearchControl.titleBlank'],
-                        loading: false
-                    });
-                } else if (title === resolveCurrentTitle(this.savedSearchModel)) {
-                    // The user has tried to set the currently saved title, so we can exit without saving
-                    this.trigger('remove');
-                } else {
-                    this.model.set({
-                        error: null,
-                        loading: true
-                    });
+                this.model.set({
+                    error: null,
+                    loading: true
+                });
 
-                    this.saveCallback(
-                        {title: title, type: type},
-                        _.bind(function() {
-                            this.trigger('remove');
-                        }, this),
-                        _.bind(function() {
-                            this.model.set('error', i18n['search.savedSearchControl.error']);
-                            this.model.set('loading', false);
-                        }, this)
-                    );
-                }
+                this.saveCallback(
+                    {title: title, type: type},
+                    _.bind(function() {
+                        this.trigger('remove');
+                    }, this),
+                    _.bind(function() {
+                        this.model.set('error', i18n['search.savedSearchControl.error']);
+                        this.model.set('loading', false);
+                    }, this)
+                );
             }
         },
 
@@ -103,6 +93,8 @@ define([
                 ]
             }));
 
+            this.$confirmButton = this.$('.save-title-confirm-button');
+
             this.$('.search-title-input').focus();
 
             this.updateError();
@@ -132,11 +124,19 @@ define([
             if ($titleInput.val() !== title) {
                 this.$('.search-title-input').val(title);
             }
+
+            this.updateConfirmButton();
         },
 
         updateType: function() {
             var type = this.model.get('type');
             this.$('[name="saved-search-type"][value="' + type + '"]').iCheck('check');
+        },
+
+        updateConfirmButton: function() {
+            var title = this.model.get('title');
+
+            this.$confirmButton.toggleClass('disabled', resolveCurrentTitle(this.savedSearchModel) === title || !title);
         }
     });
 
