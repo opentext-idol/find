@@ -10,15 +10,15 @@ define([
     'find/app/model/saved-searches/saved-search-model'
 ], function(Backbone, searchDataUtil, ComparisonDocumentsCollection, SavedSearchModel) {
 
-    var convertSearchModelToComparisonModel = function(model, prefix) {
+    var getComparisonAttributesFromSavedSearch = function(savedSearchModel, prefix) {
         var data = {};
 
-        data[prefix + 'Text'] = searchDataUtil.makeQueryText(model.get('queryText'), model.get('relatedConcepts'));
+        data[prefix + 'Text'] = searchDataUtil.makeQueryText(savedSearchModel.get('queryText'), savedSearchModel.get('relatedConcepts'));
 
-        if(model.get('type') === SavedSearchModel.Type.SNAPSHOT) {
-            data[prefix + 'QueryStateToken'] = model.get('stateTokens')[0];
+        if(savedSearchModel.get('type') === SavedSearchModel.Type.SNAPSHOT) {
+            data[prefix + 'QueryStateToken'] = _.first(savedSearchModel.get('stateTokens'));
         } else {
-            data[prefix + 'Restrictions'] = searchDataUtil.buildQuery(model);
+            data[prefix + 'Restrictions'] = searchDataUtil.buildQuery(savedSearchModel);
         }
 
         return data;
@@ -50,12 +50,12 @@ define([
         }
     }, {
         fromModels: function(primaryModel, secondaryModel) {
-            var comparisonModelArguments = {};
+            var comparisonModelAttributes = {};
 
-            _.extend(comparisonModelArguments, convertSearchModelToComparisonModel(primaryModel, 'first'));
-            _.extend(comparisonModelArguments, convertSearchModelToComparisonModel(secondaryModel, 'second'));
+            _.extend(comparisonModelAttributes, getComparisonAttributesFromSavedSearch(primaryModel, 'first'));
+            _.extend(comparisonModelAttributes, getComparisonAttributesFromSavedSearch(secondaryModel, 'second'));
 
-            return new ComparisonModel(comparisonModelArguments);
+            return new ComparisonModel(comparisonModelAttributes);
         }
     });
 
