@@ -40,7 +40,7 @@ public class SavedSnapshot extends SavedSearch<SavedSnapshot> {
 
     private SavedSnapshot(final Builder builder) {
         super(builder);
-        stateTokens = builder.stateToken;
+        stateTokens = builder.stateTokens;
         resultCount = builder.resultCount;
     }
 
@@ -55,13 +55,13 @@ public class SavedSnapshot extends SavedSearch<SavedSnapshot> {
     @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder extends SavedSearch.Builder<SavedSnapshot> {
-        private List<String> stateToken;
+        private List<String> stateTokens;
         private Long resultCount;
 
         public Builder(final SavedSnapshot snapshot) {
             super(snapshot);
 
-            stateToken = snapshot.stateTokens;
+            stateTokens = snapshot.stateTokens;
             resultCount = snapshot.resultCount;
         }
 

@@ -1,109 +1,130 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
-import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.io.Serializable;
 import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.hamcrest.core.Is.isA;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public abstract class AbstractSavedSnapshotServiceIT<S extends Serializable, R extends SearchResult, E extends Exception> extends AbstractFindIT {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    private SavedSnapshotService savedSnapshotService;
+    protected SavedSnapshotService savedSnapshotService;
 
-    @Test
-    @DirtiesContext
-    public void createFetchDelete() {
-        final String title = "Any old saved snapshot";
-        final Long resultCount = 100L;
+    @Mock
+    protected DocumentsService<S, R, E> documentsService;
 
-        final Set<ConceptClusterPhrase> conceptClusterPhrases = new HashSet<>();
-        final ConceptClusterPhrase manhattanClusterPhraseOne = new ConceptClusterPhrase("manhattan", true, 0);
-        final ConceptClusterPhrase manhattanClusterPhraseTwo = new ConceptClusterPhrase("mid-town", false, 0);
-        conceptClusterPhrases.add(manhattanClusterPhraseOne);
-        conceptClusterPhrases.add(manhattanClusterPhraseTwo);
+    protected SavedSnapshotController controller;
 
-        final SavedSnapshot savedSnapshot = new SavedSnapshot.Builder()
-                .setResultCount(resultCount)
-                .setStateToken(Collections.singletonList("abc"))
-                .setConceptClusterPhrases(conceptClusterPhrases)
-                .setQueryText("*")
-                .setTitle(title)
+    private ObjectMapper mapper = new ObjectMapper();
+
+    private final String QUERY_TEXT = "orange";
+    private final Long RESULT_COUNT = 555L;
+    private final String STATE_TOKEN = "a state token";
+
+    protected abstract void initController();
+
+    private SavedSnapshot getBaseSavedSnapshot() {
+        return new SavedSnapshot.Builder()
+                .setTitle("Any old saved search")
+                .setQueryText(QUERY_TEXT)
                 .build();
+    }
 
-        final SavedSnapshot entity = savedSnapshotService.create(savedSnapshot);
+    @Before
+    public void setup() throws E {
+        MockitoAnnotations.initMocks(this);
 
-        assertThat(entity.getId(), isA(Long.class));
-        assertEquals(entity.getResultCount(), resultCount);
-        assertThat(entity.getStateTokens(), isA(List.class));
-        assertEquals(entity.getStateTokens().size(), 1);
-        assertNotNull(entity.getId());
-        assertThat(entity.getConceptClusterPhrases(), hasSize(2));
+        when(documentsService.getStateTokenAndResultCount(Matchers.<QueryRestrictions<S>>any(), anyInt()))
+                .thenReturn(new StateTokenAndResultCount(STATE_TOKEN, RESULT_COUNT));
 
-        conceptClusterPhrases.clear();
-        final ConceptClusterPhrase jerseyClusterPhraseOne = new ConceptClusterPhrase("jersey", true, 0);
-        conceptClusterPhrases.add(jerseyClusterPhraseOne);
-
-        entity.setQueryText("*");
-        entity.setConceptClusterPhrases(conceptClusterPhrases);
-
-        SavedSnapshot updatedEntity = savedSnapshotService.update(entity);
-
-        assertEquals(updatedEntity.getResultCount(), resultCount);
-        assertThat(updatedEntity.getStateTokens(), isA(List.class));
-        assertEquals(updatedEntity.getStateTokens().size(), 1);
-        assertEquals(updatedEntity.getQueryText(), "*");
-
-        final Set<ConceptClusterPhrase> updatedConceptClusters = updatedEntity.getConceptClusterPhrases();
-        assertThat(updatedConceptClusters, hasSize(1));
-
-        final ConceptClusterPhrase updatedConceptCluster = updatedConceptClusters.iterator().next();
-        assertThat(updatedConceptCluster.getClusterId(), is(jerseyClusterPhraseOne.getClusterId()));
-        assertThat(updatedConceptCluster.getPhrase(), is(jerseyClusterPhraseOne.getPhrase()));
-        assertThat(updatedConceptCluster.isPrimary(), is(jerseyClusterPhraseOne.isPrimary()));
-
-        // Mimic how the update method is likely to be called - with an entity without a user
-        final SavedSnapshot updateInputEntity = new SavedSnapshot.Builder()
-                .setTitle(title)
-                .setId(entity.getId())
-                .setQueryText("cat")
-                .build();
-
-        updatedEntity = savedSnapshotService.update(updateInputEntity);
-
-        assertEquals(updatedEntity.getQueryText(), "cat");
-        assertNotNull(updatedEntity.getUser());
-
-        final Set<SavedSnapshot> fetchedEntities = savedSnapshotService.getAll();
-
-        final SavedSnapshot fetchedEntity = fetchedEntities.iterator().next();
-        assertEquals(fetchedEntities.size(), 1);
-        assertEquals(fetchedEntity.getTitle(), title);
-
-        final ConceptClusterPhrase fetchedConceptClusterPhrase = fetchedEntity.getConceptClusterPhrases().iterator().next();
-        assertThat(fetchedConceptClusterPhrase.getClusterId(), is(jerseyClusterPhraseOne.getClusterId()));
-        assertThat(fetchedConceptClusterPhrase.getPhrase(), is(jerseyClusterPhraseOne.getPhrase()));
-        assertThat(fetchedConceptClusterPhrase.isPrimary(), is(jerseyClusterPhraseOne.isPrimary()));
-
-        savedSnapshotService.deleteById(updatedEntity.getId());
-
-        assertEquals(savedSnapshotService.getAll().size(), 0);
+        initController();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
-    @Transactional
+    public void create() throws Exception {
+        mockMvc.perform(post(SavedSnapshotController.PATH + '/')
+                .content(mapper.writeValueAsString(getBaseSavedSnapshot()))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.id", not(nullValue())))
+                .andExpect(jsonPath("$.resultCount", is(RESULT_COUNT.intValue())))
+                .andExpect(jsonPath("$.stateTokens", contains(STATE_TOKEN)));
+    }
+
+    @Test
+    public void update() throws Exception {
+        final SavedSnapshot createdEntity = savedSnapshotService.create(getBaseSavedSnapshot());
+
+        final String UPDATED_QUERY_TEXT = "banana";
+        final String UPDATED_TITLE = "a new title";
+
+        final SavedSnapshot updatedSnapshot = new SavedSnapshot.Builder()
+                .setQueryText(UPDATED_QUERY_TEXT)
+                .setTitle(UPDATED_TITLE)
+                .build();
+
+        mockMvc.perform(put(SavedSnapshotController.PATH + '/' + createdEntity.getId())
+                .content(mapper.writeValueAsString(updatedSnapshot))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.id", is(createdEntity.getId().intValue())))
+                .andExpect(jsonPath("$.queryText", is(QUERY_TEXT))) // Only title is updateable for snapshots
+                .andExpect(jsonPath("$.title", is(UPDATED_TITLE)));
+    }
+
+    @Test
+    public void fetch() throws Exception {
+        final SavedSnapshot createdEntity = controller.create(getBaseSavedSnapshot());
+
+        mockMvc.perform(get(SavedSnapshotController.PATH + '/')
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$[0].id", is(createdEntity.getId().intValue())))
+                .andExpect(jsonPath("$[0].resultCount", is(RESULT_COUNT.intValue())))
+                .andExpect(jsonPath("$[0].stateTokens", contains(STATE_TOKEN)));
+    }
+
+    @Test
+    public void deleteById() throws Exception {
+        final SavedSnapshot createdEntity = controller.create(getBaseSavedSnapshot());
+
+        mockMvc.perform(delete(SavedSnapshotController.PATH + '/' + createdEntity.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        final Set<SavedSnapshot> queries = savedSnapshotService.getAll();
+        assertThat(queries, is(empty()));
+    }
+
+    @Test
     public void getAllReturnsNothing() throws Exception {
         assertThat(savedSnapshotService.getAll(), is(empty()));
     }
