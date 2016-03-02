@@ -22,6 +22,7 @@
   ],
   "dependencies": {
     "backbone": "1.2.3",
+    "bjoska.bowser": "1.0.0",
     "colorbox": "colorbox#1.5.10",
     "corejs-typeahead": "#3d2a7eb",
     "fontawesome": "components-font-awesome#4.5.0",

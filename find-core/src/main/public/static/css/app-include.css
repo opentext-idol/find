@@ -326,8 +326,8 @@ html, body {
 
 .find {
     text-align: center;
-    /* We need to be on top of the static navbar */
-    z-index: 9999;
+    /* We need to be on top of the static navbar but below the modal backdrop */
+    z-index: 1020;
 }
 
 .find-logo {

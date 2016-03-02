@@ -14,17 +14,17 @@ define([
         el: '.page',
 
         initialize: function() {
-            $.ajaxSetup({ cache: false });
+            testBrowser().done(_.bind(function() {
+                $.ajaxSetup({ cache: false });
 
-            this.render();
+                this.render();
 
-            var matchedRoute = Backbone.history.start();
+                var matchedRoute = Backbone.history.start();
 
-            if (!matchedRoute) {
-                vent.navigate(this.defaultRoute);
-            }
-
-            testBrowser();
+                if (!matchedRoute) {
+                    vent.navigate(this.defaultRoute);
+                }
+            }, this))
         },
 
         render: function() {

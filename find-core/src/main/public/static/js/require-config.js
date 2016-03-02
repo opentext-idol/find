@@ -9,6 +9,7 @@ require.config({
         backbone: 'find/lib/backbone/backbone-extensions',
         'backbone-base': '../bower_components/backbone/backbone',
         bootstrap: '../lib/bootstrap/js/bootstrap',
+        bowser: '../bower_components/bjoska.bowser/bowser',
         colorbox: '../bower_components/colorbox/jquery.colorbox',
         'bootstrap-datetimepicker': '../bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
         'databases-view': '../bower_components/hp-autonomy-js-databases-view/src',
