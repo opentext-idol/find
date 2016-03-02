@@ -99,7 +99,7 @@ define([
                     relatedConcepts: []
                 });
             },
-            'click .preview-mode [data-reference]': function(e) {
+            'click .preview-mode [data-cid]': function(e) {
                 var $target = $(e.currentTarget);
 
                 if ($target.hasClass('selected-document')) {
@@ -110,7 +110,7 @@ define([
                     this.$('.main-results-container').removeClass('selected-document');
                 } else {
                     //enable/choose another preview view
-                    this.trigger('preview', this.documentsCollection.findWhere({reference: $target.data('reference')}));
+                    this.trigger('preview', this.documentsCollection.get($target.data('cid')));
 
                     //resetting selected-document class and adding it to the target
                     this.$('.main-results-container').removeClass('selected-document');
@@ -349,6 +349,7 @@ define([
             }
 
             var $newResult = $(this.resultsTemplate({
+                cid: model.cid,
                 i18n: i18n,
                 title: model.get('title'),
                 reference: reference,
