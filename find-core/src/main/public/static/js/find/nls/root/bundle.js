@@ -7,7 +7,7 @@ define([
 ], function(substitution) {
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "Find © Copyright 2014-2015 Hewlett-Packard Development Company, L.P.",
+        'about.copyright': "Find © Copyright 2014-2016 Hewlett Packard Enterprise Development Company, L.P.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
@@ -153,7 +153,7 @@ define([
         'settings.queryManipulation.dictionary': 'Dictionary',
         'settings.queryManipulation.enable': 'Enable Query Manipulation',
         'settings.queryManipulation.enabled': 'Query Manipulation is enabled',
-        'settings.queryManipulation.expandQuery': 'Expand Query',
+        'settings.queryManipulation.expandQuery': 'Enable synonyms',
         'settings.queryManipulation.index': 'Index',
         'settings.queryManipulation.loading': 'Loading...',
         'settings.queryManipulation.typeaheadMode': 'Typeahead Mode',
