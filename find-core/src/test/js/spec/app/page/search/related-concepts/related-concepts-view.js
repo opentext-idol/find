@@ -69,7 +69,7 @@ define([
                     {cluster: 0, text: 'fruit'},
                     {cluster: 0, text: 'juice'},
                     {cluster: 1, text: 'red'}
-                ]);
+                ], { parse: true });
 
                 createView.call(this);
             });
@@ -137,7 +137,7 @@ define([
                         {cluster: 0, text: 'juice'},
                         {cluster: 1, text: 'red'},
                         {cluster: 0, text: 'squeeze'}
-                    ]);
+                    ], { parse: true });
                 });
 
                 it('displays the related concepts list', function() {

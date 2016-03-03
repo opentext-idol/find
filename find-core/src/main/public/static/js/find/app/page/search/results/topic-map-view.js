@@ -32,7 +32,7 @@ define([
                 "name": "topic map",
                 "size": 1.0,
                 "sentiment": null,
-                "children": _.chain(this.entityCollection.models)
+                "children": this.entityCollection.chain()
                     .filter(function(entity) {
                         return entity.get(this.clusteringMode) >= this.relevance.value;
                     }, this)

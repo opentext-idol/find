@@ -131,11 +131,7 @@ define([
                     } else {
                         this.model.set('viewState', ViewState.LIST);
 
-                        var html = _.chain(this.entityCollection.models)
-                            .reject(function (model) {
-                                // A negative cluster indicates that the associated documentes did not fall into a cluster
-                                return model.get('cluster') < 0;
-                            })
+                        var html = this.entityCollection.chain()
                             .groupBy(function (model) {
                                 return model.get('cluster');
                             })
