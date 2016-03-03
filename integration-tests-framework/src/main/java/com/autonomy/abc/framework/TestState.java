@@ -67,7 +67,6 @@ public class TestState {
     }
 
     public void finish() {
-        test.getSessionRegistry().clear();
         statementHandlers.clear();
     }
 
