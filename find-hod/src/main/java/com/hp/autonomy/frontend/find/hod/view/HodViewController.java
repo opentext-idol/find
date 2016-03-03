@@ -25,7 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.UUID;
 
 @Controller
 @RequestMapping(ViewController.VIEW_PATH)
@@ -109,6 +108,7 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
                 .setMainMessageCode(HOD_ERROR_MESSAGE_CODE_MAIN)
                 .setSubMessageCode(HOD_ERROR_MESSAGE_CODE_TOKEN_EXPIRED)
                 .setStatusCode(HttpServletResponse.SC_FORBIDDEN)
+                .setAuthError(true)
                 .build());
     }
 

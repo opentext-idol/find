@@ -23,6 +23,7 @@ public class ErrorModelAndViewInfo {
     private final boolean contactSupport;
     private final URI buttonHref;
     private final Exception exception;
+    private final boolean isAuthError;
 
     @Accessors(chain = true)
     @NoArgsConstructor
@@ -36,9 +37,10 @@ public class ErrorModelAndViewInfo {
         private boolean contactSupport;
         private URI buttonHref;
         private Exception exception;
+        private boolean isAuthError;
 
         public ErrorModelAndViewInfo build() {
-            return new ErrorModelAndViewInfo(request, mainMessageCode, subMessageCode, subMessageArguments, statusCode, contactSupport, buttonHref, exception);
+            return new ErrorModelAndViewInfo(request, mainMessageCode, subMessageCode, subMessageArguments, statusCode, contactSupport, buttonHref, exception, isAuthError);
         }
     }
 }

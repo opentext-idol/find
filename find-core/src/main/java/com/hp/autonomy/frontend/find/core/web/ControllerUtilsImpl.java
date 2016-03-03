@@ -60,6 +60,7 @@ public class ControllerUtilsImpl implements ControllerUtils {
         modelAndView.addObject(ErrorAttributes.SUB_MESSAGE.value(), getMessage(errorInfo.getSubMessageCode(), errorInfo.getSubMessageArguments()));
         modelAndView.addObject(ErrorAttributes.BASE_URL.value(), getBaseUrl(errorInfo.getRequest()));
         modelAndView.addObject(ErrorAttributes.STATUS_CODE.value(), errorInfo.getStatusCode());
+        modelAndView.addObject(ErrorAttributes.AUTH_ERROR.value(), errorInfo.isAuthError());
         if (errorInfo.isContactSupport()) {
             final Exception exception = errorInfo.getException();
             if(exception != null) {

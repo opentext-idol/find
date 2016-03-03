@@ -12,7 +12,8 @@ public enum ErrorAttributes {
     STATUS_CODE("statusCode"),
     CONTACT_SUPPORT("contactSupport"),
     BUTTON_HREF("buttonHref"),
-    BUTTON_MESSAGE("buttonMessage");
+    BUTTON_MESSAGE("buttonMessage"),
+    AUTH_ERROR("isAuthError");
 
     private final String value;
 

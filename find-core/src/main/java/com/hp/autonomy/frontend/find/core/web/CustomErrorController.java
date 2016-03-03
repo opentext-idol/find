@@ -15,7 +15,6 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
-import java.util.UUID;
 
 @Slf4j
 public abstract class CustomErrorController {
@@ -47,6 +46,7 @@ public abstract class CustomErrorController {
                 .setSubMessageCode(MESSAGE_CODE_AUTHENTICATION_ERROR_SUB)
                 .setStatusCode(response.getStatus())
                 .setButtonHref(getAuthenticationErrorUrl(request))
+                .setAuthError(true)
                 .build());
     }
 

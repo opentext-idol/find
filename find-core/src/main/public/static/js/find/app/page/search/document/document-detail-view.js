@@ -95,6 +95,11 @@ define([
                 this.$iframe = this.$('.preview-document-frame');
 
                 this.$iframe.on('load', _.bind(function() {
+                    // Cannot execute scripts in iframe or detect error event, so look for attribute on html
+                    if(this.$iframe.contents().find('html').data('hpeFindAuthError')) {
+                        window.location.reload();
+                    }
+
                     this.$('.view-server-loading-indicator').addClass('hidden');
                     this.$iframe.removeClass('hidden');
                 }, this));

@@ -81,7 +81,16 @@ define([
 
                 this.$iframe = this.$('.preview-document-frame');
 
+                this.$iframe.ajaxError(function() {
+                    console.log('an error');
+                });
+
                 this.$iframe.on('load', _.bind(function() {
+                    // Cannot execute scripts in iframe or detect error event, so look for attribute on html
+                    if(this.$iframe.contents().find('html').data('hpeFindAuthError')) {
+                        window.location.reload();
+                    }
+
                     this.$('.view-server-loading-indicator').addClass('hidden');
                     this.$iframe.removeClass('hidden');
                     this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height())
