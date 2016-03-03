@@ -182,6 +182,7 @@ define([
 
             this.listenTo(this.parametricCollection, 'sync', function() {
                 this.populateDropDown(this.$firstChosen, this.parametricCollection.pluck('name'));
+                this.firstPass();
             });
 
             this.listenTo(this.secondParametricCollection, 'sync', this.update);
