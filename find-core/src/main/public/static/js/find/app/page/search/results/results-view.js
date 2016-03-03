@@ -172,15 +172,15 @@ define([
         },
 
         stateTokenRefreshResults: function() {
-            this.endOfResults = false;
-            this.start = 1;
-            this.maxResults = SCROLL_INCREMENT;
-            this.loadData(false);
-
             this.$loadingSpinner.removeClass('hide');
             this.toggleError(false);
             this.$('.main-results-content .error .error-list').empty();
             this.$('.main-results-content .results').empty();
+
+            this.endOfResults = false;
+            this.start = 1;
+            this.maxResults = SCROLL_INCREMENT;
+            this.loadData(false);
         },
 
         normalClearLoadingSpinner: function() {
@@ -233,7 +233,7 @@ define([
                 this.formatResult(model, false);
             });
 
-            this.listenTo(this.documentsCollection, 'sync', function() {
+            this.listenTo(this.documentsCollection, 'sync reset', function() {
                 this.resultsFinished = true;
                 this.clearLoadingSpinner();
 
@@ -498,17 +498,21 @@ define([
             this.$loadingSpinner.removeClass('hide');
             this.resultsFinished = false;
 
-            this.documentsCollection.fetch({
-                data: {
-                    text: this.queryModel.get('queryText'),
-                    start: this.start,
-                    max_results: this.maxResults,
-                    summary: 'context',
-                    sort: this.queryModel.get('sort')
-                },
-                reset: false,
-                remove: !infiniteScroll
-            }, this);
+            if(this.documentsCollection.stateMatchIds && this.documentsCollection.stateMatchIds.length) {
+                this.documentsCollection.fetch({
+                    data: {
+                        text: this.queryModel.get('queryText'),
+                        start: this.start,
+                        max_results: this.maxResults,
+                        summary: 'context',
+                        sort: this.queryModel.get('sort')
+                    },
+                    reset: false,
+                    remove: !infiniteScroll
+                }, this);
+            } else {
+                this.documentsCollection.reset();
+            }
         },
 
         normalCheckScroll: function() {
