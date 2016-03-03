@@ -258,14 +258,14 @@ define([
                     this.documentsCollection.each(function(document) {
                         var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
 
-                        this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
+                        this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
                     }, this);
 
                     if(!this.stateTokenMode()) {
                         this.promotionsCollection.each(function(document) {
                             var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
 
-                            this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
+                            this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
                         }, this);
                     }
                 }
@@ -397,9 +397,11 @@ define([
         },
 
         handlePopover: function($content, $target) {
+            var targetDocument = this.documentsCollection.get($target.closest('[data-cid]').data('cid'));
+
             var collection = new SimilarDocumentsCollection([], {
                 indexes: this.queryModel.get('indexes'),
-                reference: $target.closest('[data-reference]').attr('data-reference')
+                reference: targetDocument.get('reference')
             });
 
             collection.fetch({
