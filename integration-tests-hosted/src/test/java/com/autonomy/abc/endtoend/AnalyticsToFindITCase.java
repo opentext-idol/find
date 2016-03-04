@@ -1,5 +1,6 @@
 package com.autonomy.abc.endtoend;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -54,6 +55,12 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         searchWindow.activate();
     }
 
+    @After
+    public void keywordTearDown() {
+        searchWindow.activate();
+        ABCTearDown.KEYWORDS.tearDown(this);
+    }
+
     @Test
     public void testPromotionToFind() throws InterruptedException {
         AnalyticsPage analyticsPage = getApplication().switchTo(AnalyticsPage.class);
@@ -96,8 +103,6 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         searchWindow.activate();
 
         promotionService.deleteAll();
-
-        keywordService.deleteAll(KeywordFilter.ALL);
     }
 
 }

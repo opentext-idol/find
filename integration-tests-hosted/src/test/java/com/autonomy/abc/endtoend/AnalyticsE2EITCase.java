@@ -1,5 +1,6 @@
 package com.autonomy.abc.endtoend;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -70,6 +71,11 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         goToAnalytics();
     }
 
+    @After
+    public void tearDownKeywords() {
+        ABCTearDown.KEYWORDS.tearDown(this);
+    }
+
     @Test
     public void testAnalytics() throws InterruptedException {
         List<String> newTriggers = Arrays.asList("happy", "sad");
@@ -117,11 +123,6 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         for(String trigger : existingTriggers){
             verifyTriggerPromotes(promotedDocuments, trigger, false);
         }
-    }
-
-    @After
-    public void tearDownKeywords() {
-        keywordService.deleteAll(KeywordFilter.ALL);
     }
 
     @After

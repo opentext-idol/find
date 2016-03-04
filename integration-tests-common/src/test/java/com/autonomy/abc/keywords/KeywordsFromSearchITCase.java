@@ -1,5 +1,6 @@
 package com.autonomy.abc.keywords;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
@@ -67,7 +68,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
     @After
     public void tearDown() {
-        keywordService.deleteAll(KeywordFilter.ALL);
+        ABCTearDown.KEYWORDS.tearDown(this);
     }
 
     //Blacklisted terms can be created on the searchpage. This link has often broken
