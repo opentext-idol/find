@@ -262,10 +262,4 @@ public class AnalyticsITCase extends HostedTestBase {
     public void testNoErrorsOnPageLoad(){
         verifyThat(analytics, not(containsTextIgnoringCase("error")));
     }
-    
-    @After
-    public void tearDown(){
-
-    }
-
 }

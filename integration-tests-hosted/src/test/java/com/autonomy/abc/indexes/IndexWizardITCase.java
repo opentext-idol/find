@@ -136,7 +136,4 @@ public class IndexWizardITCase extends HostedTestBase {
         indexConfigStepTab.setParametricFields(lowercase);
         verifyThat(input.getErrorMessage(), nullValue());
     }
-
-    @After
-    public void tearDown(){}
 }

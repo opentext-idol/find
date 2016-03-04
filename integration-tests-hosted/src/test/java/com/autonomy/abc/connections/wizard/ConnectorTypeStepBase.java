@@ -40,11 +40,6 @@ public class ConnectorTypeStepBase extends HostedTestBase {
         connectorTypeStepTab = newConnectionPage.getConnectorTypeStep();
     }
 
-    @After
-    public void cleanUp() {
-
-    }
-
     protected void selectConnectorType(ConnectorType type) {
         connectorTypeStepTab.typeBtn(type).click();
         Waits.loadOrFadeWait();

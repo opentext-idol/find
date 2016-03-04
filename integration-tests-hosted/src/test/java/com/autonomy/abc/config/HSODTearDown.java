@@ -1,14 +1,6 @@
 package com.autonomy.abc.config;
 
 public enum HSODTearDown implements TearDown<HostedTestBase> {
-    CONNECTIONS {
-        @Override
-        public void tearDown(HostedTestBase test) {
-            if (test.hasSetUp()) {
-                test.getApplication().connectionService().deleteAllConnections(false);
-            }
-        }
-    },
     INDEXES {
         @Override
         public void tearDown(HostedTestBase test) {
@@ -17,5 +9,5 @@ public enum HSODTearDown implements TearDown<HostedTestBase> {
                 test.getApplication().indexService().deleteAllIndexes();
             }
         }
-    }
+    },
 }
