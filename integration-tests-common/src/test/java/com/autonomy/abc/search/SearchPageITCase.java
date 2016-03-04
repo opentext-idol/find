@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -676,8 +677,8 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	@KnownBug("IOD-6855")
-	public void testFromDateFilter() throws ParseException {
+	@KnownBug("HOD-1116")
+	public void testFromDateFilter() {
 		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResult(1).getTitleString();
 		final Date invalidDate = DateUtils.addMinutes(date, 1);
@@ -697,8 +698,27 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	@KnownBug("HOD-1116")
+	public void testWideFromDate() throws ParseException {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
+		Date june = simpleDateFormat.parse("06/12/2015 00:00");
+
+		searchService.search(new SearchQuery("Pertussis").withFilter(new IndexFilter("wiki_eng")));
+		Waits.loadOrFadeWait();
+		searchPage.filterBy(new DatePickerFilter().from(june));
+
+		for(int i = 0; i < 2; i++) {
+			for (SOSearchResult searchResult : searchPage.getSearchResults()) {
+				verifyThat(searchResult.getDate(), greaterThanOrEqualTo(june));
+			}
+
+			searchPage.switchResultsPage(Pagination.NEXT);
+		}
+	}
+
+	@Test
 	@KnownBug("IOD-6855")
-	public void testUntilDateFilter() throws ParseException {
+	public void testUntilDateFilter() {
 		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResult(1).getTitleString();
 
@@ -719,9 +739,33 @@ public class SearchPageITCase extends ABCTestBase {
 		verifyValidDate(firstResult);
 	}
 
+	@Test
+	@KnownBug("HOD-1116")
+	public void testWideUntilDate() throws ParseException {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
+		Date june = simpleDateFormat.parse("06/12/2015 00:00");
+
+		searchService.search(new SearchQuery("Pertussis").withFilter(new IndexFilter("wiki_eng")));
+		Waits.loadOrFadeWait();
+		searchPage.filterBy(new DatePickerFilter().until(june));
+
+		//There should be results in this index
+		verifyThat(searchPage.getSearchResults().size(), not(0));
+
+		for(int i = 0; i < 2; i++) {
+			for (SOSearchResult searchResult : searchPage.getSearchResults()) {
+				verifyThat(searchResult.getDate(), lessThanOrEqualTo(june));
+			}
+
+			if(searchPage.getHeadingResultsCount() > SearchPage.RESULTS_PER_PAGE) {
+				searchPage.switchResultsPage(Pagination.NEXT);
+			}
+		}
+	}
+
 	private Date beginDateFilterTest() {
 		// not all indexes have times configured
-		search(new SearchQuery("Dog").withFilter(new IndexFilter("news_eng")));
+		search(new SearchQuery("Dog").withFilter(new IndexFilter("news_eng")).withFilter(new FieldTextFilter("EMPTY{}:Date")));
 		Date date = searchPage.getSearchResult(1).getDate();
 		if (date == null) {
 			throw new IllegalStateException("date filter test requires first search result to have a date");
