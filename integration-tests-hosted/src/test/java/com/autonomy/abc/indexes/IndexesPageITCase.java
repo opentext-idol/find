@@ -1,5 +1,6 @@
 package com.autonomy.abc.indexes;
 
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
@@ -65,6 +66,11 @@ public class IndexesPageITCase extends HostedTestBase {
     public void setUp() {
         indexService = getApplication().indexService();
         indexesPage = indexService.goToIndexes();
+    }
+
+    @After
+    public void tearDown(){
+        HSODTearDown.INDEXES.tearDown(this);
     }
 
     @Test
@@ -314,15 +320,5 @@ public class IndexesPageITCase extends HostedTestBase {
 
     private void verifyNoError(FindPage findPage) {
         verifyThat(findPage.getResultsPage().resultsDiv(), not(containsText(Errors.Find.GENERAL)));
-    }
-
-    @After
-    public void tearDown(){
-        try {
-            getApplication().connectionService().deleteAllConnections(false);
-            getApplication().indexService().deleteAllIndexes();
-        } catch (Exception e) {
-            LOGGER.warn("Failed to tear down");
-        }
     }
 }

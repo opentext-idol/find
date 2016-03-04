@@ -1,5 +1,6 @@
 package com.autonomy.abc.endtoend;
 
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.connections.ConnectionService;
@@ -44,6 +45,11 @@ public class ConnectionToSearchITCase extends HostedTestBase {
         searchService = getApplication().searchService();
     }
 
+    @After
+    public void tearDown() {
+        HSODTearDown.INDEXES.tearDown(this);
+    }
+
     @Test
     public void testConnectionToSearch() {
         connectionService.setUpConnection(connector);
@@ -74,10 +80,5 @@ public class ConnectionToSearchITCase extends HostedTestBase {
         verifyThat("connection does not show up in incorrect filter", connectionsPage.connectionsList(), empty());
         input.clear();
         dropdown.select("All Types");
-    }
-
-    @After
-    public void tearDown() {
-        connectionService.deleteConnection(connector, true);
     }
 }

@@ -1,6 +1,7 @@
 package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.ABCTearDown;
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -58,6 +59,11 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         ABCTearDown.PROMOTIONS.tearDown(this);
     }
 
+    @After
+    public void indexTearDown() {
+        HSODTearDown.INDEXES.tearDown(this);
+    }
+
     @Test
     //Fails due to Unhandled Exception when attempting to create promotion
     public void testConnectionsToFind() throws InterruptedException {
@@ -108,11 +114,5 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         for (IndexNodeElement node : searchPage.indexesTree()) {
             assertThat(node.getName(), not(index.getName()));
         }
-    }
-
-    @After
-    public void tearDown(){
-        connectionService.deleteAllConnections(true);
-        indexService.deleteAllIndexes();
     }
 }
