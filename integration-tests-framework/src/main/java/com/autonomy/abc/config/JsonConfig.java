@@ -49,6 +49,7 @@ class JsonConfig {
         selenium = defaults.selenium.overrideUsing(overrides.selenium);
         users = mapOverride(defaults.users, overrides.users);
         newUsers = mapOverride(defaults.newUsers, overrides.newUsers);
+        parser = override(defaults.parser, overrides.parser);
     }
 
     static JsonConfig readFile(File jsonFile) throws IOException {
