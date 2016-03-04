@@ -715,11 +715,11 @@ input.find-input {
 }
 
 .comparison-list-title,
-.results-list-container .result-message {
+.result-message {
     color: #425563;
 }
 
-.results-list-container .result-message {
+.result-message {
     font-size: 28px;
 }
 
