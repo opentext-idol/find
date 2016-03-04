@@ -1,5 +1,6 @@
 package com.autonomy.abc.endtoend;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -55,6 +56,12 @@ public class PromotionsToFindITCase extends HostedTestBase {
         resultsPage = findPage.getResultsPage();
 
         searchWindow.activate();
+    }
+
+    @After
+    public void tearDown(){
+        searchWindow.activate();
+        ABCTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test
@@ -148,15 +155,5 @@ public class PromotionsToFindITCase extends HostedTestBase {
 
     private void verifyPinToPosition(List<String> promotionTitles, int start, int end) {
         verifyResultsContainPromoted(resultsPage.getResultTitles(start, end), promotionTitles);
-    }
-
-    @After
-    public void tearDown(){
-        try {
-            searchWindow.activate();
-            promotionService.deleteAll();
-        } catch (NullPointerException e) {
-            LOGGER.warn("skipping tear down");
-        }
     }
 }

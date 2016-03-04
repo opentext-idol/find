@@ -56,6 +56,12 @@ public class AnalyticsToFindITCase extends HostedTestBase {
     }
 
     @After
+    public void promotionTearDown() {
+        searchWindow.activate();
+        ABCTearDown.PROMOTIONS.tearDown(this);
+    }
+
+    @After
     public void keywordTearDown() {
         searchWindow.activate();
         ABCTearDown.KEYWORDS.tearDown(this);
@@ -96,13 +102,6 @@ public class AnalyticsToFindITCase extends HostedTestBase {
     private void promotionShownCorrectly (FindSearchResult promotion){
         verifyThat(promotion.isPromoted(), is(true));
         verifyThat(promotion.star(), displayed());
-    }
-
-    @After
-    public void tearDown(){
-        searchWindow.activate();
-
-        promotionService.deleteAll();
     }
 
 }

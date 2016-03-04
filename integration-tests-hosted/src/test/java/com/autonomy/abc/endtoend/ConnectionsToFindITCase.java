@@ -1,5 +1,6 @@
 package com.autonomy.abc.endtoend;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -50,6 +51,11 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         searchService = getApplication().searchService();
         promotionService = getApplication().promotionService();
         indexService = getApplication().indexService();
+    }
+
+    @After
+    public void tearDown() {
+        ABCTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test
@@ -106,7 +112,6 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
     @After
     public void tearDown(){
-        promotionService.deleteAll();
         connectionService.deleteAllConnections(true);
         indexService.deleteAllIndexes();
     }

@@ -1,6 +1,7 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.Trigger.SharedTriggerTests;
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
@@ -50,7 +51,7 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        promotionService.deleteAll();
+        ABCTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

@@ -76,6 +76,11 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         ABCTearDown.KEYWORDS.tearDown(this);
     }
 
+    @After
+    public void tearDownPromotions() {
+        ABCTearDown.PROMOTIONS.tearDown(this);
+    }
+
     @Test
     public void testAnalytics() throws InterruptedException {
         List<String> newTriggers = Arrays.asList("happy", "sad");
@@ -123,11 +128,6 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         for(String trigger : existingTriggers){
             verifyTriggerPromotes(promotedDocuments, trigger, false);
         }
-    }
-
-    @After
-    public void tearDownPromotions() {
-        promotionService.deleteAll();
     }
 
     private void setUpPromotion(String searchTerm, String trigger) {
