@@ -717,7 +717,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	@KnownBug("IOD-6855")
+	@KnownBug("HOD-1116")
 	public void testUntilDateFilter() {
 		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResult(1).getTitleString();

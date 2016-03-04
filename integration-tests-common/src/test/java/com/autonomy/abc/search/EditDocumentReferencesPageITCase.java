@@ -224,8 +224,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     public void testViewFromBucketAndFromSearchResults() throws InterruptedException {
         setUpPromotion("apple", "potato", 35);
 
-        Waits.loadOrFadeWait();
-
         if (verifyThat(editReferencesPage.promotionsBucketList(), not(empty()))) {
             for (int i = 0; i < 5; i++) {
                 final String docTitle = editReferencesPage.promotionsBucketWebElements().get(i).getText();
@@ -328,7 +326,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editReferencesPage.saveButton().click();
 
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-        Waits.loadOrFadeWait();
 
         List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
 
