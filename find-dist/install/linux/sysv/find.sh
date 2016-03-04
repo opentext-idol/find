@@ -25,7 +25,7 @@ JAVA_BIN="/usr/bin/java"
 PRODUCT_NAME="HPE Find"
 LOCKFILE="/var/lock/${NAME}.pid"
 STARTUP_LOG="${FIND_INSTALL_DIR}/console.log"
-ARGS=("-Dhp.find.home=${FIND_HOME_DIR}" "-Dserver.FIND_PORT=${FIND_PORT}" "-jar" "${EXECUTABLE}")
+ARGS=("-Dhp.find.home=${FIND_HOME_DIR}" "-Dserver.port=${FIND_PORT}" "-jar" "${EXECUTABLE}")
 SLEEP_TIME=2
 ##
 
