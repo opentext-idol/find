@@ -739,18 +739,15 @@ input.find-input {
 }
 
 .find-navbar .dropdown-toggle:hover,
-.find-navbar .nav li.open a.dropdown-toggle {
+.find-navbar .nav li.open a.dropdown-toggle,
+.find-navbar .settings-logout a:focus,
+.find-navbar .settings-logout a:hover {
     background-color: #949494;
 }
 
-.find-navbar .navbar-brand {
-    padding: 25px 15px;
-    height: 70px;
-}
-
-.find-navbar .nav > li > a {
-    padding-bottom: 24px;
-    padding-top: 24px;
+.find-navbar .settings-logout-icon {
+    margin-right: 10px;
+    vertical-align: middle;
 }
 
 .list-indexes {
@@ -862,20 +859,13 @@ input:-moz-placeholder::before {
     border-bottom-color:#353535;
 }
 
-@media (min-width: 980px) {
-    .page .body {
-        left: 0;
-        position: fixed;
-        right: 0;
-    }
-
-    .page .body {
-        bottom: 32px;
-        top: 50px;
-        overflow: auto;
-        -webkit-transition: bottom 0.5s ease;
-        transition: bottom 0.5s ease;
-    }
+.page .body {
+    left: 0;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    top: 70px;
+    overflow: auto;
 }
 
 @media (max-width: 991px) {

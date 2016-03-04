@@ -1,14 +1,13 @@
-<div class="find-navbar navbar navbar-fixed-top">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand"><%-strings.appName%></a>
-        </div>
-        <div class="collapse navbar-collapse">
-            <% if (showLogout) { %>
-            <ul class="nav navbar-nav">
-                <li><a href="<%=logoutUri%>"><%-strings.logout%></a></li>
-            </ul>
-            <% } %>
-        </div>
-    </div>
+<div class="find-navbar navbar navbar-static-top">
+    <span class="find-logo-small navbar-brand m-l-sm m-t-sm"></span>
+    <% if (showLogout) { %>
+    <ul class="nav navbar-top-link navbar-right settings-logout">
+        <li>
+            <a href="<%=logoutUri%>">
+                <i class="hp-icon hp-steps settings-logout-icon"></i>
+                <%-strings.logout%>
+            </a>
+        </li>
+    </ul>
+    <% } %>
 </div>
