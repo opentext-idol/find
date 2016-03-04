@@ -11,7 +11,6 @@ import org.junit.Test;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static org.hamcrest.CoreMatchers.containsString;
 
 public class DevConsoleITCase extends SeleniumTest<DevConsole, DevConsoleElementFactory> {
     private HSODLandingPage landingPage;
