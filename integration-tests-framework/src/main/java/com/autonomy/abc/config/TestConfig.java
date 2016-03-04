@@ -11,7 +11,6 @@ import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;

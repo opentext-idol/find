@@ -1,5 +1,6 @@
 package com.autonomy.abc.endtoend;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -9,7 +10,6 @@ import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.HSODFind;
-import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.PromotionService;
@@ -54,6 +54,18 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         searchWindow.activate();
     }
 
+    @After
+    public void promotionTearDown() {
+        searchWindow.activate();
+        ABCTearDown.PROMOTIONS.tearDown(this);
+    }
+
+    @After
+    public void keywordTearDown() {
+        searchWindow.activate();
+        ABCTearDown.KEYWORDS.tearDown(this);
+    }
+
     @Test
     public void testPromotionToFind() throws InterruptedException {
         AnalyticsPage analyticsPage = getApplication().switchTo(AnalyticsPage.class);
@@ -89,15 +101,6 @@ public class AnalyticsToFindITCase extends HostedTestBase {
     private void promotionShownCorrectly (FindSearchResult promotion){
         verifyThat(promotion.isPromoted(), is(true));
         verifyThat(promotion.star(), displayed());
-    }
-
-    @After
-    public void tearDown(){
-        searchWindow.activate();
-
-        promotionService.deleteAll();
-
-        keywordService.deleteAll(KeywordFilter.ALL);
     }
 
 }

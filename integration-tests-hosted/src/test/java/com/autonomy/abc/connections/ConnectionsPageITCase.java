@@ -1,12 +1,11 @@
 package com.autonomy.abc.connections;
 
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.connections.*;
-import com.autonomy.abc.selenium.connections.ConnectorIndexStepTab;
-import com.autonomy.abc.selenium.connections.ConnectorTypeStepTab;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
@@ -20,7 +19,6 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 
@@ -40,6 +38,11 @@ public class ConnectionsPageITCase extends HostedTestBase {
         connectionService = getApplication().connectionService();
 
         connectionsPage = connectionService.goToConnections();
+    }
+
+    @After
+    public void tearDown(){
+        HSODTearDown.INDEXES.tearDown(this);
     }
 
     @Test
@@ -186,10 +189,5 @@ public class ConnectionsPageITCase extends HostedTestBase {
         getWindow().goTo(connectionUrl);
         getElementFactory().getConnectionsDetailPage();
         assertThat(getWindow(), url(is(connectionUrl)));
-    }
-
-    @After
-    public void tearDown(){
-        connectionService.deleteAllConnections(true);
     }
 }

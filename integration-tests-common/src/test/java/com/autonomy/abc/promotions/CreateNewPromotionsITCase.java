@@ -1,6 +1,7 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.Trigger.SharedTriggerTests;
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -82,7 +83,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @After
     public void cleanUp() {
-        promotionService.deleteAll();
+        ABCTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.categories.CoreFeature;
@@ -33,7 +34,7 @@ public class StaticPromotionsCoreITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        promotionService.deleteAll();
+        ABCTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

@@ -1,9 +1,9 @@
 package com.autonomy.abc.keywords;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.categories.CoreFeature;
-import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
@@ -33,7 +33,7 @@ public class KeywordsCoreITCase extends ABCTestBase {
 
     @After
     public void tearDown() {
-        keywordService.deleteAll(KeywordFilter.ALL);
+        ABCTearDown.KEYWORDS.tearDown(this);
     }
 
     @Test

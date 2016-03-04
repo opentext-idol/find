@@ -3,9 +3,7 @@ package com.autonomy.abc.selenium.find;
 import com.autonomy.abc.selenium.application.Application;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.users.HSODUser;
 import com.autonomy.abc.selenium.users.LoginService;
-import com.autonomy.abc.selenium.users.User;
 
 public class HSODFind implements Application<HSODFindElementFactory> {
     private Window window;

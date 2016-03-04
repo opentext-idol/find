@@ -8,7 +8,6 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.indexes.*;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -136,7 +135,4 @@ public class IndexWizardITCase extends HostedTestBase {
         indexConfigStepTab.setParametricFields(lowercase);
         verifyThat(input.getErrorMessage(), nullValue());
     }
-
-    @After
-    public void tearDown(){}
 }

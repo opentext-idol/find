@@ -2,6 +2,7 @@ package com.autonomy.abc.config;
 
 import com.autonomy.abc.framework.TestState;
 import com.autonomy.abc.framework.rules.KnownBugRule;
+import com.autonomy.abc.framework.rules.SessionRegistryResource;
 import com.autonomy.abc.framework.rules.StateHelperRule;
 import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
@@ -40,7 +41,6 @@ public abstract class SeleniumTest<A extends Application<? extends F>, F extends
     private final SessionRegistry sessions;
     private final A application;
 
-    private Session mainSession;
     private String initialUrl;
 
     protected SeleniumTest(TestConfig config, A appUnderTest) {
@@ -56,7 +56,9 @@ public abstract class SeleniumTest<A extends Application<? extends F>, F extends
 
     // StateHelperRule.finished() calls WebDriver.quit so must be the last thing called
     @Rule
-    public RuleChain chain = RuleChain.outerRule(new StateHelperRule(this))
+    public RuleChain chain = RuleChain
+            .outerRule(new SessionRegistryResource(this))
+            .around(new StateHelperRule(this))
             .around(new TestArtifactRule(this))
             .around(new KnownBugRule());
 
@@ -72,22 +74,10 @@ public abstract class SeleniumTest<A extends Application<? extends F>, F extends
 
     @Before
     public final void baseSetUp() {
-        initialiseTest();
-        goToInitialPage();
-    }
-
-    private void initialiseTest() {
-        LOGGER.info("Starting " + testState.getTestName());
-        LOGGER.info(config.toString());
-
-        mainSession = getSessionRegistry().startSession();
-        getApplication().inWindow(getWindow());
-
         testState.addStatementHandler(new StatementLoggingHandler(this));
         testState.addStatementHandler(new StatementArtifactHandler(this));
-    }
-
-    private void goToInitialPage() {
+        LOGGER.info("Starting " + testState.getTestName());
+        LOGGER.info(config.toString());
         getDriver().get(initialUrl);
     }
 
@@ -101,22 +91,22 @@ public abstract class SeleniumTest<A extends Application<? extends F>, F extends
     }
 
     protected Session getMainSession() {
-        return mainSession;
+        return getSessionRegistry().getSession(0);
     }
 
     protected Window getWindow() {
-        return mainSession.getActiveWindow();
+        return getMainSession().getActiveWindow();
     }
 
     protected WebDriver getDriver() {
-        return mainSession.getDriver();
+        return getMainSession().getDriver();
     }
 
     protected final TestConfig getConfig() {
         return config;
     }
 
-    protected A getApplication() {
+    public A getApplication() {
         return application;
     }
 

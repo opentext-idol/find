@@ -1,5 +1,6 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.TriggerForm;
@@ -37,7 +38,7 @@ public class CreateNewDynamicPromotionsHostedITCase extends HostedTestBase {
 
     @After
     public void tearDown(){
-        getApplication().promotionService().deleteAll();
+        ABCTearDown.PROMOTIONS.tearDown(this);
     }
 
     // TODO: is there a nicer way to share this without

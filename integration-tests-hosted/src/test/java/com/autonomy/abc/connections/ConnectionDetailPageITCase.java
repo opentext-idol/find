@@ -1,5 +1,6 @@
 package com.autonomy.abc.connections;
 
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
@@ -38,6 +39,11 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     @Before
     public void setUp(){
         connectionService = getApplication().connectionService();
+    }
+
+    @After
+    public void tearDown() {
+        HSODTearDown.INDEXES.tearDown(this);
     }
 
     @Test
@@ -141,11 +147,5 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
 
     private void verifyIndexNameForConnector() {
         verifyThat(getElementFactory().getConnectionsDetailPage().getIndexName(), is(connector.getIndex().getName()));
-    }
-
-    @After
-    public void tearDown(){
-        connectionService.deleteAllConnections(true);
-        getApplication().indexService().deleteAllIndexes();
     }
 }
