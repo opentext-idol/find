@@ -17,7 +17,7 @@ public class SimilarDocumentsView implements AppPage {
     private WebElement container;
 
     //TODO find somewhere more suitable for this
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEE, MMMMM dd, yyyy HH:mm a");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEE, MMMMM dd, yyyy kk:mm a");
 
     private SimilarDocumentsView(WebDriver driver) {
         this.driver = driver;
