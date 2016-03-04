@@ -19,6 +19,7 @@ import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.isA;
@@ -68,7 +69,7 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
                 .andExpect(jsonPath("$.title", equalTo(TITLE)))
                 .andExpect(jsonPath("$.queryText", equalTo(QUERY_TEXT)))
                 .andExpect(jsonPath("$.conceptClusterPhrases", hasSize(2)))
-                .andExpect(jsonPath("$.conceptClusterPhrases[*].phrase", contains(PRIMARY_PHRASE, OTHER_PHRASE)))
+                .andExpect(jsonPath("$.conceptClusterPhrases[*].phrase", containsInAnyOrder(PRIMARY_PHRASE, OTHER_PHRASE)))
                 .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase=='" + PRIMARY_PHRASE + "')].primary", contains(true)))
                 .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase== '" + PRIMARY_PHRASE + "')].clusterId", contains(0)))
                 .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase== '" + OTHER_PHRASE + "')].primary", contains(false)))
@@ -113,7 +114,7 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
                 .andExpect(jsonPath("$[0].id", is(createdEntity.getId().intValue())))
                 .andExpect(jsonPath("$[0].queryText", is(createdEntity.getQueryText())))
                 .andExpect(jsonPath("$[0].conceptClusterPhrases", hasSize(createdEntity.getConceptClusterPhrases().size())))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[*].phrase", contains(PRIMARY_PHRASE, OTHER_PHRASE)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[*].phrase", containsInAnyOrder(PRIMARY_PHRASE, OTHER_PHRASE)))
                 .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='" + PRIMARY_PHRASE + "')].primary", contains(true)))
                 .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase== '" + PRIMARY_PHRASE + "')].clusterId", contains(0)))
                 .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase== '" + OTHER_PHRASE + "')].primary", contains(false)))

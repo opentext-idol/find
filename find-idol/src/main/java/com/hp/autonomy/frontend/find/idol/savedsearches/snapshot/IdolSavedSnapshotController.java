@@ -27,6 +27,10 @@ public class IdolSavedSnapshotController extends SavedSnapshotController<String,
     private List<String> getDatabases(final Iterable<EmbeddableIndex> indexes) {
         final List<String> databases = new ArrayList<>();
 
+        if(indexes == null) {
+            return null;
+        }
+
         for (final EmbeddableIndex index : indexes) {
             databases.add(index.getName());
         }

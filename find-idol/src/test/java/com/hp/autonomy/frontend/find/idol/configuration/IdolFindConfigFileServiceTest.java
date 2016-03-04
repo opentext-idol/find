@@ -73,12 +73,12 @@ public class IdolFindConfigFileServiceTest {
         assertTrue(generatedConfigFile.exists());
 
         final String configFileContents = FileUtils.readFileToString(generatedConfigFile);
-        assertFalse(configFileContents.contains("indexProtocol"));
-        assertFalse(configFileContents.contains("indexPort"));
-        assertFalse(configFileContents.contains("serviceProtocol"));
-        assertFalse(configFileContents.contains("servicePort"));
-        assertFalse(configFileContents.contains("productType"));
-        assertFalse(configFileContents.contains("indexErrorMessage"));
+        assertFalse(configFileContents.contains("\"indexProtocol\""));
+        assertFalse(configFileContents.contains("\"indexPort\""));
+        assertFalse(configFileContents.contains("\"serviceProtocol\""));
+        assertFalse(configFileContents.contains("\"servicePort\""));
+        assertFalse(configFileContents.contains("\"productType\""));
+        assertFalse(configFileContents.contains("\"indexErrorMessage\""));
     }
 
     @Test
