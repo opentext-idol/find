@@ -1,5 +1,7 @@
 package com.autonomy.abc.selenium.error;
 
+import java.io.Serializable;
+
 public class Errors {
     public static class Term {
         public static final String DUPLICATE_EXISTING = "duplicate of an existing keyword";
@@ -12,20 +14,31 @@ public class Errors {
         public static final String NO_QUOTES = "Terms may not contain quotation marks";
     }
 
-    public static class Search {
-        public static final String NO_RESULTS = "No results found";
-        public static final String UNKNOWN = "An unknown error occurred executing the search action";
-        public static final String GENERAL = "An error occurred retrieving results";
-        public static final String OPERATORS = "Invalid use of special tokens";
-        public static final String STOPWORDS = "All terms were invalid, through being stopwords";
-        public static final String BACKEND = "Backend request failed";
-        public final static String HOD = "Haven OnDemand returned an error while executing the search action";
-        public static final String QUOTES = "Unclosed phrase";
-        public static final String NO_TEXT = "No valid query text supplied";
-        public static final String BLACKLIST = "All query text has been blocked by white or blacklists";
-        public static final String RELATED_CONCEPTS = "An error occurred fetching top results";
-        public static final String OPENING_BOOL = "Opening boolean operator";
-        public static final String CLOSING_BOOL = "Terminating boolean operator";
+    public enum Search implements Serializable {
+        NO_RESULTS("No results found"),
+        UNKNOWN("An unknown error occurred executing the search action"),
+        GENERAL("An error occurred retrieving results"),
+        OPERATORS("Invalid use of special tokens"),
+        STOPWORDS("All terms were invalid, through being stopwords"),
+        BACKEND("Backend request failed"),
+        HOD("Haven OnDemand returned an error while executing the search action"),
+        QUOTES("Unclosed phrase"),
+        NO_TEXT("No valid query text supplied"),
+        BLACKLIST("All query text has been blocked by white or blacklists"),
+        RELATED_CONCEPTS("An error occurred fetching top results"),
+        OPENING_BOOL("Opening boolean operator"),
+        CLOSING_BOOL("Terminating boolean operator");
+
+        private final String value;
+
+        Search(String content) {
+            value = content;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 
     public static class Keywords {

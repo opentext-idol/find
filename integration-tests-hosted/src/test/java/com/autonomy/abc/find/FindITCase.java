@@ -43,14 +43,11 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsString;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class FindITCase extends FindTestBase {
@@ -460,12 +457,7 @@ public class FindITCase extends FindTestBase {
     //DUPLICATE SEARCH TEST
     @Test
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-        final List<String> hiddenBooleansProximities = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "PARAGRAPHING", "NEARLY", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
-        for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
-            findService.search(hiddenBooleansProximity);
-            verifyThat(hiddenBooleansProximity + " searched for successfully", findPage.getText(), not(containsString("An error has occurred")));
-        }
-        new QueryTestHelper<>(findService).hiddenQueryOperatorText(Errors.Find.GENERAL);
+        new QueryTestHelper<>(findService).hiddenQueryOperatorText(not(containsString(Errors.Find.GENERAL)));
     }
 
     //DUPLICATE

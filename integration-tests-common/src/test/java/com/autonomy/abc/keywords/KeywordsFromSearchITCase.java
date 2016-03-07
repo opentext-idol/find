@@ -35,6 +35,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,6 +44,7 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.CommonMatchers.containsString;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
@@ -246,7 +248,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     @KnownBug("CCUK-2703")
     @RelatedTo({"CSA-1724", "CSA-1893"})
     public void testNoBlacklistLinkForBlacklistedSearch() throws InterruptedException {
-        String blacklistMessage = Errors.Search.BLACKLIST;
+        Serializable blacklistMessage = Errors.Search.BLACKLIST;
         if (getConfig().getType().equals(ApplicationType.HOSTED)) {
             blacklistMessage = Errors.Search.NO_RESULTS;
         }

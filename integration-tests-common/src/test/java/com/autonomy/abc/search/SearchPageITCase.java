@@ -38,6 +38,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,8 +46,8 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
-import static com.autonomy.abc.matchers.CommonMatchers.stringContainingAnyOf;
+import static com.autonomy.abc.matchers.CommonMatchers.*;
+import static com.autonomy.abc.matchers.CommonMatchers.containsString;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
@@ -376,8 +377,8 @@ public class SearchPageITCase extends ABCTestBase {
         List<String> emptyPhrases = Arrays.asList("\"\"","\" \"");
 		List<String> unclosedPhrases = Arrays.asList("\"","\"word","\" word","\" wo\"rd\"");
 
-		String emptyError = Errors.Search.NO_TEXT;
-		String unclosedError = Errors.Search.QUOTES;
+		Serializable emptyError = Errors.Search.NO_TEXT;
+		Serializable unclosedError = Errors.Search.QUOTES;
 
 		// HOD should return better errors
         if(getConfig().getType().equals(ApplicationType.HOSTED)){
@@ -674,12 +675,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-		new QueryTestHelper<>(searchService).hiddenQueryOperatorText(not(stringContainingAnyOf(
-				Errors.Search.OPENING_BOOL,
-				Errors.Search.CLOSING_BOOL,
-				Errors.Search.NO_TEXT,
-				Errors.Search.UNKNOWN
-		)));
+		new QueryTestHelper<>(searchService).hiddenQueryOperatorText(not(stringContainingAnyOf(Errors.Search.values())));
 	}
 
 	@Test

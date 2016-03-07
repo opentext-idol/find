@@ -4,6 +4,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static org.hamcrest.Matchers.*;
@@ -87,9 +88,9 @@ public class CommonMatchers {
         return hasItemThat(is(isIn(collection)));
     }
     
-    public static Matcher<? super String> stringContainingAnyOf(final Iterable<? extends String> strings) {
+    public static Matcher<String> stringContainingAnyOf(final Iterable<? extends Serializable> strings) {
         final List<Matcher<? super String>> matchers = new ArrayList<>();
-        for (String string : strings) {
+        for (Serializable string : strings) {
             matchers.add(containsString(string));
         }
         return new TypeSafeMatcher<String>() {
@@ -107,7 +108,11 @@ public class CommonMatchers {
         };
     }
 
-    public static Matcher<? super String> stringContainingAnyOf(final String... strings) {
+    public static Matcher<String> stringContainingAnyOf(final Serializable[] strings) {
         return stringContainingAnyOf(Arrays.asList(strings));
+    }
+
+    public static Matcher<String> containsString(Serializable stringLike) {
+        return org.hamcrest.Matchers.containsString(stringLike.toString());
     }
 }
