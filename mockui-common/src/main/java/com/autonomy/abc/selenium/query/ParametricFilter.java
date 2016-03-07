@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.search;
+package com.autonomy.abc.selenium.query;
 
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;

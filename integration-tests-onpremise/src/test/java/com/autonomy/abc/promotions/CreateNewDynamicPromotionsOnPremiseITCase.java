@@ -6,6 +6,8 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.SearchQuery;
 import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;

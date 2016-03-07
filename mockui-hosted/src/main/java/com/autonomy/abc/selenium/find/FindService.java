@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.search.AggregateSearchFilter;
-import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.query.AggregateSearchFilter;
+import com.autonomy.abc.selenium.query.SearchQuery;
 
 public class FindService {
     private HSODFindElementFactory elementFactory;

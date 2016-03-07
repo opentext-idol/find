@@ -1,5 +1,6 @@
-package com.autonomy.abc.selenium.search;
+package com.autonomy.abc.selenium.query;
 
+import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebElement;

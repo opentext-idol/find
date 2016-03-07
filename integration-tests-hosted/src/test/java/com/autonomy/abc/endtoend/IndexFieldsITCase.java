@@ -15,6 +15,7 @@ import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
+import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.*;
 import org.junit.After;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.search;
+package com.autonomy.abc.selenium.query;
 
 public class AggregateSearchFilter implements SearchFilter {
     private final Iterable<SearchFilter> filters;

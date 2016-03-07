@@ -6,7 +6,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.query.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.After;
 import org.junit.Before;
