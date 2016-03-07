@@ -27,6 +27,7 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -675,7 +676,9 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-		new QueryTestHelper<>(searchService).hiddenQueryOperatorText(not(stringContainingAnyOf(Errors.Search.values())));
+		Matcher<String> expectedBehaviour = not(stringContainingAnyOf(Errors.Search.values()));
+		new QueryTestHelper<>(searchService)
+				.hiddenQueryOperatorText(expectedBehaviour);
 	}
 
 	@Test

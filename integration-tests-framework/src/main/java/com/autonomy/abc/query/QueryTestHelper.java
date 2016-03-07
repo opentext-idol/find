@@ -11,6 +11,28 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 
 public class QueryTestHelper<T extends QueryResultsPage> {
+    private final static List<String> HIDDEN_BOOLEANS = Arrays.asList(
+            "NOTed",
+            "ANDREW",
+            "ORder",
+            "WHENCE",
+            "SENTENCED",
+            "PARAGRAPHING",
+            "NEARLY",
+            "SENTENCE1D",
+            "PARAGRAPHING",
+            "PARAGRAPH2inG",
+            "SOUNDEXCLUSIVE",
+            "XORING",
+            "EORE",
+            "DNEARLY",
+            "WNEARING",
+            "YNEARD",
+            "AFTERWARDS",
+            "BEFOREHAND",
+            "NOTWHENERED"
+    );
+
     private final QueryService<T> service;
 
     public QueryTestHelper(QueryService<T> queryService) {
@@ -18,8 +40,7 @@ public class QueryTestHelper<T extends QueryResultsPage> {
     }
 
     public void hiddenQueryOperatorText(final Matcher<? super String> errorMatcher) {
-        final List<String> hiddenBooleansProximities = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "PARAGRAPHING", "NEARLY", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
-        for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
+        for (final String hiddenBooleansProximity : HIDDEN_BOOLEANS) {
             T page = service.search(hiddenBooleansProximity);
             Waits.loadOrFadeWait();
             assertThat(page.getText(), errorMatcher);
