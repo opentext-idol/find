@@ -3,6 +3,7 @@ package com.autonomy.abc.usermanagement;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
@@ -16,6 +17,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.Matchers.containsString;
@@ -65,8 +70,17 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     @Test
     public void testCannotNavigate(){
+        verifyThat(userApp.elementFactory().getPromotionsPage(), displayed());
         userService.deleteUser(user);
-        userApp.switchTo(PromotionsPage.class);
-        verifyThat(userSession.getDriver().findElement(By.partialLinkText("Google")), displayed());
+
+        try {
+            userApp.switchTo(AnalyticsPage.class);
+        } catch (StaleElementReferenceException | NoSuchElementException | TimeoutException e){
+            //Expected as you'll be logged out
+        }
+
+        new WebDriverWait(userSession.getDriver(), 10).until(ExpectedConditions.titleIs("Haven Search OnDemand - Error"));
+
+        verifyThat(userSession.getDriver().getPageSource(), containsString("Authentication Failed"));
     }
 }
