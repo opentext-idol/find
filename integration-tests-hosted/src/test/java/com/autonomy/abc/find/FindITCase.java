@@ -454,22 +454,14 @@ public class FindITCase extends FindTestBase {
         }
     }
 
-    //DUPLICATE SEARCH TEST
     @Test
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
         new QueryTestHelper<>(findService).hiddenQueryOperatorText(not(containsString(Errors.Find.GENERAL)));
     }
 
-    //DUPLICATE
     @Test
     public void testSearchParentheses() {
-        List<String> testSearchTerms = Arrays.asList("(",")",") (",")war"); //"()" appears to be fine
-
-        for(String searchTerm : testSearchTerms){
-            findService.search(searchTerm);
-
-            assertThat(results, containsText(Errors.Search.OPERATORS));
-        }
+        new QueryTestHelper<>(findService).mismatchedBracketQueryText(Errors.Find.GENERAL);
     }
 
     //DUPLICATE

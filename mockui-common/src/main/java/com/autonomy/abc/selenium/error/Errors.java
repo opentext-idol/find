@@ -38,7 +38,8 @@ public class Errors {
         BLACKLIST("All query text has been blocked by white or blacklists"),
         RELATED_CONCEPTS("An error occurred fetching top results"),
         OPENING_BOOL("Opening boolean operator"),
-        CLOSING_BOOL("Terminating boolean operator");
+        CLOSING_BOOL("Terminating boolean operator"),
+        INVALID("Invalid query text");
 
         private final String value;
 

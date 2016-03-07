@@ -326,48 +326,19 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testWhitespaceSearch() {
 		search(" ");
 		assertThat("Whitespace search should not return a message as if it is a blacklisted term",
-                searchPage.getText(),not(containsString("All search terms are blacklisted")));
+				searchPage.getText(), not(containsString("All search terms are blacklisted")));
 	}
 
-    String searchErrorMessage = "An error occurred executing the search action";
-    String correctErrorMessageNotShown = "Correct error message not shown";
-
 	@Test
+	@KnownBug("CCUK-3741")
 	public void testSearchParentheses() {
-        List<String> testSearchTerms = Arrays.asList("(",")","()",") (",")war");
-
-        if(getConfig().getType().equals(ApplicationType.HOSTED)){
-            for(String searchTerm : testSearchTerms){
-                search(searchTerm);
-
-                assertThat(searchPage.getText(),containsString(Errors.Search.HOD));
-            }
-        } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            int searchTerm = 0;
-            String bracketMismatch = "Bracket Mismatch in the query";
-            search(testSearchTerms.get(searchTerm++));
-
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(bracketMismatch));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(bracketMismatch));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString("No valid query text supplied"));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString("Terminating boolean operator"));
-
-            search(testSearchTerms.get(searchTerm));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(bracketMismatch));
-        } else {
-            fail("Config type not recognised");
-        }
+		Serializable errorMessage;
+		if (getConfig().getType() == ApplicationType.HOSTED) {
+			errorMessage = Errors.Search.HOD;
+		} else {
+			errorMessage = Errors.Search.GENERAL;
+		}
+        new QueryTestHelper<>(searchService).mismatchedBracketQueryText(errorMessage);
 	}
 
     //TODO there are some which contain helpful error messages?
