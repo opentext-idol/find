@@ -129,7 +129,7 @@ define([
                 this.$('.scrolling-buttons').remove();
 
                 _.each(this.model.get('relatedConcepts'), function(conceptCluster, index) {
-                    this.$additionalConcepts.append(conceptsTemplate({
+                    this.$additionalConcepts.prepend(conceptsTemplate({
                         concepts: conceptCluster,
                         clusterId: index
                     }));
