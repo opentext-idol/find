@@ -841,6 +841,10 @@ input.find-input {
     display: inline-flex;
 }
 
+.selected-related-concept:not(:first-child) {
+    margin-left: 5px;
+}
+
 .selected-related-concept-text {
     width: 80px;
 }
@@ -849,9 +853,13 @@ input.find-input {
     line-height: inherit;
 }
 
+.additional-concepts-container {
+    display: inline;
+}
+
 .additional-concepts {
     overflow: hidden;
-    width: 350px;
+    width: calc(100% - 349px); /* 349 is the width of 'also searching for', scrolling buttons and 'see all docs' */
     float: left;
     white-space: nowrap;
 }

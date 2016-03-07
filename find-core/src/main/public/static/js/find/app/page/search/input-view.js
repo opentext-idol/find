@@ -11,7 +11,7 @@ define([
 ], function(Backbone, $, _, stringBlank, i18n, template, relatedConceptTemplate) {
 
     var html = _.template(template)({i18n: i18n});
-    
+
     var conceptsTemplate = _.template(relatedConceptTemplate);
     var scrollingButtons = _.template('<span class="scrolling-buttons">' +
             '<button class="btn btn-xs btn-white left-scroll"><i class="hp-icon hp-chevron-left"></i></button> ' +
@@ -60,6 +60,10 @@ define([
         initialize: function() {
             this.listenTo(this.model, 'change:inputText', this.updateText);
             this.listenTo(this.model, 'change:relatedConcepts', this.updateRelatedConcepts);
+
+            _.bindAll(this, 'updateScrollingButtons');
+
+            $(window).on('resize', this.updateScrollingButtons);
         },
 
         render: function() {
@@ -138,16 +142,26 @@ define([
 
                 this.$alsoSearchingFor.toggleClass('hide', _.isEmpty(this.model.get('relatedConcepts')));
 
+                this.updateScrollingButtons();
+            }
+        },
+
+        updateScrollingButtons: function() {
+            if (this.$additionalConcepts) {
                 //calculate the total width of all the related concepts
                 var relatedConceptsWidth = 0;
 
-                this.$('.selected-related-concept').each(function() {
-                    relatedConceptsWidth += parseInt($(this).width(), 10);
+                this.$('.selected-related-concept').each(function () {
+                    relatedConceptsWidth += parseInt($(this).outerWidth(true), 10);
                 });
 
                 //add scrolling template if total width of rc's is bigger than their container
                 if (this.$additionalConcepts.width() < relatedConceptsWidth) {
-                    this.$additionalConcepts.after(scrollingButtons);
+                    if(!this.$('.scrolling-buttons').length) {
+                        this.$additionalConcepts.after(scrollingButtons);
+                    }
+                } else {
+                    this.$('.scrolling-buttons').remove();
                 }
             }
         },
@@ -167,10 +181,15 @@ define([
             }
         },
 
-        removeRelatedConcept: function(id){
+        removeRelatedConcept: function(id) {
             var concepts = _.clone(this.model.get('relatedConcepts'));
             concepts.splice(id, 1);
             this.model.set('relatedConcepts', concepts);
+        },
+
+        remove: function() {
+            $(window).off('resize', this.updateScrollingButtons);
+            Backbone.View.prototype.remove.apply(this, arguments);
         }
     });
 
