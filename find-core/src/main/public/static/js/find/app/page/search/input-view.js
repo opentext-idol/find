@@ -128,7 +128,7 @@ define([
                 this.$('.scrolling-buttons').remove();
 
                 _.each(this.model.get('relatedConcepts'), function (concept) {
-                    this.$additionalConcepts.append(relatedConceptsTemplate({
+                    this.$additionalConcepts.prepend(relatedConceptsTemplate({
                         concept: concept
                     }));
                 }, this);
