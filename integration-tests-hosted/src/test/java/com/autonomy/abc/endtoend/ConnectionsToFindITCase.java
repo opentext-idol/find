@@ -17,8 +17,8 @@ import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.query.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.After;
 import org.junit.Before;
@@ -72,7 +72,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
         connectionService.setUpConnection(connector);
 
-        SearchPage searchPage = searchService.search(new SearchQuery(searchTerm).withFilter(new IndexFilter(index)));
+        SearchPage searchPage = searchService.search(new Query(searchTerm).withFilter(new IndexFilter(index)));
         verifyThat("index shows up on search page", searchPage.indexesTree().getSelected(), hasItem(index));
         verifyThat("index has search results", searchPage.getHeadingResultsCount(), greaterThan(0));
 

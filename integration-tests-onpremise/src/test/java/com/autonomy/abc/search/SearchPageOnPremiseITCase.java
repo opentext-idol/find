@@ -10,7 +10,7 @@ import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.query.FieldTextFilter;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.LanguageFilter;
-import com.autonomy.abc.selenium.query.SearchQuery;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
@@ -93,7 +93,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
 
     @Test
     public void testEditFieldText() {
-        searchService.search(new SearchQuery("boer").withFilter(IndexFilter.ALL));
+        searchService.search(new Query("boer").withFilter(IndexFilter.ALL));
 
         searchPage.selectLanguage(Language.AFRIKAANS);
 
@@ -141,7 +141,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
     public void testFieldTextRestrictionOnPinToPositionPromotions(){
         PromotionService<?> promotionService = getApplication().promotionService();
         promotionService.deleteAll();
-        List<String> promotedDocs = promotionService.setUpPromotion(new SpotlightPromotion("duck"), new SearchQuery("horse").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
+        List<String> promotedDocs = promotionService.setUpPromotion(new SpotlightPromotion("duck"), new Query("horse").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
 
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
 

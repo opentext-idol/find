@@ -11,7 +11,7 @@ import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.query.SearchQuery;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
@@ -69,7 +69,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     }
 
     private void goToTriggers() {
-        searchPage = searchService.search(new SearchQuery("orange").withFilter(new LanguageFilter(Language.AFRIKAANS)));
+        searchPage = searchService.search(new Query("orange").withFilter(new LanguageFilter(Language.AFRIKAANS)));
         searchPage.promoteThisQueryButton().click();
         Waits.loadOrFadeWait();
 
@@ -122,7 +122,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testWizardCancelButtonAfterClickingNavBarToggleButton() {
-        searchPage = searchService.search(new SearchQuery("simba").withFilter(new LanguageFilter(Language.SWAHILI)));
+        searchPage = searchService.search(new Query("simba").withFilter(new LanguageFilter(Language.SWAHILI)));
         searchPage.promoteThisQueryButton().click();
         Waits.loadOrFadeWait();
 

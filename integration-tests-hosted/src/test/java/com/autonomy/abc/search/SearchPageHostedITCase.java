@@ -12,7 +12,7 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.FieldTextFilter;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.ParametricFilter;
-import com.autonomy.abc.selenium.query.SearchQuery;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
@@ -59,12 +59,12 @@ public class SearchPageHostedITCase extends HostedTestBase {
 	@Ignore("TODO: Not implemented")
 	@Test
 	public void testParametricSearch() {
-		searchService.search(new SearchQuery("*").withFilter(IndexFilter.ALL));
+		searchService.search(new Query("*").withFilter(IndexFilter.ALL));
 	}
 
 	@Test
 	public void testFieldTextFilter() {
-		searchService.search(new SearchQuery("Harrison Ford").withFilter(new IndexFilter("wiki_eng")));
+		searchService.search(new Query("Harrison Ford").withFilter(new IndexFilter("wiki_eng")));
 
 		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
 		searchPage.fieldTextAddButton().click();
@@ -92,7 +92,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 	public void testEditFieldText() {
 		assumeThat(getAppUrl(), not("http://search.havenapps.io/searchoptimizer/p"));
 
-		searchService.search(new SearchQuery("*")
+		searchService.search(new Query("*")
 				.withFilter(IndexFilter.PUBLIC)
 				.withFilter(new FieldTextFilter("EXISTS{}:place_population")));
 
@@ -118,7 +118,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 	@Test
 	public void testAuthor(){
 		String author = "FIFA.com";
-		searchPage = searchService.search(new SearchQuery("blatter").withFilter(new ParametricFilter("Author", author)));
+		searchPage = searchService.search(new Query("blatter").withFilter(new ParametricFilter("Author", author)));
 
 		searchPage.getSearchResult(1).title().click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
@@ -136,7 +136,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 	@RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
 	public void testDocumentPreview(){
 		Index index = new Index("fifa");
-		searchService.search(new SearchQuery("document preview").withFilter(new IndexFilter(index)));
+		searchService.search(new Query("document preview").withFilter(new IndexFilter(index)));
 
 		SharedPreviewTests.testDocumentPreviews(getMainSession(), searchPage.getSearchResults().subList(0, 5), index);
 	}

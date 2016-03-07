@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.query.LanguageFilter;
-import com.autonomy.abc.selenium.query.SearchQuery;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -69,7 +69,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 	}
 
 	private void addDynamicPromotion(final String searchTerm, final Language language, final Promotion.SpotlightType promotionType, final String trigger) {
-		searchPage = searchService.search(new SearchQuery(searchTerm).withFilter(new LanguageFilter(language)));
+		searchPage = searchService.search(new Query(searchTerm).withFilter(new LanguageFilter(language)));
 
 		final String firstDocTitle = searchPage.getSearchResult(1).getTitleString();
 		searchPage.promoteThisQueryButton().click();
@@ -113,8 +113,8 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 	public void testTwoPromotionTypesForSameTrigger() {
 		DynamicPromotion promotion1 = new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "cat");
 		DynamicPromotion promotion2 = new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "cat");
-		SearchQuery query1 = new SearchQuery("paris");
-		SearchQuery query2 = new SearchQuery("rome");
+		Query query1 = new Query("paris");
+		Query query2 = new Query("rome");
 
         searchPage = searchService.search(query1);
         int expected = searchPage.getHeadingResultsCount();
@@ -133,7 +133,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 
 	@Test
 	public void testDuplicateQueryAndTriggerDifferentSpotlightType() {
-        SearchQuery query = new SearchQuery("berlin");
+        Query query = new Query("berlin");
         searchPage = searchService.search(query);
         int promotionResultsCount = searchPage.getHeadingResultsCount();
 		searchPage.promoteThisQueryButton().click();
@@ -162,7 +162,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 
 	@Test
 	public void testPromotionLanguage() {
-        SearchQuery query = new SearchQuery("میں").withFilter(new LanguageFilter(Language.URDU));
+        Query query = new Query("میں").withFilter(new LanguageFilter(Language.URDU));
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "phrase"), query, 1);
         searchPage = getElementFactory().getSearchPage();
 
@@ -178,7 +178,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 
 	@Test
 	public void testDynamicPromotionCreation() {
-		searchPage = searchService.search(new SearchQuery("lapin").withFilter(new LanguageFilter(Language.FRENCH)));
+		searchPage = searchService.search(new Query("lapin").withFilter(new LanguageFilter(Language.FRENCH)));
 
 		final String firstDocTitle = searchPage.getSearchResult(1).getTitleString();
 		searchPage.promoteThisQueryButton().click();

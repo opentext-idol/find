@@ -90,7 +90,7 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     @Override
-    public void filterBy(SearchFilter filter) {
+    public void filterBy(QueryFilter filter) {
         filter.apply(this);
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }

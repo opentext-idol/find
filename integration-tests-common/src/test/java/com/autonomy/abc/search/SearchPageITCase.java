@@ -75,7 +75,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage = searchService.search(searchTerm);
 	}
 
-	private void search(SearchQuery query) {
+	private void search(Query query) {
 		logger.info("Searching for: " + query + "");
 		searchPage = searchService.search(query);
 	}
@@ -707,7 +707,7 @@ public class SearchPageITCase extends ABCTestBase {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
 		Date june = simpleDateFormat.parse("06/12/2015 00:00");
 
-		searchService.search(new SearchQuery("Pertussis").withFilter(new IndexFilter("wiki_eng")));
+		searchService.search(new Query("Pertussis").withFilter(new IndexFilter("wiki_eng")));
 		Waits.loadOrFadeWait();
 		searchPage.filterBy(new DatePickerFilter().from(june));
 
@@ -749,7 +749,7 @@ public class SearchPageITCase extends ABCTestBase {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
 		Date june = simpleDateFormat.parse("06/12/2015 00:00");
 
-		searchService.search(new SearchQuery("Pertussis").withFilter(new IndexFilter("wiki_eng")));
+		searchService.search(new Query("Pertussis").withFilter(new IndexFilter("wiki_eng")));
 		Waits.loadOrFadeWait();
 		searchPage.filterBy(new DatePickerFilter().until(june));
 
@@ -769,7 +769,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	private Date beginDateFilterTest() {
 		// not all indexes have times configured
-		search(new SearchQuery("Dog").withFilter(new IndexFilter("news_eng")).withFilter(new FieldTextFilter("EMPTY{}:Date")));
+		search(new Query("Dog").withFilter(new IndexFilter("news_eng")).withFilter(new FieldTextFilter("EMPTY{}:Date")));
 		Date date = searchPage.getSearchResult(1).getDate();
 		if (date == null) {
 			throw new IllegalStateException("date filter test requires first search result to have a date");
@@ -1056,7 +1056,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	@KnownBug("CSA-1708")
 	public void testParametricLabelsNotUndefined(){
-		searchService.search(new SearchQuery("simpsons")
+		searchService.search(new Query("simpsons")
 				.withFilter(new IndexFilter(Index.DEFAULT))
 				.withFilter(new ParametricFilter("Content Type", "TEXT/HTML")));
 
@@ -1112,7 +1112,7 @@ public class SearchPageITCase extends ABCTestBase {
 			secondIndex = new Index("news_ger");
 		}
 
-		searchService.search(new SearchQuery("car").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.ALL));
+		searchService.search(new Query("car").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.ALL));
 		IndexesTree indexesTree = searchPage.indexesTree();
 
 		for (IndexNodeElement node : indexesTree) {
@@ -1165,7 +1165,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	@KnownBug("CSA-2061")
 	public void testHeadingCount(){
-		searchService.search(new SearchQuery("dog").withFilter(IndexFilter.ALL));
+		searchService.search(new Query("dog").withFilter(IndexFilter.ALL));
 
 		verifyThat(searchPage.getHeadingResultsCount(), lessThanOrEqualTo(2501));
 	}
@@ -1173,7 +1173,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	@KnownBug("CSA-2060")
 	public void testResultIndex(){
-		searchService.search(new SearchQuery("Jamaica"));
+		searchService.search(new Query("Jamaica"));
 
 		for(SOSearchResult searchResult : searchPage.getSearchResults()){
 			verifyThat(searchResult.getIndex().getDisplayName(), not(containsString("Object")));

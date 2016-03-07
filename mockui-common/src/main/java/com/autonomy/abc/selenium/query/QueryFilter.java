@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.query;
 
-public interface SearchFilter {
+public interface QueryFilter {
     void apply(Filterable searchBase);
 
     interface Filterable {
-        void filterBy(SearchFilter filter);
+        void filterBy(QueryFilter filter);
     }
 }

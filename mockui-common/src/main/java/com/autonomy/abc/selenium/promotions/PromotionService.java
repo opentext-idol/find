@@ -4,8 +4,8 @@ import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.query.SearchQuery;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -40,7 +40,7 @@ public class PromotionService<T extends SOElementFactory> extends ServiceBase<T>
         return getElementFactory().getPromotionsDetailPage();
     }
 
-    public List<String> setUpPromotion(Promotion promotion, SearchQuery query, int numberOfDocs) {
+    public List<String> setUpPromotion(Promotion promotion, Query query, int numberOfDocs) {
         SearchPage searchPage = getApplication().searchService().search(query);
         searchPage.promoteTheseDocumentsButton().click();
         List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
@@ -57,7 +57,7 @@ public class PromotionService<T extends SOElementFactory> extends ServiceBase<T>
     }
 
     public List<String> setUpPromotion(Promotion promotion, String searchTerm, int numberOfDocs) {
-        return setUpPromotion(promotion, new SearchQuery(searchTerm), numberOfDocs);
+        return setUpPromotion(promotion, new Query(searchTerm), numberOfDocs);
     }
 
     public PromotionsPage delete(Promotion promotion) {

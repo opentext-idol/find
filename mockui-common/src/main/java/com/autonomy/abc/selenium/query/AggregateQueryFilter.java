@@ -1,15 +1,15 @@
 package com.autonomy.abc.selenium.query;
 
-public class AggregateSearchFilter implements SearchFilter {
-    private final Iterable<SearchFilter> filters;
+public class AggregateQueryFilter implements QueryFilter {
+    private final Iterable<QueryFilter> filters;
 
-    public AggregateSearchFilter(Iterable<SearchFilter> filters) {
+    public AggregateQueryFilter(Iterable<QueryFilter> filters) {
         this.filters = filters;
     }
 
     @Override
     public void apply(Filterable searchBase) {
-        for (SearchFilter filter : filters) {
+        for (QueryFilter filter : filters) {
             filter.apply(searchBase);
         }
     }

@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.query.AggregateSearchFilter;
-import com.autonomy.abc.selenium.query.SearchQuery;
+import com.autonomy.abc.selenium.query.AggregateQueryFilter;
+import com.autonomy.abc.selenium.query.Query;
 
 public class FindService {
     private HSODFindElementFactory elementFactory;
@@ -13,13 +13,13 @@ public class FindService {
     }
 
     public FindResultsPage search(String query){
-        return search(new SearchQuery(query));
+        return search(new Query(query));
     }
 
-    public FindResultsPage search(final SearchQuery query) {
-        elementFactory.getTopNavBar().search(query.getSearchTerm());
+    public FindResultsPage search(final Query query) {
+        elementFactory.getTopNavBar().search(query.getTerm());
         findPage.waitForIndexes();
-        findPage.filterBy(new AggregateSearchFilter(query.getFilters()));
+        findPage.filterBy(new AggregateQueryFilter(query.getFilters()));
         return elementFactory.getResultsPage();
     }
 

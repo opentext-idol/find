@@ -4,30 +4,30 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SearchQuery {
+public class Query {
     private String term;
-    private List<SearchFilter> filters;
+    private List<QueryFilter> filters;
 
-    public SearchQuery(String searchTerm) {
+    public Query(String searchTerm) {
         term = searchTerm;
         filters = new ArrayList<>();
     }
 
-    public SearchQuery withFilter(SearchFilter filter) {
+    public Query withFilter(QueryFilter filter) {
         filters.add(filter);
         return this;
     }
 
-    public List<SearchFilter> getFilters() {
+    public List<QueryFilter> getFilters() {
         return Collections.unmodifiableList(filters);
     }
 
-    public String getSearchTerm() {
+    public String getTerm() {
         return term;
     }
 
     @Override
     public String toString() {
-        return "SearchQuery<" + getSearchTerm() + "|" + getFilters() + ">";
+        return "Query<" + getTerm() + "|" + getFilters() + ">";
     }
 }

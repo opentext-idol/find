@@ -14,7 +14,7 @@ import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.query.SearchQuery;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.After;
 import org.junit.Before;
@@ -57,9 +57,9 @@ public class QuickSetUpITCase extends HostedTestBase {
 
         SearchService searchService = getApplication().searchService();
         //Can't search for forward slash, so take those out
-        SearchQuery searchQuery = new SearchQuery(site.split("//")[1]).withFilter(new IndexFilter(Index.DEFAULT));
+        Query query = new Query(site.split("//")[1]).withFilter(new IndexFilter(Index.DEFAULT));
 
-        SearchPage searchPage = searchService.search(searchQuery);
+        SearchPage searchPage = searchService.search(query);
 
         //Check promoting the correct document
         searchPage.getSearchResult(1).title().click();
@@ -69,7 +69,7 @@ public class QuickSetUpITCase extends HostedTestBase {
 
         String trigger = "trigger";
         try {
-            List<String> promotionTitles = promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), searchQuery, 1);
+            List<String> promotionTitles = promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), query, 1);
 
             searchPage = getElementFactory().getSearchPage();
             searchPage.waitForPromotionsLoadIndicatorToDisappear();

@@ -13,7 +13,7 @@ import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.ParametricFilter;
-import com.autonomy.abc.selenium.query.SearchQuery;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.autonomy.abc.selenium.search.SearchResult;
 import com.autonomy.abc.selenium.util.Locator;
@@ -89,7 +89,7 @@ public class FindITCase extends FindTestBase {
     }
 
     private void checkContentTypeFilter(String filterType, String extension) {
-        SearchQuery query = new SearchQuery("red star")
+        Query query = new Query("red star")
                 .withFilter(new ParametricFilter("Content Type", filterType));
         findService.search(query);
         for(String type : results.getDisplayedDocumentsDocumentTypes()){
@@ -165,7 +165,7 @@ public class FindITCase extends FindTestBase {
     public void testAuthor(){
         String author = "FIFA.COM";
 
-        findService.search(new SearchQuery("football")
+        findService.search(new Query("football")
                 .withFilter(new IndexFilter("Fifa"))
                 .withFilter(new ParametricFilter("Author", author)));
 
@@ -360,7 +360,7 @@ public class FindITCase extends FindTestBase {
         Date start = getDate(FindResultsPage.DateEnum.MONTH);
         Date end = getDate(FindResultsPage.DateEnum.WEEK);
 
-        findService.search(new SearchQuery("Corbyn")
+        findService.search(new Query("Corbyn")
                 .withFilter(new StringDateFilter().from(start).until(end)));
         Waits.loadOrFadeWait();
         for (int unused = 0; unused < 3; unused++) {
@@ -581,7 +581,7 @@ public class FindITCase extends FindTestBase {
     @Test
     @KnownBug("CCUK-3647")
     public void testLessThan30ResultsDoesntAttemptToLoadMore() {
-        findService.search(new SearchQuery("roland garros")
+        findService.search(new Query("roland garros")
                 .withFilter((new IndexFilter("fifa"))));
 
         results.getResult(1).openDocumentPreview();
@@ -593,7 +593,7 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testBetween30And60Results(){
-        findService.search(new SearchQuery("idol")
+        findService.search(new Query("idol")
                 .withFilter(new IndexFilter("sitesearch")));
 
         scrollToBottom();
@@ -671,7 +671,7 @@ public class FindITCase extends FindTestBase {
     @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
     public void testDocumentPreview(){
         Index index = new Index("fifa");
-        findService.search(new SearchQuery("document preview").withFilter(new IndexFilter(index)));
+        findService.search(new Query("document preview").withFilter(new IndexFilter(index)));
 
         SharedPreviewTests.testDocumentPreviews(getMainSession(), results.getResults(5), index);
     }

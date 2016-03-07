@@ -17,7 +17,7 @@ import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.LanguageFilter;
-import com.autonomy.abc.selenium.query.SearchQuery;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
@@ -529,7 +529,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     }
 
     private void search(String searchTerm, Language language) {
-        SearchQuery query = new SearchQuery(searchTerm).withFilter(new LanguageFilter(language));
+        Query query = new Query(searchTerm).withFilter(new LanguageFilter(language));
         if (getConfig().getType().equals(ApplicationType.HOSTED)) {
             query = query.withFilter(new IndexFilter("news_eng"));
         }

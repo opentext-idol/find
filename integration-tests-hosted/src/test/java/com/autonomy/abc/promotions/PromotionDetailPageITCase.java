@@ -8,8 +8,8 @@ import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.query.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang.StringUtils;
@@ -45,17 +45,17 @@ public class PromotionDetailPageITCase extends ABCTestBase {
         final String initialQueryTerm = "chat";
         final String updateQueryTerm = "kitty";
 
-        SearchPage searchPage = searchService.search(new SearchQuery(updateQueryTerm).withFilter(new LanguageFilter(Language.FRENCH)));
+        SearchPage searchPage = searchService.search(new Query(updateQueryTerm).withFilter(new LanguageFilter(Language.FRENCH)));
         final String updatePromotedResult = searchPage.getSearchResult(1).title().getText();
         Promotion promotion = new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, initialTrigger);
-        final String initialPromotedResult = promotionService.setUpPromotion(promotion, new SearchQuery(initialQueryTerm).withFilter(new LanguageFilter(Language.FRENCH)), 1).get(0);
+        final String initialPromotedResult = promotionService.setUpPromotion(promotion, new Query(initialQueryTerm).withFilter(new LanguageFilter(Language.FRENCH)), 1).get(0);
 
         promotionsDetailPage = promotionService.goToDetails(promotion);
         PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
         triggerForm.addTrigger(updateTrigger);
         triggerForm.removeTrigger(initialTrigger);
 
-        searchService.search(new SearchQuery(updateTrigger).withFilter(new LanguageFilter(Language.FRENCH)));
+        searchService.search(new Query(updateTrigger).withFilter(new LanguageFilter(Language.FRENCH)));
         verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotedResult));
 
         promotionsDetailPage = promotionService.goToDetails(initialTrigger);
@@ -66,7 +66,7 @@ public class PromotionDetailPageITCase extends ABCTestBase {
         queryText.setValueAndWait(updateQueryTerm);
         verifyThat("query text updated", queryText.getValue(), is(updateQueryTerm));
 
-        searchService.search(new SearchQuery(updateTrigger).withFilter(new LanguageFilter(Language.FRENCH)));
+        searchService.search(new Query(updateTrigger).withFilter(new LanguageFilter(Language.FRENCH)));
         verifyThat("promoted query updated in search results", searchPage.getPromotedDocumentTitles(false).get(0), is(updatePromotedResult));
 
         getWindow().refresh();

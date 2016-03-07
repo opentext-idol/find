@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class SearchBase extends AppElement implements AppPage,
-		SearchFilter.Filterable,
+		QueryFilter.Filterable,
 		IndexFilter.Filterable,
 		DatePickerFilter.Filterable,
 		StringDateFilter.Filterable,
@@ -361,7 +361,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return ElementUtil.webElementListToStringList(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
 	}
 
-	public void filterBy(SearchFilter filter) {
+	public void filterBy(QueryFilter filter) {
 		filter.apply(this);
 		Waits.loadOrFadeWait();
 		waitForSearchLoadIndicatorToDisappear();

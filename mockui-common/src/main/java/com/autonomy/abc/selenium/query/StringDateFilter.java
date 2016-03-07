@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class StringDateFilter implements SearchFilter {
+public class StringDateFilter implements QueryFilter {
     public static final SimpleDateFormat FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     private final StringDateHandler fromHandler = new StringDateHandler();
     private final StringDateHandler untilHandler = new StringDateHandler();
@@ -21,7 +21,7 @@ public class StringDateFilter implements SearchFilter {
     }
 
     @Override
-    public void apply(SearchFilter.Filterable searchBase) {
+    public void apply(QueryFilter.Filterable searchBase) {
         if (searchBase instanceof Filterable) {
             apply((Filterable) searchBase);
         }
