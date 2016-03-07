@@ -18,6 +18,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -88,7 +89,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 	}
 
 	private void verifyDuplicateError(ModalView newUserModal) {
-		String expectedError;
+		Serializable expectedError;
 		if (getConfig().getType().equals(ApplicationType.HOSTED)) {
 			expectedError = Errors.User.DUPLICATE_EMAIL;
 		} else {

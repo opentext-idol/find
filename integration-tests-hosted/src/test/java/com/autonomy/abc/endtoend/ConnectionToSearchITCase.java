@@ -21,8 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.*;
 
 public class ConnectionToSearchITCase extends HostedTestBase {

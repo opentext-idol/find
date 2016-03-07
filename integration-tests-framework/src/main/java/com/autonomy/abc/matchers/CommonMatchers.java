@@ -87,32 +87,5 @@ public class CommonMatchers {
     public static <T> Matcher<Iterable<? extends T>> containsAnyOf(final Collection<? super T> collection) {
         return hasItemThat(is(isIn(collection)));
     }
-    
-    public static Matcher<String> stringContainingAnyOf(final Iterable<? extends Serializable> strings) {
-        final List<Matcher<? super String>> matchers = new ArrayList<>();
-        for (Serializable string : strings) {
-            matchers.add(containsString(string));
-        }
-        return new TypeSafeMatcher<String>() {
-            @Override
-            protected boolean matchesSafely(String s) {
-                return anyOf(matchers).matches(s);
-            }
 
-            @Override
-            public void describeTo(Description description) {
-                description
-                        .appendText("a string containing any of ")
-                        .appendValue(strings);
-            }
-        };
-    }
-
-    public static Matcher<String> stringContainingAnyOf(final Serializable[] strings) {
-        return stringContainingAnyOf(Arrays.asList(strings));
-    }
-
-    public static Matcher<String> containsString(Serializable stringLike) {
-        return org.hamcrest.Matchers.containsString(stringLike.toString());
-    }
 }

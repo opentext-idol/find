@@ -22,6 +22,7 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.*;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 

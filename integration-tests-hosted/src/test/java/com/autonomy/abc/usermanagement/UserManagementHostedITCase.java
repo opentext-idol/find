@@ -27,13 +27,9 @@ import java.util.concurrent.TimeUnit;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.startsWith;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.Matchers.*;
 
 public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
 

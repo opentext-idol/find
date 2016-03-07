@@ -44,7 +44,7 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
-import static com.autonomy.abc.matchers.CommonMatchers.containsString;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;

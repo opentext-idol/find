@@ -26,7 +26,6 @@ import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -48,7 +47,7 @@ import java.util.*;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.*;
-import static com.autonomy.abc.matchers.CommonMatchers.containsString;
+import static com.autonomy.abc.matchers.StringMatchers.*;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
@@ -1041,14 +1040,14 @@ public class SearchPageITCase extends ABCTestBase {
 		for(int i = 0; i < 3; i++) {
 			for (WebElement searchElement : getDriver().findElements(By.xpath("//div[contains(@class,'search-results-view')]//p//*[contains(text(),'" + searchTerm + "')]"))) {
 				if (searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
-					verifyThat(searchElement.getText(), CoreMatchers.containsString(searchTerm));
+					verifyThat(searchElement.getText(), containsString(searchTerm));
 				}
 				verifyThat(searchElement.getTagName(), is("a"));
 				verifyThat(searchElement.getAttribute("class"), is("query-text"));
 
 				WebElement parent = searchElement.findElement(By.xpath(".//.."));
 				verifyThat(parent.getTagName(), is("span"));
-				verifyThat(parent.getAttribute("class"), CoreMatchers.containsString("label"));
+				verifyThat(parent.getAttribute("class"), containsString("label"));
 			}
 			searchPage.switchResultsPage(Pagination.NEXT);
 		}

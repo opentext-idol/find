@@ -26,11 +26,7 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.Matchers.*;
 
 /*
  *   IMPORTANT - HOSTED ALLOWS CAPITALS IN PROMOTION TITLES/TRIGGERS WHILE OP DOESN'T (hence the .toLowerCase() everywhere so I don't forget

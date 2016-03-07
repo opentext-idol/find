@@ -18,10 +18,7 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Is.is;
 
 public class CreateStaticPromotionsITCase extends HostedTestBase {
     private HSODCreateNewPromotionsPage createPromotionsPage;

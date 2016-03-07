@@ -29,7 +29,7 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
-import static com.autonomy.abc.matchers.CommonMatchers.containsString;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;

@@ -43,7 +43,7 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.CommonMatchers.containsString;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
