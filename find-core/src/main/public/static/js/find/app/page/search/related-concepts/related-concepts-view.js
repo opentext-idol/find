@@ -192,7 +192,7 @@ define([
             // check to ensure each related concept are not the same as the query text or in the selected related concepts
             return model.get('text').toLowerCase() !== this.queryTextModel.get('inputText').toLowerCase()
                 && (this.queryTextModel.get('relatedConcepts').length === 0
-                    || !this.queryTextModel.get('relatedConcepts').contains(model.get('text')));
+                    || !_.contains(this.queryTextModel.get('relatedConcepts'), model.get('text')));
         }
     });
 
