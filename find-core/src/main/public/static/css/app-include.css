@@ -674,6 +674,10 @@ input.find-input {
     display: inline-flex;
 }
 
+.selected-related-concept:not(:first-child) {
+    margin-left: 5px;
+}
+
 .selected-related-concept-text {
     width: 80px;
 }
@@ -684,7 +688,7 @@ input.find-input {
 
 .additional-concepts {
     overflow: hidden;
-    width: 350px;
+    width: calc(100% - 218px); /* 218 is the width of 'also searching for' and scrolling buttons */
     float: left;
     white-space: nowrap;
 }
