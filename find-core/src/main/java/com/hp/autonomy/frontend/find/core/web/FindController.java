@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfig;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +48,10 @@ public abstract class FindController {
     @Autowired
     private ControllerUtils controllerUtils;
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
+    private AuthenticationInformationRetriever<? extends Principal> authenticationInformationRetriever;
+
     protected abstract Map<String, Object> getPublicConfig();
 
     @RequestMapping("/")
@@ -61,7 +67,7 @@ public abstract class FindController {
 
     @RequestMapping(value = PUBLIC_PATH, method = RequestMethod.GET)
     public ModelAndView mainPage() throws JsonProcessingException {
-        final String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final String username = authenticationInformationRetriever.getAuthentication().getName();
         final Map<String, Object> config = new HashMap<>();
         config.put(MvcConstants.USERNAME.value(), username);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);

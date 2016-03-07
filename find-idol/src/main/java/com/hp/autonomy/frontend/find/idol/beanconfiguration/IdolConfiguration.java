@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
-import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
