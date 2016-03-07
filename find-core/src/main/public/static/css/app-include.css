@@ -349,10 +349,6 @@ html, body {
     height: 20px;
 }
 
-.find-logo-small.reduced {
-    display: none;
-}
-
 .find-logo-large {
     background-image: url('../img/Find_Logo_lge.png');
     width: 240px;
