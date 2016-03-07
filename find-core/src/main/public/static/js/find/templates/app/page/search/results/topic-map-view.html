@@ -1,13 +1,11 @@
 <div class="col-md-12">
     <%-i18n['search.topicmap.clustering']%>
-    <label class="radio i-check">
-        <input type="radio" checked value="occurrences" name="optionsRadios">
-        <%-i18n['search.topicMap.occurrences']%>
-    </label>
-    <label class="radio i-check">
-        <input type="radio" value="docsWithPhrase"  name="optionsRadios">
-        <%-i18n['search.topicMap.documents']%>
-    </label>
+    <% _.each(clusteringModes, function(mode) { %>
+        <label class="radio i-check clickable">
+            <input type="radio" <%= mode.value === selectedMode ? 'checked' : ''%> value="<%=mode.value%>" name="<%=radioName%>">
+            <%-mode.text%>
+        </label>
+    <% }); %>
     <label class="slider-input">
         <span><%-i18n['search.topicMap.relevance']%></span>
         <input class="relevance-slider" type="text"/>
