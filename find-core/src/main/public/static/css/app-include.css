@@ -453,10 +453,6 @@ dt,
     line-height: 20px;
 }
 
-.find-logo-small.reduced {
-    display: none;
-}
-
 .find-logo-large {
     font-size: 49px;
     font-family: Metric-Semibold;
