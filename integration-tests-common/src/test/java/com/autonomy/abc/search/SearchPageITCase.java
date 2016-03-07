@@ -672,12 +672,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-		final List<String> hiddenBooleansProximities = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "PARAGRAPHING", "NEARLY", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
-		for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
-			search(hiddenBooleansProximity);
-			Waits.loadOrFadeWait();
-			assertThat(searchPage.getText(), not(containsString("Terminating boolean operator")));
-		}
+		new QueryTestHelper<>(searchService).testHiddenQueryOperator("Terminating boolean operator");
 	}
 
 	@Test
