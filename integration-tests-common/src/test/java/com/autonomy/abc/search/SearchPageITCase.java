@@ -45,8 +45,8 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.CommonMatchers.containsAnyOf;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.CommonMatchers.stringContainingAnyOf;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
@@ -674,7 +674,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-		new QueryTestHelper<>(searchService).hiddenQueryOperatorText(not(containsAnyOf(
+		new QueryTestHelper<>(searchService).hiddenQueryOperatorText(not(stringContainingAnyOf(
 				Errors.Search.OPENING_BOOL,
 				Errors.Search.CLOSING_BOOL,
 				Errors.Search.NO_TEXT,

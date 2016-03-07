@@ -87,11 +87,27 @@ public class CommonMatchers {
         return hasItemThat(is(isIn(collection)));
     }
     
-    public static Matcher<? super String> containsAnyOf(final String... strings) {
-        List<Matcher<? super String>> matchers = new ArrayList<>();
+    public static Matcher<? super String> stringContainingAnyOf(final Iterable<? extends String> strings) {
+        final List<Matcher<? super String>> matchers = new ArrayList<>();
         for (String string : strings) {
             matchers.add(containsString(string));
         }
-        return anyOf(matchers);
+        return new TypeSafeMatcher<String>() {
+            @Override
+            protected boolean matchesSafely(String s) {
+                return anyOf(matchers).matches(s);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description
+                        .appendText("a string containing any of ")
+                        .appendValue(strings);
+            }
+        };
+    }
+
+    public static Matcher<? super String> stringContainingAnyOf(final String... strings) {
+        return stringContainingAnyOf(Arrays.asList(strings));
     }
 }
