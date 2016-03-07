@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.query.QueryTestHelper;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
@@ -44,6 +45,7 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsAnyOf;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
@@ -672,7 +674,12 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-		new QueryTestHelper<>(searchService).testHiddenQueryOperator("Terminating boolean operator");
+		new QueryTestHelper<>(searchService).hiddenQueryOperatorText(not(containsAnyOf(
+				Errors.Search.OPENING_BOOL,
+				Errors.Search.CLOSING_BOOL,
+				Errors.Search.NO_TEXT,
+				Errors.Search.UNKNOWN
+		)));
 	}
 
 	@Test

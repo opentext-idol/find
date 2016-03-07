@@ -4,11 +4,9 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Is.is;
 
 public class CommonMatchers {
     private CommonMatchers() {}
@@ -87,5 +85,13 @@ public class CommonMatchers {
 
     public static <T> Matcher<Iterable<? extends T>> containsAnyOf(final Collection<? super T> collection) {
         return hasItemThat(is(isIn(collection)));
+    }
+    
+    public static Matcher<? super String> containsAnyOf(final String... strings) {
+        List<Matcher<? super String>> matchers = new ArrayList<>();
+        for (String string : strings) {
+            matchers.add(containsString(string));
+        }
+        return anyOf(matchers);
     }
 }

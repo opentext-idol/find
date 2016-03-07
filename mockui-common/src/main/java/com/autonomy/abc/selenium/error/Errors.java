@@ -14,6 +14,7 @@ public class Errors {
 
     public static class Search {
         public static final String NO_RESULTS = "No results found";
+        public static final String UNKNOWN = "An unknown error occurred executing the search action";
         public static final String GENERAL = "An error occurred retrieving results";
         public static final String OPERATORS = "Invalid use of special tokens";
         public static final String STOPWORDS = "All terms were invalid, through being stopwords";
@@ -23,6 +24,8 @@ public class Errors {
         public static final String NO_TEXT = "No valid query text supplied";
         public static final String BLACKLIST = "All query text has been blocked by white or blacklists";
         public static final String RELATED_CONCEPTS = "An error occurred fetching top results";
+        public static final String OPENING_BOOL = "Opening boolean operator";
+        public static final String CLOSING_BOOL = "Terminating boolean operator";
     }
 
     public static class Keywords {

@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.documentPreview.SharedPreviewTests;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.query.QueryTestHelper;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
@@ -464,6 +465,7 @@ public class FindITCase extends FindTestBase {
             findService.search(hiddenBooleansProximity);
             verifyThat(hiddenBooleansProximity + " searched for successfully", findPage.getText(), not(containsString("An error has occurred")));
         }
+        new QueryTestHelper<>(findService).hiddenQueryOperatorText(Errors.Find.GENERAL);
     }
 
     //DUPLICATE
