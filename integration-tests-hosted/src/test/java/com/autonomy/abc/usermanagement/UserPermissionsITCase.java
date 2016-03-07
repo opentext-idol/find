@@ -2,6 +2,7 @@ package com.autonomy.abc.usermanagement;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
@@ -9,19 +10,20 @@ import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.users.UserService;
-import com.autonomy.abc.selenium.util.PageUtil;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
+@RelatedTo("HOD-532")
 public class UserPermissionsITCase extends HostedTestBase {
     public UserPermissionsITCase(TestConfig config) {
         super(config);
@@ -38,19 +40,27 @@ public class UserPermissionsITCase extends HostedTestBase {
     @Before
     public void setUp(){
         userService = getApplication().userService();
-        user = userService.createNewUser(getConfig().generateNewUser(), Role.ADMIN);
+        GoogleAuth googleAuth = (GoogleAuth) userService.createNewUser(getConfig().generateNewUser(), Role.ADMIN).getAuthProvider();
+
+        user = userService.createNewUser(getConfig().getNewUser("newhppassport"), Role.ADMIN);
 
         devSession = getMainSession();
         userApp = new HSODApplication();
         userSession = launchInNewSession(userApp);
 
-        user.authenticate(getConfig().getWebDriverFactory(), new GmailSignupEmailHandler((GoogleAuth) user.getAuthProvider()));
+        user.authenticate(getConfig().getWebDriverFactory(), new GmailSignupEmailHandler(googleAuth));
 
         try {
             userApp.loginService().login(user);
         } catch (NoSuchElementException e) {
-            assertThat(userSession.getDriver().getPageSource(), not(containsString("Authentication Failed")));
+            assumeThat("Authentication failed", userSession.getDriver().getPageSource(), not(containsString("Authentication Failed")));
+            assumeThat("Promotions page not displayed", userApp.elementFactory().getPromotionsPage(), displayed());
         }
+    }
+
+    @After
+    public void tearDown(){
+        userService.deleteOtherUsers();
     }
 
     @Test
