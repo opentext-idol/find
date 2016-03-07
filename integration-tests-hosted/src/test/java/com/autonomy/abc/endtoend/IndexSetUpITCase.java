@@ -1,5 +1,7 @@
 package com.autonomy.abc.endtoend;
 
+import com.autonomy.abc.config.ABCTearDown;
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -51,6 +53,16 @@ public class IndexSetUpITCase extends HostedTestBase {
         indexService.setUpIndex(index);
     }
 
+    @After
+    public void deletePromotions() {
+        ABCTearDown.PROMOTIONS.tearDown(this);
+    }
+
+    @After
+    public void deleteIndex() {
+        HSODTearDown.INDEXES.tearDown(this);
+    }
+
     @Test
     public void testIndexSetUp() {
         final String site = "www.bbc.co.uk";
@@ -86,15 +98,5 @@ public class IndexSetUpITCase extends HostedTestBase {
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
         verifyThat(searchPage.getTopPromotedLinkTitle(), is(promotedTitle));
         verifyThat(searchPage.promotedResult(1), containsText("Index: " + index.getName()));
-    }
-
-    @After
-    public void deletePromotions() {
-        promotionService.deleteAll();
-    }
-
-    @After
-    public void deleteIndex() {
-        indexService.deleteIndex(index);
     }
 }

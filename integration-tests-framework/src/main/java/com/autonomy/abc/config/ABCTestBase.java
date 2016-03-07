@@ -14,6 +14,7 @@ import static org.junit.Assert.fail;
 @RunWith(Parameterized.class)
 public abstract class ABCTestBase extends SeleniumTest<SearchOptimizerApplication<?>, SOElementFactory> {
 	private User initialUser;
+	private boolean hasSetUp = false;
 
 	public ABCTestBase(final TestConfig config) {
 		super(config, SearchOptimizerApplication.ofType(config.getType()));
@@ -33,6 +34,7 @@ public abstract class ABCTestBase extends SeleniumTest<SearchOptimizerApplicatio
 			try {
 				getApplication().loginService().login(initialUser);
 				postLogin();
+				hasSetUp = true;
 			} catch (Exception e) {
 				LOGGER.error("Unable to login");
 				LOGGER.error(e.toString());
@@ -47,5 +49,9 @@ public abstract class ABCTestBase extends SeleniumTest<SearchOptimizerApplicatio
 
 	protected final User getInitialUser() {
 		return initialUser;
+	}
+
+	public boolean hasSetUp() {
+		return hasSetUp;
 	}
 }

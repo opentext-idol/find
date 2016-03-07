@@ -1,5 +1,6 @@
 package com.autonomy.abc.connections;
 
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.categories.CoreFeature;
@@ -33,7 +34,7 @@ public class ConnectionsCoreITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        connectionService.deleteAllConnections(true);
+        HSODTearDown.INDEXES.tearDown(this);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.TriggerForm;
@@ -47,7 +48,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 
 	@After
 	public void tearDown(){
-		promotionService.deleteAll();
+		ABCTearDown.PROMOTIONS.tearDown(this);
 	}
 
 	@Test

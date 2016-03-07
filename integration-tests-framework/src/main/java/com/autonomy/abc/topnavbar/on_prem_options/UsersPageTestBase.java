@@ -1,5 +1,6 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
@@ -54,7 +55,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
 
     @After
     public void emailTearDown() {
-        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+        if(hasSetUp() && getConfig().getType().equals(ApplicationType.HOSTED)) {
             Window firstWindow = getWindow();
             Window secondWindow = getMainSession().openWindow("about:blank");
             try {
@@ -70,11 +71,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
 
     @After
     public void userTearDown() {
-        if (loginService.getCurrentUser() != getInitialUser()) {
-            logoutAndNavigateToWebApp();
-            loginAs(getInitialUser());
-        }
-        userService.deleteOtherUsers();
+        ABCTearDown.USERS.tearDown(this);
     }
 
     protected User singleSignUp() {

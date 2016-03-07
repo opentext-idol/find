@@ -1,5 +1,6 @@
 package com.autonomy.abc.endtoend;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -44,6 +45,11 @@ public class QuickSetUpITCase extends HostedTestBase {
         gettingStarted = getApplication().switchTo(GettingStartedPage.class);
     }
 
+    @After
+    public void tearDown(){
+        ABCTearDown.PROMOTIONS.tearDown(this);
+    }
+
     @Test
     public void testQuickSetUp(){
         String site = "http://www.cnet.com";
@@ -74,11 +80,6 @@ public class QuickSetUpITCase extends HostedTestBase {
             new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Removed a spotlight promotion"));
             assertThat(promotionsPage.promotionsList().size(), is(0));
         }
-    }
-
-    @After
-    public void tearDown(){
-        promotionService.deleteAll();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.autonomy.abc.indexes;
 
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
@@ -20,7 +21,6 @@ import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -37,15 +37,8 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
-import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.core.AllOf.allOf;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class IndexesPageITCase extends HostedTestBase {
@@ -65,6 +58,11 @@ public class IndexesPageITCase extends HostedTestBase {
     public void setUp() {
         indexService = getApplication().indexService();
         indexesPage = indexService.goToIndexes();
+    }
+
+    @After
+    public void tearDown(){
+        HSODTearDown.INDEXES.tearDown(this);
     }
 
     @Test
@@ -314,15 +312,5 @@ public class IndexesPageITCase extends HostedTestBase {
 
     private void verifyNoError(FindPage findPage) {
         verifyThat(findPage.getResultsPage().resultsDiv(), not(containsText(Errors.Find.GENERAL)));
-    }
-
-    @After
-    public void tearDown(){
-        try {
-            getApplication().connectionService().deleteAllConnections(false);
-            getApplication().indexService().deleteAllIndexes();
-        } catch (Exception e) {
-            LOGGER.warn("Failed to tear down");
-        }
     }
 }

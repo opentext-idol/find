@@ -39,6 +39,10 @@ public class SessionRegistry implements Iterable<Session> {
         session.end();
     }
 
+    public Session getSession(int index) {
+        return sessions.get(index);
+    }
+
     public void clear() {
         for (Session session : this) {
             endSession(session);

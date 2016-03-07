@@ -1,5 +1,6 @@
 package com.autonomy.abc.indexes;
 
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.categories.CoreFeature;
@@ -29,7 +30,7 @@ public class IndexCoreITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        indexService.deleteAllIndexes();
+        HSODTearDown.INDEXES.tearDown(this);
     }
 
     @Test

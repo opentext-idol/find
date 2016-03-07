@@ -1,5 +1,6 @@
 package com.autonomy.abc.endtoend;
 
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.connections.ConnectionService;
@@ -7,7 +8,6 @@ import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Frame;
-import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
@@ -19,7 +19,6 @@ import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -42,6 +41,11 @@ public class ConnectionToSearchITCase extends HostedTestBase {
     public void setUp() {
         connectionService = getApplication().connectionService();
         searchService = getApplication().searchService();
+    }
+
+    @After
+    public void tearDown() {
+        HSODTearDown.INDEXES.tearDown(this);
     }
 
     @Test
@@ -74,10 +78,5 @@ public class ConnectionToSearchITCase extends HostedTestBase {
         verifyThat("connection does not show up in incorrect filter", connectionsPage.connectionsList(), empty());
         input.clear();
         dropdown.select("All Types");
-    }
-
-    @After
-    public void tearDown() {
-        connectionService.deleteConnection(connector, true);
     }
 }

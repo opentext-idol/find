@@ -1,5 +1,6 @@
 package com.autonomy.abc.indexes;
 
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
@@ -51,6 +52,11 @@ public class IndexDetailsPageITCase extends HostedTestBase {
         indexesDetailPage = indexService.goToDetails(indexOne);
     }
 
+    @After
+    public void tearDown(){
+        HSODTearDown.INDEXES.tearDown(this);
+    }
+
     @Test
     @KnownBug("CSA-1643")
     public void testAssociatedConnections(){
@@ -64,7 +70,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
             indexesPage = indexService.goToIndexes();
             verifyThat(indexesPage.getNumberOfConnections(indexOne), is(1));
             verifyThat(indexesPage.getNumberOfConnections(indexTwo), is(0));
-            
+
             indexesDetailPage = indexService.goToDetails(indexOne);
             List<String> associatedConnections = indexesDetailPage.getAssociatedConnectors();
             verifyThat(associatedConnections.size(), is(1));
@@ -120,11 +126,5 @@ public class IndexDetailsPageITCase extends HostedTestBase {
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining("Index " + indexOne.getDisplayName() + " successfully deleted"));
         indexesPage = getElementFactory().getIndexesPage();
         verifyThat(indexesPage.getIndexDisplayNames(), not(hasItem(indexOne.getDisplayName())));
-    }
-
-    @After
-    public void tearDown(){
-        getApplication().connectionService().deleteAllConnections(true);
-        indexService.deleteAllIndexes();
     }
 }

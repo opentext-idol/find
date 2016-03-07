@@ -1,5 +1,6 @@
 package com.autonomy.abc.endtoend;
 
+import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
@@ -72,7 +73,7 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        indexService.deleteAllIndexes();
+        HSODTearDown.INDEXES.tearDown(this);
     }
 
     @Test
