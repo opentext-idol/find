@@ -5,10 +5,11 @@ define([
     'jquery',
     'i18n!find/nls/bundle',
     'sunburst/js/sunburst',
-    'text!find/templates/app/page/search/results/sunburst-view.html',
+    'text!find/templates/app/page/search/results/sunburst/sunburst-view.html',
+    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
     'text!find/templates/app/page/loading-spinner.html',
     'chosen'
-], function(Backbone, DependentParametricCollection, _, $, i18n, Sunburst, template, loadingSpinnerTemplate) {
+], function(Backbone, DependentParametricCollection, _, $, i18n, Sunburst, template, labelTemplate, loadingSpinnerTemplate) {
 
     'use strict';
 
@@ -19,9 +20,9 @@ define([
     var SUNBURST_SIZE_ATTR = 'count';
 
     var sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
-    var sunburstLabelTemplate = _.template('<div style="font-size:14px;font-weight:bold;"><%=icon%><%-name%></div><%-size%>');
+    var sunburstLabelTemplate = _.template(labelTemplate);
 
-    function drawSunburst($el, data) {
+    function drawSunburst($el, data, secondField) {
         var color = d3.scale.category20c();
 
         return new Sunburst($el, {
@@ -51,11 +52,20 @@ define([
                 var zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
                 var hoveringCenter = prevClicked ? data === prevClicked.parent : data.depth === 0;
 
-                return sunburstLabelTemplate({
-                    name: data[SUNBURST_NAME_ATTR],
+                var templateArguments = {
                     size: data[SUNBURST_SIZE_ATTR],
                     icon: !zoomedOnRoot && hoveringCenter ? sunburstLabelIcon : ''
-                });
+                };
+
+                if (data[SUNBURST_NAME_ATTR] === '') {
+                    templateArguments.name = i18n['search.sunburst.noValue'](secondField);
+                    templateArguments.italic = true;
+                } else {
+                    templateArguments.name = data[SUNBURST_NAME_ATTR];
+                    templateArguments.italic = false;
+                }
+
+                return sunburstLabelTemplate(templateArguments);
             }
         });
     }
@@ -92,7 +102,7 @@ define([
             this.$sunburst.empty();
 
             if (!this.dependentParametricCollection.isEmpty()) {
-                drawSunburst(this.$sunburst, this.dependentParametricCollection.toJSON());
+                drawSunburst(this.$sunburst, this.dependentParametricCollection.toJSON(), this.$secondChosen.val());
                 
                 this.$sunburst.removeClass('hide');
                 this.toggleError('');

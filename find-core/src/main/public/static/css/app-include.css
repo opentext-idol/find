@@ -734,6 +734,10 @@ input.find-input {
     height: 600px;
 }
 
+.sunburst-sector-name {
+    font-size: 14px;
+}
+
 .chosen-container {
     margin-left: 5px;
     margin-bottom: 5px;
