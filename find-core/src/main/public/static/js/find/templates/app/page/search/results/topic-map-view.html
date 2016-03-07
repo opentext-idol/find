@@ -2,7 +2,7 @@
     <%-i18n['search.topicmap.clustering']%>
     <% _.each(clusteringModes, function(mode) { %>
         <label class="radio i-check clickable">
-            <input type="radio" <%= mode.value === selectedMode ? 'checked' : ''%> value="<%=mode.value%>" name="<%=radioName%>">
+            <input type="radio" <%= mode.value === selectedMode ? 'checked' : ''%> value="<%=mode.value%>" name="<%=cid%>-cluster-mode">
             <%-mode.text%>
         </label>
     <% }); %>
@@ -12,7 +12,7 @@
     </label>
     <label class="slider-input">
         <span><%-i18n['search.topicMap.topics']%></span>
-        <input class="amount-slider" type="text"/>
+        <input class="count-slider" type="text"/>
     </label>
     <div class="topic-map m-t-sm"></div>
 </div>

@@ -20,6 +20,22 @@ define([
         topicCount: 10,
         clusteringMode: clusteringModes[0].value,
 
+        events: {
+            'change .relevance-slider': function(event) {
+                this.relevance.value = event.value.newValue;
+                this.update();
+            },
+            'change .count-slider': function(event) {
+                this.topicCount = event.value.newValue;
+                this.update();
+            },
+            'ifChecked .clustering-mode-i-check': function(event) {
+                this.clusteringMode = event.target.value;
+                this.renderRelevanceSlider();
+                this.update();
+            }
+        },
+
         initialize: function(options) {
             this.entityCollection = options.entityCollection;
             this.clickHandler = options.clickHandler;
@@ -64,24 +80,24 @@ define([
                 }, this).get(this.clusteringMode);
 
                 this.relevance.value = this.relevance.min;
-                this.renderAmountSlider();
+                this.renderCountSlider();
                 this.$relevanceSlider.slider(this.relevance);
                 this.$relevanceSlider.slider('refresh');
             }
         },
 
-        renderAmountSlider: function() {
+        renderCountSlider: function() {
             var max = this.entityCollection.filter(function(entity) {
                 return entity.get(this.clusteringMode) >= this.relevance.value;
             }, this).length;
 
-            this.$amountSlider.slider({
+            this.$countSlider.slider({
                 min: 1,
                 max: max,
                 value: Math.min(this.topicCount, max)
             });
 
-            this.$amountSlider.slider('refresh');
+            this.$countSlider.slider('refresh');
         },
 
         render: function() {
@@ -89,47 +105,26 @@ define([
                 i18n: i18n,
                 clusteringModes: clusteringModes,
                 selectedMode: this.clusteringMode,
-                radioName: _.uniqueId('topic-map-radio')
+                cid: this.cid
             }));
 
-            this.$topicMap = this.$('.topic-map');
+            this.$topicMap = this.$('.topic-map')
+                .topicmap({
+                    hideLegend: false,
+                    skipAnimation: false,
+                    onLeafClick: _.bind(function(node) {
+                        this.clickHandler(node.name);
+                    }, this)
+                });
 
-            this.$topicMap.topicmap({
-                hideLegend: false,
-                skipAnimation: false,
-                onLeafClick: _.bind(function(node) {
-                    this.clickHandler(node.name);
-                }, this)
-            });
+            this.$el.find('.i-check')
+                .iCheck({radioClass: 'iradio-hp'});
 
-            var $iCheck = this.$el.find('.i-check');
-
-            $iCheck.iCheck({
-                radioClass: 'iradio-hp'
-            });
-
-            this.$amountSlider = this.$el.find('.amount-slider');
+            this.$countSlider = this.$el.find('.count-slider');
             this.$relevanceSlider = this.$el.find('.relevance-slider');
 
             this.update();
             this.renderRelevanceSlider();
-
-            this.$amountSlider.on('change', _.bind(function(event) {
-                this.topicCount = event.value.newValue;
-                this.update();
-            }, this));
-
-            this.$relevanceSlider.on('change', _.bind(function(event) {
-                this.relevance.value = event.value.newValue;
-                this.update();
-                this.renderAmountSlider();
-            }, this));
-
-            $iCheck.on('ifChecked', _.bind(function(event) {
-                this.clusteringMode = event.target.value;
-                this.renderRelevanceSlider();
-                this.update();
-            }, this));
 
             this.listenTo(this.entityCollection, 'reset', function() {
                 this.renderRelevanceSlider();
