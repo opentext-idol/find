@@ -33,27 +33,27 @@ define([
             i18n: i18n,
             nameAttr: SUNBURST_NAME_ATTR,
             sizeAttr: SUNBURST_SIZE_ATTR,
-            colorFn: function(d) {
-                if (!d.parent) {
-                    return color(d.parent);
+            colorFn: function(data) {
+                if (!data.parent) {
+                    return color(data.parent);
                 }
 
-                if (!d.parent.parent) {
-                    return d.color = d3.hsl(d[SUNBURST_SIZE_ATTR] ? color(d[SUNBURST_NAME_ATTR]) : 'black');
+                if (!data.parent.parent) {
+                    return data.color = d3.hsl(data[SUNBURST_SIZE_ATTR] ? color(data[SUNBURST_NAME_ATTR]) : 'black');
                 }
 
-                var parentColour = d.parent.color;
-                var index = d.parent.children.indexOf(d);
-                var saturationShift = index / d.parent.children.length;
-                return d.color = d3.hsl(parentColour.h, (parentColour.s + saturationShift) % 1, parentColour.l + 0.05);
+                var parentColour = data.parent.color;
+                var index = data.parent.children.indexOf(data);
+                var saturationShift = index / data.parent.children.length;
+                return data.color = d3.hsl(parentColour.h, (parentColour.s + saturationShift) % 1, parentColour.l + 0.05);
             },
-            labelFormatter: function(d, prevClicked) {
+            labelFormatter: function(data, prevClicked) {
                 var zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
-                var hoveringCenter = prevClicked ? d === prevClicked.parent : d.depth === 0;
+                var hoveringCenter = prevClicked ? data === prevClicked.parent : data.depth === 0;
 
                 return sunburstLabelTemplate({
-                    name: d[SUNBURST_NAME_ATTR],
-                    size: d[SUNBURST_SIZE_ATTR],
+                    name: data[SUNBURST_NAME_ATTR],
+                    size: data[SUNBURST_SIZE_ATTR],
                     icon: !zoomedOnRoot && hoveringCenter ? sunburstLabelIcon : ''
                 });
             }
