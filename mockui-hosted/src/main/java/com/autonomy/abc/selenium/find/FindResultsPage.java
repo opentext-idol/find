@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -12,7 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FindResultsPage extends AppElement {
+public class FindResultsPage extends AppElement implements QueryResultsPage {
     public FindResultsPage(WebDriver driver) {
         super(driver.findElement(By.className("service-view-container")), driver);
     }

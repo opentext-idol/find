@@ -6,17 +6,19 @@ import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.query.AggregateQueryFilter;
 import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.query.QueryService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class SearchService extends ServiceBase<SOElementFactory> {
+public class SearchService extends ServiceBase<SOElementFactory> implements QueryService<SearchPage> {
     SearchPage searchPage;
 
     public SearchService(SearchOptimizerApplication<?> application) {
         super(application);
     }
 
+    @Override
     public SearchPage search(final Query query) {
         getElementFactory().getTopNavBar().search(query.getTerm());
         setSearchPage(getElementFactory().getSearchPage());
@@ -24,6 +26,7 @@ public class SearchService extends ServiceBase<SOElementFactory> {
         return searchPage;
     }
 
+    @Override
     public SearchPage search(String term) {
         return search(new Query(term));
     }

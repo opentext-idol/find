@@ -2,8 +2,9 @@ package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.query.AggregateQueryFilter;
 import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.query.QueryService;
 
-public class FindService {
+public class FindService implements QueryService<FindResultsPage> {
     private HSODFindElementFactory elementFactory;
     private FindPage findPage;
 
@@ -12,10 +13,12 @@ public class FindService {
         findPage = elementFactory.getFindPage();
     }
 
+    @Override
     public FindResultsPage search(String query){
         return search(new Query(query));
     }
 
+    @Override
     public FindResultsPage search(final Query query) {
         elementFactory.getTopNavBar().search(query.getTerm());
         findPage.waitForIndexes();

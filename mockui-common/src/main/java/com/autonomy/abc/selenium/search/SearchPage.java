@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
+import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -21,7 +22,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class SearchPage extends SearchBase implements AppPage {
+public abstract class SearchPage extends SearchBase implements AppPage, QueryResultsPage {
 	public final static int RESULTS_PER_PAGE = 6;
 	public final static int MAX_RESULTS = 2500;
 
