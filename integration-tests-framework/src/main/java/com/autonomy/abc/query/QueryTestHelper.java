@@ -1,23 +1,18 @@
 package com.autonomy.abc.query;
 
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.autonomy.abc.selenium.query.QueryService;
-import com.autonomy.abc.selenium.util.Waits;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.StringMatchers.stringContainingAnyOf;
-import static org.hamcrest.Matchers.allOf;
-import static org.junit.Assert.fail;
 
 public class QueryTestHelper<T extends QueryResultsPage> {
     private final static List<String> HIDDEN_BOOLEANS = Arrays.asList(
@@ -49,10 +44,9 @@ public class QueryTestHelper<T extends QueryResultsPage> {
     }
 
     public void hiddenQueryOperatorText(final Matcher<? super String> errorMatcher) {
-        for (final String hiddenBooleansProximity : HIDDEN_BOOLEANS) {
-            T page = service.search(hiddenBooleansProximity);
-            Waits.loadOrFadeWait();
-            assertThat("able to search for " + hiddenBooleansProximity, page.getText(), errorMatcher);
+        for (Result result : resultsFor(HIDDEN_BOOLEANS)) {
+            assertThat("able to search for " + result.term, result.getText(), errorMatcher);
+
         }
     }
 
@@ -65,17 +59,56 @@ public class QueryTestHelper<T extends QueryResultsPage> {
                 ")war"
         );
 
-        for (String searchTerm : queryTerms) {
-            String text = service.search(searchTerm).getText();
-            assertThat("query term " + searchTerm + " is invalid",
-                    text, containsString(invalidator));
-            assertThat("query term " + searchTerm + " has sensible error message",
-                    text, stringContainingAnyOf(Arrays.asList(
+        for (Result result : resultsFor(queryTerms)) {
+            assertThat("query term " + result.term + " is invalid",
+                    result.getText(), containsString(invalidator));
+            assertThat("query term " + result.term + " has sensible error message",
+                    result.getText(), stringContainingAnyOf(Arrays.asList(
                             Errors.Search.INVALID,
                             Errors.Search.OPERATORS,
                             Errors.Search.STOPWORDS
                     ))
             );
+        }
+    }
+
+    private Iterable<Result> resultsFor(final Iterable<String> queries) {
+        return new Iterable<Result>() {
+            @Override
+            public Iterator<Result> iterator() {
+                final Iterator<String> queryIterator = queries.iterator();
+                return new Iterator<Result>() {
+                    @Override
+                    public boolean hasNext() {
+                        return queryIterator.hasNext();
+                    }
+
+                    @Override
+                    public Result next() {
+                        final String queryTerm = queryIterator.next();
+                        T page = service.search(queryTerm);
+                        return new Result(queryTerm, page);
+                    }
+                };
+            }
+        };
+    }
+    
+    private class Result {
+        final String term;
+        final T page;
+        private String text;
+
+        Result(String term, T page) {
+            this.term = term;
+            this.page = page;
+        }
+
+        String getText() {
+            if (text == null) {
+                text = page.getText();
+            }
+            return text;
         }
     }
 }
