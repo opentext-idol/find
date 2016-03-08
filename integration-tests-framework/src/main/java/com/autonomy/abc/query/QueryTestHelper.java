@@ -36,6 +36,19 @@ public class QueryTestHelper<T extends QueryResultsPage> {
             "BEFOREHAND",
             "NOTWHENERED"
     );
+    private final static List<String> MISMATCHED_BRACKETS = Arrays.asList(
+            "(",
+            ")",
+            "()",
+            ") (",
+            ")war"
+    );
+    private final static List<String> MISMATCHED_QUOTES = Arrays.asList(
+            "\"",
+            "\"word",
+            "\" word",
+            "\" wo\"rd\""
+    );
 
     private final QueryService<T> service;
 
@@ -51,15 +64,7 @@ public class QueryTestHelper<T extends QueryResultsPage> {
     }
 
     public void mismatchedBracketQueryText(final Serializable invalidator) {
-        List<String> queryTerms = Arrays.asList(
-                "(",
-                ")",
-                "()",
-                ") (",
-                ")war"
-        );
-
-        for (Result result : resultsFor(queryTerms)) {
+        for (Result result : resultsFor(MISMATCHED_BRACKETS)) {
             assertThat("query term " + result.term + " is invalid",
                     result.getText(), containsString(invalidator));
             assertThat("query term " + result.term + " has sensible error message",
@@ -74,13 +79,7 @@ public class QueryTestHelper<T extends QueryResultsPage> {
 
     public void mismatchedQuoteQueryText(final Serializable invalidator) {
         // TODO: cover "", "\"\"" and " " in whitespace test
-        List<String> queryTerms = Arrays.asList(
-                "\"",
-                "\"word",
-                "\" word",
-                "\" wo\"rd\""
-        );
-        for (Result result : resultsFor(queryTerms)) {
+        for (Result result : resultsFor(MISMATCHED_QUOTES)) {
             assertThat(result.getText(), containsString(Errors.Search.QUOTES));
             assertThat("query term " + result.term + " has sensible error message", result.getText(), containsString(invalidator));
         }
@@ -99,13 +98,16 @@ public class QueryTestHelper<T extends QueryResultsPage> {
 
                     @Override
                     public Result next() {
-                        final String queryTerm = queryIterator.next();
-                        T page = service.search(queryTerm);
-                        return new Result(queryTerm, page);
+                        return resultFor(queryIterator.next());
                     }
                 };
             }
         };
+    }
+
+    private Result resultFor(String queryTerm) {
+        T page = service.search(queryTerm);
+        return new Result(queryTerm, page);
     }
     
     private class Result {
