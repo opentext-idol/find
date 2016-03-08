@@ -822,11 +822,11 @@ input.find-input {
     font-family: Metric-Bold;
 }
 
-.also-searching-for,
-.also-searching-for:hover {
+.also-searching-for {
     color:#fff;
-    padding: 3px;
+    padding: 0 3px;
     font-weight: lighter;
+    vertical-align: top;
 }
 
 .selected-related-concept {
@@ -836,10 +836,50 @@ input.find-input {
     font-size: 100%;
     font-weight: normal;
     margin-left: 5px;
+    color: #fff;
+    display: inline-flex;
+    height: 22px;
+    line-height: 15px;
 }
 
-.selected-related-concept {
-    color: #fff;
+.selected-related-concept:not(:first-child) {
+    margin-left: 5px;
+}
+
+.selected-related-concept-text {
+    max-width: 100px;
+}
+
+.concept-remove-icon {
+    line-height: inherit;
+}
+
+.additional-concepts-container {
+    display: inline;
+}
+
+.additional-concepts {
+    overflow: hidden;
+    width: calc(100% - 349px); /* 349 is the width of 'also searching for', scrolling buttons and 'see all docs' */
+    float: left;
+    white-space: nowrap;
+}
+
+.left-scroll,
+.right-scroll,
+.left-scroll:hover,
+.right-scroll:hover {
+    box-shadow: none;
+}
+
+.selected-related-concept-dropdown-container {
+    display: inline;
+    position: absolute;
+}
+
+.selected-related-concept-dropdown-trigger-container,
+.selected-related-concept-dropdown-trigger {
+    display: inline-flex;
 }
 
 .selected-related-concept-cluster {
@@ -848,13 +888,10 @@ input.find-input {
     display: inline;
     border-left: 0;
     border-right: 0;
+    line-height: 14px;
 }
 
-.selected-related-concept-cluster ul {
-    margin-left: -6px;
-}
-
-.selected-related-concept-cluster ul a:hover {
+.selected-related-concept-dropdown-container ul a:hover {
     cursor: default;
     background: inherit;
     color: inherit;
@@ -869,7 +906,7 @@ input.find-input {
 }
 
 .selected-related-concept-cluster-chevron {
-    vertical-align: middle;
+    line-height: 12px;
     font-weight: bold;
 }
 
@@ -1080,6 +1117,7 @@ input:-moz-placeholder::before {
 }
 
 .filter-display-text {
+    max-width: 130px;
     vertical-align: middle;
     line-height: 1.2em;
 }
