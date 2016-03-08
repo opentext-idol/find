@@ -26,7 +26,7 @@ define([
     'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/selected-values-collection',
     'find/app/page/search/saved-searches/saved-search-control-view',
-    'find/app/page/search/results/topic-map-view',
+    'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/compare-modal',
     'i18n!find/nls/bundle',

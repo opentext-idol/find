@@ -1,14 +1,13 @@
 define([
     'backbone',
     'underscore',
-    'find/app/vent',
     'find/app/util/model-any-changed-attribute-listener',
+    'find/app/util/topic-map-view',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/results/topic-map-view.html',
-    'topicmap/js/topicmap',
+    'text!find/templates/app/page/search/results/entity-topic-map-view.html',
     'iCheck',
     'slider/bootstrap-slider'
-], function(Backbone, _, vent, addChangeListener, i18n, template) {
+], function(Backbone, _, addChangeListener, TopicMapView, i18n, template) {
 
     'use strict';
 
@@ -76,7 +75,10 @@ define([
 
         initialize: function(options) {
             this.entityCollection = options.entityCollection;
-            this.clickHandler = options.clickHandler;
+
+            this.topicMap = new TopicMapView({
+                clickHandler: options.clickHandler
+            });
 
             this.clusteringModel = new Backbone.Model({
                 mode: clusteringModes[0].value,
@@ -91,6 +93,7 @@ define([
 
             this.listenTo(this.entityCollection, 'sync', function() {
                 updateClusteringModelForEntities(this.entityCollection, this.clusteringModel);
+                this.updateTopicMapData();
                 this.update();
             });
 
@@ -98,38 +101,40 @@ define([
                 updateClusteringModelForEntities(this.entityCollection, this.clusteringModel);
             });
 
-            this.listenTo(vent, 'vent:resize', this.update);
+            addChangeListener(this, this.clusteringModel, ['count', 'relevance', 'mode'], function() {
+                this.updateTopicMapData();
+                this.update();
+            });
 
-            addChangeListener(this, this.clusteringModel, ['count', 'relevance', 'mode'], this.update);
             addChangeListener(this, this.clusteringModel, ['count', 'maxCount'], this.updateCountSlider);
             addChangeListener(this, this.clusteringModel, ['relevance', 'minRelevance', 'maxRelevance'], this.updateRelevanceSlider);
         },
 
         update: function() {
             // If the view is not visible, update will be called again if the user switches to this tab
-            if (this.$el.is(':visible') && this.$topicMap) {
-                var mode = this.clusteringModel.get('mode');
-
-                this.$topicMap.topicmap('renderData', {
-                    name: 'topic map',
-                    size: 1.0,
-                    sentiment: null,
-                    children: this.entityCollection.chain()
-                        .filter(function(entity) {
-                            return entity.get(mode) >= this.clusteringModel.get('relevance');
-                        }, this)
-                        .first(this.clusteringModel.get('count'))
-                        .map(function(entity) {
-                            return {
-                                name: entity.get('text'),
-                                size: entity.get(mode),
-                                sentiment: null,
-                                children: null
-                            };
-                        }, this)
-                        .value()
-                }, false);
+            if (this.$el.is(':visible')) {
+                this.topicMap.draw();
             }
+        },
+
+        updateTopicMapData: function() {
+            var relevance = this.clusteringModel.get('relevance');
+            var mode = this.clusteringModel.get('mode');
+
+            var data = this.entityCollection.chain()
+                .filter(function(entity) {
+                    return entity.get(mode) >= relevance;
+                }, this)
+                .sortBy(function(entity) {
+                    return - entity.get(mode);
+                })
+                .first(this.clusteringModel.get('count'))
+                .map(function(entity) {
+                    return {name: entity.get('text'), size: entity.get(mode)};
+                }, this)
+                .value();
+
+            this.topicMap.setData(data);
         },
 
         updateRelevanceSlider: function() {
@@ -157,18 +162,6 @@ define([
                 cid: this.cid
             }));
 
-            this.$topicMap = this.$('.topic-map')
-                .topicmap({
-                    hideLegend: false,
-                    skipAnimation: false,
-                    i18n: {
-                        'autn.vis.topicmap.noResultsAvailable': i18n['search.topicMap.noResults']
-                    },
-                    onLeafClick: _.bind(function(node) {
-                        this.clickHandler(node.name);
-                    }, this)
-                });
-
             this.$el.find('.i-check')
                 .iCheck({radioClass: 'iradio-hp'});
 
@@ -188,6 +181,7 @@ define([
                     value: this.clusteringModel.get('relevance')
                 });
 
+            this.topicMap.setElement(this.$('.entity-topic-map')).render();
             this.update();
         }
     });
