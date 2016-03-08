@@ -1,18 +1,26 @@
 <div class="col-md-12">
-    <%-i18n['search.topicmap.clustering']%>
-    <% _.each(clusteringModes, function(mode) { %>
-        <label class="radio i-check clickable">
-            <input type="radio" <%= mode.value === selectedMode ? 'checked' : ''%> value="<%=mode.value%>" name="<%=cid%>-cluster-mode">
-            <%-mode.text%>
-        </label>
-    <% }); %>
-    <label class="slider-input">
-        <span><%-i18n['search.topicMap.relevance']%></span>
-        <input class="relevance-slider" type="text"/>
-    </label>
-    <label class="slider-input">
-        <span><%-i18n['search.topicMap.topics']%></span>
-        <input class="count-slider" type="text"/>
-    </label>
+    <form class="flex-row">
+        <div class="m-r-lg flex-row slider-block">
+            <div class="m-r-md">
+                <label for="<%=cid%>-relevance-slider"><%-i18n['search.topicMap.relevance']%></label>
+                <label for="<%=cid%>-count-slider"><%-i18n['search.topicMap.topics']%></label>
+            </div>
+            <div>
+                <div><input id="<%=cid%>-relevance-slider" class="relevance-slider" type="text"/></div>
+                <div><input id="<%=cid%>-count-slider" class="count-slider" type="text"/></div>
+            </div>
+        </div>
+        <div>
+            <fieldset class="radio-fieldset">
+                <legend><%-i18n['search.topicMap.clustering']%></legend>
+                <% _.each(clusteringModes, function(mode) { %>
+                    <label class="radio-inline i-check clustering-mode-i-check clickable">
+                        <input type="radio" <%= mode.value === selectedMode ? 'checked' : ''%> value="<%=mode.value%>" name="<%=cid%>-clustering-mode-input">
+                        <%-mode.text%>
+                    </label>
+                <% }); %>
+            </fieldset>
+        </div>
+    </form>
     <div class="topic-map m-t-sm"></div>
 </div>
