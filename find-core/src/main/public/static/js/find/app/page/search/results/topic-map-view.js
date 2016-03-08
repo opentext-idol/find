@@ -116,6 +116,9 @@ define([
                 .topicmap({
                     hideLegend: false,
                     skipAnimation: false,
+                    i18n: {
+                        'autn.vis.topicmap.noResultsAvailable': i18n['search.topicMap.noResults']
+                    },
                     onLeafClick: _.bind(function(node) {
                         this.clickHandler(node.name);
                     }, this)

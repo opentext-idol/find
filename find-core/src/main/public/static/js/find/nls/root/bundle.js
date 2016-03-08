@@ -165,6 +165,7 @@ define([
         'search.topicMap.clustering': 'Clustering Mode',
         'search.topicMap.occurrences': 'Occurrences of phrase',
         'search.topicMap.documents': 'Documents with phrase',
+        'search.topicMap.noResults': 'No results found for this query',
         'search.topicMap.relevance': 'Relevance',
         'search.topicMap.topics': 'Number of topics',
         'search.sunburst.title': 'Parametric Distribution',
