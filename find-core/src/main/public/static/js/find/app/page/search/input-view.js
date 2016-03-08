@@ -14,8 +14,8 @@ define([
     
     var conceptsTemplate = _.template(relatedConceptTemplate);
     var scrollingButtons = _.template('<span class="scrolling-buttons">' +
-        '<button class="btn btn-xs btn-white left-scroll"><i class="hp-icon hp-chevron-left"></i></button> ' +
-        '<button class="btn btn-xs btn-white right-scroll"><i class="hp-icon hp-chevron-right"></i></button> ' +
+            '<button class="btn btn-xs btn-white left-scroll"><i class="hp-icon hp-chevron-left"></i></button> ' +
+            '<button class="btn btn-xs btn-white right-scroll"><i class="hp-icon hp-chevron-right"></i></button> ' +
         '</span>');
 
     return Backbone.View.extend({
@@ -38,7 +38,7 @@ define([
                 this.toggleRelatedConceptClusterDropdown(false, $(e.currentTarget));
             },
             'show.bs.dropdown .selected-related-concept-dropdown-container': function(e) {
-                this.toggleRelatedConceptClusterDropdown(true, $(e.currentTarget));
+                this.toggleRelatedConceptClusterDropdown(true, $(e.currentTarget), $(e.relatedTarget));
             },
             'click .see-all-documents': function() {
                 this.search('*');
@@ -133,7 +133,7 @@ define([
 
                 this.$('[data-toggle="tooltip"]').tooltip({
                     container: 'body',
-                    placement: 'bottom'
+                    placement: 'top'
                 });
 
                 this.$alsoSearchingFor.toggleClass('hide', _.isEmpty(this.model.get('relatedConcepts')));
@@ -152,10 +152,19 @@ define([
             }
         },
 
-        toggleRelatedConceptClusterDropdown: function (open, $target) {
+        toggleRelatedConceptClusterDropdown: function (open, $target, $relatedTarget) {
             var $icon = $target.find('.selected-related-concept-cluster-chevron');
             $icon.toggleClass('hp-chevron-up', open);
             $icon.toggleClass('hp-chevron-down', !open);
+
+            if($relatedTarget) {
+                var triggerOffset = $relatedTarget.closest('.selected-related-concept').offset();
+
+                $target.offset({
+                    top: triggerOffset.top + 22,
+                    left: triggerOffset.left
+                });
+            }
         },
 
         removeRelatedConcept: function(id){
