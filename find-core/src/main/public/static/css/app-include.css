@@ -656,22 +656,23 @@ input.find-input {
     font-family: Metric-Bold;
 }
 
-.also-searching-for,
-.also-searching-for:hover {
+.also-searching-for {
     color:#fff;
-    padding: 3px;
+    padding: 0 3px;
     font-weight: lighter;
     vertical-align: top;
 }
 
 .selected-related-concept {
-    padding: 0 2px;
+    padding: 1px 6px;
+    border: solid 2px #fff;
+    border-radius: 0;
     font-size: 100%;
     font-weight: normal;
     color: #fff;
-    border: solid 1px #00b388;
-    border-radius: 0;
     display: inline-flex;
+    height: 22px;
+    line-height: 15px;
 }
 
 .selected-related-concept:not(:first-child) {
@@ -679,7 +680,7 @@ input.find-input {
 }
 
 .selected-related-concept-text {
-    width: 80px;
+    max-width: 100px;
 }
 
 .concept-remove-icon {
@@ -883,13 +884,13 @@ input:-moz-placeholder::before {
 }
 
 .shorten {
-    max-width: 130px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
 
 .filter-display-text {
+    max-width: 130px;
     vertical-align: middle;
     line-height: 1.2em;
 }
