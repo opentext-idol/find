@@ -1,0 +1,35 @@
+<div class="col-md-12">
+    <form class="flex-row m-b-sm">
+        <div class="m-r-lg flex-row slider-block">
+            <div class="m-r-md">
+                <label for="<%=cid%>-relevance-slider"><%-i18n['search.topicMap.relevance']%></label>
+                <label for="<%=cid%>-count-slider"><%-i18n['search.topicMap.topics']%></label>
+            </div>
+            <div>
+                <input id="<%=cid%>-relevance-slider" class="relevance-slider" type="text"/>
+                <input id="<%=cid%>-count-slider" class="count-slider" type="text"/>
+            </div>
+        </div>
+        <div>
+            <fieldset class="radio-fieldset">
+                <legend><%-i18n['search.topicMap.clustering']%></legend>
+                <% _.each(clusteringModes, function(mode) { %>
+                    <label class="radio-inline i-check clustering-mode-i-check clickable">
+                        <input type="radio" <%= mode.value === selectedMode ? 'checked' : ''%> value="<%=mode.value%>" name="<%=cid%>-clustering-mode-input">
+                        <%-mode.text%>
+                    </label>
+                <% }); %>
+            </fieldset>
+        </div>
+    </form>
+    <div class="entity-topic-map-error">
+        <p class="result-message"><%-i18n['search.topicMap.error']%></p>
+    </div>
+    <div class="entity-topic-map-empty">
+        <p class="result-message"><%-i18n['search.topicMap.empty']%></p>
+    </div>
+    <div class="entity-topic-map-loading m-t-lg">
+        <%= loadingHtml %>
+    </div>
+    <div class="entity-topic-map"></div>
+</div>

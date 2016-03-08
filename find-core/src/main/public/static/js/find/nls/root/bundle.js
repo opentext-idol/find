@@ -163,6 +163,8 @@ define([
         'search.snapshot.restrictions.relatedConcepts': 'Also searching for',
         'search.snapshot.restrictionsTitle': 'Query Restrictions',
         'search.topicMap.clustering': 'Clustering Mode',
+        'search.topicMap.empty': 'No topics found for this query',
+        'search.topicMap.error': 'An error occurred retrieving topics for this search',
         'search.topicMap.occurrences': 'Occurrences of phrase',
         'search.topicMap.documents': 'Documents with phrase',
         'search.topicMap.relevance': 'Relevance',
