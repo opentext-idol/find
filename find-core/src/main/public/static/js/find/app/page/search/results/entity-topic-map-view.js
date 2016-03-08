@@ -5,16 +5,30 @@ define([
     'find/app/util/topic-map-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/results/entity-topic-map-view.html',
+    'text!find/templates/app/page/loading-spinner.html',
     'iCheck',
     'slider/bootstrap-slider'
-], function(Backbone, _, addChangeListener, TopicMapView, i18n, template) {
+], function(Backbone, _, addChangeListener, TopicMapView, i18n, template, loadingTemplate) {
 
     'use strict';
+
+    var loadingHtml = _.template(loadingTemplate)({i18n: i18n, large: true});
 
     var clusteringModes = [
         {value: 'occurrences', text: i18n['search.topicMap.occurrences']},
         {value: 'docsWithPhrase', text: i18n['search.topicMap.documents']}
     ];
+
+    /**
+     * @readonly
+     * @enum {String}
+     */
+    var ViewState = {
+        LOADING: 'LOADING',
+        ERROR: 'ERROR',
+        EMPTY: 'EMPTY',
+        MAP: 'MAP'
+    };
 
     // Return the given value if it is in the range [min, max], else return the number in the range which is closest to the value.
     function ensureRange(min, max, value) {
@@ -80,6 +94,18 @@ define([
                 clickHandler: options.clickHandler
             });
 
+            var viewState;
+
+            if (this.entityCollection.currentRequest) {
+                viewState = ViewState.LOADING;
+            } else {
+                viewState = this.entityCollection.isEmpty() ? ViewState.EMPTY : ViewState.MAP;
+            }
+
+            this.viewModel = new Backbone.Model({
+                state: viewState
+            });
+
             this.clusteringModel = new Backbone.Model({
                 mode: clusteringModes[0].value,
                 relevance: 1,
@@ -92,10 +118,22 @@ define([
             updateClusteringModelForEntities(this.entityCollection, this.clusteringModel);
 
             this.listenTo(this.entityCollection, 'sync', function() {
+                this.viewModel.set('state', this.entityCollection.isEmpty() ? ViewState.EMPTY : ViewState.MAP);
                 updateClusteringModelForEntities(this.entityCollection, this.clusteringModel);
                 this.updateTopicMapData();
                 this.update();
             });
+
+            this.listenTo(this.entityCollection, 'request', function() {
+                this.viewModel.set('state', ViewState.LOADING);
+            });
+
+            this.listenTo(this.entityCollection, 'error', function(collection, xhr) {
+                // Status of zero means the request has been aborted
+                this.viewModel.set('state', xhr.status === 0 ? ViewState.LOADING : ViewState.ERROR);
+            });
+
+            this.listenTo(this.viewModel, 'change', this.updateViewState);
 
             this.listenTo(this.clusteringModel, 'change:mode', function() {
                 updateClusteringModelForEntities(this.entityCollection, this.clusteringModel);
@@ -108,6 +146,8 @@ define([
 
             addChangeListener(this, this.clusteringModel, ['count', 'maxCount'], this.updateCountSlider);
             addChangeListener(this, this.clusteringModel, ['relevance', 'minRelevance', 'maxRelevance'], this.updateRelevanceSlider);
+
+            this.updateTopicMapData();
         },
 
         update: function() {
@@ -154,9 +194,18 @@ define([
             }
         },
 
+        updateViewState: function() {
+            var state = this.viewModel.get('state');
+            this.topicMap.$el.toggleClass('hide', state !== ViewState.MAP);
+            this.$('.entity-topic-map-error').toggleClass('hide', state !== ViewState.ERROR);
+            this.$('.entity-topic-map-empty').toggleClass('hide', state !== ViewState.EMPTY);
+            this.$('.entity-topic-map-loading').toggleClass('hide', state !== ViewState.LOADING);
+        },
+
         render: function() {
             this.$el.html(this.template({
                 i18n: i18n,
+                loadingHtml: loadingHtml,
                 clusteringModes: clusteringModes,
                 selectedMode: this.clusteringModel.get('mode'),
                 cid: this.cid
@@ -183,6 +232,7 @@ define([
 
             this.topicMap.setElement(this.$('.entity-topic-map')).render();
             this.update();
+            this.updateViewState();
         }
     });
 
