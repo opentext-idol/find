@@ -2,13 +2,14 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/vent',
     'find/app/util/string-blank',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/input-view.html',
     'text!find/templates/app/page/search/related-concepts/selected-related-concept.html',
     'typeahead',
     'bootstrap'
-], function(Backbone, $, _, stringBlank, i18n, template, relatedConceptTemplate) {
+], function(Backbone, $, _, vent, stringBlank, i18n, template, relatedConceptTemplate) {
 
     var html = _.template(template)({i18n: i18n});
 
@@ -61,9 +62,9 @@ define([
             this.listenTo(this.model, 'change:inputText', this.updateText);
             this.listenTo(this.model, 'change:relatedConcepts', this.updateRelatedConcepts);
 
-            _.bindAll(this, 'updateScrollingButtons');
+            this.listenTo(vent, 'vent:resize', this.updateScrollingButtons);
 
-            $(window).on('resize', this.updateScrollingButtons);
+            _.bindAll(this, 'updateScrollingButtons');
         },
 
         render: function() {
@@ -185,11 +186,6 @@ define([
             var concepts = _.clone(this.model.get('relatedConcepts'));
             concepts.splice(id, 1);
             this.model.set('relatedConcepts', concepts);
-        },
-
-        remove: function() {
-            $(window).off('resize', this.updateScrollingButtons);
-            Backbone.View.prototype.remove.apply(this, arguments);
         }
     });
 
