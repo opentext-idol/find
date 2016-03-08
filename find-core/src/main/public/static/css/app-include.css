@@ -888,6 +888,7 @@ input.find-input {
     display: inline;
     border-left: 0;
     border-right: 0;
+    line-height: 14px;
 }
 
 .selected-related-concept-dropdown-container ul a:hover {
@@ -905,7 +906,7 @@ input.find-input {
 }
 
 .selected-related-concept-cluster-chevron {
-    line-height: 18px;
+    line-height: 12px;
     font-weight: bold;
 }
 
