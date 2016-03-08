@@ -1,5 +1,10 @@
 @import "HPEElements.css";
 
+body {
+    background: url("../img/login.png");
+    background-size: cover;
+}
+
 .login-title-align {
     color: #fff;
 }
