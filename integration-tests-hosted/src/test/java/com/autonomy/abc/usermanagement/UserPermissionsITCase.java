@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
+import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
@@ -17,18 +18,23 @@ import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.users.UserService;
+import com.autonomy.abc.selenium.users.UsersPage;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.sql.Time;
+
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
@@ -96,22 +102,38 @@ public class UserPermissionsITCase extends HostedTestBase {
 
         new WebDriverWait(userSession.getDriver(), 10).until(ExpectedConditions.titleIs("Haven Search OnDemand - Error"));
 
-        verifyThat(userSession.getDriver().getPageSource(), containsString("Authentication Failed"));
+        verifyAuthFailed();
     }
 
     @Test
     public void testCannotAddKeywords(){
+        String blacklist = "Dave";
+
         KeywordService keywordService = userApp.keywordService();
-        keywordService.goToKeywords();
+        KeywordsPage keywordsPage = keywordService.goToKeywords();
+        keywordsPage.createNewKeywordsButton().click();
+        CreateNewKeywordsPage createNewKeywordsPage = userElementFactory.getCreateNewKeywordsPage();
+
+        Waits.loadOrFadeWait();
 
         userService.deleteUser(user);
 
-        String blacklist = "Dave";
-
         try {
-            keywordService.addBlacklistTerms(blacklist);
-        } catch (TimeoutException e) {
+            createNewKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
+            createNewKeywordsPage.continueWizardButton().click();
+            createNewKeywordsPage.getTriggerForm().addTrigger(blacklist);
+            createNewKeywordsPage.finishWizardButton().click();
+
             verifyError();
+        } catch (TimeoutException e) {
+            try {
+                verifyError();
+            } catch (Exception f) {
+                verifyAuthFailed();
+            }
+        } catch (StaleElementReferenceException e) {
+            Waits.loadOrFadeWait();
+            verifyAuthFailed();
         }
 
         getApplication().switchTo(KeywordsPage.class);
@@ -131,7 +153,7 @@ public class UserPermissionsITCase extends HostedTestBase {
 
             verifyError();
         } catch (StaleElementReferenceException | TimeoutException e) {
-            verifyThat(userSession.getDriver().getPageSource(), containsString("Authentication Failed"));
+            verifyThat(userSession.getDriver().getPageSource(), anyOf(containsString("Authentication Failed"), containsString("Error executing search action")));
         }
     }
 
@@ -140,16 +162,39 @@ public class UserPermissionsITCase extends HostedTestBase {
         HSODPromotionService promotionService = userApp.promotionService();
         HSODPromotionsPage promotionsPage = promotionService.goToPromotions();
 
+        promotionsPage.staticPromotionButton().click();
+        HSODCreateNewPromotionsPage createNewPromotionsPage = userElementFactory.getCreateNewPromotionsPage();
+
         userService.deleteUser(user);
 
         try {
-            promotionsPage.staticPromotionButton().click();
-            HSODCreateNewPromotionsPage createNewPromotionsPage = userElementFactory.getCreateNewPromotionsPage();
             new StaticPromotion("TITLE", "CONTENT", "TRIGGER").makeWizard(createNewPromotionsPage).apply();
 
             verifyError();
         } catch (StaleElementReferenceException e) {
-            verifyThat(userSession.getDriver().getPageSource(), containsString("Authentication Failed"));
+            verifyAuthFailed();
+        }
+    }
+
+    @Test
+    public void testCannotAddUser(){
+        UserService userUserService = userApp.userService();
+
+        UsersPage usersPage = userUserService.goToUsers();
+
+        userService.deleteUser(user);
+
+        try {
+            usersPage.createUserButton().click();
+            try {
+                usersPage.addNewUser(getConfig().generateNewUser(), Role.ADMIN);
+            } finally {
+                usersPage.closeModal();
+            }
+
+           verifyError();
+        } catch (NoSuchElementException | StaleElementReferenceException | TimeoutException e) {
+            verifyAuthFailed();
         }
     }
 
@@ -158,5 +203,9 @@ public class UserPermissionsITCase extends HostedTestBase {
         topNavBar.openNotifications();
         NotificationsDropDown notificationsDropDown = topNavBar.getNotifications();
         verifyThat(notificationsDropDown.getNotification(1).getMessage(), containsString("Error"));
+    }
+
+    private void verifyAuthFailed() {
+        verifyThat(userSession.getDriver().getPageSource(), containsString("Authentication Failed"));
     }
 }
