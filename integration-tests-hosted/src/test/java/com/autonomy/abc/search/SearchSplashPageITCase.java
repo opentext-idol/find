@@ -17,13 +17,13 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchSplashPageITCase extends HostedTestBase {
     private TopNavBar topNavBar;
     private SideNavBar sideNavBar;
+    private SearchPage searchPage;
 
     public SearchSplashPageITCase(TestConfig config) {
         super(config);
@@ -44,9 +44,26 @@ public class SearchSplashPageITCase extends HostedTestBase {
         verifyBigSearch();
 
         topNavBar.search("hello");
-        SearchPage searchPage = getElementFactory().getSearchPage();
-        verifyThat(searchPage.getSearchResults(), not(empty()));
-        verifyThat(topNavBar, not(searchBoxIsDown()));
+        searchPage = getElementFactory().getSearchPage();
+        verifyRealSearch();
+    }
+
+    @Test
+    @KnownBug("CCUK-2658")
+    public void testWhitespaceSearch() {
+        setNavBars();
+        goToSearchVia(PromotionsPage.class);
+
+        topNavBar.search("     ");
+        verifyBigSearch();
+
+        topNavBar.search("not white space");
+        searchPage = getElementFactory().getSearchPage();
+        topNavBar.search(" ");
+        searchPage.waitForSearchLoadIndicatorToDisappear();
+
+        verifyRealSearch();
+        verifyThat(searchPage.getHeadingSearchTerm(), is("not white space"));
     }
 
     private void goToSearchVia(Class<? extends AppPage> otherPage) {
@@ -60,6 +77,11 @@ public class SearchSplashPageITCase extends HostedTestBase {
     private void setNavBars() {
         topNavBar = getElementFactory().getTopNavBar();
         sideNavBar = getElementFactory().getSideNavBar();
+    }
+
+    private void verifyRealSearch() {
+        verifyThat(searchPage.getSearchResults(), not(empty()));
+        verifyThat(topNavBar, not(searchBoxIsDown()));
     }
 
     private void verifyBigSearch() {

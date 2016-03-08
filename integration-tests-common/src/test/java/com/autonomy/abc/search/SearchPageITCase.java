@@ -323,15 +323,6 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	@KnownBug("CCUK-2658")
-	public void testWhitespaceSearch() {
-		search("something");
-		search(" ");
-		assertThat(searchPage.getHeadingSearchTerm(), is("something"));
-		assertThat(searchPage.errorContainer(), not(displayed()));
-	}
-
-	@Test
 	@KnownBug("CCUK-3741")
 	public void testSearchParentheses() {
 		Serializable errorMessage;
