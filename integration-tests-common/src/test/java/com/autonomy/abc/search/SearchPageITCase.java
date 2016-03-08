@@ -323,10 +323,12 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	@KnownBug("CCUK-2658")
 	public void testWhitespaceSearch() {
+		search("something");
 		search(" ");
-		assertThat("Whitespace search should not return a message as if it is a blacklisted term",
-				searchPage.getText(), not(containsString("All search terms are blacklisted")));
+		assertThat(searchPage.getHeadingSearchTerm(), is("something"));
+		assertThat(searchPage.errorContainer(), not(displayed()));
 	}
 
 	@Test

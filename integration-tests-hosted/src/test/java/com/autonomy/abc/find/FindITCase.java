@@ -470,11 +470,11 @@ public class FindITCase extends FindTestBase {
         new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
     }
 
-    //DUPLICATE
     @Test
+    @KnownBug("CCUK-3700")
     public void testWhitespaceSearch() {
         try {
-            findService.search(" ");
+            findService.search("       ");
         } catch (TimeoutException e) { /* Expected behaviour */ }
 
         assertThat(findPage.footerLogo(), displayed());
