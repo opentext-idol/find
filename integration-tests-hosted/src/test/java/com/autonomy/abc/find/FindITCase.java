@@ -464,15 +464,10 @@ public class FindITCase extends FindTestBase {
         new QueryTestHelper<>(findService).mismatchedBracketQueryText(Errors.Find.GENERAL);
     }
 
-    //DUPLICATE
     @Test
     @KnownBug({"IOD-8454","CCUK-3634"})
     public void testSearchQuotationMarks() {
-        List<String> testSearchTerms = Arrays.asList("\"", "", "\"word", "\" word", "\" wo\"rd\""); //"\"\"" seems okay and " "
-        for (String searchTerm : testSearchTerms){
-            findService.search(searchTerm);
-            assertThat(results, containsText(Errors.Search.QUOTES));
-        }
+        new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
     }
 
     //DUPLICATE

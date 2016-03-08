@@ -3,7 +3,6 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.query.QueryTestHelper;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Frame;
@@ -46,11 +45,12 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.CommonMatchers.*;
-import static com.autonomy.abc.matchers.StringMatchers.*;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
+import static com.autonomy.abc.matchers.StringMatchers.stringContainingAnyOf;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeThat;
@@ -343,27 +343,20 @@ public class SearchPageITCase extends ABCTestBase {
 
     //TODO there are some which contain helpful error messages?
 	@Test
-	@RelatedTo("IOD-8454")
+	@KnownBug({"IOD-8454", "CCUK-3741"})
 	public void testSearchQuotationMarks() {
         List<String> emptyPhrases = Arrays.asList("\"\"","\" \"");
-		List<String> unclosedPhrases = Arrays.asList("\"","\"word","\" word","\" wo\"rd\"");
 
 		Serializable emptyError = Errors.Search.NO_TEXT;
-		Serializable unclosedError = Errors.Search.QUOTES;
-
 		// HOD should return better errors
-        if(getConfig().getType().equals(ApplicationType.HOSTED)){
+		if(getConfig().getType().equals(ApplicationType.HOSTED)){
 			emptyError = Errors.Search.HOD;
-			unclosedError = Errors.Search.HOD;
-        }
+		}
 		for (String empty : emptyPhrases) {
 			search(empty);
 			verifyThat(searchPage, containsText(emptyError));
 		}
-		for (String unclosed : unclosedPhrases) {
-			search(unclosed);
-			verifyThat(searchPage, containsText(unclosedError));
-		}
+		new QueryTestHelper<>(searchService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
 	}
 
 	@Test

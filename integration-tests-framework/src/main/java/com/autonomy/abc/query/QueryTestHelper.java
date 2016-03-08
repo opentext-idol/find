@@ -72,6 +72,20 @@ public class QueryTestHelper<T extends QueryResultsPage> {
         }
     }
 
+    public void mismatchedQuoteQueryText(final Serializable invalidator) {
+        // TODO: cover "", "\"\"" and " " in whitespace test
+        List<String> queryTerms = Arrays.asList(
+                "\"",
+                "\"word",
+                "\" word",
+                "\" wo\"rd\""
+        );
+        for (Result result : resultsFor(queryTerms)) {
+            assertThat(result.getText(), containsString(Errors.Search.QUOTES));
+            assertThat("query term " + result.term + " has sensible error message", result.getText(), containsString(invalidator));
+        }
+    }
+
     private Iterable<Result> resultsFor(final Iterable<String> queries) {
         return new Iterable<Result>() {
             @Override
