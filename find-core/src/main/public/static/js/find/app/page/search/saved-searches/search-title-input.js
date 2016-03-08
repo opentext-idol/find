@@ -136,7 +136,7 @@ define([
         updateConfirmButton: function() {
             var title = this.model.get('title');
 
-            this.$confirmButton.toggleClass('disabled', resolveCurrentTitle(this.savedSearchModel) === title || !title);
+            this.$confirmButton.toggleClass('disabled not-clickable', resolveCurrentTitle(this.savedSearchModel) === title || !title);
         }
     });
 
