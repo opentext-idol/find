@@ -822,10 +822,9 @@ input.find-input {
     font-family: Metric-Bold;
 }
 
-.also-searching-for,
-.also-searching-for:hover {
+.also-searching-for {
     color:#fff;
-    padding: 3px;
+    padding: 0 3px;
     font-weight: lighter;
     vertical-align: top;
 }
@@ -839,6 +838,8 @@ input.find-input {
     margin-left: 5px;
     color: #fff;
     display: inline-flex;
+    height: 22px;
+    line-height: 15px;
 }
 
 .selected-related-concept:not(:first-child) {
@@ -846,7 +847,7 @@ input.find-input {
 }
 
 .selected-related-concept-text {
-    width: 80px;
+    max-width: 100px;
 }
 
 .concept-remove-icon {
@@ -1115,6 +1116,7 @@ input:-moz-placeholder::before {
 }
 
 .filter-display-text {
+    max-width: 130px;
     vertical-align: middle;
     line-height: 1.2em;
 }
