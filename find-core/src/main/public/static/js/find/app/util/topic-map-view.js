@@ -18,7 +18,7 @@ define([
     return Backbone.View.extend({
         initialize: function(options) {
             this.data = options.data || [];
-            this.clickHandler = options.clickHandler || _.noop;
+            this.clickHandler = options.clickHandler;
 
             this.render();
 
@@ -30,17 +30,23 @@ define([
         },
 
         render: function() {
-            this.$el.topicmap({
+            var topicMapOptions = {
                 hideLegend: false,
                 skipAnimation: false,
                 i18n: {
                     'autn.vis.topicmap.noResultsAvailable': i18n['search.topicMap.noResults']
-                },
-                onLeafClick: _.bind(function(node) {
-                    this.clickHandler(node.name);
-                }, this)
-            });
+                }
+            };
 
+            if (this.clickHandler) {
+                this.$el.addClass('clickable');
+
+                topicMapOptions.onLeafClick = _.bind(function(node) {
+                    this.clickHandler(node.name);
+                }, this);
+            }
+
+            this.$el.topicmap(topicMapOptions);
             this.draw();
         },
 
