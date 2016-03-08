@@ -21,7 +21,7 @@ define([
      * @param {Jquery} $el
      * @param {Function} callback
      */
-    return function($el, trigger, callback) {
+    return function($el, trigger, callback, hideCallback) {
         $el.popover({
             content: initialContent,
             html: true,
@@ -34,6 +34,10 @@ define([
             // popover openings. The .popover-content-inner element will be destroyed each time, so we don't have to track
             // the state ourselves.
             callback($target.siblings('.popover').find('.popover-content-inner'), $target);
+        }).on('hidden.bs.popover', function() {
+            if(hideCallback){
+                hideCallback();
+            }
         });
     };
 

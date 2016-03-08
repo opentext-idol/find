@@ -1,5 +1,6 @@
 define([
     'backbone',
+    'jquery',
     'find/app/util/array-equality',
     'find/app/page/search/saved-searches/search-title-input',
     'find/app/model/saved-searches/saved-search-model',
@@ -7,7 +8,7 @@ define([
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
     'i18n!find/nls/bundle',
     'find/app/util/popover'
-], function(Backbone, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, template, i18n, popover) {
+], function(Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, template, i18n, popover) {
 
     'use strict';
 
@@ -50,7 +51,7 @@ define([
             'click .show-save-as-button': toggleTitleEditState(TitleEditState.SAVE_AS),
             'click .show-rename-button': toggleTitleEditState(TitleEditState.RENAME),
             'click .popover-control': function(e) {
-                this.$('.popover-control[aria-pressed="false"], .save-search-button').toggleClass('disabled not-clickable');
+                this.$('.popover-control, .save-search-button').addClass('disabled not-clickable');
                 $(e.currentTarget).removeClass('disabled not-clickable');
             },
             'click .open-as-query-option': function() {
@@ -191,9 +192,30 @@ define([
         },
 
         createPopover: function() {
-            popover(this.$('.popover-control'), 'click', function(content, target) {
-                content.html('<div class="search-title-input-container"></div>')
-            });
+            var $popover;
+            var $popoverControl = this.$('.popover-control');
+
+            var clickHandler = _.bind(function(e) {
+                var $target = $(e.target);
+                var notPopover = !$target.is($popover) && !$.contains($popover[0], $target[0]);
+                var notPopoverControl = !$target.is($popoverControl) && !$.contains($popoverControl[0], $target[0]);
+
+                if (notPopover && notPopoverControl) {
+                    //$popoverControl.popover('hide');
+                    this.$('.popover-control.active').click();
+
+                }
+            }, this);
+
+            popover($popoverControl, 'click', function(content) {
+                content.html('<div class="search-title-input-container"></div>');
+                $popover = content.closest('.popover');
+                $('body').on('click', clickHandler);
+            }, _.bind(function() {
+                $(document.body).off('click', clickHandler);
+
+                this.$('.popover-control, .save-search-button').removeClass('active disabled not-clickable');
+            }, this));
         },
 
         updateForSavedState: function() {

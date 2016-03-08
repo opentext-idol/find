@@ -19,6 +19,10 @@ define([
         return Boolean(view.$('.popover').length)
     }
 
+    function checkButtonEnabled(view) {
+        return !view.$('.popover-control').hasClass('disabled');
+    }
+
     function testDeactivatesTheSaveSearchButton() {
         it('deactivates the "Save Search" button', function() {
             expect(this.view.$('.show-save-as-button')).not.toHaveClass('active');
@@ -38,8 +42,21 @@ define([
     }
 
     function testEnablesOptionButton(className, name) {
-        it('enables the ' + name + ' button', function() {
-            expect(this.view.$(className)).not.toHaveClass('disabled');
+        describe('enables option button', function() {
+            beforeEach(function(done) {
+                var view = this.view;
+
+                var intervalId = setInterval(function() {
+                    if (checkButtonEnabled(view)) {
+                        clearTimeout(intervalId);
+                        done();
+                    }
+                }, 50);
+            });
+
+            it('enables the ' + name + ' button', function() {
+                expect(this.view.$(className)).not.toHaveClass('disabled');
+            });
         });
     }
 
