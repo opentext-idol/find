@@ -743,8 +743,25 @@ input.find-input {
 }
 
 .topic-map {
-    width: 800px;
-    height: 600px;
+    width: 100%;
+    max-width: 1250px;
+}
+
+/* Ensures topic map height is always less than the window height */
+@media (min-height: 801px) {
+    .topic-map {
+        height: 750px;
+    }
+}
+@media (max-height: 800px) {
+    .topic-map {
+        height: 500px;
+    }
+}
+@media (max-height: 550px) {
+    .topic-map {
+        height: 300px;
+    }
 }
 
 .sunburst {

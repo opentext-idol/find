@@ -1,12 +1,13 @@
 define([
     'backbone',
     'underscore',
+    'find/app/vent',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/results/topic-map-view.html',
     'topicmap/js/topicmap',
     'iCheck',
     'slider/bootstrap-slider'
-], function(Backbone, _, i18n, template) {
+], function(Backbone, _, vent, i18n, template) {
 
     'use strict';
 
@@ -48,25 +49,28 @@ define([
         },
 
         update: function() {
-            this.$topicMap.topicmap('renderData', {
-                name: 'topic map',
-                size: 1.0,
-                sentiment: null,
-                children: this.entityCollection.chain()
-                    .filter(function(entity) {
-                        return entity.get(this.clusteringMode) >= this.relevance.value;
-                    }, this)
-                    .first(this.topicCount)
-                    .map(function(entity) {
-                        return {
-                            name: entity.get('text'),
-                            size: entity.get(this.clusteringMode),
-                            sentiment: null,
-                            children: null
-                        };
-                    }, this)
-                    .value()
-            }, false);
+            // If the view is not visible, update will be called again if the user switches to this tab
+            if (this.$el.is(':visible')) {
+                this.$topicMap.topicmap('renderData', {
+                    name: 'topic map',
+                    size: 1.0,
+                    sentiment: null,
+                    children: this.entityCollection.chain()
+                        .filter(function(entity) {
+                            return entity.get(this.clusteringMode) >= this.relevance.value;
+                        }, this)
+                        .first(this.topicCount)
+                        .map(function(entity) {
+                            return {
+                                name: entity.get('text'),
+                                size: entity.get(this.clusteringMode),
+                                sentiment: null,
+                                children: null
+                            };
+                        }, this)
+                        .value()
+                }, false);
+            }
         },
 
         renderRelevanceSlider: function() {
@@ -128,6 +132,10 @@ define([
 
             this.listenTo(this.entityCollection, 'reset', function() {
                 this.renderRelevanceSlider();
+                this.update();
+            });
+
+            this.listenTo(vent, 'vent:resize', function() {
                 this.update();
             });
         }
