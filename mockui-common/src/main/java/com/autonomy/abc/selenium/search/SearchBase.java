@@ -28,13 +28,18 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		IndexFilter.Filterable,
 		DatePickerFilter.Filterable,
 		StringDateFilter.Filterable,
-		ParametricFilter.Filterable {
+		ParametricFilter.Filterable,
+		QueryResultsPage {
 
 	private static final SimpleDateFormat INPUT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	public static final SimpleDateFormat RESULT_DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
 
 	public SearchBase(final WebElement element, final WebDriver driver) {
 		super(element, driver);
+	}
+
+	public WebElement errorContainer() {
+		return findElement(By.className("search-information"));
 	}
 
 	/* search results */

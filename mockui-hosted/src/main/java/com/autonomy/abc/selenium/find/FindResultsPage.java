@@ -46,6 +46,11 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
     }
 
+    @Override
+    public WebElement errorContainer() {
+        return findElement(By.cssSelector(".error.well"));
+    }
+
     public List<FindSearchResult> promotions() {
         List<FindSearchResult> results = new ArrayList<>();
         for(WebElement result : promotionsDiv().findElements(By.className("promoted-document"))) {
