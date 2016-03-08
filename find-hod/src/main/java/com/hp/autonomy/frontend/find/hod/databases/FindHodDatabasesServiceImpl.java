@@ -16,7 +16,6 @@ import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
 import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;

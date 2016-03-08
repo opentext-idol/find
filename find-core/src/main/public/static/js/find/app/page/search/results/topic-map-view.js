@@ -10,14 +10,18 @@ define([
 
     'use strict';
 
+    var clusteringModes = [
+        {value: 'occurrences', text: i18n['search.topicMap.occurrences']},
+        {value: 'docsWithPhrase', text: i18n['search.topicMap.documents']}
+    ];
+
     return Backbone.View.extend({
         template: _.template(template),
-        clusteringMode: 'occurrences',
-        topicAmount: 10,
+        topicCount: 10,
+        clusteringMode: clusteringModes[0].value,
 
         initialize: function(options) {
             this.entityCollection = options.entityCollection;
-            this.queryTextModel = options.queryTextModel;
             this.clickHandler = options.clickHandler;
 
             this.relevance = {
@@ -29,20 +33,20 @@ define([
 
         update: function() {
             this.$topicMap.topicmap('renderData', {
-                "name": "topic map",
-                "size": 1.0,
-                "sentiment": null,
-                "children": this.entityCollection.chain()
+                name: 'topic map',
+                size: 1.0,
+                sentiment: null,
+                children: this.entityCollection.chain()
                     .filter(function(entity) {
                         return entity.get(this.clusteringMode) >= this.relevance.value;
                     }, this)
-                    .first(this.topicAmount)
+                    .first(this.topicCount)
                     .map(function(entity) {
                         return {
-                            "name": entity.get('text'),
-                            "size": entity.get(this.clusteringMode),
-                            "sentiment": null,
-                            "children": null
+                            name: entity.get('text'),
+                            size: entity.get(this.clusteringMode),
+                            sentiment: null,
+                            children: null
                         };
                     }, this)
                     .value()
@@ -74,14 +78,19 @@ define([
             this.$amountSlider.slider({
                 min: 1,
                 max: max,
-                value: Math.min(this.topicAmount, max)
+                value: Math.min(this.topicCount, max)
             });
 
             this.$amountSlider.slider('refresh');
         },
 
         render: function() {
-            this.$el.html(this.template({i18n: i18n}));
+            this.$el.html(this.template({
+                i18n: i18n,
+                clusteringModes: clusteringModes,
+                selectedMode: this.clusteringMode,
+                radioName: _.uniqueId('topic-map-radio')
+            }));
 
             this.$topicMap = this.$('.topic-map');
 
@@ -106,7 +115,7 @@ define([
             this.renderRelevanceSlider();
 
             this.$amountSlider.on('change', _.bind(function(event) {
-                this.topicAmount = event.value.newValue;
+                this.topicCount = event.value.newValue;
                 this.update();
             }, this));
 

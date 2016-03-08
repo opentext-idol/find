@@ -56,7 +56,7 @@ define([
             // does not work after JS concatenation
             var icon = leaflet.icon(_.defaults({
                 iconUrl: '../static-' + configuration().commit + '/bower_components/leaflet/dist/images/marker-icon.png'
-            }, leaflet.Icon.Default.options));
+            }, leaflet.Icon.Default.prototype.options));
 
             leaflet
                 .marker([latitude, longitude], {icon: icon})

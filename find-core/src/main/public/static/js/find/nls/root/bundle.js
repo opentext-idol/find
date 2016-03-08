@@ -170,6 +170,7 @@ define([
         'search.sunburst.title': 'Parametric Distribution',
         'search.sunburst.firstParametric': 'Select a field',
         'search.sunburst.secondParametric': 'Select a second field',
+        'search.sunburst.noValue': 'No {0} value',
         'search.savedSearches': 'Searches',
         'search.savedSearches.confirm.deleteMessage': 'Are you sure you want to remove {0} saved search?',
         'search.savedSearches.confirm.deleteMessage.title': 'Delete saved search',
