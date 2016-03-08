@@ -2,12 +2,13 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/vent',
     'find/app/util/string-blank',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/input-view.html',
     'typeahead',
     'bootstrap'
-], function (Backbone, $, _, stringBlank, i18n, template) {
+], function(Backbone, $, _, vent, stringBlank, i18n, template) {
 
     var html = _.template(template)({i18n: i18n});
     var relatedConceptsTemplate = _.template('<span class="selected-related-concept" data-id="<%-concept%>" data-toggle="tooltip" title="<%-concept%>">' +
@@ -55,9 +56,9 @@ define([
             this.listenTo(this.model, 'change:inputText', this.updateText);
             this.listenTo(this.model, 'change:relatedConcepts', this.updateRelatedConcepts);
 
-            _.bindAll(this, 'updateScrollingButtons');
+            this.listenTo(vent, 'vent:resize', this.updateScrollingButtons);
 
-            $(window).on('resize', this.updateScrollingButtons);
+            _.bindAll(this, 'updateScrollingButtons');
         },
 
         render: function () {
@@ -168,11 +169,6 @@ define([
             var newConcepts = _.without(this.model.get('relatedConcepts'), id);
 
             this.model.set('relatedConcepts', newConcepts);
-        },
-
-        remove: function() {
-            $(window).off('resize', this.updateScrollingButtons);
-            Backbone.View.prototype.remove.apply(this, arguments);
         }
     });
 
