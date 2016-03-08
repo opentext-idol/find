@@ -3,7 +3,7 @@ package com.autonomy.abc.query;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.autonomy.abc.selenium.query.QueryService;
-import org.hamcrest.Matcher;
+import org.openqa.selenium.WebElement;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -11,8 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.StringMatchers.stringContainingAnyOf;
+import static org.hamcrest.Matchers.not;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class QueryTestHelper<T extends QueryResultsPage> {
     private final static List<String> HIDDEN_BOOLEANS = Arrays.asList(
@@ -56,19 +59,18 @@ public class QueryTestHelper<T extends QueryResultsPage> {
         service = queryService;
     }
 
-    public void hiddenQueryOperatorText(final Matcher<? super String> errorMatcher) {
+    public void hiddenQueryOperatorText() {
         for (Result result : resultsFor(HIDDEN_BOOLEANS)) {
-            assertThat("able to search for " + result.term, result.getText(), errorMatcher);
-
+            assertThat("able to search for " + result.term, result.errorContainer(), not(displayed()));
         }
     }
 
-    public void mismatchedBracketQueryText(final Serializable invalidator) {
+    public void mismatchedBracketQueryText(final Serializable expectedError) {
         for (Result result : resultsFor(MISMATCHED_BRACKETS)) {
-            assertThat("query term " + result.term + " is invalid",
-                    result.getText(), containsString(invalidator));
-            assertThat("query term " + result.term + " has sensible error message",
-                    result.getText(), stringContainingAnyOf(Arrays.asList(
+            assertThat("query term '" + result.term + "' is invalid",
+                    result.getErrorMessage(), containsString(expectedError));
+            assertThat("query term '" + result.term + "' has sensible error message",
+                    result.getErrorMessage(), stringContainingAnyOf(Arrays.asList(
                             Errors.Search.INVALID,
                             Errors.Search.OPERATORS,
                             Errors.Search.STOPWORDS
@@ -77,11 +79,11 @@ public class QueryTestHelper<T extends QueryResultsPage> {
         }
     }
 
-    public void mismatchedQuoteQueryText(final Serializable invalidator) {
+    public void mismatchedQuoteQueryText(final Serializable expectedError) {
         // TODO: cover "", "\"\"" and " " in whitespace test
         for (Result result : resultsFor(MISMATCHED_QUOTES)) {
-            assertThat(result.getText(), containsString(Errors.Search.QUOTES));
-            assertThat("query term " + result.term + " has sensible error message", result.getText(), containsString(invalidator));
+            assertThat("query term '" + result.term + "' produces an error", result.errorContainer(), displayed());
+            verifyThat("query term '" + result.term + "' has sensible error message", result.getErrorMessage(), containsString(expectedError));
         }
     }
 
@@ -120,11 +122,15 @@ public class QueryTestHelper<T extends QueryResultsPage> {
             this.page = page;
         }
 
-        String getText() {
+        String getErrorMessage() {
             if (text == null) {
-                text = page.getText();
+                text = errorContainer().getText();
             }
             return text;
+        }
+
+        WebElement errorContainer() {
+            return page.errorContainer();
         }
     }
 }

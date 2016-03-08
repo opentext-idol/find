@@ -39,7 +39,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public WebElement errorContainer() {
-		return findElement(By.className("search-information"));
+		return findElement(By.cssSelector(".search-results-view .search-information"));
 	}
 
 	/* search results */

@@ -456,7 +456,7 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-        new QueryTestHelper<>(findService).hiddenQueryOperatorText(not(containsString(Errors.Find.GENERAL)));
+        new QueryTestHelper<>(findService).hiddenQueryOperatorText();
     }
 
     @Test

@@ -639,9 +639,8 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-		Matcher<String> expectedBehaviour = not(stringContainingAnyOf(Errors.Search.values()));
 		new QueryTestHelper<>(searchService)
-				.hiddenQueryOperatorText(expectedBehaviour);
+				.hiddenQueryOperatorText();
 	}
 
 	@Test
