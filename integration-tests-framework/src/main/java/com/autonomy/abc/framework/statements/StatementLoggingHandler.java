@@ -17,7 +17,15 @@ public class StatementLoggingHandler implements StatementHandler {
         if (testStatement.passed()) {
             logger.info(testStatement.toString());
         } else {
-            logger.error(testStatement.toString());
+            Throwable e = new AssertionError();
+            StackTraceElement rootCause = null;
+            for (StackTraceElement el : e.getStackTrace()) {
+                if (!el.getClassName().contains("framework")) {
+                    rootCause = el;
+                    break;
+                }
+            }
+            logger.error(testStatement.toString() + "\n\tat " + rootCause + "\n");
         }
     }
 }

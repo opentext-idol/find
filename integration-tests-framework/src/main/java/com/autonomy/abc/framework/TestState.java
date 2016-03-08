@@ -62,7 +62,7 @@ public class TestState {
 
     public void throwIfFailed() throws AssertionError {
         if (assertionErrors.size() > 0) {
-            throw new AssertionError(assertionErrors.size() + " verifications failed");
+            throw new AssertionError(assertionErrors.size() + " of " + statementCount + " verifications failed");
         }
     }
 
