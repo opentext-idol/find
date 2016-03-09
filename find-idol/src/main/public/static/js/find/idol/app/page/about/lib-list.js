@@ -25,12 +25,6 @@ define(function() {
             license: 'MIT',
             edited: false
         }, {
-            name: 'Colorbox',
-            url: 'http://www.jacklmoore.com/colorbox/',
-            version: '1.5.10',
-            license: 'MIT',
-            edited: false
-        }, {
             name: 'DataTables',
             url: 'http://www.datatables.net/download/',
             version: '1.10.2',

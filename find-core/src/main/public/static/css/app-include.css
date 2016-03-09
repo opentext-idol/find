@@ -548,6 +548,10 @@ input.find-input {
     cursor: pointer;
 }
 
+.preview-mode .popover {
+    cursor: default;
+}
+
 .document-reference {
     display: inline-block;
     color: #aeaeae;
@@ -802,33 +806,6 @@ input.find-input {
     left: 225px;
     top: 165px
 }
-
-/* fancy colourbox buttons */
-.btn-colorbox, .btn-colorbox:focus {
-    color: #ffffff;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-    background-color: #929292;
-    background-image: linear-gradient(to bottom, #898D90, #707476);
-    background-repeat: repeat-x;
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff46aeea', endColorstr='#ff2fa4e7', GradientType=0);
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-}
-
-.btn-colorbox:active {
-    background-color: #707476;
-    background-image: none;
-    outline: 0;
-    -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
-    -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
-}
-
-.btn-colorbox:focus {
-    background-color: #707476;
-    outline: 0 none;
-}
-/* end of btn override from the bootstrap-custom */
 
 .result-summary {
     text-align: justify;

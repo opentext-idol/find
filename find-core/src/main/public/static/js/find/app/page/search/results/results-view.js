@@ -2,6 +2,7 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/vent',
     'find/app/model/document-model',
     'find/app/model/promotions-collection',
     'find/app/model/similar-documents-collection',
@@ -15,17 +16,15 @@ define([
     'text!find/templates/app/page/search/popover-message.html',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/search/results/results-container.html',
-    'text!find/templates/app/page/colorbox-controls.html',
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/view/media-player.html',
     'text!find/templates/app/page/view/view-document.html',
     'moment',
     'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes',
-    'colorbox'
-], function(Backbone, $, _, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, SortView, ResultsNumberView, popover,
+    'i18n!find/nls/indexes'
+], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, SortView, ResultsNumberView, popover,
             viewClient, documentMimeTypes, addLinksToSummary, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
-            colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate,
+            loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate,
             moment, i18n, i18n_indexes) {
 
     var Mode = {
@@ -64,14 +63,7 @@ define([
         return matchedType.className;
     };
 
-    var $window = $(window);
-    var SIZE = '90%';
-
     var SCROLL_INCREMENT = 30;
-
-    var onResize = function() {
-        $.colorbox.resize({width: SIZE, height: SIZE});
-    };
 
     return Backbone.View.extend({
         //to be overridden
@@ -274,66 +266,9 @@ define([
             // Do not bind here since the same function must be passed to the off method
             $('.main-content').scroll(this.checkScroll);
 
-            /*colorbox fancy button override*/
-            $('#colorbox').append(_.template(colorboxControlsTemplate));
-            $('.nextBtn').on('click', this.handleNextResult);
-            $('.prevBtn').on('click', this.handlePrevResult);
-
             if (this.documentsCollection.isEmpty()) {
                 this.refreshResults();
             }
-        },
-
-        handlePrevResult: function() {
-            $.colorbox.prev();
-        },
-
-        handleNextResult: function() {
-            $.colorbox.next();
-        },
-
-        colorboxArguments: function(options) {
-            var args = {
-                current: '{current} of {total}',
-                height: '70%',
-                iframe: false,
-                rel: 'results',
-                width: '70%',
-                onClosed: function() {
-                    $window.off('resize', onResize);
-                },
-                onComplete: _.bind(function() {
-                    $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
-
-                    var $viewServerPage = $('.view-server-page');
-
-                    $viewServerPage.on('load', function() {
-                        $('.view-server-loading-indicator').addClass('hidden');
-                        $('.view-server-page').removeClass('hidden');
-                    });
-
-                    // Adding the source attribute after the colorbox has loaded prevents the iframe from loading
-                    // a very quick response (such as an error) before the listener is attached
-                    $viewServerPage.attr("src", options.href);
-
-                    $window.resize(onResize);
-                }, this)
-            };
-
-            if (options.model.isMedia()) {
-                args.html = this.mediaPlayerTemplate({
-                    i18n: i18n,
-                    model: options.model
-                });
-            } else {
-                args.html = this.viewDocumentTemplate({
-                    src: options.href,
-                    i18n: i18n,
-                    model: options.model
-                });
-            }
-
-            return args;
         },
 
         formatResult: function(model, isPromotion) {
@@ -367,26 +302,6 @@ define([
                 this.$('.main-results-content .results').append($newResult);
             }
 
-            var colorboxArgs = this.colorboxArguments({model: model, href: href});
-            var $previewTrigger = $newResult.find('.preview-documents-trigger');
-            var $resultHeader = $newResult.find('.result-header');
-
-            $previewTrigger.colorbox(colorboxArgs);
-
-            // web documents should open the original document in a new tab
-            if (model.isWebType()) {
-                $resultHeader.attr({
-                    href: reference,
-                    target: "_blank"
-                });
-            } else {
-                $resultHeader.click(function(e) {
-                    e.preventDefault();
-
-                    $previewTrigger.colorbox(_.extend({open: true}, colorboxArgs));
-                });
-            }
-
             var $similarDocumentsTrigger = $newResult.find('.similar-documents-trigger');
             popover($similarDocumentsTrigger, 'focus', this.handlePopover);
 
@@ -414,19 +329,21 @@ define([
                     } else {
                         $content.html('<ul class="list-unstyled"></ul>');
                         _.each(collection.models, function(model) {
-                            var listItem = $(this.popoverTemplate({
+                            var $listItem = $(this.popoverTemplate({
                                 title: model.get('title'),
                                 summary: model.get('summary').trim().substring(0, 100) + '...'
                             }));
-                            var reference = model.get('reference');
-                            var href;
-                            if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
-                                href = viewClient.getStaticContentPromotionHref(reference);
-                            } else {
-                                href = viewClient.getHref(reference, model);
-                            }
-                            $(listItem).find('a').colorbox(this.colorboxArguments({model: model, href: href}));
-                            $content.find('ul').append(listItem);
+
+                            $listItem.find('a.results-popover-title').click(function() {
+                                vent.navigateToDetailRoute(model);
+                            });
+
+                            // Stop preview from triggering when clicking popover
+                            $listItem.click(function(e) {
+                                e.stopPropagation();
+                            });
+
+                            $content.find('ul').append($listItem);
                         }, this);
                     }
                 }, this)
