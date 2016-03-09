@@ -3,6 +3,7 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.query.QueryTestHelper;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Frame;
@@ -23,9 +24,7 @@ import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,9 +49,7 @@ import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
-import static com.autonomy.abc.matchers.StringMatchers.stringContainingAnyOf;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -338,17 +335,6 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	@KnownBug({"IOD-8454", "CCUK-3741"})
 	public void testSearchQuotationMarks() {
-        List<String> emptyPhrases = Arrays.asList("\"\"","\" \"");
-
-		Serializable emptyError = Errors.Search.NO_TEXT;
-		// HOD should return better errors
-		if(getConfig().getType().equals(ApplicationType.HOSTED)){
-			emptyError = Errors.Search.HOD;
-		}
-		for (String empty : emptyPhrases) {
-			search(empty);
-			verifyThat(searchPage, containsText(emptyError));
-		}
 		new QueryTestHelper<>(searchService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
 	}
 
@@ -597,45 +583,35 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testInvalidQueryTextNoKeywordsLinksDisplayed() {
-		//TODO: map error messages to application type
-
-        List<String> boolOperators = Arrays.asList("OR", "WHEN", "SENTENCE", "DNEAR");
-        List<String> stopWords = Arrays.asList("a", "the", "of", "SOUNDEX"); //According to IDOL team SOUNDEX isn't considered a boolean operator without brackets
-		searchPage.selectLanguage(Language.ENGLISH);
-
+	@RelatedTo("CCUK-3747")
+	public void testQueriesWithNoTerms() {
+		Serializable booleanError;
+		Serializable emptyError;
         if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-            List<String> allTerms = ListUtils.union(boolOperators, stopWords);
-
-            for (final String searchTerm : allTerms) {
-				search(searchTerm);
-                assertThat(searchPage.errorContainer().getText(), containsString(Errors.Search.HOD));
-				assertThat(searchPage.errorContainer().getText(), containsString(Errors.Search.INVALID));
-				assertThat(searchPage.getText(), containsString(Errors.Keywords.NO_TERMS));
-            }
-
-        } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            for (final String searchTerm : boolOperators) {
-                search(searchTerm);
-                assertThat(searchPage.getText(), containsString(Errors.Search.UNKNOWN));
-                assertThat(searchPage.getText(), containsString(Errors.Search.ANALYSIS));
-                assertThat(searchPage.getText(), containsString(Errors.Search.OPENING_BOOL));
-            }
-            for (final String searchTerm : stopWords) {
-                search(searchTerm);
-                assertThat(searchPage.getText(), containsString(Errors.Search.UNKNOWN));
-                assertThat(searchPage.getText(), containsString(Errors.Search.ANALYSIS));
-                assertThat(searchPage.getText(), containsString(Errors.Search.NO_TEXT));
-            }
+			booleanError = Errors.Search.INVALID;
+			emptyError = Errors.Search.INVALID;
         } else {
-            fail("Application Type not recognised");
-        }
+			booleanError = Errors.Search.OPENING_BOOL;
+			emptyError = Errors.Search.NO_TEXT;
+		}
+
+		new QueryTestHelper<>(searchService).booleanOperatorQueryText(booleanError);
+		new QueryTestHelper<>(searchService).emptyQueryText(emptyError);
+	}
+
+	@Test
+	public void testQueryAnalysisForBadQueries() {
+		for (final String term : QueryTestHelper.NO_TERMS) {
+			search(term);
+			String error = searchPage.getKeywordError();
+			assertThat(error, not(isEmptyOrNullString()));
+			assertThat(error, containsString(Errors.Keywords.NO_TERMS));
+		}
 	}
 
 	@Test
 	public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-		new QueryTestHelper<>(searchService)
-				.hiddenQueryOperatorText();
+		new QueryTestHelper<>(searchService).hiddenQueryOperatorText();
 	}
 
 	@Test

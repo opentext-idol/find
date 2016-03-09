@@ -1,6 +1,9 @@
 package com.autonomy.abc.query;
 
 import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.autonomy.abc.selenium.query.QueryService;
 import org.openqa.selenium.WebElement;
@@ -18,6 +21,16 @@ import static org.hamcrest.Matchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class QueryTestHelper<T extends QueryResultsPage> {
+    public final static List<String> NO_TERMS = Arrays.asList(
+            "a",
+            "the",
+            "of",
+            "\"\"",
+            "\"       \"",
+            /* According to IDOL team SOUNDEX isn't considered a boolean
+               operator without brackets */
+            "SOUNDEX"
+    );
     private final static List<String> HIDDEN_BOOLEANS = Arrays.asList(
             "NOTed",
             "ANDREW",
@@ -52,6 +65,12 @@ public class QueryTestHelper<T extends QueryResultsPage> {
             "\" word",
             "\" wo\"rd\""
     );
+    private final static List<String> OPERATORS = Arrays.asList(
+            "OR",
+            "WHEN",
+            "SENTENCE",
+            "DNEAR"
+    );
 
     private final QueryService<T> service;
 
@@ -80,8 +99,19 @@ public class QueryTestHelper<T extends QueryResultsPage> {
     }
 
     public void mismatchedQuoteQueryText(final Serializable expectedError) {
-        // TODO: cover "", "\"\"" and " " in whitespace test
-        for (Result result : resultsFor(MISMATCHED_QUOTES)) {
+        checkQueries(MISMATCHED_QUOTES, expectedError);
+    }
+
+    public void booleanOperatorQueryText(final Serializable expectedError) {
+        checkQueries(OPERATORS, expectedError);
+    }
+
+    public void emptyQueryText(final Serializable expectedError) {
+        checkQueries(NO_TERMS, expectedError);
+    }
+
+    private void checkQueries(List<String> terms, final Serializable expectedError) {
+        for (Result result : resultsFor(terms)) {
             assertThat("query term '" + result.term + "' produces an error", result.errorContainer(), displayed());
             verifyThat("query term '" + result.term + "' has sensible error message", result.getErrorMessage(), containsString(expectedError));
         }
@@ -108,7 +138,9 @@ public class QueryTestHelper<T extends QueryResultsPage> {
     }
 
     private Result resultFor(String queryTerm) {
-        T page = service.search(queryTerm);
+        Query query = new Query(queryTerm)
+                .withFilter(new LanguageFilter(Language.ENGLISH));
+        T page = service.search(query);
         return new Result(queryTerm, page);
     }
     

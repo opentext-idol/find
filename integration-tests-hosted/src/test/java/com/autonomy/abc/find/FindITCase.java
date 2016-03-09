@@ -43,8 +43,8 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
@@ -435,21 +435,10 @@ public class FindITCase extends FindTestBase {
         assertThat(notTermOne, containsInAnyOrder(t2NotT1.toArray()));
     }
 
-    //DUPLICATE SEARCH TEST (almost)
     @Test
     public void testCorrectErrorMessageDisplayed() {
-        List<String> boolOperators = Arrays.asList("OR", "WHEN", "SENTENCE", "DNEAR");
-        List<String> stopWords = Arrays.asList("a", "the", "of", "SOUNDEX"); //According to IDOL team SOUNDEX isn't considered a boolean operator without brackets
-
-        for (final String searchTerm : boolOperators) {
-            findService.search(searchTerm);
-            verifyThat("Correct error message for searchterm: " + searchTerm, results.errorContainer().getText(), containsString(Errors.Search.OPERATORS));
-        }
-
-        for (final String searchTerm : stopWords) {
-            findService.search(searchTerm);
-            verifyThat("Correct error message for searchterm: " + searchTerm, results.errorContainer().getText(), containsString(Errors.Search.STOPWORDS));
-        }
+        new QueryTestHelper<>(findService).booleanOperatorQueryText(Errors.Search.OPERATORS);
+        new QueryTestHelper<>(findService).emptyQueryText(Errors.Search.STOPWORDS);
     }
 
     @Test
