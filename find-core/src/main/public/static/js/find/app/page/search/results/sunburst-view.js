@@ -5,16 +5,13 @@ define([
     'jquery',
     'i18n!find/nls/bundle',
     'sunburst/js/sunburst',
+    'find/app/page/search/results/field-selection-view',
     'text!find/templates/app/page/search/results/sunburst/sunburst-view.html',
     'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
-    'text!find/templates/app/page/loading-spinner.html',
-    'chosen'
-], function(Backbone, DependentParametricCollection, _, $, i18n, Sunburst, template, labelTemplate, loadingSpinnerTemplate) {
+    'text!find/templates/app/page/loading-spinner.html'
+], function(Backbone, DependentParametricCollection, _, $, i18n, Sunburst, FieldSelectionView, template, labelTemplate, loadingSpinnerTemplate) {
 
     'use strict';
-
-    var emptyOptionHtml = '<option value=""></option>';
-    var optionTemplate = _.template('<option value="<%-field%>"><%-field%></option>');
 
     var SUNBURST_NAME_ATTR = 'text';
     var SUNBURST_SIZE_ATTR = 'count';
@@ -78,6 +75,16 @@ define([
             this.queryModel = options.queryModel;
             this.parametricCollection = options.parametricCollection;
             this.dependentParametricCollection = new DependentParametricCollection();
+
+            this.firstFieldModel = new Backbone.Model();
+            this.secondFieldModel = new Backbone.Model();
+
+            this.listenTo(this.firstFieldModel, 'change:field', _.bind(this.firstPass, this));
+
+            this.listenTo(this.secondFieldModel, 'change:field', _.bind(function() {
+                this.$sunburst.addClass('hide');
+                this.fetchDependentFields(this.firstFieldModel.get('field'), this.secondFieldModel.get('field'));
+            }, this));
         },
 
         fetchDependentFields: function(first, second) {
@@ -98,12 +105,37 @@ define([
             });
         },
 
+        firstDropdown: function() {
+            if(this.firstChosen) {
+                this.firstChosen.remove();
+            }
+
+            if (this.secondChosen) {
+                this.secondChosen.remove();
+            }
+
+            var fields = this.parametricCollection.pluck('name').sort();
+
+            this.firstFieldModel.set('field', fields[0]);
+            this.secondFieldModel.set('field', '');
+
+            this.firstChosen = new FieldSelectionView({
+                model: this.firstFieldModel,
+                name: 'first',
+                fields: fields,
+                initialSelection: true
+            });
+
+            this.$parametricSelections.prepend(this.firstChosen.$el);
+            this.firstChosen.render();
+        },
+
         update: function() {
             this.$sunburst.empty();
 
             if (!this.dependentParametricCollection.isEmpty()) {
-                drawSunburst(this.$sunburst, this.dependentParametricCollection.toJSON(), this.$secondChosen.val());
-                
+                drawSunburst(this.$sunburst, this.dependentParametricCollection.toJSON(), this.secondFieldModel.get('field'));
+
                 this.$sunburst.removeClass('hide');
                 this.toggleError('');
             }
@@ -111,29 +143,7 @@ define([
             this.toggleLoadingSpinner(false);
         },
 
-        emptyDropdown: function($dropdown) {
-            $dropdown
-                .empty()
-                .append($dropdown.hasClass('first-parametric') ? '' : emptyOptionHtml)
-                .trigger('chosen:updated');
-        },
-
-        populateDropDown: function($dropdown, fields) {
-            this.emptyDropdown($dropdown);
-
-            var html = _.map(fields.sort(), function(field) {
-                return optionTemplate({field: field});
-            });
-
-            $dropdown
-                .append(html)
-                .chosen({width: '20%'})
-                .trigger('chosen:updated');
-        },
-
         resetView: function() {
-            this.emptyDropdown(this.$firstChosen);
-            this.emptyDropdown(this.$secondChosen);
             this.$sunburst.empty().addClass('hide');
 
             this.toggleLoadingSpinner(true);
@@ -143,12 +153,22 @@ define([
         firstPass: function() {
             this.$sunburst.addClass('hide');
 
-            var val = this.$firstChosen.val();
-            this.fetchDependentFields(val);
+            this.fetchDependentFields(this.firstFieldModel.get('field'));
 
-            this.populateDropDown(this.$secondChosen, _.without(this.parametricCollection.pluck('name'), val));
+            if(this.secondChosen) {
+                this.secondChosen.remove();
+            }
 
-            this.$secondChosen.removeClass('hide');
+            this.secondFieldModel.set('field', '');
+
+            this.secondChosen = new FieldSelectionView({
+                model: this.secondFieldModel,
+                name: 'second',
+                fields: _.without(this.parametricCollection.pluck('name'), this.firstFieldModel.get('field')).sort()
+            });
+
+            this.$parametricSelections.append(this.secondChosen.$el);
+            this.secondChosen.render();
         },
 
         toggleError: function(message) {
@@ -172,24 +192,17 @@ define([
             this.$error = this.$('.sunburst-view-error');
             this.$sunburst = this.$('.sunburst');
             this.$sunburst.addClass('hide');
-            this.$firstChosen = this.$('.first-parametric');
-            this.$secondChosen = this.$('.second-parametric');
 
-            this.populateDropDown(this.$firstChosen, this.parametricCollection.pluck('name'));
-            this.firstPass();
+            this.$parametricSelections = this.$('.parametric-selections');
 
-            this.$firstChosen.change(_.bind(this.firstPass, this));
-
-            this.$secondChosen.change(_.bind(function() {
-                this.$sunburst.addClass('hide');
-                this.fetchDependentFields(this.$firstChosen.val(), this.$secondChosen.val());
-            }, this));
+            if(!this.parametricCollection.isEmpty()) {
+                this.firstDropdown();
+            }
 
             this.listenTo(this.parametricCollection, 'request', this.resetView);
 
             this.listenTo(this.parametricCollection, 'sync', function() {
-                this.populateDropDown(this.$firstChosen, this.parametricCollection.pluck('name'));
-                this.firstPass();
+                this.firstDropdown();
 
                 if (this.parametricCollection.isEmpty()) {
                     this.toggleLoadingSpinner(false);
