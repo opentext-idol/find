@@ -14,10 +14,12 @@ import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.WebApplicationInitializer;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class, SessionAutoConfiguration.class, ErrorMvcAutoConfiguration.class})
 @Import(HavenSearchIdolConfiguration.class)
+@PropertySource("classpath:/custom-application.properties")
 public class IdolFindApplication extends SpringBootServletInitializer implements WebApplicationInitializer {
     public static void main(final String[] args) {
         SpringApplication.run(IdolFindApplication.class, args);
