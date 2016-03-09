@@ -37,7 +37,7 @@
     "typeAheadMode": "Index",
     "expandQuery": true,
     "blacklist": "ISO_BLACKLIST",
-    "enabled": true
+    "enabled": false
   },
   "view": {
     "protocol": "HTTP",
