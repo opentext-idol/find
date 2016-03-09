@@ -119,7 +119,12 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.xpath(".//*[contains(text(), 'Promote items')]"));
 	}
 
-	public void promotionsBucketClose() {
+	public void openPromotionsBucket() {
+		promoteTheseDocumentsButton().click();
+		Waits.loadOrFadeWait();
+	}
+
+	public void closePromotionsBucket() {
 		promotionsBucket().findElement(By.className("close-link")).click();
 		Waits.loadOrFadeWait();
 	}

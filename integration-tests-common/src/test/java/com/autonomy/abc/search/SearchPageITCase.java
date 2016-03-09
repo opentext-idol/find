@@ -84,6 +84,28 @@ public class SearchPageITCase extends ABCTestBase {
 		}
 	}
 
+	@Test
+	public void testPromoteButton(){
+		searchPage.openPromotionsBucket();
+		checkBucketEmpty();
+
+		searchPage.searchResultCheckbox(1).click();
+		assertThat(searchPage.promoteTheseItemsButton(), not(disabled()));
+		assertThat(searchPage.promotedItemsCount(), is(1));
+
+		searchPage.closePromotionsBucket();
+		assertThat(searchPage.promotionsBucket(), not(displayed()));
+
+		searchPage.openPromotionsBucket();
+		checkBucketEmpty();
+	}
+
+	private void checkBucketEmpty() {
+		assertThat(searchPage.promotionsBucket(), displayed());
+		assertThat(searchPage.promoteTheseItemsButton(), disabled());
+		assertThat(searchPage.promotedItemsCount(), is(0));
+	}
+
     @Test
 	public void testUnmodifiedResultsToggleButton(){
         assertThat(searchPage.modifiedResults(), checked());
@@ -96,28 +118,6 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.modifiedResults().check();
         assertThat(searchPage.modifiedResults(), checked());
         assertThat(getWindow(), urlContains("/modified"));
-	}
-
-	@Test
-	public void testPromoteButton(){
-		searchPage.promoteTheseDocumentsButton().click();
-		Waits.loadOrFadeWait();
-		assertThat("Promoted items bucket has not appeared", searchPage.promotionsBucket().isDisplayed());
-		assertThat("Promote these items button should not be enabled", ElementUtil.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
-		assertThat("Promoted items count should equal 0", searchPage.promotedItemsCount(), is(0));
-
-		searchPage.searchResultCheckbox(1).click();
-		assertThat("Promote these items button should be enabled", !ElementUtil.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
-		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(1));
-
-		searchPage.promotionsBucketClose();
-		assertThat("Promoted items bucket has not appeared", searchPage.getText(), not(containsString("Select Items to Promote")));
-
-		searchPage.promoteTheseDocumentsButton().click();
-		Waits.loadOrFadeWait();
-		assertThat("Promoted items bucket has not appeared", searchPage.promotionsBucket().isDisplayed());
-		assertThat("Promote these items button should not be enabled", ElementUtil.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
-		assertThat("Promoted items count should equal 0", searchPage.promotedItemsCount(), is(0));
 	}
 
 	@Test
@@ -137,7 +137,7 @@ public class SearchPageITCase extends ABCTestBase {
 			assertThat("Promoted items count not correct", searchPage.promotedItemsCount(), is(j - 1));
 		}
 
-		searchPage.promotionsBucketClose();
+		searchPage.closePromotionsBucket();
 	}
 
 	@Test

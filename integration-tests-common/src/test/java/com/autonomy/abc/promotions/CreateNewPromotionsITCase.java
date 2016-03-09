@@ -351,7 +351,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
         searchPage.emptyBucket();
-        searchPage.promotionsBucketClose();
+        searchPage.closePromotionsBucket();
 
         try {
             for (final Promotion promotion : promotions) {
