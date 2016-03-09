@@ -93,7 +93,11 @@ define([
 
                     this.$('.view-server-loading-indicator').addClass('hidden');
                     this.$iframe.removeClass('hidden');
-                    this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height())
+                    this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height());
+
+                    // View server adds script tags to rendered HTML documents, which are blocked by the application
+                    // This replicates their functionality
+                    this.$iframe.contents().find('.InvisibleAbsolute').hide();
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition

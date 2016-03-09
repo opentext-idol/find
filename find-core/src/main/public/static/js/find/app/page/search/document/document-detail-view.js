@@ -102,6 +102,10 @@ define([
 
                     this.$('.view-server-loading-indicator').addClass('hidden');
                     this.$iframe.removeClass('hidden');
+
+                    // View server adds script tags to rendered PDF documents, which are blocked by the application
+                    // This replicates their functionality
+                    this.$iframe.contents().find('.InvisibleAbsolute').hide();
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition
