@@ -438,19 +438,17 @@ public class FindITCase extends FindTestBase {
     //DUPLICATE SEARCH TEST (almost)
     @Test
     public void testCorrectErrorMessageDisplayed() {
-        //TODO: map error messages to application type
-
         List<String> boolOperators = Arrays.asList("OR", "WHEN", "SENTENCE", "DNEAR");
         List<String> stopWords = Arrays.asList("a", "the", "of", "SOUNDEX"); //According to IDOL team SOUNDEX isn't considered a boolean operator without brackets
 
         for (final String searchTerm : boolOperators) {
             findService.search(searchTerm);
-            verifyThat("Correct error message for searchterm: " + searchTerm, findPage.getText(), containsString(Errors.Search.OPERATORS));
+            verifyThat("Correct error message for searchterm: " + searchTerm, results.errorContainer().getText(), containsString(Errors.Search.OPERATORS));
         }
 
         for (final String searchTerm : stopWords) {
             findService.search(searchTerm);
-            verifyThat("Correct error message for searchterm: " + searchTerm, findPage.getText(), containsString(Errors.Search.STOPWORDS));
+            verifyThat("Correct error message for searchterm: " + searchTerm, results.errorContainer().getText(), containsString(Errors.Search.STOPWORDS));
         }
     }
 

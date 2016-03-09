@@ -609,21 +609,23 @@ public class SearchPageITCase extends ABCTestBase {
 
             for (final String searchTerm : allTerms) {
 				search(searchTerm);
-                assertThat("Correct error message not present for searchterm: " + searchTerm, searchPage.getText(), containsString(Errors.Search.HOD));
+                assertThat(searchPage.errorContainer().getText(), containsString(Errors.Search.HOD));
+				assertThat(searchPage.errorContainer().getText(), containsString(Errors.Search.INVALID));
+				assertThat(searchPage.getText(), containsString(Errors.Keywords.NO_TERMS));
             }
 
         } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
             for (final String searchTerm : boolOperators) {
                 search(searchTerm);
-                assertThat("Correct error message not present for searchterm: " + searchTerm + searchPage.getText(), searchPage.getText(), containsString("An error occurred executing the search action"));
-                assertThat("Correct error message not present for searchterm: " + searchTerm, searchPage.getText(), containsString("An error occurred fetching the query analysis."));
-                assertThat("Correct error message not present for searchterm: " + searchTerm, searchPage.getText(), containsString("Opening boolean operator"));
+                assertThat(searchPage.getText(), containsString(Errors.Search.UNKNOWN));
+                assertThat(searchPage.getText(), containsString(Errors.Search.ANALYSIS));
+                assertThat(searchPage.getText(), containsString(Errors.Search.OPENING_BOOL));
             }
             for (final String searchTerm : stopWords) {
                 search(searchTerm);
-                assertThat("Correct error message not present", searchPage.getText(), containsString("An error occurred executing the search action"));
-                assertThat("Correct error message not present", searchPage.getText(), containsString("An error occurred fetching the query analysis."));
-                assertThat("Correct error message not present", searchPage.getText(), containsString("No valid query text supplied"));
+                assertThat(searchPage.getText(), containsString(Errors.Search.UNKNOWN));
+                assertThat(searchPage.getText(), containsString(Errors.Search.ANALYSIS));
+                assertThat(searchPage.getText(), containsString(Errors.Search.NO_TEXT));
             }
         } else {
             fail("Application Type not recognised");

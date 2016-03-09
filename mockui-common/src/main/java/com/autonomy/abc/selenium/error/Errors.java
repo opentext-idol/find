@@ -39,7 +39,8 @@ public class Errors {
         RELATED_CONCEPTS("An error occurred fetching top results"),
         OPENING_BOOL("Opening boolean operator"),
         CLOSING_BOOL("Terminating boolean operator"),
-        INVALID("Invalid query text");
+        INVALID("Invalid query text"),
+        ANALYSIS("An error occurred fetching the query analysis");
 
         private final String value;
 
@@ -55,7 +56,8 @@ public class Errors {
 
     public enum Keywords implements Serializable {
         CREATING("Error occurred creating keywords"),
-        DUPLICATE_BLACKLIST("already blacklisted");
+        DUPLICATE_BLACKLIST("already blacklisted"),
+        NO_TERMS("No terms were supplied");
 
         private final String value;
 
