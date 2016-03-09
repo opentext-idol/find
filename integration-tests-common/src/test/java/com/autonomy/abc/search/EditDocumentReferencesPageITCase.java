@@ -82,7 +82,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         getApplication().switchTo(KeywordsPage.class);
         SearchPage searchPage = searchService.search("edit");
         searchPage.openPromotionsBucket();
-        searchPage.addToBucket(3);
+        searchPage.addDocsToBucket(3);
 
         final List<String> searchBucketDocs = searchPage.promotionsBucketList();
 

@@ -89,7 +89,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.openPromotionsBucket();
 		checkBucketEmpty();
 
-		searchPage.searchResultCheckbox(1).click();
+		searchPage.addDocToBucket(1);
 		assertThat(searchPage.promoteTheseItemsButton(), not(disabled()));
 		assertThat(searchPage.promotedItemsCount(), is(1));
 
@@ -125,14 +125,12 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.openPromotionsBucket();
 
 		for (int i = 1; i < 7; i++) {
-			ElementUtil.scrollIntoView(searchPage.searchResultCheckbox(i), getDriver());
-			searchPage.searchResultCheckbox(i).click();
+			searchPage.addDocToBucket(i);
 			assertThat("Promoted items count not correct", searchPage.promotedItemsCount(),is(i));
 		}
 
 		for (int j = 6; j > 0; j--) {
-			ElementUtil.scrollIntoView(searchPage.searchResultCheckbox(j), getDriver());
-			searchPage.searchResultCheckbox(j).click();
+			searchPage.removeDocFromBucket(j);
 			assertThat("Promoted items count not correct", searchPage.promotedItemsCount(), is(j - 1));
 		}
 
@@ -199,7 +197,7 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testAddDocumentToPromotionsBucket() {
 		search("horse");
 		searchPage.openPromotionsBucket();
-		searchPage.searchResultCheckbox(1).click();
+		searchPage.addDocToBucket(1);
 		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(1));
 		assertThat("File in bucket description does not match file added", searchPage.getSearchResult(1).getTitleString(), equalToIgnoringCase(searchPage.bucketDocumentTitle(1)));
 	}
@@ -208,7 +206,7 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testPromoteTheseItemsButtonLink() {
 		search("fox");
 		searchPage.openPromotionsBucket();
-		searchPage.searchResultCheckbox(1).click();
+		searchPage.addDocToBucket(1);
 		searchPage.promoteTheseItemsButton().click();
 		assertThat(getWindow(), url(endsWith("promotions/create")));
 	}
@@ -286,13 +284,12 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testDocumentsRemainInBucket() {
 		search("cow");
 		searchPage.openPromotionsBucket();
-		searchPage.searchResultCheckbox(1).click();
-		searchPage.searchResultCheckbox(2).click();
+		searchPage.addDocsToBucket(2);
 		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount(), is(2));
 
 		search("bull");
 		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount(), is(2));
-		searchPage.searchResultCheckbox(1).click();
+		searchPage.addDocToBucket(1);
 		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(3));
 
 		search("cow");
@@ -301,7 +298,7 @@ public class SearchPageITCase extends ABCTestBase {
 		search("bull");
 		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(3));
 
-		searchPage.searchResultCheckbox(1).click();
+		searchPage.removeDocFromBucket(1);
 		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(2));
 
 		search("cow");
@@ -313,7 +310,7 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testDeleteDocsFromWithinBucket() {
 		search("sabre");
 		searchPage.openPromotionsBucket();
-		searchPage.addToBucket(4);
+		searchPage.addDocsToBucket(4);
 
 		final List<String> bucketList = searchPage.promotionsBucketList();
 		assertThat("There should be four documents in the bucket", bucketList.size(), is(4));
@@ -327,11 +324,11 @@ public class SearchPageITCase extends ABCTestBase {
 		search("tooth");
 		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList(), empty());
 
-		searchPage.searchResultCheckbox(5).click();
+		searchPage.addDocToBucket(5);
 		final List<String> docTitles = new ArrayList<>();
 		docTitles.add(searchPage.getSearchResult(5).getTitleString());
 		searchPage.switchResultsPage(Pagination.NEXT);
-		searchPage.searchResultCheckbox(3).click();
+		searchPage.addDocToBucket(3);
 		docTitles.add(searchPage.getSearchResult(3).getTitleString());
 
 		final List<String> bucketListNew = searchPage.promotionsBucketList();
@@ -395,7 +392,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		for (int j = 1; j <=2; j++) {
 			for (int i = 1; i <= 3; i++) {
-				searchPage.searchResultCheckbox(i).click();
+				searchPage.addDocToBucket(i);
 				final String docTitle = searchPage.getSearchResult(i).getTitleString();
 				ElementUtil.scrollIntoViewAndClick(searchPage.promotionBucketElementByTitle(docTitle), getDriver());
 
@@ -433,10 +430,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.selectLanguage(Language.FRENCH);
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.openPromotionsBucket();
-
-		for (int i = 1; i <=4; i++) {
-			searchPage.searchResultCheckbox(i).click();
-		}
+		searchPage.addDocsToBucket(4);
 
 		assertThat(searchPage.promotionsBucketWebElements(), hasSize(4));
 
@@ -458,7 +452,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Languages should be enabled", !ElementUtil.isAttributePresent(searchPage.languageButton(), "disabled"));
 
 		searchPage.openPromotionsBucket();
-		searchPage.searchResultCheckbox(1).click();
+		searchPage.addDocToBucket(1);
 		assertThat("There should be one document in the bucket", searchPage.promotionsBucketList(), hasSize(1));
 		searchPage.selectLanguage(Language.FRENCH);
 		assertThat("The promotions bucket should close when the language is changed", searchPage.promotionsBucket(), not(displayed()));

@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
@@ -53,7 +52,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     private List<String> goToWizard(String query, int numberOfDocs) {
         searchPage = searchService.search(query);
         searchPage.openPromotionsBucket();
-        List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
+        List<String> promotedDocTitles = searchPage.addDocsToBucket(numberOfDocs);
         ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
         createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         return promotedDocTitles;
