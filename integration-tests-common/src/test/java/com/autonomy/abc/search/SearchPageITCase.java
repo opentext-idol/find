@@ -29,8 +29,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,17 +77,15 @@ public class SearchPageITCase extends ABCTestBase {
 
     @Test
 	public void testUnmodifiedResultsToggleButton(){
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
-
-        assertThat("Page should be showing modified results", searchPage.modifiedResultsShown(), is(true));
+        assertThat(searchPage.modifiedResults(), checked());
 		assertThat(getWindow(), urlContains("/modified"));
 
-		searchPage.modifiedResultsCheckBox().click();
-        assertThat("Page should not be showing modified results", searchPage.modifiedResultsShown(), is(false));
+		searchPage.modifiedResults().uncheck();
+        assertThat(searchPage.modifiedResults(), not(checked()));
 		assertThat(getWindow(), urlContains("/unmodified"));
 
-		searchPage.modifiedResultsCheckBox().click();
-        assertThat("Page should be showing modified results", searchPage.modifiedResultsShown(), is(true));
+		searchPage.modifiedResults().check();
+        assertThat(searchPage.modifiedResults(), checked());
         assertThat(getWindow(), urlContains("/modified"));
 	}
 

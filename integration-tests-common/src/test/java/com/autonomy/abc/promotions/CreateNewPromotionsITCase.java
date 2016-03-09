@@ -218,11 +218,11 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
             verifyThat(searchPage.getTopPromotedSpotlightType(), is(spotlightType.getOption()));
         }
 
-        searchPage.modifiedResultsCheckBox().click();
+        searchPage.modifiedResults().uncheck();
         Waits.loadOrFadeWait();
         verifyThat(searchPage, not(containsText(promotedDocTitle)));
 
-        searchPage.modifiedResultsCheckBox().click();
+        searchPage.modifiedResults().check();
         Waits.loadOrFadeWait();
         verifyThat(searchPage, containsText(promotedDocTitle));
 

@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.search;
 
+import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
@@ -69,12 +70,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.xpath("//button[text()=' Promote query']"));
 	}
 
-	public WebElement modifiedResultsCheckBox() {
-		return findElement(By.className("search-type-toggle"));
-	}
-
-	public boolean modifiedResultsShown(){
-		return findElement(By.className("search-type-toggle")).findElement(By.className("checkbox-input")).isSelected();
+	public Checkbox modifiedResults() {
+		return new SOCheckbox(findElement(By.className("search-type-toggle")), getDriver());
 	}
 
 	public void sortBy(final Sort sort) {

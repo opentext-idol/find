@@ -31,6 +31,7 @@ public abstract class Checkbox extends AppElement {
         }
     }
 
+    // TODO: this does not belong in Checkbox
     protected int getResultCount(By by){
         String spanResultCount = findElement(by).getText().split("\\(")[1];
         return Integer.parseInt(spanResultCount.substring(0, spanResultCount.length() - 1));
