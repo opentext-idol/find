@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.users.LoginService;
 
 public interface Application<T extends ElementFactoryBase> {
     T elementFactory();
-    ApplicationType getType();
+    boolean isHosted();
     // TODO: remove this once Applications are initialized with a Window
     Application<T> inWindow(Window window);
     LoginService loginService();

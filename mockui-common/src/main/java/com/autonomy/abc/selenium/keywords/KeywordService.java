@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.keywords;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.language.Language;
@@ -85,7 +84,7 @@ public class KeywordService extends ServiceBase<SOElementFactory> {
     // this does not wait at the end, generally not the one you want
     public void addKeywords(KeywordWizardType type, Language language, Iterable<String> keywords) {
         goToKeywordsWizard();
-        if (getApplication().getType().equals(ApplicationType.HOSTED) && !language.equals(Language.ENGLISH)) {
+        if (getApplication().isHosted() && !language.equals(Language.ENGLISH)) {
             LOGGER.warn("hosted mode does not support foreign keywords, using English instead");
             language = Language.ENGLISH;
         }
