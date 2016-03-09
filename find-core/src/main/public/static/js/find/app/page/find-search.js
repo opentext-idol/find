@@ -102,11 +102,11 @@ define([
 
                 if (this.searchModel.get('inputText')) {
                     this.expandedState();
-                }
 
-                // Create a tab if the user has run a search but has no open tabs
-                if (this.selectedTabModel.get('selectedSearchCid') === null && this.searchModel.get('inputText')) {
-                    this.createNewTab(this.searchModel.get('inputText'));
+                    // Create a tab if the user has run a search but has no open tabs
+                    if (this.selectedTabModel.get('selectedSearchCid') === null) {
+                        this.createNewTab(this.searchModel.get('inputText'));
+                    }
                 }
             });
 
@@ -144,19 +144,28 @@ define([
 
             this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
 
-            router.on('route:emptySearch', this.reducedState, this);
+            router.on('route:searchSplash', function() {
+                this.selectedTabModel.set('selectedSearchCid', null);
+                this.searchModel.set({
+                    inputText: '',
+                    relatedConcepts: []
+                });
+
+                this.reducedState();
+            }, this);
 
             // Bind routing to search model
             router.on('route:search', function(text) {
                 this.removeDocumentDetailView();
 
                 this.searchModel.set({
-                    inputText: text || '',
-                    relatedConcepts: []
+                    inputText: text || ''
                 });
 
-                this.$('.service-view-container').addClass('hide');
-                this.$('.query-service-view-container').removeClass('hide');
+                if(this.isExpanded()) {
+                    this.$('.service-view-container').addClass('hide');
+                    this.$('.query-service-view-container').removeClass('hide');
+                }
             }, this);
 
             router.on('route:documentDetail', function () {
@@ -310,10 +319,14 @@ define([
         generateURL: function() {
             var inputText = this.searchModel.get('inputText');
 
-            if(inputText) {
-                return 'find/search/query/' + encodeURIComponent(inputText);
+            if(this.searchModel.isEmpty()) {
+                if (this.selectedTabModel.get('selectedSearchCid')) {
+                    return 'find/search/query';
+                } else {
+                    return 'find/search/splash';
+                }
             } else {
-                return 'find/search/query';
+                return 'find/search/query/' + encodeURIComponent(inputText);
             }
         },
 
@@ -350,6 +363,10 @@ define([
 
             // TODO: somebody else needs to own this
             $('.container-fluid, .find-logo-small').addClass('reduced');
+        },
+
+        isExpanded: function() {
+            return this.$('.find').hasClass(expandedClasses);
         },
 
         // If we already have the document model in one of our collections, then don't bother fetching it

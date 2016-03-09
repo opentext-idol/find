@@ -15,7 +15,7 @@ define([
 
         template: _.template(template),
 
-        defaultRoute: 'find/search',
+        defaultRoute: 'find/search/splash',
 
         Navigation: Navigation,
 
