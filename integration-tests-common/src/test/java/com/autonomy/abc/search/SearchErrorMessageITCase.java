@@ -5,12 +5,10 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.query.QueryTestHelper;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.query.Query;
-import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,31 +41,22 @@ public class SearchErrorMessageITCase extends ABCTestBase {
 
     @Test
     @KnownBug({"IOD-8454", "CCUK-3741"})
-    @RelatedTo("CCUK-3747")
     public void testSearchQuotationMarks() {
-        Serializable error;
-        if (getConfig().getType().equals(ApplicationType.HOSTED)) {
-            error = Errors.Search.INVALID;
-        } else {
-            error = Errors.Search.QUOTES;
-        }
+        @RelatedTo("CCUK-3747")
+        Serializable error = getApplication().isHosted() ?
+                Errors.Search.INVALID : Errors.Search.QUOTES;
         new QueryTestHelper<>(searchService).mismatchedQuoteQueryText(error);
     }
 
 
     @Test
     @KnownBug("CCUK-3741")
-    @RelatedTo("CCUK-3747")
     public void testQueriesWithNoTerms() {
-        Serializable booleanError;
-        Serializable emptyError;
-        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-            booleanError = Errors.Search.INVALID;
-            emptyError = Errors.Search.INVALID;
-        } else {
-            booleanError = Errors.Search.OPENING_BOOL;
-            emptyError = Errors.Search.NO_TEXT;
-        }
+        @RelatedTo("CCUK-3747")
+        Serializable booleanError = getApplication().isHosted() ?
+                Errors.Search.INVALID : Errors.Search.OPENING_BOOL;
+        Serializable emptyError = getApplication().isHosted() ?
+                Errors.Search.INVALID : Errors.Search.NO_TEXT;
 
         new QueryTestHelper<>(searchService).booleanOperatorQueryText(booleanError);
         new QueryTestHelper<>(searchService).emptyQueryText(emptyError);
