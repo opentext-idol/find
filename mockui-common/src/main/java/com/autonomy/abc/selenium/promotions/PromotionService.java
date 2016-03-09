@@ -42,7 +42,7 @@ public class PromotionService<T extends SOElementFactory> extends ServiceBase<T>
 
     public List<String> setUpPromotion(Promotion promotion, Query query, int numberOfDocs) {
         SearchPage searchPage = getApplication().searchService().search(query);
-        searchPage.promoteTheseDocumentsButton().click();
+        searchPage.openPromotionsBucket();
         List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
 
         if (promotion instanceof DynamicPromotion) {

@@ -179,7 +179,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("Finish button enabled", !ElementUtil.isAttributePresent(createKeywordsPage.enabledFinishWizardButton(), "disabled"));
 
         createKeywordsPage.enabledFinishWizardButton().click();
-        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+        getElementFactory().getSearchPage();
 
         keywordsPage = keywordService.goToKeywords();
         keywordsPage.filterView(KeywordFilter.SYNONYMS);

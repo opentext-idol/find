@@ -133,7 +133,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.enabledFinishWizardButton().click();
         Waits.loadOrFadeWait();
         SearchPage searchPage = getElementFactory().getSearchPage();
-        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
         searchPage.selectLanguage(Language.FRENCH);
 
