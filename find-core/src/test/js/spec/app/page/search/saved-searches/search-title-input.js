@@ -18,7 +18,7 @@ define([
             this.saveCallback = jasmine.createSpy('saveCallback');
         });
 
-        describe('for a new saved search model', function() {
+        describe('for a new saved search model with showSearchTypes true', function() {
             beforeEach(function() {
                 this.savedSearchModel = new Backbone.Model({
                     title: INITIAL_TITLE,
@@ -27,6 +27,7 @@ define([
 
                 this.view = new SearchTitleInput({
                     saveCallback: this.saveCallback,
+                    showSearchTypes: true,
                     savedSearchModel: this.savedSearchModel
                 });
 
@@ -35,6 +36,10 @@ define([
 
             it('displays no title', function() {
                 expect(this.view.$('.search-title-input')).toHaveValue('');
+            });
+
+            it('shows the search types', function() {
+                expect(this.view.$('[name="saved-search-type"]')).toHaveLength(2);
             });
 
             describe('when the user adds a title, selects a type', function() {
@@ -67,7 +72,7 @@ define([
             });
         });
 
-        describe('with an existing saved search model', function() {
+        describe('with an existing saved search model with showSearchTypes false', function() {
             beforeEach(function() {
                 this.savedSearchModel = new Backbone.Model({
                     id: 1,
@@ -77,7 +82,8 @@ define([
 
                 this.view = new SearchTitleInput({
                     savedSearchModel: this.savedSearchModel,
-                    saveCallback: this.saveCallback
+                    saveCallback: this.saveCallback,
+                    showSearchTypes: false
                 });
 
                 this.listener = jasmine.createSpy('listener');
@@ -88,6 +94,10 @@ define([
 
             it('displays the initial title', function() {
                 expect(this.view.$('.search-title-input')).toHaveValue(INITIAL_TITLE);
+            });
+
+            it('does not show the search types', function() {
+                expect(this.view.$('[name="saved-search-type"]')).toHaveLength(0);
             });
 
             describe('when the cancel button is clicked', function() {

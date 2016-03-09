@@ -252,6 +252,7 @@ define([
             if (titleEditState !== TitleEditState.OFF && this.titleInput === null) {
                 this.titleInput = new SearchTitleInput({
                     savedSearchModel: this.savedSearchModel,
+                    showSearchTypes: titleEditState !== TitleEditState.RENAME,
                     saveCallback: _.bind(function(newAttributes, success, error) {
                         var savedState = this.model.get('savedState');
                         var titleEditState = this.model.get('titleEditState');

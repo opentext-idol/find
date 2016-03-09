@@ -66,6 +66,7 @@ define([
 
         initialize: function(options) {
             this.savedSearchModel = options.savedSearchModel;
+            this.showSearchTypes = options.showSearchTypes;
 
             // Called with the new title, search type, and a success callback and an error callback
             this.saveCallback = options.saveCallback;
@@ -86,7 +87,7 @@ define([
         render: function() {
             this.$el.html(this.template({
                 i18n: i18n,
-                savedSearchModel: this.savedSearchModel,
+                showSearchTypes: this.showSearchTypes,
                 savedSearchTypes: [
                     SavedSearchModel.Type.QUERY,
                     SavedSearchModel.Type.SNAPSHOT

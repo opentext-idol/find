@@ -1,13 +1,15 @@
 <div class="form-group">
     <input class="search-title-input form-control" placeholder="<%- i18n['search.savedSearchControl.nameSearch'] %>" type="text"/>
 </div>
-<div class="form-group">
-    <% _.each(savedSearchTypes, function(type) { %>
-        <label class="radio-inline i-check">
-            <input type="radio" value="<%- type %>" name="saved-search-type"> <%- i18n['search.savedSearchControl.searchType.' + type] %>
-        </label>
-    <% }); %>
-</div>
+<% if (showSearchTypes) { %>
+    <div class="form-group">
+        <% _.each(savedSearchTypes, function(type) { %>
+            <label class="radio-inline i-check">
+                <input type="radio" value="<%- type %>" name="saved-search-type"> <%- i18n['search.savedSearchControl.searchType.' + type] %>
+            </label>
+        <% }); %>
+    </div>
+<% } %>
 <div class="form-group">
     <button type="submit" class="btn thin-btn button-primary save-title-confirm-button disabled not-clickable">
         <%- i18n['search.savedSearchControl.save'] %>
