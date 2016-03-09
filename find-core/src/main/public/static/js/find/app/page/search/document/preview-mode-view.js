@@ -9,8 +9,8 @@ define([
     'find/app/configuration',
     'text!find/templates/app/page/search/document/preview-mode-view.html',
     'text!find/templates/app/page/search/document/preview-mode-metadata.html',
-    'text!find/templates/app/page/search/document/preview-mode-document.html',
-    'text!find/templates/app/page/view/media-player.html'
+    'text!find/templates/app/page/search/document/view-mode-document.html',
+    'text!find/templates/app/page/search/document/view-media-player.html'
 ], function(Backbone, _, $, i18n, vent, viewClient, DocumentModel, configuration, template, metaDataTemplate, documentTemplate, mediaTemplate) {
     'use strict';
 

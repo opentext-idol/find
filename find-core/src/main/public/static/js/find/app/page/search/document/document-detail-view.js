@@ -13,8 +13,8 @@ define([
     'find/app/page/search/document/document-detail-tabs',
     'find/app/configuration',
     'text!find/templates/app/page/search/document/document-detail.html',
-    'text!find/templates/app/page/search/document/preview-mode-document.html',
-    'text!find/templates/app/page/view/media-player.html'
+    'text!find/templates/app/page/search/document/view-mode-document.html',
+    'text!find/templates/app/page/search/document/view-media-player.html'
 ], function(Backbone, _, vent, i18n, viewClient, ListView, tabs, configuration, template, documentTemplate, mediaTemplate) {
     'use strict';
 
