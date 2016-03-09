@@ -48,7 +48,14 @@
       "IDOLPROXY",
       "DAH"
     ],
-    "referenceField": "DREREFERENCE"
+    "referenceField": "DREREFERENCE",
+    "viewingMode": "FIELD",
+    "connector": {
+      "protocol": "HTTP",
+      "host": "find-connectors",
+      "port": 10000,
+      "productTypeRegex": ".*?CONNECTOR"
+    }
   },
   "map": {
     "enabled": false,
