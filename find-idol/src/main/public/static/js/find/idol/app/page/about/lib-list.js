@@ -24,18 +24,42 @@ define(function() {
             version: '4.14.30',
             license: 'MIT',
             edited: false
+        },  {
+            name: 'Bootstrap Slider',
+            url: 'https://github.com/seiyria/bootstrap-slider',
+            version: '6.0.8',
+            license: 'MIT',
+            edited: false
+        }, {
+            name: 'Chosen',
+            url: 'https://harvesthq.github.io/chosen/',
+            version: '1.4.2',
+            license: 'MIT',
+            edited: false
+        }, {
+            name: 'd3',
+            url: 'https://d3js.org/',
+            version: '3.3.8',
+            license: 'BSD',
+            edited: false
         }, {
             name: 'DataTables',
             url: 'http://www.datatables.net/download/',
-            version: '1.10.2',
+            version: '1.10.11',
             license: 'BSD',
             edited: false
         }, {
             name: 'Font Awesome by Dave Gandy',
             url: 'http://fontawesome.io',
-            version: '3.2.1',
+            version: '4.5.0',
             license: 'MIT/SIL OFL 1.1', // icons are SIL OFL 1.1, css is MIT
             edited: false // remove parameter from css url
+        }, {
+            name: 'iCheck',
+            url: 'http://icheck.fronteed.com/',
+            version: '1.0.1',
+            license: 'MIT',
+            edited: false
         }, {
             name: 'jQuery',
             url: 'http://jquery.com/',
@@ -61,10 +85,22 @@ define(function() {
             license: 'MIT',
             edited: false
         }, {
+            name: 'Raphaël',
+            url: 'http://raphaeljs.com/',
+            version: '2.1.2',
+            license: 'MIT',
+            edited: false
+        }, {
             name: 'RequireJS',
             url: 'http://requirejs.org/',
             version: '2.1.15',
             license: 'BSD',
+            edited: false
+        }, {
+            name: 'typeahead.js',
+            url: 'https://typeahead.js.org/',
+            version: '#3d2a7eb',
+            license: 'MIT',
             edited: false
         }, {
             name: 'Underscore.js',
