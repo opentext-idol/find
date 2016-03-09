@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.config;
 
+import com.autonomy.abc.selenium.users.NewHPPassport;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.sso.*;
 
@@ -28,6 +29,12 @@ enum HSODAuthFactory {
         @Override
         AuthProvider getProvider(Map<String, Object> map) {
             return new HPPassport(map.get("username").toString(), map.get("password").toString());
+        }
+    },
+    NEW_HP_PASSPORT() {
+        @Override
+        AuthProvider getProvider(Map<String, Object> map) {
+            return new NewHPPassport(map.get("email").toString(), map.get("password").toString());
         }
     },
     OPEN_ID() {

@@ -60,6 +60,16 @@
         "email": "hodtestqa500+FacebookSignUp@gmail.com",
         "password": "xE8vnTGeXFKtM3R6"
       }
+    },
+    "newhppassport": {
+      "username": "nicki",
+      "password": "romanholiday",
+      "email": "hodtestqa401+NEWNEWHPPASSPORT@gmail.com",
+      "auth": {
+        "type":"New HP Passport",
+        "email": "hodtestqa500+thisisanewemail@gmail.com",
+        "password": "t87hy49898qaiu"
+      }
     }
   },
   "users": {
