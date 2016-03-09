@@ -75,6 +75,15 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage = searchService.search(query);
 	}
 
+	@Test
+	public void testSearchHeading(){
+		List<String> terms = Arrays.asList("dog", "cat", "ElEPhanT");
+		for (String term : terms) {
+			search(term);
+			assertThat(searchPage.getHeadingSearchTerm(), is(term));
+		}
+	}
+
     @Test
 	public void testUnmodifiedResultsToggleButton(){
         assertThat(searchPage.modifiedResults(), checked());
@@ -87,18 +96,6 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.modifiedResults().check();
         assertThat(searchPage.modifiedResults(), checked());
         assertThat(getWindow(), urlContains("/modified"));
-	}
-
-	@Test
-	public void testSearchBasic(){
-		search("dog");
-		assertThat("Search title text is wrong", searchPage.getHeadingSearchTerm(), is("dog"));
-
-		search("cat");
-		assertThat("Search title text is wrong", searchPage.getHeadingSearchTerm(), is("cat"));
-
-		search("ElEPhanT");
-		assertThat("Search title text is wrong", searchPage.getHeadingSearchTerm(), is("ElEPhanT"));
 	}
 
 	@Test
