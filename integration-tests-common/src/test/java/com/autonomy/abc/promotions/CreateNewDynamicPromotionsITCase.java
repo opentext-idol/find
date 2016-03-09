@@ -85,7 +85,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
     private int getNumberOfPromotedDynamicResults() {
         int promotionResultsCount = 30;
-        if (getConfig().getType().equals(ApplicationType.ON_PREM) || searchPage.getHeadingResultsCount() <= 30) {
+        if (isOnPrem() || searchPage.getHeadingResultsCount() <= 30) {
             promotionResultsCount = searchPage.getHeadingResultsCount();
         }
         return promotionResultsCount;
@@ -162,7 +162,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     }
 
     private void clickTopPromotions() {
-        if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
+        if(isOnPrem()) {
             dynamicPromotionsPage.spotlightType(Promotion.SpotlightType.TOP_PROMOTIONS).click();
         }
     }

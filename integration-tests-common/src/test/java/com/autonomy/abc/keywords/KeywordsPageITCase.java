@@ -481,7 +481,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testAddingForbiddenKeywordsFromUrl() {
 		String blacklistUrl = getAppUrl() + "/keywords/create/blacklisted/English/";
 		String synonymsUrl = getAppUrl() + "/keywords/create/synonyms/English/";
-		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
+		if (isOnPrem()) {
 			blacklistUrl = getAppUrl() + "keywords/create/blacklisted/englishUTF8/";
 			synonymsUrl = getAppUrl() + "keywords/create/synonyms/englishUTF8/";
 		}

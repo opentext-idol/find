@@ -43,19 +43,18 @@ public class SearchErrorMessageITCase extends ABCTestBase {
     @KnownBug({"IOD-8454", "CCUK-3741"})
     public void testSearchQuotationMarks() {
         @RelatedTo("CCUK-3747")
-        Serializable error = getApplication().isHosted() ?
+        Serializable error = isHosted() ?
                 Errors.Search.INVALID : Errors.Search.QUOTES;
         new QueryTestHelper<>(searchService).mismatchedQuoteQueryText(error);
     }
-
 
     @Test
     @KnownBug("CCUK-3741")
     public void testQueriesWithNoTerms() {
         @RelatedTo("CCUK-3747")
-        Serializable booleanError = getApplication().isHosted() ?
+        Serializable booleanError = isHosted() ?
                 Errors.Search.INVALID : Errors.Search.OPENING_BOOL;
-        Serializable emptyError = getApplication().isHosted() ?
+        Serializable emptyError = isHosted() ?
                 Errors.Search.INVALID : Errors.Search.NO_TEXT;
 
         new QueryTestHelper<>(searchService).booleanOperatorQueryText(booleanError);

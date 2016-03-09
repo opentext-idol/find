@@ -222,7 +222,7 @@ public class PromotionsITCase extends ABCTestBase {
 	public void testPromotionFilter() throws InterruptedException {
 		// hosted does not have foreign content indexed
 		Query[] searches;
-		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
+		if (isOnPrem()) {
 			searches = new Query[]{
 					getQuery("chien", Language.FRENCH),
 					getQuery("الكلب", Language.ARABIC),

@@ -249,7 +249,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     @RelatedTo({"CSA-1724", "CSA-1893"})
     public void testNoBlacklistLinkForBlacklistedSearch() throws InterruptedException {
         Serializable blacklistMessage = Errors.Search.BLACKLIST;
-        if (getConfig().getType().equals(ApplicationType.HOSTED)) {
+        if (isHosted()) {
             blacklistMessage = Errors.Search.NO_RESULTS;
         }
 
@@ -265,7 +265,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         keywordsPage.selectLanguageButton();	//Wait for select Language button
 
-        if(getConfig().getType().equals(ApplicationType.ON_PREM)){
+        if(isOnPrem()){
             assertThat("blacklist has been created in the correct language", keywordsPage.getSelectedLanguage(), is(Language.ARABIC));
         }
 
@@ -286,7 +286,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("link to blacklist or create synonyms not present", searchPage,
                 not(containsText("You can create synonyms or blacklist these search terms")));
 
-        if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
+        if (isOnPrem()) {
             searchPage.selectLanguage(Language.ENGLISH);
             searchPage.waitForSynonymsLoadingIndicatorToDisappear();
 
@@ -532,7 +532,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
     private void search(String searchTerm, Language language) {
         Query query = new Query(searchTerm).withFilter(new LanguageFilter(language));
-        if (getConfig().getType().equals(ApplicationType.HOSTED)) {
+        if (isHosted()) {
             query = query.withFilter(new IndexFilter("news_eng"));
         }
         searchPage = searchService.search(query);

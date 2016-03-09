@@ -90,7 +90,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 	private void verifyDuplicateError(ModalView newUserModal) {
 		Serializable expectedError;
-		if (getConfig().getType().equals(ApplicationType.HOSTED)) {
+		if (isHosted()) {
 			expectedError = Errors.User.DUPLICATE_EMAIL;
 		} else {
 			expectedError = Errors.User.DUPLICATE_USER;

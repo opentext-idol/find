@@ -137,4 +137,12 @@ public abstract class SeleniumTest<A extends Application<? extends F>, F extends
         getWindow().goTo(newUrl);
         someApp.inWindow(getWindow());
     }
+
+    protected boolean isHosted() {
+        return getApplication().isHosted();
+    }
+
+    protected boolean isOnPrem() {
+        return !getApplication().isHosted();
+    }
 }
