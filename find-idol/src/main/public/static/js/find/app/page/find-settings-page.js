@@ -7,11 +7,12 @@ define([
     'find/app/page/abstract-find-settings-page',
     'find/app/page/settings/aci-widget',
     'find/app/page/settings/community-widget',
+    'find/app/page/settings/map-widget',
     'find/app/page/settings/mmap-widget',
     'find/app/page/settings/query-manipulation-widget',
     'find/app/page/settings/view-widget',
     'i18n!find/nls/bundle'
-], function(SettingsPage, AciWidget, CommunityWidget, MmapWidget, QueryManipulationWidget, ViewWidget, i18n) {
+], function(SettingsPage, AciWidget, CommunityWidget, MapWidget, MmapWidget, QueryManipulationWidget, ViewWidget, i18n) {
 
     return SettingsPage.extend({
         initializeWidgets: function() {
@@ -65,6 +66,21 @@ define([
                             enabled: i18n['settings.mmap.enabled'],
                             loading: i18n['settings.mmap.loading'],
                             url: i18n['settings.mmap.url']
+                        })
+                    }),
+                    new MapWidget({
+                        configItem: 'map',
+                        description: i18n['settings.map.description'],
+                        isOpened: true,
+                        title: i18n['settings.map'],
+                        strings: _.extend(this.serverStrings(), {
+                            attribution: i18n['settings.map.attribution'],
+                            disable: i18n['settings.map.disable'],
+                            disabled: i18n['settings.map.disabled'],
+                            enable: i18n['settings.map.enable'],
+                            enabled: i18n['settings.map.enabled'],
+                            loading: i18n['settings.map.loading'],
+                            url: i18n['settings.map.url']
                         })
                     })
                 ]
