@@ -15,8 +15,10 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.StringMatchers.stringContainingAnyOf;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -80,14 +82,17 @@ public class QueryTestHelper<T extends QueryResultsPage> {
 
     public void hiddenQueryOperatorText() {
         for (Result result : resultsFor(HIDDEN_BOOLEANS)) {
-            assertThat("able to search for " + result.term, result.errorContainer(), not(displayed()));
+            assertThat("able to search for " + result.term, result.errorContainer(), anyOf(
+                    not(displayed()),
+                    containsText(Errors.Search.NO_RESULTS)
+            ));
         }
     }
 
-    public void mismatchedBracketQueryText(final Serializable expectedError) {
+    public void mismatchedBracketQueryText() {
         for (Result result : resultsFor(MISMATCHED_BRACKETS)) {
             assertThat("query term '" + result.term + "' is invalid",
-                    result.getErrorMessage(), containsString(expectedError));
+                    result.errorContainer(), displayed());
             assertThat("query term '" + result.term + "' has sensible error message",
                     result.getErrorMessage(), stringContainingAnyOf(Arrays.asList(
                             Errors.Search.INVALID,

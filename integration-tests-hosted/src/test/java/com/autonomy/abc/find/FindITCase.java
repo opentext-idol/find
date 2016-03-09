@@ -448,7 +448,7 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testSearchParentheses() {
-        new QueryTestHelper<>(findService).mismatchedBracketQueryText(Errors.Find.GENERAL);
+        new QueryTestHelper<>(findService).mismatchedBracketQueryText();
     }
 
     @Test

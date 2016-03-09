@@ -7,6 +7,9 @@ import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.query.QueryTestHelper;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.Before;
@@ -35,23 +38,25 @@ public class SearchErrorMessageITCase extends ABCTestBase {
     @Test
     @KnownBug("CCUK-3741")
     public void testSearchParentheses() {
-        Serializable errorMessage;
-        if (getConfig().getType() == ApplicationType.HOSTED) {
-            errorMessage = Errors.Search.HOD;
-        } else {
-            errorMessage = Errors.Search.GENERAL;
-        }
-        new QueryTestHelper<>(searchService).mismatchedBracketQueryText(errorMessage);
+        new QueryTestHelper<>(searchService).mismatchedBracketQueryText();
     }
 
     @Test
     @KnownBug({"IOD-8454", "CCUK-3741"})
+    @RelatedTo("CCUK-3747")
     public void testSearchQuotationMarks() {
-        new QueryTestHelper<>(searchService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
+        Serializable error;
+        if (getConfig().getType().equals(ApplicationType.HOSTED)) {
+            error = Errors.Search.INVALID;
+        } else {
+            error = Errors.Search.QUOTES;
+        }
+        new QueryTestHelper<>(searchService).mismatchedQuoteQueryText(error);
     }
 
 
     @Test
+    @KnownBug("CCUK-3741")
     @RelatedTo("CCUK-3747")
     public void testQueriesWithNoTerms() {
         Serializable booleanError;
@@ -71,7 +76,8 @@ public class SearchErrorMessageITCase extends ABCTestBase {
     @Test
     public void testQueryAnalysisForBadQueries() {
         for (final String term : QueryTestHelper.NO_TERMS) {
-            String error = searchService.search(term).getKeywordError();
+            Query query = new Query(term).withFilter(new LanguageFilter(Language.ENGLISH));
+            String error = searchService.search(query).getKeywordError();
             assertThat(error, not(isEmptyOrNullString()));
             assertThat(error, containsString(Errors.Keywords.NO_TERMS));
         }

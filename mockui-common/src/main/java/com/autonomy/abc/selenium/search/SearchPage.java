@@ -313,8 +313,12 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public String getKeywordError() {
+		WebElement firstError = findElement(By.className("keywords-invalid"));
+		if (firstError.isDisplayed()) {
+			return firstError.getText();
+		}
 		try {
-			return findElement(By.cssSelector(".keywords-invalid, .search-synonyms-error")).getText();
+			return findElement(By.className("search-synonyms-error")).getText();
 		} catch (NoSuchElementException e) {
 			return null;
 		}
