@@ -3,8 +3,6 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.framework.RelatedTo;
-import com.autonomy.abc.query.QueryTestHelper;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
@@ -36,7 +34,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -320,25 +317,6 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	@KnownBug("CCUK-3741")
-	public void testSearchParentheses() {
-		Serializable errorMessage;
-		if (getConfig().getType() == ApplicationType.HOSTED) {
-			errorMessage = Errors.Search.HOD;
-		} else {
-			errorMessage = Errors.Search.GENERAL;
-		}
-        new QueryTestHelper<>(searchService).mismatchedBracketQueryText(errorMessage);
-	}
-
-    //TODO there are some which contain helpful error messages?
-	@Test
-	@KnownBug({"IOD-8454", "CCUK-3741"})
-	public void testSearchQuotationMarks() {
-		new QueryTestHelper<>(searchService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
-	}
-
-	@Test
 	//TODO seems to be failing within VM - investigate futher
 	public void testDeleteDocsFromWithinBucket() {
 		search("sabre");
@@ -580,38 +558,6 @@ public class SearchPageITCase extends ABCTestBase {
 			final int expectedCount = completePages * SearchPage.RESULTS_PER_PAGE + lastPageDocumentsCount;
 			verifyThat("number of results is as expected", searchPage.getHeadingResultsCount(), is(expectedCount));
 		}
-	}
-
-	@Test
-	@RelatedTo("CCUK-3747")
-	public void testQueriesWithNoTerms() {
-		Serializable booleanError;
-		Serializable emptyError;
-        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-			booleanError = Errors.Search.INVALID;
-			emptyError = Errors.Search.INVALID;
-        } else {
-			booleanError = Errors.Search.OPENING_BOOL;
-			emptyError = Errors.Search.NO_TEXT;
-		}
-
-		new QueryTestHelper<>(searchService).booleanOperatorQueryText(booleanError);
-		new QueryTestHelper<>(searchService).emptyQueryText(emptyError);
-	}
-
-	@Test
-	public void testQueryAnalysisForBadQueries() {
-		for (final String term : QueryTestHelper.NO_TERMS) {
-			search(term);
-			String error = searchPage.getKeywordError();
-			assertThat(error, not(isEmptyOrNullString()));
-			assertThat(error, containsString(Errors.Keywords.NO_TERMS));
-		}
-	}
-
-	@Test
-	public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-		new QueryTestHelper<>(searchService).hiddenQueryOperatorText();
 	}
 
 	@Test
