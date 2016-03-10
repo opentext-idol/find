@@ -85,6 +85,7 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
                     .and()
                 .authorizeRequests()
                     .antMatchers(FindController.PUBLIC_PATH + "/**").hasAnyRole(UserConfiguration.ADMIN_ROLE, UserConfiguration.USER_ROLE)
+                    .antMatchers(FindController.PRIVATE_PATH + "/**").hasAnyRole(UserConfiguration.ADMIN_ROLE)
                     .antMatchers("/api/public/**").hasAnyRole(UserConfiguration.ADMIN_ROLE, UserConfiguration.USER_ROLE)
                     .antMatchers("/api/config/**").hasRole(UserConfiguration.CONFIG_ROLE)
                     .antMatchers("/config/**").hasRole(UserConfiguration.CONFIG_ROLE)
