@@ -138,59 +138,72 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	@KnownBug("CCUK-2661")
 	public void testSearchResultsPagination() {
 		search("grass");
 		Waits.loadOrFadeWait();
-		assertThat(searchPage.resultsPaginationButton(Pagination.FIRST), disabled());
-		assertThat(searchPage.resultsPaginationButton(Pagination.PREVIOUS), disabled());
+		checkPageButtonDisabled(Pagination.FIRST);
+		checkPageButtonDisabled(Pagination.PREVIOUS);
 
 		searchPage.switchResultsPage(Pagination.NEXT);
-		assertThat(searchPage.resultsPaginationButton(Pagination.FIRST), not(disabled()));
-		assertThat(searchPage.resultsPaginationButton(Pagination.PREVIOUS), not(disabled()));
-		assertThat(searchPage.getCurrentPageNumber(), is(2));
+		checkPageButtonEnabled(Pagination.FIRST);
+		checkPageButtonEnabled(Pagination.PREVIOUS);
+		checkOnPage(2);
 
 		searchPage.switchResultsPage(Pagination.NEXT);
 		searchPage.switchResultsPage(Pagination.NEXT);
 		searchPage.switchResultsPage(Pagination.PREVIOUS);
-		assertThat(searchPage.getCurrentPageNumber(), is(3));
+		checkOnPage(3);
 
 		searchPage.switchResultsPage(Pagination.FIRST);
-		assertThat(searchPage.getCurrentPageNumber(), is(1));
+		checkOnPage(1);
 
 		searchPage.switchResultsPage(Pagination.LAST);
-		assertThat(searchPage.resultsPaginationButton(Pagination.LAST), disabled());
-		assertThat(searchPage.resultsPaginationButton(Pagination.NEXT), disabled());
+		checkPageButtonDisabled(Pagination.NEXT);
+		checkPageButtonDisabled(Pagination.LAST);
 
 		final int numberOfPages = searchPage.getCurrentPageNumber();
 		for (int i = numberOfPages - 1; i > 0; i--) {
 			searchPage.switchResultsPage(Pagination.PREVIOUS);
-			assertThat(searchPage.getCurrentPageNumber(), is(i));
-			assertThat(getWindow(), url(endsWith(String.valueOf(i))));
+			checkOnPage(i);
 		}
 
 		for (int j = 2; j < numberOfPages + 1; j++) {
 			searchPage.switchResultsPage(Pagination.NEXT);
-			assertThat(searchPage.getCurrentPageNumber(), is(j));
-			assertThat(getWindow(), url(endsWith(String.valueOf(j))));
+			checkOnPage(j);
 		}
 	}
 
-	// This used to fail because the predict=false parameter was not added to our query actions
 	@Test
+	@KnownBug("CCUK-2565")
 	public void testPaginationAndBackButton() {
 		search("safe");
 		searchPage.switchResultsPage(Pagination.LAST);
-		assertThat(searchPage.resultsPaginationButton(Pagination.LAST), disabled());
-		assertThat(searchPage.resultsPaginationButton(Pagination.NEXT), disabled());
-		assertThat(searchPage.resultsPaginationButton(Pagination.PREVIOUS), not(disabled()));
-		assertThat(searchPage.resultsPaginationButton(Pagination.FIRST), not(disabled()));
 		final int lastPage = searchPage.getCurrentPageNumber();
 
+		checkPageButtonDisabled(Pagination.LAST);
+		checkPageButtonDisabled(Pagination.NEXT);
+		checkPageButtonEnabled(Pagination.FIRST);
+		checkPageButtonEnabled(Pagination.PREVIOUS);
+
 		getDriver().navigate().back();
-		assertThat("Back button has not brought the user back to the first page", searchPage.getCurrentPageNumber(), is(1));
+		checkOnPage(1);
 
 		getDriver().navigate().forward();
-		assertThat("Forward button has not brought the user back to the last page", searchPage.getCurrentPageNumber(), is(lastPage));
+		checkOnPage(lastPage);
+	}
+
+	private void checkPageButtonDisabled(Pagination button) {
+		assertThat(searchPage.resultsPaginationButton(button), disabled());
+	}
+
+	private void checkPageButtonEnabled(Pagination button) {
+		assertThat(searchPage.resultsPaginationButton(button), not(disabled()));
+	}
+
+	private void checkOnPage(int i) {
+		assertThat("on page " + i, searchPage.getCurrentPageNumber(), is(i));
+		assertThat(getWindow(), url(endsWith(String.valueOf(i))));
 	}
 
 	@Test
