@@ -4,27 +4,26 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
-import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.query.*;
+import com.autonomy.abc.selenium.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.ParametricFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SOSearchResult;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import org.apache.commons.lang.time.DateUtils;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -34,19 +33,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.autonomy.abc.matchers.ElementMatchers.checked;
+import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchPageITCase extends ABCTestBase {
@@ -69,11 +69,6 @@ public class SearchPageITCase extends ABCTestBase {
 	private void search(String searchTerm){
 		logger.info("Searching for: '" + searchTerm + "'");
 		searchPage = searchService.search(searchTerm);
-	}
-
-	private void search(Query query) {
-		logger.info("Searching for: " + query + "");
-		searchPage = searchService.search(query);
 	}
 
 	@Test
@@ -338,157 +333,6 @@ public class SearchPageITCase extends ABCTestBase {
 			final int expectedCount = completePages * SearchPage.RESULTS_PER_PAGE + lastPageDocumentsCount;
 			verifyThat("number of results is as expected", searchPage.getHeadingResultsCount(), is(expectedCount));
 		}
-	}
-
-	@Test
-	@KnownBug("HOD-1116")
-	public void testFromDateFilter() {
-		final Date date = beginDateFilterTest();
-		final String firstResult = searchPage.getSearchResult(1).getTitleString();
-		final Date invalidDate = DateUtils.addMinutes(date, 1);
-
-		searchPage.filterBy(new DatePickerFilter().from(date));
-		for (final String label : searchPage.filterLabelList()) {
-			assertThat("no 'Until' filter applied", label,not(containsString("Until: ")));
-		}
-		assertThat("applied 'From' filter", searchPage.fromDateInput().getValue(), not(isEmptyOrNullString()));
-		verifyValidDate(firstResult);
-
-		searchPage.filterBy(new DatePickerFilter().from(invalidDate));
-		verifyInvalidDate(firstResult);
-
-		searchPage.filterBy(new DatePickerFilter().from(date));
-		verifyValidDate(firstResult);
-	}
-
-	@Test
-	@KnownBug("HOD-1116")
-	public void testWideFromDate() throws ParseException {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
-		Date june = simpleDateFormat.parse("06/12/2015 00:00");
-
-		searchService.search(new Query("Pertussis").withFilter(new IndexFilter("wiki_eng")));
-		Waits.loadOrFadeWait();
-		searchPage.filterBy(new DatePickerFilter().from(june));
-
-		for(int i = 0; i < 2; i++) {
-			for (SOSearchResult searchResult : searchPage.getSearchResults()) {
-				verifyThat(searchResult.getDate(), greaterThanOrEqualTo(june));
-			}
-
-			searchPage.switchResultsPage(Pagination.NEXT);
-		}
-	}
-
-	@Test
-	@KnownBug("HOD-1116")
-	public void testUntilDateFilter() {
-		final Date date = beginDateFilterTest();
-		final String firstResult = searchPage.getSearchResult(1).getTitleString();
-
-		// plus 1 minute to be inclusive
-		final Date validDate = DateUtils.addMinutes(date, 1);
-
-		searchPage.filterBy(new DatePickerFilter().until(validDate));
-		for (final String label : searchPage.filterLabelList()) {
-			assertThat("no 'From' filter applied", label,not(containsString("From: ")));
-		}
-		assertThat("applied 'Until' filter", searchPage.untilDateInput().getValue(), not(isEmptyOrNullString()));
-		verifyValidDate(firstResult);
-
-		searchPage.filterBy(new DatePickerFilter().until(date));
-        verifyInvalidDate(firstResult);
-
-		searchPage.filterBy(new DatePickerFilter().until(validDate));
-		verifyValidDate(firstResult);
-	}
-
-	@Test
-	@KnownBug("HOD-1116")
-	public void testWideUntilDate() throws ParseException {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
-		Date june = simpleDateFormat.parse("06/12/2015 00:00");
-
-		searchService.search(new Query("Pertussis").withFilter(new IndexFilter("wiki_eng")));
-		Waits.loadOrFadeWait();
-		searchPage.filterBy(new DatePickerFilter().until(june));
-
-		//There should be results in this index
-		verifyThat(searchPage.getSearchResults().size(), not(0));
-
-		for(int i = 0; i < 2; i++) {
-			for (SOSearchResult searchResult : searchPage.getSearchResults()) {
-				verifyThat(searchResult.getDate(), lessThanOrEqualTo(june));
-			}
-
-			if(searchPage.getHeadingResultsCount() > SearchPage.RESULTS_PER_PAGE) {
-				searchPage.switchResultsPage(Pagination.NEXT);
-			}
-		}
-	}
-
-	private Date beginDateFilterTest() {
-		// not all indexes have times configured
-		search(new Query("Dog").withFilter(new IndexFilter("news_eng")).withFilter(new FieldTextFilter("EMPTY{}:Date")));
-		Date date = searchPage.getSearchResult(1).getDate();
-		if (date == null) {
-			throw new IllegalStateException("date filter test requires first search result to have a date");
-		}
-		logger.info("First Result: " + searchPage.getSearchResult(1).getTitleString() + " " + date);
-		return date;
-	}
-
-	private void verifyValidDate(String firstResult) {
-		logger.info("from: " + searchPage.fromDateInput().getValue());
-		logger.info("until: " + searchPage.untilDateInput().getValue());
-		if (verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0))) {
-			verifyThat("Document should be displayed again", searchPage.getSearchResult(1).getTitleString(), is(firstResult));
-		}
-	}
-
-	private void verifyInvalidDate(String firstResult) {
-		logger.info("from: " + searchPage.fromDateInput().getValue());
-		logger.info("until: " + searchPage.untilDateInput().getValue());
-		if (searchPage.getHeadingResultsCount() > 0) {
-			verifyThat("Document should not be displayed", searchPage.getSearchResult(1).getTitleString(), not(firstResult));
-		}
-	}
-
-	@Test
-	public void testFromDateAlwaysBeforeUntilDate() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(2000, Calendar.MAY, 4, 12, 0);
-		final Date date = calendar.getTime();
-
-		searchPage.filterBy(new StringDateFilter().from(date).until(date));
-		assertThat("Dates should be equal", searchPage.fromDateInput().getValue(), is(searchPage.untilDateInput().getValue()));
-
-		searchPage.filterBy(new StringDateFilter().from(DateUtils.addMinutes(date, 1)).until(date));
-		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
-        assertThat("From date should be blank", searchPage.fromDateInput().getValue(), isEmptyOrNullString());
-
-		searchPage.filterBy(new StringDateFilter().from(date).until(DateUtils.addMinutes(date, -1)));
-		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
-        assertThat("Until date should be blank", searchPage.untilDateInput().getValue(), isEmptyOrNullString());
-	}
-
-	@Test
-	public void testFromDateEqualsUntilDate() throws ParseException {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(2012, Calendar.DECEMBER, 12, 12, 12);
-		final Date date = calendar.getTime();
-
-		searchPage.filterBy(new StringDateFilter().from(date).until(date));
-
-		assertThat(searchPage.fromDateInput().getValue(), is(searchPage.untilDateInput().getValue()));
-
-		Date nextDate = DateUtils.addMinutes(date, 1);
-		searchPage.filterBy(new StringDateFilter().until(nextDate));
-		assertThat(searchPage.untilDateInput().getValue(), is(searchPage.formatInputDate(nextDate)));
-
-		nextDate = DateUtils.addMinutes(date, -1);
-		searchPage.filterBy(new StringDateFilter().until(nextDate));
-        assertThat(searchPage.untilDateInput().getValue(), isEmptyOrNullString());
 	}
 
 	@Test
