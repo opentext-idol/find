@@ -1,0 +1,13 @@
+<div class="find-navbar navbar navbar-static-top">
+    <span class="find-logo-small navbar-brand m-l-sm m-t-sm"></span>
+    <% if (showLogout) { %>
+    <ul class="nav navbar-top-link navbar-right settings-logout">
+        <li>
+            <a href="<%=logoutUri%>">
+                <i class="hp-icon hp-steps settings-logout-icon"></i>
+                <%-strings.logout%>
+            </a>
+        </li>
+    </ul>
+    <% } %>
+</div>

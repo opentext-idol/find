@@ -1,9 +1,9 @@
 {
   "login": {
-    "method": "autonomy",
+    "method": "default",
     "community": {
       "protocol": "HTTP",
-      "host": "find-backend",
+      "host": "localhost",
       "port": 9030,
       "productType": [
         "UASERVER",
@@ -15,7 +15,7 @@
   },
   "content": {
     "protocol": "HTTP",
-    "host": "find-idol",
+    "host": "localhost",
     "port": 9000,
     "productType": [
       "AXE",
@@ -26,7 +26,7 @@
   "queryManipulation": {
     "server": {
       "protocol": "HTTP",
-      "host": "find-idol",
+      "host": "localhost",
       "port": 16000,
       "productType": [
         "QMS",
@@ -41,7 +41,7 @@
   },
   "view": {
     "protocol": "HTTP",
-    "host": "find-idol",
+    "host": "localhost",
     "port": 9080,
     "productType": [
       "VIEW",
@@ -52,7 +52,7 @@
     "viewingMode": "FIELD",
     "connector": {
       "protocol": "HTTP",
-      "host": "find-connectors",
+      "host": "localhost",
       "port": 10000,
       "productTypeRegex": ".*?CONNECTOR"
     }

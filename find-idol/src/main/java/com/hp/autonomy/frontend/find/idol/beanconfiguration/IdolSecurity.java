@@ -7,11 +7,7 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider;
-import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
-import com.hp.autonomy.frontend.configuration.authentication.Role;
-import com.hp.autonomy.frontend.configuration.authentication.Roles;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +21,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -33,8 +28,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 
 @Configuration
@@ -64,7 +57,7 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, UserConfiguration.CONFIG_ROLE));
+        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, UserConfiguration.role(UserConfiguration.CONFIG_ROLE)));
 
         for (final AuthenticationProvider authenticationProvider : idolSecurityCustomizer.getAuthenticationProviders()) {
             auth.authenticationProvider(authenticationProvider);
@@ -74,11 +67,9 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        final AuthenticationSuccessHandler successHandler = new LoginSuccessHandler(UserConfiguration.role(UserConfiguration.CONFIG_ROLE), "/config", FindController.PUBLIC_PATH);
-
         final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
         entryPoints.put(new AntPathRequestMatcher("/api/**"), new Http403ForbiddenEntryPoint());
-        entryPoints.put(AnyRequestMatcher.INSTANCE, new LoginUrlAuthenticationEntryPoint("/login"));
+        entryPoints.put(AnyRequestMatcher.INSTANCE, new LoginUrlAuthenticationEntryPoint("/loginPage"));
         final AuthenticationEntryPoint authenticationEntryPoint = new DelegatingAuthenticationEntryPoint(entryPoints);
 
         http
@@ -90,10 +81,11 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
                     .and()
                 .logout()
                     .logoutUrl("/logout")
-                    .logoutSuccessUrl("/login")
+                    .logoutSuccessUrl("/loginPage")
                     .and()
                 .authorizeRequests()
                     .antMatchers(FindController.PUBLIC_PATH + "/**").hasAnyRole(UserConfiguration.ADMIN_ROLE, UserConfiguration.USER_ROLE)
+                    .antMatchers(FindController.PRIVATE_PATH + "/**").hasAnyRole(UserConfiguration.ADMIN_ROLE)
                     .antMatchers("/api/public/**").hasAnyRole(UserConfiguration.ADMIN_ROLE, UserConfiguration.USER_ROLE)
                     .antMatchers("/api/config/**").hasRole(UserConfiguration.CONFIG_ROLE)
                     .antMatchers("/config/**").hasRole(UserConfiguration.CONFIG_ROLE)

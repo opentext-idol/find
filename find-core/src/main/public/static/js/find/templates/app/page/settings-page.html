@@ -1,0 +1,21 @@
+<% var uniqueId = _.uniqueId('settings'); %>
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-12">
+            <h2><%-strings.title%></h2>
+            <p class="settings-description"></p>
+        </div>
+    </div>
+
+    <div class="settings-control row">
+        <div class="col-md-12">
+            <button type="submit" form="settings-form-<%-uniqueId%>" class="btn button-warning"><%-strings.saveButton%></button>
+            <button type="button" class="btn button-accent settings-restore"><%-strings.restoreButton%></button>
+            <span class="settings-required-flag"><i class="fa fa-asterisk"></i></span> <%-strings.requiredFields%>
+        </div>
+    </div>
+
+    <form id="settings-form-<%-uniqueId%>" class="form-inline main-page-contents">
+        <div class="row"></div>
+    </form>
+</div>

@@ -1,66 +1,87 @@
 #!/bin/bash
-
+#
 # © Copyright 2015 Hewlett Packard Enterprise Development, L.P. 
 # Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+#
+# find		Start up the Find server daemon
+#
+# chkconfig: 2345 70 30
+# description: Find init script
+#
+# processname: Find
+# pidfile: /var/lock/${NAME}.pid
 
 ## Installation defaults
 NAME="find"
-MYUSER="$NAME"
-MYGROUP="$NAME"
-BASEDIR="/opt/$NAME"
-HOMEDIR="$BASEDIR/home"
-PORT=8080
-EXECUTABLE="$BASEDIR/$NAME.jar"
+FIND_USER="${NAME}"
+FIND_GROUP="${NAME}"
+FIND_INSTALL_DIR="/opt/${NAME}"
+FIND_HOME_DIR="${FIND_INSTALL_DIR}/home"
+FIND_PORT=8080
+EXECUTABLE="${FIND_INSTALL_DIR}/${NAME}.war"
 JAVA_BIN="/usr/bin/java"
 
 ## Don't change these
 PRODUCT_NAME="HPE BI for Human Information"
-LOCKFILE="/var/lock/$NAME.pid"
-STARTUP_LOG="$BASE_DIR/console.log"
-ARGS="-Dhp.find.home=$HOMEDIR -Dserver.port=$PORT -jar $EXECUTABLE -uriEncoding utf-8"
-SLEEPTIME=2
+LOCKFILE="/var/lock/${NAME}.pid"
+STARTUP_LOG="${FIND_INSTALL_DIR}/console.log"
+ARGS=("-Dhp.find.home=${FIND_HOME_DIR}" "-Dserver.port=${FIND_PORT}" "-jar" "${EXECUTABLE}")
+SLEEP_TIME=2
 ##
 
 # Wait for a process to terminate
 waitForPid() {
-	local PID=$1
-	echo "Waiting for process" $PID "to terminate"
-	while [ -e /proc/$PID ];
-	do
-		sleep $SLEEPTIME
+	local -i pid="${1}"
+
+	echo "Waiting for process ${pid} to terminate"
+
+	while [ -e "/proc/${pid}" ]; do
+		sleep ${SLEEP_TIME}
 	done
-	echo "Process" $PID "has terminated"
+
+	echo "Process ${pid} has terminated"
+
 	return 0
 }
 
-# Starts the server as $MYUSER
+# Starts the server as ${FIND_USER}
 startServer() {
-	echo "Attempting to start $PRODUCT_NAME"
+	echo "Attempting to start ${PRODUCT_NAME}"
 
-	start-stop-daemon --start \
-	--exec $JAVA_BIN \
-	-m --pidfile "$LOCKFILE" \
-	--user $MYUSER --group $MYGROUP --chuid $MYUSER \
-	--chdir "$BASEDIR" \
-	--startas "$JAVA_BIN" \
-	-- $ARGS &> "$STARTUP_LOG" &
+	if [ -e "${LOCKFILE}" ]; then
+		local PID
+		PID=$(cat ${LOCKFILE})
+		if [ -e /proc/${PID} ]; then
+			echo "${NAME} is already running - process id ${PID}"
+			return 1;
+		fi
+
+		rm -f "${LOCKFILE}"
+	fi
+
+	touch ${LOCKFILE} || return 1
+	chgrp ${FIND_GROUP} ${LOCKFILE} || return 1
+	chmod g+w ${LOCKFILE} || return 1
+
+	local cmd
+	cmd="nohup ${JAVA_BIN} ${ARGS[@]} >>${STARTUP_LOG} 2>&1 & echo \$! >${LOCKFILE}"
+	su -m "${FIND_USER}" -s "${SHELL}" -c "${cmd}" || return 1
+	printStatus
+	return 0;
 }
 
 # Checks if process is running and returns:
 # 0 - Running
 # 1 - Not running
 getStatus() {
-	if [ -f $LOCKFILE ] # Check if pid file exists
-	then
-		if ps --no-headers -p `cat $LOCKFILE` > /dev/null # Check if process from pid is still running
-		then
-			return 0
-		else
-			return 1
-		fi
-	else
-		return 1
+	# Check if pid file exists
+	if [ -f ${LOCKFILE} ]; then
+		# Check if process from pid is still running
+		ps --no-headers -p $( cat "${LOCKFILE}" ) >/dev/null 2>&1
+		return ${?}
 	fi
+
+	return 1
 }
 
 # Stops the server and removes the pidfile
@@ -68,30 +89,33 @@ stopServer() {
 	getStatus
 	STATUS=$?
 
-	if [ $STATUS -eq 0 ]
+	if [ ${STATUS} -eq 0 ]
 	then
-		local PID=`cat $LOCKFILE`
-		echo "Sending stop signal to $NAME"
-		kill $PID
+		local PID
+		PID=$(cat ${LOCKFILE})
 
-		echo "Waiting for process $PID to terminate"
-		waitForPid $PID
-		rm $LOCKFILE
+		echo "Sending stop signal to ${NAME}"
+		kill "${PID}"
+
+		echo "Waiting for process ${PID} to terminate"
+		waitForPid "${PID}"
+		rm ${LOCKFILE}
 	else
-		echo "$NAME is not currently running"
+		echo "${NAME} is not currently running"
 	fi
 	return 0
 }
 
 # Restarts the server
 restartServer() {
-	local PID=`cat $LOCKFILE`
+	local PID
+	PID=$(cat ${LOCKFILE})
 	
-	echo "Stopping $NAME"
-	stopComponent
+	echo "Stopping ${NAME}"
+	stopServer
 
-	echo "Starting $NAME"
-	startComponent
+	echo "Starting ${NAME}"
+	startServer
 	return 0
 }
 
@@ -102,18 +126,19 @@ printStatus() {
 	getStatus
 	STATUS=$?
 
-	if [ $STATUS -eq 0 ]
+	if [ ${STATUS} -eq 0 ]
 	then
-		local PID=`cat $LOCKFILE`
-		echo "$NAME is running - process id $PID"
+		local PID
+		PID=$(cat ${LOCKFILE})
+		echo "${NAME} is running - process id ${PID}"
 		return 0
 	else
-		echo "$NAME is not currently running"
+		echo "${NAME} is not currently running"
 		return 1
 	fi
 }
 
-# Entrypoint
+# Entry point
 case $1 in
 	start)
 		startServer
