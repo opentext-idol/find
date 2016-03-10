@@ -807,24 +807,6 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	@KnownBug("CSA-1629")
-	public void testPinToPositionPagination(){
-		PromotionService promotionService = getApplication().promotionService();
-
-		try {
-			promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), "*", SearchPage.RESULTS_PER_PAGE + 2);
-			searchPage.waitForSearchLoadIndicatorToDisappear();
-
-			verifyThat(searchPage.resultsPaginationButton(Pagination.NEXT), not(disabled()));
-			searchPage.switchResultsPage(Pagination.NEXT);
-
-			verifyThat(searchPage.visibleDocumentsCount(), is(2));
-		} finally {
-			promotionService.deleteAll();
-		}
-	}
-
-	@Test
 	public void testDeletingDocument(){
 		searchService.search("bbc");
 

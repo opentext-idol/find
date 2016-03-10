@@ -4,10 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.Pagination;
-import com.autonomy.abc.selenium.promotions.Promotion;
-import com.autonomy.abc.selenium.promotions.PromotionService;
-import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
@@ -94,6 +91,25 @@ public class SearchPaginationITCase extends ABCTestBase {
         checkOnPage(lastPage);
     }
 
+    @Test
+    @KnownBug("CSA-1629")
+    public void testPinToPositionPagination(){
+        PromotionService promotionService = getApplication().promotionService();
+
+        try {
+            promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), "*", SearchPage.RESULTS_PER_PAGE + 2);
+            searchPage = getElementFactory().getSearchPage();
+            searchPage.waitForSearchLoadIndicatorToDisappear();
+
+            checkPageButtonEnabled(Pagination.NEXT);
+            searchPage.switchResultsPage(Pagination.NEXT);
+
+            verifyThat(searchPage.visibleDocumentsCount(), is(2));
+        } finally {
+            promotionService.deleteAll();
+        }
+    }
+
     private void checkPageButtonDisabled(Pagination button) {
         assertThat(searchPage.resultsPaginationButton(button), disabled());
     }
@@ -175,5 +191,4 @@ public class SearchPaginationITCase extends ABCTestBase {
             verifyThat(name + " button disabled", element, hasClass("disabled"));
         }
     }
-
 }
