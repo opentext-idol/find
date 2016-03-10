@@ -4,18 +4,16 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
-import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.SOSearchResult;
 import com.autonomy.abc.selenium.search.SearchBase;
@@ -24,7 +22,6 @@ import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang.time.DateUtils;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -43,10 +40,10 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.autonomy.abc.matchers.ElementMatchers.checked;
+import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchPageITCase extends ABCTestBase {
@@ -280,78 +277,6 @@ public class SearchPageITCase extends ABCTestBase {
 			}
 
 			searchPage.switchResultsPage(Pagination.NEXT);
-		}
-	}
-
-	@Test
-	public void testChangeLanguage() {
-		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
-		String docTitle = searchPage.getSearchResult(1).getTitleString();
-		search("1");
-
-		List<Language> languages = Arrays.asList(Language.ENGLISH, Language.AFRIKAANS, Language.FRENCH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE, Language.SWAHILI);
-		for (final Language language : languages) {
-			searchPage.selectLanguage(language);
-			assertThat(searchPage.getSelectedLanguage(), is(language));
-
-			searchPage.waitForSearchLoadIndicatorToDisappear();
-			assertThat(searchPage.getSearchResult(1).getTitleString(), not(docTitle));
-
-			docTitle = searchPage.getSearchResult(1).getTitleString();
-		}
-	}
-
-	@Test
-	public void testBucketEmptiesWhenLanguageChangedInURL() {
-		search("arc");
-		searchPage.selectLanguage(Language.FRENCH);
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.openPromotionsBucket();
-		searchPage.addDocsToBucket(4);
-
-		assertThat(searchPage.promotionsBucketWebElements(), hasSize(4));
-
-		final String url = getWindow().getUrl().replace("french", "arabic");
-		getWindow().goTo(url);
-		searchPage = getElementFactory().getSearchPage();
-		Waits.loadOrFadeWait();
-		assertThat("Have not navigated back to search page with modified url " + url, searchPage.promoteThisQueryButton().isDisplayed());
-		assertThat(searchPage.promotionsBucketWebElements(), hasSize(0));
-	}
-
-	@Test
-	public void testLanguageDisabledWhenBucketOpened() {
-		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
-		//This test currently fails because language dropdown is not disabled when the promotions bucket is open
-		searchPage.selectLanguage(Language.ENGLISH);
-		search("al");
-		Waits.loadOrFadeWait();
-		assertThat("Languages should be enabled", !ElementUtil.isAttributePresent(searchPage.languageButton(), "disabled"));
-
-		searchPage.openPromotionsBucket();
-		searchPage.addDocToBucket(1);
-		assertThat("There should be one document in the bucket", searchPage.promotionsBucketList(), hasSize(1));
-		searchPage.selectLanguage(Language.FRENCH);
-		assertThat("The promotions bucket should close when the language is changed", searchPage.promotionsBucket(), not(displayed()));
-
-		searchPage.openPromotionsBucket();
-		assertThat("There should be no documents in the bucket after changing language", searchPage.promotionsBucketList(), hasSize(0));
-
-		searchPage.selectLanguage(Language.ENGLISH);
-		assertThat("The promotions bucket should close when the language is changed", searchPage.promotionsBucket(), not(displayed()));
-	}
-
-	@Test
-	public void testSearchAlternateScriptToSelectedLanguage() {
-		List<Language> languages = Arrays.asList(Language.FRENCH, Language.ENGLISH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE);
-		for (final Language language : languages) {
-			searchPage.selectLanguage(language);
-
-			for (final String script : Arrays.asList("निर्वाण", "العربية", "עברית", "сценарий", "latin", "ελληνικά", "ქართული", "བོད་ཡིག")) {
-				search(script);
-				Waits.loadOrFadeWait();
-				assertThat("Undesired error message for language: " + language + " with script: " + script, searchPage.findElement(By.cssSelector(".search-results-view")).getText(),not(containsString("error")));
-			}
 		}
 	}
 
@@ -646,28 +571,6 @@ public class SearchPageITCase extends ABCTestBase {
 			assertThat(searchPage.youSearchedFor(), containsItems(words));
 			assertThat(searchPage.getHeadingSearchTerm(), containsString(queryText));
 		}
-	}
-
-	@Test
-	public void testRelatedConceptsDifferentInDifferentLanguages() {
-		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
-
-		search("France");
-		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
-		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-		final List<String> englishConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
-		searchPage.selectLanguage(Language.FRENCH);
-		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
-		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-		final List<String> frenchConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
-
-		assertThat("Concepts should be different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
-
-		searchPage.selectLanguage(Language.ENGLISH);
-		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
-		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-		final List<String> secondEnglishConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
-		assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
 	}
 
 	@Test

@@ -1,0 +1,138 @@
+package com.autonomy.abc.search;
+
+import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.search.SearchBase;
+import com.autonomy.abc.selenium.search.SearchPage;
+import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
+import org.hamcrest.Matchers;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.By;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.junit.Assume.assumeThat;
+import static org.openqa.selenium.lift.Matchers.displayed;
+
+public class SearchLanguageITCase extends ABCTestBase {
+    private SearchService searchService;
+    private SearchPage searchPage;
+
+    public SearchLanguageITCase(TestConfig config) {
+        super(config);
+    }
+
+    @Before
+    public void setUp() {
+        searchService = getApplication().searchService();
+    }
+
+    private void search(String term) {
+        searchPage = searchService.search(term);
+    }
+
+
+    @Test
+    public void testChangeLanguage() {
+        assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
+        String docTitle = searchPage.getSearchResult(1).getTitleString();
+        search("1");
+
+        List<Language> languages = Arrays.asList(Language.ENGLISH, Language.AFRIKAANS, Language.FRENCH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE, Language.SWAHILI);
+        for (final Language language : languages) {
+            searchPage.selectLanguage(language);
+            assertThat(searchPage.getSelectedLanguage(), is(language));
+
+            searchPage.waitForSearchLoadIndicatorToDisappear();
+            assertThat(searchPage.getSearchResult(1).getTitleString(), not(docTitle));
+
+            docTitle = searchPage.getSearchResult(1).getTitleString();
+        }
+    }
+
+    @Test
+    public void testBucketEmptiesWhenLanguageChangedInURL() {
+        search("arc");
+        searchPage.selectLanguage(Language.FRENCH);
+        searchPage.waitForSearchLoadIndicatorToDisappear();
+        searchPage.openPromotionsBucket();
+        searchPage.addDocsToBucket(4);
+
+        assertThat(searchPage.promotionsBucketWebElements(), hasSize(4));
+
+        final String url = getWindow().getUrl().replace("french", "arabic");
+        getWindow().goTo(url);
+        searchPage = getElementFactory().getSearchPage();
+        Waits.loadOrFadeWait();
+        assertThat("Have not navigated back to search page with modified url " + url, searchPage.promoteThisQueryButton().isDisplayed());
+        assertThat(searchPage.promotionsBucketWebElements(), hasSize(0));
+    }
+
+    @Test
+    public void testLanguageDisabledWhenBucketOpened() {
+        assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
+        //This test currently fails because language dropdown is not disabled when the promotions bucket is open
+        searchPage.selectLanguage(Language.ENGLISH);
+        search("al");
+        Waits.loadOrFadeWait();
+        assertThat("Languages should be enabled", !ElementUtil.isAttributePresent(searchPage.languageButton(), "disabled"));
+
+        searchPage.openPromotionsBucket();
+        searchPage.addDocToBucket(1);
+        assertThat("There should be one document in the bucket", searchPage.promotionsBucketList(), hasSize(1));
+        searchPage.selectLanguage(Language.FRENCH);
+        assertThat("The promotions bucket should close when the language is changed", searchPage.promotionsBucket(), not(displayed()));
+
+        searchPage.openPromotionsBucket();
+        assertThat("There should be no documents in the bucket after changing language", searchPage.promotionsBucketList(), hasSize(0));
+
+        searchPage.selectLanguage(Language.ENGLISH);
+        assertThat("The promotions bucket should close when the language is changed", searchPage.promotionsBucket(), not(displayed()));
+    }
+
+    @Test
+    public void testSearchAlternateScriptToSelectedLanguage() {
+        List<Language> languages = Arrays.asList(Language.FRENCH, Language.ENGLISH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE);
+        for (final Language language : languages) {
+            searchPage.selectLanguage(language);
+
+            for (final String script : Arrays.asList("निर्वाण", "العربية", "עברית", "сценарий", "latin", "ελληνικά", "ქართული", "བོད་ཡིག")) {
+                search(script);
+                Waits.loadOrFadeWait();
+                assertThat("Undesired error message for language: " + language + " with script: " + script, searchPage.findElement(By.cssSelector(".search-results-view")).getText(),not(containsString("error")));
+            }
+        }
+    }
+
+    @Test
+    public void testRelatedConceptsDifferentInDifferentLanguages() {
+        assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
+
+        search("France");
+        searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
+        searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
+        final List<String> englishConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
+        searchPage.selectLanguage(Language.FRENCH);
+        searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
+        searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
+        final List<String> frenchConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
+
+        assertThat("Concepts should be different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
+
+        searchPage.selectLanguage(Language.ENGLISH);
+        searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
+        searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
+        final List<String> secondEnglishConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
+        assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
+    }
+}
