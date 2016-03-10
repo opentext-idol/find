@@ -98,8 +98,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
 
         editDocumentSearch("wall");
-        editReferencesPage.searchResultCheckbox(1).click();
-        editReferencesPage.searchResultCheckbox(2).click();
+        editReferencesPage.addDocsToBucket(2);
 
         final List<String> finalPromotionsBucketList = editReferencesPage.promotionsBucketList();
 
@@ -122,14 +121,12 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editDocumentSearch("unrelated");
 
         for (int i = 1; i < 7; i++) {
-            ElementUtil.scrollIntoView(editReferencesPage.searchResultCheckbox(i), getDriver());
-            editReferencesPage.searchResultCheckbox(i).click();
+            editReferencesPage.addDocToBucket(i);
             verifyThat(editReferencesPage.promotionsBucketList(), hasSize(++currentSize));
         }
 
         for (int j = 6; j > 0; j--) {
-            ElementUtil.scrollIntoView(editReferencesPage.searchResultCheckbox(j), getDriver());
-            editReferencesPage.searchResultCheckbox(j).click();
+            editReferencesPage.removeDocFromBucket(j);
             verifyThat(editReferencesPage.promotionsBucketList(), hasSize(--currentSize));
         }
     }
@@ -143,7 +140,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         editDocumentSearch("solo");
         editReferencesPage.deleteDocFromWithinBucket(originalDoc);
-        editReferencesPage.searchResultCheckbox(1).click();
+        editReferencesPage.addDocToBucket(1);
         verifyRefreshing();
     }
 
@@ -171,16 +168,16 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         editReferencesPage.deleteDocFromWithinBucket(originalDoc);
         editDocumentSearch("mansion");
-        editReferencesPage.searchResultCheckbox(1).click();
-        editReferencesPage.searchResultCheckbox(2).click();
+        editReferencesPage.addDocToBucket(1);
+        editReferencesPage.addDocToBucket(2);
         editReferencesPage.switchResultsPage(Pagination.NEXT);
-        editReferencesPage.searchResultCheckbox(3).click();
-        editReferencesPage.searchResultCheckbox(4).click();
+        editReferencesPage.addDocToBucket(3);
+        editReferencesPage.addDocToBucket(4);
 
         editDocumentSearch("villa");
         verifyThat(editReferencesPage.getCurrentPageNumber(), is(1));
-        editReferencesPage.searchResultCheckbox(5).click();
-        editReferencesPage.searchResultCheckbox(6).click();
+        editReferencesPage.addDocToBucket(5);
+        editReferencesPage.addDocToBucket(6);
         editReferencesPage.cancelButton().click();
 
         verifyThat(promotionsDetailPage.getPromotedTitles(), hasSize(1));
@@ -248,7 +245,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editDocumentSearch("banana");
 
         for (int i = 1; i < 5; i++) {
-            editReferencesPage.searchResultCheckbox(i).click();
+            editReferencesPage.addDocToBucket(i);
             final String docTitle = editReferencesPage.getSearchResult(i).getTitleString();
             editReferencesPage.promotionBucketElementByTitle(docTitle).click();
             checkDocumentViewable(docTitle);
@@ -274,7 +271,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         verifyThat(getWindow(), urlContains("promotions/edit"));
 
-        editReferencesPage.searchResultCheckbox(6).click();
+        editReferencesPage.addDocToBucket(6);
         final String newPromotedDoc = editReferencesPage.getSearchResult(6).getTitleString();
 
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
@@ -320,8 +317,8 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         editDocumentSearch("Friday");
 
+        editReferencesPage.addDocToBucket(5);
         String title = editReferencesPage.getSearchResult(5).getTitleString();
-        editReferencesPage.searchResultCheckbox(5).click();
 
         editReferencesPage.saveButton().click();
 
