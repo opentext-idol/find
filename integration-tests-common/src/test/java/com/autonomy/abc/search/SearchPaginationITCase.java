@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.Pagination;
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
@@ -15,11 +16,10 @@ import org.openqa.selenium.WebElement;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
+import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchPaginationITCase extends ABCTestBase {
@@ -89,6 +89,28 @@ public class SearchPaginationITCase extends ABCTestBase {
 
         getDriver().navigate().forward();
         checkOnPage(lastPage);
+    }
+
+    @Test
+    @KnownBug("CSA-1819")
+    public void testNavigateBeyondEndOfResults() {
+        searchPage = searchService.search("nice");
+        searchPage.switchResultsPage(Pagination.LAST);
+        final int lastPage = searchPage.getCurrentPageNumber();
+        final String docTitle = searchPage.getSearchResult(1).getTitleString();
+
+        assertThat(getWindow(), urlContains("nice/" + lastPage));
+
+        final String illegitimateUrl = getWindow().getUrl().replace("nice/" + lastPage, "nice/" + (lastPage + 5));
+        getWindow().goTo(illegitimateUrl);
+        searchPage = getElementFactory().getSearchPage();
+        searchPage.waitForSearchLoadIndicatorToDisappear();
+
+        WebElement error = searchPage.errorContainer();
+        verifyThat(error, not(displayed()));
+        assertThat(error, hasTextThat(isEmptyOrNullString()));
+        checkOnPage(lastPage);
+        assertThat(searchPage.getSearchResult(1).getTitleString(), is(docTitle));
     }
 
     @Test

@@ -669,29 +669,6 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	@KnownBug("CSA-1819")
-	public void testNavigateToLastPageOfSearchResultsAndEditUrlToTryAndNavigateFurther() {
-        search("nice");
-		searchPage.switchResultsPage(Pagination.LAST);
-		final int currentPage = searchPage.getCurrentPageNumber();
-		final String docTitle = searchPage.getSearchResult(1).getTitleString();
-		final String url = getWindow().getUrl();
-		assertThat("Url and current page number are out of sync", url, containsString("nice/" + currentPage));
-
-		final String illegitimateUrl = url.replace("nice/" + currentPage, "nice/" + (currentPage + 5));
-		getWindow().goTo(illegitimateUrl);
-		searchPage = getElementFactory().getSearchPage();
-        searchPage.waitForSearchLoadIndicatorToDisappear();
-
-        assertThat("Page should still have results", searchPage, not(containsText(Errors.Search.NO_RESULTS)));
-		assertThat("Page should not have thrown an error", searchPage, not(containsText(Errors.Search.HOD)));
-		assertThat("Page number should not have changed", currentPage, is(searchPage.getCurrentPageNumber()));
-		assertThat(getWindow(), url(is(url)));
-		assertThat("Error message should not be showing", searchPage.isErrorMessageShowing(), is(false));
-		assertThat("Search results have changed on last page", docTitle, is(searchPage.getSearchResult(1).getTitleString()));
-	}
-
-	@Test
 	public void testNoRelatedConceptsIfNoResultsFound() {
 		final String garbageQueryText = "garbagedjlsfjijlsf";
 		search(garbageQueryText);
