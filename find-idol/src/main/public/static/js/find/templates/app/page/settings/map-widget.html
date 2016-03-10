@@ -1,18 +1,10 @@
-<!--
-  ~ Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
-  ~ Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
-  -->
-
 <% var uid = _.uniqueId('map') %>
-<% var uid2 = _.uniqueId('map') %>
 
-<div class="form-group">
-    <div class="form-group m-t-sm col-sm-12">
-        <label for="<%-uid%>-url" class="control-label"><%-strings.url%>: </label>
-        <input id="<%-uid%>-url" class="form-control tileserver-url-input">
-    </div>
-    <div class="form-group m-t-sm col-sm-12">
-        <label for="<%-uid2%>-url" class="control-label"><%-strings.attribution%>: </label>
-        <input id="<%-uid2%>-url" class="form-control attribution-input">
-    </div>
+<div class="form-group col-sm-12">
+    <label for="<%-uid%>-url" class="control-label"><%-strings.url%>: </label>
+    <input id="<%-uid%>-url" class="form-control tileserver-url-input">
+</div>
+<div class="form-group m-t-sm col-sm-12">
+    <label for="<%-uid%>-attribution" class="control-label"><%-strings.attribution%>: </label>
+    <input id="<%-uid%>-attribution" class="form-control attribution-input">
 </div>

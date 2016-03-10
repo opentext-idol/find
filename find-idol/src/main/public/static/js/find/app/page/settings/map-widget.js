@@ -18,6 +18,7 @@ define([
             Widget.prototype.initialize.apply(this, arguments);
 
             this.enableView = new EnableView({
+                className: 'form-group m-t-sm',
                 enableIcon: 'fa fa-file',
                 strings: this.strings
             })
