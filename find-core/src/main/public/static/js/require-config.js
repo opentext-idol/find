@@ -19,7 +19,7 @@ require.config({
         'fieldtext': '../bower_components/hp-autonomy-fieldtext-js/src',
         'parametric-refinement': '../bower_components/hp-autonomy-js-parametric-refinement/src',
         iCheck: '../bower_components/iCheck/icheck',
-        chosen: '../bower_components/chosen/chosen.jquery.min',
+        chosen: '../bower_components/chosen/chosen.jquery',
         jquery: '../bower_components/jquery/jquery',
         'js-whatever': '../bower_components/hp-autonomy-js-whatever/src',
         json2: '../bower_components/json/json2',
