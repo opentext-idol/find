@@ -32,7 +32,7 @@ define([
             maxDate: model.get('maxDate'),
             queryText: makeQueryText(model.get('queryText'), model.get('relatedConcepts')),
             databases: buildIndexes(model.get('indexes')),
-            fieldText: toFieldTextNode(model.get('parametricValues')),
+            fieldText: toFieldTextNode(model.get('parametricValues')).toString(),
             anyLanguage: true
         };
     };
