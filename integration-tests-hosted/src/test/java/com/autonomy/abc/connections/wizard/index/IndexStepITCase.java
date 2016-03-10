@@ -110,6 +110,6 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
     }
 
     private void verifyError(String errorMessage, Serializable expectedError) {
-        verifyThat(errorMessage, is(expectedError));
+        verifyThat(errorMessage, is(expectedError.toString()));
     }
 }
