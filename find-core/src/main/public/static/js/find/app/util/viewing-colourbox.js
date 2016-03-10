@@ -14,7 +14,8 @@ define([
     'text!find/templates/app/page/view/view-document.html',
     'i18n!find/nls/bundle'
 ], function ($, _, DocumentModel, colorboxControlsTemplate, documentContentTemplateString, audioPlayerTemplateString, videoPlayerTemplateString, viewDocumentTemplateString, i18n) {
-    "use strict";
+
+    'use strict';
 
     var SIZE = '90%';
     var window = $(window);
@@ -56,16 +57,20 @@ define([
             onComplete: _.bind(function () {
                 $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
 
-                var viewServerPage = $('.view-server-page');
+                var $iframe = $('.view-server-page');
 
-                viewServerPage.on('load', function () {
+                $iframe.on('load', function () {
                     $('.view-server-loading-indicator').addClass('hidden');
                     $('.view-server-page').removeClass('hidden');
+
+                    // View server adds script tags to rendered HTML documents, which are blocked by the application
+                    // This replicates their functionality
+                    $iframe.contents().find('.InvisibleAbsolute').hide();
                 });
 
                 // Adding the source attribute after the colorbox has loaded prevents the iframe from loading
                 // a very quick response (such as an error) before the listener is attached
-                viewServerPage.attr("src", options.href);
+                $iframe.attr("src", options.href);
 
                 window.resize(onResize);
             }, this)
