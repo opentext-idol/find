@@ -1,0 +1,8 @@
+<% var loginTypeUid = _.uniqueId('settings'); %>
+
+<div class="form-group m-t-sm">
+    <label class="control-label settings-label" for="login-type-<%-loginTypeUid%>"><%-strings.loginTypeLabel%>: </label>
+    <select class="form-control" id="login-type-<%-loginTypeUid%>" name="login-type" disabled></select>
+    <span class="fetch-security-types settings-info hide"><%-strings.fetchSecurityTypes%></span>
+    <span class="settings-client-validation settings-info hide"><%-strings.invalidSecurityType%></span>
+</div>

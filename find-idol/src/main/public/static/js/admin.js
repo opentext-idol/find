@@ -3,5 +3,9 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-// this file needs to exist to keep the tests happy but is never used
-define({});
+require(['require-config'], function () {
+    'use strict';
+    require(['find/idol/admin/admin-idol-app'], function (App) {
+        new App();
+    });
+});

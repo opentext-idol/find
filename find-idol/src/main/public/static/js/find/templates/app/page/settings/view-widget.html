@@ -1,0 +1,17 @@
+<% var uid = _.uniqueId('referenceField'); %>
+<div class="form-group m-t-sm">
+    <div class="form-group m-t-sm col-sm-12">
+        <label for="<%-uid%>-viewing-mode" class="control-label"><%-strings.viewingMode%>: </label>
+        <select id="<%-uid%>-viewing-mode" class="form-control viewing-mode-input">
+            <option value="FIELD"><%-strings.referenceFieldLabel%></option>
+            <option value="CONNECTOR"><%-strings.connector%></option>
+        </select>
+    </div>
+</div>
+<div class="form-group m-t-sm field-form-group">
+    <label for="<%-uid%>"><%-strings.referenceFieldLabel%>:</label>
+    <input class="reference-field form-control" id="<%-uid%>" name="referenceField" placeholder="<%-strings.referenceFieldPlaceholder%>">
+    <span class="settings-required-flag"><i class="fa fa-asterisk"></i></span>
+    <span class="settings-client-validation settings-info hide"><%-strings.referenceFieldBlank%></span>
+</div>
+<div class="connector-container m-t-sm"></div>
