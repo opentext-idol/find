@@ -33,10 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -282,15 +279,15 @@ public class SearchPageITCase extends ABCTestBase {
 
 		searchPage.fieldTextAddButton().click();
 		assertThat(searchPage.fieldTextAddButton(), not(displayed()));
-		assertThat("Field text input not visible", fieldTextInputElement, displayed());
+		assertThat(fieldTextInputElement, displayed());
 
 		searchPage.fieldTextInput().getElement().click();
 		assertThat(searchPage.fieldTextAddButton(), not(displayed()));
-		assertThat("Field text input not visible", fieldTextInputElement, displayed());
+		assertThat(fieldTextInputElement, displayed());
 
 		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		assertThat(searchPage.fieldTextAddButton(), displayed());
-		assertThat("Field text input visible", fieldTextInputElement, not(displayed()));
+		assertThat(fieldTextInputElement, not(displayed()));
 	}
 
 	@Test
@@ -337,7 +334,7 @@ public class SearchPageITCase extends ABCTestBase {
 			final int completePages = searchPage.getCurrentPageNumber() - 1;
 			final int lastPageDocumentsCount = searchPage.visibleDocumentsCount();
 			final int expectedCount = completePages * SearchPage.RESULTS_PER_PAGE + lastPageDocumentsCount;
-			verifyThat("number of results is as expected", searchPage.getHeadingResultsCount(), is(expectedCount));
+			verifyThat(searchPage.getHeadingResultsCount(), is(expectedCount));
 		}
 	}
 
@@ -345,30 +342,23 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testSortByRelevance() {
 		search("string");
 		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
-		List<Float> weights = searchPage.getWeightsOnPage(5);
-
-        logger.info("Weight of 0: " + weights.get(0));
-
-        for (int i = 0; i < weights.size() - 1; i++) {
-            logger.info("Weight of " + (i + 1) + ": " + weights.get(i + 1));
-
-			assertThat("Weight of search result " + i + " is not greater that weight of search result " + (i + 1), weights.get(i), greaterThanOrEqualTo(weights.get(i + 1)));
-		}
+		checkWeightsForPages(5);
 
 		searchPage.sortBy(SearchBase.Sort.DATE);
 		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
-		weights = searchPage.getWeightsOnPage(5);
-		for (int i = 0; i < weights.size() - 1; i++) {
-			assertThat("Weight of search result " + i + " is not greater that weight of search result " + (i + 1), weights.get(i), greaterThanOrEqualTo(weights.get(i + 1)));
-		}
+		checkWeightsForPages(5);
 
 		searchPage.sortBy(SearchBase.Sort.DATE);
 		search("paper packages");
 		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
-		weights = searchPage.getWeightsOnPage(5);
-		for (int i = 0; i < weights.size() - 1; i++) {
-			assertThat("Weight of search result " + i + " is not greater that weight of search result " + (i + 1), weights.get(i), greaterThanOrEqualTo(weights.get(i + 1)));
-		}
+		checkWeightsForPages(5);
+	}
+
+	private void checkWeightsForPages(int numberOfPages) {
+		List<Float> weights = searchPage.getWeightsOnPage(numberOfPages);
+		List<Float> sortedWeights = new ArrayList<>(weights);
+		Collections.sort(sortedWeights, Collections.reverseOrder());
+		assertThat(sortedWeights, equalTo(weights));
 	}
 
 	@Test
