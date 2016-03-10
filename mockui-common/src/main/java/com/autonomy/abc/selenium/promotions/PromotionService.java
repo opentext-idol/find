@@ -48,6 +48,7 @@ public class PromotionService<T extends SOElementFactory> extends ServiceBase<T>
         if (promotion instanceof DynamicPromotion) {
             searchPage.promoteThisQueryButton().click();
         } else {
+            ElementUtil.scrollIntoView(searchPage.promoteTheseItemsButton(), getDriver());
             ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
         }
 
