@@ -213,7 +213,7 @@ define([
         'settings.logoutFromSettings': 'Logout from Settings',
         'settings.map': 'Mapping',
         'settings.map.attribution': 'Attribution',
-        'settings.map.description': 'View location information',
+        'settings.map.description': 'View location information. The tile server url should contain {x}, {y}, and {z} variables',
         'settings.map.disable': 'Disable Mapping',
         'settings.map.disabled': 'Mapping is disabled',
         'settings.map.enable': 'Enable Mapping',
