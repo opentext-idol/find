@@ -275,20 +275,20 @@ public class SearchPageITCase extends ABCTestBase {
     @Test
 	public void testFieldTextInputDisappearsOnOutsideClick() {
 		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
-		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
+		assertThat(searchPage.fieldTextAddButton(), displayed());
 
 		WebElement fieldTextInputElement = searchPage.fieldTextInput().getElement();
 
 		searchPage.fieldTextAddButton().click();
-		assertThat("Field text add button visible", !searchPage.fieldTextAddButton().isDisplayed());
+		assertThat(searchPage.fieldTextAddButton(), not(displayed()));
 		assertThat("Field text input not visible", fieldTextInputElement, displayed());
 
 		searchPage.fieldTextInput().getElement().click();
-		assertThat("Field text add button visible", !searchPage.fieldTextAddButton().isDisplayed());
+		assertThat(searchPage.fieldTextAddButton(), not(displayed()));
 		assertThat("Field text input not visible", fieldTextInputElement, displayed());
 
 		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
-		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
+		assertThat(searchPage.fieldTextAddButton(), displayed());
 		assertThat("Field text input visible", fieldTextInputElement, not(displayed()));
 	}
 
@@ -432,7 +432,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.expand(SearchBase.Facet.FILTER_BY);
 		searchPage.expand(SearchBase.Facet.PARAMETRIC_VALUES);
 		Thread.sleep(20000);
-		assertThat("Load indicator still visible after 20 seconds", searchPage.parametricValueLoadIndicator().isDisplayed(), is(false));
+		assertThat(searchPage.parametricValueLoadIndicator(), not(displayed()));
 	}
 
 	@Test

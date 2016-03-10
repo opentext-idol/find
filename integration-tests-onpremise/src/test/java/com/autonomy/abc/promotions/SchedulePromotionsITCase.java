@@ -30,6 +30,7 @@ import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SchedulePromotionsITCase extends ABCTestBase {
 
@@ -68,7 +69,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 
 		assertThat(getWindow(), urlContains("schedule"));
 		assertThat("Wrong wizard text", schedulePage.getText().contains("Schedule your promotion"));
-		assertThat("Finish button not visible", schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed(), is(true));
+		assertThat(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), displayed());
 		assertThat("Always active isn't selected", schedulePage.alwaysActive().getAttribute("class"), containsString("progressive-disclosure-selection"));
 		assertThat("Schedule shouldn't be selected", schedulePage.schedule().getAttribute("class"), not(containsString("progressive-disclosure-selection")));
 		assertThat("Finish button should be enabled", ElementUtil.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"), is(false));
@@ -77,7 +78,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		assertThat("Finish button should be enabled", ElementUtil.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"), is(false));
 
 		schedulePage.schedule().click();
-		assertThat("Continue button should be present", schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed(), is(true));
+		assertThat(schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), displayed());
 
 		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
 		Waits.loadOrFadeWait();
@@ -184,7 +185,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		}
 		assertThat(getWindow(), urlContains("schedule"));
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("Schedule your promotion"));
-		assertThat("Finish button not visible", schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed(), is(true));
+		assertThat(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), displayed());
 		assertThat("Finish button should be enabled", ElementUtil.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"), is(false));
 
 		schedulePage.alwaysActive().click();
@@ -193,7 +194,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 
 		schedulePage.schedule().click();
 		Waits.loadOrFadeWait();
-		assertThat("Continue button should be present", schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed(), is(true));
+		assertThat(schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), displayed());
 
 		schedulePage.alwaysActive().click();
 		Waits.loadOrFadeWait();
@@ -201,7 +202,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 
 		schedulePage.schedule().click();
 		Waits.loadOrFadeWait();
-		assertThat("Continue button should be present", schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed(), is(true));
+		assertThat(schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), displayed());
 
 		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
 		Waits.loadOrFadeWait();
@@ -584,7 +585,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		final DatePicker datePicker = new DatePicker(schedulePage.$el(), getDriver());
 		datePicker.calendarDateSelect(DateUtils.addYears(schedulePage.getTodayDate(), 3));
 		schedulePage.endDateTextBoxButton().click();
-		assertThat("Finish button should be displayed when schedule period greater than one year", schedulePage.finishButton(SchedulePage.WizardStep.START_END).isDisplayed());
+		assertThat(schedulePage.finishButton(SchedulePage.WizardStep.START_END), displayed());
 		schedulePage.finishButton(SchedulePage.WizardStep.START_END).click();
 	}
 }

@@ -45,7 +45,6 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
-import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
@@ -299,7 +298,7 @@ public class FindITCase extends FindTestBase {
 
         for(String field : parametricFields) {
             try {
-                assertTrue(results.parametricContainer(field).isDisplayed());
+                assertThat(results.parametricContainer(field), displayed());
             } catch (ElementNotVisibleException | NotFoundException e) {
                 fail("Could not find field '"+field+"'");
             }
@@ -665,5 +664,4 @@ public class FindITCase extends FindTestBase {
             return sidebarString;
         }
     }
-
 }

@@ -73,7 +73,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
         searchPage.fieldTextRemoveButton().click();
         Waits.loadOrFadeWait();
         assertThat(searchPage.getSearchResult(comparisonResult).getTitleString(), is(comparisonString));
-        assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
+        assertThat(searchPage.fieldTextAddButton(), displayed());
         assertThat(searchPage.getSearchResult(1).getTitleString(), is(searchResultTitle));
     }
 

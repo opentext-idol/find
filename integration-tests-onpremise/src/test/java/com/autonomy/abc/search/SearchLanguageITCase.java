@@ -77,7 +77,7 @@ public class SearchLanguageITCase extends ABCTestBase {
         getWindow().goTo(url);
         searchPage = getElementFactory().getSearchPage();
         Waits.loadOrFadeWait();
-        assertThat("Have not navigated back to search page with modified url " + url, searchPage.promoteThisQueryButton().isDisplayed());
+        assertThat(searchPage.promoteThisQueryButton(), displayed());
         assertThat(searchPage.promotionsBucketWebElements(), hasSize(0));
     }
 

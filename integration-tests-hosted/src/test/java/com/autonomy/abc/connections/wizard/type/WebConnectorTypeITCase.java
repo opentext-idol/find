@@ -103,7 +103,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
         connectorConfigStep.getDepthBox().setValue("-2");
 
         newConnectionPage.nextButton().click();
-        assertThat(connectorConfigStep.advancedConfigurations().isDisplayed(), is(true));
+        assertThat(connectorConfigStep.advancedConfigurations(), displayed());
 
         checkFormInputError(connectorConfigStep.getMaxPagesBox(), 10);
         checkFormInputError(connectorConfigStep.getDurationBox(), 60);
@@ -122,7 +122,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
         connectorConfigStep.getDepthBox().setValue("-1");
 
         newConnectionPage.nextButton().click();
-        assertThat(connectorConfigStep.advancedConfigurations().isDisplayed(), is(false));
+        assertThat(connectorConfigStep.advancedConfigurations(), not(displayed()));
     }
 
     @Test

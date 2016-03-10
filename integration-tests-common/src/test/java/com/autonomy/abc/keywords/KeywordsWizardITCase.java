@@ -77,19 +77,19 @@ public class KeywordsWizardITCase extends ABCTestBase {
         assertThat("Cancel button displayed", createKeywordsPage.cancelWizardButton(), is(displayed()));
         createKeywordsPage.cancelWizardButton().click();
 
-        assertThat("Create new keywords button is not visible", keywordsPage.createNewKeywordsButton().isDisplayed());
+        assertThat(keywordsPage.createNewKeywordsButton(), displayed());
 
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat(getWindow(), urlContains("keywords/create"));
-        assertThat("Create new keywords button should not be visible", !keywordsPage.createNewKeywordsButton().isDisplayed());
-        assertThat("Create Synonyms button should be visible", createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).isDisplayed());
-        assertThat("Create Blacklisted button should be visible", createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).isDisplayed());
-        assertThat("Cancel button be visible", createKeywordsPage.cancelWizardButton().isDisplayed());
-        assertThat("Continue button should be visible", createKeywordsPage.continueWizardButton().isDisplayed());
+        assertThat(keywordsPage.createNewKeywordsButton(), not(displayed()));
+        assertThat(createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM), displayed());
+        assertThat(createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST), displayed());
+        assertThat(createKeywordsPage.cancelWizardButton(), displayed());
+        assertThat(createKeywordsPage.continueWizardButton(), displayed());
 
         createKeywordsPage.cancelWizardButton().click();
-        assertThat("Create new keywords button should be visible", keywordsPage.createNewKeywordsButton().isDisplayed());
+        assertThat(keywordsPage.createNewKeywordsButton(), displayed());
     }
 
 
@@ -100,7 +100,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
         assertThat("Synonym type not set active", ElementUtil.getFirstChild(createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM)).getAttribute("class"), containsString("progressive-disclosure-selection"));
         assertThat("Continue button should be enabled", createKeywordsPage.continueWizardButton().getAttribute("class"), not(containsString("disabled")));
-        assertThat("languages select should be visible", createKeywordsPage.languagesSelectBox().isDisplayed());
+        assertThat(createKeywordsPage.languagesSelectBox(), displayed());
 
         if(isOnPrem()) {
             createKeywordsPage.selectLanguage(Language.FRENCH);
@@ -162,7 +162,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         getElementFactory().getSideNavBar().toggle();
         createKeywordsPage.cancelWizardButton().click();
-        assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
+        assertThat(keywordsPage.createNewKeywordsButton(), displayed());
 
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
@@ -173,7 +173,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         Waits.loadOrFadeWait();
         getElementFactory().getSideNavBar().toggle();
         createKeywordsPage.cancelWizardButton().click();
-        assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
+        assertThat(keywordsPage.createNewKeywordsButton(), displayed());
 
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
@@ -184,7 +184,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         Waits.loadOrFadeWait();
         getElementFactory().getSideNavBar().toggle();
         createKeywordsPage.cancelWizardButton().click();
-        assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
+        assertThat(keywordsPage.createNewKeywordsButton(), displayed());
     }
 
     @Test
@@ -195,7 +195,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         assertThat("Blacklisted type not set active", ElementUtil.getFirstChild(createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST)).getAttribute("class"), containsString("progressive-disclosure-selection"));
         assertThat("Continue button should be enabled", createKeywordsPage.continueWizardButton().getAttribute("class"), not(containsString("disabled")));
 
-        assertThat("Wizard did not navigate to languages page", createKeywordsPage.languagesSelectBox().isDisplayed());
+        assertThat(createKeywordsPage.languagesSelectBox(), displayed());
 
         if(isOnPrem()) {
             createKeywordsPage.selectLanguage(Language.SWAHILI);

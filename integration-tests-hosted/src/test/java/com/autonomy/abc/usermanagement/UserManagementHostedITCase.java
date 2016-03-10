@@ -30,6 +30,7 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
 
@@ -210,7 +211,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
             userService.editUsername(user, "");
         } catch (TimeoutException e) { /* Should fail here as you're giving it an invalid username */ }
 
-        verifyThat(usersPage.editUsernameInput(user).getElement().isDisplayed(), is(true));
+        verifyThat(usersPage.editUsernameInput(user).getElement(), displayed());
         verifyThat(usersPage.editUsernameInput(user).getElement().findElement(By.xpath("./../..")), hasClass("has-error"));
     }
 
