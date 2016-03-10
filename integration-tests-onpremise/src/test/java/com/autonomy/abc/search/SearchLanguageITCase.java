@@ -2,14 +2,19 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.control.Frame;
+import com.autonomy.abc.selenium.element.DocumentViewer;
+import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -18,10 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.contains;
-import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchLanguageITCase extends ABCTestBase {
@@ -44,7 +48,6 @@ public class SearchLanguageITCase extends ABCTestBase {
 
     @Test
     public void testChangeLanguage() {
-        assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
         String docTitle = searchPage.getSearchResult(1).getTitleString();
         search("1");
 
@@ -80,7 +83,6 @@ public class SearchLanguageITCase extends ABCTestBase {
 
     @Test
     public void testLanguageDisabledWhenBucketOpened() {
-        assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
         //This test currently fails because language dropdown is not disabled when the promotions bucket is open
         searchPage.selectLanguage(Language.ENGLISH);
         search("al");
@@ -116,8 +118,6 @@ public class SearchLanguageITCase extends ABCTestBase {
 
     @Test
     public void testRelatedConceptsDifferentInDifferentLanguages() {
-        assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
-
         search("France");
         searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
         searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
@@ -134,5 +134,32 @@ public class SearchLanguageITCase extends ABCTestBase {
         searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
         final List<String> secondEnglishConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
         assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
+    }
+
+    @Test
+    @KnownBug("CCUK-2882")
+    public void testNonLatinUrlEncoding() {
+        Query nonLatin = new Query("جيمس")
+                .withFilter(new LanguageFilter(Language.ARABIC));
+        searchPage = searchService.search(nonLatin);
+        searchPage.openPromotionsBucket();
+
+        for (int j = 1; j <=2; j++) {
+            for (int i = 1; i <= 3; i++) {
+                searchPage.addDocToBucket(i);
+                final String docTitle = searchPage.getSearchResult(i).getTitleString();
+                checkViewResult(docTitle);
+            }
+            searchPage.switchResultsPage(Pagination.NEXT);
+        }
+    }
+
+    @RelatedTo("CCUK-3728")
+    private void checkViewResult(String docTitle) {
+        ElementUtil.scrollIntoViewAndClick(searchPage.promotionBucketElementByTitle(docTitle), getDriver());
+        DocumentViewer viewer = DocumentViewer.make(getDriver());
+        Frame frame = new Frame(getWindow(), viewer.frame());
+        verifyThat("view frame displays", frame.getText(), containsString(docTitle));
+        viewer.close();
     }
 }

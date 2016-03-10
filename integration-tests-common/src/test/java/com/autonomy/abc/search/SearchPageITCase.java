@@ -4,16 +4,18 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.SOSearchResult;
 import com.autonomy.abc.selenium.search.SearchBase;
@@ -22,6 +24,7 @@ import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang.time.DateUtils;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -40,10 +43,10 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static com.autonomy.abc.matchers.ElementMatchers.checked;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchPageITCase extends ABCTestBase {
@@ -242,6 +245,23 @@ public class SearchPageITCase extends ABCTestBase {
 		}
 	}
 
+	@Test
+	public void testViewFromBucketLabel() throws InterruptedException {
+		search("Engineer");
+		searchPage.openPromotionsBucket();
+
+		for (int j = 1; j <=2; j++) {
+			for (int i = 1; i <= 3; i++) {
+				searchPage.addDocToBucket(i);
+				final String docTitle = searchPage.getSearchResult(i).getTitleString();
+				ElementUtil.scrollIntoViewAndClick(searchPage.promotionBucketElementByTitle(docTitle), getDriver());
+				checkViewResult();
+			}
+
+			searchPage.switchResultsPage(Pagination.NEXT);
+		}
+	}
+
 	// TODO: after CCUK-3728 use SharedPreviewTests
 	@RelatedTo("CCUK-3728")
 	private void checkViewResult() {
@@ -250,36 +270,8 @@ public class SearchPageITCase extends ABCTestBase {
 
 		verifyThat(frame.getText(), not(isEmptyOrNullString()));
 		docViewer.close();
+
 	}
-
-	@Test
-	public void testViewFromBucketLabel() throws InterruptedException {
-		// TODO: add Arabic test to OP
-		//Testing in Arabic because in some instances not latin urls have been encoded incorrectly
-		search("جيمس");
-		searchPage.selectLanguage(Language.ARABIC);
-
-        search("Engineer");
-
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.openPromotionsBucket();
-
-		for (int j = 1; j <=2; j++) {
-			for (int i = 1; i <= 3; i++) {
-				searchPage.addDocToBucket(i);
-				final String docTitle = searchPage.getSearchResult(i).getTitleString();
-				ElementUtil.scrollIntoViewAndClick(searchPage.promotionBucketElementByTitle(docTitle), getDriver());
-
-				DocumentViewer viewer = DocumentViewer.make(getDriver());
-				Frame frame = new Frame(getWindow(), viewer.frame());
-				verifyThat("view frame displays", frame.getText(), containsString(docTitle));
-				viewer.close();
-			}
-
-			searchPage.switchResultsPage(Pagination.NEXT);
-		}
-	}
-
     @Test
 	public void testFieldTextInputDisappearsOnOutsideClick() {
 		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
