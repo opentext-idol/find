@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.iso;
 
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.promotions.OPPromotionService;
@@ -34,7 +33,7 @@ public class OPISOApplication extends SearchOptimizerApplication<OPISOElementFac
     }
 
     @Override
-    public ApplicationType getType() {
-        return ApplicationType.ON_PREM;
+    public boolean isHosted() {
+        return false;
     }
 }

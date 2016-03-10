@@ -15,6 +15,7 @@ import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
+import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.*;
 import org.junit.After;
 import org.junit.Before;
@@ -92,7 +93,7 @@ public class IndexFieldsITCase extends HostedTestBase {
     }
 
     private void verifyIndexSearch() {
-        logSearch(new SearchQuery("*").withFilter(new IndexFilter(index)));
+        logSearch(new Query("*").withFilter(new IndexFilter(index)));
         assertThat(searchPage.getHeadingResultsCount(), greaterThan(0));
 
         logSearch(indexFieldValue);
@@ -107,21 +108,21 @@ public class IndexFieldsITCase extends HostedTestBase {
     }
 
     private void verifyParametricSearch() {
-        logSearch(new SearchQuery("*").withFilter(new IndexFilter(index)));
+        logSearch(new Query("*").withFilter(new IndexFilter(index)));
         assertThat(searchPage.getHeadingResultsCount(), greaterThan(0));
 
         applyParametricFilter(searchPage);
         verifyFirstSearchResult();
 
-        logSearch(new SearchQuery("*").withFilter(matchFilter));
+        logSearch(new Query("*").withFilter(matchFilter));
         verifyFirstSearchResult();
     }
 
     private void logSearch(String query) {
-        logSearch(new SearchQuery(query));
+        logSearch(new Query(query));
     }
 
-    private void logSearch(SearchQuery query) {
+    private void logSearch(Query query) {
         logger.info("searching for " + query);
         boolean quick = true;
         try {
@@ -194,7 +195,7 @@ public class IndexFieldsITCase extends HostedTestBase {
         }
     }
 
-    private void applyParametricFilter(SearchFilter.Filterable filterable) {
+    private void applyParametricFilter(QueryFilter.Filterable filterable) {
         logger.info("filtering by " + parametricFilter);
         boolean success = true;
         try {

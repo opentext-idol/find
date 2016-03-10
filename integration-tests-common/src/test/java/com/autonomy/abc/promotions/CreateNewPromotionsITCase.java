@@ -214,7 +214,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage.waitForSearchLoadIndicatorToDisappear();
 
         verifyThat(searchPage.getTopPromotedLinkTitle(), is(promotedDocTitle));
-        if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
+        if (isOnPrem()) {
             verifyThat(searchPage.getTopPromotedSpotlightType(), is(spotlightType.getOption()));
         }
 
@@ -226,7 +226,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         Waits.loadOrFadeWait();
         verifyThat(searchPage, containsText(promotedDocTitle));
 
-        if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
+        if (isOnPrem()) {
             promotionsDetailPage = promotionService.goToDetails(searchTrigger);
             verifyThat(promotionsDetailPage, containsText("Spotlight for: " + searchTrigger));
             verifyThat(promotionsDetailPage.spotlightTypeDropdown().getValue(), is(spotlightType.getOption()));
@@ -308,7 +308,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         wizard.getCurrentStep().apply();
         wizard.next();
         // TODO: refactor tests
-        if (getConfig().getType() == ApplicationType.ON_PREM) {
+        if (isOnPrem()) {
             verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
             toggleAndCancel();
 

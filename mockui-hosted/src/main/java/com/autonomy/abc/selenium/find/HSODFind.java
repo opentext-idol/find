@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.application.Application;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.users.LoginService;
 
@@ -35,8 +34,8 @@ public class HSODFind implements Application<HSODFindElementFactory> {
     }
 
     @Override
-    public ApplicationType getType() {
-        return ApplicationType.HOSTED;
+    public boolean isHosted() {
+        return true;
     }
 
     @Override

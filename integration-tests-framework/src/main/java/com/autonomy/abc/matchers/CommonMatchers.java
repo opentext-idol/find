@@ -4,11 +4,10 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import java.util.Collection;
-import java.util.Comparator;
+import java.io.Serializable;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Is.is;
 
 public class CommonMatchers {
     private CommonMatchers() {}
@@ -88,4 +87,5 @@ public class CommonMatchers {
     public static <T> Matcher<Iterable<? extends T>> containsAnyOf(final Collection<? super T> collection) {
         return hasItemThat(is(isIn(collection)));
     }
+
 }

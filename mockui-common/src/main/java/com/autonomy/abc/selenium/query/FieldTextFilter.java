@@ -1,10 +1,11 @@
-package com.autonomy.abc.selenium.search;
+package com.autonomy.abc.selenium.query;
 
+import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebElement;
 
-public class FieldTextFilter implements SearchFilter {
+public class FieldTextFilter implements QueryFilter {
     private String fieldText;
 
     public FieldTextFilter(String fieldText) {
@@ -12,7 +13,7 @@ public class FieldTextFilter implements SearchFilter {
     }
 
     @Override
-    public void apply(SearchFilter.Filterable page) {
+    public void apply(QueryFilter.Filterable page) {
         if (page instanceof SearchBase) {
             SearchBase searchBase = (SearchBase) page;
             searchBase.expand(SearchBase.Facet.FIELD_TEXT);
@@ -33,7 +34,7 @@ public class FieldTextFilter implements SearchFilter {
         }
     }
 
-    public void clear(SearchFilter.Filterable page) {
+    public void clear(QueryFilter.Filterable page) {
         if (page instanceof SearchBase) {
             ((SearchBase) page).clearFieldText();
         }

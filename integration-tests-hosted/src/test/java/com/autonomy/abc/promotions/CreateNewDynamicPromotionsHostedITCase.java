@@ -5,8 +5,8 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
@@ -45,7 +45,7 @@ public class CreateNewDynamicPromotionsHostedITCase extends HostedTestBase {
     // sharing the whole test?
     @Test
     public void testDynamicPromotionCreation() {
-        SearchPage searchPage = searchService.search(new SearchQuery("bugs"));
+        SearchPage searchPage = searchService.search(new Query("bugs"));
 
         final String firstDocTitle = searchPage.getSearchResult(1).getTitleString();
         searchPage.promoteThisQueryButton().click();

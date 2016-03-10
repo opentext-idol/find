@@ -11,9 +11,9 @@ import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.query.Query;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,7 +88,7 @@ public class IndexSetUpITCase extends HostedTestBase {
     }
 
     private String promoteDocumentInIndex(String trigger) {
-        SearchQuery search = new SearchQuery("*").withFilter(new IndexFilter(index));
+        Query search = new Query("*").withFilter(new IndexFilter(index));
         Promotion promotion = new SpotlightPromotion(trigger);
         return promotionService.setUpPromotion(promotion, search, 1).get(0);
     }

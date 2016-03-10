@@ -3,7 +3,6 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
@@ -16,12 +15,14 @@ import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.query.*;
+import com.autonomy.abc.selenium.search.SOSearchResult;
+import com.autonomy.abc.selenium.search.SearchBase;
+import com.autonomy.abc.selenium.search.SearchPage;
+import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,8 +45,8 @@ import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -71,7 +72,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage = searchService.search(searchTerm);
 	}
 
-	private void search(SearchQuery query) {
+	private void search(Query query) {
 		logger.info("Searching for: " + query + "");
 		searchPage = searchService.search(query);
 	}
@@ -313,79 +314,6 @@ public class SearchPageITCase extends ABCTestBase {
 
 		search("cow");
 		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(2));
-	}
-
-	@Test
-	public void testWhitespaceSearch() {
-		search(" ");
-		assertThat("Whitespace search should not return a message as if it is a blacklisted term",
-                searchPage.getText(),not(containsString("All search terms are blacklisted")));
-	}
-
-    String searchErrorMessage = "An error occurred executing the search action";
-    String correctErrorMessageNotShown = "Correct error message not shown";
-
-	@Test
-	public void testSearchParentheses() {
-        List<String> testSearchTerms = Arrays.asList("(",")","()",") (",")war");
-
-        if(getConfig().getType().equals(ApplicationType.HOSTED)){
-            for(String searchTerm : testSearchTerms){
-                search(searchTerm);
-
-                assertThat(searchPage.getText(),containsString(Errors.Search.HOD));
-            }
-        } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            int searchTerm = 0;
-            String bracketMismatch = "Bracket Mismatch in the query";
-            search(testSearchTerms.get(searchTerm++));
-
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(bracketMismatch));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(bracketMismatch));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString("No valid query text supplied"));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString("Terminating boolean operator"));
-
-            search(testSearchTerms.get(searchTerm));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(bracketMismatch));
-        } else {
-            fail("Config type not recognised");
-        }
-	}
-
-    //TODO there are some which contain helpful error messages?
-	@Test
-	@RelatedTo("IOD-8454")
-	public void testSearchQuotationMarks() {
-        List<String> emptyPhrases = Arrays.asList("\"\"","\" \"");
-		List<String> unclosedPhrases = Arrays.asList("\"","\"word","\" word","\" wo\"rd\"");
-
-		String emptyError = Errors.Search.NO_TEXT;
-		String unclosedError = Errors.Search.QUOTES;
-
-		// HOD should return better errors
-        if(getConfig().getType().equals(ApplicationType.HOSTED)){
-			emptyError = Errors.Search.HOD;
-			unclosedError = Errors.Search.HOD;
-        }
-		for (String empty : emptyPhrases) {
-			search(empty);
-			verifyThat(searchPage, containsText(emptyError));
-		}
-		for (String unclosed : unclosedPhrases) {
-			search(unclosed);
-			verifyThat(searchPage, containsText(unclosedError));
-		}
 	}
 
 	@Test
@@ -633,50 +561,6 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testInvalidQueryTextNoKeywordsLinksDisplayed() {
-		//TODO: map error messages to application type
-
-        List<String> boolOperators = Arrays.asList("OR", "WHEN", "SENTENCE", "DNEAR");
-        List<String> stopWords = Arrays.asList("a", "the", "of", "SOUNDEX"); //According to IDOL team SOUNDEX isn't considered a boolean operator without brackets
-		searchPage.selectLanguage(Language.ENGLISH);
-
-        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-            List<String> allTerms = ListUtils.union(boolOperators, stopWords);
-
-            for (final String searchTerm : allTerms) {
-				search(searchTerm);
-                assertThat("Correct error message not present for searchterm: " + searchTerm, searchPage.getText(), containsString(Errors.Search.HOD));
-            }
-
-        } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            for (final String searchTerm : boolOperators) {
-                search(searchTerm);
-                assertThat("Correct error message not present for searchterm: " + searchTerm + searchPage.getText(), searchPage.getText(), containsString("An error occurred executing the search action"));
-                assertThat("Correct error message not present for searchterm: " + searchTerm, searchPage.getText(), containsString("An error occurred fetching the query analysis."));
-                assertThat("Correct error message not present for searchterm: " + searchTerm, searchPage.getText(), containsString("Opening boolean operator"));
-            }
-            for (final String searchTerm : stopWords) {
-                search(searchTerm);
-                assertThat("Correct error message not present", searchPage.getText(), containsString("An error occurred executing the search action"));
-                assertThat("Correct error message not present", searchPage.getText(), containsString("An error occurred fetching the query analysis."));
-                assertThat("Correct error message not present", searchPage.getText(), containsString("No valid query text supplied"));
-            }
-        } else {
-            fail("Application Type not recognised");
-        }
-	}
-
-	@Test
-	public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-		final List<String> hiddenBooleansProximities = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "PARAGRAPHING", "NEARLY", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
-		for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
-			search(hiddenBooleansProximity);
-			Waits.loadOrFadeWait();
-			assertThat(searchPage.getText(), not(containsString("Terminating boolean operator")));
-		}
-	}
-
-	@Test
 	@KnownBug("HOD-1116")
 	public void testFromDateFilter() {
 		final Date date = beginDateFilterTest();
@@ -703,7 +587,7 @@ public class SearchPageITCase extends ABCTestBase {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
 		Date june = simpleDateFormat.parse("06/12/2015 00:00");
 
-		searchService.search(new SearchQuery("Pertussis").withFilter(new IndexFilter("wiki_eng")));
+		searchService.search(new Query("Pertussis").withFilter(new IndexFilter("wiki_eng")));
 		Waits.loadOrFadeWait();
 		searchPage.filterBy(new DatePickerFilter().from(june));
 
@@ -745,7 +629,7 @@ public class SearchPageITCase extends ABCTestBase {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
 		Date june = simpleDateFormat.parse("06/12/2015 00:00");
 
-		searchService.search(new SearchQuery("Pertussis").withFilter(new IndexFilter("wiki_eng")));
+		searchService.search(new Query("Pertussis").withFilter(new IndexFilter("wiki_eng")));
 		Waits.loadOrFadeWait();
 		searchPage.filterBy(new DatePickerFilter().until(june));
 
@@ -765,7 +649,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	private Date beginDateFilterTest() {
 		// not all indexes have times configured
-		search(new SearchQuery("Dog").withFilter(new IndexFilter("news_eng")).withFilter(new FieldTextFilter("EMPTY{}:Date")));
+		search(new Query("Dog").withFilter(new IndexFilter("news_eng")).withFilter(new FieldTextFilter("EMPTY{}:Date")));
 		Date date = searchPage.getSearchResult(1).getDate();
 		if (date == null) {
 			throw new IllegalStateException("date filter test requires first search result to have a date");
@@ -1036,14 +920,14 @@ public class SearchPageITCase extends ABCTestBase {
 		for(int i = 0; i < 3; i++) {
 			for (WebElement searchElement : getDriver().findElements(By.xpath("//div[contains(@class,'search-results-view')]//p//*[contains(text(),'" + searchTerm + "')]"))) {
 				if (searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
-					verifyThat(searchElement.getText(), CoreMatchers.containsString(searchTerm));
+					verifyThat(searchElement.getText(), containsString(searchTerm));
 				}
 				verifyThat(searchElement.getTagName(), is("a"));
 				verifyThat(searchElement.getAttribute("class"), is("query-text"));
 
 				WebElement parent = searchElement.findElement(By.xpath(".//.."));
 				verifyThat(parent.getTagName(), is("span"));
-				verifyThat(parent.getAttribute("class"), CoreMatchers.containsString("label"));
+				verifyThat(parent.getAttribute("class"), containsString("label"));
 			}
 			searchPage.switchResultsPage(Pagination.NEXT);
 		}
@@ -1052,7 +936,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	@KnownBug("CSA-1708")
 	public void testParametricLabelsNotUndefined(){
-		searchService.search(new SearchQuery("simpsons")
+		searchService.search(new Query("simpsons")
 				.withFilter(new IndexFilter(Index.DEFAULT))
 				.withFilter(new ParametricFilter("Content Type", "TEXT/HTML")));
 
@@ -1100,7 +984,7 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testIndexSelection() {
 		Index firstIndex;
 		Index secondIndex;
-		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
+		if (isOnPrem()) {
 			firstIndex = new Index("wikienglish");
 			secondIndex = new Index("wookiepedia");
 		} else {
@@ -1108,7 +992,7 @@ public class SearchPageITCase extends ABCTestBase {
 			secondIndex = new Index("news_ger");
 		}
 
-		searchService.search(new SearchQuery("car").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.ALL));
+		searchService.search(new Query("car").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.ALL));
 		IndexesTree indexesTree = searchPage.indexesTree();
 
 		for (IndexNodeElement node : indexesTree) {
@@ -1161,7 +1045,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	@KnownBug("CSA-2061")
 	public void testHeadingCount(){
-		searchService.search(new SearchQuery("dog").withFilter(IndexFilter.ALL));
+		searchService.search(new Query("dog").withFilter(IndexFilter.ALL));
 
 		verifyThat(searchPage.getHeadingResultsCount(), lessThanOrEqualTo(2501));
 	}
@@ -1169,7 +1053,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	@KnownBug("CSA-2060")
 	public void testResultIndex(){
-		searchService.search(new SearchQuery("Jamaica"));
+		searchService.search(new Query("Jamaica"));
 
 		for(SOSearchResult searchResult : searchPage.getSearchResults()){
 			verifyThat(searchResult.getIndex().getDisplayName(), not(containsString("Object")));

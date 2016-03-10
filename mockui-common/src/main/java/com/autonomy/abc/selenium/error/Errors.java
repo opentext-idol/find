@@ -1,51 +1,125 @@
 package com.autonomy.abc.selenium.error;
 
+import java.io.Serializable;
+
 public class Errors {
-    public static class Term {
-        public static final String DUPLICATE_EXISTING = "duplicate of an existing keyword";
-        public static final String DUPLICATED = "is duplicated";
-        public static final String QUOTES = "Terms have an odd number of quotes";
-        public static final String COMMAS = "Terms may not contain commas";
+    public enum Term {
+        DUPLICATE_EXISTING("duplicate of an existing keyword"),
+        DUPLICATED("is duplicated"),
+        QUOTES("Terms have an odd number of quotes"),
+        COMMAS("Terms may not contain commas"),
         // triggers are converted toLowerCase, but this may change again
-        public static final String CASE = DUPLICATE_EXISTING;
-        public static final String BLANK = "No terms were supplied";
-        public static final String NO_QUOTES = "Terms may not contain quotation marks";
+        CASE("duplicate of an existing keyword"),
+        BLANK("No terms were supplied"),
+        NO_QUOTES("Terms may not contain quotation marks");
+
+        private final String value;
+
+        Term(String text) {
+            value = text;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 
-    public static class Search {
-        public static final String NO_RESULTS = "No results found";
-        public static final String GENERAL = "An error occurred retrieving results";
-        public static final String OPERATORS = "Invalid use of special tokens";
-        public static final String STOPWORDS = "All terms were invalid, through being stopwords";
-        public static final String BACKEND = "Backend request failed";
-        public final static String HOD = "Haven OnDemand returned an error while executing the search action";
-        public static final String QUOTES = "Unclosed phrase";
-        public static final String NO_TEXT = "No valid query text supplied";
-        public static final String BLACKLIST = "All query text has been blocked by white or blacklists";
-        public static final String RELATED_CONCEPTS = "An error occurred fetching top results";
+    public enum Search implements Serializable {
+        NO_RESULTS("No results found"),
+        UNKNOWN("An unknown error occurred executing the search action"),
+        GENERAL("An error occurred retrieving results"),
+        OPERATORS("Invalid use of special tokens"),
+        STOPWORDS("All terms were invalid, through being stopwords"),
+        BACKEND("Backend request failed"),
+        HOD("Haven OnDemand returned an error while executing the search action"),
+        QUOTES("Unclosed phrase"),
+        NO_TEXT("No valid query text supplied"),
+        BLACKLIST("All query text has been blocked by white or blacklists"),
+        RELATED_CONCEPTS("An error occurred fetching top results"),
+        OPENING_BOOL("Opening boolean operator"),
+        CLOSING_BOOL("Terminating boolean operator"),
+        INVALID("Invalid query text"),
+        ANALYSIS("An error occurred fetching the query analysis");
+
+        private final String value;
+
+        Search(String content) {
+            value = content;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 
-    public static class Keywords {
-        public static final String CREATING = "Error occurred creating keywords";
-        public static final String DUPLICATE_BLACKLIST = "already blacklisted";
+    public enum Keywords implements Serializable {
+        CREATING("Error occurred creating keywords"),
+        DUPLICATE_BLACKLIST("already blacklisted"),
+        NO_TERMS("No terms were supplied");
+
+        private final String value;
+
+        Keywords(String text) {
+            value = text;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 
-    public static class User {
-        public static final String CREATING = "Error! New user profile creation failed.";
-        public static final String BLANK_EMAIL = "Error! Email address must not be blank";
-        public static final String DUPLICATE_EMAIL = "Error! A user with this email address already exists";
-        public static final String DUPLICATE_USER = "Error! User exists!";
+    public enum User implements Serializable {
+        CREATING("Error! New user profile creation failed."),
+        BLANK_EMAIL("Error! Email address must not be blank"),
+        DUPLICATE_EMAIL("Error! A user with this email address already exists"),
+        DUPLICATE_USER("Error! User exists!");
+
+        private final String value;
+
+        User(String text) {
+            value = text;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 
-    public static class Index {
-        public static final String DISPLAY_NAME = "Please enter a valid name that contains only alphanumeric characters";
-        public static final String MAX_CHAR_LENGTH = "The field is limited to 100 characters";
-        public static final String FIELD_NAMES = "field names can contain only lowercase alphanumeric characters";
-        public static final String INVALID_INDEX = "does not exist";
-        public static final String INDEX_NAME = "Please enter a valid name that contains only lowercase alphanumeric characters";
+    public enum Index implements Serializable {
+        DISPLAY_NAME("Please enter a valid name that contains only alphanumeric characters"),
+        MAX_CHAR_LENGTH("The field is limited to 100 characters"),
+        FIELD_NAMES("field names can contain only lowercase alphanumeric characters"),
+        INVALID_INDEX("does not exist"),
+        INDEX_NAME("Please enter a valid name that contains only lowercase alphanumeric characters");
+
+        private final String value;
+
+        Index(String text) {
+            value = text;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 
-    public static class Find {
-        public static final String GENERAL = "An error occurred";
+    public enum Find implements Serializable {
+        GENERAL("An error occurred");
+
+        private final String value;
+
+        Find(String text) {
+            value = text;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 }

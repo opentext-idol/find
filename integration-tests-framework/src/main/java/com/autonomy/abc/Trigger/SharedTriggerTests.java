@@ -5,13 +5,13 @@ import com.autonomy.abc.selenium.error.Errors;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
+import java.io.Serializable;
+
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Is.is;
 
 public class SharedTriggerTests {
     private int numberOfTriggers;
@@ -147,7 +147,7 @@ public class SharedTriggerTests {
         verifyThat(triggerForm.addButton(), is(disabled()));
     }
 
-    private void checkBadTriggers(String[] triggers, String errorSubstring) {
+    private void checkBadTriggers(String[] triggers, Serializable errorSubstring) {
         for (String trigger : triggers) {
             triggerForm.addTrigger(trigger);
             if (noQuotesFlag && trigger.contains("\"")) {
@@ -158,7 +158,7 @@ public class SharedTriggerTests {
         }
     }
 
-    private void verifyTriggerNotAdded(String trigger, String errorSubstring){
+    private void verifyTriggerNotAdded(String trigger, Serializable errorSubstring){
         verifyNoNewTriggers(trigger);
         verifyErrorString(errorSubstring);
         verifyAddButtonDisabled();
@@ -168,7 +168,7 @@ public class SharedTriggerTests {
         verifyThat("trigger '" + trigger + "' not added", triggerForm.getNumberOfTriggers(), is(numberOfTriggers));
     }
 
-    private void verifyErrorString(String errorSubstring){
+    private void verifyErrorString(Serializable errorSubstring){
         verifyThat(triggerForm.getTriggerError(), containsString(errorSubstring));
     }
 

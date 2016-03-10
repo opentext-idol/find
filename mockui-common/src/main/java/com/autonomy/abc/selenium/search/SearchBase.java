@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
+import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
@@ -23,17 +24,22 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class SearchBase extends AppElement implements AppPage,
-		SearchFilter.Filterable,
+		QueryFilter.Filterable,
 		IndexFilter.Filterable,
 		DatePickerFilter.Filterable,
 		StringDateFilter.Filterable,
-		ParametricFilter.Filterable {
+		ParametricFilter.Filterable,
+		QueryResultsPage {
 
 	private static final SimpleDateFormat INPUT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	public static final SimpleDateFormat RESULT_DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
 
 	public SearchBase(final WebElement element, final WebDriver driver) {
 		super(element, driver);
+	}
+
+	public WebElement errorContainer() {
+		return findElement(By.cssSelector(".search-results-view .search-information"));
 	}
 
 	/* search results */
@@ -360,7 +366,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return ElementUtil.webElementListToStringList(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
 	}
 
-	public void filterBy(SearchFilter filter) {
+	public void filterBy(QueryFilter filter) {
 		filter.apply(this);
 		Waits.loadOrFadeWait();
 		waitForSearchLoadIndicatorToDisappear();

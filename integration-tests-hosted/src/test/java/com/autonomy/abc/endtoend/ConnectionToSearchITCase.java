@@ -12,17 +12,15 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.*;
 
 public class ConnectionToSearchITCase extends HostedTestBase {
@@ -52,7 +50,7 @@ public class ConnectionToSearchITCase extends HostedTestBase {
     public void testConnectionToSearch() {
         connectionService.setUpConnection(connector);
         String searchTerm = "haven";
-        SearchPage searchPage = searchService.search(new SearchQuery(searchTerm).withFilter(new IndexFilter(index)));
+        SearchPage searchPage = searchService.search(new Query(searchTerm).withFilter(new IndexFilter(index)));
         verifyThat("index shows up on search page", searchPage.indexesTree().getSelected(), hasItem(index));
         verifyThat("index has search results", searchPage.getHeadingResultsCount(), greaterThan(0));
 

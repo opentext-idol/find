@@ -18,8 +18,8 @@ import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
@@ -145,7 +145,7 @@ public class IndexesPageITCase extends HostedTestBase {
         //Create a promotion (using the index created)
         PromotionService promotionService = getApplication().promotionService();
         PinToPositionPromotion ptpPromotion = new PinToPositionPromotion(1,"trigger");
-        SearchQuery search = new SearchQuery("bbc").withFilter(new IndexFilter(connector.getIndex()));
+        Query search = new Query("bbc").withFilter(new IndexFilter(connector.getIndex()));
 
         try {
             int numberOfDocs = 1;
@@ -249,7 +249,7 @@ public class IndexesPageITCase extends HostedTestBase {
         try {
             findWindow.activate();
 
-            SearchQuery query = new SearchQuery("search")
+            Query query = new Query("search")
                     .withFilter(new IndexFilter(index));
             findApp.findService().search(query);
 

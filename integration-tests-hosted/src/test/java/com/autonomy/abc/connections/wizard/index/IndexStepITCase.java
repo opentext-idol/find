@@ -14,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
+import java.io.Serializable;
+
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.not;
@@ -56,7 +58,7 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
         String errorMessage = connectorIndexStepTab.indexNameInput().getErrorMessage();
         WebElement indexNameFormGroup = connectorIndexStepTab.indexNameInput().formGroup();
         verifyThat(indexNameFormGroup, hasClass("has-error"));
-        verifyThat(errorMessage, is(Errors.Index.INDEX_NAME));
+        verifyError(errorMessage, Errors.Index.INDEX_NAME);
     }
 
     @Test
@@ -81,7 +83,7 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
         String errorMessage = connectorIndexStepTab.indexDisplayNameInput().getErrorMessage();
         WebElement displayNameFormGroup = connectorIndexStepTab.indexDisplayNameInput().formGroup();
         verifyThat(displayNameFormGroup, hasClass("has-error"));
-        verifyThat(errorMessage, is(Errors.Index.DISPLAY_NAME));
+        verifyError(errorMessage, Errors.Index.DISPLAY_NAME);
     }
 
     @Test
@@ -92,7 +94,7 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
         String errorMessage = connectorIndexStepTab.indexNameInput().getErrorMessage();
         WebElement indexNameFormGroup = connectorIndexStepTab.indexNameInput().formGroup();
         verifyThat(indexNameFormGroup, hasClass("has-error"));
-        verifyThat(errorMessage, is(Errors.Index.MAX_CHAR_LENGTH));
+        verifyError(errorMessage, Errors.Index.MAX_CHAR_LENGTH);
     }
 
     @Test
@@ -104,6 +106,10 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
         String errorMessage = connectorIndexStepTab.indexDisplayNameInput().getErrorMessage();
         WebElement displayNameFormGroup = connectorIndexStepTab.indexDisplayNameInput().formGroup();
         verifyThat(displayNameFormGroup, hasClass("has-error"));
-        verifyThat(errorMessage, is(Errors.Index.MAX_CHAR_LENGTH));
+        verifyError(errorMessage, Errors.Index.MAX_CHAR_LENGTH);
+    }
+
+    private void verifyError(String errorMessage, Serializable expectedError) {
+        verifyThat(errorMessage, is(expectedError.toString()));
     }
 }

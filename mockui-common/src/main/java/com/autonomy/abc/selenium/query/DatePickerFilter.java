@@ -1,10 +1,10 @@
-package com.autonomy.abc.selenium.search;
+package com.autonomy.abc.selenium.query;
 
 import com.autonomy.abc.selenium.element.DatePicker;
 
 import java.util.Date;
 
-public class DatePickerFilter implements SearchFilter {
+public class DatePickerFilter implements QueryFilter {
     private final DatePickerHandler fromHandler = new DatePickerHandler();
     private final DatePickerHandler untilHandler = new DatePickerHandler();
 
@@ -19,7 +19,7 @@ public class DatePickerFilter implements SearchFilter {
     }
 
     @Override
-    public void apply(SearchFilter.Filterable searchBase) {
+    public void apply(QueryFilter.Filterable searchBase) {
         if (searchBase instanceof Filterable) {
             apply((Filterable) searchBase);
         }

@@ -7,6 +7,8 @@ import org.hamcrest.TypeSafeMatcher;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.io.Serializable;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -32,6 +34,10 @@ public class ElementMatchers {
                         .appendValue(webElement);
             }
         };
+    }
+
+    public static Matcher<? super WebElement> containsText(final Serializable text) {
+        return containsText(text.toString());
     }
 
     public static Matcher<? super WebElement> containsText(final String text) {
@@ -81,7 +87,7 @@ public class ElementMatchers {
         };
     }
 
-    public static Matcher<? super WebElement> hasTextThat(final Matcher<String> matcher) {
+    public static Matcher<? super WebElement> hasTextThat(final Matcher<? super String> matcher) {
         return new TypeSafeMatcher<WebElement>() {
             @Override
             protected boolean matchesSafely(WebElement item) {

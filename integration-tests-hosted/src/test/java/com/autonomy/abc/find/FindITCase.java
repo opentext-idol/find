@@ -5,13 +5,18 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.documentPreview.SharedPreviewTests;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.query.QueryTestHelper;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.ParametricFilter;
+import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.query.StringDateFilter;
+import com.autonomy.abc.selenium.search.SearchResult;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -39,13 +44,10 @@ import java.util.*;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class FindITCase extends FindTestBase {
@@ -85,7 +87,7 @@ public class FindITCase extends FindTestBase {
     }
 
     private void checkContentTypeFilter(String filterType, String extension) {
-        SearchQuery query = new SearchQuery("red star")
+        Query query = new Query("red star")
                 .withFilter(new ParametricFilter("Content Type", filterType));
         findService.search(query);
         for(String type : results.getDisplayedDocumentsDocumentTypes()){
@@ -161,7 +163,7 @@ public class FindITCase extends FindTestBase {
     public void testAuthor(){
         String author = "FIFA.COM";
 
-        findService.search(new SearchQuery("football")
+        findService.search(new Query("football")
                 .withFilter(new IndexFilter("Fifa"))
                 .withFilter(new ParametricFilter("Author", author)));
 
@@ -356,7 +358,7 @@ public class FindITCase extends FindTestBase {
         Date start = getDate(FindResultsPage.DateEnum.MONTH);
         Date end = getDate(FindResultsPage.DateEnum.WEEK);
 
-        findService.search(new SearchQuery("Corbyn")
+        findService.search(new Query("Corbyn")
                 .withFilter(new StringDateFilter().from(start).until(end)));
         Waits.loadOrFadeWait();
         for (int unused = 0; unused < 3; unused++) {
@@ -433,63 +435,33 @@ public class FindITCase extends FindTestBase {
         assertThat(notTermOne, containsInAnyOrder(t2NotT1.toArray()));
     }
 
-    //DUPLICATE SEARCH TEST (almost)
     @Test
     public void testCorrectErrorMessageDisplayed() {
-        //TODO: map error messages to application type
-
-        List<String> boolOperators = Arrays.asList("OR", "WHEN", "SENTENCE", "DNEAR");
-        List<String> stopWords = Arrays.asList("a", "the", "of", "SOUNDEX"); //According to IDOL team SOUNDEX isn't considered a boolean operator without brackets
-
-        for (final String searchTerm : boolOperators) {
-            findService.search(searchTerm);
-            verifyThat("Correct error message for searchterm: " + searchTerm, findPage.getText(), containsString(Errors.Search.OPERATORS));
-        }
-
-        for (final String searchTerm : stopWords) {
-            findService.search(searchTerm);
-            verifyThat("Correct error message for searchterm: " + searchTerm, findPage.getText(), containsString(Errors.Search.STOPWORDS));
-        }
+        new QueryTestHelper<>(findService).booleanOperatorQueryText(Errors.Search.OPERATORS);
+        new QueryTestHelper<>(findService).emptyQueryText(Errors.Search.STOPWORDS);
     }
 
-    //DUPLICATE SEARCH TEST
     @Test
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-        final List<String> hiddenBooleansProximities = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "PARAGRAPHING", "NEARLY", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
-        for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
-            findService.search(hiddenBooleansProximity);
-            verifyThat(hiddenBooleansProximity + " searched for successfully", findPage.getText(), not(containsString("An error has occurred")));
-        }
+        new QueryTestHelper<>(findService).hiddenQueryOperatorText();
     }
 
-    //DUPLICATE
     @Test
     public void testSearchParentheses() {
-        List<String> testSearchTerms = Arrays.asList("(",")",") (",")war"); //"()" appears to be fine
-
-        for(String searchTerm : testSearchTerms){
-            findService.search(searchTerm);
-
-            assertThat(results, containsText(Errors.Search.OPERATORS));
-        }
+        new QueryTestHelper<>(findService).mismatchedBracketQueryText();
     }
 
-    //DUPLICATE
     @Test
     @KnownBug({"IOD-8454","CCUK-3634"})
     public void testSearchQuotationMarks() {
-        List<String> testSearchTerms = Arrays.asList("\"", "", "\"word", "\" word", "\" wo\"rd\""); //"\"\"" seems okay and " "
-        for (String searchTerm : testSearchTerms){
-            findService.search(searchTerm);
-            assertThat(results, containsText(Errors.Search.QUOTES));
-        }
+        new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
     }
 
-    //DUPLICATE
     @Test
+    @KnownBug("CCUK-3700")
     public void testWhitespaceSearch() {
         try {
-            findService.search(" ");
+            findService.search("       ");
         } catch (TimeoutException e) { /* Expected behaviour */ }
 
         assertThat(findPage.footerLogo(), displayed());
@@ -577,7 +549,7 @@ public class FindITCase extends FindTestBase {
     @Test
     @KnownBug("CCUK-3647")
     public void testLessThan30ResultsDoesntAttemptToLoadMore() {
-        findService.search(new SearchQuery("roland garros")
+        findService.search(new Query("roland garros")
                 .withFilter((new IndexFilter("fifa"))));
 
         results.getResult(1).openDocumentPreview();
@@ -589,7 +561,7 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testBetween30And60Results(){
-        findService.search(new SearchQuery("idol")
+        findService.search(new Query("idol")
                 .withFilter(new IndexFilter("sitesearch")));
 
         scrollToBottom();
@@ -667,7 +639,7 @@ public class FindITCase extends FindTestBase {
     @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
     public void testDocumentPreview(){
         Index index = new Index("fifa");
-        findService.search(new SearchQuery("document preview").withFilter(new IndexFilter(index)));
+        findService.search(new Query("document preview").withFilter(new IndexFilter(index)));
 
         SharedPreviewTests.testDocumentPreviews(getMainSession(), results.getResults(5), index);
     }

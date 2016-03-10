@@ -7,7 +7,13 @@ import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.query.FieldTextFilter;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.search.SearchBase;
+import com.autonomy.abc.selenium.search.SearchPage;
+import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +22,7 @@ import org.openqa.selenium.NoSuchElementException;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
@@ -87,7 +94,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
 
     @Test
     public void testEditFieldText() {
-        searchService.search(new SearchQuery("boer").withFilter(IndexFilter.ALL));
+        searchService.search(new Query("boer").withFilter(IndexFilter.ALL));
 
         searchPage.selectLanguage(Language.AFRIKAANS);
 
@@ -135,7 +142,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
     public void testFieldTextRestrictionOnPinToPositionPromotions(){
         PromotionService<?> promotionService = getApplication().promotionService();
         promotionService.deleteAll();
-        List<String> promotedDocs = promotionService.setUpPromotion(new SpotlightPromotion("duck"), new SearchQuery("horse").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
+        List<String> promotedDocs = promotionService.setUpPromotion(new SpotlightPromotion("duck"), new Query("horse").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
 
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
 

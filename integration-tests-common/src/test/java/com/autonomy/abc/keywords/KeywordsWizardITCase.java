@@ -14,7 +14,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -102,7 +102,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         assertThat("Continue button should be enabled", createKeywordsPage.continueWizardButton().getAttribute("class"), not(containsString("disabled")));
         assertThat("languages select should be visible", createKeywordsPage.languagesSelectBox().isDisplayed());
 
-        if(getConfig().getType() == ApplicationType.ON_PREM) {
+        if(isOnPrem()) {
             createKeywordsPage.selectLanguage(Language.FRENCH);
             assertThat(createKeywordsPage.languagesSelectBox().getText(), equalToIgnoringCase("French"));
         } else {
@@ -137,7 +137,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         searchPage.selectLanguage(Language.FRENCH);
 
-        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+        if(isHosted()) {
             new IndexFilter("news_eng").apply(searchPage);
         }
 
@@ -198,7 +198,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         assertThat("Wizard did not navigate to languages page", createKeywordsPage.languagesSelectBox().isDisplayed());
 
-        if(getConfig().getType() == ApplicationType.ON_PREM) {
+        if(isOnPrem()) {
             createKeywordsPage.selectLanguage(Language.SWAHILI);
             assertThat(createKeywordsPage.languagesSelectBox().getText(), equalToIgnoringCase("Swahili"));
 

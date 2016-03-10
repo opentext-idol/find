@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.search;
+package com.autonomy.abc.selenium.query;
 
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class IndexFilter implements SearchFilter {
+public class IndexFilter implements QueryFilter {
     private Set<String> indexes;
     public final static IndexFilter ALL = new AllIndexFilter();
     public final static IndexFilter NONE = new EmptyIndexFilter();
@@ -29,7 +29,7 @@ public class IndexFilter implements SearchFilter {
     }
 
     @Override
-    public final void apply(SearchFilter.Filterable page) {
+    public final void apply(QueryFilter.Filterable page) {
         if (page instanceof Filterable) {
             apply((Filterable) page);
         }
@@ -95,7 +95,7 @@ public class IndexFilter implements SearchFilter {
         }
     }
 
-    public interface Filterable extends SearchFilter.Filterable {
+    public interface Filterable extends QueryFilter.Filterable {
         IndexesTree indexesTree();
     }
 }

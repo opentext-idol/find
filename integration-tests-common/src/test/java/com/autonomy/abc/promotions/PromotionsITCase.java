@@ -15,7 +15,11 @@ import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.search.SearchPage;
+import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +63,7 @@ public class PromotionsITCase extends ABCTestBase {
 		promotionsPage = promotionService.deleteAll();
 	}
 
-	private List<String> setUpPromotion(SearchQuery search, int numberOfDocs, Promotion promotion) {
+	private List<String> setUpPromotion(Query search, int numberOfDocs, Promotion promotion) {
 		List<String> promotedDocTitles = promotionService.setUpPromotion(promotion, search, numberOfDocs);
 		// wait for search page to load before navigating away
 		getElementFactory().getSearchPage();
@@ -67,16 +71,16 @@ public class PromotionsITCase extends ABCTestBase {
 		return promotedDocTitles;
 	}
 
-	private List<String> setUpPromotion(SearchQuery search, Promotion promotion) {
+	private List<String> setUpPromotion(Query search, Promotion promotion) {
 		return setUpPromotion(search, 1, promotion);
 	}
 
 	private List<String> setUpCarsPromotion(int numberOfDocs) {
-		return setUpPromotion(new SearchQuery("cars"), numberOfDocs, new SpotlightPromotion("wheels"));
+		return setUpPromotion(new Query("cars"), numberOfDocs, new SpotlightPromotion("wheels"));
 	}
 
-	private SearchQuery getQuery(String searchTerm, Language language) {
-		return new SearchQuery(searchTerm).withFilter(new LanguageFilter(language));
+	private Query getQuery(String searchTerm, Language language) {
+		return new Query(searchTerm).withFilter(new LanguageFilter(language));
 	}
 
 	@Test
@@ -163,7 +167,7 @@ public class PromotionsITCase extends ABCTestBase {
 		String[] searchTerms = {"rabbit", "horse", "script"};
 		String[] triggers = {"bunny", "pony", "<script> document.body.innerHTML = '' </script>"};
 		for (int i=0; i<searchTerms.length; i++) {
-			setUpPromotion(new SearchQuery(searchTerms[i]), new SpotlightPromotion(triggers[i]));
+			setUpPromotion(new Query(searchTerms[i]), new SpotlightPromotion(triggers[i]));
 			promotionsPage = promotionService.goToPromotions();
 		}
 
@@ -197,7 +201,7 @@ public class PromotionsITCase extends ABCTestBase {
 		int size = 100;
 		boolean setUp = false;
 		try {
-			setUpPromotion(new SearchQuery("dog"), size, new SpotlightPromotion("golden retriever"));
+			setUpPromotion(new Query("dog"), size, new SpotlightPromotion("golden retriever"));
 			setUp = true;
 		} catch (TimeoutException e) {
 			/* failed to set up promotion */
@@ -217,9 +221,9 @@ public class PromotionsITCase extends ABCTestBase {
 	@KnownBug("CCUK-2671")
 	public void testPromotionFilter() throws InterruptedException {
 		// hosted does not have foreign content indexed
-		SearchQuery[] searches;
-		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			searches = new SearchQuery[]{
+		Query[] searches;
+		if (isOnPrem()) {
+			searches = new Query[]{
 					getQuery("chien", Language.FRENCH),
 					getQuery("الكلب", Language.ARABIC),
 					getQuery("dog", Language.ENGLISH),
@@ -229,7 +233,7 @@ public class PromotionsITCase extends ABCTestBase {
 					getQuery("hond", Language.AFRIKAANS)
 			};
 		} else {
-			searches = new SearchQuery[]{
+			searches = new Query[]{
 					getQuery("marge", Language.ENGLISH),
 					getQuery("homer", Language.ENGLISH),
 					getQuery("dog", Language.ENGLISH),
@@ -470,7 +474,7 @@ public class PromotionsITCase extends ABCTestBase {
 	@KnownBug({"CCUK-3457", "CCUK-3649"})
 	public void testPromotingItemsWithBrackets(){
 		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "imagine dragons");
-		SearchQuery query = new SearchQuery("\"Selenium (software)\"").withFilter(new IndexFilter("wiki_eng"));
+		Query query = new Query("\"Selenium (software)\"").withFilter(new IndexFilter("wiki_eng"));
 
 		SearchPage searchPage = searchService.search(query);
 		assumeThat("Was expecting Selenium (Software) to be the first result", searchPage.getSearchResult(1).getTitleString(), is("Selenium (software)"));

@@ -9,9 +9,9 @@ import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.search.LanguageFilter;
+import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
@@ -69,7 +69,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     }
 
     private void goToTriggers() {
-        searchPage = searchService.search(new SearchQuery("orange").withFilter(new LanguageFilter(Language.AFRIKAANS)));
+        searchPage = searchService.search(new Query("orange").withFilter(new LanguageFilter(Language.AFRIKAANS)));
         searchPage.promoteThisQueryButton().click();
         Waits.loadOrFadeWait();
 
@@ -85,7 +85,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
     private int getNumberOfPromotedDynamicResults() {
         int promotionResultsCount = 30;
-        if (getConfig().getType().equals(ApplicationType.ON_PREM) || searchPage.getHeadingResultsCount() <= 30) {
+        if (isOnPrem() || searchPage.getHeadingResultsCount() <= 30) {
             promotionResultsCount = searchPage.getHeadingResultsCount();
         }
         return promotionResultsCount;
@@ -122,7 +122,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testWizardCancelButtonAfterClickingNavBarToggleButton() {
-        searchPage = searchService.search(new SearchQuery("simba").withFilter(new LanguageFilter(Language.SWAHILI)));
+        searchPage = searchService.search(new Query("simba").withFilter(new LanguageFilter(Language.SWAHILI)));
         searchPage.promoteThisQueryButton().click();
         Waits.loadOrFadeWait();
 
@@ -162,7 +162,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     }
 
     private void clickTopPromotions() {
-        if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
+        if(isOnPrem()) {
             dynamicPromotionsPage.spotlightType(Promotion.SpotlightType.TOP_PROMOTIONS).click();
         }
     }

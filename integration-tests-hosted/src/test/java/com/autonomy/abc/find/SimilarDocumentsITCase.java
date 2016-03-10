@@ -16,9 +16,9 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.ParametricFilter;
-import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.ParametricFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +57,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testSimilarDocumentsShowUp() throws InterruptedException {
-        findService.search(new SearchQuery("Doe"));
+        findService.search(new Query("Doe"));
 
         for (int i = 1; i <= 5; i++) {
             String title = results.getResult(i).getTitleString();
@@ -75,7 +75,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     @Test
     @KnownBug("CSA-3678")
     public void testTitle(){
-        findService.search(new SearchQuery("Bill Murray").withFilter(new ParametricFilter("Source Connector","SimpsonsArchive")));
+        findService.search(new Query("Bill Murray").withFilter(new ParametricFilter("Source Connector","SimpsonsArchive")));
 
         for(int i = 1; i <= 5; i++){
             similarDocuments = findService.goToSimilarDocuments(i);
@@ -88,7 +88,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testPreviewSeed() throws InterruptedException {
-        findService.search(new SearchQuery("bart").withFilter(new IndexFilter("simpsonsarchive")));
+        findService.search(new Query("bart").withFilter(new IndexFilter("simpsonsarchive")));
 
         for (int i = 1; i <= 5; i++) {
             similarDocuments = findService.goToSimilarDocuments(i);
@@ -133,7 +133,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     @Test
     @KnownBug("CCUK-3676")
     public void testPublicIndexesSimilarDocs(){
-        findService.search(new SearchQuery("Hammer").withFilter(IndexFilter.PUBLIC));
+        findService.search(new Query("Hammer").withFilter(IndexFilter.PUBLIC));
 
         for(int i = 1; i <= 5; i++){
             verifySimilarDocsNotEmpty(i);
@@ -201,7 +201,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testInfiniteScroll(){
-        results = findService.search(new SearchQuery("Heaven is Earth").withFilter(IndexFilter.ALL));
+        results = findService.search(new Query("Heaven is Earth").withFilter(IndexFilter.ALL));
 
         similarDocuments = findService.goToSimilarDocuments(1);
         assumeThat(similarDocuments.getResults().size(), is(30));
@@ -217,7 +217,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testSortByDate() throws ParseException {
-        findService.search(new SearchQuery("Fade").withFilter(new IndexFilter("news_eng")));
+        findService.search(new Query("Fade").withFilter(new IndexFilter("news_eng")));
         similarDocuments = findService.goToSimilarDocuments(1);
 
         similarDocuments.sortByDate();
@@ -246,7 +246,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testDocumentPreview(){
-        findService.search(new SearchQuery("stars").withFilter(new IndexFilter(Index.DEFAULT)));
+        findService.search(new Query("stars").withFilter(new IndexFilter(Index.DEFAULT)));
         similarDocuments = findService.goToSimilarDocuments(1);
 
         SharedPreviewTests.testDocumentPreviews(getMainSession(), similarDocuments.getResults(5), Index.DEFAULT);

@@ -6,9 +6,9 @@ import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.search.LanguageFilter;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang3.time.DateUtils;
@@ -27,9 +27,7 @@ import java.util.regex.Pattern;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -332,7 +330,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 	@Test
 	public void testResetTimeAndDate() {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Korea".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
-		promotionService.setUpPromotion(spotlight, new SearchQuery("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
+		promotionService.setUpPromotion(spotlight, new Query("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
 		promotionService.goToDetails(spotlight);
 		elementFactory.getPromotionsDetailPage().schedulePromotion();
 		try {
@@ -355,7 +353,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 	@Test
 	public void testTextInputToCalendar() {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Korea".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
-		promotionService.setUpPromotion(spotlight, new SearchQuery("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
+		promotionService.setUpPromotion(spotlight, new Query("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
 		promotionService.goToDetails(spotlight);
 		elementFactory.getPromotionsDetailPage().schedulePromotion();
 		try {
@@ -406,7 +404,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 	@Test
 	public void testIncrementDecrementTimeOnCalendar() {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "Kaz".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
-		promotionService.setUpPromotion(spotlight, new SearchQuery("Қазақстан").withFilter(new LanguageFilter(Language.KAZAKH)), 5);
+		promotionService.setUpPromotion(spotlight, new Query("Қазақстан").withFilter(new LanguageFilter(Language.KAZAKH)), 5);
 		promotionService.goToDetails(spotlight);
 		elementFactory.getPromotionsDetailPage().schedulePromotion();
 		try {
@@ -464,7 +462,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 	@Test
 	public void testPromotionIsPrepopulated() {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Korea".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
-		promotionService.setUpPromotion(spotlight, new SearchQuery("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
+		promotionService.setUpPromotion(spotlight, new Query("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
 		promotionService.goToDetails(spotlight);
 		elementFactory.getPromotionsDetailPage().schedulePromotion();
 		try {
@@ -505,7 +503,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 	@Test
 	public void testFrequencyPeriodNotLessThanPromotionLengthAndFinalDateNotLessThanEndDate() {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Georgia".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
-		promotionService.setUpPromotion(spotlight, new SearchQuery("საქართველო").withFilter(new LanguageFilter(Language.GEORGIAN)), 4);
+		promotionService.setUpPromotion(spotlight, new Query("საქართველო").withFilter(new LanguageFilter(Language.GEORGIAN)), 4);
 		promotionService.goToDetails(spotlight);
 		elementFactory.getPromotionsDetailPage().schedulePromotion();
 		try {

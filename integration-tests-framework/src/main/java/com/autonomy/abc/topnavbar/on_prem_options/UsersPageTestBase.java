@@ -32,7 +32,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     protected final NewUser aNewUser = getConfig().getNewUser("james");
     protected final NewUser newUser2 = getConfig().getNewUser("john");
-    protected int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
+    protected int defaultNumberOfUsers = isHosted() ? 0 : 1;
     protected UsersPage usersPage;
     protected UserService<?> userService;
     protected SignupEmailHandler emailHandler;
@@ -40,7 +40,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
 
     public UsersPageTestBase(TestConfig config) {
         super(config);
-        if(config.getType().equals(ApplicationType.HOSTED)) {
+        if(isHosted()) {
             emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
         }
     }
@@ -55,7 +55,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
 
     @After
     public void emailTearDown() {
-        if(hasSetUp() && getConfig().getType().equals(ApplicationType.HOSTED)) {
+        if(hasSetUp() && isHosted()) {
             Window firstWindow = getWindow();
             Window secondWindow = getMainSession().openWindow("about:blank");
             try {
@@ -110,7 +110,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
 
     protected void deleteAndVerify(User user) {
         userService.deleteUser(user);
-        if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
+        if (isOnPrem()) {
             verifyThat(usersPage, containsText("User " + user.getUsername() + " successfully deleted"));
         } else {
             new WebDriverWait(getDriver(),10).withMessage("User " + user.getUsername() + " not successfully deleted").until(GritterNotice.notificationContaining("Deleted user " + user.getUsername()));
@@ -118,7 +118,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     }
 
     protected void verifyUserAdded(ModalView newUserModal, User user){
-        if(getConfig().getType().equals(ApplicationType.ON_PREM)){
+        if(isOnPrem()){
             verifyThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
         }
 

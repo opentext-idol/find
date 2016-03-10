@@ -15,7 +15,11 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.search.SearchPage;
+import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -31,6 +35,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,6 +44,7 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
@@ -242,8 +248,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     @KnownBug("CCUK-2703")
     @RelatedTo({"CSA-1724", "CSA-1893"})
     public void testNoBlacklistLinkForBlacklistedSearch() throws InterruptedException {
-        String blacklistMessage = Errors.Search.BLACKLIST;
-        if (getConfig().getType().equals(ApplicationType.HOSTED)) {
+        Serializable blacklistMessage = Errors.Search.BLACKLIST;
+        if (isHosted()) {
             blacklistMessage = Errors.Search.NO_RESULTS;
         }
 
@@ -259,7 +265,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         keywordsPage.selectLanguageButton();	//Wait for select Language button
 
-        if(getConfig().getType().equals(ApplicationType.ON_PREM)){
+        if(isOnPrem()){
             assertThat("blacklist has been created in the correct language", keywordsPage.getSelectedLanguage(), is(Language.ARABIC));
         }
 
@@ -280,7 +286,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("link to blacklist or create synonyms not present", searchPage,
                 not(containsText("You can create synonyms or blacklist these search terms")));
 
-        if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
+        if (isOnPrem()) {
             searchPage.selectLanguage(Language.ENGLISH);
             searchPage.waitForSynonymsLoadingIndicatorToDisappear();
 
@@ -525,8 +531,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     }
 
     private void search(String searchTerm, Language language) {
-        SearchQuery query = new SearchQuery(searchTerm).withFilter(new LanguageFilter(language));
-        if (getConfig().getType().equals(ApplicationType.HOSTED)) {
+        Query query = new Query(searchTerm).withFilter(new LanguageFilter(language));
+        if (isHosted()) {
             query = query.withFilter(new IndexFilter("news_eng"));
         }
         searchPage = searchService.search(query);

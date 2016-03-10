@@ -11,10 +11,7 @@ import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -313,6 +310,18 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	private KeywordsContainer keywordsContainer() {
 		return new KeywordsContainer(findElement(By.cssSelector(".search-results-synonyms .keywords-list-container")), getDriver());
+	}
+
+	public String getKeywordError() {
+		WebElement firstError = findElement(By.className("keywords-invalid"));
+		if (firstError.isDisplayed()) {
+			return firstError.getText();
+		}
+		try {
+			return findElement(By.className("search-synonyms-error")).getText();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 	}
 
 	/* parametric values */

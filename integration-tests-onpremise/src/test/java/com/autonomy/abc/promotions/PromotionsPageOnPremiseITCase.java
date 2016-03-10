@@ -8,9 +8,9 @@ import com.autonomy.abc.selenium.promotions.OPPromotionService;
 import com.autonomy.abc.selenium.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.FieldTextFilter;
+import com.autonomy.abc.selenium.query.FieldTextFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
@@ -163,7 +163,7 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
         Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "ming");
         String fieldText = "RANGE{.,01/01/2010}:DREDATE";
         FieldTextFilter filter = new FieldTextFilter(fieldText);
-        SearchQuery query = new SearchQuery("flash").withFilter(filter);
+        Query query = new Query("flash").withFilter(filter);
 
 		promotionService.setUpPromotion(promotion, query, 1);
         promotionsDetailPage = promotionService.goToDetails(promotion);

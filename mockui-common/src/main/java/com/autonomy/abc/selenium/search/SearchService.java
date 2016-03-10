@@ -4,26 +4,31 @@ import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
+import com.autonomy.abc.selenium.query.AggregateQueryFilter;
+import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.query.QueryService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class SearchService extends ServiceBase<SOElementFactory> {
+public class SearchService extends ServiceBase<SOElementFactory> implements QueryService<SearchPage> {
     SearchPage searchPage;
 
     public SearchService(SearchOptimizerApplication<?> application) {
         super(application);
     }
 
-    public SearchPage search(final SearchQuery query) {
-        getElementFactory().getTopNavBar().search(query.getSearchTerm());
+    @Override
+    public SearchPage search(final Query query) {
+        getElementFactory().getTopNavBar().search(query.getTerm());
         setSearchPage(getElementFactory().getSearchPage());
-        searchPage.filterBy(new AggregateSearchFilter(query.getFilters()));
+        searchPage.filterBy(new AggregateQueryFilter(query.getFilters()));
         return searchPage;
     }
 
+    @Override
     public SearchPage search(String term) {
-        return search(new SearchQuery(term));
+        return search(new Query(term));
     }
 
     //Is this service for the search page or for searching?

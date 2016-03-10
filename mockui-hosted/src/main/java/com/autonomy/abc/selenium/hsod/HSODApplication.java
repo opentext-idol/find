@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.hsod;
 
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.control.Window;
@@ -47,7 +46,7 @@ public class HSODApplication extends SearchOptimizerApplication<HSODElementFacto
     }
 
     @Override
-    public ApplicationType getType() {
-        return ApplicationType.HOSTED;
+    public boolean isHosted() {
+        return true;
     }
 }

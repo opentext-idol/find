@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.search;
+package com.autonomy.abc.selenium.query;
 
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ParametricFilter implements SearchFilter {
+public class ParametricFilter implements QueryFilter {
     private Map<String, String> map;
 
     public ParametricFilter(String category, String field){
@@ -21,7 +21,7 @@ public class ParametricFilter implements SearchFilter {
     }
 
     @Override
-    public void apply(SearchFilter.Filterable page) {
+    public void apply(QueryFilter.Filterable page) {
         if(page instanceof Filterable){
             Filterable filterable = (Filterable) page;
             WebElement parametricContainer = filterable.parametricContainer();
@@ -68,7 +68,7 @@ public class ParametricFilter implements SearchFilter {
         return "ParametricFilter:" + map;
     }
 
-    public interface Filterable extends SearchFilter.Filterable{
+    public interface Filterable extends QueryFilter.Filterable{
         WebElement parametricContainer();
         void waitForParametricValuesToLoad();
     }

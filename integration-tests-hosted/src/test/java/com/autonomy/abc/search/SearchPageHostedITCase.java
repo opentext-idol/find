@@ -9,7 +9,13 @@ import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.query.FieldTextFilter;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.ParametricFilter;
+import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.search.SearchBase;
+import com.autonomy.abc.selenium.search.SearchPage;
+import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -25,7 +31,7 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static org.hamcrest.CoreMatchers.is;
+import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
@@ -53,12 +59,12 @@ public class SearchPageHostedITCase extends HostedTestBase {
 	@Ignore("TODO: Not implemented")
 	@Test
 	public void testParametricSearch() {
-		searchService.search(new SearchQuery("*").withFilter(IndexFilter.ALL));
+		searchService.search(new Query("*").withFilter(IndexFilter.ALL));
 	}
 
 	@Test
 	public void testFieldTextFilter() {
-		searchService.search(new SearchQuery("Harrison Ford").withFilter(new IndexFilter("wiki_eng")));
+		searchService.search(new Query("Harrison Ford").withFilter(new IndexFilter("wiki_eng")));
 
 		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
 		searchPage.fieldTextAddButton().click();
@@ -86,7 +92,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 	public void testEditFieldText() {
 		assumeThat(getAppUrl(), not("http://search.havenapps.io/searchoptimizer/p"));
 
-		searchService.search(new SearchQuery("*")
+		searchService.search(new Query("*")
 				.withFilter(IndexFilter.PUBLIC)
 				.withFilter(new FieldTextFilter("EXISTS{}:place_population")));
 
@@ -112,7 +118,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 	@Test
 	public void testAuthor(){
 		String author = "FIFA.com";
-		searchPage = searchService.search(new SearchQuery("blatter").withFilter(new ParametricFilter("Author", author)));
+		searchPage = searchService.search(new Query("blatter").withFilter(new ParametricFilter("Author", author)));
 
 		searchPage.getSearchResult(1).title().click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
@@ -130,7 +136,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 	@RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
 	public void testDocumentPreview(){
 		Index index = new Index("fifa");
-		searchService.search(new SearchQuery("document preview").withFilter(new IndexFilter(index)));
+		searchService.search(new Query("document preview").withFilter(new IndexFilter(index)));
 
 		SharedPreviewTests.testDocumentPreviews(getMainSession(), searchPage.getSearchResults().subList(0, 5), index);
 	}
