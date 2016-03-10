@@ -181,7 +181,7 @@ define([
 
                     describe('then the save fails', function () {
                         beforeEach(function () {
-                            this.saveCallback.calls.argsFor(0)[2]({status: 404});
+                            this.saveCallback.calls.argsFor(0)[2]({status: 404}, {statusText: ''});
                         });
 
                         it('enables the input', function () {
