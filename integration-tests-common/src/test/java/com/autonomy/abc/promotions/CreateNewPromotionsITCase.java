@@ -290,7 +290,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         getElementFactory().getSideNavBar().toggle();
         createPromotionsPage.cancelButton().click();
         verifyThat(getWindow(), urlContains("search/modified"));
-        verifyThat(searchPage.promotedItemsCount(), is(1));
+        verifyThat(searchPage.getBucketTitles(), hasSize(1));
         getElementFactory().getSideNavBar().toggle();
         ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
 //        searchPage.promoteTheseItemsButton().click();
@@ -381,7 +381,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
         searchPage = getElementFactory().getSearchPage();
         searchPage.openPromotionsBucket();
-        verifyThat(searchPage.promotionsBucketWebElements(), hasSize(0));
+        verifyThat(searchPage.getBucketTitles(), empty());
         verifyThat(searchPage.promoteTheseItemsButton(), hasAttribute("disabled"));
     }
 }

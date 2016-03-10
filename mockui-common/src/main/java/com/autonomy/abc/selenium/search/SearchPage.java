@@ -111,10 +111,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* promotions bucket */
-	public List<String> promotionsBucketList() {
-		return bucketList(this);
-	}
-
 	public WebElement promoteTheseItemsButton() {
 		return findElement(By.xpath(".//*[contains(text(), 'Promote items')]"));
 	}

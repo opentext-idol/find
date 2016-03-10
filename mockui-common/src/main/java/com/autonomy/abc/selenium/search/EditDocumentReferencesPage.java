@@ -30,18 +30,6 @@ public class EditDocumentReferencesPage extends SearchBase implements AppPage {
         waitForLoad(getDriver());
     }
 
-    public List<String> promotionsBucketList() {
-        return bucketList(this);
-    }
-
-    public List<Removable> promotionsBucketItems() {
-        List<Removable> items = new ArrayList<>();
-        for (WebElement element : promotionsBucketWebElements()) {
-            items.add(new LabelBox(element, getDriver()));
-        }
-        return items;
-    }
-
     public WebElement saveButton() {
         return findElement(By.xpath(".//button[text() = 'Save']"));
     }

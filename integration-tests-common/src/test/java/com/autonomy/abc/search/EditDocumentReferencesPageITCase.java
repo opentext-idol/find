@@ -73,7 +73,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         promotionsDetailPage.addMoreButton().click();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
-        final List<String> promotionsBucketList = editReferencesPage.promotionsBucketList();
+        final List<String> promotionsBucketList = editReferencesPage.getBucketTitles();
 
         for (final String docTitle : promotionsBucketList) {
             verifyThat(promotedDocs, hasItem(equalToIgnoringCase(docTitle)));
@@ -84,14 +84,14 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         searchPage.openPromotionsBucket();
         searchPage.addDocsToBucket(3);
 
-        final List<String> searchBucketDocs = searchPage.promotionsBucketList();
+        final List<String> searchBucketDocs = searchPage.getBucketTitles();
 
         promotionsDetailPage = promotionService.goToDetails("jedi");
         promotionsDetailPage.addMoreButton().click();
         Waits.loadOrFadeWait();
 
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
-        final List<String> secondPromotionsBucketList = editReferencesPage.promotionsBucketList();
+        final List<String> secondPromotionsBucketList = editReferencesPage.getBucketTitles();
         verifyThat(secondPromotionsBucketList.size(), is(promotionsBucketList.size()));
         for (final String searchBucketDoc : searchBucketDocs) {
             verifyThat(secondPromotionsBucketList, not(hasItem(equalToIgnoringCase(searchBucketDoc))));
@@ -100,13 +100,13 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editDocumentSearch("wall");
         editReferencesPage.addDocsToBucket(2);
 
-        final List<String> finalPromotionsBucketList = editReferencesPage.promotionsBucketList();
+        final List<String> finalPromotionsBucketList = editReferencesPage.getBucketTitles();
 
         getApplication().switchTo(KeywordsPage.class);
         searchPage = searchService.search("fast");
         searchPage.openPromotionsBucket();
 
-        final List<String> searchPageBucketDocs = searchPage.promotionsBucketList();
+        final List<String> searchPageBucketDocs = searchPage.getBucketTitles();
 
         for (final String bucketDoc : finalPromotionsBucketList) {
             verifyThat(searchPageBucketDocs, not(hasItem(bucketDoc)));
@@ -116,18 +116,18 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     @Test
     public void testAddRemoveDocsToEditBucket() {
         setUpPromotion("yoda", "green dude", 4);
-        int currentSize = editReferencesPage.promotionsBucketList().size();
+        int currentSize = editReferencesPage.getBucketTitles().size();
 
         editDocumentSearch("unrelated");
 
         for (int i = 1; i < 7; i++) {
             editReferencesPage.addDocToBucket(i);
-            verifyThat(editReferencesPage.promotionsBucketList(), hasSize(++currentSize));
+            verifyThat(editReferencesPage.getBucketTitles(), hasSize(++currentSize));
         }
 
         for (int j = 6; j > 0; j--) {
             editReferencesPage.removeDocFromBucket(j);
-            verifyThat(editReferencesPage.promotionsBucketList(), hasSize(--currentSize));
+            verifyThat(editReferencesPage.getBucketTitles(), hasSize(--currentSize));
         }
     }
 
@@ -135,7 +135,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     @KnownBug("CSA-1755")
     public void testRefreshEditPromotionPage() throws InterruptedException {
         String originalDoc = setUpPromotion("Luke", "jedi master", 1).get(0);
-        assumeThat(editReferencesPage.promotionsBucketItems(), not(empty()));
+        assumeThat(editReferencesPage.getBucketTitles(), not(empty()));
         verifyRefreshing();
 
         editDocumentSearch("solo");
@@ -149,7 +149,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
         Waits.loadOrFadeWait();
         verifyThat(editReferencesPage.saveButton(), not(disabled()));
-        verifyThat(editReferencesPage.promotionsBucketItems(), not(empty()));
+        verifyThat(editReferencesPage.getBucketTitles(), not(empty()));
     }
 
     @Test
@@ -164,7 +164,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     @Test
     public void testEditDocumentReferencesCancel() {
         String originalDoc = setUpPromotion("house", "home", 1).get(0);
-        assumeThat(editReferencesPage.promotionsBucketList(), not(empty()));
+        assumeThat(editReferencesPage.getBucketTitles(), not(empty()));
 
         editReferencesPage.deleteDocFromWithinBucket(originalDoc);
         editDocumentSearch("mansion");
@@ -185,22 +185,22 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         promotionsDetailPage.addMoreButton().click();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
-        verifyThat(editReferencesPage.promotionsBucketList(), hasItem(equalToIgnoringCase(originalDoc)));
-        verifyThat(editReferencesPage.promotionsBucketList(), hasSize(1));
+        verifyThat(editReferencesPage.getBucketTitles(), hasItem(equalToIgnoringCase(originalDoc)));
+        verifyThat(editReferencesPage.getBucketTitles(), hasSize(1));
     }
 
     @Test
     public void testDeleteItemsFromWithinTheBucket() {
         setUpPromotion("cheese", "cheddar brie", 4);
-        final List<String> bucketList = editReferencesPage.promotionsBucketList();
+        final List<String> bucketList = editReferencesPage.getBucketTitles();
         assumeThat(bucketList, hasSize(4));
         verifyThat(editReferencesPage.saveButton(), not(disabled()));
 
         int bucketSize = bucketList.size();
         for (final String bucketDocTitle : bucketList) {
             editReferencesPage.deleteDocFromWithinBucket(bucketDocTitle);
-            verifyThat(editReferencesPage.promotionsBucketList(), not(hasItem(bucketDocTitle)));
-            verifyThat(editReferencesPage.promotionsBucketList(), hasSize(--bucketSize));
+            verifyThat(editReferencesPage.getBucketTitles(), not(hasItem(bucketDocTitle)));
+            verifyThat(editReferencesPage.getBucketTitles(), hasSize(--bucketSize));
         }
 
         verifyThat(editReferencesPage.saveButton(), disabled());
@@ -221,9 +221,9 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     public void testViewFromBucketAndFromSearchResults() throws InterruptedException {
         setUpPromotion("apple", "potato", 35);
 
-        if (verifyThat(editReferencesPage.promotionsBucketList(), not(empty()))) {
+        if (verifyThat(editReferencesPage.getBucketTitles(), not(empty()))) {
             for (int i = 0; i < 5; i++) {
-                final String docTitle = editReferencesPage.promotionsBucketWebElements().get(i).getText();
+                final String docTitle = editReferencesPage.getBucketTitles().get(i);
                 editReferencesPage.promotionBucketElementByTitle(docTitle).click();
                 checkDocumentViewable(docTitle);
             }
@@ -257,14 +257,14 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     public void testCheckboxUpdatesWithBucketDelete() {
         setUpPromotion("fred", "white fluffy", 4);
         editDocumentSearch("fred");
-        final List<String> bucketList = editReferencesPage.promotionsBucketList();
+        final List<String> bucketList = editReferencesPage.getBucketTitles();
         assumeThat(bucketList, hasSize(4));
 
         for (final String docTitle : bucketList) {
             verifyThat("search result checkbox is initially checked", editReferencesPage.searchCheckboxForTitle(docTitle).isChecked(), is(true));
             editReferencesPage.deleteDocFromWithinBucket(docTitle);
             verifyThat("search result checkbox is unchecked after removing", editReferencesPage.searchCheckboxForTitle(docTitle).isChecked(), is(false));
-            verifyThat(editReferencesPage.promotionsBucketList(), not(contains(docTitle)));
+            verifyThat(editReferencesPage.getBucketTitles(), not(contains(docTitle)));
         }
 
         verifyThat(editReferencesPage.saveButton(), disabled());
@@ -292,12 +292,12 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     @Test
     public void testDeletedDocumentsRemainDeleted() {
         setUpPromotion("dog", "woof bark", 8);
-        final List<String> bucketList = editReferencesPage.promotionsBucketList();
+        final List<String> bucketList = editReferencesPage.getBucketTitles();
         assumeThat(bucketList, hasSize(8));
 
         for (int i = 0; i < 4; i++) {
             editReferencesPage.deleteDocFromWithinBucket(bucketList.get(i));
-            verifyThat(editReferencesPage.promotionsBucketList(), hasSize(7 - i));
+            verifyThat(editReferencesPage.getBucketTitles(), hasSize(7 - i));
         }
 
         editReferencesPage.saveButton().click();

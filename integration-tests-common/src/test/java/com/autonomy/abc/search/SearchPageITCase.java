@@ -87,7 +87,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		searchPage.addDocToBucket(1);
 		assertThat(searchPage.promoteTheseItemsButton(), not(disabled()));
-		assertThat(searchPage.promotedItemsCount(), is(1));
+		assertThat(searchPage.getBucketTitles(), hasSize(1));
 
 		searchPage.closePromotionsBucket();
 		assertThat(searchPage.promotionsBucket(), not(displayed()));
@@ -99,7 +99,7 @@ public class SearchPageITCase extends ABCTestBase {
 	private void checkBucketEmpty() {
 		assertThat(searchPage.promotionsBucket(), displayed());
 		assertThat(searchPage.promoteTheseItemsButton(), disabled());
-		assertThat(searchPage.promotedItemsCount(), is(0));
+		assertThat(searchPage.getBucketTitles(), empty());
 	}
 
     @Test
@@ -122,12 +122,12 @@ public class SearchPageITCase extends ABCTestBase {
 
 		for (int i = 1; i < 7; i++) {
 			searchPage.addDocToBucket(i);
-			assertThat("Promoted items count not correct", searchPage.promotedItemsCount(),is(i));
+			assertThat(searchPage.getBucketTitles(), hasSize(i));
 		}
 
 		for (int j = 6; j > 0; j--) {
 			searchPage.removeDocFromBucket(j);
-			assertThat("Promoted items count not correct", searchPage.promotedItemsCount(), is(j - 1));
+			assertThat(searchPage.getBucketTitles(), hasSize(j - 1));
 		}
 
 		searchPage.closePromotionsBucket();
@@ -138,8 +138,8 @@ public class SearchPageITCase extends ABCTestBase {
 		search("horse");
 		searchPage.openPromotionsBucket();
 		searchPage.addDocToBucket(1);
-		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(1));
-		assertThat("File in bucket description does not match file added", searchPage.getSearchResult(1).getTitleString(), equalToIgnoringCase(searchPage.bucketDocumentTitle(1)));
+		assertThat(searchPage.getBucketTitles(), hasSize(1));
+		assertThat(searchPage.getBucketTitles(), hasItem(equalToIgnoringCase(searchPage.getSearchResult(1).getTitleString())));
 	}
 
 	@Test
@@ -153,27 +153,28 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testDocumentsRemainInBucket() {
+		int bucketCount = 2;
 		search("cow");
 		searchPage.openPromotionsBucket();
-		searchPage.addDocsToBucket(2);
-		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount(), is(2));
+		searchPage.addDocsToBucket(bucketCount);
+		assertThat(searchPage.getBucketTitles(), hasSize(bucketCount));
 
 		search("bull");
-		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount(), is(2));
+		assertThat(searchPage.getBucketTitles(), hasSize(bucketCount));
 		searchPage.addDocToBucket(1);
-		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(3));
+		assertThat(searchPage.getBucketTitles(), hasSize(++bucketCount));
 
 		search("cow");
-		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount(), is(3));
+		assertThat(searchPage.getBucketTitles(), hasSize(bucketCount));
 
 		search("bull");
-		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(3));
+		assertThat(searchPage.getBucketTitles(), hasSize(bucketCount));
 
 		searchPage.removeDocFromBucket(1);
-		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(2));
+		assertThat(searchPage.getBucketTitles(), hasSize(--bucketCount));
 
 		search("cow");
-		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(2));
+		assertThat(searchPage.getBucketTitles(), hasSize(bucketCount));
 	}
 
 	@Test
@@ -183,7 +184,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.openPromotionsBucket();
 		searchPage.addDocsToBucket(4);
 
-		final List<String> bucketList = searchPage.promotionsBucketList();
+		final List<String> bucketList = searchPage.getBucketTitles();
 		assertThat(bucketList, hasSize(4));
 		assertThat(searchPage.promoteTheseDocumentsButton(), disabled());
 		assertThat(searchPage.promoteTheseItemsButton(), not(disabled()));
@@ -192,7 +193,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat(searchPage.promoteTheseItemsButton(), disabled());
 
 		search("tooth");
-		assertThat(searchPage.promotionsBucketList(), empty());
+		assertThat(searchPage.getBucketTitles(), empty());
 
 		final int doc1Index = 5;
 		final String doc1 = searchPage.getSearchResult(5).getTitleString();
@@ -203,27 +204,27 @@ public class SearchPageITCase extends ABCTestBase {
 		final String doc2 = searchPage.getSearchResult(3).getTitleString();
 		searchPage.addDocToBucket(doc2Index);
 
-		final List<String> bucketDocs = searchPage.promotionsBucketList();
+		final List<String> bucketDocs = searchPage.getBucketTitles();
 		assertThat(bucketDocs, hasSize(2));
 		assertThat(bucketDocs, hasItem(equalToIgnoringCase(doc1)));
 		assertThat(bucketDocs, hasItem(equalToIgnoringCase(doc2)));
 
 		verifyRemovingFirstItem(doc2, doc2Index);
-		assertThat(searchPage.promotionsBucketList(), hasItem(equalToIgnoringCase(doc1)));
+		assertThat(searchPage.getBucketTitles(), hasItem(equalToIgnoringCase(doc1)));
 		searchPage.switchResultsPage(Pagination.PREVIOUS);
 		verifyRemovingFinalItem(doc1, doc1Index);
 	}
 
 	private void verifyRemovingFirstItem(String toRemove, int number) {
 		searchPage.deleteDocFromWithinBucket(toRemove);
-		assertThat(searchPage.promotionsBucketList(), hasSize(1));
-		assertThat(searchPage.promotionsBucketList(), not(hasItem(equalToIgnoringCase(toRemove))));
+		assertThat(searchPage.getBucketTitles(), hasSize(1));
+		assertThat(searchPage.getBucketTitles(), not(hasItem(equalToIgnoringCase(toRemove))));
 		assertThat(searchPage.searchResultCheckbox(number), not(checked()));
 	}
 
 	private void verifyRemovingFinalItem(String toRemove, int number) {
 		searchPage.deleteDocFromWithinBucket(toRemove);
-		assertThat(searchPage.promotionsBucketList(), empty());
+		assertThat(searchPage.getBucketTitles(), empty());
 		assertThat(searchPage.searchResultCheckbox(number), not(checked()));
 		assertThat(searchPage.promoteTheseItemsButton(), disabled());
 	}

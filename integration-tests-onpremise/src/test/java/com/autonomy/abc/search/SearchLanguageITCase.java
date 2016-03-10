@@ -71,14 +71,14 @@ public class SearchLanguageITCase extends ABCTestBase {
         searchPage.openPromotionsBucket();
         searchPage.addDocsToBucket(4);
 
-        assertThat(searchPage.promotionsBucketWebElements(), hasSize(4));
+        assertThat(searchPage.getBucketTitles(), hasSize(4));
 
         final String url = getWindow().getUrl().replace("french", "arabic");
         getWindow().goTo(url);
         searchPage = getElementFactory().getSearchPage();
         Waits.loadOrFadeWait();
         assertThat(searchPage.promoteThisQueryButton(), displayed());
-        assertThat(searchPage.promotionsBucketWebElements(), hasSize(0));
+        assertThat(searchPage.getBucketTitles(), empty());
     }
 
     @Test
@@ -91,12 +91,12 @@ public class SearchLanguageITCase extends ABCTestBase {
 
         searchPage.openPromotionsBucket();
         searchPage.addDocToBucket(1);
-        assertThat("There should be one document in the bucket", searchPage.promotionsBucketList(), hasSize(1));
+        assertThat("There should be one document in the bucket", searchPage.getBucketTitles(), hasSize(1));
         searchPage.selectLanguage(Language.FRENCH);
         assertThat("The promotions bucket should close when the language is changed", searchPage.promotionsBucket(), not(displayed()));
 
         searchPage.openPromotionsBucket();
-        assertThat("There should be no documents in the bucket after changing language", searchPage.promotionsBucketList(), hasSize(0));
+        assertThat("There should be no documents in the bucket after changing language", searchPage.getBucketTitles(), hasSize(0));
 
         searchPage.selectLanguage(Language.ENGLISH);
         assertThat("The promotions bucket should close when the language is changed", searchPage.promotionsBucket(), not(displayed()));

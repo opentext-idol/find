@@ -112,16 +112,12 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		searchResultCheckbox(docNumber).uncheck();
 	}
 
-	public int promotedItemsCount() {
-		return findElements(By.cssSelector(".promotions-bucket-document")).size();
+	public List<String> getBucketTitles() {
+		return ElementUtil.getTexts(promotionsBucketWebElements());
 	}
 
-	public List<WebElement> promotionsBucketWebElements() {
+	private List<WebElement> promotionsBucketWebElements() {
 		return findElements(By.xpath(".//*[contains(@class, 'promotions-bucket-document')]/.."));
-	}
-
-	public String bucketDocumentTitle(final int bucketNumber) {
-		return promotionsBucket().findElement(By.cssSelector(".promotions-bucket-document:nth-child(" + bucketNumber + ')')).getText();
 	}
 
 	public WebElement promotionsBucket() {
@@ -149,14 +145,6 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		for (final WebElement bucketItem : promotionsBucketWebElements()) {
 			bucketItem.findElement(By.cssSelector(".remove-bucket-item")).click();
 		}
-	}
-
-	protected List<String> bucketList(final WebElement element) {
-		final List<String> bucketDocTitles = new ArrayList<>();
-		for (final WebElement bucketDoc : element.findElements(By.cssSelector(".promotions-bucket-document"))) {
-			bucketDocTitles.add(bucketDoc.getText());
-		}
-		return bucketDocTitles;
 	}
 
 	public String getTopPromotedLinkTitle() {
