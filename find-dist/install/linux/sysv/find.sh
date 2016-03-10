@@ -48,36 +48,26 @@ waitForPid() {
 startServer() {
 	echo "Attempting to start ${PRODUCT_NAME}"
 
-	if command -v start-stop-daemon >/dev/null; then
-		start-stop-daemon --start \
-		--exec "${JAVA_BIN}" \
-		-m --pidfile "${LOCKFILE}" \
-		--user "${FIND_USER}" --group "${FIND_GROUP}" --chuid "${FIND_USER}" \
-		--chdir "${FIND_INSTALL_DIR}" \
-		--startas "${JAVA_BIN}" \
-		-- "${ARGS[@]}" > "${STARTUP_LOG}" 2>&1
-	else
-		if [ -e "${LOCKFILE}" ]; then
-			local PID
-			PID=$(cat ${LOCKFILE})
-			if [ -e /proc/${PID} ]; then
-				echo "${NAME} is already running - process id ${PID}"
-				return 1;
-			fi
-
-			rm -f "${LOCKFILE}"
+	if [ -e "${LOCKFILE}" ]; then
+		local PID
+		PID=$(cat ${LOCKFILE})
+		if [ -e /proc/${PID} ]; then
+			echo "${NAME} is already running - process id ${PID}"
+			return 1;
 		fi
 
-		touch ${LOCKFILE} || return 1
-		chgrp ${FIND_GROUP} ${LOCKFILE} || return 1
-		chmod g+w ${LOCKFILE} || return 1
-
-		local cmd
-		cmd="nohup ${JAVA_BIN} ${ARGS[@]} >>${STARTUP_LOG} 2>&1 & echo \$! >${LOCKFILE}"
-		su -m "${FIND_USER}" -s "${SHELL}" -c "${cmd}" || return 1
-		printStatus
-		return 0;
+		rm -f "${LOCKFILE}"
 	fi
+
+	touch ${LOCKFILE} || return 1
+	chgrp ${FIND_GROUP} ${LOCKFILE} || return 1
+	chmod g+w ${LOCKFILE} || return 1
+
+	local cmd
+	cmd="nohup ${JAVA_BIN} ${ARGS[@]} >>${STARTUP_LOG} 2>&1 & echo \$! >${LOCKFILE}"
+	su -m "${FIND_USER}" -s "${SHELL}" -c "${cmd}" || return 1
+	printStatus
+	return 0;
 }
 
 # Checks if process is running and returns:
