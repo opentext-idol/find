@@ -83,6 +83,31 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	/* promotions bucket */
+	public List<String> addDocsToBucket(int finalNumberOfDocs) {
+		final List<String> promotedDocTitles = new ArrayList<>();
+		for (int i = 0; i < finalNumberOfDocs; i++) {
+			final int checkboxIndex = i % SearchPage.RESULTS_PER_PAGE + 1;
+			addDocToBucket(checkboxIndex);
+			promotedDocTitles.add(getSearchResult(checkboxIndex).getTitleString());
+
+			// Change page when we have checked all boxes on the current page, if we have more to check
+			if (i < finalNumberOfDocs - 1 && checkboxIndex == SearchPage.RESULTS_PER_PAGE) {
+				switchResultsPage(Pagination.NEXT);
+			}
+		}
+		return promotedDocTitles;
+	}
+
+	public void addDocToBucket(int docNumber) {
+		ElementUtil.scrollIntoView(searchResultCheckbox(docNumber), getDriver());
+		searchResultCheckbox(docNumber).click();
+	}
+
+	public void removeDocFromBucket(int docNumber) {
+		// TODO: check if the doc is in the bucket
+		addDocToBucket(docNumber);
+	}
+
 	public int promotedItemsCount() {
 		return findElements(By.cssSelector(".promotions-bucket-document")).size();
 	}

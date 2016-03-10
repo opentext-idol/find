@@ -129,33 +129,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		Waits.loadOrFadeWait();
 	}
 
-	public List<String> addDocsToBucket(int finalNumberOfDocs) {
-		final List<String> promotedDocTitles = new ArrayList<>();
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(promoteTheseItemsButton()));
-		waitForSearchLoadIndicatorToDisappear(60);
-		for (int i = 0; i < finalNumberOfDocs; i++) {
-			final int checkboxIndex = i % RESULTS_PER_PAGE + 1;
-			addDocToBucket(checkboxIndex);
-			promotedDocTitles.add(getSearchResult(checkboxIndex).getTitleString());
-
-			// Change page when we have checked all boxes on the current page, if we have more to check
-			if (i < finalNumberOfDocs - 1 && checkboxIndex == RESULTS_PER_PAGE) {
-				switchResultsPage(Pagination.NEXT);
-			}
-		}
-		return promotedDocTitles;
-	}
-
-	public void addDocToBucket(int docNumber) {
-		ElementUtil.scrollIntoView(searchResultCheckbox(docNumber), getDriver());
-		searchResultCheckbox(docNumber).click();
-	}
-
-	public void removeDocFromBucket(int docNumber) {
-		// TODO: check if the doc is in the bucket
-		addDocToBucket(docNumber);
-	}
-
 	/* promoted results */
 	public List<SOSearchResult> getPromotedResults() {
 		waitForPromotionsLoadIndicatorToDisappear();
