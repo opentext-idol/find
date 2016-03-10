@@ -3,6 +3,7 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
@@ -230,7 +231,6 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testViewFrame() throws InterruptedException {
 		search("army");
-		searchPage.waitForSearchLoadIndicatorToDisappear();
 
 		for (int page = 1; page <= 2; page++) {
 			for (int result = 1; result <= 6; result++) {
@@ -245,6 +245,8 @@ public class SearchPageITCase extends ABCTestBase {
 		}
 	}
 
+	// TODO: after CCUK-3728 use SharedPreviewTests
+	@RelatedTo("CCUK-3728")
 	private void checkViewResult() {
 		DocumentViewer docViewer = DocumentViewer.make(getDriver());
 		Frame frame = new Frame(getWindow(), docViewer.frame());
