@@ -246,7 +246,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	@Override
-	public WebElement searchResultCheckbox(int resultNumber) {
+	protected WebElement searchResultCheckboxElement(int resultNumber) {
 		// TODO: find others like this, avoid repetition
 		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-results li:nth-child(" + resultNumber + ") label")));
 	}

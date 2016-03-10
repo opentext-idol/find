@@ -184,43 +184,48 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.addDocsToBucket(4);
 
 		final List<String> bucketList = searchPage.promotionsBucketList();
-		assertThat("There should be four documents in the bucket", bucketList.size(), is(4));
+		assertThat(bucketList, hasSize(4));
 		assertThat(searchPage.promoteTheseDocumentsButton(), disabled());
-		assertThat(searchPage.promoteTheseItemsButton(), displayed());
+		assertThat(searchPage.promoteTheseItemsButton(), not(disabled()));
 
 		searchPage.emptyBucket();
-
-		assertThat("promote button should be disabled when bucket has no documents", searchPage.promoteTheseItemsButton(), disabled());
+		assertThat(searchPage.promoteTheseItemsButton(), disabled());
 
 		search("tooth");
-		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList(), empty());
+		assertThat(searchPage.promotionsBucketList(), empty());
 
-		searchPage.addDocToBucket(5);
-		final List<String> docTitles = new ArrayList<>();
-		docTitles.add(searchPage.getSearchResult(5).getTitleString());
+		final int doc1Index = 5;
+		final String doc1 = searchPage.getSearchResult(5).getTitleString();
+		searchPage.addDocToBucket(doc1Index);
+
 		searchPage.switchResultsPage(Pagination.NEXT);
-		searchPage.addDocToBucket(3);
-		docTitles.add(searchPage.getSearchResult(3).getTitleString());
+		final int doc2Index = 3;
+		final String doc2 = searchPage.getSearchResult(3).getTitleString();
+		searchPage.addDocToBucket(doc2Index);
 
-		final List<String> bucketListNew = searchPage.promotionsBucketList();
-		assertThat("Wrong number of documents in the bucket", bucketListNew, hasSize(2));
-		assertThat(bucketListNew, hasSize(docTitles.size()));
+		final List<String> bucketDocs = searchPage.promotionsBucketList();
+		assertThat(bucketDocs, hasSize(2));
+		assertThat(bucketDocs, hasItem(equalToIgnoringCase(doc1)));
+		assertThat(bucketDocs, hasItem(equalToIgnoringCase(doc2)));
 
-		for(String docTitle : docTitles){
-			assertThat(bucketListNew, hasItem(equalToIgnoringCase(docTitle)));
-		}
-
-		searchPage.deleteDocFromWithinBucket(docTitles.get(1));
-		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList(), hasSize(1));
-		assertThat("Document should still be in the bucket", searchPage.promotionsBucketList(),hasItem(equalToIgnoringCase(docTitles.get(0))));
-		assertThat("Document should no longer be in the bucket", searchPage.promotionsBucketList(),not(hasItem(equalToIgnoringCase(docTitles.get(1)))));
-		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(3).isSelected());
-
+		verifyRemovingFirstItem(doc2, doc2Index);
+		assertThat(searchPage.promotionsBucketList(), hasItem(equalToIgnoringCase(doc1)));
 		searchPage.switchResultsPage(Pagination.PREVIOUS);
-		searchPage.deleteDocFromWithinBucket(docTitles.get(0));
-		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList(), empty());
-		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(5).isSelected());
-		assertThat("promote button should be disabled when bucket has no documents", searchPage.promoteTheseItemsButton(), disabled());
+		verifyRemovingFinalItem(doc1, doc1Index);
+	}
+
+	private void verifyRemovingFirstItem(String toRemove, int number) {
+		searchPage.deleteDocFromWithinBucket(toRemove);
+		assertThat(searchPage.promotionsBucketList(), hasSize(1));
+		assertThat(searchPage.promotionsBucketList(), not(hasItem(equalToIgnoringCase(toRemove))));
+		assertThat(searchPage.searchResultCheckbox(number), not(checked()));
+	}
+
+	private void verifyRemovingFinalItem(String toRemove, int number) {
+		searchPage.deleteDocFromWithinBucket(toRemove);
+		assertThat(searchPage.promotionsBucketList(), empty());
+		assertThat(searchPage.searchResultCheckbox(number), not(checked()));
+		assertThat(searchPage.promoteTheseItemsButton(), disabled());
 	}
 
 	@Test

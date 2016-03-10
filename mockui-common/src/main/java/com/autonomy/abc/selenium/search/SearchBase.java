@@ -55,7 +55,11 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return new SOSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
 	}
 
-	public WebElement searchResultCheckbox(final int resultNumber) {
+	public Checkbox searchResultCheckbox(final int resultNumber) {
+		return new SOCheckbox(searchResultCheckboxElement(resultNumber), getDriver());
+	}
+
+	protected WebElement searchResultCheckboxElement(final int resultNumber) {
 		return new WebDriverWait(getDriver(), 20)
 				.withMessage("waiting for #" + resultNumber + " search result to appear")
 				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + resultNumber + ") label")));
@@ -100,12 +104,12 @@ public abstract class SearchBase extends AppElement implements AppPage,
 
 	public void addDocToBucket(int docNumber) {
 		ElementUtil.scrollIntoView(searchResultCheckbox(docNumber), getDriver());
-		searchResultCheckbox(docNumber).click();
+		searchResultCheckbox(docNumber).check();
 	}
 
 	public void removeDocFromBucket(int docNumber) {
-		// TODO: check if the doc is in the bucket
-		addDocToBucket(docNumber);
+		ElementUtil.scrollIntoView(searchResultCheckbox(docNumber), getDriver());
+		searchResultCheckbox(docNumber).uncheck();
 	}
 
 	public int promotedItemsCount() {
@@ -129,6 +133,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public void deleteDocFromWithinBucket(final String docTitle) {
+		ElementUtil.scrollIntoView(promotionsBucket(), getDriver());
 		for (WebElement document : promotionsBucketWebElements()) {
 			if (document.getText().compareToIgnoreCase(docTitle) == 0) {
 				document.findElement(By.cssSelector(".fa-close")).click();
