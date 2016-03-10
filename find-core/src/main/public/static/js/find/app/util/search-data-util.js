@@ -26,13 +26,18 @@ define([
         });
     };
 
+    var buildFieldText = function(parametricValues) {
+        var fieldTextNode = toFieldTextNode(parametricValues);
+        return fieldTextNode && fieldTextNode.toString();
+    };
+
     var buildQuery = function(model) {
         return {
             minDate: model.get('minDate'),
             maxDate: model.get('maxDate'),
             queryText: makeQueryText(model.get('queryText'), model.get('relatedConcepts')),
             databases: buildIndexes(model.get('indexes')),
-            fieldText: toFieldTextNode(model.get('parametricValues')).toString(),
+            fieldText: buildFieldText(model.get('parametricValues')),
             anyLanguage: true
         };
     };
