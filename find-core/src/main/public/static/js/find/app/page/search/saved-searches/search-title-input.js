@@ -56,8 +56,12 @@ define([
                     _.bind(function() {
                         this.trigger('remove');
                     }, this),
-                    _.bind(function() {
-                        this.model.set('error', i18n['search.savedSearchControl.error']);
+                    _.bind(function(collection, response) {
+                        if(response.statusText === 'timeout') {
+                            this.model.set('error', i18n['search.savedSearchControl.error.timeout']);
+                        } else {
+                            this.model.set('error', i18n['search.savedSearchControl.error']);
+                        }
                         this.model.set('loading', false);
                     }, this)
                 );
@@ -115,6 +119,7 @@ define([
         },
 
         updateLoading: function() {
+            this.$('.save-title-confirm-button > i').toggleClass('hide', !this.model.get('loading'));
             this.$('.search-title-input, .save-title-cancel-button, .save-title-confirm-button').prop('disabled', this.model.get('loading'));
         },
 

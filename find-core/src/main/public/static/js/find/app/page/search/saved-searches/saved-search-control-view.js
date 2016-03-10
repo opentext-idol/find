@@ -263,7 +263,8 @@ define([
                         var saveOptions = {
                             error: error,
                             success: success,
-                            wait: true
+                            wait: true,
+                            timeout: 90000
                         };
 
                         if (titleEditState === TitleEditState.SAVE_AS && searchType === SavedSearchModel.Type.SNAPSHOT) {

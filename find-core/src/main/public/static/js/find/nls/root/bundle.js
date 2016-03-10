@@ -151,6 +151,7 @@ define([
         'search.savedSearchControl.searchType.SNAPSHOT': 'Snapshot',
         'search.savedSearchControl.cancelSave': 'Cancel',
         'search.savedSearchControl.error': 'Error saving search',
+        'search.savedSearchControl.error.timeout': 'Timed out saving the search, try refining your query',
         'search.savedSearchControl.rename': 'Rename',
         'search.savedSearchControl.openAsSearch': 'Open as Query',
         'search.savedSearchControl.titleBlank': 'Title must not be blank',
