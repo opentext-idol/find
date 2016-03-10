@@ -19,7 +19,9 @@ define([
         initialize: function(options) {
             this.fields = options.fields;
             this.name = options.name;
-            this.initialSelection = options.initialSelection;
+            this.allowEmpty = options.allowEmpty;
+
+            this.selectionsStart = this.allowEmpty ? [emptyOptionHtml] : [];
         },
 
         render: function() {
@@ -27,9 +29,7 @@ define([
                 dataPlaceholder: i18n['search.sunburst.fieldPlaceholder.' + this.name]
             }));
 
-            var start = this.initialSelection ? [] : [emptyOptionHtml];
-
-            var options = start.concat(_.map(this.fields, function(field) {
+            var options = this.selectionsStart.concat(_.map(this.fields, function(field) {
                 return optionTemplate({
                     field: field,
                     selected: field === this.model.get('field')
@@ -39,7 +39,10 @@ define([
             this.$select = this.$('.parametric-select');
 
             this.$select.append(options)
-                .chosen({width: '20%'})
+                .chosen({
+                    width: '20%',
+                    allow_single_deselect: this.allowEmpty
+                })
                 .trigger('chosen:updated');
 
             this.$select.change(_.bind(function() {

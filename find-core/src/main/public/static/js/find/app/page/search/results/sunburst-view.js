@@ -123,7 +123,7 @@ define([
                 model: this.firstFieldModel,
                 name: 'first',
                 fields: fields,
-                initialSelection: true
+                allowEmpty: false
             });
 
             this.$parametricSelections.prepend(this.firstChosen.$el);
@@ -164,7 +164,8 @@ define([
             this.secondChosen = new FieldSelectionView({
                 model: this.secondFieldModel,
                 name: 'second',
-                fields: _.without(this.parametricCollection.pluck('name'), this.firstFieldModel.get('field')).sort()
+                fields: _.without(this.parametricCollection.pluck('name'), this.firstFieldModel.get('field')).sort(),
+                allowEmpty: true
             });
 
             this.$parametricSelections.append(this.secondChosen.$el);

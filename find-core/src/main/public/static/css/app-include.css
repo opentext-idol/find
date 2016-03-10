@@ -1212,6 +1212,11 @@ input:-moz-placeholder::before {
     pointer-events: none;
 }
 
+/* Chosen remove button */
+.chosen-container .chosen-single-with-deselect abbr {
+    cursor: pointer;
+}
+
 /* Indexes View */
 .database-name,
 .category-name,
