@@ -13,8 +13,8 @@ define([
     'find/app/page/search/document/document-detail-tabs',
     'find/app/configuration',
     'text!find/templates/app/page/search/document/document-detail.html',
-    'text!find/templates/app/page/search/document/preview-mode-document.html',
-    'text!find/templates/app/page/view/media-player.html'
+    'text!find/templates/app/page/search/document/view-mode-document.html',
+    'text!find/templates/app/page/search/document/view-media-player.html'
 ], function(Backbone, _, vent, i18n, viewClient, ListView, tabs, configuration, template, documentTemplate, mediaTemplate) {
     'use strict';
 
@@ -102,6 +102,10 @@ define([
 
                     this.$('.view-server-loading-indicator').addClass('hidden');
                     this.$iframe.removeClass('hidden');
+
+                    // View server adds script tags to rendered PDF documents, which are blocked by the application
+                    // This replicates their functionality
+                    this.$iframe.contents().find('.InvisibleAbsolute').hide();
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition

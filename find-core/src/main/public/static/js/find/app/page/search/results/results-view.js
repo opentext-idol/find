@@ -17,15 +17,12 @@ define([
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/search/results/results-container.html',
     'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/view/media-player.html',
-    'text!find/templates/app/page/view/view-document.html',
     'moment',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, SortView, ResultsNumberView, popover,
             viewClient, documentMimeTypes, addLinksToSummary, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
-            loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate,
-            moment, i18n, i18n_indexes) {
+            loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     var Mode = {
         STATE_TOKEN: 'STATE_TOKEN',
@@ -75,9 +72,7 @@ define([
         popoverMessageTemplate: _.template(popoverMessageTemplate),
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
-        mediaPlayerTemplate: _.template(mediaPlayerTemplate),
         popoverTemplate: _.template(popoverTemplate),
-        viewDocumentTemplate: _.template(viewDocumentTemplate),
 
         events: {
             'click .entity-text': function(e) {

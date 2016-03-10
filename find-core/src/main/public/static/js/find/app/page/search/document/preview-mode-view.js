@@ -9,8 +9,8 @@ define([
     'find/app/configuration',
     'text!find/templates/app/page/search/document/preview-mode-view.html',
     'text!find/templates/app/page/search/document/preview-mode-metadata.html',
-    'text!find/templates/app/page/search/document/preview-mode-document.html',
-    'text!find/templates/app/page/view/media-player.html'
+    'text!find/templates/app/page/search/document/view-mode-document.html',
+    'text!find/templates/app/page/search/document/view-media-player.html'
 ], function(Backbone, _, $, i18n, vent, viewClient, DocumentModel, configuration, template, metaDataTemplate, documentTemplate, mediaTemplate) {
     'use strict';
 
@@ -93,7 +93,11 @@ define([
 
                     this.$('.view-server-loading-indicator').addClass('hidden');
                     this.$iframe.removeClass('hidden');
-                    this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height())
+                    this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height());
+
+                    // View server adds script tags to rendered HTML documents, which are blocked by the application
+                    // This replicates their functionality
+                    this.$iframe.contents().find('.InvisibleAbsolute').hide();
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition
