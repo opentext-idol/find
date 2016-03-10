@@ -28,7 +28,8 @@ define([
                 this.view = new SearchTitleInput({
                     saveCallback: this.saveCallback,
                     showSearchTypes: true,
-                    savedSearchModel: this.savedSearchModel
+                    savedSearchModel: this.savedSearchModel,
+                    savedSearchCollection: new Backbone.Collection()
                 });
 
                 this.view.render();
@@ -83,7 +84,8 @@ define([
                 this.view = new SearchTitleInput({
                     savedSearchModel: this.savedSearchModel,
                     saveCallback: this.saveCallback,
-                    showSearchTypes: false
+                    showSearchTypes: false,
+                    savedSearchCollection: new Backbone.Collection()
                 });
 
                 this.listener = jasmine.createSpy('listener');
