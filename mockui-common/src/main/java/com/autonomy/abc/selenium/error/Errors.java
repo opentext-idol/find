@@ -40,7 +40,8 @@ public class Errors {
         OPENING_BOOL("Opening boolean operator"),
         CLOSING_BOOL("Terminating boolean operator"),
         INVALID("Invalid query text"),
-        ANALYSIS("An error occurred fetching the query analysis");
+        ANALYSIS("An error occurred fetching the query analysis"),
+        NO_CONCEPTS("No related concepts found");
 
         private final String value;
 

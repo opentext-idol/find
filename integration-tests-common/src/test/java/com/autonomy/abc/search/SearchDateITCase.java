@@ -25,6 +25,7 @@ import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assume.assumeThat;
 
 public class SearchDateITCase extends ABCTestBase {
     private SearchPage searchPage;
@@ -135,9 +136,7 @@ public class SearchDateITCase extends ABCTestBase {
                 .withFilter(new FieldTextFilter("EMPTY{}:Date"))
         );
         Date date = searchPage.getSearchResult(1).getDate();
-        if (date == null) {
-            throw new IllegalStateException("date filter test requires first search result to have a date");
-        }
+        assumeThat("test requires first search result to have a date", date, notNullValue());
         LOGGER.info("First Result: " + searchPage.getSearchResult(1).getTitleString() + " " + date);
         return date;
     }

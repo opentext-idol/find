@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
@@ -41,9 +42,11 @@ import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.checked;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchPageITCase extends ABCTestBase {
@@ -371,7 +374,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		getWindow().refresh();
 		final String newSearchText = getElementFactory().getTopNavBar().getSearchBarText();
-		assertThat("search bar should be blank on refresh of a page that isn't the search page", newSearchText, is(searchText));
+		assertThat(newSearchText, is(searchText));
 	}
 
 	@Test
@@ -409,13 +412,10 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testNoRelatedConceptsIfNoResultsFound() {
 		final String garbageQueryText = "garbagedjlsfjijlsf";
 		search(garbageQueryText);
-
-        String errorMessage = "Garbage text returned results. garbageQueryText string needs changed to be more garbage like";
-		assertThat(errorMessage, searchPage.getText(), containsString("No results found"));
-		assertThat(errorMessage, searchPage.getHeadingResultsCount(), is(0));
+		assumeThat(searchPage.errorContainer(), containsText(Errors.Search.NO_RESULTS));
 
 		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
-        assertThat("If there are no search results there should be no related concepts", searchPage.getText(), containsString("No related concepts found"));
+        assertThat(searchPage.getText(), containsString(Errors.Search.NO_CONCEPTS));
 	}
 
 	@Test
