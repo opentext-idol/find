@@ -154,6 +154,7 @@ define([
         'search.savedSearchControl.rename': 'Rename',
         'search.savedSearchControl.openAsSearch': 'Open as Query',
         'search.savedSearchControl.titleBlank': 'Title must not be blank',
+        'search.savedSearchControl.nameAlreadyExists': 'Search with this name already exists',
         'search.snapshot.detail.dateCreated': 'Date Created',
         'search.snapshot.detail.resultCount': 'Result Count',
         'search.snapshot.detailTitle': 'Snapshot',

@@ -45,28 +45,37 @@ define([
 
                 var title = this.model.get('title').trim();
                 var type = this.model.get('type');
+                var isDuplicateName = Boolean(this.savedSearchCollection.findWhere({title: title}));
 
-                this.model.set({
-                    error: null,
-                    loading: true
-                });
+                if(isDuplicateName) {
+                    this.model.set({
+                        error: i18n['search.savedSearchControl.nameAlreadyExists'],
+                        loading: false
+                    });
+                } else {
+                    this.model.set({
+                        error: null,
+                        loading: true
+                    });
 
-                this.saveCallback(
-                    {title: title, type: type},
-                    _.bind(function() {
-                        this.trigger('remove');
-                    }, this),
-                    _.bind(function() {
-                        this.model.set('error', i18n['search.savedSearchControl.error']);
-                        this.model.set('loading', false);
-                    }, this)
-                );
+                    this.saveCallback(
+                        {title: title, type: type},
+                        _.bind(function() {
+                            this.trigger('remove');
+                        }, this),
+                        _.bind(function() {
+                            this.model.set('error', i18n['search.savedSearchControl.error']);
+                            this.model.set('loading', false);
+                        }, this)
+                    );
+                }
             }
         },
 
         initialize: function(options) {
             this.savedSearchModel = options.savedSearchModel;
             this.showSearchTypes = options.showSearchTypes;
+            this.savedSearchCollection = options.savedSearchCollection;
 
             // Called with the new title, search type, and a success callback and an error callback
             this.saveCallback = options.saveCallback;
