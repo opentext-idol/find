@@ -1,5 +1,6 @@
 package com.autonomy.abc.usermanagement;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -8,6 +9,10 @@ import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
+import com.autonomy.abc.selenium.indexes.CreateNewIndexPage;
+import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.indexes.IndexWizard;
+import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
@@ -24,20 +29,18 @@ import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.sql.Time;
-
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.AllOf.allOf;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -49,8 +52,6 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     private UserService userService;
     private User user;
-
-    private Session devSession;
 
     private Session userSession;
     private HSODApplication userApp;
@@ -65,7 +66,6 @@ public class UserPermissionsITCase extends HostedTestBase {
 
         user = userService.createNewUser(getConfig().getNewUser("newhppassport"), Role.ADMIN);
 
-        devSession = getMainSession();
         userApp = new HSODApplication();
         userSession = launchInNewSession(userApp);
         userElementFactory = userApp.elementFactory();
@@ -77,14 +77,18 @@ public class UserPermissionsITCase extends HostedTestBase {
         try {
             userApp.loginService().login(user);
         } catch (NoSuchElementException e) {
-            assumeThat("Authentication failed", userSession.getDriver().getPageSource(), not(containsString("Authentication Failed")));
-            assumeThat("Promotions page not displayed", userApp.elementFactory().getPromotionsPage(), displayed());
+            try {
+                assumeThat("Authentication failed", userSession.getDriver().getPageSource(), not(containsString("Authentication Failed")));
+                assumeThat("Promotions page not displayed", userApp.elementFactory().getPromotionsPage(), displayed());
+            } finally {
+                tearDown();
+            }
         }
     }
 
     @After
     public void tearDown(){
-        userService.deleteOtherUsers();
+        ABCTearDown.USERS.tearDown(this);
         emailHandler.markAllEmailAsRead(getDriver());
     }
 
@@ -179,7 +183,6 @@ public class UserPermissionsITCase extends HostedTestBase {
     @Test
     public void testCannotAddUser(){
         UserService userUserService = userApp.userService();
-
         UsersPage usersPage = userUserService.goToUsers();
 
         userService.deleteUser(user);
@@ -195,6 +198,34 @@ public class UserPermissionsITCase extends HostedTestBase {
            verifyError();
         } catch (NoSuchElementException | StaleElementReferenceException | TimeoutException e) {
             verifyAuthFailed();
+        }
+    }
+
+    @Test
+    public void testCannotAddIndex(){
+        Index index = new Index("not gonna");
+        CreateNewIndexPage createNewIndexPage = userApp.indexService().goToIndexWizard();
+
+        userService.deleteUser(user);
+
+        try {
+            new IndexWizard(index, createNewIndexPage).apply();
+
+            TopNavBar topNavBar = userElementFactory.getTopNavBar();
+            topNavBar.openNotifications();
+            NotificationsDropDown notificationsDropDown = topNavBar.getNotifications();
+
+            verifyThat(notificationsDropDown.getAllNotificationMessages(), allOf(hasItem("Index " + index.getDisplayName() + " has not been created"), hasItem("Unauthorized")));
+        } catch (NoSuchElementException | StaleElementReferenceException | TimeoutException e) {
+            verifyAuthFailed();
+        } finally {
+            IndexesPage devIndexesPage = getApplication().switchTo(IndexesPage.class);
+
+            if(!verifyThat(devIndexesPage.getIndexDisplayNames(), not(hasItem(index.getDisplayName())))){
+                getApplication().indexService().deleteIndex(index);
+            }
+
+            getApplication().switchTo(UsersPage.class);
         }
     }
 
