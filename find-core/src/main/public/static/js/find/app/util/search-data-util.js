@@ -45,6 +45,7 @@ define([
     return {
         makeQueryText: makeQueryText,
         buildIndexes: buildIndexes,
-        buildQuery: buildQuery
+        buildQuery: buildQuery,
+        buildFieldText: buildFieldText
     };
 });
