@@ -92,11 +92,17 @@ public class UserPermissionsITCase extends HostedTestBase {
         try {
             userApp.loginService().login(user);
         } catch (NoSuchElementException e) {
+            boolean assumeFailed = true;
+
             try {
                 assumeThat("Authentication failed", userSession.getDriver().getPageSource(), not(containsString("Authentication Failed")));
                 assumeThat("Promotions page not displayed", userApp.elementFactory().getPromotionsPage(), displayed());
+
+                assumeFailed = false;
             } finally {
-                tearDown();
+                if(assumeFailed) {
+                    tearDown();
+                }
             }
         }
     }
