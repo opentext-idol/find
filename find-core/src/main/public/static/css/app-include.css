@@ -952,7 +952,7 @@ input.find-input {
 
 
 .service-view-container, .service-view-sub-container {
-    height: 100%;
+    height: 100vh;
     width: 100%;
     display: table;
     table-layout: fixed;
