@@ -397,6 +397,24 @@ fieldset.radio-fieldset > label {
     padding-top: 5px;
 }
 
+.tab-dropdown {
+    margin-top: 16px;
+    margin-right: 16px;
+}
+
+.tab-dropdown .dropdown-menu {
+    margin-left: -115px;
+}
+
+.tab-dropdown .tab-drop > i {
+    font-size: 24px;
+}
+
+.search-tabs-list {
+    height: 60px;
+    overflow: hidden;
+}
+
 .search-tabs-container .nav-tabs > li > a {
     height: 60px;
     line-height: 22px;
