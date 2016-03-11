@@ -19,11 +19,16 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexWizard;
 import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.KeywordService;
+import com.autonomy.abc.selenium.keywords.KeywordGroup;
+import com.autonomy.abc.selenium.keywords.KeywordWizardType;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
+import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
@@ -40,6 +45,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -105,7 +111,7 @@ public class UserPermissionsITCase extends HostedTestBase {
     public void testCannotNavigate(){
         verifyThat(userElementFactory.getPromotionsPage(), displayed());
 
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
             userApp.switchTo(AnalyticsPage.class);
@@ -120,22 +126,20 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     @Test
     public void testCannotAddKeywords(){
-        String blacklist = "Dave";
+        List<String> blacklist = new ArrayList<>();
+        blacklist.add("Dave");
 
-        KeywordService keywordService = userApp.keywordService();
-        KeywordsPage keywordsPage = keywordService.goToKeywords();
+        KeywordsPage keywordsPage = userApp.keywordService().goToKeywords();
+
         keywordsPage.createNewKeywordsButton().click();
         CreateNewKeywordsPage createNewKeywordsPage = userElementFactory.getCreateNewKeywordsPage();
 
         Waits.loadOrFadeWait();
 
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
-            createNewKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
-            createNewKeywordsPage.continueWizardButton().click();
-            createNewKeywordsPage.getTriggerForm().addTrigger(blacklist);
-            createNewKeywordsPage.finishWizardButton().click();
+            new KeywordGroup(KeywordWizardType.BLACKLIST, Language.ENGLISH, blacklist).makeWizard(createNewKeywordsPage).apply();
 
             verifyError();
         } catch (TimeoutException e) {
@@ -156,13 +160,12 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     @Test
     public void testCannotAddPromotions(){
-        PromotionService promotionService = userApp.promotionService();
         userApp.switchTo(SearchPage.class);
 
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
-            promotionService.setUpPromotion(new SpotlightPromotion("BE ALONE"), "Baggins", 2);
+            userApp.promotionService().setUpPromotion(new SpotlightPromotion("BE ALONE"), "Baggins", 2);
 
             verifyError();
         } catch (StaleElementReferenceException | TimeoutException e) {
@@ -172,13 +175,12 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     @Test
     public void testCannotAddStaticPromotion(){
-        HSODPromotionService promotionService = userApp.promotionService();
-        HSODPromotionsPage promotionsPage = promotionService.goToPromotions();
+        HSODPromotionsPage promotionsPage = userApp.promotionService().goToPromotions();
 
         promotionsPage.staticPromotionButton().click();
         HSODCreateNewPromotionsPage createNewPromotionsPage = userElementFactory.getCreateNewPromotionsPage();
 
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
             new StaticPromotion("TITLE", "CONTENT", "TRIGGER").makeWizard(createNewPromotionsPage).apply();
@@ -191,10 +193,9 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     @Test
     public void testCannotAddUser(){
-        UserService userUserService = userApp.userService();
-        UsersPage usersPage = userUserService.goToUsers();
+        UsersPage usersPage = userApp.userService().goToUsers();
 
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
             usersPage.createUserButton().click();
@@ -215,16 +216,12 @@ public class UserPermissionsITCase extends HostedTestBase {
         Index index = new Index("not gonna");
         CreateNewIndexPage createNewIndexPage = userApp.indexService().goToIndexWizard();
 
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
             new IndexWizard(index, createNewIndexPage).apply();
 
-            TopNavBar topNavBar = userElementFactory.getTopNavBar();
-            topNavBar.openNotifications();
-            NotificationsDropDown notificationsDropDown = topNavBar.getNotifications();
-
-            verifyThat(notificationsDropDown.getAllNotificationMessages(), hasItems("Index " + index.getDisplayName() + " has not been created", "Unauthorized"));
+            verifyThat(getNotificationMessages(), hasItems("Index " + index.getDisplayName() + " has not been created", "Unauthorized"));
         } catch (NoSuchElementException | StaleElementReferenceException | TimeoutException e) {
             verifyAuthFailed();
         } finally {
@@ -244,19 +241,14 @@ public class UserPermissionsITCase extends HostedTestBase {
         Connector connector = new WebConnector("http://www.google.co.uk", connectorName, Index.DEFAULT);
 
         ConnectionService connectionService = userApp.connectionService();
-
         connectionService.goToConnections();
 
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
             connectionService.setUpConnection(connector);
         } catch (TimeoutException e) {
-            TopNavBar topNavBar = userElementFactory.getTopNavBar();
-            topNavBar.openNotifications();
-            NotificationsDropDown notificationsDropDown = topNavBar.getNotifications();
-
-            verifyThat(notificationsDropDown.getAllNotificationMessages(), hasItems("Failed to create a new connection: " + connectorName, "Failed to create '" + connectorName + "' connector", "Unauthorized"));
+            verifyThat(getNotificationMessages(), hasItems("Failed to create a new connection: " + connectorName, "Failed to create '" + connectorName + "' connector", "Unauthorized"));
         } finally {
             ConnectionsPage connectionsPage = getApplication().switchTo(ConnectionsPage.class);
 
@@ -273,15 +265,11 @@ public class UserPermissionsITCase extends HostedTestBase {
     public void testAnalyticsNotifications(){
         userApp.switchTo(IndexesPage.class);
 
-        userService.deleteUser(user);
+        deleteUser();
 
         userApp.switchTo(AnalyticsPage.class);
 
-        TopNavBar topNavBar = userElementFactory.getTopNavBar();
-        topNavBar.openNotifications();
-
-        List<String> notifications = topNavBar.getNotifications().getAllNotificationMessages();
-
+        List<String> notifications = getNotificationMessages();
         assertThat(notifications, hasItem("Unauthorized"));
 
         int unauthorized = 0;
@@ -292,6 +280,18 @@ public class UserPermissionsITCase extends HostedTestBase {
         }
 
         verifyThat("One 'unauthorized' notification is shown", unauthorized, is(1));
+    }
+
+    private void deleteUser() {
+        userService.deleteUser(user);
+    }
+
+    private List<String> getNotificationMessages(){
+        TopNavBar topNavBar = userElementFactory.getTopNavBar();
+        topNavBar.openNotifications();
+        NotificationsDropDown notificationsDropDown = topNavBar.getNotifications();
+
+        return notificationsDropDown.getAllNotificationMessages();
     }
 
     private void verifyError(){
