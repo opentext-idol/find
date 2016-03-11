@@ -3,8 +3,13 @@ package com.autonomy.abc.usermanagement;
 import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.connections.ConnectionService;
+import com.autonomy.abc.selenium.connections.ConnectionsPage;
+import com.autonomy.abc.selenium.connections.Connector;
+import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
@@ -35,12 +40,16 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
+
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.core.AllOf.allOf;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -215,7 +224,7 @@ public class UserPermissionsITCase extends HostedTestBase {
             topNavBar.openNotifications();
             NotificationsDropDown notificationsDropDown = topNavBar.getNotifications();
 
-            verifyThat(notificationsDropDown.getAllNotificationMessages(), allOf(hasItem("Index " + index.getDisplayName() + " has not been created"), hasItem("Unauthorized")));
+            verifyThat(notificationsDropDown.getAllNotificationMessages(), hasItems("Index " + index.getDisplayName() + " has not been created", "Unauthorized"));
         } catch (NoSuchElementException | StaleElementReferenceException | TimeoutException e) {
             verifyAuthFailed();
         } finally {
@@ -227,6 +236,62 @@ public class UserPermissionsITCase extends HostedTestBase {
 
             getApplication().switchTo(UsersPage.class);
         }
+    }
+
+    @Test
+    public void testCannotAddConnector(){
+        String connectorName = "abc";
+        Connector connector = new WebConnector("http://www.google.co.uk", connectorName, Index.DEFAULT);
+
+        ConnectionService connectionService = userApp.connectionService();
+
+        connectionService.goToConnections();
+
+        userService.deleteUser(user);
+
+        try {
+            connectionService.setUpConnection(connector);
+        } catch (TimeoutException e) {
+            TopNavBar topNavBar = userElementFactory.getTopNavBar();
+            topNavBar.openNotifications();
+            NotificationsDropDown notificationsDropDown = topNavBar.getNotifications();
+
+            verifyThat(notificationsDropDown.getAllNotificationMessages(), hasItems("Failed to create a new connection: " + connectorName, "Failed to create '" + connectorName + "' connector", "Unauthorized"));
+        } finally {
+            ConnectionsPage connectionsPage = getApplication().switchTo(ConnectionsPage.class);
+
+            if(!verifyThat(connectionsPage.getConnectionNames(), not(hasItem(connector.getName())))){
+                getApplication().connectionService().deleteConnection(connector, false);
+            }
+
+            getApplication().switchTo(UsersPage.class);
+        }
+    }
+
+    @Test
+    @KnownBug("CSA-2116")
+    public void testAnalyticsNotifications(){
+        userApp.switchTo(IndexesPage.class);
+
+        userService.deleteUser(user);
+
+        userApp.switchTo(AnalyticsPage.class);
+
+        TopNavBar topNavBar = userElementFactory.getTopNavBar();
+        topNavBar.openNotifications();
+
+        List<String> notifications = topNavBar.getNotifications().getAllNotificationMessages();
+
+        assertThat(notifications, hasItem("Unauthorized"));
+
+        int unauthorized = 0;
+        for(String notification : notifications){
+            if(notification.contains("Unauthorized")){
+                unauthorized++;
+            }
+        }
+
+        verifyThat("One 'unauthorized' notification is shown", unauthorized, is(1));
     }
 
     private void verifyError(){
