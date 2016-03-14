@@ -23,6 +23,11 @@ define([
         return !view.$('.popover-control').hasClass('disabled');
     }
 
+    function saveDisabled(view) {
+        return view.$('.save-search-button').hasClass('disabled not-clickable') &&
+            view.$('.show-save-as-button').hasClass('disabled not-clickable');
+    }
+
     function testDeactivatesTheSaveSearchButton() {
         it('deactivates the "Save Search" button', function() {
             expect(this.view.$('.show-save-as-button')).not.toHaveClass('active');
@@ -187,6 +192,72 @@ define([
 
         afterEach(function() {
             MockConfirmView.reset();
+        });
+
+        describe('when the search is a previously saved query and the view renders while the documents collection is fetching', function() {
+            beforeEach(function() {
+                this.savedSearchModel.set(_.extend({
+                    id: 3,
+                    title: 'Quantum Cats'
+                }, SavedSearchModel.attributesFromQueryState(this.queryState)));
+
+                this.savedQueryCollection.add(this.savedSearchModel);
+                this.savedSearchCollection.add(this.savedSearchModel);
+
+                this.documentsCollection.currentRequest = true;
+
+                this.view = new SavedSearchControlView(this.viewOptions);
+                this.view.render();
+                $('body').append(this.view.$el);
+            });
+
+            afterEach(function() {
+                this.view.remove();
+            });
+
+            it('saving should be disabled', function() {
+                expect(saveDisabled(this.view)).toBe(true);
+            });
+
+            describe('and the documents collection syncs', function() {
+                beforeEach(function() {
+                    this.documentsCollection.trigger('sync');
+                });
+
+                it('saving should be enabled', function() {
+                    expect(saveDisabled(this.view)).toBe(false);
+                });
+            });
+
+            describe('and the documents collection resets', function() {
+                beforeEach(function() {
+                    this.documentsCollection.trigger('reset');
+                });
+
+                it('saving should be enabled', function() {
+                    expect(saveDisabled(this.view)).toBe(false);
+                });
+            });
+
+            describe('and the documents collection errors', function() {
+                beforeEach(function() {
+                    this.documentsCollection.trigger('error');
+                });
+
+                it('saving should be disabled', function() {
+                    expect(saveDisabled(this.view)).toBe(true);
+                });
+            });
+
+            describe('and the documents collection makes a request', function() {
+                beforeEach(function() {
+                    this.documentsCollection.trigger('request');
+                });
+
+                it('saving should be disabled', function() {
+                    expect(saveDisabled(this.view)).toBe(true);
+                });
+            });
         });
 
         describe('when the saved search is new', function() {
