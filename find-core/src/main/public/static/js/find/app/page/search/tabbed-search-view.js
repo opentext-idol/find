@@ -12,7 +12,7 @@ define([
     'use strict';
 
     var html = _.template(template)({i18n: i18n});
-    var startNewSearchHtml = _.template('<li class="start-new-search m-t-md m-l-sm m-r-sm"><a><i class="hp-icon hp-add"></i></a></li>');
+    var startNewSearchHtml = _.template('<li class="start-new-search m-t-md m-l-sm m-r-sm" data-toggle="tooltip" data-placement="bottom" title="<%-i18n[\'search.newTab.tooltip\']%>"><a><i class="hp-icon hp-add"></i></a></li>')({i18n: i18n});
     var shownTabsSelector = '.nav-tabs > li';
     var menuTabsSelector = '.dropdown-menu > li';
 
@@ -108,6 +108,7 @@ define([
             this.hiddenTabListView.setElement(this.$('.dropdown-menu')).render();
             this.updateSelectedTab();
             this.listenTo(vent, 'vent:resize', this.checkTabSize);
+            this.$('.start-new-search').tooltip({delay: 100});
         },
 
         updateSelectedTab: function() {

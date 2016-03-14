@@ -65,6 +65,7 @@ define([
         'placeholder.ip': 'IP',
         'placeholder.port': 'port',
         'search.alsoSearchingFor': 'Also searching for',
+        'search.newTab.tooltip' : 'Create a new tab showing all documents',
         'search.compare': 'Compare',
         'search.compare.comparedSaved': 'Compare saved searches',
         'search.compare.selectedSearch': 'Selected: ',
