@@ -163,7 +163,7 @@ define([
                 this.model.set('validForSave', false);
             });
 
-            this.listenTo(this.documentsCollection, 'sync reset', function() {
+            this.listenTo(this.documentsCollection, 'sync', function() {
                 this.model.set('validForSave', true);
             });
 

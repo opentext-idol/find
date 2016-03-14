@@ -229,16 +229,6 @@ define([
                 });
             });
 
-            describe('and the documents collection resets', function() {
-                beforeEach(function() {
-                    this.documentsCollection.trigger('reset');
-                });
-
-                it('saving should be enabled', function() {
-                    expect(saveDisabled(this.view)).toBe(false);
-                });
-            });
-
             describe('and the documents collection errors', function() {
                 beforeEach(function() {
                     this.documentsCollection.trigger('error');
