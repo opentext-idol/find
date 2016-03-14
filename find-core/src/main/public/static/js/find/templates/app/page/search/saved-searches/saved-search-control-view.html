@@ -1,11 +1,11 @@
-<button type="button" class="btn button-primary save-search-button">
+<button type="button" class="btn button-primary save-search-button save-button">
     <%- i18n['search.savedSearchControl.update'] %>
 </button>
-    <button type="button" class="btn btn-secondary popover-control show-rename-button" aria-pressed="false">
+<button type="button" class="btn btn-secondary popover-control show-rename-button" aria-pressed="false">
     <%- i18n['search.savedSearchControl.rename'] %>
 </button>
     <% if (searchType === SearchType.QUERY) { %>
-        <button type="button" class="btn button-primary popover-control show-save-as-button" aria-pressed="false"></button>
+        <button type="button" class="btn button-primary popover-control show-save-as-button save-button" aria-pressed="false"></button>
     <% } %>
 <div class="btn-group m-r-sm">
     <button data-toggle="dropdown" class="btn btn-icon btn-circular button-primary btn-lg dropdown-toggle" aria-expanded="false" id="btnDropDown">
