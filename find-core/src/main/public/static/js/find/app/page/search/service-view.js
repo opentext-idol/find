@@ -132,6 +132,7 @@ define([
                 savedSearchCollection: this.savedSearchCollection,
                 savedSnapshotCollection: this.savedSnapshotCollection,
                 savedQueryCollection: this.savedQueryCollection,
+                documentsCollection: this.documentsCollection,
                 selectedTabModel: this.selectedTabModel,
                 queryModel: this.queryModel,
                 queryState: this.queryState

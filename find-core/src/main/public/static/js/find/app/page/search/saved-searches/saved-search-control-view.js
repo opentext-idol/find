@@ -133,6 +133,7 @@ define([
             this.savedSnapshotCollection = options.savedSnapshotCollection;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
+            this.documentsCollection = options.documentsCollection;
             this.queryState = options.queryState;
             this.selectedTabModel = options.selectedTabModel;
 
@@ -147,13 +148,24 @@ define([
                 loading: false,
 
                 // Either null or an error message to display
-                error: null
+                error: null,
+
+                validForSave: !this.documentsCollection.currentRequest
             });
 
             this.listenTo(this.model, 'change:loading', this.updateLoading);
             this.listenTo(this.model, 'change:error', this.updateErrorMessage);
             this.listenTo(this.model, 'change:savedState', this.updateForSavedState);
             this.listenTo(this.model, 'change:titleEditState', this.updateForTitleEditState);
+            this.listenTo(this.model, 'change:validForSave', this.updateSearchValidityUI);
+
+            this.listenTo(this.documentsCollection, 'error request', function() {
+                this.model.set('validForSave', false);
+            });
+
+            this.listenTo(this.documentsCollection, 'sync', function() {
+                this.model.set('validForSave', true);
+            });
 
             var updateSavedState = _.bind(function() {
                 var savedState = resolveSavedState(this.queryState, this.savedSearchModel);
@@ -189,6 +201,10 @@ define([
             this.updateForTitleEditState();
             this.updateLoading();
             this.createPopover();
+
+            this.$saveButtons = this.$('.save-button');
+
+            this.updateSearchValidityUI();
         },
 
         createPopover: function() {
@@ -292,6 +308,10 @@ define([
 
         updateLoading: function() {
             this.$('.save-search-button').prop('disabled', this.model.get('loading'));
+        },
+
+        updateSearchValidityUI: function() {
+            this.$saveButtons.toggleClass('disabled not-clickable', !this.model.get('validForSave'));
         },
 
         remove: function() {
