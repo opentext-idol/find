@@ -171,7 +171,7 @@ define([
                 var savedState = resolveSavedState(this.queryState, this.savedSearchModel);
                 var attributes = {savedState: savedState};
 
-                if (savedState === SavedState.NEW) {
+                if (savedState === SavedState.NEW && this.model.get('titleEditState') === TitleEditState.RENAME) {
                     // This shouldn't happen; a saved model cannot become new again
                     attributes.titleEditState = TitleEditState.OFF;
                 }
