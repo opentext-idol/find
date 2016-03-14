@@ -249,7 +249,6 @@ define([
                     var initialSelectedIndexes;
                     var savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
 
-                    // TODO: Check if the saved indexes still exist?
                     if (savedSelectedIndexes.length === 0 && searchType === SavedSearchModel.Type.QUERY) {
                         if (this.indexesCollection.isEmpty()) {
                             initialSelectedIndexes = [];
