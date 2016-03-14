@@ -53,7 +53,7 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     public IndexFieldsITCase(TestConfig config) {
         super(config);
-        setInitialUser(config.getUser("index_tests"));
+        useIndexTestsUser();
 
         String indexName = UUID.randomUUID().toString().replace('-','a');
         index = new Index(indexName)
