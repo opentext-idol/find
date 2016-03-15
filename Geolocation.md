@@ -1,4 +1,4 @@
-Maps of document location metadata can be displayed in the UI if enabled in the application configuration. The map configuration consists of two properties, a tile URL template and an attribution. The attribution is optional text rendered in the bottom right corner of the map (for example, © Google Maps 2016).
+Maps of document location metadata can be displayed in the UI if enabled in the application configuration. The map configuration consists of two properties, a tile URL template and an attribution. The attribution is optional text rendered in the bottom right corner of the map (for example, "© Awesome Maps 2016").
 
 The tile server URL template is the full Slippy Map Tilenames (XYZ) URL for requesting a tile from an accessible tile server, with the x, y and z coordinates replaced with curly brace variables. For example:
 
