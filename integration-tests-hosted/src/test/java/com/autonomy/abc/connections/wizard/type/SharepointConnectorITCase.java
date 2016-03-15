@@ -3,7 +3,7 @@ package com.autonomy.abc.connections.wizard.type;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
-import com.autonomy.abc.selenium.connections.CredentialsConfigurations;
+import com.autonomy.abc.selenium.connections.SharepointCredentialsConfigurations;
 import com.autonomy.abc.selenium.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.connections.SharepointConnector;
 import org.junit.After;
@@ -26,7 +26,7 @@ public class SharepointConnectorITCase extends HostedTestBase {
         connectionsPage.newConnectionButton().click();
 
         newConnectionPage = getElementFactory().getNewConnectionPage();
-        connector = new SharepointConnector("http://www.bbc.co.uk", "esposito", "ryan", "castle", "stanakatic@katebeckett.com", false, CredentialsConfigurations.URLType.WEB_APP);
+        connector = new SharepointConnector("http://www.bbc.co.uk", "esposito", "ryan", "castle", "stanakatic@katebeckett.com", false, SharepointCredentialsConfigurations.URLType.WEB_APP);
     }
 
     @After

@@ -22,7 +22,7 @@ public class SharepointConnectorConfigStep implements WizardStep {
     public Object apply() {
         ConnectorConfigStepTab connectorConfigStepTab = newConnectionPage.getConnectorConfigStep();
 
-        CredentialsConfigurations credentialsConfigurations = connectorConfigStepTab.getCredentialsConfigruations();
+        SharepointCredentialsConfigurations credentialsConfigurations = connectorConfigStepTab.getSharepointCredentialsConfigurations();
 
         credentialsConfigurations.userNameInput().setValue(connector.getUsername());
         credentialsConfigurations.passwordInput().setValue(connector.getPassword());

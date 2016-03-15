@@ -15,9 +15,9 @@ public class SharepointConnector extends Connector {
     private final String password;
     private final String notificationEmail;
     private final boolean online;
-    private final CredentialsConfigurations.URLType urlType;
+    private final SharepointCredentialsConfigurations.URLType urlType;
 
-    public SharepointConnector(String url, String name, String username, String password, String notificationEmail, boolean online, CredentialsConfigurations.URLType urlType) {
+    public SharepointConnector(String url, String name, String username, String password, String notificationEmail, boolean online, SharepointCredentialsConfigurations.URLType urlType) {
         super(name);
         this.url = url;
         this.username = username;
@@ -27,7 +27,7 @@ public class SharepointConnector extends Connector {
         this.urlType = urlType;
     }
 
-    public SharepointConnector(String url, String name, String username, String password, String notificationEmail, boolean online, CredentialsConfigurations.URLType urlType, Index index) {
+    public SharepointConnector(String url, String name, String username, String password, String notificationEmail, boolean online, SharepointCredentialsConfigurations.URLType urlType, Index index) {
         super(name, index);
         this.url = url;
         this.username = username;
@@ -57,7 +57,7 @@ public class SharepointConnector extends Connector {
         return online;
     }
 
-    public CredentialsConfigurations.URLType getUrlType() {
+    public SharepointCredentialsConfigurations.URLType getUrlType() {
         return urlType;
     }
 

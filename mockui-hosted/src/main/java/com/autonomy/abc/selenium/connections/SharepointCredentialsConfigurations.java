@@ -1,8 +1,6 @@
 package com.autonomy.abc.selenium.connections;
 
-import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
@@ -10,8 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-public class CredentialsConfigurations extends AppElement {
-    public CredentialsConfigurations(WebDriver driver) {
+public class SharepointCredentialsConfigurations extends AppElement {
+    public SharepointCredentialsConfigurations(WebDriver driver) {
         super(ElementUtil.ancestor(driver.findElement(By.id("CredentialsConfigurationPropsHeader")), 1), driver);
     }
 
