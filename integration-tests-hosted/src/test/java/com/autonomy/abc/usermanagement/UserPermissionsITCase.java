@@ -161,7 +161,7 @@ public class UserPermissionsITCase extends HostedTestBase {
 
         getApplication().switchTo(KeywordsPage.class);
 
-        verifyThat(getElementFactory().getKeywordsPage().getBlacklistedTerms(), not(hasItem(blacklist)));
+        verifyThat(getElementFactory().getKeywordsPage().getBlacklistedTerms(), not(hasItem(blacklist.get(0))));
     }
 
     @Test
