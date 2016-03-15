@@ -1,17 +1,20 @@
 package com.autonomy.abc.selenium.connections;
 
+import com.autonomy.abc.selenium.DropboxConnector;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 
 class ConnectorTypeStep implements WizardStep {
     private final static String TITLE = "Select Connector Type";
     private String url;
     private String name;
+    private Connector connector;
 
     private ConnectorTypeStepTab connectorTypeStepTab;
-    ConnectorTypeStep(NewConnectionPage newConnectionPage, String url, String name) {
+    ConnectorTypeStep(NewConnectionPage newConnectionPage, String url, String name, Connector connector) {
         this.url = url;
         this.name = name;
         this.connectorTypeStepTab = newConnectionPage.getConnectorTypeStep();
+        this.connector = connector;
     }
 
     @Override
@@ -21,7 +24,18 @@ class ConnectorTypeStep implements WizardStep {
 
     @Override
     public Object apply() {
-        connectorTypeStepTab.connectorUrl().setValue(url);
+        if(connector instanceof DropboxConnector) {
+            connectorTypeStepTab.dropboxConnector().click();
+        } else {
+            if (connector instanceof FileSystemConnector) {
+                connectorTypeStepTab.fileSystemConnector().click();
+            } else if (connector instanceof SharepointConnector) {
+                connectorTypeStepTab.sharepointConnector().click();
+            }
+
+            connectorTypeStepTab.connectorUrl().setValue(url);
+        }
+
         connectorTypeStepTab.connectorName().setValue(name);
         return null;
     }

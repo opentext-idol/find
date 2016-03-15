@@ -13,9 +13,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by avidan on 10-11-15.
- */
 public class ConnectorConfigStepTab extends ICMAPageBase {
     private ConnectorConfigStepTab(WebDriver driver) {
         super(driver);
@@ -155,5 +152,9 @@ public class ConnectorConfigStepTab extends ICMAPageBase {
 
     public WebElement skipSchedulingCheckbox() {
         return findElement(By.cssSelector("[for='noSchedule'] ins"));
+    }
+
+    public CredentialsConfigurations getCredentialsConfigruations() {
+        return new CredentialsConfigurations(getDriver());
     }
 }
