@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.search;
 
+import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
@@ -69,12 +70,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.xpath("//button[text()=' Promote query']"));
 	}
 
-	public WebElement modifiedResultsCheckBox() {
-		return findElement(By.className("search-type-toggle"));
-	}
-
-	public boolean modifiedResultsShown(){
-		return findElement(By.className("search-type-toggle")).findElement(By.className("checkbox-input")).isSelected();
+	public Checkbox modifiedResults() {
+		return new SOCheckbox(findElement(By.className("search-type-toggle")), getDriver());
 	}
 
 	public void sortBy(final Sort sort) {
@@ -114,15 +111,16 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* promotions bucket */
-	public List<String> promotionsBucketList() {
-		return bucketList(this);
-	}
-
 	public WebElement promoteTheseItemsButton() {
 		return findElement(By.xpath(".//*[contains(text(), 'Promote items')]"));
 	}
 
-	public void promotionsBucketClose() {
+	public void openPromotionsBucket() {
+		promoteTheseDocumentsButton().click();
+		Waits.loadOrFadeWait();
+	}
+
+	public void closePromotionsBucket() {
 		promotionsBucket().findElement(By.className("close-link")).click();
 		Waits.loadOrFadeWait();
 	}
@@ -244,7 +242,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	@Override
-	public WebElement searchResultCheckbox(int resultNumber) {
+	protected WebElement searchResultCheckboxElement(int resultNumber) {
 		// TODO: find others like this, avoid repetition
 		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-results li:nth-child(" + resultNumber + ") label")));
 	}
@@ -333,23 +331,5 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	public void openParametricValuesList() {
 		ElementUtil.scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")), getDriver());
 		Waits.loadOrFadeWait();
-	}
-
-	/* helper methods */
-	public List<String> addToBucket(int finalNumberOfDocs) {
-		final List<String> promotedDocTitles = new ArrayList<>();
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(promoteTheseItemsButton()));
-		waitForSearchLoadIndicatorToDisappear(60);
-		for (int i = 0; i < finalNumberOfDocs; i++) {
-			final int checkboxIndex = i % RESULTS_PER_PAGE + 1;
-			searchResultCheckbox(checkboxIndex).click();
-			promotedDocTitles.add(getSearchResult(checkboxIndex).getTitleString());
-
-			// Change page when we have checked all boxes on the current page, if we have more to check
-			if (i < finalNumberOfDocs - 1 && checkboxIndex == RESULTS_PER_PAGE) {
-				switchResultsPage(Pagination.NEXT);
-			}
-		}
-		return promotedDocTitles;
 	}
 }

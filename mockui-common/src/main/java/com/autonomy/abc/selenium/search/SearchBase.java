@@ -55,7 +55,11 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return new SOSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
 	}
 
-	public WebElement searchResultCheckbox(final int resultNumber) {
+	public Checkbox searchResultCheckbox(final int resultNumber) {
+		return new SOCheckbox(searchResultCheckboxElement(resultNumber), getDriver());
+	}
+
+	protected WebElement searchResultCheckboxElement(final int resultNumber) {
 		return new WebDriverWait(getDriver(), 20)
 				.withMessage("waiting for #" + resultNumber + " search result to appear")
 				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + resultNumber + ") label")));
@@ -83,16 +87,37 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	/* promotions bucket */
-	public int promotedItemsCount() {
-		return findElements(By.cssSelector(".promotions-bucket-document")).size();
+	public List<String> addDocsToBucket(int finalNumberOfDocs) {
+		final List<String> promotedDocTitles = new ArrayList<>();
+		for (int i = 0; i < finalNumberOfDocs; i++) {
+			final int checkboxIndex = i % SearchPage.RESULTS_PER_PAGE + 1;
+			addDocToBucket(checkboxIndex);
+			promotedDocTitles.add(getSearchResult(checkboxIndex).getTitleString());
+
+			// Change page when we have checked all boxes on the current page, if we have more to check
+			if (i < finalNumberOfDocs - 1 && checkboxIndex == SearchPage.RESULTS_PER_PAGE) {
+				switchResultsPage(Pagination.NEXT);
+			}
+		}
+		return promotedDocTitles;
 	}
 
-	public List<WebElement> promotionsBucketWebElements() {
+	public void addDocToBucket(int docNumber) {
+		ElementUtil.scrollIntoView(searchResultCheckbox(docNumber), getDriver());
+		searchResultCheckbox(docNumber).check();
+	}
+
+	public void removeDocFromBucket(int docNumber) {
+		ElementUtil.scrollIntoView(searchResultCheckbox(docNumber), getDriver());
+		searchResultCheckbox(docNumber).uncheck();
+	}
+
+	public List<String> getBucketTitles() {
+		return ElementUtil.getTexts(promotionsBucketWebElements());
+	}
+
+	private List<WebElement> promotionsBucketWebElements() {
 		return findElements(By.xpath(".//*[contains(@class, 'promotions-bucket-document')]/.."));
-	}
-
-	public String bucketDocumentTitle(final int bucketNumber) {
-		return promotionsBucket().findElement(By.cssSelector(".promotions-bucket-document:nth-child(" + bucketNumber + ')')).getText();
 	}
 
 	public WebElement promotionsBucket() {
@@ -104,6 +129,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public void deleteDocFromWithinBucket(final String docTitle) {
+		ElementUtil.scrollIntoView(promotionsBucket(), getDriver());
 		for (WebElement document : promotionsBucketWebElements()) {
 			if (document.getText().compareToIgnoreCase(docTitle) == 0) {
 				document.findElement(By.cssSelector(".fa-close")).click();
@@ -119,14 +145,6 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		for (final WebElement bucketItem : promotionsBucketWebElements()) {
 			bucketItem.findElement(By.cssSelector(".remove-bucket-item")).click();
 		}
-	}
-
-	protected List<String> bucketList(final WebElement element) {
-		final List<String> bucketDocTitles = new ArrayList<>();
-		for (final WebElement bucketDoc : element.findElements(By.cssSelector(".promotions-bucket-document"))) {
-			bucketDocTitles.add(bucketDoc.getText());
-		}
-		return bucketDocTitles;
 	}
 
 	public String getTopPromotedLinkTitle() {

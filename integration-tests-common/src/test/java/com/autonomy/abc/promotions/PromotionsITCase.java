@@ -43,6 +43,7 @@ import static com.autonomy.abc.matchers.PromotionsMatchers.triggerList;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class PromotionsITCase extends ABCTestBase {
 
@@ -387,7 +388,7 @@ public class PromotionsITCase extends ABCTestBase {
 
 		secondWindow.activate();
 		final PromotionsPage secondPromotionsPage = getElementFactory().getPromotionsPage();
-		assertThat("Navigated to promotions menu", secondPromotionsPage.promoteExistingButton().isDisplayed());
+		assertThat(secondPromotionsPage.promoteExistingButton(), displayed());
 
 		mainWindow.activate();
 		setUpPromotion(getQuery("nein", Language.GERMAN), new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "friend"));

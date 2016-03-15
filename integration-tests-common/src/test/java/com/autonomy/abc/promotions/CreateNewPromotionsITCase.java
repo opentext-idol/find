@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
@@ -52,8 +51,8 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     private List<String> goToWizard(String query, int numberOfDocs) {
         searchPage = searchService.search(query);
-        searchPage.promoteTheseDocumentsButton().click();
-        List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
+        searchPage.openPromotionsBucket();
+        List<String> promotedDocTitles = searchPage.addDocsToBucket(numberOfDocs);
         ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
         createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         return promotedDocTitles;
@@ -179,7 +178,6 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         final String trigger = triggerForm.getTriggersAsStrings().get(0);
         finishPromotion();
 
-        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
         promotionsDetailPage = promotionService.goToDetails(trigger);
 
         verifyThat(promotionsDetailPage, containsText(trigger));
@@ -204,7 +202,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
             wizard.next();
         }
 
-        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+        getElementFactory().getSearchPage();
         promotionsDetailPage = promotionService.goToDetails(searchTrigger);
 
         verifyThat(promotionsDetailPage, containsText("Spotlight for: " + searchTrigger));
@@ -218,11 +216,11 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
             verifyThat(searchPage.getTopPromotedSpotlightType(), is(spotlightType.getOption()));
         }
 
-        searchPage.modifiedResultsCheckBox().click();
+        searchPage.modifiedResults().uncheck();
         Waits.loadOrFadeWait();
         verifyThat(searchPage, not(containsText(promotedDocTitle)));
 
-        searchPage.modifiedResultsCheckBox().click();
+        searchPage.modifiedResults().check();
         Waits.loadOrFadeWait();
         verifyThat(searchPage, containsText(promotedDocTitle));
 
@@ -292,7 +290,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         getElementFactory().getSideNavBar().toggle();
         createPromotionsPage.cancelButton().click();
         verifyThat(getWindow(), urlContains("search/modified"));
-        verifyThat(searchPage.promotedItemsCount(), is(1));
+        verifyThat(searchPage.getBucketTitles(), hasSize(1));
         getElementFactory().getSideNavBar().toggle();
         ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
 //        searchPage.promoteTheseItemsButton().click();
@@ -351,7 +349,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
         searchPage.emptyBucket();
-        searchPage.promotionsBucketClose();
+        searchPage.closePromotionsBucket();
 
         try {
             for (final Promotion promotion : promotions) {
@@ -380,11 +378,10 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         goToTriggerStep();
         triggerForm.addTrigger("fox luke");
         finishPromotion();
-        Waits.loadOrFadeWait();
 
-        new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        searchPage.promoteTheseDocumentsButton().click();
-        verifyThat(searchPage.promotionsBucketWebElements(), hasSize(0));
+        searchPage = getElementFactory().getSearchPage();
+        searchPage.openPromotionsBucket();
+        verifyThat(searchPage.getBucketTitles(), empty());
         verifyThat(searchPage.promoteTheseItemsButton(), hasAttribute("disabled"));
     }
 }

@@ -101,8 +101,7 @@ public class OverviewPageITCase extends ABCTestBase {
 					if (tableRowLink.isDisplayed()) {
 						final String searchTerm = tableRowLink.getText();
 						tableRowLink.click();
-						final SearchPage searchPage = getElementFactory().getSearchPage();
-						new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+						getElementFactory().getSearchPage();
 						assertThat(getWindow(), urlContains("search/modified/" + searchTerm));
 						assertThat(searchTerm + " Title incorrect", PageUtil.getPageTitle(getDriver()), containsString("Results for " + searchTerm));
 
@@ -170,7 +169,6 @@ public class OverviewPageITCase extends ABCTestBase {
 			createNewKeywordsPage.finishWizardButton().click();
 
 			final SearchPage searchPage = getElementFactory().getSearchPage();
-			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
 			if (!searchPage.getText().contains("An error occurred executing the search action")) {
 				assertThat("page title incorrect", PageUtil.getPageTitle(getDriver()), containsString(linkText));

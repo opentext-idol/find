@@ -202,7 +202,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	@Test
 	public void testPhrasesCanBeAddedAsSynonymsOnKeywordsPage() throws InterruptedException {
 		searchPage = keywordService.addSynonymGroup(Language.ENGLISH, "one two three");
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+
 		keywordsPage = keywordService.goToKeywords();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);

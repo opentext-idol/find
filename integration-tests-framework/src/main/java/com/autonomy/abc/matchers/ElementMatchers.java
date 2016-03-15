@@ -1,5 +1,6 @@
 package com.autonomy.abc.matchers;
 
+import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -246,4 +247,17 @@ public class ElementMatchers {
         };
     }
 
+    public static Matcher<Checkbox> checked() {
+        return new TypeSafeMatcher<Checkbox>() {
+            @Override
+            protected boolean matchesSafely(Checkbox checkbox) {
+                return checkbox.isChecked();
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("checked");
+            }
+        };
+    }
 }

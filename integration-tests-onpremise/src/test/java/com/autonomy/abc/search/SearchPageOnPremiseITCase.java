@@ -25,6 +25,7 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchPageOnPremiseITCase extends ABCTestBase{
@@ -73,7 +74,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
         searchPage.fieldTextRemoveButton().click();
         Waits.loadOrFadeWait();
         assertThat(searchPage.getSearchResult(comparisonResult).getTitleString(), is(comparisonString));
-        assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
+        assertThat(searchPage.fieldTextAddButton(), displayed());
         assertThat(searchPage.getSearchResult(1).getTitleString(), is(searchResultTitle));
     }
 
@@ -88,7 +89,8 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
                 return result;
             }
         }
-        throw new IllegalStateException("Cannot test field text filter with this search");
+        assumeThat("test requires results not to have similar titles", null, notNullValue());
+        return -1;
     }
 
 
