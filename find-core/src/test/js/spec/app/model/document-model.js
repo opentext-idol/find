@@ -1,11 +1,13 @@
 define([
-    'find/app/model/document-model'
-], function(DocumentModel) {
+    'find/app/model/document-model',
+    'moment'
+], function(DocumentModel, moment) {
 
     var THUMBNAIL = 'VGhlIGJhc2UgNjQgZW5jb2RlZCB0aHVtYm5haWw=';
     var TITLE = 'My Document';
     var TRANSCRIPT = 'test transcript';
     var SOURCETYPE = 'news';
+    var DATE_PUBLISHED_SECONDS = 1456161196000;
 
     function baseResponse() {
         return {
@@ -13,7 +15,7 @@ define([
                 authors: {type: 'STRING', displayName: 'Author', values: ['Humbert', 'Gereon']},
                 longitude: {type: 'NUMBER', displayName: 'Longitude', values: ['52.5']},
                 thumbnail: {type: 'STRING', values: [THUMBNAIL]},
-                datePublished: {type: 'DATE', displayName: 'Date Published', values: [1456161196000]},
+                datePublished: {type: 'DATE', displayName: 'Date Published', values: [DATE_PUBLISHED_SECONDS]},
                 sourceType: {type: 'STRING', values: [SOURCETYPE]},
                 transcript: {type: 'STRING', values: [TRANSCRIPT]}
             }
@@ -93,7 +95,7 @@ define([
                 var datePublishedField = _.findWhere(fields, {displayName: 'Date Published'});
                 expect(datePublishedField).toBeDefined();
                 expect(datePublishedField.values.length).toBe(1);
-                expect(datePublishedField.values[0]).toBe('Monday, February 22, 2016 5:13 PM');
+                expect(datePublishedField.values[0]).toBe(moment(DATE_PUBLISHED_SECONDS).format('LLLL'));
             });
         });
     });
