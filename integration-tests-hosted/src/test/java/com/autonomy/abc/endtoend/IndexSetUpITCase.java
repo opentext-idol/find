@@ -36,7 +36,7 @@ public class IndexSetUpITCase extends HostedTestBase {
 
     public IndexSetUpITCase(TestConfig config) {
         super(config);
-        setInitialUser(config.getUser("index_tests"));
+        useIndexTestsUser();
 
         String indexName = UUID.randomUUID().toString().replace('-','a');
         index = new Index(indexName);

@@ -23,7 +23,7 @@ public class ConnectionsCoreITCase extends HostedTestBase {
 
     public ConnectionsCoreITCase(TestConfig config) {
         super(config);
-        setInitialUser(config.getUser("index_tests"));
+        useIndexTestsUser();
     }
 
     @Before
