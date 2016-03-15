@@ -25,6 +25,9 @@ import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -41,9 +44,7 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static com.autonomy.abc.matchers.ElementMatchers.checked;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
@@ -548,55 +549,81 @@ public class SearchPageITCase extends ABCTestBase {
 			firstIndex = new Index("news_eng");
 			secondIndex = new Index("news_ger");
 		}
+		List<Index> selected = new ArrayList<>();
 
-		searchService.search(new Query("car").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.ALL));
+		searchService.search(
+				new Query("car")
+						.withFilter(new LanguageFilter(Language.ENGLISH))
+						.withFilter(IndexFilter.ALL));
 		IndexesTree indexesTree = searchPage.indexesTree();
 
-		for (IndexNodeElement node : indexesTree) {
-			assertThat(node.getName() + " is selected", node.isSelected(), is(true));
-		}
-		assertThat("all indexes selected", indexesTree.allIndexes().isSelected(), is(true));
+		assertThat(indexesTree.allIndexes(), selected());
+		assertThat(indexesTree, everyItem(selected()));
 
-		searchPage.filterBy(new IndexFilter(firstIndex));
-		assertThat("all indexes checkbox not selected", indexesTree.allIndexes().isSelected(), is(false));
-		assertThat("only one index should be selected", indexesTree.getSelected(), hasSize(1));
-		assertThat("correct index selected", indexesTree.getSelected(), hasItem(firstIndex));
+		indexesTree.allIndexes().deselect();
+		selectIndex(firstIndex, selected);
+		checkIndexes(selected);
+		assertThat(indexesTree.allIndexes(), not(selected()));
+
 		final String firstIndexResult = searchPage.getSearchResult(1).getTitleString();
+		checkResultPagesForIndexes(2, selected);
 
-		for (int j = 1; j <= 2; j++) {
-			for (int i = 1; i <= 6; i++) {
-				assertThat("result " + i + " from " + firstIndex, searchPage.getSearchResult(i).getIndex(), is(firstIndex));
-			}
-			searchPage.switchResultsPage(Pagination.NEXT);
-		}
+		selectIndex(secondIndex, selected);
+		deselectIndex(firstIndex, selected);
+		checkIndexes(selected);
+		assertThat(indexesTree.getSelected(), not(hasItem(firstIndex)));
 
-		searchPage.switchResultsPage(Pagination.FIRST);
-		indexesTree.select(secondIndex);
-		indexesTree.deselect(firstIndex);
-		assertThat("only one index should be selected", indexesTree.getSelected(), hasSize(1));
-		assertThat("correct index selected", indexesTree.getSelected(), hasItem(secondIndex));
 		final String secondIndexResult = searchPage.getSearchResult(1).getTitleString();
 		assertThat(secondIndexResult, not(firstIndexResult));
+		checkResultPagesForIndexes(2, selected);
 
-		for (int j = 1; j <= 2; j++) {
-			for (int i = 1; i <= 6; i++) {
-				assertThat("result " + i + " from " + secondIndex, searchPage.getSearchResult(i).getIndex(), is(secondIndex));
+		selectIndex(firstIndex, selected);
+		checkIndexes(selected);
+		assertThat(searchPage.getSearchResult(1).getTitleString(),
+				isOneOf(firstIndexResult, secondIndexResult));
+		checkResultPagesForIndexes(2, selected);
+	}
+
+	private Matcher<IndexNodeElement> selected() {
+		return new TypeSafeMatcher<IndexNodeElement>() {
+			@Override
+			protected boolean matchesSafely(IndexNodeElement indexNodeElement) {
+				return indexNodeElement.isSelected();
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("selected");
+			}
+		};
+	}
+
+	private void checkIndexes(List<Index> selected) {
+		IndexesTree indexesTree = searchPage.indexesTree();
+		assertThat(indexesTree.getSelected(), hasSize(selected.size()));
+		assertThat(indexesTree.getSelected(), containsItems(selected));
+	}
+
+	private void selectIndex(Index toSelect, List<Index> selected) {
+		searchPage.indexesTree().select(toSelect);
+		selected.add(toSelect);
+	}
+
+	private void deselectIndex(Index toDeselect, List<Index> selected) {
+		searchPage.indexesTree().deselect(toDeselect);
+		selected.remove(toDeselect);
+	}
+
+	private void checkResultPagesForIndexes(int numberOfPages, List<Index> indexes) {
+		for (int j = 1; j <= numberOfPages; j++) {
+			for (int i = 1; i <= SearchPage.RESULTS_PER_PAGE; i++) {
+				assertThat("result p" + j + " #" + i + " in " + indexes,
+						searchPage.getSearchResult(i).getIndex(), isIn(indexes));
 			}
 			searchPage.switchResultsPage(Pagination.NEXT);
+			searchPage.waitForSearchLoadIndicatorToDisappear();
 		}
-
 		searchPage.switchResultsPage(Pagination.FIRST);
-		indexesTree.select(firstIndex);
-		assertThat("2 indexes should be selected", indexesTree.getSelected(), hasSize(2));
-		assertThat("correct indexes selected", indexesTree.getSelected(), hasItems(firstIndex, secondIndex));
-		assertThat("search result from selected indexes", searchPage.getSearchResult(1).getTitleString(), isOneOf(firstIndexResult, secondIndexResult));
-
-		for (int j = 1; j <= 2; j++) {
-			for (int i = 1; i <= 6; i++) {
-				assertThat("result " + i + " from either index", searchPage.getSearchResult(i).getIndex(), anyOf(is(firstIndex), is(secondIndex)));
-			}
-			searchPage.switchResultsPage(Pagination.NEXT);
-		}
 	}
 
 	@Test
