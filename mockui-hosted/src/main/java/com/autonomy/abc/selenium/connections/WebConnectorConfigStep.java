@@ -4,13 +4,13 @@ import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.WebElement;
 
-class ConnectorConfigStep implements WizardStep {
+class WebConnectorConfigStep implements WizardStep {
     private static final String TITLE = "Connector Configuration";
 
     private final NewConnectionPage newConnectionPage;
     private final WebConnector connector;
 
-    ConnectorConfigStep(NewConnectionPage newConnectionPage, WebConnector connector) {
+    WebConnectorConfigStep(NewConnectionPage newConnectionPage, WebConnector connector) {
         this.newConnectionPage = newConnectionPage;
         this.connector = connector;
     }
