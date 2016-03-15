@@ -3,12 +3,15 @@ package com.autonomy.abc.analytics;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.analytics.Container;
 import com.autonomy.abc.selenium.analytics.ContainerItem;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -26,7 +29,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItem;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.CommonMatchers.hasItemThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsTextIgnoringCase;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
@@ -128,13 +135,66 @@ public class AnalyticsITCase extends HostedTestBase {
     }
 
     @Test
-    public void testClickingZeroHitTerms() {
+    @KnownBug("CSA-1723") @RelatedTo("CSA-2121")
+    public void testCreateSynonymsFromZeroHitTerm() {
+        final String synonym = "orange";
+
         ContainerItem item = analytics.zeroHitTerms().get(0);
         String term = item.getTerm();
         item.click();
-        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
 
-        verifyThat(keywordsPage.searchFilterBox().getValue(), equalToIgnoringCase(term));
+        try {
+            CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+
+            doKeywordTypeStep(createKeywordsPage, CreateNewKeywordsPage.KeywordType.SYNONYM);
+            checkTriggersAre(createKeywordsPage, term);
+
+            createKeywordsPage.getTriggerForm().addTrigger(synonym);
+            checkTriggersAre(createKeywordsPage, term, synonym);
+
+            createKeywordsPage.finishWizardButton().click();
+            SearchPage searchPage = getElementFactory().getSearchPage();
+            assertThat(searchPage.getHeadingSearchTerm(), isOneOf(term, synonym));
+
+            KeywordsPage keywordsPage = getApplication().switchTo(KeywordsPage.class);
+            assertThat(keywordsPage.synonymGroupContaining(term).getSynonyms(), hasSize(2));
+        } finally {
+            getApplication().keywordService().deleteAll(KeywordFilter.ALL);
+        }
+    }
+
+    @Test
+    @KnownBug("CSA-1723") @RelatedTo("CSA-2121")
+    public void testCreateBlacklistFromZeroHitTerm() {
+        ContainerItem item = analytics.zeroHitTerms().get(0);
+        String term = item.getTerm();
+        item.click();
+
+        try {
+            CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+
+            doKeywordTypeStep(createKeywordsPage, CreateNewKeywordsPage.KeywordType.BLACKLIST);
+            checkTriggersAre(createKeywordsPage, term);
+            createKeywordsPage.finishWizardButton().click();
+
+            KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
+            assertThat(keywordsPage.getBlacklistedTerms(), hasItemThat(equalToIgnoringCase(term)));
+        } finally {
+            getApplication().keywordService().deleteAll(KeywordFilter.ALL);
+        }
+    }
+
+    private void doKeywordTypeStep(CreateNewKeywordsPage page, CreateNewKeywordsPage.KeywordType type) {
+        page.keywordsType(type).click();
+        page.continueWizardButton().click();
+    }
+
+    private void checkTriggersAre(CreateNewKeywordsPage page, String... expectedTriggers) {
+        List<String> existingTriggers = page.getTriggerForm().getTriggersAsStrings();
+        assertThat(existingTriggers, hasSize(expectedTriggers.length));
+        for (String trigger : expectedTriggers) {
+            assertThat(existingTriggers, hasItemThat(equalToIgnoringCase(trigger)));
+        }
     }
 
     @Test

@@ -19,6 +19,7 @@ public class HSODCreateNewKeywordsPage extends CreateNewKeywordsPage {
     public static class Factory implements ParametrizedFactory<WebDriver, HSODCreateNewKeywordsPage> {
         @Override
         public HSODCreateNewKeywordsPage create(WebDriver context) {
+            CreateNewKeywordsPage.waitForLoad(context);
             return new HSODCreateNewKeywordsPage(context);
         }
     }
