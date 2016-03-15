@@ -23,7 +23,11 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 
 	@Override
 	public void waitForLoad(){
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("pd-wizard")));
+		waitForLoad(getDriver());
+	}
+
+	protected static void waitForLoad(WebDriver driver) {
+		new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("pd-wizard")));
 	}
 
 	public WebElement keywordsType(final KeywordType type) {
