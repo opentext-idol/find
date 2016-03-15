@@ -86,8 +86,8 @@ public class WebConnector extends Connector {
 
     private List<WizardStep> getCreationWizardSteps(NewConnectionPage newConnectionPage) {
         return Arrays.asList(
-                new ConnectorTypeStep(newConnectionPage, url, name),
-                new ConnectorConfigStep(newConnectionPage, this),
+                new ConnectorTypeStep(newConnectionPage, url, name, this),
+                new WebConnectorConfigStep(newConnectionPage, this),
                 new ConnectorIndexStep(newConnectionPage, index, name),
                 new BlankWizardStep("Complete")
         );
