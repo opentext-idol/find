@@ -41,7 +41,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
 
     public IndexDisplayNameITCase(TestConfig config) {
         super(config);
-        setInitialUser(config.getUser("index_tests"));
+        useIndexTestsUser();
     }
 
     @Before

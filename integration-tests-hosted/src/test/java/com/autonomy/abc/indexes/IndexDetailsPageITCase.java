@@ -41,8 +41,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
 
     public IndexDetailsPageITCase(TestConfig config) {
         super(config);
-        // requires a separate account where indexes can safely be added and deleted
-        setInitialUser(config.getUser("index_tests"));
+        useIndexTestsUser();
     }
 
     @Before

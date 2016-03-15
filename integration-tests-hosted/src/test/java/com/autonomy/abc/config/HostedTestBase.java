@@ -3,6 +3,7 @@ package com.autonomy.abc.config;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
+import com.autonomy.abc.selenium.users.User;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -33,5 +34,16 @@ public abstract class HostedTestBase extends ABCTestBase {
     @Override
     public HSODApplication getApplication() {
         return (HSODApplication) super.getApplication();
+    }
+
+    /**
+     * Use the user for index/connection tests
+     *
+     * Must be called in constructor of test
+     * A separate account is needed to create/delete
+     * indexes due to resource limits
+     */
+    protected void useIndexTestsUser() {
+        setInitialUser(getConfig().getUser("index_tests"));
     }
 }

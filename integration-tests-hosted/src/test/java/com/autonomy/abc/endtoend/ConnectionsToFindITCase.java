@@ -43,7 +43,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
     public ConnectionsToFindITCase(TestConfig config) {
         super(config);
-        setInitialUser(config.getUser("index_tests"));
+        useIndexTestsUser();
     }
 
     @Before

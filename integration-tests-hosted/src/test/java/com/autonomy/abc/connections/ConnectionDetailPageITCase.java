@@ -31,9 +31,8 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
 
     public ConnectionDetailPageITCase(TestConfig config) {
         super(config);
-        // requires a separate account where indexes can safely be added and deleted
-        testUser = config.getUser("index_tests");
-        setInitialUser(testUser);
+        useIndexTestsUser();
+        testUser = getInitialUser();
     }
 
     @Before

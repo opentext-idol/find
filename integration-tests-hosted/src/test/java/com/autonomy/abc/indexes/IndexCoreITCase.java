@@ -20,7 +20,7 @@ public class IndexCoreITCase extends HostedTestBase {
 
     public IndexCoreITCase(TestConfig config) {
         super(config);
-        setInitialUser(config.getUser("index_tests"));
+        useIndexTestsUser();
     }
 
     @Before
