@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.connections;
 
-import com.autonomy.abc.selenium.DropboxConnector;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 
 class ConnectorTypeStep implements WizardStep {

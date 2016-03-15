@@ -9,17 +9,40 @@ import com.autonomy.abc.selenium.util.Waits;
 import java.util.Arrays;
 import java.util.List;
 
-public class FileSystemConnector extends Connector {
-    private final String url;
+public class DropboxConnector extends Connector {
+    private final String appKey, accessToken, notificationEmail;
+    private final boolean dropboxAccess;
 
-    public FileSystemConnector(String url, String name) {
+    public DropboxConnector(String name, boolean dropboxAcess, String appKey, String accessToken, String notificationEmail) {
         super(name);
-        this.url = url;
+        this.appKey = appKey;
+        this.accessToken = accessToken;
+        this.notificationEmail = notificationEmail;
+        this.dropboxAccess = dropboxAcess;
     }
 
-    public FileSystemConnector(String url, String name, Index index) {
+    public DropboxConnector(String name, boolean dropboxAcess, String appKey, String accessToken, String notificationEmail, Index index) {
         super(name, index);
-        this.url = url;
+        this.appKey = appKey;
+        this.accessToken = accessToken;
+        this.notificationEmail = notificationEmail;
+        this.dropboxAccess = dropboxAcess;
+    }
+
+    public String getAppKey() {
+        return appKey;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getNotificationEmail() {
+        return notificationEmail;
+    }
+
+    public boolean isDropboxAccess() {
+        return dropboxAccess;
     }
 
     @Override
@@ -33,8 +56,8 @@ public class FileSystemConnector extends Connector {
 
     private List<WizardStep> getCreationWizardSteps(NewConnectionPage newConnectionPage) {
         return Arrays.asList(
-                new ConnectorTypeStep(newConnectionPage, url, name, this),
-                new BlankWizardStep("Connector Configuration"),
+                new ConnectorTypeStep(newConnectionPage, null, name, this),
+                new DropboxConnectorConfigStep(newConnectionPage, this),
                 new ConnectorIndexStep(newConnectionPage, index, name),
                 new BlankWizardStep("Complete")
         );

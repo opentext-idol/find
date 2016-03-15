@@ -154,7 +154,11 @@ public class ConnectorConfigStepTab extends ICMAPageBase {
         return findElement(By.cssSelector("[for='noSchedule'] ins"));
     }
 
-    public CredentialsConfigurations getCredentialsConfigruations() {
-        return new CredentialsConfigurations(getDriver());
+    public SharepointCredentialsConfigurations getSharepointCredentialsConfigurations() {
+        return new SharepointCredentialsConfigurations(getDriver());
+    }
+
+    public DropboxCredentialsConfigurations getDropboxCredentialsConfigurations(){
+        return new DropboxCredentialsConfigurations(getDriver());
     }
 }
