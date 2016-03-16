@@ -5,6 +5,8 @@ import org.openqa.selenium.WebDriver;
 
 public class DriverUtil {
 
+    // TODO: get rid of this, only used as a nasty hack
+    @Deprecated
     public static boolean isAlertPresent(WebDriver driver) {
         try {
             driver.switchTo().alert();
