@@ -1,8 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
-import org.openqa.selenium.WebDriver;
 
 public class User {
     protected String username;
