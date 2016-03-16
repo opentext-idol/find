@@ -24,12 +24,9 @@ public class NewHPPassport implements AuthProvider {
     public void login(WebDriver driver) {
         this.driver = driver;
         try {
-            newAccountButton().click();
-            emailInput().setValue(email);
-            passwordInput().setValue(password);
-            confirmPasswordInput().setValue(password);
-            createButton().click();
+            createNewPassport();
 
+            //Wait to see if there's been an error, and if there has go back to the normal authentication page
             WebElement error = new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(driver.findElement(By.className("message-error"))));
             if(error.getText().contains("email address is already registered")) {
                 existingAccountButton().click();
@@ -38,8 +35,16 @@ public class NewHPPassport implements AuthProvider {
         } catch (ElementNotVisibleException | NoSuchElementException | UnsupportedOperationException e) {
             new HPPassport(email, password).login(driver);
         } catch (TimeoutException e) {
-            //Expected if working
+            //Expected if working - thrown when there is no error message
         }
+    }
+
+    private void createNewPassport(){
+        newAccountButton().click();
+        emailInput().setValue(email);
+        passwordInput().setValue(password);
+        confirmPasswordInput().setValue(password);
+        createButton().click();
     }
 
     private WebElement createButton() {

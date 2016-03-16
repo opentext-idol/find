@@ -1,19 +1,34 @@
 package com.autonomy.abc.usermanagement;
 
+import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.connections.ConnectionService;
+import com.autonomy.abc.selenium.connections.ConnectionsPage;
+import com.autonomy.abc.selenium.connections.Connector;
+import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
+import com.autonomy.abc.selenium.indexes.CreateNewIndexPage;
+import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.indexes.IndexWizard;
+import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.KeywordService;
+import com.autonomy.abc.selenium.keywords.KeywordGroup;
+import com.autonomy.abc.selenium.keywords.KeywordWizardType;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
+import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
@@ -24,20 +39,23 @@ import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -49,8 +67,6 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     private UserService userService;
     private User user;
-
-    private Session devSession;
 
     private Session userSession;
     private HSODApplication userApp;
@@ -65,7 +81,6 @@ public class UserPermissionsITCase extends HostedTestBase {
 
         user = userService.createNewUser(getConfig().getNewUser("newhppassport"), Role.ADMIN);
 
-        devSession = getMainSession();
         userApp = new HSODApplication();
         userSession = launchInNewSession(userApp);
         userElementFactory = userApp.elementFactory();
@@ -77,14 +92,24 @@ public class UserPermissionsITCase extends HostedTestBase {
         try {
             userApp.loginService().login(user);
         } catch (NoSuchElementException e) {
-            assumeThat("Authentication failed", userSession.getDriver().getPageSource(), not(containsString("Authentication Failed")));
-            assumeThat("Promotions page not displayed", userApp.elementFactory().getPromotionsPage(), displayed());
+            boolean assumeFailed = true;
+
+            try {
+                assumeThat("Authentication failed", userSession.getDriver().getPageSource(), not(containsString("Authentication Failed")));
+                assumeThat("Promotions page not displayed", userApp.elementFactory().getPromotionsPage(), displayed());
+
+                assumeFailed = false;
+            } finally {
+                if(assumeFailed) {
+                    tearDown();
+                }
+            }
         }
     }
 
     @After
     public void tearDown(){
-        userService.deleteOtherUsers();
+        ABCTearDown.USERS.tearDown(this);
         emailHandler.markAllEmailAsRead(getDriver());
     }
 
@@ -92,7 +117,7 @@ public class UserPermissionsITCase extends HostedTestBase {
     public void testCannotNavigate(){
         verifyThat(userElementFactory.getPromotionsPage(), displayed());
 
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
             userApp.switchTo(AnalyticsPage.class);
@@ -107,22 +132,20 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     @Test
     public void testCannotAddKeywords(){
-        String blacklist = "Dave";
+        List<String> blacklist = new ArrayList<>();
+        blacklist.add("Dave");
 
-        KeywordService keywordService = userApp.keywordService();
-        KeywordsPage keywordsPage = keywordService.goToKeywords();
+        KeywordsPage keywordsPage = userApp.keywordService().goToKeywords();
+
         keywordsPage.createNewKeywordsButton().click();
         CreateNewKeywordsPage createNewKeywordsPage = userElementFactory.getCreateNewKeywordsPage();
 
         Waits.loadOrFadeWait();
 
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
-            createNewKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
-            createNewKeywordsPage.continueWizardButton().click();
-            createNewKeywordsPage.getTriggerForm().addTrigger(blacklist);
-            createNewKeywordsPage.finishWizardButton().click();
+            new KeywordGroup(KeywordWizardType.BLACKLIST, Language.ENGLISH, blacklist).makeWizard(createNewKeywordsPage).apply();
 
             verifyError();
         } catch (TimeoutException e) {
@@ -138,18 +161,17 @@ public class UserPermissionsITCase extends HostedTestBase {
 
         getApplication().switchTo(KeywordsPage.class);
 
-        verifyThat(getElementFactory().getKeywordsPage().getBlacklistedTerms(), not(hasItem(blacklist)));
+        verifyThat(getElementFactory().getKeywordsPage().getBlacklistedTerms(), not(hasItem(blacklist.get(0))));
     }
 
     @Test
     public void testCannotAddPromotions(){
-        PromotionService promotionService = userApp.promotionService();
         userApp.switchTo(SearchPage.class);
 
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
-            promotionService.setUpPromotion(new SpotlightPromotion("BE ALONE"), "Baggins", 2);
+            userApp.promotionService().setUpPromotion(new SpotlightPromotion("BE ALONE"), "Baggins", 2);
 
             verifyError();
         } catch (StaleElementReferenceException | TimeoutException e) {
@@ -159,13 +181,12 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     @Test
     public void testCannotAddStaticPromotion(){
-        HSODPromotionService promotionService = userApp.promotionService();
-        HSODPromotionsPage promotionsPage = promotionService.goToPromotions();
+        HSODPromotionsPage promotionsPage = userApp.promotionService().goToPromotions();
 
         promotionsPage.staticPromotionButton().click();
         HSODCreateNewPromotionsPage createNewPromotionsPage = userElementFactory.getCreateNewPromotionsPage();
 
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
             new StaticPromotion("TITLE", "CONTENT", "TRIGGER").makeWizard(createNewPromotionsPage).apply();
@@ -178,11 +199,9 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     @Test
     public void testCannotAddUser(){
-        UserService userUserService = userApp.userService();
+        UsersPage usersPage = userApp.userService().goToUsers();
 
-        UsersPage usersPage = userUserService.goToUsers();
-
-        userService.deleteUser(user);
+        deleteUser();
 
         try {
             usersPage.createUserButton().click();
@@ -196,6 +215,89 @@ public class UserPermissionsITCase extends HostedTestBase {
         } catch (NoSuchElementException | StaleElementReferenceException | TimeoutException e) {
             verifyAuthFailed();
         }
+    }
+
+    @Test
+    public void testCannotAddIndex(){
+        Index index = new Index("not gonna");
+        CreateNewIndexPage createNewIndexPage = userApp.indexService().goToIndexWizard();
+
+        deleteUser();
+
+        try {
+            new IndexWizard(index, createNewIndexPage).apply();
+
+            verifyThat(getNotificationMessages(), hasItems("Index " + index.getDisplayName() + " has not been created", "Unauthorized"));
+        } catch (NoSuchElementException | StaleElementReferenceException | TimeoutException e) {
+            verifyAuthFailed();
+        } finally {
+            IndexesPage devIndexesPage = getApplication().switchTo(IndexesPage.class);
+
+            if(!verifyThat(devIndexesPage.getIndexDisplayNames(), not(hasItem(index.getDisplayName())))){
+                getApplication().indexService().deleteIndex(index);
+            }
+
+            getApplication().switchTo(UsersPage.class);
+        }
+    }
+
+    @Test
+    public void testCannotAddConnector(){
+        String connectorName = "abc";
+        Connector connector = new WebConnector("http://www.google.co.uk", connectorName, Index.DEFAULT);
+
+        ConnectionService connectionService = userApp.connectionService();
+        connectionService.goToConnections();
+
+        deleteUser();
+
+        try {
+            connectionService.setUpConnection(connector);
+        } catch (TimeoutException e) {
+            verifyThat(getNotificationMessages(), hasItems("Failed to create a new connection: " + connectorName, "Failed to create '" + connectorName + "' connector", "Unauthorized"));
+        } finally {
+            ConnectionsPage connectionsPage = getApplication().switchTo(ConnectionsPage.class);
+
+            if(!verifyThat(connectionsPage.getConnectionNames(), not(hasItem(connector.getName())))){
+                getApplication().connectionService().deleteConnection(connector, false);
+            }
+
+            getApplication().switchTo(UsersPage.class);
+        }
+    }
+
+    @Test
+    @KnownBug("CSA-2116")
+    public void testAnalyticsNotifications(){
+        userApp.switchTo(IndexesPage.class);
+
+        deleteUser();
+
+        userApp.switchTo(AnalyticsPage.class);
+
+        List<String> notifications = getNotificationMessages();
+        assertThat(notifications, hasItem("Unauthorized"));
+
+        int unauthorized = 0;
+        for(String notification : notifications){
+            if(notification.contains("Unauthorized")){
+                unauthorized++;
+            }
+        }
+
+        verifyThat("One 'unauthorized' notification is shown", unauthorized, is(1));
+    }
+
+    private void deleteUser() {
+        userService.deleteUser(user);
+    }
+
+    private List<String> getNotificationMessages(){
+        TopNavBar topNavBar = userElementFactory.getTopNavBar();
+        topNavBar.openNotifications();
+        NotificationsDropDown notificationsDropDown = topNavBar.getNotifications();
+
+        return notificationsDropDown.getAllNotificationMessages();
     }
 
     private void verifyError(){

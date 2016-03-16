@@ -60,6 +60,10 @@ public class ConnectionsPage extends ICMAPageBase {
         return ElementUtil.ancestor(connectionWithTitleContaining(connector.getName()), 9).findElement(By.cssSelector(".listItemNormalText.ng-scope")).getText().split(":")[1].trim();
     }
 
+    public List<String> getConnectionNames() {
+        return ElementUtil.getTexts(getDriver().findElements(By.className("listItemTitle")));
+    }
+
     public static class Factory implements ParametrizedFactory<WebDriver, ConnectionsPage> {
         @Override
         public ConnectionsPage create(WebDriver context) {
