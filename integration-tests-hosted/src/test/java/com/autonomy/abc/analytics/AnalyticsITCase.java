@@ -31,8 +31,6 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.CommonMatchers.containsItem;
-import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.CommonMatchers.hasItemThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsTextIgnoringCase;
 import static org.hamcrest.Matchers.*;

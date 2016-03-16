@@ -1,10 +1,10 @@
 package com.autonomy.abc.selenium.keywords;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
+import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.search.SearchPage;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;

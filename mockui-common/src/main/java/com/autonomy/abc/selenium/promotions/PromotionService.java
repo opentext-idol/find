@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
+import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.util.DriverUtil;

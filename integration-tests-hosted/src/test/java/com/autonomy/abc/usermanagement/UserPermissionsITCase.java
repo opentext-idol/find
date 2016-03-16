@@ -16,7 +16,6 @@ import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

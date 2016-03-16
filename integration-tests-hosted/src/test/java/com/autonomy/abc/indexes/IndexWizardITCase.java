@@ -18,7 +18,8 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 public class IndexWizardITCase extends HostedTestBase {
 

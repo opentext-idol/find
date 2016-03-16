@@ -20,7 +20,6 @@ import com.autonomy.abc.selenium.search.SearchResult;
 import com.autonomy.abc.selenium.users.HSODUser;
 import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Locator;
-import com.autonomy.abc.selenium.util.SOPageUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;

@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.SafeClassLoader;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import org.openqa.selenium.WebDriver;
 
 // TODO: this does not belong in "selenium"!

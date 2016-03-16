@@ -1,11 +1,11 @@
 package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.analytics.OverviewPage;
+import com.autonomy.abc.selenium.application.PageMapper;
+import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.keywords.OPCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.OPKeywordsPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.application.PageMapper;
-import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.promotions.OPCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionsPage;

@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.application.PageMapper;
+import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.NewConnectionPage;
@@ -11,8 +13,6 @@ import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.keywords.HSODCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.HSODKeywordsPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.application.PageMapper;
-import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
