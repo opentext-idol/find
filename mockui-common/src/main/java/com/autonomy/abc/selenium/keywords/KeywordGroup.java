@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 
-class KeywordGroup {
+public class KeywordGroup {
     private String keywordString;
     private KeywordWizardType type;
     private Language language;
