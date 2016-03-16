@@ -100,14 +100,6 @@ public final class ElementUtil {
         element.click();
     }
 
-    public static List<String> webElementListToStringList(final List<WebElement> list) {
-        final List<String> stringList = new ArrayList<>();
-        for (final WebElement element : list) {
-            stringList.add(element.getText());
-        }
-        return stringList;
-    }
-
     public static void hover(WebElement element, WebDriver driver) {
         Actions builder = new Actions(driver);
         Dimension dimensions = element.getSize();

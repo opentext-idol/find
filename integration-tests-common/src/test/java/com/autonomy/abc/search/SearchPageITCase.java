@@ -389,7 +389,7 @@ public class SearchPageITCase extends ABCTestBase {
 		for (int i = 0; i < 5; i++) {
 			searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 			searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-			final int conceptsCount = searchPage.countRelatedConcepts();
+			final int conceptsCount = searchPage.relatedConcepts().size();
 			assertThat(conceptsCount, lessThanOrEqualTo(50));
 			final int index = new Random().nextInt(conceptsCount);
 			queryText = searchPage.relatedConcepts().get(index).getText();

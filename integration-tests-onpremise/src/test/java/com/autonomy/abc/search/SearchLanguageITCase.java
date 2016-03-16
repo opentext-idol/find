@@ -121,18 +121,18 @@ public class SearchLanguageITCase extends ABCTestBase {
         search("France");
         searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
         searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-        final List<String> englishConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
+        final List<String> englishConcepts = searchPage.getRelatedConcepts();
         searchPage.selectLanguage(Language.FRENCH);
         searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
         searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-        final List<String> frenchConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
+        final List<String> frenchConcepts = searchPage.getRelatedConcepts();
 
         assertThat("Concepts should be different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
 
         searchPage.selectLanguage(Language.ENGLISH);
         searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
         searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-        final List<String> secondEnglishConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
+        final List<String> secondEnglishConcepts = searchPage.getRelatedConcepts();
         assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
     }
 

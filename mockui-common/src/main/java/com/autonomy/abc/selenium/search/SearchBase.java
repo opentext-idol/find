@@ -216,8 +216,8 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	/* related concepts */
-	public int countRelatedConcepts() {
-		return relatedConcepts().size();
+	public List<String> getRelatedConcepts() {
+		return ElementUtil.getTexts(relatedConcepts());
 	}
 
 	public List<WebElement> relatedConcepts() {
@@ -381,7 +381,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public List<String> filterLabelList() {
-		return ElementUtil.webElementListToStringList(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
+		return ElementUtil.getTexts(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
 	}
 
 	public void filterBy(QueryFilter filter) {
