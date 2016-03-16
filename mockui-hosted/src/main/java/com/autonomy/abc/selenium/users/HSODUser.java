@@ -57,14 +57,15 @@ public class HSODUser extends User {
         WebDriver driver = driverFactory.create();
 
         try {
-            if(emailParser.tryGoingToAuthPage(driver)) {
-                LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
-                try {
-                    loginPage.loginWith(getAuthProvider());
-                } catch (TimeoutException e) {
-                /* already signed in to auth account */
-                }
+            emailParser.tryGoingToAuthPage(driver);
+            LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
+            try {
+                loginPage.loginWith(getAuthProvider());
+            } catch (TimeoutException e) {
+            /* already signed in to auth account */
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             driver.quit();
         }

@@ -7,7 +7,6 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,22 +44,20 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
     }
 
     @Override
-    public boolean tryGoingToAuthPage(WebDriver driver) {
+    public void tryGoingToAuthPage(WebDriver driver) throws EmailNotFoundException {
         this.driver = driver;
         goToGoogleAndLogIn();
         while (haveNewMessages()) {
             openMessage();
             try {
                 clickLinkToAuthPage();
-                return true;
-            } catch (NoSuchElementException e) {
+                return;
+            } catch (EmailNotFoundException e) {
                 // it was probably spam
                 returnToInbox();
             }
         }
-        LoggerFactory.getLogger(GoesToHodAuthPageFromGmail.class)
-                .info("Email failed to open; *probably* signed up already for some reason");
-        return false;
+        throw new EmailNotFoundException();
     }
 
     private boolean haveNewMessages() {
@@ -120,29 +117,43 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
         } catch (Exception e) { /* No Ellipses */ }
     }
 
-    private void clickLinkToAuthPage() {
-        driver.findElement(By.partialLinkText("here")).click();
+    private void clickLinkToAuthPage() throws EmailNotFoundException {
+        try {
+            driver.findElement(By.partialLinkText("here")).click();
+        } catch (NoSuchElementException e) {
+            throw new EmailNotFoundException();
+        }
 
         Waits.loadOrFadeWait();
-
         List<String> handles = new ArrayList<>(driver.getWindowHandles());
         driver.switchTo().window(handles.get(1));
 
-        try {
-            new WebDriverWait(driver,20).until(ExpectedConditions.visibilityOfElementLocated(By.className("twitter")));
-        } catch (TimeoutException e) {
-            //If not already verified then go back to inbox
-            if (!driver.getCurrentUrl().contains("already")) {
-                //Want to ignore cases where users are already verified, or taken to verification       TODO figure out which cases need this to be run
-                driver.close();
-                driver.switchTo().window(handles.get(0));
-                //Probably the wrong exception to throw but just to make things easier - happens when a link has already been used for auth
-                throw new NoSuchElementException("Incorrect link clicked");
-            }
+        // TODO: handle the "already verified" case better
+        if (!isOnAuthPage() && !hasAlreadyVerifiedMessage()) {
+            driver.close();
+            driver.switchTo().window(handles.get(0));
+            throw new EmailNotFoundException();
         }
 
         driver.switchTo().window(handles.get(0));
         driver.close();
         driver.switchTo().window(handles.get(1));
+    }
+
+    private boolean isOnAuthPage() {
+        try {
+            new WebDriverWait(driver,20).until(ExpectedConditions.visibilityOfElementLocated(By.className("twitter")));
+            return true;
+        } catch (final TimeoutException e) {
+            return false;
+        }
+    }
+
+    private boolean hasAlreadyVerifiedMessage() {
+        return driver.getCurrentUrl().contains("already");
+    }
+
+    public static class EmailNotFoundException extends Exception {
+        private EmailNotFoundException() {}
     }
 }
