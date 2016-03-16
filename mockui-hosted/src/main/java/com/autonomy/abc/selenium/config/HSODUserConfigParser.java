@@ -1,9 +1,6 @@
 package com.autonomy.abc.selenium.config;
 
-import com.autonomy.abc.selenium.users.HSODNewUser;
-import com.autonomy.abc.selenium.users.NewUser;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +23,9 @@ public class HSODUserConfigParser extends UserConfigParser {
         String apiKey = userNode.path("apikey").asText();
         String domain = userNode.path("domain").asText();
 
-        return new User(provider, username, role).withApiKey(apiKey).withDomain(domain);
+        return new HSODUser(provider, username, role)
+                .withApiKey(apiKey)
+                .withDomain(domain);
     }
 
     @Override

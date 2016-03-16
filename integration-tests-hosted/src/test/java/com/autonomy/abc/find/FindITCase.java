@@ -17,6 +17,7 @@ import com.autonomy.abc.selenium.query.ParametricFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.autonomy.abc.selenium.search.SearchResult;
+import com.autonomy.abc.selenium.users.HSODUser;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -281,7 +282,7 @@ public class FindITCase extends FindTestBase {
         final TokenProxy tokenProxy = authenticationService.authenticateApplication(
                 new ApiKey("098b8420-f85f-4164-b8a8-42263e9405a1"),
                 "733d64e8-41f7-4c46-a1c8-60d083255159",
-                getCurrentUser().getDomain(),
+                ((HSODUser) getCurrentUser()).getDomain(),
                 TokenType.simple
         );
 
@@ -291,7 +292,7 @@ public class FindITCase extends FindTestBase {
 
         for (String indexName : findPage.getPrivateIndexNames()) {
             RetrieveIndexFieldsResponse retrieveIndexFieldsResponse = retrieveIndexFieldsService.retrieveIndexFields(tokenProxy,
-                    new ResourceIdentifier(getCurrentUser().getDomain(), indexName), new RetrieveIndexFieldsRequestBuilder().setFieldType(FieldType.parametric));
+                    new ResourceIdentifier(((HSODUser)getCurrentUser()).getDomain(), indexName), new RetrieveIndexFieldsRequestBuilder().setFieldType(FieldType.parametric));
 
             parametricFields.addAll(retrieveIndexFieldsResponse.getAllFields());
         }

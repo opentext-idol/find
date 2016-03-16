@@ -9,8 +9,6 @@ public class User {
     private Role role;
     private final AuthProvider authProvider;
     public final static User NULL = NullUser.getInstance();
-    private String apiKey;
-    private String domain;
 
     public User(AuthProvider provider, String username, Role role) {
         this.authProvider = provider;
@@ -45,23 +43,5 @@ public class User {
 
     public void authenticate(Factory<WebDriver> driver, SignupEmailHandler handler) {
         /* NOOP by default */
-    }
-
-    public User withApiKey(String apiKey) {
-        this.apiKey = apiKey;
-        return this;
-    }
-
-    public String getApiKey(){
-        return apiKey;
-    }
-
-    public User withDomain(String domain) {
-        this.domain = domain;
-        return this;
-    }
-
-    public String getDomain(){
-        return domain;
     }
 }
