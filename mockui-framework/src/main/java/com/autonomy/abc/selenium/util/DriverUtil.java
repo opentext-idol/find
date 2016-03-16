@@ -3,6 +3,8 @@ package com.autonomy.abc.selenium.util;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public final class DriverUtil {
     private DriverUtil() {}
@@ -31,5 +33,11 @@ public final class DriverUtil {
     public static void scrollIntoViewAndClick(WebDriver driver, final WebElement element) {
         scrollIntoView(driver, element);
         element.click();
+    }
+
+    public static void waitUntilClickableThenClick(WebDriver driver, final WebElement element) {
+        new WebDriverWait(driver, 10)
+                .until(ExpectedConditions.visibilityOf(element))
+                .click();
     }
 }

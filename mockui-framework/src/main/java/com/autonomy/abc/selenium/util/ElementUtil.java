@@ -1,11 +1,9 @@
 package com.autonomy.abc.selenium.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 
 import java.util.*;
 
@@ -50,12 +48,6 @@ public final class ElementUtil {
         return output;
     }
 
-    public static void waitUntilClickableThenClick(final WebElement element, WebDriver driver) {
-        final WebDriverWait waiting = new WebDriverWait(driver,10);
-        waiting.until(ExpectedConditions.visibilityOf(element));
-        element.click();
-    }
-
     public static void tryClickThenTryParentClick(final WebElement element) {
         try {
             element.click();
@@ -83,9 +75,4 @@ public final class ElementUtil {
         return parent.findElement(By.xpath(".//*"));
     }
 
-    public static void sendBackspaceToWebElement(final WebElement element, final int numberOfBackspaces) {
-        for (int i = 0; i < numberOfBackspaces; i++) {
-            element.sendKeys(Keys.BACK_SPACE);
-        }
-    }
 }

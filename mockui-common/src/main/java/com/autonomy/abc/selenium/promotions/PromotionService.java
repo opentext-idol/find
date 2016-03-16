@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.util.DriverUtil;
-import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
@@ -50,7 +49,7 @@ public class PromotionService<T extends SOElementFactory> extends ServiceBase<T>
             searchPage.promoteThisQueryButton().click();
         } else {
             DriverUtil.scrollIntoView(getDriver(), searchPage.promoteTheseItemsButton());
-            ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
+            DriverUtil.waitUntilClickableThenClick(getDriver(), searchPage.promoteTheseItemsButton());
         }
 
         promotion.makeWizard(getElementFactory().getCreateNewPromotionsPage()).apply();
