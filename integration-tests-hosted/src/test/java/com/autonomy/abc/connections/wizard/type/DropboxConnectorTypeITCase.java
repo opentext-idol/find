@@ -8,9 +8,11 @@ import com.autonomy.abc.selenium.connections.ConnectorType;
 import com.autonomy.abc.selenium.connections.DropboxConnector;
 import com.autonomy.abc.selenium.connections.DropboxCredentialsConfigurations;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Test;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
 
@@ -18,6 +20,7 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class DropboxConnectorTypeITCase extends ConnectorTypeStepBase {
@@ -65,5 +68,21 @@ public class DropboxConnectorTypeITCase extends ConnectorTypeStepBase {
         wizard.next();
 
         verifyThat(newConnectionPage.getIndexStep().selectIndexButton(), displayed());
+    }
+
+    @Test
+    public void testCreating(){
+        try {
+            Connector connector = new DropboxConnector("abc", false, "abcdef", "abcdef", "email@email.com");
+            connector.makeWizard(newConnectionPage).apply();
+
+            new WebDriverWait(getDriver(), 15).until(GritterNotice.notificationContaining("Created a new connection"));
+
+            verifyThat(getElementFactory().getConnectionsPage().getConnectionNames(), hasItem(connector.getName()));
+
+            new WebDriverWait(getDriver(), 300).until(GritterNotice.notificationContaining("finished running"));
+        } finally {
+            getApplication().connectionService().deleteAllConnections(true);
+        }
     }
 }
