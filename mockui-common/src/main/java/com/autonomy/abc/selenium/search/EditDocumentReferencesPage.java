@@ -1,7 +1,5 @@
 package com.autonomy.abc.selenium.search;
 
-import com.autonomy.abc.selenium.element.LabelBox;
-import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -9,9 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EditDocumentReferencesPage extends SearchBase implements AppPage {
 

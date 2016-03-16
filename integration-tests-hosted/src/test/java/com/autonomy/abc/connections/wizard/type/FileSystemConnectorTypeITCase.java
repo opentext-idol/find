@@ -2,20 +2,31 @@ package com.autonomy.abc.connections.wizard.type;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
+import com.autonomy.abc.selenium.actions.wizard.Wizard;
+import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.ConnectorType;
+import com.autonomy.abc.selenium.connections.FileSystemConnector;
+import com.autonomy.abc.selenium.connections.SharepointCompleteStepTab;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
     public FileSystemConnectorTypeITCase(TestConfig config) {
@@ -79,6 +90,70 @@ public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
 
             connectorPath.clear();
             connectorName.clear();
+        }
+    }
+
+    @Test
+    public void testCreating(){
+        try {
+            Connector connector = new FileSystemConnector("/c/", "c");
+            connector.makeWizard(newConnectionPage).apply();
+
+            new WebDriverWait(getDriver(), 15).until(GritterNotice.notificationContaining("Created a new connection"));
+
+            verifyThat(getElementFactory().getConnectionsPage().getConnectionNames(), hasItem(connector.getName()));
+        } finally {
+            getApplication().connectionService().deleteAllConnections(true);
+        }
+    }
+
+    @Test
+    public void testDocumentationLink(){
+        goToLastStep(new FileSystemConnector("/c/","163"));
+
+        SharepointCompleteStepTab completeStep = new SharepointCompleteStepTab(getDriver());
+
+        completeStep.downloadAgentButton().click();
+        Waits.loadOrFadeWait();
+        completeStep.agentInformationButton().click();
+        Waits.loadOrFadeWait();
+
+        getMainSession().switchWindow(1);
+
+        verifyThat(getDriver().getCurrentUrl(), not(containsString(".int.")));
+        verifyThat(getDriver().getPageSource(), not(containsString("404")));
+
+        getWindow().close();
+        getMainSession().switchWindow(0);
+
+        completeStep.modalCancel().click();
+    }
+
+    @Test
+    public void testAPIKeyGen(){
+        goToLastStep(new FileSystemConnector("/c/","42152"));
+
+        SharepointCompleteStepTab completeStep = new SharepointCompleteStepTab(getDriver());
+
+        completeStep.downloadAgentButton().click();
+        Waits.loadOrFadeWait();
+
+        verifyThat(completeStep.apiKey().getAttribute("value"), is(""));
+
+        completeStep.generateAPIKeyButton().click();
+        Waits.loadOrFadeWait();
+
+        verifyThat(completeStep.apiKey().getAttribute("value"), not(""));
+
+        completeStep.modalCancel().click();
+    }
+
+    private void goToLastStep(FileSystemConnector connector){
+        Wizard wizard = connector.makeWizard(newConnectionPage);
+
+        for(int i = 0; i < 3; i++){
+            wizard.getCurrentStep().apply();
+            wizard.next();
         }
     }
 }
