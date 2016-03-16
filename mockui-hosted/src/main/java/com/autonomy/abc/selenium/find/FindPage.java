@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
-import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;

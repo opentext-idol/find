@@ -21,7 +21,7 @@ import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
-import com.autonomy.abc.selenium.util.PageUtil;
+import com.autonomy.abc.selenium.util.SOPageUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,7 +73,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
         AnalyticsPage analyticsPage = getApplication().switchTo(AnalyticsPage.class);
         analyticsPage.indexSizeChart().click();
 
-        verifyThat(PageUtil.getWrapperContent(getDriver()), not(containsText(Errors.Index.INVALID_INDEX)));
+        verifyThat(SOPageUtil.getWrapperContent(getDriver()), not(containsText(Errors.Index.INVALID_INDEX)));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.query.QueryResultsPage;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -29,7 +30,7 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
 
     public WebElement hoverOverRelatedConcept(int i) {
         WebElement concept = relatedConcepts().get(i);
-        ElementUtil.hover(concept, getDriver());
+        DriverUtil.hover(getDriver(), concept);
         WebElement popover = findElement(By.className("popover"));
         waitForPopoverToLoad(popover);
         return popover;

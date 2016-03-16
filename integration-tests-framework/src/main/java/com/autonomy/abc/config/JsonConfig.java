@@ -3,10 +3,14 @@ package com.autonomy.abc.config;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.UserConfigParser;
 import com.autonomy.abc.selenium.control.Resolution;
+import com.autonomy.abc.selenium.users.AuthenticationStrategy;
 import com.autonomy.abc.selenium.users.NewUser;
+import com.autonomy.abc.selenium.users.NullAuthenticationStrategy;
 import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.util.Factory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,6 +98,10 @@ class JsonConfig {
 
     NewUser generateRandomNewUser() {
         return parser.generateNewUser(UUID.randomUUID().toString().replaceAll("-", ""));
+    }
+
+    AuthenticationStrategy getAuthenticationStrategy(Factory<WebDriver> driverFactory) {
+        return parser == null ? NullAuthenticationStrategy.getInstance() : parser.getAuthenticationStrategy(driverFactory);
     }
 
     ApplicationType getAppType() {

@@ -10,15 +10,13 @@ import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.PageUtil;
+import com.autonomy.abc.selenium.util.SOPageUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -103,7 +101,7 @@ public class OverviewPageITCase extends ABCTestBase {
 						tableRowLink.click();
 						getElementFactory().getSearchPage();
 						assertThat(getWindow(), urlContains("search/modified/" + searchTerm));
-						assertThat(searchTerm + " Title incorrect", PageUtil.getPageTitle(getDriver()), containsString("Results for " + searchTerm));
+						assertThat(searchTerm + " Title incorrect", SOPageUtil.getPageTitle(getDriver()), containsString("Results for " + searchTerm));
 
 						getApplication().switchTo(OverviewPage.class);
 					}
@@ -171,8 +169,8 @@ public class OverviewPageITCase extends ABCTestBase {
 			final SearchPage searchPage = getElementFactory().getSearchPage();
 
 			if (!searchPage.getText().contains("An error occurred executing the search action")) {
-				assertThat("page title incorrect", PageUtil.getPageTitle(getDriver()), containsString(linkText));
-				assertThat("page title incorrect", PageUtil.getPageTitle(getDriver()), containsString(extraSynonym));
+				assertThat("page title incorrect", SOPageUtil.getPageTitle(getDriver()), containsString(linkText));
+				assertThat("page title incorrect", SOPageUtil.getPageTitle(getDriver()), containsString(extraSynonym));
 				assertThat(searchPage.getSearchResults(), not(empty()));
 				assertThat("you searched for section incorrect", searchPage.youSearchedFor(), hasItems(linkText, extraSynonym));
 				assertThat(searchPage.countSynonymLists(), is(2));
@@ -181,7 +179,7 @@ public class OverviewPageITCase extends ABCTestBase {
 
 				final String searchResultTitle = searchPage.getSearchResult(1).getTitleString();
                 getElementFactory().getTopNavBar().search(linkText);
-				assertThat("page title incorrect", PageUtil.getPageTitle(getDriver()), containsString(linkText));
+				assertThat("page title incorrect", SOPageUtil.getPageTitle(getDriver()), containsString(linkText));
 				assertThat(searchPage.getSearchResults(), not(empty()));
 				assertThat(searchPage.getSearchResult(1).getTitleString(), is(searchResultTitle));
 				assertThat(searchPage.countSynonymLists(), is(1));

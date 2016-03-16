@@ -1,8 +1,8 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
+import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.navigation.SOElementFactory;
 
 public abstract class UserService<T extends SOElementFactory> extends ServiceBase<T> {
 

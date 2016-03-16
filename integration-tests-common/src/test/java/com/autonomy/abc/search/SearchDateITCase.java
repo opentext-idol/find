@@ -23,8 +23,6 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assume.assumeThat;
 
 public class SearchDateITCase extends ABCTestBase {

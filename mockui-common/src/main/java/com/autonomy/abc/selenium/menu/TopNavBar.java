@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.menu;
 
-import com.autonomy.abc.selenium.users.LoginService;
+import com.autonomy.abc.selenium.application.LoginService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;

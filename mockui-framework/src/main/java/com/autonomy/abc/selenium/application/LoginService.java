@@ -1,7 +1,6 @@
-package com.autonomy.abc.selenium.users;
+package com.autonomy.abc.selenium.application;
 
-import com.autonomy.abc.selenium.application.Application;
-import com.autonomy.abc.selenium.navigation.ElementFactoryBase;
+import com.autonomy.abc.selenium.users.User;
 
 public class LoginService {
     private final ElementFactoryBase elementFactory;

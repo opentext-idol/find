@@ -21,7 +21,7 @@ import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.util.PageUtil;
+import com.autonomy.abc.selenium.util.SOPageUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -211,7 +211,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @KnownBug("CSA-1735")
     public void testNavigatingToNonExistingIndexByURL(){
         getDriver().get(getAppUrl().split("searchoptimizer")[0] + "search/#/index/doesntexistmate");
-        verifyThat(PageUtil.getWrapperContent(getDriver()), containsText(Errors.Index.INVALID_INDEX));
+        verifyThat(SOPageUtil.getWrapperContent(getDriver()), containsText(Errors.Index.INVALID_INDEX));
     }
 
     @Test

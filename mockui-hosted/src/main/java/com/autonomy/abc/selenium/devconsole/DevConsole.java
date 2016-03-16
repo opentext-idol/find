@@ -1,8 +1,8 @@
 package com.autonomy.abc.selenium.devconsole;
 
 import com.autonomy.abc.selenium.application.Application;
+import com.autonomy.abc.selenium.application.LoginService;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.users.User;
 
 public class DevConsole implements Application<DevConsoleElementFactory> {
