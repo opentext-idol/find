@@ -22,7 +22,8 @@ import org.openqa.selenium.WebElement;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 /*

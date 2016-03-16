@@ -4,14 +4,12 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.connections.*;
-import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;

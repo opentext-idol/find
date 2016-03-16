@@ -7,7 +7,6 @@ import org.hamcrest.TypeSafeMatcher;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.hamcrest.Matchers.anyOf;

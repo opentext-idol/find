@@ -4,8 +4,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
 
 import static org.hamcrest.Matchers.*;
 
