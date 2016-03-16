@@ -5,7 +5,6 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.control.Session;
-import com.autonomy.abc.selenium.external.GoesToHodAuthPageFromGmail;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
@@ -15,10 +14,7 @@ import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.users.UserService;
-import com.autonomy.abc.selenium.users.UsersPage;
+import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.junit.After;
@@ -53,8 +49,6 @@ public class UserPermissionsITCase extends HostedTestBase {
     private HSODApplication userApp;
     private HSODElementFactory userElementFactory;
 
-    private GoesToHodAuthPageFromGmail emailHandler;
-
     @Before
     public void setUp(){
         userService = getApplication().userService();
@@ -67,9 +61,7 @@ public class UserPermissionsITCase extends HostedTestBase {
         userSession = launchInNewSession(userApp);
         userElementFactory = userApp.elementFactory();
 
-        emailHandler = new GoesToHodAuthPageFromGmail(googleAuth);
-
-        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
+        new AuthenticatesUsers(getConfig().getWebDriverFactory(), getConfig().getAuthStrategy()).authenticate(user);
 
         try {
             userApp.loginService().login(user);
@@ -82,7 +74,7 @@ public class UserPermissionsITCase extends HostedTestBase {
     @After
     public void tearDown(){
         userService.deleteOtherUsers();
-        emailHandler.cleanUp(getDriver());
+        getConfig().getAuthStrategy().cleanUp(getDriver());
     }
 
     @Test

@@ -4,11 +4,11 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Session;
-import com.autonomy.abc.selenium.external.GoesToHodAuthPageFromGmail;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -17,12 +17,10 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.menu.Notification;
-import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
-import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
@@ -168,8 +166,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     public void testUsernameShowsInNotifications() throws Exception {
         KeywordService keywordService = getApplication().keywordService();
         UserService userService = getApplication().userService();
+        AuthenticatesUsers authenticatesUsers = new AuthenticatesUsers(getConfig().getWebDriverFactory(), getConfig().getAuthStrategy());
         Session secondSession = null;
-        GoesToAuthPage emailHandler = new GoesToHodAuthPageFromGmail((GoogleAuth) getConfig().getUser("google").getAuthProvider());
 
         HSODDevelopersPage hsoDevelopersPage = getApplication().switchTo(HSODDevelopersPage.class);
 
@@ -183,7 +181,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             User user = userService.createNewUser(getConfig().getNewUser("drake"), Role.ADMIN);
 
             try {
-                user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
+                authenticatesUsers.authenticate(user);
             } catch (TimeoutException e) { /* User has likely already been authenticated recently, attempt to continue */ }
 
             HSODApplication secondApplication = new HSODApplication();
@@ -208,7 +206,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             userService.deleteOtherUsers();
             keywordService.deleteAll(KeywordFilter.ALL);
 
-            emailHandler.cleanUp(getDriver());
+            getConfig().getAuthStrategy().cleanUp(getDriver());
         }
     }
 
