@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.external;
 
-import com.autonomy.abc.selenium.users.SignupEmailHandler;
+import com.autonomy.abc.selenium.users.GoesToAuthPage;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.openqa.selenium.*;
@@ -12,23 +12,20 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GmailSignupEmailHandler implements SignupEmailHandler {
+public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
     private final static String GMAIL_URL = "https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier";
     private final GoogleAuth googleAuth;
     private WebDriver driver;
 
-    public GmailSignupEmailHandler(GoogleAuth auth) {
+    public GoesToHodAuthPageFromGmail(GoogleAuth auth) {
         this.googleAuth = auth;
     }
 
-    public void markAllEmailAsRead(WebDriver driver){
-        setDriver(driver);
+    @Override
+    public void cleanUp(WebDriver driver) {
+        this.driver = driver;
         goToGoogleAndLogIn();
-
-        clickMoreDropdown();
-        Waits.loadOrFadeWait();
-        driver.findElement(By.xpath("//div[text()='Mark all as read']")).click();
-        Waits.loadOrFadeWait();
+        markAllEmailAsRead();
     }
 
     private void goToGoogleAndLogIn() {
@@ -36,73 +33,78 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
         new GoogleAuth.GoogleLoginPage(driver).login(googleAuth);
     }
 
-    private void setDriver(WebDriver driver) {
-        this.driver = driver;
+    private void markAllEmailAsRead() {
+        openInboxOptionsDropdown();
+        Waits.loadOrFadeWait();
+        driver.findElement(By.xpath("//div[text()='Mark all as read']")).click();
+        Waits.loadOrFadeWait();
+    }
+
+    private void openInboxOptionsDropdown(){
+        driver.findElement(By.cssSelector(".T-I.J-J5-Ji.ar7.nf.T-I-ax7.L3")).click();
     }
 
     @Override
-    public boolean goToUrl(WebDriver driver) {
-        setDriver(driver);
+    public boolean tryGoingToAuthPage(WebDriver driver) {
+        this.driver = driver;
         goToGoogleAndLogIn();
-        openMessage();
-        try {
-            clickLink();
-        } catch (NoSuchElementException e) {
-            /* Probably had an unread email */
-
-            clickBackToInbox();
-
+        while (haveNewMessages()) {
+            openMessage();
             try {
-                openMessage();
-            } catch (TimeoutException f) {
-                //Email was probably opened the first time; but for some reason clicking on the message didn't take you to the 'right' place
-                LoggerFactory.getLogger(GmailSignupEmailHandler.class).info("Email failed to open; *probably* signed up already for some reason");
-                return false;
+                clickLinkToAuthPage();
+                return true;
+            } catch (NoSuchElementException e) {
+                // it was probably spam
+                returnToInbox();
             }
+        }
+        LoggerFactory.getLogger(GoesToHodAuthPageFromGmail.class)
+                .info("Email failed to open; *probably* signed up already for some reason");
+        return false;
+    }
 
-            clickLink();
+    private boolean haveNewMessages() {
+        try {
+            new WebDriverWait(driver, 60)
+                    .withMessage("waiting for new email")
+                    .until(new ExpectedCondition<Boolean>() {
+                        @Override
+                        public Boolean apply(WebDriver driver) {
+                            return haveNewMessagesNow(driver);
+                        }
+                    });
+            return true;
+        } catch (TimeoutException f) {
+            return false;
+        }
+    }
+
+    private boolean haveNewMessagesNow(WebDriver driver) {
+        List<WebElement> unreadEmails = driver.findElements(By.cssSelector(".zA.zE"));
+
+        if (unreadEmails.size() > 0) {
+            return true;
         }
 
-        return true;
+        refreshInbox();
+        return false;
     }
 
     private void openMessage(){
-        waitForNewEmail();
-        clickUnreadMessage();
+        openFirstUnreadMessage();
         expandCollapsedMessage();
     }
 
-    private void waitForNewEmail() {
-        new WebDriverWait(driver,60).until(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver driver) {
-                List<WebElement> unreadEmails = driver.findElements(By.cssSelector(".zA.zE"));
-
-                if (unreadEmails.size() > 0) {
-                    return true;
-                }
-
-                clickRefreshButton();
-
-                return false;
-            }
-        });
-    }
-
-    private void clickRefreshButton() {
+    private void refreshInbox() {
         driver.findElement(By.cssSelector(".T-I.J-J5-Ji.nu.T-I-ax7.L3")).click();
     }
 
-    private void clickUnreadMessage(){
+    private void openFirstUnreadMessage(){
         driver.findElement(By.cssSelector(".zA.zE")).click();
     }
 
-    private void clickBackToInbox(){
+    private void returnToInbox(){
         driver.findElement(By.cssSelector(".T-I.J-J5-Ji.lS.T-I-ax7.ar7")).click();
-    }
-
-    private void clickMoreDropdown(){
-        driver.findElement(By.cssSelector(".T-I.J-J5-Ji.ar7.nf.T-I-ax7.L3")).click();
     }
 
     private void expandCollapsedMessage() {
@@ -118,7 +120,7 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
         } catch (Exception e) { /* No Ellipses */ }
     }
 
-    private void clickLink() {
+    private void clickLinkToAuthPage() {
         driver.findElement(By.partialLinkText("here")).click();
 
         Waits.loadOrFadeWait();

@@ -6,7 +6,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.LoginService;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
+import com.autonomy.abc.selenium.external.GoesToHodAuthPageFromGmail;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -35,13 +35,13 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     protected int defaultNumberOfUsers = isHosted() ? 0 : 1;
     protected UsersPage usersPage;
     protected UserService<?> userService;
-    protected SignupEmailHandler emailHandler;
+    protected GoesToAuthPage emailHandler;
     private LoginService loginService;
 
     public UsersPageTestBase(TestConfig config) {
         super(config);
         if(isHosted()) {
-            emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+            emailHandler = new GoesToHodAuthPageFromGmail((GoogleAuth) config.getUser("google").getAuthProvider());
         }
     }
 
@@ -59,7 +59,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
             Window firstWindow = getWindow();
             Window secondWindow = getMainSession().openWindow("about:blank");
             try {
-                emailHandler.markAllEmailAsRead(getDriver());
+                emailHandler.cleanUp(getDriver());
             } catch (TimeoutException e) {
                 LoggerFactory.getLogger(UsersPageTestBase.class).warn("Could not tear down");
             } finally {

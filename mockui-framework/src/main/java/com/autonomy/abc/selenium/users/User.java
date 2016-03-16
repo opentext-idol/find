@@ -41,7 +41,7 @@ public class User {
         this.role = role;
     }
 
-    public void authenticate(Factory<WebDriver> driver, SignupEmailHandler handler) {
+    public void authenticate(Factory<WebDriver> driver, GoesToAuthPage handler) {
         /* NOOP by default */
     }
 }

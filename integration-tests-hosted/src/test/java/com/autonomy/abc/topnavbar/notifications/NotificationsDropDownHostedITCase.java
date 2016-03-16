@@ -8,7 +8,7 @@ import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Session;
-import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
+import com.autonomy.abc.selenium.external.GoesToHodAuthPageFromGmail;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -169,7 +169,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         KeywordService keywordService = getApplication().keywordService();
         UserService userService = getApplication().userService();
         Session secondSession = null;
-        SignupEmailHandler emailHandler = new GmailSignupEmailHandler((GoogleAuth) getConfig().getUser("google").getAuthProvider());
+        GoesToAuthPage emailHandler = new GoesToHodAuthPageFromGmail((GoogleAuth) getConfig().getUser("google").getAuthProvider());
 
         HSODDevelopersPage hsoDevelopersPage = getApplication().switchTo(HSODDevelopersPage.class);
 
@@ -208,7 +208,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             userService.deleteOtherUsers();
             keywordService.deleteAll(KeywordFilter.ALL);
 
-            emailHandler.markAllEmailAsRead(getDriver());
+            emailHandler.cleanUp(getDriver());
         }
     }
 

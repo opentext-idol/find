@@ -53,11 +53,11 @@ public class HSODUser extends User {
     }
 
     @Override
-    public void authenticate(Factory<WebDriver> driverFactory, SignupEmailHandler emailParser) {
+    public void authenticate(Factory<WebDriver> driverFactory, GoesToAuthPage emailParser) {
         WebDriver driver = driverFactory.create();
 
         try {
-            if(emailParser.goToUrl(driver)) {
+            if(emailParser.tryGoingToAuthPage(driver)) {
                 LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
                 try {
                     loginPage.loginWith(getAuthProvider());
