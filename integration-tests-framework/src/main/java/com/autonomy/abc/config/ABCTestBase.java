@@ -1,7 +1,7 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.navigation.SOElementFactory;
+import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.users.User;
 import org.junit.Before;
 import org.junit.Ignore;

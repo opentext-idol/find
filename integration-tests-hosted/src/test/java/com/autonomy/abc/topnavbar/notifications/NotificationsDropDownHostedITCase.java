@@ -17,7 +17,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.menu.Notification;
-import com.autonomy.abc.selenium.navigation.SOElementFactory;
+import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;

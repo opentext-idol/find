@@ -2,10 +2,8 @@ package com.autonomy.abc.selenium.application;
 
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.keywords.KeywordService;
-import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.SearchService;
-import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.SafeClassLoader;

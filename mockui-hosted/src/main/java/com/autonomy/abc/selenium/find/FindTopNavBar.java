@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.find;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.HPRemovable;
 import com.autonomy.abc.selenium.element.Removable;
-import com.autonomy.abc.selenium.users.LoginService;
+import com.autonomy.abc.selenium.application.LoginService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Waits;

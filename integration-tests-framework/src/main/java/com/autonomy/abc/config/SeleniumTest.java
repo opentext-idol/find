@@ -12,7 +12,7 @@ import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.SessionRegistry;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.navigation.ElementFactoryBase;
+import com.autonomy.abc.selenium.application.ElementFactoryBase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;

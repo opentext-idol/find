@@ -3,7 +3,7 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.application.LoginService;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
