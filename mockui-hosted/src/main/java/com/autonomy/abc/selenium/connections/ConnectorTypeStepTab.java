@@ -46,4 +46,8 @@ public class ConnectorTypeStepTab extends ICMAPageBase {
     public WebElement dropboxConnector() {
         return findElement(By.id("dropbox_cloud"));
     }
+
+    public FormInput connectorSource() {
+        return new FormInput(findElement(By.name("connectorPath")), getDriver());
+    }
 }

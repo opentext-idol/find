@@ -25,10 +25,11 @@ class ConnectorTypeStep implements WizardStep {
     public Object apply() {
         if(connector instanceof DropboxConnector) {
             connectorTypeStepTab.dropboxConnector().click();
+        } else if (connector instanceof FileSystemConnector) {
+            connectorTypeStepTab.fileSystemConnector().click();
+            connectorTypeStepTab.connectorSource().setValue(url);
         } else {
-            if (connector instanceof FileSystemConnector) {
-                connectorTypeStepTab.fileSystemConnector().click();
-            } else if (connector instanceof SharepointConnector) {
+            if (connector instanceof SharepointConnector) {
                 connectorTypeStepTab.sharepointConnector().click();
             }
 
