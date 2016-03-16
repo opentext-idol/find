@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
 public class SharepointCompleteStepTab extends ICMAPageBase {
     public SharepointCompleteStepTab(WebDriver driver) {
@@ -28,5 +29,9 @@ public class SharepointCompleteStepTab extends ICMAPageBase {
 
     public WebElement agentInformationButton(){
         return getDriver().findElement(By.className("hp-help"));
+    }
+
+    public Select osVersion() {
+        return new Select(getDriver().findElement(By.name("indexFlavor")));
     }
 }

@@ -16,6 +16,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
 
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -91,9 +92,7 @@ public class SharepointConnectorITCase extends HostedTestBase {
 
     @Test
     public void testDocumentationLink(){
-        goToLastStep();
-
-        SharepointCompleteStepTab completeStep = new SharepointCompleteStepTab(getDriver());
+        SharepointCompleteStepTab completeStep = goToLastStep();
 
         completeStep.downloadAgentButton().click();
         Waits.loadOrFadeWait();
@@ -113,9 +112,7 @@ public class SharepointConnectorITCase extends HostedTestBase {
 
     @Test
     public void testAPIKeyGen(){
-        goToLastStep();
-
-        SharepointCompleteStepTab completeStep = new SharepointCompleteStepTab(getDriver());
+        SharepointCompleteStepTab completeStep = goToLastStep();
 
         completeStep.downloadAgentButton().click();
         Waits.loadOrFadeWait();
@@ -130,12 +127,26 @@ public class SharepointConnectorITCase extends HostedTestBase {
         completeStep.modalCancel().click();
     }
 
-    private void goToLastStep(){
+    @Test
+    public void testNoLinuxOption(){
+        SharepointCompleteStepTab completeStep = goToLastStep();
+
+        completeStep.downloadAgentButton().click();
+
+        assertThat(completeStep.osVersion().getOptions().size(), is(1));
+        assertThat(completeStep.osVersion().getOptions().get(0).getText(), is("Windows"));
+
+        completeStep.modalCancel().click();
+    }
+
+    private SharepointCompleteStepTab goToLastStep(){
         Wizard wizard = connector.makeWizard(newConnectionPage);
 
         for(int i = 0; i < 3; i++){
             wizard.getCurrentStep().apply();
             wizard.next();
         }
+
+        return new SharepointCompleteStepTab(getDriver());
     }
 }
