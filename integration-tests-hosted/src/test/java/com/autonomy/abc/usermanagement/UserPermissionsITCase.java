@@ -36,23 +36,25 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 @RelatedTo("HOD-532")
 public class UserPermissionsITCase extends HostedTestBase {
+    private UserService userService;
+
+    private User user;
+    private AuthenticationStrategy authStrategy;
+    private Session devSession;
+
+    private Session userSession;
+
+    private HSODApplication userApp;
+    private HSODElementFactory userElementFactory;
+
     public UserPermissionsITCase(TestConfig config) {
         super(config);
     }
 
-    private UserService userService;
-    private User user;
-
-    private Session devSession;
-
-    private Session userSession;
-    private HSODApplication userApp;
-    private HSODElementFactory userElementFactory;
-
     @Before
     public void setUp(){
         userService = getApplication().userService();
-        GoogleAuth googleAuth = (GoogleAuth) userService.createNewUser(getConfig().generateNewUser(), Role.ADMIN).getAuthProvider();
+        authStrategy = getConfig().getAuthenticationStrategy();
 
         user = userService.createNewUser(getConfig().getNewUser("newhppassport"), Role.ADMIN);
 
@@ -61,7 +63,7 @@ public class UserPermissionsITCase extends HostedTestBase {
         userSession = launchInNewSession(userApp);
         userElementFactory = userApp.elementFactory();
 
-        new AuthenticatesUsers(getConfig().getWebDriverFactory(), getConfig().getAuthStrategy()).authenticate(user);
+        authStrategy.authenticate(user);
 
         try {
             userApp.loginService().login(user);
@@ -74,7 +76,7 @@ public class UserPermissionsITCase extends HostedTestBase {
     @After
     public void tearDown(){
         userService.deleteOtherUsers();
-        getConfig().getAuthStrategy().cleanUp(getDriver());
+        authStrategy.cleanUp(getDriver());
     }
 
     @Test

@@ -1,11 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
-import com.hp.autonomy.frontend.selenium.login.LoginPage;
-import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
 
 public class HSODUser extends User {
     private String email;
@@ -50,25 +45,6 @@ public class HSODUser extends User {
 
     public String getDomain(){
         return domain;
-    }
-
-    @Override
-    public void authenticate(Factory<WebDriver> driverFactory, GoesToAuthPage emailParser) {
-        WebDriver driver = driverFactory.create();
-
-        try {
-            emailParser.tryGoingToAuthPage(driver);
-            LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
-            try {
-                loginPage.loginWith(getAuthProvider());
-            } catch (TimeoutException e) {
-            /* already signed in to auth account */
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            driver.quit();
-        }
     }
 
 }

@@ -166,7 +166,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     public void testUsernameShowsInNotifications() throws Exception {
         KeywordService keywordService = getApplication().keywordService();
         UserService userService = getApplication().userService();
-        AuthenticatesUsers authenticatesUsers = new AuthenticatesUsers(getConfig().getWebDriverFactory(), getConfig().getAuthStrategy());
+        AuthenticationStrategy authenticationStrategy = getConfig().getAuthenticationStrategy();
         Session secondSession = null;
 
         HSODDevelopersPage hsoDevelopersPage = getApplication().switchTo(HSODDevelopersPage.class);
@@ -181,7 +181,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             User user = userService.createNewUser(getConfig().getNewUser("drake"), Role.ADMIN);
 
             try {
-                authenticatesUsers.authenticate(user);
+                authenticationStrategy.authenticate(user);
             } catch (TimeoutException e) { /* User has likely already been authenticated recently, attempt to continue */ }
 
             HSODApplication secondApplication = new HSODApplication();
@@ -206,7 +206,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             userService.deleteOtherUsers();
             keywordService.deleteAll(KeywordFilter.ALL);
 
-            getConfig().getAuthStrategy().cleanUp(getDriver());
+            getConfig().getAuthenticationStrategy().cleanUp(getDriver());
         }
     }
 

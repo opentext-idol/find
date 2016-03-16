@@ -6,10 +6,7 @@ import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.external.GoesToHodAuthPageFromGmail;
-import com.autonomy.abc.selenium.users.GoesToAuthPage;
-import com.autonomy.abc.selenium.users.NewUser;
-import com.autonomy.abc.selenium.users.NullAuthStrategy;
-import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -112,12 +109,8 @@ public class TestConfig {
 		return jsonConfig.generateRandomNewUser();
 	}
 
-	public GoesToAuthPage getAuthStrategy() {
-		if (getType() == ApplicationType.HOSTED) {
-			return new GoesToHodAuthPageFromGmail((GoogleAuth) getUser("google").getAuthProvider());
-		} else {
-			return NullAuthStrategy.getInstance();
-		}
+	public AuthenticationStrategy getAuthenticationStrategy() {
+		return jsonConfig.getAuthenticationStrategy(getWebDriverFactory());
 	}
 
 	// used when running whole suite via mvn

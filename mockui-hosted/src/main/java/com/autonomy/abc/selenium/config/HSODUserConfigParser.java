@@ -1,11 +1,14 @@
 package com.autonomy.abc.selenium.config;
 
+import com.autonomy.abc.selenium.external.GoesToHodAuthPageFromGmail;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.Factory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
+import org.openqa.selenium.WebDriver;
 
 import java.util.Map;
 
@@ -54,5 +57,10 @@ public class HSODUserConfigParser extends UserConfigParser {
 
     private GoogleAuth getAuthProvider() {
         return new GoogleAuth(emailPrefix + emailSuffix, password);
+    }
+
+    @Override
+    public AuthenticationStrategy getAuthenticationStrategy(Factory<WebDriver> driverFactory) {
+        return new HodAuthenticationStrategy(driverFactory, new GoesToHodAuthPageFromGmail(getAuthProvider()));
     }
 }

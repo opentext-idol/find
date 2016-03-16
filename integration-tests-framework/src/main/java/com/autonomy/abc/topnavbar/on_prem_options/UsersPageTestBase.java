@@ -34,11 +34,11 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     protected UsersPage usersPage;
     protected UserService<?> userService;
     private LoginService loginService;
-    private AuthenticatesUsers authenticatesUsers;
+    private AuthenticationStrategy authStrategy;
 
     public UsersPageTestBase(TestConfig config) {
         super(config);
-        authenticatesUsers = new AuthenticatesUsers(config.getWebDriverFactory(), config.getAuthStrategy());
+        authStrategy = config.getAuthenticationStrategy();
     }
 
     @Before
@@ -55,7 +55,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
             Window firstWindow = getWindow();
             Window secondWindow = getMainSession().openWindow("about:blank");
             try {
-                getConfig().getAuthStrategy().cleanUp(getDriver());
+                authStrategy.cleanUp(getDriver());
             } catch (TimeoutException e) {
                 LoggerFactory.getLogger(UsersPageTestBase.class).warn("Could not tear down");
             } finally {
@@ -148,6 +148,6 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     }
 
     protected void authenticate(User user) {
-        authenticatesUsers.authenticate(user);
+        authStrategy.authenticate(user);
     }
 }

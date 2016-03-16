@@ -40,8 +40,4 @@ public class User {
     void setRole(Role role) {
         this.role = role;
     }
-
-    public void authenticate(Factory<WebDriver> driver, GoesToAuthPage handler) {
-        /* NOOP by default */
-    }
 }
