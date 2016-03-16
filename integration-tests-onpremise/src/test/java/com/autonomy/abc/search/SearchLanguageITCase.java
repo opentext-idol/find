@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
@@ -156,7 +157,7 @@ public class SearchLanguageITCase extends ABCTestBase {
 
     @RelatedTo("CCUK-3728")
     private void checkViewResult(String docTitle) {
-        ElementUtil.scrollIntoViewAndClick(searchPage.promotionBucketElementByTitle(docTitle), getDriver());
+        DriverUtil.scrollIntoViewAndClick(getDriver(), searchPage.promotionBucketElementByTitle(docTitle));
         DocumentViewer viewer = DocumentViewer.make(getDriver());
         Frame frame = new Frame(getWindow(), viewer.frame());
         verifyThat("view frame displays", frame.getText(), containsString(docTitle));

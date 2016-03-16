@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.OPNewUser;
 import com.autonomy.abc.selenium.users.OPUsersPage;
 import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.UnhandledAlertException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -137,7 +137,16 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
 
         executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function() {alert(\"error\");});");
         Waits.loadOrFadeWait();
-        assertThat(DriverUtil.isAlertPresent(getDriver()), is(false));
+        assertThat(isAlertPresent(), is(false));
+    }
+
+    private boolean isAlertPresent() {
+        try {
+            getDriver().switchTo().alert();
+            return true;
+        } catch (final NoAlertPresentException ex) {
+            return false;
+        }
     }
 
     @Test

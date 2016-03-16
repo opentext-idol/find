@@ -1,7 +1,6 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.error.Errors;
@@ -9,7 +8,6 @@ import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.users.UserNotCreatedException;
-import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.Test;
@@ -55,7 +53,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers));
 
 		usersPage.createUserButton().click();
-		verifyThat(PageUtil.isModalShowing(getDriver()), is(true));
+		verifyThat(usersPage, modalIsDisplayed());
 		usersPage.addNewUser(aNewUser, Role.USER);
 		usersPage.addNewUser(newUser2, Role.ADMIN);
 		usersPage.closeModal();

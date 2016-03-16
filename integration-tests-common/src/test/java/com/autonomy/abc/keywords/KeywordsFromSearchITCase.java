@@ -21,7 +21,7 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.PageUtil;
+import com.autonomy.abc.selenium.util.SOPageUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
@@ -201,7 +201,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         searchPage = keywordService.addSynonymGroup(synonymListBears);
 
         for (final String synonym : synonymListBears) {
-            assertThat(synonym + " included in title", PageUtil.getPageTitle(getDriver()),containsString(synonym));
+            assertThat(synonym + " included in title", SOPageUtil.getPageTitle(getDriver()),containsString(synonym));
             assertThat(synonym + " included in 'You searched for' section", searchPage.youSearchedFor(),hasItem(synonym));
             verifyThat(synonym + " synonym group complete in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym), containsItems(synonymListBears));
             verifyThat(searchPage.countSynonymLists(), is(1));

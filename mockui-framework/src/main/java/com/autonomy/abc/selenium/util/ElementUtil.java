@@ -88,23 +88,4 @@ public final class ElementUtil {
             element.sendKeys(Keys.BACK_SPACE);
         }
     }
-
-    public static void scrollIntoView(final WebElement element, final WebDriver driver) {
-        final JavascriptExecutor executor = (JavascriptExecutor) driver;
-        final int centre = element.getLocation().getY() + element.getSize().height / 2;
-        executor.executeScript("window.scrollTo(0, " + centre + " - Math.floor(window.innerHeight/2));");
-    }
-
-    public static void scrollIntoViewAndClick(final WebElement element, WebDriver driver) {
-        scrollIntoView(element, driver);
-        element.click();
-    }
-
-    public static void hover(WebElement element, WebDriver driver) {
-        Actions builder = new Actions(driver);
-        Dimension dimensions = element.getSize();
-        builder.moveToElement(element, dimensions.getWidth() / 2, dimensions.getHeight() / 2);
-        Action hover = builder.build();
-        hover.perform();
-    }
 }

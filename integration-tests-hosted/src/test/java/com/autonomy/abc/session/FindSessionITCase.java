@@ -8,7 +8,7 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,7 +80,7 @@ public class FindSessionITCase extends FindTestBase {
 
         deleteCookies();
 
-        ElementUtil.hover(relatedConcepts.get(0), getDriver());
+        DriverUtil.hover(getDriver(), relatedConcepts.get(0));
 
         Waits.loadOrFadeWait();
         verifyRefreshedSession();

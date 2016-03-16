@@ -3,10 +3,7 @@ package com.autonomy.abc.selenium.search;
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Locator;
-import com.autonomy.abc.selenium.util.Predicates;
-import com.autonomy.abc.selenium.util.Waits;
+import com.autonomy.abc.selenium.util.*;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -103,12 +100,12 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public void addDocToBucket(int docNumber) {
-		ElementUtil.scrollIntoView(searchResultCheckbox(docNumber), getDriver());
+		DriverUtil.scrollIntoView(getDriver(), searchResultCheckbox(docNumber));
 		searchResultCheckbox(docNumber).check();
 	}
 
 	public void removeDocFromBucket(int docNumber) {
-		ElementUtil.scrollIntoView(searchResultCheckbox(docNumber), getDriver());
+		DriverUtil.scrollIntoView(getDriver(), searchResultCheckbox(docNumber));
 		searchResultCheckbox(docNumber).uncheck();
 	}
 
@@ -129,7 +126,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public void deleteDocFromWithinBucket(final String docTitle) {
-		ElementUtil.scrollIntoView(promotionsBucket(), getDriver());
+		DriverUtil.scrollIntoView(getDriver(), promotionsBucket());
 		for (WebElement document : promotionsBucketWebElements()) {
 			if (document.getText().compareToIgnoreCase(docTitle) == 0) {
 				document.findElement(By.cssSelector(".fa-close")).click();
@@ -141,7 +138,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public void emptyBucket() {
-		ElementUtil.scrollIntoView(promotionsBucket(), getDriver());
+		DriverUtil.scrollIntoView(getDriver(), promotionsBucket());
 		for (final WebElement bucketItem : promotionsBucketWebElements()) {
 			bucketItem.findElement(By.cssSelector(".remove-bucket-item")).click();
 		}
@@ -163,7 +160,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public void switchResultsPage(Pagination pagination) {
-		ElementUtil.scrollIntoViewAndClick(resultsPaginationButton(pagination), getDriver());
+		DriverUtil.scrollIntoViewAndClick(getDriver(), resultsPaginationButton(pagination));
 		waitForSearchLoadIndicatorToDisappear();
 	}
 
@@ -231,7 +228,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	/* field text */
 	public WebElement fieldTextAddButton() {
 		WebElement addButton = findElement(By.xpath(".//button[contains(text(), 'FieldText Restriction')]"));
-		ElementUtil.scrollIntoView(addButton, getDriver());
+		DriverUtil.scrollIntoView(getDriver(), addButton);
 		return addButton;
 	}
 

@@ -23,7 +23,7 @@ import com.autonomy.abc.selenium.search.SOSearchResult;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
-import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -256,7 +256,7 @@ public class SearchPageITCase extends ABCTestBase {
 			for (int i = 1; i <= 3; i++) {
 				searchPage.addDocToBucket(i);
 				final String docTitle = searchPage.getSearchResult(i).getTitleString();
-				ElementUtil.scrollIntoViewAndClick(searchPage.promotionBucketElementByTitle(docTitle), getDriver());
+				DriverUtil.scrollIntoViewAndClick(getDriver(), searchPage.promotionBucketElementByTitle(docTitle));
 				checkViewResult();
 			}
 
