@@ -14,21 +14,8 @@ define([
         model: DocumentModel,
 
         parse: function(response) {
+            this.totalResults = response.totalResults;
             return response.documents;
-        },
-
-        initialize: function(models, options) {
-            this.indexes = options.indexes;
-            this.reference = options.reference;
-        },
-
-        fetch: function(options) {
-            return BaseCollection.prototype.fetch.call(this, _.extend(options || {}, {
-                data: {
-                    indexes: this.indexes,
-                    reference: this.reference
-                }
-            }));
         }
     });
 

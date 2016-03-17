@@ -15,15 +15,23 @@ define([
         VentConstructor.call(this, router);
     }
 
+    function suffixForDocument(documentModel) {
+        return [documentModel.get('index'), documentModel.get('reference')]
+            .map(encodeURIComponent)
+            .join('/');
+    }
+
     IdolVent.prototype = Object.create(VentConstructor.prototype);
 
     _.extend(IdolVent.prototype, {
         constructor: IdolVent,
 
-        navigateToDetailRoute: function (model) {
-            var database = encodeURIComponent(model.get('index'));
-            var reference = encodeURIComponent(model.get('reference'));
-            this.navigate('find/search/document/' + database + '/' + reference);
+        navigateToDetailRoute: function(model) {
+            this.navigate('find/search/document/' + suffixForDocument(model));
+        },
+
+        navigateToSuggestRoute: function(model) {
+            this.navigate('find/search/suggest/' + suffixForDocument(model));
         }
     });
 

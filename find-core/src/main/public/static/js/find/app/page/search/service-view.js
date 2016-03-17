@@ -7,14 +7,14 @@ define([
     'find/app/model/entity-collection',
     'find/app/model/query-model',
     'find/app/model/saved-searches/saved-search-model',
-    'find/app/model/comparisons/comparison-model',
     'find/app/model/search-filters-collection',
-    'find/app/model/comparisons/comparison-documents-collection',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/model/parametric-collection',
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/results/results-view',
+    'find/app/page/search/results/query-strategy',
+    'find/app/page/search/results/state-token-strategy',
     'find/app/page/search/results/results-view-augmentation',
     'find/app/page/search/results/results-view-container',
     'find/app/page/search/results/results-view-selection',
@@ -32,8 +32,8 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel, ComparisonModel, SearchFiltersCollection,
-            ComparisonDocumentsCollection, ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsView, ResultsViewAugmentation, 
+], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel, SearchFiltersCollection,
+            ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsView, queryStrategy, stateTokenStrategy, ResultsViewAugmentation,
             ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, relatedConceptsClickHandlers, SpellCheckView, SnapshotDataView, Collapsible,
             addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, i18nIndexes, template) {
 
@@ -94,7 +94,7 @@ define([
 
             this.queryModel = new QueryModel({
                 autoCorrect: searchType === SavedSearchModel.Type.QUERY,
-                stateTokens: searchType === SavedSearchModel.Type.SNAPSHOT ? this.savedSearchModel.get('stateTokens') : []
+                stateMatchIds: searchType === SavedSearchModel.Type.SNAPSHOT ? this.savedSearchModel.get('stateTokens') : []
             }, {queryState: this.queryState});
 
             this.listenTo(this.queryModel, 'change:indexes', function() {
@@ -226,8 +226,11 @@ define([
 
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], relatedConceptsView);
 
-            this.resultsView = new this.ResultsView(_.extend({
-                mode: searchType === SavedSearchModel.Type.QUERY ? ResultsView.Mode.QUERY : ResultsView.Mode.STATE_TOKEN
+            this.resultsView = new this.ResultsView(_.defaults({
+                enablePreview: true,
+                // TODO: Display promotions when QMS supports state tokens
+                displayPromotions: searchType === SavedSearchModel.Type.QUERY,
+                fetchStrategy: searchType === SavedSearchModel.Type.QUERY ? queryStrategy : stateTokenStrategy
             }, resultsViewConstructorArguments));
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({resultsView: this.resultsView});
@@ -285,7 +288,7 @@ define([
 
             this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
 
-            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'stateTokens'], this.fetchData);
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchData);
             this.fetchData();
         },
 
@@ -334,7 +337,7 @@ define([
                     fieldText: this.queryModel.get('fieldText'),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
-                    stateTokens: this.queryModel.get('stateTokens')
+                    stateTokens: this.queryModel.get('stateMatchIds')
                 };
 
                 this.entityCollection.fetch({data: data});

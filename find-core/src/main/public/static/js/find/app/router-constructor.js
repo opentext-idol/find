@@ -28,6 +28,10 @@ define([
             this.trigger('route:find', 'search');
         },
 
+        suggest: function() {
+            this.trigger('route:find', 'search');
+        },
+
         searchSplash: function() {
             this.trigger('route:find', 'search');
         }

@@ -7,13 +7,15 @@ define([
     'underscore',
     'find/app/router-constructor'
 ], function(_, RouterConstructor) {
+
     //noinspection LocalVariableNamingConventionJS
     var Router = RouterConstructor.extend({
-
         routes: _.extend({
-            'find/search/document/:database/:reference': 'documentDetail'
+            'find/search/document/:database/:reference': 'documentDetail',
+            'find/search/suggest/:database/:reference': 'suggest'
         }, RouterConstructor.prototype.routes)
     });
 
     return new Router();
+
 });

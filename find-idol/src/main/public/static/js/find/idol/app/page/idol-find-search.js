@@ -6,18 +6,27 @@
 define([
     'find/app/page/find-search',
     'find/idol/app/page/search/idol-service-view',
+    'find/idol/app/page/search/suggest/idol-suggest-view',
     'find/idol/app/page/search/saved-searches/comparison/idol-comparison-view'
-], function(FindSearch, ServiceView, ComparisonView) {
+], function(FindSearch, ServiceView, SuggestView, ComparisonView) {
     'use strict';
 
     return FindSearch.extend({
         ServiceView: ServiceView,
         ComparisonView: ComparisonView,
+        SuggestView: SuggestView,
 
         documentDetailOptions: function (database, reference) {
             return {
                 reference: reference,
                 database: database
+            };
+        },
+
+        suggestOptions: function (database, reference) {
+            return {
+                database: database,
+                reference: reference
             };
         }
     });

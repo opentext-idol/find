@@ -52,7 +52,7 @@ define([
     }
 
     /**
-     * Replace the placeholder highlighting tags and instances of the given entity titles with anchor tags in the summary.
+     * Replace the placeholder highlighting tags and instances of the given entity titles (if provided) with anchor tags in the summary.
      */
     return function addLinksToSummary(entityCollection, summary) {
         // Find highlighted query terms
@@ -77,14 +77,20 @@ define([
         var escapedSummary = escapedSummaryElements.join('');
 
         // Create an array of the entity titles, longest first
-        var entities = entityCollection.map(function(entity) {
-            return {
-                text: entity.get('text'),
-                id: _.uniqueId('Find-IOD-Entity-Placeholder')
-            };
-        }).sort(function(a, b) {
-            return b.text.length - a.text.length;
-        });
+        var entities;
+
+        if (entityCollection) {
+            entities = entityCollection.map(function(entity) {
+                return {
+                    text: entity.get('text'),
+                    id: _.uniqueId('Find-IOD-Entity-Placeholder')
+                };
+            }).sort(function(a, b) {
+                return b.text.length - a.text.length;
+            });
+        } else {
+            entities = [];
+        }
 
         // Loop through entities, replacing each with a unique id to prevent later replaces finding what we've
         // changed here and messing things up badly

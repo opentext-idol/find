@@ -15,16 +15,23 @@ define([
         VentConstructor.call(this, router);
     }
 
+    function suffixForDocument(documentModel) {
+        return [documentModel.get('domain'), documentModel.get('index'), documentModel.get('reference')]
+            .map(encodeURIComponent)
+            .join('/');
+    }
+
     HodVent.prototype = Object.create(VentConstructor.prototype);
 
     _.extend(HodVent.prototype, {
         constructor: HodVent,
 
-        navigateToDetailRoute: function (model) {
-            var domain = encodeURIComponent(model.get('domain'));
-            var index = encodeURIComponent(model.get('index'));
-            var reference = encodeURIComponent(model.get('reference'));
-            this.navigate('find/search/document/' + domain + '/' + index + '/' + reference);
+        navigateToDetailRoute: function(model) {
+            this.navigate('find/search/document/' + hodSuffixForDocument(model));
+        },
+
+        navigateToSuggestRoute: function(model) {
+            this.navigate('find/search/suggest/' + hodSuffixForDocument(model));
         }
     });
 

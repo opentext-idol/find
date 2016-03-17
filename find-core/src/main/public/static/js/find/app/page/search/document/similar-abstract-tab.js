@@ -7,10 +7,9 @@ define([
     'backbone',
     'underscore',
     'i18n!find/nls/bundle',
-    'find/app/model/similar-documents-collection',
     'find/app/vent',
     'text!find/templates/app/page/search/document/similar-documents-tab.html'
-], function(Backbone, _, i18n, SimilarDocumentsCollection, vent, template) {
+], function(Backbone, _, i18n, vent, template) {
     'use strict';
 
     return Backbone.View.extend({

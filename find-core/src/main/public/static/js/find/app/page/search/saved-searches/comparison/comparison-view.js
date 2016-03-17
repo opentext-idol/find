@@ -1,12 +1,13 @@
 define([
     'backbone',
-    'find/app/model/query-model',
+    'find/app/model/comparisons/comparison-documents-collection',
     'find/app/page/search/results/results-view',
+    'find/app/page/search/results/state-token-strategy',
     'text!find/templates/app/page/search/saved-searches/comparison/comparison-view.html',
     'text!find/templates/app/page/search/saved-searches/comparison/comparison-list-container.html',
     'find/app/util/search-data-util',
     'i18n!find/nls/bundle'
-], function (Backbone, QueryModel, ResultsView, template, comparisonListContainer, searchDataUtil, i18n) {
+], function (Backbone, ComparisonDocumentsCollection, ResultsView, stateTokenStrategy, template, comparisonListContainer, searchDataUtil, i18n) {
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -25,9 +26,9 @@ define([
             this.escapeCallback = options.escapeCallback;
 
             this.resultsLists = {
-                both: this.constructComparisonResultsView(this.model.get('documentsInBoth'), [this.searchModels.first, this.searchModels.second]),
-                first: this.constructComparisonResultsView(this.model.get('documentsOnlyInFirst'), [this.searchModels.first]),
-                second: this.constructComparisonResultsView(this.model.get('documentsOnlyInSecond'), [this.searchModels.second])
+                both: this.constructComparisonResultsView(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]),
+                first: this.constructComparisonResultsView(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]),
+                second: this.constructComparisonResultsView(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second])
             };
         },
 
@@ -67,19 +68,22 @@ define([
             _.invoke(this.resultsLists, 'render');
         },
 
-        constructComparisonResultsView: function (collection, searchModels) {
+        constructComparisonResultsView: function (queryText, stateTokens, searchModels) {
+            var collection = new ComparisonDocumentsCollection();
+
             var indexes = _.chain(searchModels).reduce(function(indexes, model) {
                 return indexes.concat(searchDataUtil.buildIndexes(model.get('indexes')));
             }, []).uniq().value();
 
+            var queryModel = new Backbone.Model(_.extend({
+                queryText: queryText,
+                indexes: indexes
+            }, stateTokens));
+
             return new this.ResultsView({
-                mode: ResultsView.Mode.STATE_TOKEN,
-                isComparisonView: true,
-                queryModel: new Backbone.Model({
-                    indexes: indexes
-                }),
-                entityCollection: new Backbone.Collection,
-                documentsCollection: collection
+                queryModel: queryModel,
+                documentsCollection: collection,
+                fetchStrategy: stateTokenStrategy
             });
         }
     });

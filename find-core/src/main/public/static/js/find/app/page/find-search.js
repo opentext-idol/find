@@ -39,7 +39,7 @@ define([
     var QUERY_TEXT_MODEL_ATTRIBUTES = ['inputText', 'relatedConcepts'];
 
     var html = _.template(template)({i18n: i18n});
-    
+
     function selectInitialIndexes(indexesCollection) {
         var privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
         var selectedIndexes;
@@ -55,6 +55,20 @@ define([
         });
     }
 
+    function fetchDocument(options, callback) {
+        var documentModel = new DocumentModel();
+
+        documentModel
+            .fetch({
+                data: {
+                    reference: options.reference,
+                    database: options.database
+                }
+            }).done(function() {
+                callback(documentModel);
+            });
+    }
+
     return BasePage.extend({
         className: 'search-page',
         template: _.template(template),
@@ -65,7 +79,9 @@ define([
         // Abstract
         ServiceView: null,
         ComparisonView: null,
+        SuggestView: null,
         documentDetailOptions: null,
+        suggestOptions: null,
 
         initialize: function() {
             this.savedQueryCollection = new SavedQueryCollection();
@@ -110,7 +126,7 @@ define([
                 }
             });
 
-            this.listenTo(this.savedSearchCollection, 'add', function (model) {
+            this.listenTo(this.savedSearchCollection, 'add', function(model) {
                 if (this.selectedTabModel.get('selectedCid') === null) {
                     this.selectedTabModel.set('selectedCid', model.cid);
                 }
@@ -144,8 +160,9 @@ define([
 
             this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
 
-            router.on('route:searchSplash', function() {
+            this.listenTo(router, 'route:searchSplash', function() {
                 this.selectedTabModel.set('selectedSearchCid', null);
+
                 this.searchModel.set({
                     inputText: '',
                     relatedConcepts: []
@@ -155,20 +172,20 @@ define([
             }, this);
 
             // Bind routing to search model
-            router.on('route:search', function(text) {
+            this.listenTo(router, 'route:search', function(text) {
                 this.removeDocumentDetailView();
 
                 this.searchModel.set({
                     inputText: text || ''
                 });
 
-                if(this.isExpanded()) {
+                if (this.isExpanded()) {
                     this.$('.service-view-container').addClass('hide');
                     this.$('.query-service-view-container').removeClass('hide');
                 }
             }, this);
 
-            router.on('route:documentDetail', function () {
+            this.listenTo(router, 'route:documentDetail', function() {
                 this.expandedState();
                 this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
@@ -176,7 +193,36 @@ define([
                 this.removeDocumentDetailView();
 
                 var options = this.documentDetailOptions.apply(this, arguments);
-                this.populateDocumentModelForDetailView(options);
+
+                fetchDocument(options, function(documentModel) {
+                    this.documentDetailView = new DocumentDetailView({
+                        backUrl: this.generateURL(),
+                        model: documentModel,
+                        indexesCollection: this.indexesCollection
+                    });
+
+                    this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
+                    this.documentDetailView.render();
+                }.bind(this));
+            }, this);
+
+            this.listenTo(router, 'route:suggest', function() {
+                this.expandedState();
+                this.$('.service-view-container').addClass('hide');
+                this.$('.suggest-service-view-container').removeClass('hide');
+
+                var options = this.suggestOptions.apply(this, arguments);
+
+                fetchDocument(options, function(documentModel) {
+                    this.suggestView = new this.SuggestView({
+                        backUrl: this.generateURL(),
+                        documentModel: documentModel,
+                        indexesCollection: this.indexesCollection
+                    });
+
+                    this.$('.suggest-service-view-container').append(this.suggestView.$el);
+                    this.suggestView.render();
+                }.bind(this));
             }, this);
         },
 
@@ -235,10 +281,7 @@ define([
                 } else {
                     var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
 
-                    var documentsCollection = searchType === SavedSearchModel.Type.QUERY ? new DocumentsCollection() : new ComparisonDocumentsCollection([], {
-                        text: queryTextModel.makeQueryText(),
-                        stateMatchIds: savedSearchModel.get('stateTokens')
-                    });
+                    var documentsCollection = searchType === SavedSearchModel.Type.QUERY ? new DocumentsCollection() : new ComparisonDocumentsCollection();
 
                     var queryState = {
                         queryTextModel: queryTextModel,
@@ -279,7 +322,24 @@ define([
                             savedQueryCollection: this.savedQueryCollection,
                             queryState: queryState,
                             savedSearchModel: savedSearchModel,
-                            comparisonSuccessCallback: _.bind(this.comparisonSuccessCallback, this)
+                            comparisonSuccessCallback: function(model, searchModels) {
+                                this.removeComparisonView();
+
+                                this.$('.service-view-container').addClass('hide');
+                                this.$('.comparison-service-view-container').removeClass('hide');
+
+                                this.comparisonView = new this.ComparisonView({
+                                    model: model,
+                                    searchModels: searchModels,
+                                    escapeCallback: function() {
+                                        this.removeComparisonView();
+                                        this.$('.service-view-container').addClass('hide');
+                                        this.$('.query-service-view-container').removeClass('hide');
+                                    }.bind(this)
+                                });
+
+                                this.comparisonView.setElement(this.$('.comparison-service-view-container')).render();
+                            }.bind(this)
                         })
                     };
 
@@ -318,7 +378,7 @@ define([
         generateURL: function() {
             var inputText = this.searchModel.get('inputText');
 
-            if(this.searchModel.isEmpty()) {
+            if (this.searchModel.isEmpty()) {
                 if (this.selectedTabModel.get('selectedSearchCid')) {
                     return 'find/search/query';
                 } else {
@@ -340,6 +400,7 @@ define([
             this.$('.see-all-documents').addClass('hide');
 
             this.removeDocumentDetailView();
+            this.removeSuggestView();
 
             this.inputView.unFocus();
             this.$('.find-banner-container').addClass('hide');
@@ -358,6 +419,7 @@ define([
             this.$('.see-all-documents').removeClass('hide');
 
             this.removeDocumentDetailView();
+            this.removeSuggestView();
 
             this.inputView.focus();
             this.$('.find-banner-container').removeClass('hide');
@@ -370,28 +432,6 @@ define([
             return this.$('.find').hasClass(expandedClasses);
         },
 
-        // If we already have the document model in one of our collections, then don't bother fetching it
-        populateDocumentModelForDetailView: function (options) {
-            new DocumentModel().fetch({
-                data: {
-                    reference: options.reference,
-                    database: options.database
-                },
-                success: _.bind(this.renderDocumentDetail, this)
-            });
-        },
-
-        renderDocumentDetail: function(model) {
-            this.documentDetailView = new DocumentDetailView({
-                backUrl: this.generateURL(),
-                model: model,
-                indexesCollection: this.indexesCollection
-            });
-
-            this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
-            this.documentDetailView.render();
-        },
-
         removeDocumentDetailView: function() {
             if (this.documentDetailView) {
                 this.documentDetailView.remove();
@@ -400,8 +440,8 @@ define([
             }
         },
 
-        clearComparison: function() {
-            if(this.comparisonView) {
+        removeComparisonView: function() {
+            if (this.comparisonView) {
                 // Setting the element to nothing prevents the containing element from being removed when the view is removed
                 this.comparisonView.setElement();
                 this.comparisonView.remove();
@@ -410,26 +450,17 @@ define([
             }
         },
 
-        comparisonSuccessCallback: function(model, searchModels) {
-            this.clearComparison();
-
-            this.$('.service-view-container').addClass('hide');
-            this.$('.comparison-service-view-container').removeClass('hide');
-
-            this.comparisonView = new this.ComparisonView({
-                model: model,
-                searchModels: searchModels,
-                escapeCallback: _.bind(this.comparisonEscapeCallback, this)
-            });
-
-            this.comparisonView.setElement(this.$('.comparison-service-view-container')).render();
+        removeSuggestView: function() {
+            if (this.suggestView) {
+                this.suggestView.remove();
+                this.stopListening(this.suggestView);
+                this.suggestView = null;
+            }
         },
 
-        comparisonEscapeCallback: function() {
-            this.clearComparison();
-
-            this.$('.service-view-container').addClass('hide');
-            this.$('.query-service-view-container').removeClass('hide');
+        remove: function() {
+            this.removeDocumentDetailView();
+            this.removeComparisonView();
         }
     });
 });

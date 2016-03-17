@@ -165,6 +165,7 @@ define([
         'search.snapshot.restrictions.queryText': 'Query Text',
         'search.snapshot.restrictions.relatedConcepts': 'Also searching for',
         'search.snapshot.restrictionsTitle': 'Query Restrictions',
+        'search.suggest.title': 'Similar results to "{0}"',
         'search.topicMap.clustering': 'Clustering Mode',
         'search.topicMap.empty': 'No topics found for this query',
         'search.topicMap.error': 'An error occurred retrieving topics for this search',

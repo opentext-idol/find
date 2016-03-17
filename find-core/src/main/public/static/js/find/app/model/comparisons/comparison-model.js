@@ -6,9 +6,8 @@
 define([
     'backbone',
     'find/app/util/search-data-util',
-    'find/app/model/comparisons/comparison-documents-collection',
     'find/app/model/saved-searches/saved-search-model'
-], function(Backbone, searchDataUtil, ComparisonDocumentsCollection, SavedSearchModel) {
+], function(Backbone, searchDataUtil, SavedSearchModel) {
 
     var getComparisonAttributesFromSavedSearch = function(savedSearchModel, prefix) {
         var data = {};
@@ -29,23 +28,22 @@ define([
 
         parse: function(response) {
             return {
-                documentsInBoth: new ComparisonDocumentsCollection([], {
-                    text: '(' + this.get('firstText') + ') OR (' + this.get('secondText') + ')',
+                bothText: '(' + this.get('firstText') + ') OR (' + this.get('secondText') + ')',
+
+                inBoth: {
                     stateMatchIds: _.compact([response.firstQueryStateToken, response.secondQueryStateToken]),
                     stateDontMatchIds: _.compact([response.documentsOnlyInFirstStateToken, response.documentsOnlyInSecondStateToken])
-                }),
+                },
 
-                documentsOnlyInFirst: new ComparisonDocumentsCollection([], {
-                    text: this.get('firstText'),
+                onlyInFirst: {
                     stateMatchIds: _.compact([response.firstQueryStateToken]),
                     stateDontMatchIds: _.compact([response.secondQueryStateToken])
-                }),
+                },
 
-                documentsOnlyInSecond: new ComparisonDocumentsCollection([], {
-                    text: this.get('secondText'),
+                onlyInSecond: {
                     stateMatchIds: _.compact([response.secondQueryStateToken]),
                     stateDontMatchIds: _.compact([response.firstQueryStateToken])
-                })
+                }
             };
         }
     }, {

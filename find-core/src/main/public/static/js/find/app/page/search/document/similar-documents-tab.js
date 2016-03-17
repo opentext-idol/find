@@ -4,20 +4,33 @@
  */
 
 define([
+    'underscore',
+    'find/app/vent',
     'find/app/model/similar-documents-collection',
     'find/app/page/search/document/similar-abstract-tab'
-
-], function(SimilarDocumentsCollection, SimilarAbstractTab) {
+], function(_, vent, SimilarDocumentsCollection, SimilarAbstractTab) {
     'use strict';
 
     return SimilarAbstractTab.extend({
+        events: _.extend({
+            'click .similar-documents-tab-see-more': function() {
+                vent.navigateToSuggestRoute(this.model);
+            }
+        }, SimilarAbstractTab.prototype.events),
+
         createCollection: function() {
-            return new SimilarDocumentsCollection([], {
-                indexes: this.indexesCollection.pluck('id'),
-                reference: this.model.get('reference')
-            });
+            return new SimilarDocumentsCollection();
         },
 
-        fetchData: function() { return {} }
+        fetchData: function() {
+            return {
+                max_results: 3,
+                start: 1,
+                summary: 'context',
+                indexes: this.indexesCollection.pluck('id'),
+                reference: this.model.get('reference'),
+                highlight: false
+            };
+        }
     });
 });

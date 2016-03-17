@@ -107,13 +107,29 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
 
     @RequestMapping(value = SIMILAR_DOCUMENTS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public Documents<R> findSimilar(@RequestParam(REFERENCE_PARAM) final String reference, @RequestParam(INDEXES_PARAM) final List<S> indexes) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(null, null, indexes != null ? indexes : Collections.<S>emptyList(), null, null, Collections.<String>emptyList(), Collections.<String>emptyList());
-        final SuggestRequest<S> suggestRequest = new SuggestRequest<>();
-        suggestRequest.setQueryRestrictions(queryRestrictions);
-        suggestRequest.setReference(reference);
-        suggestRequest.setSummary("concept");
-        suggestRequest.setMaxResults(FIND_SIMILAR_MAX_RESULTS);
+    public Documents<R> findSimilar(
+            @RequestParam(REFERENCE_PARAM) final String reference,
+            @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
+            @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
+            @RequestParam(SUMMARY_PARAM) final String summary,
+            @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
+            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(value = SORT_PARAM, required = false) final String sort,
+            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+            @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight
+    ) throws E {
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(
+                null,
+                fieldText,
+                databases != null ? databases : Collections.<S>emptyList(),
+                minDate,
+                maxDate,
+                Collections.<String>emptyList(),
+                Collections.<String>emptyList()
+        );
+
+        final SuggestRequest<S> suggestRequest = new SuggestRequest<>(reference, queryRestrictions, resultsStart, maxResults, summary, MAX_SUMMARY_CHARACTERS, sort, highlight);
         return documentsService.findSimilar(suggestRequest);
     }
 

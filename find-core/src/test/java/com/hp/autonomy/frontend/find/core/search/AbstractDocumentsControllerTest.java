@@ -50,7 +50,7 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, R 
     @Test
     public void findSimilar() throws E {
         final String reference = "SomeReference";
-        documentsController.findSimilar(reference, Collections.<S>emptyList());
+        documentsController.findSimilar(reference, 1, 3, "context", Collections.<S>emptyList(), null, null, null, null, false);
         verify(documentsService).findSimilar(Matchers.<SuggestRequest<S>>any());
     }
 
