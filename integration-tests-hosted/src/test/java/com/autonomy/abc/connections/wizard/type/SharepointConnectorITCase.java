@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -16,7 +17,6 @@ import java.util.Arrays;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
@@ -61,11 +61,11 @@ public class SharepointConnectorITCase extends HostedTestBase {
         FormInput emailInput = cc.notificationEmailInput();
 
         for(FormInput input : Arrays.asList(cc.userNameInput(), cc.passwordInput(), emailInput)){
-            verifyThat(input.getElement(), hasClass("ng-invalid-required"));
+            verifyThat(input.getErrorMessage(), is("Required"));
         }
 
         emailInput.setValue("abc123");
-        verifyThat(emailInput.getElement(), hasClass("ng-invalid-email"));
+        verifyThat(emailInput.getErrorMessage(), is("Invalid Value"));
 
         wizard.getCurrentStep().apply();
         wizard.next();
@@ -74,6 +74,7 @@ public class SharepointConnectorITCase extends HostedTestBase {
     }
 
     @Test
+    @Ignore("Can't create sharepoint connectors")
     public void testCreated(){
         connector.makeWizard(newConnectionPage).apply();
 

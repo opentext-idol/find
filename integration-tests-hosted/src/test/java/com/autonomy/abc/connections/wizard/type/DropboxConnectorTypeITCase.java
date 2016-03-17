@@ -20,6 +20,7 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -58,11 +59,11 @@ public class DropboxConnectorTypeITCase extends ConnectorTypeStepBase {
         FormInput emailInput = cc.notificationEmailInput();
 
         for (FormInput input : Arrays.asList(cc.applicationKeyInput(), cc.accessTokenInput(), emailInput)) {
-            verifyThat(input.getElement(), hasClass("ng-invalid-required"));
+            verifyThat(input.getErrorMessage(), is("Required"));
         }
 
         emailInput.setValue("abc123");
-        verifyThat(emailInput.getElement(), hasClass("ng-invalid-email"));
+        verifyThat(emailInput.getErrorMessage(), is("Invalid Value"));
 
         wizard.getCurrentStep().apply();
         wizard.next();
