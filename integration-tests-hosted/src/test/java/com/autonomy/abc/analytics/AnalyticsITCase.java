@@ -29,8 +29,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.hasItemThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsTextIgnoringCase;
 import static org.hamcrest.Matchers.*;

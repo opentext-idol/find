@@ -29,7 +29,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;

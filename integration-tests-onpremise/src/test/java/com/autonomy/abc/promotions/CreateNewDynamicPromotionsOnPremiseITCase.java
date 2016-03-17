@@ -1,7 +1,7 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.ABCTearDown;
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTearDown;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
@@ -22,7 +22,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
@@ -30,7 +30,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
+public class CreateNewDynamicPromotionsOnPremiseITCase extends SOTestBase {
 
 	public CreateNewDynamicPromotionsOnPremiseITCase(final TestConfig config) {
 		super(config);
@@ -52,7 +52,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 
 	@After
 	public void tearDown(){
-		ABCTearDown.PROMOTIONS.tearDown(this);
+		SOTearDown.PROMOTIONS.tearDown(this);
 	}
 
 	@Test

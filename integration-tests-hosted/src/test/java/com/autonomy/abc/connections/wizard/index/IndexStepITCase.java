@@ -16,7 +16,7 @@ import org.openqa.selenium.WebElement;
 
 import java.io.Serializable;
 
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;

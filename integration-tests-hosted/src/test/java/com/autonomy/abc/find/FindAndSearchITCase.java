@@ -26,8 +26,8 @@ import org.openqa.selenium.WebElement;
 import java.awt.*;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;

@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.not;

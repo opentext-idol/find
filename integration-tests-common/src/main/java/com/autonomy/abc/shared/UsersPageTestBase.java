@@ -1,7 +1,7 @@
 package com.autonomy.abc.shared;
 
-import com.autonomy.abc.config.ABCTearDown;
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTearDown;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.LoginService;
 import com.autonomy.abc.selenium.control.Window;
@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.util.NoSuchElementException;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.modalIsDisplayed;
@@ -27,7 +27,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
+public class UsersPageTestBase<T extends NewUser> extends SOTestBase {
     protected final NewUser aNewUser = getConfig().getNewUser("james");
     protected final NewUser newUser2 = getConfig().getNewUser("john");
     protected int defaultNumberOfUsers = isHosted() ? 0 : 1;
@@ -67,7 +67,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
 
     @After
     public void userTearDown() {
-        ABCTearDown.USERS.tearDown(this);
+        SOTearDown.USERS.tearDown(this);
     }
 
     protected User singleSignUp() {

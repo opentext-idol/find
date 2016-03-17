@@ -1,6 +1,6 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.config.ABCTearDown;
+import com.autonomy.abc.config.SOTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.everyItem;
@@ -73,12 +73,12 @@ public class AnalyticsE2EITCase extends HostedTestBase {
 
     @After
     public void tearDownKeywords() {
-        ABCTearDown.KEYWORDS.tearDown(this);
+        SOTearDown.KEYWORDS.tearDown(this);
     }
 
     @After
     public void tearDownPromotions() {
-        ABCTearDown.PROMOTIONS.tearDown(this);
+        SOTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

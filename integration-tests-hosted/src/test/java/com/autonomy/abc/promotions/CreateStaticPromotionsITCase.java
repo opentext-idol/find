@@ -1,6 +1,6 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.ABCTearDown;
+import com.autonomy.abc.config.SOTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
@@ -15,8 +15,8 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
 
@@ -48,7 +48,7 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        ABCTearDown.PROMOTIONS.tearDown(this);
+        SOTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

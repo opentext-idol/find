@@ -1,6 +1,6 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
@@ -21,12 +21,12 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 
-public class PromotionsPageOnPremiseITCase extends ABCTestBase {
+public class PromotionsPageOnPremiseITCase extends SOTestBase {
 
 	public PromotionsPageOnPremiseITCase(final TestConfig config) {
 		super(config);

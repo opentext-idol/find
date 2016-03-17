@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.util.*;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
@@ -50,7 +50,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class SearchPageITCase extends ABCTestBase {
+public class SearchPageITCase extends SOTestBase {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private SearchPage searchPage;
 	private TopNavBar topNavBar;

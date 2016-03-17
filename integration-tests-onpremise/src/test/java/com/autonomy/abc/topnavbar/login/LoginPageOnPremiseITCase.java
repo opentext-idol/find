@@ -1,6 +1,6 @@
 package com.autonomy.abc.topnavbar.login;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import com.autonomy.abc.selenium.users.OPAccount;
@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.hasAttribute;
@@ -32,7 +32,7 @@ import static com.autonomy.abc.matchers.ElementMatchers.modalIsDisplayed;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
-public class LoginPageOnPremiseITCase extends ABCTestBase {
+public class LoginPageOnPremiseITCase extends SOTestBase {
 
 	public LoginPageOnPremiseITCase(final TestConfig config) {
 		super(config);

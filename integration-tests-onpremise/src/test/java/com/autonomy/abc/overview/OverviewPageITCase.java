@@ -1,6 +1,6 @@
 package com.autonomy.abc.overview;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.analytics.OverviewPage;
 import com.autonomy.abc.selenium.application.ApplicationType;
@@ -22,12 +22,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.*;
 
-public class OverviewPageITCase extends ABCTestBase {
+public class OverviewPageITCase extends SOTestBase {
 
 	public OverviewPageITCase(final TestConfig config) {
 		super(config);

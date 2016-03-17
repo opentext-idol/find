@@ -1,6 +1,6 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.Editable;
@@ -16,11 +16,11 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
 
-public class PromotionDetailPageITCase extends ABCTestBase {
+public class PromotionDetailPageITCase extends SOTestBase {
 
     private SearchService searchService;
     private PromotionService<?> promotionService;

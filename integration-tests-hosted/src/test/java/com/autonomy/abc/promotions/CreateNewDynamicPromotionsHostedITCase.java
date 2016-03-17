@@ -1,6 +1,6 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.ABCTearDown;
+import com.autonomy.abc.config.SOTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.TriggerForm;
@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
@@ -38,7 +38,7 @@ public class CreateNewDynamicPromotionsHostedITCase extends HostedTestBase {
 
     @After
     public void tearDown(){
-        ABCTearDown.PROMOTIONS.tearDown(this);
+        SOTearDown.PROMOTIONS.tearDown(this);
     }
 
     // TODO: is there a nicer way to share this without

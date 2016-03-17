@@ -1,6 +1,6 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.HostAndPorts;
@@ -19,12 +19,12 @@ import org.openqa.selenium.WebElement;
 import java.io.IOException;
 import java.util.*;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 
-public class SettingsPageITCase extends ABCTestBase {
+public class SettingsPageITCase extends SOTestBase {
 	private final static Map<SettingsPage.Panel, HostAndPorts> HOSTS_AND_PORTS;
 	private final static EnumSet<SettingsPage.Panel> SERVER_PANELS = EnumSet.of(SettingsPage.Panel.COMMUNITY, SettingsPage.Panel.CONTENT, SettingsPage.Panel.QMS, SettingsPage.Panel.QMS_AGENTSTORE, SettingsPage.Panel.STATSSERVER, SettingsPage.Panel.VIEW);
 

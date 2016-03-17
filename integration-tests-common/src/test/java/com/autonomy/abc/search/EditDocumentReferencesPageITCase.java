@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.shared.SharedPreviewTests;
 import com.autonomy.abc.framework.KnownBug;
@@ -24,13 +24,13 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 
-public class EditDocumentReferencesPageITCase extends ABCTestBase {
+public class EditDocumentReferencesPageITCase extends SOTestBase {
 
     public EditDocumentReferencesPageITCase(final TestConfig config) {
         super(config);

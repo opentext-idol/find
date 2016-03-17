@@ -1,8 +1,8 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.shared.SharedTriggerTests;
-import com.autonomy.abc.config.ABCTearDown;
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTearDown;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
@@ -27,15 +27,15 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 
-public class CreateNewPromotionsITCase extends ABCTestBase {
+public class CreateNewPromotionsITCase extends SOTestBase {
 
     public CreateNewPromotionsITCase(final TestConfig config) {
         super(config);
@@ -83,7 +83,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @After
     public void cleanUp() {
-        ABCTearDown.PROMOTIONS.tearDown(this);
+        SOTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

@@ -42,8 +42,8 @@ import org.openqa.selenium.*;
 
 import java.util.*;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;

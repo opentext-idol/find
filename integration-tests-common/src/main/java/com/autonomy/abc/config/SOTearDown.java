@@ -3,22 +3,22 @@ package com.autonomy.abc.config;
 import com.autonomy.abc.selenium.application.LoginService;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 
-public enum ABCTearDown implements TearDown<ABCTestBase> {
+public enum SOTearDown implements TearDown<SOTestBase> {
     KEYWORDS {
         @Override
-        void tearDownSafely(ABCTestBase test) {
+        void tearDownSafely(SOTestBase test) {
             test.getApplication().keywordService().deleteAll(KeywordFilter.ALL);
         }
     },
     PROMOTIONS {
         @Override
-        void tearDownSafely(ABCTestBase test) {
+        void tearDownSafely(SOTestBase test) {
             test.getApplication().promotionService().deleteAll();
         }
     },
     USERS {
         @Override
-        void tearDownSafely(ABCTestBase test) {
+        void tearDownSafely(SOTestBase test) {
             LoginService service = test.getApplication().loginService();
             if (service.getCurrentUser() == null) {
                 service.login(test.getInitialUser());
@@ -30,10 +30,10 @@ public enum ABCTearDown implements TearDown<ABCTestBase> {
         }
     };
 
-    abstract void tearDownSafely(ABCTestBase test);
+    abstract void tearDownSafely(SOTestBase test);
 
     @Override
-    public void tearDown(ABCTestBase test) {
+    public void tearDown(SOTestBase test) {
         if (test.hasSetUp()) {
             tearDownSafely(test);
         }

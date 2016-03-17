@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 
 public class DevConsoleITCase extends SeleniumTest<DevConsole, DevConsoleElementFactory> {

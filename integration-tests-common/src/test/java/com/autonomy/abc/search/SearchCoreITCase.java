@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.categories.CoreFeature;
@@ -8,12 +8,12 @@ import com.autonomy.abc.selenium.search.SearchPage;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 
 @Category(CoreFeature.class)
-public class SearchCoreITCase extends ABCTestBase {
+public class SearchCoreITCase extends SOTestBase {
 
     public SearchCoreITCase(TestConfig config) {
         super(config);

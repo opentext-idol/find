@@ -13,7 +13,7 @@ import java.util.Collections;
 
 @Ignore
 @RunWith(Parameterized.class)
-public abstract class HostedTestBase extends ABCTestBase {
+public abstract class HostedTestBase extends SOTestBase {
     public HostedTestBase(TestConfig config) {
         super(config);
     }

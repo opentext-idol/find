@@ -18,7 +18,7 @@ import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.search.HSODSearchPage;
-import com.autonomy.abc.selenium.users.AbcHasLoggedIn;
+import com.autonomy.abc.selenium.users.SOHasLoggedIn;
 import com.autonomy.abc.selenium.users.HSODDevelopersPage;
 import com.autonomy.abc.selenium.users.HSODUsersPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
@@ -30,7 +30,7 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
     LOGIN(new ParametrizedFactory<WebDriver, HSOLoginPage>() {
         @Override
         public HSOLoginPage create(WebDriver context) {
-            return new HSOLoginPage(context, new AbcHasLoggedIn(context));
+            return new HSOLoginPage(context, new SOHasLoggedIn(context));
         }
     }, HSOLoginPage.class),
 

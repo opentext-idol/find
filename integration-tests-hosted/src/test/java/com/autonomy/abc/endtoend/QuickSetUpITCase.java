@@ -1,6 +1,6 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.config.ABCTearDown;
+import com.autonomy.abc.config.SOTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
@@ -23,7 +23,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
 
@@ -47,7 +47,7 @@ public class QuickSetUpITCase extends HostedTestBase {
 
     @After
     public void tearDown(){
-        ABCTearDown.PROMOTIONS.tearDown(this);
+        SOTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

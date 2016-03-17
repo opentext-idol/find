@@ -7,10 +7,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class AbcHasLoggedIn implements HasLoggedIn {
+public class SOHasLoggedIn implements HasLoggedIn {
     private final WebDriver driver;
 
-    public AbcHasLoggedIn(final WebDriver driver) {
+    public SOHasLoggedIn(final WebDriver driver) {
         this.driver = driver;
     }
 

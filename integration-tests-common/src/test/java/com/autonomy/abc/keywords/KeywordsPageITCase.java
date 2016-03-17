@@ -1,7 +1,7 @@
 package com.autonomy.abc.keywords;
 
-import com.autonomy.abc.config.ABCTearDown;
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTearDown;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
@@ -31,8 +31,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.MalformedURLException;
 import java.util.*;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
@@ -41,7 +41,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class KeywordsPageITCase extends ABCTestBase {
+public class KeywordsPageITCase extends SOTestBase {
 	private KeywordsPage keywordsPage;
 	private SearchPage searchPage;
 	private NotificationsDropDown notifications;
@@ -59,7 +59,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	@After
 	public void tearDown() {
-		ABCTearDown.KEYWORDS.tearDown(this);
+		SOTearDown.KEYWORDS.tearDown(this);
 	}
 
 	@Test

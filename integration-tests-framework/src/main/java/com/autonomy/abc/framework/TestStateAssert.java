@@ -6,7 +6,7 @@ import org.hamcrest.StringDescription;
 
 import static org.hamcrest.Matchers.is;
 
-public class ABCAssert {
+public class TestStateAssert {
     private static TestState testState = TestState.get();
 
     public static <T> void assertThat(T actual, Matcher<? super T> matcher) {

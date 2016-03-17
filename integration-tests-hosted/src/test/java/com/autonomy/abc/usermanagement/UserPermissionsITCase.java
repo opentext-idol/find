@@ -1,7 +1,7 @@
 package com.autonomy.abc.usermanagement;
 
-import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
+import com.autonomy.abc.config.SOTearDown;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
@@ -43,8 +43,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.containsString;
@@ -104,7 +104,7 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     @After
     public void tearDown(){
-        ABCTearDown.USERS.tearDown(this);
+        SOTearDown.USERS.tearDown(this);
         authStrategy.cleanUp(getDriver());
     }
 

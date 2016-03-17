@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
@@ -16,12 +16,12 @@ import org.junit.Test;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 
-public class SearchErrorMessageITCase extends ABCTestBase {
+public class SearchErrorMessageITCase extends SOTestBase {
     private SearchService searchService;
 
     public SearchErrorMessageITCase(TestConfig config) {

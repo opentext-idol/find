@@ -16,8 +16,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;

@@ -1,6 +1,6 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.iso.AboutPage;
@@ -13,11 +13,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 
 
-public class AboutPageITCase extends ABCTestBase {
+public class AboutPageITCase extends SOTestBase {
 
 	public AboutPageITCase(final TestConfig config) {
 		super(config);

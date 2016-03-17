@@ -1,6 +1,6 @@
 package com.autonomy.abc.shared;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
@@ -8,10 +8,10 @@ import com.autonomy.abc.selenium.menu.TopNavBar;
 import org.junit.Before;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class NotificationsDropDownTestBase extends ABCTestBase {
+public class NotificationsDropDownTestBase extends SOTestBase {
     protected com.autonomy.abc.selenium.menu.NotificationsDropDown notifications;
     protected KeywordsPage keywordsPage;
     protected TopNavBar topNavBar;

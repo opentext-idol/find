@@ -1,6 +1,6 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.config.ABCTearDown;
+import com.autonomy.abc.config.SOTearDown;
 import com.autonomy.abc.config.HSODTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
@@ -26,8 +26,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
@@ -56,7 +56,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        ABCTearDown.PROMOTIONS.tearDown(this);
+        SOTearDown.PROMOTIONS.tearDown(this);
     }
 
     @After

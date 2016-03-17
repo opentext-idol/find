@@ -16,7 +16,7 @@ import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 

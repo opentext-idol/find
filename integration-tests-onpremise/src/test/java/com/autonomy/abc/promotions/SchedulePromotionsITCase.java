@@ -1,6 +1,6 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
@@ -25,14 +25,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class SchedulePromotionsITCase extends ABCTestBase {
+public class SchedulePromotionsITCase extends SOTestBase {
 
 	public SchedulePromotionsITCase(final TestConfig config) {
 		super(config);

@@ -12,11 +12,11 @@ import static org.junit.Assert.fail;
 
 @Ignore
 @RunWith(Parameterized.class)
-public abstract class ABCTestBase extends SeleniumTest<SearchOptimizerApplication<?>, SOElementFactory> {
+public abstract class SOTestBase extends SeleniumTest<SearchOptimizerApplication<?>, SOElementFactory> {
 	private User initialUser;
 	private boolean hasSetUp = false;
 
-	public ABCTestBase(final TestConfig config) {
+	public SOTestBase(final TestConfig config) {
 		super(config, SearchOptimizerApplication.ofType(config.getType()));
 		this.initialUser = config.getDefaultUser();
 	}
@@ -29,7 +29,7 @@ public abstract class ABCTestBase extends SeleniumTest<SearchOptimizerApplicatio
 	}
 
 	@Before
-	public final void abcSetUp() {
+	public final void maybeLogIn() {
 		if (!initialUser.equals(User.NULL)) {
 			try {
 				getApplication().loginService().login(initialUser);

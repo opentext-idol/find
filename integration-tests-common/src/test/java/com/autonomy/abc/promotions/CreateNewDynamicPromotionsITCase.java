@@ -1,8 +1,8 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.shared.SharedTriggerTests;
-import com.autonomy.abc.config.ABCTearDown;
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTearDown;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.TriggerForm;
@@ -17,12 +17,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
 
-public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
+public class CreateNewDynamicPromotionsITCase extends SOTestBase {
 
     private SearchPage searchPage;
     private PromotionsPage promotionsPage;
@@ -46,7 +46,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
     @After
     public void tearDown(){
-        ABCTearDown.PROMOTIONS.tearDown(this);
+        SOTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

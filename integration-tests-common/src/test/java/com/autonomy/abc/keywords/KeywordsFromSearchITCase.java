@@ -1,7 +1,7 @@
 package com.autonomy.abc.keywords;
 
-import com.autonomy.abc.config.ABCTearDown;
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SOTearDown;
+import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
@@ -41,8 +41,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
@@ -53,7 +53,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class KeywordsFromSearchITCase extends ABCTestBase {
+public class KeywordsFromSearchITCase extends SOTestBase {
     private CreateNewKeywordsPage createKeywordsPage;
     private SearchPage searchPage;
     private KeywordsPage keywordsPage;
@@ -74,7 +74,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
     @After
     public void tearDown() {
-        ABCTearDown.KEYWORDS.tearDown(this);
+        SOTearDown.KEYWORDS.tearDown(this);
     }
 
     //Blacklisted terms can be created on the searchpage. This link has often broken
