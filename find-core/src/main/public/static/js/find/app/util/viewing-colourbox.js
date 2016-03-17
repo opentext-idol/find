@@ -18,7 +18,7 @@ define([
     'use strict';
 
     var SIZE = '90%';
-    var window = $(window);
+    var $window = $(window);
     var isUrlRegex = /^https?:\/\//;
 
     var documentContentTemplate = _.template(documentContentTemplateString);
@@ -52,7 +52,7 @@ define([
             rel: options.grouping,
             width: '70%',
             onClosed: function () {
-                window.off('resize', onResize);
+                $window.off('resize', onResize);
             },
             onComplete: _.bind(function () {
                 $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
@@ -72,7 +72,7 @@ define([
                 // a very quick response (such as an error) before the listener is attached
                 $iframe.attr("src", options.href);
 
-                window.resize(onResize);
+                $window.resize(onResize);
             }, this)
         };
 
