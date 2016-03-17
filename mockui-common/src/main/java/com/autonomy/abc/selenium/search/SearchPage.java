@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -43,7 +44,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	// "Results for _____ (123)"
 	public String getHeadingSearchTerm() {
 		WebElement heading = getDriver().findElement(By.cssSelector(".heading > b"));
-		ElementUtil.scrollIntoView(heading, getDriver());
+		DriverUtil.scrollIntoView(getDriver(), heading);
 		return heading.getText();
 	}
 
@@ -165,7 +166,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		}
 
 		if (fullList && ElementUtil.isEnabled(promotionPaginationButton(Pagination.FIRST))) {
-			ElementUtil.scrollIntoViewAndClick(promotionPaginationButton(Pagination.FIRST), getDriver());
+			DriverUtil.scrollIntoViewAndClick(getDriver(), promotionPaginationButton(Pagination.FIRST));
 		}
 
 		promotionsList.addAll(getVisiblePromotedDocumentTitles());
@@ -214,7 +215,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public void switchPromotionPage(Pagination pagination) {
-		ElementUtil.scrollIntoViewAndClick(promotionPaginationButton(pagination), getDriver());
+		DriverUtil.scrollIntoViewAndClick(getDriver(), promotionPaginationButton(pagination));
 		waitForPromotionsLoadIndicatorToDisappear();
 	}
 
@@ -254,7 +255,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	/* keywords */
 	public List<String> youSearchedFor() {
 		WebElement searchTermsList = findElement(By.className("search-terms-list"));
-		ElementUtil.scrollIntoView(searchTermsList, getDriver());
+		DriverUtil.scrollIntoView(getDriver(), searchTermsList);
 		return ElementUtil.getTexts(searchTermsList.findElements(By.tagName("span")));
 	}
 
@@ -329,7 +330,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public void openParametricValuesList() {
-		ElementUtil.scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")), getDriver());
+		DriverUtil.scrollIntoViewAndClick(getDriver(), findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")));
 		Waits.loadOrFadeWait();
 	}
 }

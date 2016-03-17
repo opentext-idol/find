@@ -1,7 +1,7 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.selenium.application.LoginService;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
-import com.autonomy.abc.selenium.users.LoginService;
 
 public enum ABCTearDown implements TearDown<ABCTestBase> {
     KEYWORDS {

@@ -2,20 +2,14 @@ package com.autonomy.abc.selenium.util;
 
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class PageUtil {
+public class SOPageUtil {
 
     public static String getPageTitle(WebDriver driver) {
         return driver.findElement(By.cssSelector(".page-heading .heading")).getText();
-    }
-
-    public static boolean isModalShowing(WebDriver driver) {
-        return !driver.findElements(By.cssSelector(".modal[aria-hidden='false']")).isEmpty();
     }
 
     public static AppElement getWrapperContent(WebDriver driver) {
@@ -25,11 +19,5 @@ public class PageUtil {
 
     public static void waitForLoadingIndicatorToDisappear(WebDriver driver) {
         new WebDriverWait(driver,30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
-    }
-
-    public static void scrollToBottom(WebDriver driver) {
-        for(int i = 0; i < 10; i++){
-            new Actions(driver).sendKeys(Keys.PAGE_DOWN).perform();
-        }
     }
 }

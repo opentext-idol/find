@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;
+import com.autonomy.abc.selenium.users.AuthenticationStrategy;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Factory;
@@ -106,6 +107,10 @@ public class TestConfig {
 
 	public NewUser generateNewUser() {
 		return jsonConfig.generateRandomNewUser();
+	}
+
+	public AuthenticationStrategy getAuthenticationStrategy() {
+		return jsonConfig.getAuthenticationStrategy(getWebDriverFactory());
 	}
 
 	// used when running whole suite via mvn

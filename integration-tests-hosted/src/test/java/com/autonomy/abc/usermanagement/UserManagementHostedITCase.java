@@ -135,7 +135,8 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
         NewUser newUser = getConfig().generateNewUser();
 
         final User user = userService.createNewUser(newUser,Role.USER);
-        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
+        authenticate(user);
+
 
         waitForUserConfirmed(user);
 
@@ -153,7 +154,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
                 LOGGER.info("User reset their authentication notification shown");
             }
         }.start();
-        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
+        authenticate(user);
     }
 
     @Test
@@ -163,7 +164,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
         userService.changeRole(user, Role.NONE);
         verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
 
-        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
+        authenticate(user);
         waitForUserConfirmed(user);
         verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
 
@@ -218,7 +219,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
     @Test
     public void testAddingAndAuthenticatingUser(){
         final User user = userService.createNewUser(getConfig().generateNewUser(), Role.USER);
-        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
+        authenticate(user);
 
         waitForUserConfirmed(user);
         verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
@@ -258,7 +259,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
     @KnownBug("HOD-532")
     public void testLogOutAndLogInWithNewUser() {
         final User user = userService.createNewUser(getConfig().generateNewUser(), Role.ADMIN);
-        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
+        authenticate(user);
 
         getApplication().loginService().logout();
         HSODFind findApp = new HSODFind();
@@ -284,7 +285,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
     @KnownBug("HOD-532")
     public void testUserConfirmedWithoutRefreshing(){
         final User user = userService.createNewUser(getConfig().generateNewUser(), Role.USER);
-        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
+        authenticate(user);
 
         new WebDriverWait(getDriver(), 30).pollingEvery(5,TimeUnit.SECONDS).until(new ExpectedCondition<Boolean>() {
             @Override

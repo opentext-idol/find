@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.actions;
 
+import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import org.openqa.selenium.WebDriver;
 
 public abstract class ServiceBase<T extends SOElementFactory> {

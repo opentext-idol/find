@@ -11,7 +11,6 @@ import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Session;
-import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.indexes.CreateNewIndexPage;
@@ -30,12 +29,8 @@ import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.users.UserService;
-import com.autonomy.abc.selenium.users.UsersPage;
+import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,23 +56,25 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 @RelatedTo("HOD-532")
 public class UserPermissionsITCase extends HostedTestBase {
+    private UserService userService;
+
+    private User user;
+    private AuthenticationStrategy authStrategy;
+    private Session devSession;
+
+    private Session userSession;
+
+    private HSODApplication userApp;
+    private HSODElementFactory userElementFactory;
+
     public UserPermissionsITCase(TestConfig config) {
         super(config);
     }
 
-    private UserService userService;
-    private User user;
-
-    private Session userSession;
-    private HSODApplication userApp;
-    private HSODElementFactory userElementFactory;
-
-    private GmailSignupEmailHandler emailHandler;
-
     @Before
     public void setUp(){
         userService = getApplication().userService();
-        GoogleAuth googleAuth = (GoogleAuth) userService.createNewUser(getConfig().generateNewUser(), Role.ADMIN).getAuthProvider();
+        authStrategy = getConfig().getAuthenticationStrategy();
 
         user = userService.createNewUser(getConfig().getNewUser("newhppassport"), Role.ADMIN);
 
@@ -85,9 +82,7 @@ public class UserPermissionsITCase extends HostedTestBase {
         userSession = launchInNewSession(userApp);
         userElementFactory = userApp.elementFactory();
 
-        emailHandler = new GmailSignupEmailHandler(googleAuth);
-
-        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
+        authStrategy.authenticate(user);
 
         try {
             userApp.loginService().login(user);
@@ -110,7 +105,7 @@ public class UserPermissionsITCase extends HostedTestBase {
     @After
     public void tearDown(){
         ABCTearDown.USERS.tearDown(this);
-        emailHandler.markAllEmailAsRead(getDriver());
+        authStrategy.cleanUp(getDriver());
     }
 
     @Test

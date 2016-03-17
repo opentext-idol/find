@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
@@ -53,7 +54,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage = searchService.search(query);
         searchPage.openPromotionsBucket();
         List<String> promotedDocTitles = searchPage.addDocsToBucket(numberOfDocs);
-        ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
+        DriverUtil.waitUntilClickableThenClick(getDriver(), searchPage.promoteTheseItemsButton());
         createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         return promotedDocTitles;
     }
@@ -292,8 +293,8 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         verifyThat(getWindow(), urlContains("search/modified"));
         verifyThat(searchPage.getBucketTitles(), hasSize(1));
         getElementFactory().getSideNavBar().toggle();
-        ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
-//        searchPage.promoteTheseItemsButton().click();
+        DriverUtil.waitUntilClickableThenClick(getDriver(), searchPage.promoteTheseItemsButton());
+        //        searchPage.promoteTheseItemsButton().click();
         createPromotionsPage.waitForLoad();
     }
 

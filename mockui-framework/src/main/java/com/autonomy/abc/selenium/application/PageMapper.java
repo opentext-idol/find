@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.navigation;
+package com.autonomy.abc.selenium.application;
 
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
