@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.navigation;
+package com.autonomy.abc.selenium.application;
 
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
@@ -10,7 +10,6 @@ import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.users.UsersPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;

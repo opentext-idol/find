@@ -3,13 +3,12 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.application.LoginService;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.TimeoutException;
@@ -34,14 +33,12 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     protected int defaultNumberOfUsers = isHosted() ? 0 : 1;
     protected UsersPage usersPage;
     protected UserService<?> userService;
-    protected SignupEmailHandler emailHandler;
     private LoginService loginService;
+    private AuthenticationStrategy authStrategy;
 
     public UsersPageTestBase(TestConfig config) {
         super(config);
-        if(isHosted()) {
-            emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
-        }
+        authStrategy = config.getAuthenticationStrategy();
     }
 
     @Before
@@ -58,7 +55,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
             Window firstWindow = getWindow();
             Window secondWindow = getMainSession().openWindow("about:blank");
             try {
-                emailHandler.markAllEmailAsRead(getDriver());
+                authStrategy.cleanUp(getDriver());
             } catch (TimeoutException e) {
                 LoggerFactory.getLogger(UsersPageTestBase.class).warn("Could not tear down");
             } finally {
@@ -78,7 +75,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
         assertThat(usersPage, modalIsDisplayed());
         final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
         User user = usersPage.addNewUser(aNewUser, Role.USER);
-        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
+        authenticate(user);
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
         verifyUserAdded(newUserModal, user);
         usersPage.closeModal();
@@ -90,7 +87,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
         assertThat(usersPage, modalIsDisplayed());
 
         User user = usersPage.addNewUser(newUser, Role.USER);
-        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
+        authenticate(user);
         usersPage.closeModal();
 
         try {
@@ -148,5 +145,9 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
 
     protected void loginAs(User user) {
         loginService.login(user);
+    }
+
+    protected void authenticate(User user) {
+        authStrategy.authenticate(user);
     }
 }

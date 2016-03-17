@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
+import com.autonomy.abc.selenium.users.HSODUser;
 import com.autonomy.abc.selenium.users.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -77,7 +78,7 @@ public class IndexService extends ServiceBase<HSODElementFactory> {
     }
 
     public void deleteIndexViaAPICalls(Index index, User user, String apiUrl) {
-        String apiKey = user.getApiKey();
+        String apiKey = ((HSODUser) user).getApiKey();
 
         apiUrl += "/1/api/sync/deletetextindex/v1?index=" + index.getName() + "&";
 

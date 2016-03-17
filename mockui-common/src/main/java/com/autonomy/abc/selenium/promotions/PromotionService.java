@@ -1,12 +1,12 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
+import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
@@ -48,8 +48,8 @@ public class PromotionService<T extends SOElementFactory> extends ServiceBase<T>
         if (promotion instanceof DynamicPromotion) {
             searchPage.promoteThisQueryButton().click();
         } else {
-            ElementUtil.scrollIntoView(searchPage.promoteTheseItemsButton(), getDriver());
-            ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
+            DriverUtil.scrollIntoView(getDriver(), searchPage.promoteTheseItemsButton());
+            DriverUtil.waitUntilClickableThenClick(getDriver(), searchPage.promoteTheseItemsButton());
         }
 
         promotion.makeWizard(getElementFactory().getCreateNewPromotionsPage()).apply();

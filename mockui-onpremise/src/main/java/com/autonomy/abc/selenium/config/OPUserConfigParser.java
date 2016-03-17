@@ -1,7 +1,9 @@
 package com.autonomy.abc.selenium.config;
 
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.Factory;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.openqa.selenium.WebDriver;
 
 public class OPUserConfigParser extends UserConfigParser {
     @Override
@@ -22,5 +24,10 @@ public class OPUserConfigParser extends UserConfigParser {
     @Override
     public NewUser generateNewUser(String identifier) {
         return new OPNewUser(identifier, "pw");
+    }
+
+    @Override
+    public AuthenticationStrategy getAuthenticationStrategy(Factory<WebDriver> driverFactory) {
+        return NullAuthenticationStrategy.getInstance();
     }
 }

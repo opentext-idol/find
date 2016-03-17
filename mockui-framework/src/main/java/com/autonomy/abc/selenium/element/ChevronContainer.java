@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.element;
 
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
@@ -18,7 +19,7 @@ public class ChevronContainer implements Collapsible {
     @Override
     public void expand() {
         if (isCollapsed()) {
-            ElementUtil.scrollIntoViewAndClick(chevronIcon(), driver);
+            DriverUtil.scrollIntoViewAndClick(driver, chevronIcon());
             Waits.loadOrFadeWait();
         }
     }
@@ -26,7 +27,7 @@ public class ChevronContainer implements Collapsible {
     @Override
     public void collapse() {
         if (!isCollapsed()) {
-            ElementUtil.scrollIntoViewAndClick(chevronIcon(), driver);
+            DriverUtil.scrollIntoViewAndClick(driver, chevronIcon());
             Waits.loadOrFadeWait();
         }
     }

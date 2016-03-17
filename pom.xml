@@ -16,6 +16,7 @@
     </parent>
 
     <modules>
+        <module>mockui-framework</module>
         <module>mockui-common</module>
         <module>mockui-hosted</module>
         <module>mockui-onpremise</module>

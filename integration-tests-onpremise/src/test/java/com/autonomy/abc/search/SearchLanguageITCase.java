@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
@@ -121,18 +122,18 @@ public class SearchLanguageITCase extends ABCTestBase {
         search("France");
         searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
         searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-        final List<String> englishConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
+        final List<String> englishConcepts = searchPage.getRelatedConcepts();
         searchPage.selectLanguage(Language.FRENCH);
         searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
         searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-        final List<String> frenchConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
+        final List<String> frenchConcepts = searchPage.getRelatedConcepts();
 
         assertThat("Concepts should be different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
 
         searchPage.selectLanguage(Language.ENGLISH);
         searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
         searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-        final List<String> secondEnglishConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
+        final List<String> secondEnglishConcepts = searchPage.getRelatedConcepts();
         assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
     }
 
@@ -156,7 +157,7 @@ public class SearchLanguageITCase extends ABCTestBase {
 
     @RelatedTo("CCUK-3728")
     private void checkViewResult(String docTitle) {
-        ElementUtil.scrollIntoViewAndClick(searchPage.promotionBucketElementByTitle(docTitle), getDriver());
+        DriverUtil.scrollIntoViewAndClick(getDriver(), searchPage.promotionBucketElementByTitle(docTitle));
         DocumentViewer viewer = DocumentViewer.make(getDriver());
         Frame frame = new Frame(getWindow(), viewer.frame());
         verifyThat("view frame displays", frame.getText(), containsString(docTitle));

@@ -381,25 +381,28 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		getElementFactory().getSideNavBar().toggle();
 		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
-		ElementUtil.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
-		schedulePage.startDateTextBox().sendKeys("30/02/2019 11:20");
+		setStartDate("30/02/2019 11:20");
 		getElementFactory().getSideNavBar().toggle();
 		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
-        ElementUtil.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
-		schedulePage.startDateTextBox().sendKeys("10/13/2019 11:20");
+        setStartDate("10/13/2019 11:20");
 		getElementFactory().getSideNavBar().toggle();
 		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
-        ElementUtil.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
-		schedulePage.startDateTextBox().sendKeys("02/02/2019 24:20");
+		setStartDate("02/02/2019 24:20");
 		getElementFactory().getSideNavBar().toggle();
 		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
-        ElementUtil.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
-		schedulePage.startDateTextBox().sendKeys("02/02/2019 22:61");
+        setStartDate("02/02/2019 22:61");
 		getElementFactory().getSideNavBar().toggle();
 		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+	}
+
+	private void setStartDate(String timestamp) {
+		for (int i = 0; i < 16; i++) {
+            schedulePage.startDateTextBox().sendKeys(Keys.BACK_SPACE);
+		}
+		schedulePage.startDateTextBox().sendKeys(timestamp);
 	}
 
 	@Test
