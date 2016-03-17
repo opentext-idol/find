@@ -5,6 +5,7 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.connections.ConnectionService;
+import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import org.junit.After;
@@ -41,8 +42,8 @@ public class ConnectionsCoreITCase extends HostedTestBase {
     public void testCreateWebConnector() {
         Connector connector = new WebConnector("http://www.bbc.co.uk", "connect").withDepth(0).withDuration(60);
         connectionService.setUpConnection(connector);
-        connectionService.goToDetails(connector);
-        assertThat(getElementFactory().getConnectionsDetailPage().backButton(), displayed());
+        ConnectionsDetailPage detailPage = connectionService.goToDetails(connector);
+        assertThat(detailPage.backButton(), displayed());
     }
 
     @Test
