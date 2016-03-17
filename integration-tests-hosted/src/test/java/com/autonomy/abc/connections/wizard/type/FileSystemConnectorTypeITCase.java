@@ -2,6 +2,7 @@ package com.autonomy.abc.connections.wizard.type;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.ConnectorType;
@@ -108,6 +109,7 @@ public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
     }
 
     @Test
+    @KnownBug("CSA-2096")
     public void testDocumentationLink(){
         goToLastStep(new FileSystemConnector("/c/","163"));
 

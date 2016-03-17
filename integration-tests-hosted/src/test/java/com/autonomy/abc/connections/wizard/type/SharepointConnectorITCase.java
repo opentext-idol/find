@@ -2,6 +2,7 @@ package com.autonomy.abc.connections.wizard.type;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.element.FormInput;
@@ -30,7 +31,7 @@ public class SharepointConnectorITCase extends HostedTestBase {
 
     public SharepointConnectorITCase(TestConfig config) {
         super(config);
-        setInitialUser(config.getUser("index_tests"));
+        useIndexTestsUser();
     }
 
     @Before
@@ -90,6 +91,8 @@ public class SharepointConnectorITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-2096")
+    @Ignore("Documentation link disappeared")
     public void testDocumentationLink(){
         SharepointCompleteStepTab completeStep = goToLastStep();
 
@@ -127,6 +130,7 @@ public class SharepointConnectorITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-2097")
     public void testNoLinuxOption(){
         SharepointCompleteStepTab completeStep = goToLastStep();
 

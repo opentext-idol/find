@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.not;
 public class ConnectorTypeStepBase extends HostedTestBase {
     public ConnectorTypeStepBase(TestConfig config) {
         super(config);
-        setInitialUser(config.getUser("index_tests"));
+        useIndexTestsUser();
     }
 
     protected final String INVALID_INPUT_CLASS = "has-error";
