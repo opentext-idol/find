@@ -10,32 +10,26 @@ import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.List;
 
 public class TestConfig {
 	private final static int DEFAULT_TIMEOUT = 10;
 
 	private final JsonConfig jsonConfig;
-	private final int index;
 	private final ApplicationType type;
 	private final URL url;
 	private final Platform platform;
 	private final Browser browser;
 
-	TestConfig(final int index, final JsonConfig config) {
+	TestConfig(final JsonConfig config, final Browser browser) {
 		this.jsonConfig = config;
-		this.index = index;
 		this.type = jsonConfig.getAppType();
 		this.url = jsonConfig.getHubUrl();
 		this.platform = Platform.WINDOWS;
-		this.browser = jsonConfig.getBrowsers().get(index);
+		this.browser = browser;
 	}
 
 	public String getAppUrl(Application<?> application) {
@@ -75,10 +69,6 @@ public class TestConfig {
 		return platform;
 	}
 
-	public int getIndex() {
-		return index;
-	}
-
 	public ApplicationType getType() {
 		return type;
 	}
@@ -103,17 +93,9 @@ public class TestConfig {
 		return jsonConfig.getAuthenticationStrategy(getWebDriverFactory());
 	}
 
-	public static List<Object[]> readConfigs(final Collection<ApplicationType> applicationTypes) throws IOException {
-		return new TestConfigLoader().readConfigs(applicationTypes);
-	}
-
-	public static JsonNode getRawBaseConfig() throws IOException {
-		return new TestConfigLoader().getRawBaseConfig();
-	}
-
 	@Override
 	public String toString() {
-		return "parameter-set: [" + getIndex() + "]; browser: " + getBrowser() + "; platform: " + getPlatform() + "; effective config: " + jsonConfig;
+		return "browser: " + getBrowser() + "; platform: " + getPlatform() + "; effective config: " + jsonConfig;
 	}
 
 	Resolution getResolution() {

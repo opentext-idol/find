@@ -1,18 +1,17 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.find.HSODFindElementFactory;
 import com.autonomy.abc.selenium.users.User;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 
 import static org.junit.Assert.fail;
 
+@RunWith(Parameterized.class)
 public abstract class FindTestBase extends SeleniumTest<HSODFind, HSODFindElementFactory> {
     private User initialUser;
     private User currentUser;
@@ -24,8 +23,7 @@ public abstract class FindTestBase extends SeleniumTest<HSODFind, HSODFindElemen
 
     @Parameterized.Parameters
     public static Iterable<Object[]> parameters() throws IOException {
-        final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.HOSTED);
-        return parameters(applicationTypes);
+        return new TestParameterFactory().create(new SOConfigLocator().getJsonConfig());
     }
 
     @Before

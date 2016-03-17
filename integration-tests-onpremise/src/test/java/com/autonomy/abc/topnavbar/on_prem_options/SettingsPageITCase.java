@@ -1,5 +1,6 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
+import com.autonomy.abc.config.SOConfigLocator;
 import com.autonomy.abc.config.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
@@ -8,6 +9,7 @@ import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import com.autonomy.abc.selenium.iso.SettingsPage;
 import com.autonomy.abc.selenium.util.Waits;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.After;
@@ -32,7 +34,8 @@ public class SettingsPageITCase extends SOTestBase {
 
 	static {
 		try {
-			HOSTS_AND_PORTS = new ObjectMapper().convertValue(TestConfig.getRawBaseConfig().path("servers"), new TypeReference<Map<SettingsPage.Panel, HostAndPorts>>() {});
+			JsonNode node = new SOConfigLocator().getJsonNode().path("servers");
+			HOSTS_AND_PORTS = new ObjectMapper().convertValue(node, new TypeReference<Map<SettingsPage.Panel, HostAndPorts>>() {});
 			System.out.println(HOSTS_AND_PORTS);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);

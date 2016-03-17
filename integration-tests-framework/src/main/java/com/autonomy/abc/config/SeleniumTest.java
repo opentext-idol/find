@@ -8,7 +8,6 @@ import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
 import com.autonomy.abc.selenium.application.Application;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.ElementFactoryBase;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.SessionRegistry;
@@ -18,20 +17,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.junit.runners.model.MultipleFailureException;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 @Ignore
-@RunWith(Parameterized.class)
 public abstract class SeleniumTest<A extends Application<? extends F>, F extends ElementFactoryBase> {
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -61,16 +52,6 @@ public abstract class SeleniumTest<A extends Application<? extends F>, F extends
             .around(new StateHelperRule(this))
             .around(new TestArtifactRule(this))
             .around(new KnownBugRule());
-
-    @Parameterized.Parameters
-    public static Iterable<Object[]> parameters() throws IOException {
-        final List<ApplicationType> applicationType = Arrays.asList(ApplicationType.HOSTED, ApplicationType.ON_PREM);
-        return parameters(applicationType);
-    }
-
-    protected static List<Object[]> parameters(final Collection<ApplicationType> applicationTypes) throws IOException {
-        return TestConfig.readConfigs(applicationTypes);
-    }
 
     @Before
     public final void baseSetUp() {
