@@ -51,9 +51,9 @@ class JsonConfig {
     private JsonConfig(JsonConfig overrides, JsonConfig defaults) {
         app = defaults.app.overrideUsing(overrides.app);
         selenium = defaults.selenium.overrideUsing(overrides.selenium);
-        users = mapOverride(defaults.users, overrides.users);
-        newUsers = mapOverride(defaults.newUsers, overrides.newUsers);
-        parser = override(defaults.parser, overrides.parser);
+        users = JsonConfigHelper.mapOverride(defaults.users, overrides.users);
+        newUsers = JsonConfigHelper.mapOverride(defaults.newUsers, overrides.newUsers);
+        parser = JsonConfigHelper.override(defaults.parser, overrides.parser);
     }
 
     static JsonConfig readFile(File jsonFile) throws IOException {
@@ -69,15 +69,15 @@ class JsonConfig {
     }
 
     URL getHubUrl() {
-        return this.selenium.url;
+        return this.selenium.getUrl();
     }
 
     List<Browser> getBrowsers() {
-        return this.selenium.browsers;
+        return this.selenium.getBrowsers();
     }
 
     Resolution getResolution() {
-        return this.selenium.resolution;
+        return this.selenium.getResolution();
     }
 
     /**
@@ -85,7 +85,7 @@ class JsonConfig {
      * @return timeout, in seconds, or -1 if not set
      */
     int getTimeout() {
-        return this.selenium.timeout;
+        return this.selenium.getTimeout();
     }
 
     User getUser(String name) {
@@ -105,122 +105,11 @@ class JsonConfig {
     }
 
     ApplicationType getAppType() {
-        return this.app.type;
+        return this.app.getType();
     }
 
     URL getAppUrl(String appName) {
-        return app.urls.get(appName);
-    }
-
-    private static class AppConfig {
-        private final ApplicationType type;
-        private final Map<String, URL> urls;
-
-        private AppConfig(JsonNode node) throws MalformedURLException {
-            type = readType(node.path("type"));
-            urls = readUrls(node.fields());
-        }
-
-        private AppConfig(AppConfig overrides, AppConfig defaults) {
-            type = override(defaults.type, overrides.type);
-            urls = mapOverride(defaults.urls, overrides.urls);
-        }
-
-        private AppConfig overrideUsing(AppConfig overrides) {
-            return overrides == null ? this : new AppConfig(overrides, this);
-        }
-
-        private ApplicationType readType(JsonNode node) {
-            String typeString = node.asText();
-            return typeString.isEmpty() ? null : ApplicationType.fromString(typeString);
-        }
-
-        private Map<String, URL> readUrls(Iterator<Map.Entry<String, JsonNode>> entries) throws MalformedURLException {
-            Map<String, URL> urls = new HashMap<>();
-            while (entries.hasNext()) {
-                Map.Entry<String, JsonNode> entry = entries.next();
-                if (!entry.getKey().equals("type")) {
-                    urls.put(entry.getKey(), getUrlOrNull(entry.getValue()));
-                }
-            }
-            return urls;
-        }
-
-        @Override
-        public String toString() {
-            return "{type=" + type + ", urls=" + urls + "}";
-        }
-
-    }
-
-    private static class SeleniumConfig {
-        private final URL url;
-        private final List<Browser> browsers;
-        private final Resolution resolution;
-        private final int timeout;
-
-        private SeleniumConfig(JsonNode node) throws MalformedURLException {
-            url = getUrlOrNull(node.path("url"));
-            browsers = readBrowsers(node.path("browsers"));
-            resolution = readResolution(node.path("resolution"));
-            timeout = node.path("timeout").asInt(-1);
-        }
-
-        private SeleniumConfig(SeleniumConfig overrides, SeleniumConfig defaults) {
-            url = override(defaults.url, overrides.url);
-            browsers = override(defaults.browsers, overrides.browsers);
-            resolution = override(defaults.resolution, overrides.resolution);
-            timeout = (overrides.timeout > 0) ? overrides.timeout : defaults.timeout;
-        }
-
-        private SeleniumConfig overrideUsing(SeleniumConfig overrides) {
-            return overrides == null ? this : new SeleniumConfig(overrides, this);
-        }
-
-        private List<Browser> readBrowsers(JsonNode browsersNode) {
-            if (browsersNode.isMissingNode()) {
-                return null;
-            }
-            List<Browser> browsers = new ArrayList<>();
-            for (JsonNode browserNode : browsersNode) {
-                browsers.add(Browser.fromString(browserNode.asText()));
-            }
-            return browsers;
-        }
-
-        private Resolution readResolution(JsonNode resolutionNode) {
-            if (resolutionNode.isMissingNode()) {
-                return null;
-            }
-            int width = resolutionNode.get(0).asInt();
-            int height = resolutionNode.get(1).asInt();
-            return new Resolution(width, height);
-        }
-
-        @Override
-        public String toString() {
-            return "{browsers=" + browsers + ", url=" + url + ", resolution=" + resolution + ", timeout=" + timeout + "}";
-        }
-    }
-
-    // helper methods
-    private static URL getUrlOrNull(JsonNode node) throws MalformedURLException {
-        return node.isMissingNode() ? null : new URL(node.asText());
-    }
-
-    private static <T> T override(T first, T second) {
-        return second == null ? first : second;
-    }
-
-    private static <K, V> Map<K, V> mapOverride(Map<K, V> first, Map<K, V> second) {
-        Map<K, V> newMap = new HashMap<>();
-        if (first != null) {
-            newMap.putAll(first);
-        }
-        if (second != null) {
-            newMap.putAll(second);
-        }
-        return newMap;
+        return app.getUrl(appName);
     }
 
     @Override
