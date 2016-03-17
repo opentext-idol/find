@@ -1,4 +1,4 @@
-package com.autonomy.abc.query;
+package com.autonomy.abc.shared;
 
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.language.Language;

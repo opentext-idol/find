@@ -1,12 +1,12 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.shared.SharedTriggerTests;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

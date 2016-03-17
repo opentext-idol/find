@@ -12,7 +12,7 @@ import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
+import com.autonomy.abc.shared.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;

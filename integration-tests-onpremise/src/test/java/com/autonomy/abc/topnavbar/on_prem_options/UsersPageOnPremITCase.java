@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.users.OPNewUser;
 import com.autonomy.abc.selenium.users.OPUsersPage;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Waits;
+import com.autonomy.abc.shared.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;

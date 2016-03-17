@@ -1,6 +1,5 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
@@ -15,6 +14,7 @@ import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SOSearchResult;
 import com.autonomy.abc.selenium.search.SearchPage;
+import com.autonomy.abc.shared.SharedTriggerTests;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.Before;
 import org.junit.Test;

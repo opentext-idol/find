@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.users.UserNotCreatedException;
 import com.autonomy.abc.selenium.util.Waits;
+import com.autonomy.abc.shared.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.Test;
 import org.openqa.selenium.By;

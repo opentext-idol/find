@@ -2,7 +2,7 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.documentPreview.SharedPreviewTests;
+import com.autonomy.abc.shared.SharedPreviewTests;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.ApplicationType;

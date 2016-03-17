@@ -1,4 +1,4 @@
-package com.autonomy.abc.topnavbar.notifications;
+package com.autonomy.abc.shared;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;

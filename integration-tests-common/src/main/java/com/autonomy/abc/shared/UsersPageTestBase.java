@@ -1,4 +1,4 @@
-package com.autonomy.abc.topnavbar.on_prem_options;
+package com.autonomy.abc.shared;
 
 import com.autonomy.abc.config.ABCTearDown;
 import com.autonomy.abc.config.ABCTestBase;

@@ -21,6 +21,7 @@ import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.shared.NotificationsDropDownTestBase;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;

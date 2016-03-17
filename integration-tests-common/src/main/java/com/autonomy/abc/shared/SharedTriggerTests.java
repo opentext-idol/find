@@ -1,4 +1,4 @@
-package com.autonomy.abc.Trigger;
+package com.autonomy.abc.shared;
 
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.error.Errors;

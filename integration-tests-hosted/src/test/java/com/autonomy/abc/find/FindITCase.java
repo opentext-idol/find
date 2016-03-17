@@ -2,10 +2,10 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.documentPreview.SharedPreviewTests;
+import com.autonomy.abc.shared.SharedPreviewTests;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
-import com.autonomy.abc.query.QueryTestHelper;
+import com.autonomy.abc.shared.QueryTestHelper;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
