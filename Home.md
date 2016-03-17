@@ -17,6 +17,7 @@ Find is an end-user search interface for [HPE IDOL](http://www8.hp.com/uk/en/sof
 - [[Understanding the Code Structure]] - info about what's going on under the surface
 - [[Vagrant]] - how to set up the Find backend virtual machine with Vagrant
 - [[JetBrains IntelliJ IDEA]] - setting up the IntelliJ IDE to run Find
+- [[Documents Duplication]] - How to prevent documents with the same references being obscured.
 
 ## Configuring Find for IDOL
 
