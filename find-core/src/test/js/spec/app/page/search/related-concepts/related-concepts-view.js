@@ -20,7 +20,8 @@ define([
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
                 queryTextModel: this.queryTextModel,
-                clickHandler: this.clickHandler
+                clickHandler: this.clickHandler,
+                highlightModel: this.highlightModel
             });
 
             this.view.render();
@@ -30,6 +31,7 @@ define([
             this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection;
             this.queryModel = new Backbone.Model();
+            this.highlightModel = new Backbone.Model({highlightEntities: false});
 
             this.queryTextModel = new Backbone.Model({
                 inputText: 'orange',
@@ -204,6 +206,34 @@ define([
                         expect(this.clickHandler).toHaveBeenCalledWith([
                             'fruit'
                         ]);
+                    });
+                });
+
+                describe('when the highlight button is clicked', function() {
+                    beforeEach(function() {
+                        this.view.$('.highlight-result-entities').click();
+                    });
+
+                    it('toggles the highlightEntities attribute on the highlight model', function() {
+                        expect(this.highlightModel.get('highlightEntities')).toBe(true);
+                    });
+
+                    it('sets the class active on the button', function() {
+                        expect(this.view.$('.highlight-result-entities')).toHaveClass('active');
+                    });
+
+                    describe('then the highlight button is clicked again', function() {
+                        beforeEach(function() {
+                            this.view.$('.highlight-result-entities').click();
+                        });
+
+                        it('toggles the highlightEntities attribute on the highlight model', function() {
+                            expect(this.highlightModel.get('highlightEntities')).toBe(false);
+                        });
+
+                        it('sets the class active on the button', function() {
+                            expect(this.view.$('.highlight-result-entities')).not.toHaveClass('active');
+                        });
                     });
                 });
             });

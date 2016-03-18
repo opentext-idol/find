@@ -73,11 +73,11 @@ define([
         errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
 
         events: {
-            'click .entity-text': function(e) {
+            'click .highlighted-entity-text': function(e) {
                 e.stopPropagation();
 
                 var $target = $(e.target);
-                var queryText = $target.attr('data-title');
+                var queryText = $target.attr('data-entity-text');
 
                 this.queryTextModel.set({
                     inputText: queryText,
@@ -119,6 +119,7 @@ define([
 
             this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
+            this.highlightModel = options.highlightModel || new Backbone.Model({highlightEntities: false});
 
             if (this.displayPromotions) {
                 this.promotionsCollection = new PromotionsCollection();
@@ -134,6 +135,8 @@ define([
 
             this.checkScroll = checkScroll.bind(this);
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
+
+            this.listenTo(this.highlightModel, 'change:highlightEntities', this.updateEntityHighlighting);
         },
 
         refreshResults: function() {
@@ -244,6 +247,12 @@ define([
             if (this.documentsCollection.isEmpty()) {
                 this.refreshResults();
             }
+
+            this.updateEntityHighlighting();
+        },
+
+        updateEntityHighlighting: function() {
+            this.$el.toggleClass('highlight-entities', this.highlightModel.get('highlightEntities'));
         },
 
         formatResult: function(model, isPromotion) {

@@ -1206,10 +1206,21 @@ input:-moz-placeholder::before {
     border: 1px solid #e7eaec;
 }
 
-.entity-label {
+/* Result entity highlighting */
+.highlighted-entity-text {
     background-color: #6b7984;
     padding: 0 8px;
+    display: none;
 }
+
+.highlight-entities .highlighted-entity-text {
+    display: inherit;
+}
+
+.highlight-entities .plain-entity-text {
+    display: none;
+}
+
 /* Rotating chevrons on collapsible panels *******************/
 .collapsed .rotating-chevron,
 .collapsed.rotating-chevron {

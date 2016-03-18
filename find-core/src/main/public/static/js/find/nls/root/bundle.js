@@ -127,6 +127,7 @@ define([
         'search.preview.mmap': 'Explore in MMAP',
         'search.preview.selectDocument': 'Select a document from the list to preview',
         'search.relatedConcepts': 'Related Concepts',
+        'search.relatedConcepts.highlight': 'Highlight',
         'search.relatedConcepts.topResults.error': 'An error occurred fetching top results',
         'search.relatedConcepts.topResults.none': 'No top results found',
         'search.relatedConcepts.notLoading': 'The list of indexes has not yet been retrieved',

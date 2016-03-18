@@ -88,6 +88,7 @@ define([
 
             this.comparisonSuccessCallback = options.comparisonSuccessCallback;
 
+            this.highlightModel = new Backbone.Model({highlightEntities: false});
             this.entityCollection = new EntityCollection();
 
             var searchType = this.savedSearchModel.get('type');
@@ -221,7 +222,8 @@ define([
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
                 queryTextModel: this.queryState.queryTextModel,
-                clickHandler: relatedConceptsClickHandler
+                clickHandler: relatedConceptsClickHandler,
+                highlightModel: this.highlightModel
             });
 
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], relatedConceptsView);
@@ -230,7 +232,8 @@ define([
                 enablePreview: true,
                 // TODO: Display promotions when QMS supports state tokens
                 displayPromotions: searchType === SavedSearchModel.Type.QUERY,
-                fetchStrategy: searchType === SavedSearchModel.Type.QUERY ? queryStrategy : stateTokenStrategy
+                fetchStrategy: searchType === SavedSearchModel.Type.QUERY ? queryStrategy : stateTokenStrategy,
+                highlightModel: this.highlightModel
             }, resultsViewConstructorArguments));
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({resultsView: this.resultsView});

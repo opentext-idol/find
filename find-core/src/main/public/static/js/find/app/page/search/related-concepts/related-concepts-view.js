@@ -98,6 +98,9 @@ define([
                 var $target = $(e.currentTarget);
                 var queryCluster = Number($target.attr('data-entity-cluster'));
                 this.clickHandler(this.entityCollection.getClusterEntities(queryCluster));
+            },
+            'click .highlight-result-entities': function() {
+                this.highlightModel.set('highlightEntities', !this.highlightModel.get('highlightEntities'));
             }
         },
 
@@ -107,6 +110,7 @@ define([
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
             this.clickHandler = options.clickHandler;
+            this.highlightModel = options.highlightModel;
 
             var initialViewState;
 
@@ -160,6 +164,8 @@ define([
             this.listenTo(this.entityCollection, 'error', function () {
                 this.model.set('viewState', ViewState.ERROR);
             });
+
+            this.listenTo(this.highlightModel, 'change:highlightEntities', this.updateHighlightEntitiesButton);
         },
 
         render: function () {
@@ -169,8 +175,8 @@ define([
             this.$error = this.$('.related-concepts-error');
             this.$none = this.$('.related-concepts-none');
             this.$notLoading = this.$('.related-concepts-not-loading');
-
             this.$processing = this.$('.related-concepts-processing');
+            this.$highlightEntities = this.$('.highlight-result-entities');
 
             var viewStateElements = {};
             viewStateElements[ViewState.ERROR] = this.$error;
@@ -181,6 +187,12 @@ define([
 
             this.selectViewState = viewStateSelector(viewStateElements);
             updateForViewState.call(this);
+
+            this.updateHighlightEntitiesButton();
+        },
+
+        updateHighlightEntitiesButton: function() {
+            this.$highlightEntities.toggleClass('active', this.highlightModel.get('highlightEntities'));
         }
     });
 

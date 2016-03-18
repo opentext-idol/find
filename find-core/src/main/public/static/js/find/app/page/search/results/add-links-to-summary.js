@@ -46,8 +46,8 @@ define([
      * @param {EntityTemplateOptions} templateOptions A hash of options to configure the template
      * @returns {string|XML|*}  `text`, but with replacements made
      */
-    function replaceTextWithLabel(text, textToFind, templateOptions) {
-        var label = entityTemplateFunction(templateOptions);
+    function replaceTextWithLabel(text, textToFind, replacement) {
+        var label = entityTemplateFunction({replacement: replacement});
         return text.replace(new RegExp(START_REGEX + textToFind + END_REGEX, 'g'), '$1' + label + '$2');
     }
 
@@ -76,11 +76,9 @@ define([
 
         var escapedSummary = escapedSummaryElements.join('');
 
-        // Create an array of the entity titles, longest first
-        var entities;
-
         if (entityCollection) {
-            entities = entityCollection.map(function(entity) {
+            // Create an array of the entity titles, longest first
+            var entities = entityCollection.map(function(entity) {
                 return {
                     text: entity.get('text'),
                     id: _.uniqueId('Find-IOD-Entity-Placeholder')
@@ -88,24 +86,18 @@ define([
             }).sort(function(a, b) {
                 return b.text.length - a.text.length;
             });
-        } else {
-            entities = [];
-        }
 
-        // Loop through entities, replacing each with a unique id to prevent later replaces finding what we've
-        // changed here and messing things up badly
-        _.each(entities, function(entity) {
-            escapedSummary = replaceBoundedText(escapedSummary, entity.text, entity.id);
-        });
-
-        // Loop through entities again, replacing text with labels
-        _.each(entities, function(entity) {
-            escapedSummary = replaceTextWithLabel(escapedSummary, entity.id, {
-                elementType: 'a',
-                replacement: entity.text,
-                elementClasses: 'entity-text entity-label label clickable'
+            // Loop through entities, replacing each with a unique id to prevent later replaces finding what we've
+            // changed here and messing things up badly
+            _.each(entities, function(entity) {
+                escapedSummary = replaceBoundedText(escapedSummary, entity.text, entity.id);
             });
-        });
+
+            // Loop through entities again, replacing text with labels
+            _.each(entities, function(entity) {
+                escapedSummary = replaceTextWithLabel(escapedSummary, entity.id, entity.text);
+            });
+        }
 
         return escapedSummary;
     };
