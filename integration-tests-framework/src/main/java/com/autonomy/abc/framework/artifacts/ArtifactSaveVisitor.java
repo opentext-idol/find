@@ -4,7 +4,7 @@ import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;
 
 
-public class ArtifactSaveVisitor {
+class ArtifactSaveVisitor {
     private String currentLocation;
     private int sessionIndex;
     private int windowIndex;
@@ -40,7 +40,7 @@ public class ArtifactSaveVisitor {
         return currentLocation + ".html";
     }
 
-    public interface ArtifactSaver {
+    interface ArtifactSaver {
         String baseLocation();
         Iterable<Session> getSessions();
     }

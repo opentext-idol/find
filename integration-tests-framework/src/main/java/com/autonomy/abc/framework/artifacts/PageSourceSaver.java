@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-public class PageSourceSaver {
+class PageSourceSaver {
     private WebDriver driver;
     private final static Logger LOGGER = LoggerFactory.getLogger(PageSourceSaver.class);
 

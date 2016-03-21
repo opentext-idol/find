@@ -11,23 +11,36 @@ public class TestStatement extends TestName {
     private int number;
     private String methodName;
 
-    public TestStatement(String name, Description description) {
+    TestStatement(String name, Description description) {
         this.name = name;
         this.description = description;
+    }
+
+    void setId(String methodName, int number) {
+        id = methodName + "#" + number;
+        this.number = number;
+        this.methodName = methodName;
+    }
+
+    void setState(boolean pass) {
+        this.pass = pass;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setId(String methodName, int number) {
-        id = methodName + "#" + number;
-        this.number = number;
-        this.methodName = methodName;
-    }
-
     public String getId() {
         return id;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    @Override
+    public String getMethodName() {
+        return methodName;
     }
 
     public boolean passed() {
@@ -38,10 +51,7 @@ public class TestStatement extends TestName {
         return !pass;
     }
 
-    public void setState(boolean pass) {
-        this.pass = pass;
-    }
-
+    @Override
     public String toString() {
         StringBuilder msg = new StringBuilder();
         msg.append(passed() ? "ok " : "not ok ");
@@ -50,14 +60,5 @@ public class TestStatement extends TestName {
             msg.append("\n").append(description).append("\n");
         }
         return msg.toString();
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    @Override
-    public String getMethodName() {
-        return methodName;
     }
 }

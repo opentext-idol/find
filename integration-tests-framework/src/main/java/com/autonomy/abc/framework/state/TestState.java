@@ -27,29 +27,8 @@ public class TestState {
         timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     }
 
-    public void setTest(SeleniumTest<?, ?> newTest) {
-        test = newTest;
-    }
-
-    public void setMethod(Description description) {
-        method = description;
-        statementCount = 0;
-        assertionErrors = new ArrayList<>();
-    }
-
     public void addStatementHandler(Handler<TestStatement> handler) {
         statementHandlers.add(handler);
-    }
-
-    public void handle(TestStatement statement) {
-        statement.setId(method.getMethodName(), ++statementCount);
-        for (Handler<TestStatement> handler : statementHandlers) {
-            handler.handle(statement);
-        }
-    }
-
-    public void addException(Throwable e) {
-        assertionErrors.add(e);
     }
 
     public String getTimestamp() {
@@ -66,8 +45,28 @@ public class TestState {
         }
     }
 
-    public void finish() {
-        statementHandlers.clear();
+    void setTest(SeleniumTest<?, ?> newTest) {
+        test = newTest;
     }
 
+    void setMethod(Description description) {
+        method = description;
+        statementCount = 0;
+        assertionErrors = new ArrayList<>();
+    }
+
+    void addException(Throwable e) {
+        assertionErrors.add(e);
+    }
+
+    void handle(TestStatement statement) {
+        statement.setId(method.getMethodName(), ++statementCount);
+        for (Handler<TestStatement> handler : statementHandlers) {
+            handler.handle(statement);
+        }
+    }
+
+    void finish() {
+        statementHandlers.clear();
+    }
 }

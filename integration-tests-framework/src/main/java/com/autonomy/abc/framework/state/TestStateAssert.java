@@ -48,7 +48,7 @@ public class TestStateAssert {
         }
     }
 
-    public static <T> AssertionError testPasses(String testName, T actual, Matcher<? super T> matcher) {
+    private static <T> AssertionError testPasses(String testName, T actual, Matcher<? super T> matcher) {
         Description description = new StringDescription();
         TestStatement testStatement = new TestStatement(testName, description);
         boolean success = matcher.matches(actual);
@@ -68,7 +68,7 @@ public class TestStateAssert {
         }
     }
 
-    public static AssertionError testPasses(String reason, boolean assertion) {
+    private static AssertionError testPasses(String reason, boolean assertion) {
         return testPasses(reason, assertion, is(true));
     }
 }

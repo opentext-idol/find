@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 
-public class ScreenshotSaver {
+class ScreenshotSaver {
     private WebDriver driver;
     private final static Logger LOGGER = LoggerFactory.getLogger(ScreenshotSaver.class);
 
