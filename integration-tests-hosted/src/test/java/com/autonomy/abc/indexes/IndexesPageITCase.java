@@ -218,7 +218,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @KnownBug("CSA-1886")
     @Ignore("Breaking too many tests")
     public void testDeletingDefaultIndex(){
-        indexService.deleteIndexViaAPICalls(Index.DEFAULT, testUser, getConfig().getApiUrl());
+        indexService.deleteIndexViaAPICalls(Index.DEFAULT, testUser, getConfig().getAppUrl("api"));
 
         getWindow().refresh();
         indexesPage = getElementFactory().getIndexesPage();
@@ -229,7 +229,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @Ignore("Breaking too many tests")
     public void testDeletingSearchDefaultIndex(){
-        indexService.deleteIndexViaAPICalls(new Index("search_default_index"), testUser, getConfig().getApiUrl());
+        indexService.deleteIndexViaAPICalls(new Index("search_default_index"), testUser, getConfig().getAppUrl("api"));
         getWindow().refresh();
 
         verifyThat(getApplication().switchTo(PromotionsPage.class), containsText("There are no promotions..."));

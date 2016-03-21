@@ -1,12 +1,11 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.users.UserConfigParser;
 import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.users.AuthenticationStrategy;
 import com.autonomy.abc.selenium.users.NewUser;
-import com.autonomy.abc.selenium.users.NullAuthenticationStrategy;
 import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.UserConfigParser;
 import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -86,12 +85,12 @@ class JsonConfig {
         return this.newUsers.get(name);
     }
 
-    NewUser generateRandomNewUser() {
-        return parser.generateNewUser(UUID.randomUUID().toString().replaceAll("-", ""));
+    NewUser generateRandomNewUser(String identifier) {
+        return parser.generateNewUser(identifier);
     }
 
     AuthenticationStrategy getAuthenticationStrategy(Factory<WebDriver> driverFactory) {
-        return parser == null ? NullAuthenticationStrategy.getInstance() : parser.getAuthenticationStrategy(driverFactory);
+        return parser == null ? null : parser.getAuthenticationStrategy(driverFactory);
     }
 
     ApplicationType getAppType() {

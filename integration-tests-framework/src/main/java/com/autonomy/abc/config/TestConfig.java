@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.users.AuthenticationStrategy;
 import com.autonomy.abc.selenium.users.NewUser;
+import com.autonomy.abc.selenium.users.NullAuthenticationStrategy;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
@@ -14,31 +15,27 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 
 import java.net.URL;
+import java.util.UUID;
 
 public class TestConfig {
 	private final static int DEFAULT_TIMEOUT = 10;
 
 	private final JsonConfig jsonConfig;
-	private final ApplicationType type;
-	private final URL url;
 	private final Platform platform;
 	private final Browser browser;
 
 	TestConfig(final JsonConfig config, final Browser browser) {
 		this.jsonConfig = config;
-		this.type = jsonConfig.getAppType();
-		this.url = jsonConfig.getHubUrl();
 		this.platform = Platform.WINDOWS;
 		this.browser = browser;
 	}
 
 	public String getAppUrl(Application<?> application) {
-		return jsonConfig.getAppUrl(application.getName().toLowerCase()).toString();
+		return getAppUrl(application.getName());
 	}
 
-	// TODO: HodApiApplication
-	public String getApiUrl() {
-		return jsonConfig.getAppUrl("api").toString();
+	public String getAppUrl(String appName) {
+		return jsonConfig.getAppUrl(appName.toLowerCase()).toString();
 	}
 
 	public User getDefaultUser() {
@@ -70,11 +67,11 @@ public class TestConfig {
 	}
 
 	public ApplicationType getType() {
-		return type;
+		return jsonConfig.getAppType();
 	}
 
 	URL getHubUrl() {
-		return url;
+		return jsonConfig.getHubUrl();
 	}
 
 	public Factory<WebDriver> getWebDriverFactory() {
@@ -86,11 +83,12 @@ public class TestConfig {
 	}
 
 	public NewUser generateNewUser() {
-		return jsonConfig.generateRandomNewUser();
+		return jsonConfig.generateRandomNewUser(UUID.randomUUID().toString().replaceAll("-", ""));
 	}
 
 	public AuthenticationStrategy getAuthenticationStrategy() {
-		return jsonConfig.getAuthenticationStrategy(getWebDriverFactory());
+		AuthenticationStrategy strategy = jsonConfig.getAuthenticationStrategy(getWebDriverFactory());
+		return strategy == null ? NullAuthenticationStrategy.getInstance() : strategy;
 	}
 
 	@Override
