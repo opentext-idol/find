@@ -21,7 +21,7 @@ import org.openqa.selenium.NoSuchElementException;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;

@@ -21,7 +21,7 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 

@@ -1,6 +1,5 @@
-package com.autonomy.abc.framework.rules;
+package com.autonomy.abc.framework.logging;
 
-import com.autonomy.abc.framework.KnownBug;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.slf4j.Logger;

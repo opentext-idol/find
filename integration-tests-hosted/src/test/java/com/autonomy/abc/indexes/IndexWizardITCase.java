@@ -2,8 +2,8 @@ package com.autonomy.abc.indexes;
 
 import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.logging.KnownBug;
+import com.autonomy.abc.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.error.Errors;
@@ -14,7 +14,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;

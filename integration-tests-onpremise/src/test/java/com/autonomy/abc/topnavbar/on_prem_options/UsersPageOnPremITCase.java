@@ -15,8 +15,8 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.UnhandledAlertException;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;

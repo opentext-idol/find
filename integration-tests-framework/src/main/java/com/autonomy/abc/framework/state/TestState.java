@@ -1,7 +1,6 @@
-package com.autonomy.abc.framework;
+package com.autonomy.abc.framework.state;
 
 import com.autonomy.abc.base.SeleniumTest;
-import com.autonomy.abc.framework.statements.StatementHandler;
 import org.junit.runner.Description;
 
 import java.text.SimpleDateFormat;

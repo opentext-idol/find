@@ -2,8 +2,8 @@ package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.logging.KnownBug;
+import com.autonomy.abc.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.application.Application;
 import com.autonomy.abc.selenium.devconsole.DevConsole;
 import com.autonomy.abc.selenium.devconsole.DevConsoleHomePage;
@@ -20,7 +20,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;

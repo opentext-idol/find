@@ -2,8 +2,8 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.base.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.logging.KnownBug;
+import com.autonomy.abc.framework.logging.RelatedTo;
 import com.autonomy.abc.shared.QueryTestHelper;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.language.Language;
@@ -16,7 +16,7 @@ import org.junit.Test;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;

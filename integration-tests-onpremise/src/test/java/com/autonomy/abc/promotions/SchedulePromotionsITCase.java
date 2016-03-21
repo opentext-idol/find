@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;

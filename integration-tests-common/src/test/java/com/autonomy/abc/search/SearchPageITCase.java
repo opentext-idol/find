@@ -2,8 +2,8 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.base.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.logging.KnownBug;
+import com.autonomy.abc.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Pagination;
@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.util.*;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;

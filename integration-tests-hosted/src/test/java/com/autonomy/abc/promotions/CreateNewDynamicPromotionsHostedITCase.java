@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;

@@ -1,7 +1,7 @@
-package com.autonomy.abc.framework.rules;
+package com.autonomy.abc.framework.state;
 
 import com.autonomy.abc.base.SeleniumTest;
-import com.autonomy.abc.framework.TestState;
+import com.autonomy.abc.framework.state.TestState;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 

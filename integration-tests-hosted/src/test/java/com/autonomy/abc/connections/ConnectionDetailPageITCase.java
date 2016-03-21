@@ -3,7 +3,7 @@ package com.autonomy.abc.connections;
 import com.autonomy.abc.base.HSODTearDown;
 import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.control.Window;
@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.Matchers.not;

@@ -1,8 +1,8 @@
 package com.autonomy.abc.usermanagement;
 
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.logging.KnownBug;
+import com.autonomy.abc.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;

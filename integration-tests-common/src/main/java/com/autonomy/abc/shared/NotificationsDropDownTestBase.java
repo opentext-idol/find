@@ -8,7 +8,7 @@ import com.autonomy.abc.selenium.menu.TopNavBar;
 import org.junit.Before;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class NotificationsDropDownTestBase extends SOTestBase {

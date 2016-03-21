@@ -1,13 +1,13 @@
 package com.autonomy.abc.base;
 
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.TestState;
-import com.autonomy.abc.framework.rules.KnownBugRule;
-import com.autonomy.abc.framework.rules.SessionRegistryResource;
-import com.autonomy.abc.framework.rules.StateHelperRule;
-import com.autonomy.abc.framework.rules.TestArtifactRule;
-import com.autonomy.abc.framework.statements.StatementArtifactHandler;
-import com.autonomy.abc.framework.statements.StatementLoggingHandler;
+import com.autonomy.abc.framework.state.TestState;
+import com.autonomy.abc.framework.logging.KnownBugRule;
+import com.autonomy.abc.framework.state.SessionRegistryResource;
+import com.autonomy.abc.framework.state.StateHelperRule;
+import com.autonomy.abc.framework.artifacts.TestArtifactRule;
+import com.autonomy.abc.framework.artifacts.StatementArtifactHandler;
+import com.autonomy.abc.framework.logging.StatementLoggingHandler;
 import com.autonomy.abc.selenium.application.Application;
 import com.autonomy.abc.selenium.application.ElementFactoryBase;
 import com.autonomy.abc.selenium.control.Session;

@@ -1,10 +1,10 @@
-package com.autonomy.abc.framework.statements;
+package com.autonomy.abc.framework.artifacts;
 
 
 import com.autonomy.abc.base.SeleniumTest;
-import com.autonomy.abc.framework.ArtifactSaveVisitor;
-import com.autonomy.abc.framework.TestState;
-import com.autonomy.abc.framework.TestStatement;
+import com.autonomy.abc.framework.state.TestState;
+import com.autonomy.abc.framework.state.TestStatement;
+import com.autonomy.abc.framework.state.StatementHandler;
 import com.autonomy.abc.selenium.control.Session;
 
 public class StatementArtifactHandler implements StatementHandler, ArtifactSaveVisitor.ArtifactSaver {

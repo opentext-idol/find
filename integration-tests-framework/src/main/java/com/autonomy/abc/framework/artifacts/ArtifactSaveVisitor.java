@@ -1,4 +1,4 @@
-package com.autonomy.abc.framework;
+package com.autonomy.abc.framework.artifacts;
 
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;

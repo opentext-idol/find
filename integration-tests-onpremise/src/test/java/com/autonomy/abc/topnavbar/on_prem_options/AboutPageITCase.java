@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 
 

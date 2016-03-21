@@ -3,8 +3,8 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.base.HSODTearDown;
 import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.logging.KnownBug;
+import com.autonomy.abc.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.UUID;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
 

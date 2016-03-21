@@ -1,4 +1,4 @@
-package com.autonomy.abc.framework;
+package com.autonomy.abc.framework.logging;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

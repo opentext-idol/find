@@ -8,7 +8,7 @@ import com.autonomy.abc.selenium.users.User;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class DevelopersITCase extends HostedTestBase {

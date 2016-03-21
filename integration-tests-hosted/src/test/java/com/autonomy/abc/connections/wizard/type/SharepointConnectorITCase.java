@@ -2,7 +2,7 @@ package com.autonomy.abc.connections.wizard.type;
 
 import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.element.FormInput;
@@ -16,8 +16,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;

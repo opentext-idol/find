@@ -2,8 +2,8 @@ package com.autonomy.abc.connections.wizard.index;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
-import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.logging.KnownBug;
+import com.autonomy.abc.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.connections.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.connections.ConnectorType;
 import com.autonomy.abc.selenium.connections.ConnectorTypeStepTab;
@@ -16,7 +16,7 @@ import org.openqa.selenium.WebElement;
 
 import java.io.Serializable;
 
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;

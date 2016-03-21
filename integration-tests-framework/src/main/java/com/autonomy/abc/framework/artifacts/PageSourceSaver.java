@@ -1,4 +1,4 @@
-package com.autonomy.abc.framework;
+package com.autonomy.abc.framework.artifacts;
 
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;

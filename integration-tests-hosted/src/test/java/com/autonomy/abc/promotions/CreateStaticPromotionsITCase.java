@@ -15,8 +15,8 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
 

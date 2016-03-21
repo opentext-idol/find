@@ -1,4 +1,4 @@
-package com.autonomy.abc.framework;
+package com.autonomy.abc.framework.state;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

@@ -2,7 +2,7 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.base.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.SOSearchResult;
@@ -19,8 +19,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;

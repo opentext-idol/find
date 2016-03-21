@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized;
 
 import java.io.IOException;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 
 @RunWith(Parameterized.class)

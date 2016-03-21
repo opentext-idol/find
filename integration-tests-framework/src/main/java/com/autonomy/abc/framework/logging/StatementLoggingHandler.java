@@ -1,7 +1,8 @@
-package com.autonomy.abc.framework.statements;
+package com.autonomy.abc.framework.logging;
 
 import com.autonomy.abc.base.SeleniumTest;
-import com.autonomy.abc.framework.TestStatement;
+import com.autonomy.abc.framework.state.TestStatement;
+import com.autonomy.abc.framework.state.StatementHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

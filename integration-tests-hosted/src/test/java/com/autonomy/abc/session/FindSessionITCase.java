@@ -2,7 +2,7 @@ package com.autonomy.abc.session;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindResultsPage;
@@ -19,7 +19,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;

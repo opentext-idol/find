@@ -2,7 +2,7 @@ package com.autonomy.abc.connections.wizard.configuration;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
-import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.connections.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.connections.ConnectorType;
 import com.autonomy.abc.selenium.connections.ConnectorTypeStepTab;
@@ -15,7 +15,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalToIgnoringCase;

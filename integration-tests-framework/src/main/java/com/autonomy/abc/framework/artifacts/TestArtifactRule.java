@@ -1,8 +1,7 @@
-package com.autonomy.abc.framework.rules;
+package com.autonomy.abc.framework.artifacts;
 
 import com.autonomy.abc.base.SeleniumTest;
-import com.autonomy.abc.framework.ArtifactSaveVisitor;
-import com.autonomy.abc.framework.TestState;
+import com.autonomy.abc.framework.state.TestState;
 import com.autonomy.abc.selenium.control.Session;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;

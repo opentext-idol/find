@@ -1,4 +1,4 @@
-package com.autonomy.abc.framework.rules;
+package com.autonomy.abc.framework.state;
 
 import com.autonomy.abc.base.SeleniumTest;
 import com.autonomy.abc.selenium.control.Session;

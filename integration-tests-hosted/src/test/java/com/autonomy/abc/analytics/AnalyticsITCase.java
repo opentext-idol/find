@@ -2,8 +2,8 @@ package com.autonomy.abc.analytics;
 
 import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.logging.KnownBug;
+import com.autonomy.abc.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.analytics.Container;
 import com.autonomy.abc.selenium.analytics.ContainerItem;
@@ -29,8 +29,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.hasItemThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsTextIgnoringCase;
 import static org.hamcrest.Matchers.*;

@@ -21,7 +21,7 @@ import org.openqa.selenium.WebElement;
 import java.io.IOException;
 import java.util.*;
 
-import static com.autonomy.abc.framework.TestStateAssert.assertThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.openqa.selenium.lift.Matchers.displayed;
 

@@ -3,7 +3,7 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.base.SOTearDown;
 import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.autonomy.abc.framework.TestStateAssert.verifyThat;
+import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.isIn;
 
