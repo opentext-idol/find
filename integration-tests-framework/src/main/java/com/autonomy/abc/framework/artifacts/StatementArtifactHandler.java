@@ -4,10 +4,10 @@ package com.autonomy.abc.framework.artifacts;
 import com.autonomy.abc.base.SeleniumTest;
 import com.autonomy.abc.framework.state.TestState;
 import com.autonomy.abc.framework.state.TestStatement;
-import com.autonomy.abc.framework.state.StatementHandler;
 import com.autonomy.abc.selenium.control.Session;
+import com.autonomy.abc.selenium.util.Handler;
 
-public class StatementArtifactHandler implements StatementHandler, ArtifactSaveVisitor.ArtifactSaver {
+public class StatementArtifactHandler implements Handler<TestStatement>, ArtifactSaveVisitor.ArtifactSaver {
     private final ArtifactSaveVisitor saveVisitor = new ArtifactSaveVisitor();
     private final SeleniumTest<?, ?> testBase;
     private final String timestamp;

@@ -1,6 +1,7 @@
 package com.autonomy.abc.framework.state;
 
 import com.autonomy.abc.base.SeleniumTest;
+import com.autonomy.abc.selenium.util.Handler;
 import org.junit.runner.Description;
 
 import java.text.SimpleDateFormat;
@@ -13,7 +14,7 @@ public class TestState {
     private Description method;
     private int statementCount;
     private List<Throwable> assertionErrors;
-    private List<StatementHandler> statementHandlers = new ArrayList<>();
+    private List<Handler<TestStatement>> statementHandlers = new ArrayList<>();
     private final String timestamp;
 
     private static TestState self = new TestState();
@@ -36,13 +37,13 @@ public class TestState {
         assertionErrors = new ArrayList<>();
     }
 
-    public void addStatementHandler(StatementHandler handler) {
+    public void addStatementHandler(Handler<TestStatement> handler) {
         statementHandlers.add(handler);
     }
 
     public void handle(TestStatement statement) {
         statement.setId(method.getMethodName(), ++statementCount);
-        for (StatementHandler handler : statementHandlers) {
+        for (Handler<TestStatement> handler : statementHandlers) {
             handler.handle(statement);
         }
     }
