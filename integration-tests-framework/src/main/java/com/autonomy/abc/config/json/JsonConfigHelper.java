@@ -1,4 +1,4 @@
-package com.autonomy.abc.config;
+package com.autonomy.abc.config.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class JsonConfigHelper {
+final class JsonConfigHelper {
     private JsonConfigHelper() {}
 
     static URL getUrlOrNull(JsonNode node) throws MalformedURLException {

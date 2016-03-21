@@ -1,5 +1,6 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.config.json.JsonConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
 
 import java.util.Collection;

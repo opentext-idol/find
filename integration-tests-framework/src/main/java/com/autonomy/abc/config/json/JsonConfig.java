@@ -1,5 +1,6 @@
-package com.autonomy.abc.config;
+package com.autonomy.abc.config.json;
 
+import com.autonomy.abc.config.Browser;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.users.AuthenticationStrategy;
@@ -15,14 +16,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-class JsonConfig {
+public class JsonConfig {
     private final AppConfig app;
     private final SeleniumConfig selenium;
     private final Map<String, User> users;
     private final Map<String, NewUser> newUsers;
     private UserConfigParser<JsonNode> parser;
 
-    JsonConfig(JsonNode node, ParametrizedFactory<ApplicationType, UserConfigParser<JsonNode>> parserFactory) throws MalformedURLException {
+    public JsonConfig(JsonNode node, ParametrizedFactory<ApplicationType, UserConfigParser<JsonNode>> parserFactory) throws MalformedURLException {
         this.app = new AppConfig(node.path("app"));
         this.selenium = new SeleniumConfig(node.path("selenium"));
 
@@ -53,19 +54,19 @@ class JsonConfig {
         parser = JsonConfigHelper.override(defaults.parser, overrides.parser);
     }
 
-    JsonConfig overrideUsing(JsonConfig overrides) {
+    public JsonConfig overrideUsing(JsonConfig overrides) {
         return (overrides == null) ? this : new JsonConfig(overrides, this);
     }
 
-    URL getHubUrl() {
+    public URL getHubUrl() {
         return this.selenium.getUrl();
     }
 
-    List<Browser> getBrowsers() {
+    public List<Browser> getBrowsers() {
         return this.selenium.getBrowsers();
     }
 
-    Resolution getResolution() {
+    public Resolution getResolution() {
         return this.selenium.getResolution();
     }
 
@@ -73,31 +74,31 @@ class JsonConfig {
      * How long to implicitly wait
      * @return timeout, in seconds, or -1 if not set
      */
-    int getTimeout() {
+    public int getTimeout() {
         return this.selenium.getTimeout();
     }
 
-    User getUser(String name) {
+    public User getUser(String name) {
         return this.users.get(name);
     }
 
-    NewUser getNewUser(String name) {
+    public NewUser getNewUser(String name) {
         return this.newUsers.get(name);
     }
 
-    NewUser generateRandomNewUser(String identifier) {
+    public NewUser generateRandomNewUser(String identifier) {
         return parser.generateNewUser(identifier);
     }
 
-    AuthenticationStrategy getAuthenticationStrategy(Factory<WebDriver> driverFactory) {
+    public AuthenticationStrategy getAuthenticationStrategy(Factory<WebDriver> driverFactory) {
         return parser == null ? null : parser.getAuthenticationStrategy(driverFactory);
     }
 
-    ApplicationType getAppType() {
+    public ApplicationType getAppType() {
         return this.app.getType();
     }
 
-    URL getAppUrl(String appName) {
+    public URL getAppUrl(String appName) {
         return app.getUrl(appName);
     }
 

@@ -1,5 +1,6 @@
-package com.autonomy.abc.config;
+package com.autonomy.abc.config.json;
 
+import com.autonomy.abc.config.Browser;
 import com.autonomy.abc.selenium.control.Resolution;
 import com.fasterxml.jackson.databind.JsonNode;
 

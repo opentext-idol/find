@@ -1,5 +1,6 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.config.json.JsonConfig;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 
 import java.util.ArrayList;

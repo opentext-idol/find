@@ -1,4 +1,4 @@
-package com.autonomy.abc.config;
+package com.autonomy.abc.config.json;
 
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.fasterxml.jackson.databind.JsonNode;
