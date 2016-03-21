@@ -86,12 +86,6 @@ define([
                     }
                 }
             });
-
-            this.listenTo(options.indexesCollection, 'change:deleted', function(model) {
-                if (model.get('deleted')) {
-                    this.selectDatabase(model.get('name'), model.get('domain'), false);
-                }
-            });
         },
 
         render: function() {

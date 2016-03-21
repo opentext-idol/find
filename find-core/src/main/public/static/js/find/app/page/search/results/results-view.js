@@ -117,6 +117,7 @@ define([
             this.queryModel = options.queryModel;
             this.documentsCollection = options.documentsCollection;
             this.indexesCollection = options.indexesCollection;
+            this.selectedIndexesCollection = options.selectedIndexesCollection;
 
             this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
@@ -331,6 +332,8 @@ define([
                             if (indexModel) {
                                 indexModel.set('deleted', true);
                             }
+
+                            this.selectedIndexesCollection.remove({name: name});
                         }.bind(this));
                     }
                 }.bind(this)

@@ -232,7 +232,8 @@ define([
                 displayPromotions: searchType === SavedSearchModel.Type.QUERY,
                 fetchStrategy: searchType === SavedSearchModel.Type.QUERY ? queryStrategy : stateTokenStrategy,
                 highlightModel: this.highlightModel,
-                indexesCollection: this.indexesCollection
+                indexesCollection: this.indexesCollection,
+                selectedIndexesCollection: this.queryState.selectedIndexes
             }, resultsViewConstructorArguments));
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({resultsView: this.resultsView});
