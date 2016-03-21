@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.element;
 
-import com.autonomy.abc.selenium.util.Predicates;
+import com.hp.autonomy.frontend.selenium.util.Predicates;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

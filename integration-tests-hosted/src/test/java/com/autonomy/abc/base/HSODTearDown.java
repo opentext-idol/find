@@ -1,5 +1,7 @@
 package com.autonomy.abc.base;
 
+import com.hp.autonomy.frontend.selenium.base.TearDown;
+
 public enum HSODTearDown implements TearDown<HostedTestBase> {
     INDEXES {
         @Override

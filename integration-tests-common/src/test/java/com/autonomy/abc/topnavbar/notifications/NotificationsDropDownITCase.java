@@ -1,11 +1,11 @@
 package com.autonomy.abc.topnavbar.notifications;
 
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.analytics.DashboardBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordWizardType;
@@ -25,8 +25,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.Matchers.*;
 
 /*

@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.promotions;
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.element.TriggerForm;
-import com.autonomy.abc.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;

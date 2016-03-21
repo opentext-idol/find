@@ -1,9 +1,9 @@
 package com.autonomy.abc.external;
 
 import com.autonomy.abc.config.SOConfigLocator;
-import com.autonomy.abc.base.SeleniumTest;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.base.TestParameterFactory;
+import com.hp.autonomy.frontend.selenium.base.SeleniumTest;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.base.TestParameterFactory;
 import com.autonomy.abc.selenium.devconsole.DevConsole;
 import com.autonomy.abc.selenium.devconsole.DevConsoleElementFactory;
 import com.autonomy.abc.selenium.devconsole.HSODLandingPage;
@@ -15,8 +15,8 @@ import org.junit.runners.Parameterized;
 
 import java.io.IOException;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
-import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 
 @RunWith(Parameterized.class)
 public class DevConsoleITCase extends SeleniumTest<DevConsole, DevConsoleElementFactory> {

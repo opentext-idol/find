@@ -13,11 +13,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.StringMatchers.containsString;
-import static com.autonomy.abc.matchers.StringMatchers.stringContainingAnyOf;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
+import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.stringContainingAnyOf;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;

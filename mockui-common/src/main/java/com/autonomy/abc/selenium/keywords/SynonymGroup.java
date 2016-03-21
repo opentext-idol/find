@@ -1,10 +1,10 @@
 package com.autonomy.abc.selenium.keywords;
 
-import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.element.LabelBox;
-import com.autonomy.abc.selenium.element.Removable;
-import com.autonomy.abc.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.element.LabelBox;
+import com.hp.autonomy.frontend.selenium.element.Removable;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;

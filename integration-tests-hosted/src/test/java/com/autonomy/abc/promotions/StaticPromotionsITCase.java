@@ -1,12 +1,12 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.base.HostedTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.logging.KnownBug;
-import com.autonomy.abc.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.autonomy.abc.selenium.element.Editable;
-import com.autonomy.abc.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.element.Editable;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
@@ -24,9 +24,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.PromotionsMatchers.promotionsList;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsTextIgnoringCase;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 

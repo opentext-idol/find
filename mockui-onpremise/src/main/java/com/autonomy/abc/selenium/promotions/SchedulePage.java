@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.element.DatePicker;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.ParametrizedFactory;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.element.DatePicker;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.apache.commons.lang3.time.DateUtils;

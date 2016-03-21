@@ -11,6 +11,9 @@ import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.users.UsersPage;
+import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
+import com.hp.autonomy.frontend.selenium.application.LoginService;
+import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 

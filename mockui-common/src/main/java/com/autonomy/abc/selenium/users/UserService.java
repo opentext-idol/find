@@ -3,6 +3,9 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.hp.autonomy.frontend.selenium.users.NewUser;
+import com.hp.autonomy.frontend.selenium.users.Role;
+import com.hp.autonomy.frontend.selenium.users.User;
 
 public abstract class UserService<T extends SOElementFactory> extends ServiceBase<T> {
 

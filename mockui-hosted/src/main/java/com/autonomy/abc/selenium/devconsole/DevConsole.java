@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.devconsole;
 
-import com.autonomy.abc.selenium.application.Application;
-import com.autonomy.abc.selenium.application.LoginService;
-import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.users.User;
+import com.hp.autonomy.frontend.selenium.application.Application;
+import com.hp.autonomy.frontend.selenium.application.LoginService;
+import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.users.User;
 
 public class DevConsole implements Application<DevConsoleElementFactory> {
     private DevConsoleElementFactory factory;

@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.search;
 
-import com.autonomy.abc.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

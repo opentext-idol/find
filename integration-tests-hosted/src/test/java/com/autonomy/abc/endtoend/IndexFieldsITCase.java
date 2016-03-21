@@ -2,10 +2,10 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.base.HSODTearDown;
 import com.autonomy.abc.base.HostedTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.logging.KnownBug;
-import com.autonomy.abc.framework.logging.RelatedTo;
-import com.autonomy.abc.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.UUID;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
 
 @RelatedTo("CSA-2056")

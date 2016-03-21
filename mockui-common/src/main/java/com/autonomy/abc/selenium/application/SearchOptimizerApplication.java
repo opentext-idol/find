@@ -1,12 +1,15 @@
 package com.autonomy.abc.selenium.application;
 
-import com.autonomy.abc.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.application.Application;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
+import com.hp.autonomy.frontend.selenium.application.LoginService;
+import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.users.UserService;
-import com.autonomy.abc.selenium.util.Factory;
-import com.autonomy.abc.selenium.util.SafeClassLoader;
+import com.hp.autonomy.frontend.selenium.util.Factory;
+import com.hp.autonomy.frontend.selenium.util.SafeClassLoader;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 
 import java.util.EnumMap;

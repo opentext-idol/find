@@ -1,6 +1,7 @@
 package com.autonomy.abc.base;
 
-import com.autonomy.abc.selenium.application.LoginService;
+import com.hp.autonomy.frontend.selenium.base.TearDown;
+import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 
 public enum SOTearDown implements TearDown<SOTestBase> {

@@ -1,10 +1,10 @@
 package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.base.HostedTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.logging.KnownBug;
-import com.autonomy.abc.framework.logging.RelatedTo;
-import com.autonomy.abc.selenium.application.Application;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.application.Application;
 import com.autonomy.abc.selenium.devconsole.DevConsole;
 import com.autonomy.abc.selenium.devconsole.DevConsoleHomePage;
 import com.autonomy.abc.selenium.devconsole.HSODLandingPage;
@@ -12,7 +12,7 @@ import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
-import com.autonomy.abc.selenium.users.User;
+import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.junit.Before;
@@ -20,8 +20,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
-import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.openqa.selenium.lift.Matchers.displayed;

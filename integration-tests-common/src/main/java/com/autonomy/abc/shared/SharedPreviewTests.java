@@ -1,16 +1,16 @@
 package com.autonomy.abc.shared;
 
-import com.autonomy.abc.selenium.control.Frame;
-import com.autonomy.abc.selenium.control.Session;
-import com.autonomy.abc.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.control.Session;
+import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.search.SearchResult;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;

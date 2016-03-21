@@ -1,10 +1,10 @@
 package com.autonomy.abc.selenium.indexes;
 
-import com.autonomy.abc.selenium.element.ChevronContainer;
-import com.autonomy.abc.selenium.element.Collapsible;
-import com.autonomy.abc.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.element.ChevronContainer;
+import com.hp.autonomy.frontend.selenium.element.Collapsible;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.autonomy.abc.selenium.icma.ICMAPageBase;
-import com.autonomy.abc.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

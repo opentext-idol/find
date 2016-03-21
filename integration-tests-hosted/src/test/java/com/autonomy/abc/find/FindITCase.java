@@ -1,13 +1,13 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
-import com.autonomy.abc.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.shared.SharedPreviewTests;
-import com.autonomy.abc.framework.logging.KnownBug;
-import com.autonomy.abc.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.autonomy.abc.shared.QueryTestHelper;
-import com.autonomy.abc.selenium.control.Frame;
-import com.autonomy.abc.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.*;
@@ -18,9 +18,9 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.autonomy.abc.selenium.search.SearchResult;
 import com.autonomy.abc.selenium.users.HSODUser;
-import com.autonomy.abc.selenium.util.DriverUtil;
-import com.autonomy.abc.selenium.util.Locator;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.DriverUtil;
+import com.hp.autonomy.frontend.selenium.util.Locator;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
@@ -42,10 +42,12 @@ import org.openqa.selenium.*;
 
 import java.util.*;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.*;
-import static com.autonomy.abc.matchers.StringMatchers.containsString;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasClass;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTagName;
+import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;

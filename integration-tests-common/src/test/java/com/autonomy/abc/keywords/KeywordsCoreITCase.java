@@ -2,8 +2,8 @@ package com.autonomy.abc.keywords;
 
 import com.autonomy.abc.base.SOTearDown;
 import com.autonomy.abc.base.SOTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.categories.CoreFeature;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
 
 @Category(CoreFeature.class)

@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.users;
 
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
+import com.hp.autonomy.frontend.selenium.users.Role;
+import com.hp.autonomy.frontend.selenium.users.User;
 
 public class HSODUser extends User {
     private String email;

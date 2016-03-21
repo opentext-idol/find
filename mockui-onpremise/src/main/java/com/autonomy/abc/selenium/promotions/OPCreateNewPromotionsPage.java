@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
-import com.autonomy.abc.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Arrays;

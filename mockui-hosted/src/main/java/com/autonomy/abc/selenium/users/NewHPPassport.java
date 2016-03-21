@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.sso.HPPassport;
 import org.openqa.selenium.*;

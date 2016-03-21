@@ -1,13 +1,13 @@
 package com.autonomy.abc.base;
 
-import com.autonomy.abc.base.HybridTestParameterFactory;
-import com.autonomy.abc.base.SeleniumTest;
 import com.autonomy.abc.config.SOConfigLocator;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.application.ApplicationType;
+import com.hp.autonomy.frontend.selenium.base.HybridTestParameterFactory;
+import com.hp.autonomy.frontend.selenium.base.SeleniumTest;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.users.User;
+import com.hp.autonomy.frontend.selenium.users.User;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;

@@ -1,17 +1,17 @@
 package com.autonomy.abc.overview;
 
 import com.autonomy.abc.base.SOTestBase;
-import com.autonomy.abc.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.analytics.OverviewPage;
-import com.autonomy.abc.selenium.application.ApplicationType;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.SOPageUtil;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
-import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.*;
 
 public class OverviewPageITCase extends SOTestBase {

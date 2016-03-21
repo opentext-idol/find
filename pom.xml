@@ -103,7 +103,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <groups>com.autonomy.abc.framework.categories.CoreFeature</groups>
+                            <groups>CoreFeature</groups>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -117,7 +117,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <excludedGroups>com.autonomy.abc.framework.categories.SlowTest</excludedGroups>
+                            <excludedGroups>SlowTest</excludedGroups>
                         </configuration>
                     </plugin>
                 </plugins>

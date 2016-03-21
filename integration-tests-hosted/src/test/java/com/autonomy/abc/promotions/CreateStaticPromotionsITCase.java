@@ -2,7 +2,7 @@ package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.base.SOTearDown;
 import com.autonomy.abc.base.HostedTestBase;
-import com.autonomy.abc.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.promotions.*;
@@ -15,9 +15,9 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
-import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
 
 public class CreateStaticPromotionsITCase extends HostedTestBase {

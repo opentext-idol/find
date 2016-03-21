@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.query.QueryResultsPage;
-import com.autonomy.abc.selenium.util.DriverUtil;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Locator;
+import com.hp.autonomy.frontend.selenium.util.DriverUtil;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

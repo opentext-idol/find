@@ -1,5 +1,10 @@
 package com.autonomy.abc.selenium.users;
 
+import com.hp.autonomy.frontend.selenium.users.NewUser;
+import com.hp.autonomy.frontend.selenium.users.ReplacementAuth;
+import com.hp.autonomy.frontend.selenium.users.Role;
+import com.hp.autonomy.frontend.selenium.users.User;
+
 public class OPNewUser implements NewUser, ReplacementAuth {
     private final String username;
     private final String password;

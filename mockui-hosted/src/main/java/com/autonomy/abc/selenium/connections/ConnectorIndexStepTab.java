@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.connections;
 
-import com.autonomy.abc.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

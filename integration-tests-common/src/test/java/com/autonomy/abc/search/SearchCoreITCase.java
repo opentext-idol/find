@@ -1,14 +1,14 @@
 package com.autonomy.abc.search;
 
 import com.autonomy.abc.base.SOTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.logging.KnownBug;
-import com.autonomy.abc.framework.categories.CoreFeature;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.search.SearchPage;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 

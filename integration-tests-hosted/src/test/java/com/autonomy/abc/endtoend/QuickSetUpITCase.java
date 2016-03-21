@@ -2,10 +2,10 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.base.SOTearDown;
 import com.autonomy.abc.base.HostedTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.autonomy.abc.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.icma.GettingStartedPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -23,7 +23,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
 

@@ -1,9 +1,12 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.element.Dropdown;
-import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.element.PasswordBox;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.element.Dropdown;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.element.PasswordBox;
+import com.hp.autonomy.frontend.selenium.users.NewUser;
+import com.hp.autonomy.frontend.selenium.users.Role;
+import com.hp.autonomy.frontend.selenium.users.User;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;

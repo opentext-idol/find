@@ -1,22 +1,24 @@
 package com.autonomy.abc.connections.wizard.configuration;
 
-import com.autonomy.abc.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
-import com.autonomy.abc.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.connections.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.connections.ConnectorType;
 import com.autonomy.abc.selenium.connections.ConnectorTypeStepTab;
-import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
-import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disabled;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasAttribute;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.core.Is.is;

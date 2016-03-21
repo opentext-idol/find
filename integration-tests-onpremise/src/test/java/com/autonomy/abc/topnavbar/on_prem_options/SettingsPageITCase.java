@@ -2,12 +2,12 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.config.SOConfigLocator;
 import com.autonomy.abc.base.SOTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.application.ApplicationType;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.HostAndPorts;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import com.autonomy.abc.selenium.iso.SettingsPage;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,7 @@ import org.openqa.selenium.WebElement;
 import java.io.IOException;
 import java.util.*;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.openqa.selenium.lift.Matchers.displayed;
 

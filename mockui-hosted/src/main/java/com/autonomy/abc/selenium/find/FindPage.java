@@ -1,15 +1,15 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.element.DatePicker;
-import com.autonomy.abc.selenium.element.Dropdown;
-import com.autonomy.abc.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.element.DatePicker;
+import com.hp.autonomy.frontend.selenium.element.Dropdown;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.SearchBase;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;

@@ -2,7 +2,7 @@ package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.base.SOTearDown;
 import com.autonomy.abc.base.SOTestBase;
-import com.autonomy.abc.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
@@ -11,8 +11,8 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.OPSearchPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +22,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
-import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
-import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
+import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;

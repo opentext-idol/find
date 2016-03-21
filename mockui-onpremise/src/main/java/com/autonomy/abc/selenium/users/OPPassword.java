@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.element.PasswordBox;
+import com.hp.autonomy.frontend.selenium.element.PasswordBox;
+import com.hp.autonomy.frontend.selenium.users.ReplacementAuth;
+import com.hp.autonomy.frontend.selenium.users.User;
 
 public class OPPassword implements ReplacementAuth {
     private final String password;

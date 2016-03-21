@@ -1,6 +1,7 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.config.json.JsonConfig;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.config.json.JsonConfig;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

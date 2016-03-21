@@ -1,14 +1,14 @@
 package com.autonomy.abc.shared;
 
 import com.autonomy.abc.base.SOTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import org.junit.Before;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class NotificationsDropDownTestBase extends SOTestBase {

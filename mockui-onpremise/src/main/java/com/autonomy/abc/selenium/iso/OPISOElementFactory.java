@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.iso;
 
-import com.autonomy.abc.selenium.application.PageMapper;
+import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.keywords.OPCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.OPKeywordsPage;

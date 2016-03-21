@@ -1,7 +1,8 @@
 package com.autonomy.abc.selenium.config;
 
 import com.autonomy.abc.selenium.users.*;
-import com.autonomy.abc.selenium.util.Factory;
+import com.hp.autonomy.frontend.selenium.users.*;
+import com.hp.autonomy.frontend.selenium.util.Factory;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openqa.selenium.WebDriver;
 

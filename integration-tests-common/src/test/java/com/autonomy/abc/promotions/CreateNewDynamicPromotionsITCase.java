@@ -3,8 +3,8 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.shared.SharedTriggerTests;
 import com.autonomy.abc.base.SOTearDown;
 import com.autonomy.abc.base.SOTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
@@ -12,14 +12,14 @@ import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.assertThat;
-import static com.autonomy.abc.matchers.ControlMatchers.url;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.url;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
 
 public class CreateNewDynamicPromotionsITCase extends SOTestBase {

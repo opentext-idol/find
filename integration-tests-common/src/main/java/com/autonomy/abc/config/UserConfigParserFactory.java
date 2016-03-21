@@ -1,10 +1,10 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.users.UserConfigParser;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
+import com.hp.autonomy.frontend.selenium.users.UserConfigParser;
 import com.autonomy.abc.selenium.users.JsonUserConfigParser;
-import com.autonomy.abc.selenium.util.ParametrizedFactory;
-import com.autonomy.abc.selenium.util.SafeClassLoader;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.SafeClassLoader;
 import com.fasterxml.jackson.databind.JsonNode;
 
 class UserConfigParserFactory implements ParametrizedFactory<ApplicationType, UserConfigParser<JsonNode>> {

@@ -2,10 +2,10 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.base.SOTearDown;
 import com.autonomy.abc.base.HostedTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.find.FindService;
@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
