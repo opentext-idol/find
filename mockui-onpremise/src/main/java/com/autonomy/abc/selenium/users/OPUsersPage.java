@@ -27,7 +27,15 @@ public class OPUsersPage extends UsersPage {
         selectRole(role);
         createButton().click();
         Waits.loadOrFadeWait();
-        return newUser.withRole(role);
+        return newUser.createWithRole(role);
+    }
+
+    public User replaceAuthFor(User user, ReplacementAuth newAuth) {
+        if (newAuth instanceof OPPassword) {
+            ((OPPassword) newAuth).sendTo(passwordBoxFor(user));
+            passwordBoxFor(user).waitForUpdate();
+        }
+        return newAuth.replaceAuth(user);
     }
 
     public WebElement roleLinkFor(User user) {

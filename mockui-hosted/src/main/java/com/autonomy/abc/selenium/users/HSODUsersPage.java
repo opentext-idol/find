@@ -46,7 +46,7 @@ public class HSODUsersPage extends HSODUserManagementPage {
             throw new UserNotCreatedException(newUser);
         }
 
-        return newUser.withRole(role);
+        return newUser.createWithRole(role);
     }
 
     public WebElement getUserRow(User user){

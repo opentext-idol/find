@@ -18,13 +18,8 @@ public class HSODNewUser implements NewUser {
         this.provider = provider;
     }
 
-    public HSODUser withRole(Role role) {
+    public HSODUser createWithRole(Role role) {
         return new HSODUser(username, email, role, provider);
-    }
-
-    @Override
-    public User replaceAuthFor(User user, UsersPage usersPage) {
-        return null;
     }
 
     public String getUsername() {

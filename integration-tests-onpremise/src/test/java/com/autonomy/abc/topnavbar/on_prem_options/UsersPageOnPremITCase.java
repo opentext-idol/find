@@ -3,10 +3,7 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.Editable;
-import com.autonomy.abc.selenium.users.NewUser;
-import com.autonomy.abc.selenium.users.OPNewUser;
-import com.autonomy.abc.selenium.users.OPUsersPage;
-import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Waits;
 import com.autonomy.abc.shared.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -64,7 +61,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
     @Test
     public void testChangeOfPasswordWorksOnLogin() {
         User initialUser = singleSignUp();
-        User updatedUser = usersPage.changeAuth(initialUser, newUser2);
+        User updatedUser = ((OPUsersPage) usersPage).replaceAuthFor(initialUser, new OPPassword("bob"));
 
         logoutAndNavigateToWebApp();
         loginAs(initialUser);

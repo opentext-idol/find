@@ -101,10 +101,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		return new PasswordBox(getUserRow(user).findElement(By.cssSelector("td:nth-child(2)")), getDriver());
 	}
 
-	public User changeAuth(User user, NewUser replacementAuth) {
-		return replacementAuth.replaceAuthFor(user, this);
-	}
-
 	public void selectTableUserType(final User user, final String type) {
 		getUserRow(user).findElement(By.cssSelector(".input-admin")).findElement(By.xpath(".//*[text() = '" + type + "']")).click();
 	}

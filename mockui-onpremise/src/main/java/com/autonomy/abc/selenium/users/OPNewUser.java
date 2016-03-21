@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
-public class OPNewUser implements NewUser {
+public class OPNewUser implements NewUser, ReplacementAuth {
     private final String username;
     private final String password;
 
@@ -18,14 +18,13 @@ public class OPNewUser implements NewUser {
     }
 
     @Override
-    public User withRole(Role role) {
+    public User createWithRole(Role role) {
         return new User(new OPAccount(username, password), username, role);
     }
 
     @Override
-    public User replaceAuthFor(User user, UsersPage usersPage) {
-        usersPage.passwordBoxFor(user).setValueAndWait(password);
-        return new User(new OPAccount(user.getUsername(), password), user.getUsername(), user.getRole());
+    public User replaceAuth(User toReplace) {
+        return new User(new OPAccount(toReplace.getUsername(), password), toReplace.getUsername(), toReplace.getRole());
     }
 
     @Override
