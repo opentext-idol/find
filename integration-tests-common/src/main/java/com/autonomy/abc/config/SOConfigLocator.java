@@ -52,15 +52,15 @@ public class SOConfigLocator {
     private static class MavenJsonConfigReader implements JsonConfigReader {
         @Override
         public JsonConfig toJsonConfig(String path) throws IOException {
-            return JsonConfig.fromURL(convert(path));
+            return path == null ? null : new JsonConfig(toJsonNode(path));
         }
 
         @Override
         public JsonNode toJsonNode(String path) throws IOException {
-            return new ObjectMapper().readTree(convert(path));
+            return new ObjectMapper().readTree(urlForPath(path));
         }
 
-        private URL convert(String path) {
+        private static URL urlForPath(String path) {
             return SOConfigLocator.class.getClassLoader().getResource(path);
         }
     }
@@ -68,15 +68,15 @@ public class SOConfigLocator {
     private static class LocalJsonConfigReader implements JsonConfigReader {
         @Override
         public JsonConfig toJsonConfig(String path) throws IOException {
-            return JsonConfig.readFile(convert(path));
+            return path == null ? null : new JsonConfig(toJsonNode(path));
         }
 
         @Override
         public JsonNode toJsonNode(String path) throws IOException {
-            return new ObjectMapper().readTree(convert(path));
+            return new ObjectMapper().readTree(fileForPath(path));
         }
 
-        private File convert(String path) {
+        private static File fileForPath(String path) {
             return new File(path);
         }
     }

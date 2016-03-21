@@ -25,7 +25,7 @@ class JsonConfig {
     private final Map<String, NewUser> newUsers;
     private UserConfigParser parser;
 
-    private JsonConfig(JsonNode node) throws MalformedURLException {
+    JsonConfig(JsonNode node) throws MalformedURLException {
         this.app = new AppConfig(node.path("app"));
         this.selenium = new SeleniumConfig(node.path("selenium"));
 
@@ -54,14 +54,6 @@ class JsonConfig {
         users = JsonConfigHelper.mapOverride(defaults.users, overrides.users);
         newUsers = JsonConfigHelper.mapOverride(defaults.newUsers, overrides.newUsers);
         parser = JsonConfigHelper.override(defaults.parser, overrides.parser);
-    }
-
-    static JsonConfig readFile(File jsonFile) throws IOException {
-        return (jsonFile == null) ? null : new JsonConfig(new ObjectMapper().readTree(jsonFile));
-    }
-
-    static JsonConfig fromURL(URL url) throws IOException {
-        return (url == null) ? null : new JsonConfig(new ObjectMapper().readTree(url));
     }
 
     JsonConfig overrideUsing(JsonConfig overrides) {
