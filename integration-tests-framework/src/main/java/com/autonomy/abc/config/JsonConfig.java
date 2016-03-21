@@ -1,7 +1,7 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.config.UserConfigParser;
+import com.autonomy.abc.selenium.users.UserConfigParser;
 import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.users.AuthenticationStrategy;
 import com.autonomy.abc.selenium.users.NewUser;
