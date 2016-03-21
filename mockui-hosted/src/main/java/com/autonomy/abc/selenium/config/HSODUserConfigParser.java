@@ -12,7 +12,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.util.Map;
 
-public class HSODUserConfigParser extends UserConfigParser {
+public class HSODUserConfigParser implements ParsesUserConfig {
     // TODO: move to config
     private final String emailPrefix = "hodtestqa401";
     private final String emailSuffix = "@gmail.com";
