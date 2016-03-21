@@ -1,19 +1,17 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.config.UserConfigParser;
+import com.autonomy.abc.selenium.config.ParsesUserConfig;
 import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.users.AuthenticationStrategy;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.NullAuthenticationStrategy;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Factory;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.WebDriver;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -23,27 +21,27 @@ class JsonConfig {
     private final SeleniumConfig selenium;
     private final Map<String, User> users;
     private final Map<String, NewUser> newUsers;
-    private UserConfigParser parser;
+    private ParsesUserConfig parser;
 
-    JsonConfig(JsonNode node) throws MalformedURLException {
+    JsonConfig(JsonNode node, ParametrizedFactory<ApplicationType, ParsesUserConfig> parserFactory) throws MalformedURLException {
         this.app = new AppConfig(node.path("app"));
         this.selenium = new SeleniumConfig(node.path("selenium"));
 
         this.users = new HashMap<>();
         this.newUsers = new HashMap<>();
         if (node.has("users") || node.has("newusers")) {
-            parser = UserConfigParser.ofType(getAppType());
+            this.parser = parserFactory.create(getAppType());
 
             Iterator<Map.Entry<String, JsonNode>> iterator = node.path("users").fields();
             while (iterator.hasNext()) {
                 Map.Entry<String, JsonNode> userEntry = iterator.next();
-                users.put(userEntry.getKey(), parser.parseUser(userEntry.getValue()));
+                users.put(userEntry.getKey(), this.parser.parseUser(userEntry.getValue()));
             }
 
             iterator = node.path("newusers").fields();
             while (iterator.hasNext()) {
                 Map.Entry<String, JsonNode> newUserEntry = iterator.next();
-                newUsers.put(newUserEntry.getKey(), parser.parseNewUser(newUserEntry.getValue()));
+                newUsers.put(newUserEntry.getKey(), this.parser.parseNewUser(newUserEntry.getValue()));
             }
         }
     }

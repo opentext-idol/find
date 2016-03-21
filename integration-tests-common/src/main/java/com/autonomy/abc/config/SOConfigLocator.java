@@ -52,7 +52,7 @@ public class SOConfigLocator {
     private static class MavenJsonConfigReader implements JsonConfigReader {
         @Override
         public JsonConfig toJsonConfig(String path) throws IOException {
-            return path == null ? null : new JsonConfig(toJsonNode(path));
+            return path == null ? null : new JsonConfig(toJsonNode(path), new UserConfigParserFactory());
         }
 
         @Override
@@ -68,7 +68,7 @@ public class SOConfigLocator {
     private static class LocalJsonConfigReader implements JsonConfigReader {
         @Override
         public JsonConfig toJsonConfig(String path) throws IOException {
-            return path == null ? null : new JsonConfig(toJsonNode(path));
+            return path == null ? null : new JsonConfig(toJsonNode(path), new UserConfigParserFactory());
         }
 
         @Override
