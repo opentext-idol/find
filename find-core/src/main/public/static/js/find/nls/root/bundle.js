@@ -142,6 +142,7 @@ define([
         'search.resultsView.topic-map': 'Topic Map',
         'search.resultsView.sunburst': 'Sunburst',
         'search.resultsView.sunburst.error.noParametricValues': 'There are no parametric values to display for your current search',
+        'search.resultsView.sunburst.error.query': 'An error occured displaying sunburst view',
         'search.resultsView.map': 'Map',
         'search.savedSearchControl.save': 'Save',
         'search.savedSearchControl.openEdit.create': 'Save Search',
