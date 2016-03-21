@@ -21,9 +21,9 @@ class JsonConfig {
     private final SeleniumConfig selenium;
     private final Map<String, User> users;
     private final Map<String, NewUser> newUsers;
-    private UserConfigParser parser;
+    private UserConfigParser<JsonNode> parser;
 
-    JsonConfig(JsonNode node, ParametrizedFactory<ApplicationType, UserConfigParser> parserFactory) throws MalformedURLException {
+    JsonConfig(JsonNode node, ParametrizedFactory<ApplicationType, UserConfigParser<JsonNode>> parserFactory) throws MalformedURLException {
         this.app = new AppConfig(node.path("app"));
         this.selenium = new SeleniumConfig(node.path("selenium"));
 
