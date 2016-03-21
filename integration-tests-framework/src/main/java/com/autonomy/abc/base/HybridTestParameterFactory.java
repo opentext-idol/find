@@ -1,4 +1,4 @@
-package com.autonomy.abc.config;
+package com.autonomy.abc.base;
 
 import com.autonomy.abc.config.json.JsonConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;

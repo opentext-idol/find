@@ -1,6 +1,6 @@
 package com.autonomy.abc.framework.rules;
 
-import com.autonomy.abc.config.SeleniumTest;
+import com.autonomy.abc.base.SeleniumTest;
 import com.autonomy.abc.framework.ArtifactSaveVisitor;
 import com.autonomy.abc.framework.TestState;
 import com.autonomy.abc.selenium.control.Session;

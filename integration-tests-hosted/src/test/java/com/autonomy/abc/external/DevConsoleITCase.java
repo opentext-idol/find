@@ -1,9 +1,9 @@
 package com.autonomy.abc.external;
 
 import com.autonomy.abc.config.SOConfigLocator;
-import com.autonomy.abc.config.SeleniumTest;
+import com.autonomy.abc.base.SeleniumTest;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.config.TestParameterFactory;
+import com.autonomy.abc.base.TestParameterFactory;
 import com.autonomy.abc.selenium.devconsole.DevConsole;
 import com.autonomy.abc.selenium.devconsole.DevConsoleElementFactory;
 import com.autonomy.abc.selenium.devconsole.HSODLandingPage;

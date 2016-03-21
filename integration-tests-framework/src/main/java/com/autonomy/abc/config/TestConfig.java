@@ -25,7 +25,7 @@ public class TestConfig {
 	private final Platform platform;
 	private final Browser browser;
 
-	TestConfig(final JsonConfig config, final Browser browser) {
+	public TestConfig(final JsonConfig config, final Browser browser) {
 		this.jsonConfig = config;
 		this.platform = Platform.WINDOWS;
 		this.browser = browser;

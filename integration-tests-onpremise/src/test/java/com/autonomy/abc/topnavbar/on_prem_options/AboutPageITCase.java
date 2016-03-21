@@ -1,6 +1,6 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.config.SOTestBase;
+import com.autonomy.abc.base.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.iso.AboutPage;

@@ -60,7 +60,7 @@ public enum Browser {
 
     abstract DesiredCapabilities getCapabilities();
 
-    public WebDriver createWebDriver(URL url, Platform platform) {
+    WebDriver createWebDriver(URL url, Platform platform) {
         final DesiredCapabilities capabilities = getCapabilities();
         final LoggingPreferences logPrefs = new LoggingPreferences();
         logPrefs.enable(LogType.BROWSER, Level.ALL);

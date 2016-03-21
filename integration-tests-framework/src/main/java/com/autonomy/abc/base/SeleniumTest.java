@@ -1,5 +1,6 @@
-package com.autonomy.abc.config;
+package com.autonomy.abc.base;
 
+import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.TestState;
 import com.autonomy.abc.framework.rules.KnownBugRule;
 import com.autonomy.abc.framework.rules.SessionRegistryResource;

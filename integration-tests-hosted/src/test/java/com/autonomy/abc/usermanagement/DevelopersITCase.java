@@ -1,6 +1,6 @@
 package com.autonomy.abc.usermanagement;
 
-import com.autonomy.abc.config.HostedTestBase;
+import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.users.HSODDeveloperService;
 import com.autonomy.abc.selenium.users.HSODDevelopersPage;

@@ -1,7 +1,7 @@
 package com.autonomy.abc.connections;
 
-import com.autonomy.abc.config.HSODTearDown;
-import com.autonomy.abc.config.HostedTestBase;
+import com.autonomy.abc.base.HSODTearDown;
+import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;

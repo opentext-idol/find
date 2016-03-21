@@ -1,6 +1,6 @@
 package com.autonomy.abc.connections.wizard;
 
-import com.autonomy.abc.config.HostedTestBase;
+import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.ConnectorType;

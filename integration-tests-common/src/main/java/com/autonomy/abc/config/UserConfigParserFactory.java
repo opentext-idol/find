@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.autonomy.abc.selenium.util.SafeClassLoader;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class UserConfigParserFactory implements ParametrizedFactory<ApplicationType, UserConfigParser<JsonNode>> {
+class UserConfigParserFactory implements ParametrizedFactory<ApplicationType, UserConfigParser<JsonNode>> {
     @Override
     public UserConfigParser<JsonNode> create(ApplicationType context) {
         switch (context) {

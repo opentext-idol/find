@@ -1,7 +1,7 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.SOTearDown;
-import com.autonomy.abc.config.HostedTestBase;
+import com.autonomy.abc.base.SOTearDown;
+import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;

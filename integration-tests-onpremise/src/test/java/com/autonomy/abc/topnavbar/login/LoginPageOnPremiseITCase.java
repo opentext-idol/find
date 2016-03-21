@@ -1,6 +1,6 @@
 package com.autonomy.abc.topnavbar.login;
 
-import com.autonomy.abc.config.SOTestBase;
+import com.autonomy.abc.base.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import com.autonomy.abc.selenium.users.OPAccount;

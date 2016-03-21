@@ -1,6 +1,6 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.HostedTestBase;
+import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.control.Frame;

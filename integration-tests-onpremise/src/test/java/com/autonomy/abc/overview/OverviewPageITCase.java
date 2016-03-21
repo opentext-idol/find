@@ -1,6 +1,6 @@
 package com.autonomy.abc.overview;
 
-import com.autonomy.abc.config.SOTestBase;
+import com.autonomy.abc.base.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.analytics.OverviewPage;
 import com.autonomy.abc.selenium.application.ApplicationType;

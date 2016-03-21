@@ -1,8 +1,8 @@
 package com.autonomy.abc.keywords;
 
 import com.autonomy.abc.shared.SharedTriggerTests;
-import com.autonomy.abc.config.SOTearDown;
-import com.autonomy.abc.config.SOTestBase;
+import com.autonomy.abc.base.SOTearDown;
+import com.autonomy.abc.base.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.GritterNotice;

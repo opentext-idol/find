@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.config.SOTestBase;
+import com.autonomy.abc.base.SOTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.shared.SharedPreviewTests;
 import com.autonomy.abc.framework.KnownBug;

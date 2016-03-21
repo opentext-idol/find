@@ -1,6 +1,6 @@
 package com.autonomy.abc.session;
 
-import com.autonomy.abc.config.FindTestBase;
+import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Frame;

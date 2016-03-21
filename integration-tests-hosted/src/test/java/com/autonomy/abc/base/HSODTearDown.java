@@ -1,4 +1,4 @@
-package com.autonomy.abc.config;
+package com.autonomy.abc.base;
 
 public enum HSODTearDown implements TearDown<HostedTestBase> {
     INDEXES {

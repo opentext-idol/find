@@ -1,6 +1,6 @@
 package com.autonomy.abc.connections.wizard.type;
 
-import com.autonomy.abc.config.HostedTestBase;
+import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
