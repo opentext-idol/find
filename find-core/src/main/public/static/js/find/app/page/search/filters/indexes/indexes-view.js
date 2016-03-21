@@ -3,12 +3,12 @@ define([
     'underscore',
     'jquery',
     'databases-view/js/databases-view',
+    './index-item-view',
     'i18n!find/nls/indexes',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/indexes/indexes-view.html',
-    'text!find/templates/app/page/search/filters/indexes/index-list.html',
-    'text!find/templates/app/page/search/filters/indexes/index-item.html'
-], function(Backbone, _, $, DatabasesView, i18n, findI18n, template, listTemplate, itemTemplate) {
+    'text!find/templates/app/page/search/filters/indexes/index-list.html'
+], function(Backbone, _, $, DatabasesView, IndexItemView, i18n, findI18n, template, listTemplate) {
 
     var CHECKED_CLASS = 'hp-icon hp-fw hp-check';
     var INDETERMINATE_CLASS = 'hp-icon hp-fw hp-minus';
@@ -24,11 +24,10 @@ define([
 
         template: _.template(template),
         categoryTemplate: _.template(listTemplate),
-        databaseTemplate: _.template(itemTemplate),
         seeMoreButtonTemplate: _.template('<li class="toggle-more clickable"><i class="hp-icon <%-showMoreClass%> col-md-1"></i> <span class="toggle-more-text inline-block"><%-i18n["app.seeMore"]%></span></li>'),
 
         events: {
-            'click li[data-id]': function(e) {
+            'click li[data-id]:not(disabled-index)': function(e) {
                 e.stopPropagation();
 
                 var $target = $(e.currentTarget).find('.database-input');
@@ -79,7 +78,19 @@ define([
                 emptyMessage: i18n['search.indexes.empty'],
                 selectedDatabasesCollection: options.selectedDatabasesCollection,
                 topLevelDisplayName: i18n['search.indexes.all'],
-                childCategories: this.getIndexCategories()
+                childCategories: this.getIndexCategories(),
+                listViewOptions: {
+                    ItemView: IndexItemView,
+                    useCollectionChange: {
+                        deleted: 'updateDeleted'
+                    }
+                }
+            });
+
+            this.listenTo(options.indexesCollection, 'change:deleted', function(model) {
+                if (model.get('deleted')) {
+                    this.selectDatabase(model.get('name'), model.get('domain'), false);
+                }
             });
         },
 

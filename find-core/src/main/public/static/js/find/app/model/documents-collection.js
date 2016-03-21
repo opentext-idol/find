@@ -13,9 +13,22 @@ define([
         model: DocumentModel,
         url: '../api/public/search/query-text-index/results',
 
+        autoCorrection: null,
+        totalResults: null,
+        warnings: null,
+
+        fetch: function(options) {
+            this.autoCorrection = null;
+            this.totalResults = null;
+            this.warnings = null;
+
+            FindBaseCollection.prototype.fetch.call(this, options);
+        },
+
         parse: function(response) {
             this.autoCorrection = response.autoCorrection;
             this.totalResults = response.totalResults;
+            this.warnings = response.warnings;
 
             return response.documents;
         },

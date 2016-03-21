@@ -1021,7 +1021,6 @@ input.find-input {
 .disabled-index {
     color: #aaa;
     cursor: not-allowed;
-    pointer-events: none;
 }
 
 .indexes-list-group .controls {

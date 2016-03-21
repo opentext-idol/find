@@ -8,6 +8,8 @@ define([
     'underscore'
 ], function (DatabasesCollection, _) {
 
+    var DatabaseModel = DatabasesCollection.prototype.model;
+
     return DatabasesCollection.extend({
         url: '../api/public/search/list-indexes',
 
@@ -16,7 +18,13 @@ define([
                 responseItem.id = responseItem.domain ? encodeURIComponent(responseItem.domain) + ':' + encodeURIComponent(responseItem.name) : responseItem.name;
                 return responseItem;
             });
-        }
+        },
+
+        model: DatabaseModel.extend({
+            defaults: _.extend({
+                deleted: false
+            }, DatabaseModel.prototype.defaults)
+        })
     });
 
 });

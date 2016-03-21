@@ -116,6 +116,7 @@ define([
 
             this.queryModel = options.queryModel;
             this.documentsCollection = options.documentsCollection;
+            this.indexesCollection = options.indexesCollection;
 
             this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
@@ -320,7 +321,19 @@ define([
                     if (collection) {
                         collection.reset({documents: []}, {parse: true});
                     }
-                }
+                },
+                success: function() {
+                    if (this.indexesCollection && this.documentsCollection.warnings && this.documentsCollection.warnings.invalidDatabases) {
+                        // Invalid databases have been deleted from IDOL; mark them as such in the indexes collection
+                        this.documentsCollection.warnings.invalidDatabases.forEach(function(name) {
+                            var indexModel = this.indexesCollection.findWhere({name: name});
+
+                            if (indexModel) {
+                                indexModel.set('deleted', true);
+                            }
+                        }.bind(this));
+                    }
+                }.bind(this)
             });
 
             if (this.displayPromotions && !infiniteScroll) {

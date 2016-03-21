@@ -3,7 +3,6 @@ define([
     'jquery',
     'underscore',
     'find/app/model/dates-filter-model',
-    'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
     'find/app/model/query-model',
     'find/app/model/saved-searches/saved-search-model',
@@ -12,7 +11,6 @@ define([
     'find/app/model/parametric-collection',
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
-    'find/app/page/search/results/results-view',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/page/search/results/results-view-augmentation',
@@ -32,8 +30,8 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel, SearchFiltersCollection,
-            ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsView, queryStrategy, stateTokenStrategy, ResultsViewAugmentation,
+], function(Backbone, $, _, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, SearchFiltersCollection,
+            ParametricView, ParametricCollection, FilterDisplayView, DateView, queryStrategy, stateTokenStrategy, ResultsViewAugmentation,
             ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, relatedConceptsClickHandlers, SpellCheckView, SnapshotDataView, Collapsible,
             addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, i18nIndexes, template) {
 
@@ -233,7 +231,8 @@ define([
                 // TODO: Display promotions when QMS supports state tokens
                 displayPromotions: searchType === SavedSearchModel.Type.QUERY,
                 fetchStrategy: searchType === SavedSearchModel.Type.QUERY ? queryStrategy : stateTokenStrategy,
-                highlightModel: this.highlightModel
+                highlightModel: this.highlightModel,
+                indexesCollection: this.indexesCollection
             }, resultsViewConstructorArguments));
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({resultsView: this.resultsView});

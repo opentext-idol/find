@@ -1,13 +1,12 @@
 define([
     'backbone',
     'find/app/model/comparisons/comparison-documents-collection',
-    'find/app/page/search/results/results-view',
     'find/app/page/search/results/state-token-strategy',
     'text!find/templates/app/page/search/saved-searches/comparison/comparison-view.html',
     'text!find/templates/app/page/search/saved-searches/comparison/comparison-list-container.html',
     'find/app/util/search-data-util',
     'i18n!find/nls/bundle'
-], function (Backbone, ComparisonDocumentsCollection, ResultsView, stateTokenStrategy, template, comparisonListContainer, searchDataUtil, i18n) {
+], function (Backbone, ComparisonDocumentsCollection, stateTokenStrategy, template, comparisonListContainer, searchDataUtil, i18n) {
 
     return Backbone.View.extend({
         template: _.template(template),
