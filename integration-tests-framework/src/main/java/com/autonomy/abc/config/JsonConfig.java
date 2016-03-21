@@ -1,7 +1,7 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.config.ParsesUserConfig;
+import com.autonomy.abc.selenium.config.UserConfigParser;
 import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.users.AuthenticationStrategy;
 import com.autonomy.abc.selenium.users.NewUser;
@@ -21,9 +21,9 @@ class JsonConfig {
     private final SeleniumConfig selenium;
     private final Map<String, User> users;
     private final Map<String, NewUser> newUsers;
-    private ParsesUserConfig parser;
+    private UserConfigParser parser;
 
-    JsonConfig(JsonNode node, ParametrizedFactory<ApplicationType, ParsesUserConfig> parserFactory) throws MalformedURLException {
+    JsonConfig(JsonNode node, ParametrizedFactory<ApplicationType, UserConfigParser> parserFactory) throws MalformedURLException {
         this.app = new AppConfig(node.path("app"));
         this.selenium = new SeleniumConfig(node.path("selenium"));
 

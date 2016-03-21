@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.util.Factory;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openqa.selenium.WebDriver;
 
-public interface ParsesUserConfig {
+public interface UserConfigParser {
     User parseUser(JsonNode userNode);
     NewUser parseNewUser(JsonNode newUserNode);
     NewUser generateNewUser(String identifier);

@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.util.Factory;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openqa.selenium.WebDriver;
 
-public class OPUserConfigParser implements ParsesUserConfig {
+public class OPUserConfigParser implements UserConfigParser {
     @Override
     public User parseUser(JsonNode userNode) {
         String username = userNode.path("username").asText();
