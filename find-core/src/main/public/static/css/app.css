@@ -15,4 +15,5 @@
 @import "../bower_components/leaflet/dist/leaflet.css";
 @import 'HPEElements.css';
 @import 'app-include.css';
+@import "result-highlighting.css";
 @import 'icons.css';

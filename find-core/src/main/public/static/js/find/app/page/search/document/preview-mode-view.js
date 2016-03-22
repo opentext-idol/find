@@ -10,8 +10,9 @@ define([
     'text!find/templates/app/page/search/document/preview-mode-view.html',
     'text!find/templates/app/page/search/document/preview-mode-metadata.html',
     'text!find/templates/app/page/search/document/view-mode-document.html',
-    'text!find/templates/app/page/search/document/view-media-player.html'
-], function(Backbone, _, $, i18n, vent, viewClient, DocumentModel, configuration, template, metaDataTemplate, documentTemplate, mediaTemplate) {
+    'text!find/templates/app/page/search/document/view-media-player.html',
+    'text!css/result-highlighting.css'
+], function(Backbone, _, $, i18n, vent, viewClient, DocumentModel, configuration, template, metaDataTemplate, documentTemplate, mediaTemplate, highlightingRule) {
     'use strict';
 
     function scrollFollow() {
@@ -31,6 +32,15 @@ define([
         }
     }
 
+    function highlighting(innerWindow) {
+        var styleEl = innerWindow.createElement('style');
+
+        // Append style element to iframe document head
+        innerWindow.head.appendChild(styleEl);
+
+        styleEl.sheet.insertRule(highlightingRule, 0);
+    }
+
     return Backbone.View.extend({
         template: _.template(template),
         metaDataTemplate: _.template(metaDataTemplate),
@@ -44,7 +54,9 @@ define([
 
         $iframe: null,
 
-        initialize: function() {
+        initialize: function(options) {
+            this.queryText = options.queryText;
+
             this.scrollFollow = _.bind(scrollFollow, this);
         },
 
@@ -95,13 +107,17 @@ define([
                     this.$iframe.removeClass('hidden');
                     this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height());
 
+                    var $contents = this.$iframe.contents();
+
                     // View server adds script tags to rendered HTML documents, which are blocked by the application
                     // This replicates their functionality
-                    this.$iframe.contents().find('.InvisibleAbsolute').hide();
+                    $contents.find('.InvisibleAbsolute').hide();
+
+                    highlighting($contents[0]);
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition
-                var src = viewClient.getHref(this.model.get('reference'), this.model);
+                var src = viewClient.getHref(this.model.get('reference'), this.model, this.queryText);
                 this.$iframe.attr('src', src);
                 this.$iframe.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
             }

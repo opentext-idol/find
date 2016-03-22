@@ -12,10 +12,15 @@ define([
         initialize: function(options) {
             this.resultsView = options.resultsView;
 
+            this.queryModel = options.queryModel;
+
             this.listenTo(this.resultsView, 'preview', function(model) {
                 this.removePreviewModeView();
 
-                this.previewModeView = new this.PreviewModeView({model: model});
+                this.previewModeView = new this.PreviewModeView({
+                    model: model,
+                    queryText: this.queryModel.get('queryText')
+                });
 
                 this.listenTo(this.previewModeView, 'close-preview', function() {
                     this.togglePreviewMode(false);
