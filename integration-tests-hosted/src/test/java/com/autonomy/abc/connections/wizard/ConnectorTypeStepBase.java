@@ -1,21 +1,21 @@
 package com.autonomy.abc.connections.wizard;
 
-import com.autonomy.abc.config.HostedTestBase;
-import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.base.HostedTestBase;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.ConnectorType;
 import com.autonomy.abc.selenium.connections.ConnectorTypeStepTab;
 import com.autonomy.abc.selenium.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.openqa.selenium.WebElement;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.not;
 
 public class ConnectorTypeStepBase extends HostedTestBase {

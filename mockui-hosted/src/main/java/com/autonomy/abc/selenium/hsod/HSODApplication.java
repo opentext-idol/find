@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
-import com.autonomy.abc.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.users.HSODDeveloperService;

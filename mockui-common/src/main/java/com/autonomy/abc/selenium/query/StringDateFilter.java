@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.query;
 
-import com.autonomy.abc.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

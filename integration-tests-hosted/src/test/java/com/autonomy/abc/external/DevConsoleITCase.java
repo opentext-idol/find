@@ -1,23 +1,35 @@
 package com.autonomy.abc.external;
 
-import com.autonomy.abc.config.SeleniumTest;
-import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.config.SOConfigLocator;
+import com.hp.autonomy.frontend.selenium.base.SeleniumTest;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.base.TestParameterFactory;
 import com.autonomy.abc.selenium.devconsole.DevConsole;
 import com.autonomy.abc.selenium.devconsole.DevConsoleElementFactory;
 import com.autonomy.abc.selenium.devconsole.HSODLandingPage;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
+import java.io.IOException;
 
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
+
+@RunWith(Parameterized.class)
 public class DevConsoleITCase extends SeleniumTest<DevConsole, DevConsoleElementFactory> {
     private HSODLandingPage landingPage;
 
     public DevConsoleITCase(TestConfig config) {
         super(config, new DevConsole());
         setInitialUrl("http://search.havenondemand.com");
+    }
+
+    @Parameterized.Parameters
+    public static Iterable<Object[]> parameters() throws IOException {
+        return new TestParameterFactory().create(new SOConfigLocator().getJsonConfig());
     }
 
     @Before

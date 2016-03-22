@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.query;
 
-import com.autonomy.abc.selenium.element.DatePicker;
+import com.hp.autonomy.frontend.selenium.element.DatePicker;
 
 import java.util.Date;
 

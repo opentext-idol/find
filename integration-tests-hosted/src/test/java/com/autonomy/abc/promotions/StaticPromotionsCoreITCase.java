@@ -1,9 +1,9 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.ABCTearDown;
-import com.autonomy.abc.config.HostedTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.categories.CoreFeature;
+import com.autonomy.abc.base.SOTearDown;
+import com.autonomy.abc.base.HostedTestBase;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SearchPage;
@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 
@@ -34,7 +34,7 @@ public class StaticPromotionsCoreITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        ABCTearDown.PROMOTIONS.tearDown(this);
+        SOTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

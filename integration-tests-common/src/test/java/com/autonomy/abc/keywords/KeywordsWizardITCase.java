@@ -1,11 +1,11 @@
 package com.autonomy.abc.keywords;
 
-import com.autonomy.abc.Trigger.SharedTriggerTests;
-import com.autonomy.abc.config.ABCTearDown;
-import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.shared.SharedTriggerTests;
+import com.autonomy.abc.base.SOTearDown;
+import com.autonomy.abc.base.SOTestBase;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
@@ -15,8 +15,8 @@ import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,18 +34,18 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
-import static com.autonomy.abc.matchers.ControlMatchers.url;
-import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
+import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.url;
+import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class KeywordsWizardITCase extends ABCTestBase {
+public class KeywordsWizardITCase extends SOTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(KeywordsWizardITCase.class); 
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage createKeywordsPage;
@@ -68,7 +68,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
     @After
     public void tearDown() {
-        ABCTearDown.KEYWORDS.tearDown(this);
+        SOTearDown.KEYWORDS.tearDown(this);
     }
 
     @Test

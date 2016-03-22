@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -13,7 +13,7 @@ public class OPLoginPage extends LoginPage {
     private final WebDriver driver;
 
     private OPLoginPage(final WebDriver driver) {
-        super(driver, new AbcHasLoggedIn(driver));
+        super(driver, new SOHasLoggedIn(driver));
 
         this.driver = driver;
 

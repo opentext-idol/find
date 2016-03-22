@@ -1,12 +1,12 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.documentPreview.SharedPreviewTests;
-import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.selenium.control.Frame;
+import com.autonomy.abc.base.SOTestBase;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.autonomy.abc.shared.SharedPreviewTests;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.autonomy.abc.selenium.element.Pagination;
+import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
@@ -14,8 +14,8 @@ import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
@@ -24,13 +24,15 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
-import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disabled;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 
-public class EditDocumentReferencesPageITCase extends ABCTestBase {
+public class EditDocumentReferencesPageITCase extends SOTestBase {
 
     public EditDocumentReferencesPageITCase(final TestConfig config) {
         super(config);

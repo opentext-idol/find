@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
 public class OPPromotionsPage extends PromotionsPage {

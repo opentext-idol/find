@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.indexes;
 
 import com.autonomy.abc.selenium.actions.wizard.BlankWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 
 public class IndexWizard extends Wizard {
     private final CreateNewIndexPage page;

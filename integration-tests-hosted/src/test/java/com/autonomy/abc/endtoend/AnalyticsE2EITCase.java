@@ -1,12 +1,12 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.config.ABCTearDown;
-import com.autonomy.abc.config.HostedTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.base.SOTearDown;
+import com.autonomy.abc.base.HostedTestBase;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
-import com.autonomy.abc.selenium.element.Removable;
+import com.hp.autonomy.frontend.selenium.element.Removable;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -15,7 +15,7 @@ import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.isIn;
@@ -73,12 +73,12 @@ public class AnalyticsE2EITCase extends HostedTestBase {
 
     @After
     public void tearDownKeywords() {
-        ABCTearDown.KEYWORDS.tearDown(this);
+        SOTearDown.KEYWORDS.tearDown(this);
     }
 
     @After
     public void tearDownPromotions() {
-        ABCTearDown.PROMOTIONS.tearDown(this);
+        SOTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

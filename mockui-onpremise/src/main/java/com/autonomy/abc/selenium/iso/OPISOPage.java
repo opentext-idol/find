@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.analytics.OverviewPage;
-import com.autonomy.abc.selenium.application.PageMapper;
+import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.keywords.OPCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.OPKeywordsPage;
@@ -14,7 +14,7 @@ import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.search.OPSearchPage;
 import com.autonomy.abc.selenium.users.OPLoginPage;
 import com.autonomy.abc.selenium.users.OPUsersPage;
-import com.autonomy.abc.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 

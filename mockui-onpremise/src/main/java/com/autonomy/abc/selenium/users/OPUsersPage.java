@@ -1,7 +1,11 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.util.ParametrizedFactory;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.users.NewUser;
+import com.hp.autonomy.frontend.selenium.users.ReplacementAuth;
+import com.hp.autonomy.frontend.selenium.users.Role;
+import com.hp.autonomy.frontend.selenium.users.User;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -27,7 +31,15 @@ public class OPUsersPage extends UsersPage {
         selectRole(role);
         createButton().click();
         Waits.loadOrFadeWait();
-        return newUser.withRole(role);
+        return newUser.createWithRole(role);
+    }
+
+    public User replaceAuthFor(User user, ReplacementAuth newAuth) {
+        if (newAuth instanceof OPPassword) {
+            ((OPPassword) newAuth).sendTo(passwordBoxFor(user));
+            passwordBoxFor(user).waitForUpdate();
+        }
+        return newAuth.replaceAuth(user);
     }
 
     public WebElement roleLinkFor(User user) {

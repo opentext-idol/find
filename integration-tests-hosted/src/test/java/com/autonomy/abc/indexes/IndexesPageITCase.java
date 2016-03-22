@@ -1,11 +1,11 @@
 package com.autonomy.abc.indexes;
 
-import com.autonomy.abc.config.HSODTearDown;
-import com.autonomy.abc.config.HostedTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.base.HSODTearDown;
+import com.autonomy.abc.base.HostedTestBase;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.connections.*;
-import com.autonomy.abc.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
@@ -20,7 +20,7 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
-import com.autonomy.abc.selenium.users.User;
+import com.hp.autonomy.frontend.selenium.users.User;
 import com.autonomy.abc.selenium.util.SOPageUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -35,9 +35,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasClass;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -218,7 +220,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @KnownBug("CSA-1886")
     @Ignore("Breaking too many tests")
     public void testDeletingDefaultIndex(){
-        indexService.deleteIndexViaAPICalls(Index.DEFAULT, testUser, getConfig().getApiUrl());
+        indexService.deleteIndexViaAPICalls(Index.DEFAULT, testUser, getConfig().getAppUrl("api"));
 
         getWindow().refresh();
         indexesPage = getElementFactory().getIndexesPage();
@@ -229,7 +231,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @Ignore("Breaking too many tests")
     public void testDeletingSearchDefaultIndex(){
-        indexService.deleteIndexViaAPICalls(new Index("search_default_index"), testUser, getConfig().getApiUrl());
+        indexService.deleteIndexViaAPICalls(new Index("search_default_index"), testUser, getConfig().getAppUrl("api"));
         getWindow().refresh();
 
         verifyThat(getApplication().switchTo(PromotionsPage.class), containsText("There are no promotions..."));

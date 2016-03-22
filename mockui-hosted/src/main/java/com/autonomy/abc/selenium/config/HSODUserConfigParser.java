@@ -2,7 +2,11 @@ package com.autonomy.abc.selenium.config;
 
 import com.autonomy.abc.selenium.external.GoesToHodAuthPageFromGmail;
 import com.autonomy.abc.selenium.users.*;
-import com.autonomy.abc.selenium.util.Factory;
+import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
+import com.hp.autonomy.frontend.selenium.users.NewUser;
+import com.hp.autonomy.frontend.selenium.users.Role;
+import com.hp.autonomy.frontend.selenium.users.User;
+import com.hp.autonomy.frontend.selenium.util.Factory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +16,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.util.Map;
 
-public class HSODUserConfigParser extends UserConfigParser {
+public class HSODUserConfigParser implements JsonUserConfigParser {
     // TODO: move to config
     private final String emailPrefix = "hodtestqa401";
     private final String emailSuffix = "@gmail.com";

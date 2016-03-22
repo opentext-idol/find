@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.query;
 
-import com.autonomy.abc.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 

@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.external;
 
 import com.autonomy.abc.selenium.users.GoesToAuthPage;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;

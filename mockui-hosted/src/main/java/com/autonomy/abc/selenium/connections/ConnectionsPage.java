@@ -1,10 +1,10 @@
 package com.autonomy.abc.selenium.connections;
 
-import com.autonomy.abc.selenium.element.Dropdown;
-import com.autonomy.abc.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.element.Dropdown;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.autonomy.abc.selenium.icma.ICMAPageBase;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

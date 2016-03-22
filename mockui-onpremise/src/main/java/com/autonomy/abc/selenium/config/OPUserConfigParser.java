@@ -1,11 +1,12 @@
 package com.autonomy.abc.selenium.config;
 
 import com.autonomy.abc.selenium.users.*;
-import com.autonomy.abc.selenium.util.Factory;
+import com.hp.autonomy.frontend.selenium.users.*;
+import com.hp.autonomy.frontend.selenium.util.Factory;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openqa.selenium.WebDriver;
 
-public class OPUserConfigParser extends UserConfigParser {
+public class OPUserConfigParser implements JsonUserConfigParser {
     @Override
     public User parseUser(JsonNode userNode) {
         String username = userNode.path("username").asText();

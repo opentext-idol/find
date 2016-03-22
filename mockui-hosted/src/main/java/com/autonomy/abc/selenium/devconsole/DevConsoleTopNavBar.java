@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.devconsole;
 
-import com.autonomy.abc.selenium.application.LoginService;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.application.LoginService;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

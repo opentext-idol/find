@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>integration-tests-common</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <build>
         <testResources>
@@ -84,7 +84,7 @@
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.hp.autonomy.frontend.havensearch</groupId>
+            <groupId>com.hp.autonomy.frontend.selenium</groupId>
             <artifactId>integration-tests-framework</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>

@@ -1,13 +1,15 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.config.SOConfigLocator;
+import com.autonomy.abc.base.SOTestBase;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.HostAndPorts;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import com.autonomy.abc.selenium.iso.SettingsPage;
-import com.autonomy.abc.selenium.util.Waits;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.After;
@@ -19,12 +21,12 @@ import org.openqa.selenium.WebElement;
 import java.io.IOException;
 import java.util.*;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 
-public class SettingsPageITCase extends ABCTestBase {
+public class SettingsPageITCase extends SOTestBase {
 	private final static Map<SettingsPage.Panel, HostAndPorts> HOSTS_AND_PORTS;
 	private final static EnumSet<SettingsPage.Panel> SERVER_PANELS = EnumSet.of(SettingsPage.Panel.COMMUNITY, SettingsPage.Panel.CONTENT, SettingsPage.Panel.QMS, SettingsPage.Panel.QMS_AGENTSTORE, SettingsPage.Panel.STATSSERVER, SettingsPage.Panel.VIEW);
 
@@ -32,7 +34,8 @@ public class SettingsPageITCase extends ABCTestBase {
 
 	static {
 		try {
-			HOSTS_AND_PORTS = new ObjectMapper().convertValue(TestConfig.getRawBaseConfig().path("servers"), new TypeReference<Map<SettingsPage.Panel, HostAndPorts>>() {});
+			JsonNode node = new SOConfigLocator().getJsonNode().path("servers");
+			HOSTS_AND_PORTS = new ObjectMapper().convertValue(node, new TypeReference<Map<SettingsPage.Panel, HostAndPorts>>() {});
 			System.out.println(HOSTS_AND_PORTS);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);

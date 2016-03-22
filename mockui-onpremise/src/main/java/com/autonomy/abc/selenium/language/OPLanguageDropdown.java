@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.language;
 
-import com.autonomy.abc.selenium.element.Dropdown;
+import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
