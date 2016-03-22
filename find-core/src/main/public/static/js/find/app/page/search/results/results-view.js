@@ -20,8 +20,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, SortView, ResultsNumberView, popover,
-            documentMimeTypes, addLinksToSummary, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
-            loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
+            documentMimeTypes, addLinksToSummary, popoverTemplate, popoverMessageTemplate, template, resultsTemplate, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     var Mode = {
         STATE_TOKEN: 'STATE_TOKEN',
