@@ -49,6 +49,7 @@ define([
 
         events: {
             'click .preview-mode-open-detail-button': 'openDocumentDetail',
+            'click .preview-mode-highlight-query-terms': 'highlightQueryTerms',
             'click .close-preview-mode': 'triggerClose'
         },
 
@@ -113,7 +114,11 @@ define([
                     // This replicates their functionality
                     $contents.find('.InvisibleAbsolute').hide();
 
-                    highlighting($contents[0]);
+                    var $contentDocument = $contents[0];
+
+                    highlighting($contentDocument);
+
+                    this.$contentDocumentBody = $($contentDocument.body);
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition
@@ -144,6 +149,11 @@ define([
         openDocumentDetail: function () {
             this.pauseMedia();
             vent.navigateToDetailRoute(this.model);
+        },
+
+        highlightQueryTerms: function(e) {
+            $(e.target).toggleClass('active');
+            this.$contentDocumentBody.toggleClass('haven-search-view-document-highlighting-on');
         }
     });
 
