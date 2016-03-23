@@ -48,6 +48,6 @@ public abstract class AbstractViewControllerTest<C extends ViewController<S, E>,
         final String reference = "SomeReference";
         final S sampleDatabase = getSampleDatabase();
         viewController.viewDocument(reference, sampleDatabase, response);
-        verify(viewServerService).viewDocument(eq(reference), eq(sampleDatabase), any(OutputStream.class));
+        verify(viewServerService).viewDocument(eq(reference), eq(sampleDatabase), null, any(OutputStream.class));
     }
 }
