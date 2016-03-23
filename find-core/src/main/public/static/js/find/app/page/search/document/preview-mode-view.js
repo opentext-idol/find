@@ -49,13 +49,15 @@ define([
 
         events: {
             'click .preview-mode-open-detail-button': 'openDocumentDetail',
-            'click .preview-mode-highlight-query-terms': 'highlightQueryTerms',
+            'click .preview-mode-highlight-query-terms': 'toggleHighlighting',
             'click .close-preview-mode': 'triggerClose'
         },
 
         $iframe: null,
 
         initialize: function(options) {
+            this.highlightingModel = new Backbone.Model({highlighting: false});
+
             var queryText = options.queryText;
 
             if (queryText !== '*') {
@@ -79,6 +81,12 @@ define([
                 mmapUrl: this.model.get('mmapUrl'),
                 viewHighlighting: this.highlighting
             }));
+
+            this.$highlightToggle = this.$('.preview-mode-highlight-query-terms');
+
+            this.listenTo(this.highlightingModel, 'change:highlighting', _.bind(function() {
+                this.$highlightToggle.toggleClass('active', this.highlightingModel.get('highlighting'));
+            }, this));
 
             this.$('.preview-mode-document-title').text(this.model.get('title'));
 
@@ -128,6 +136,10 @@ define([
                     }
 
                     this.$contentDocumentBody = $($contentDocument.body);
+
+                    this.updateHighlighting();
+
+                    this.listenTo(this.highlightingModel, 'change:highlighting', this.updateHighlighting);
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition
@@ -160,9 +172,12 @@ define([
             vent.navigateToDetailRoute(this.model);
         },
 
-        highlightQueryTerms: function(e) {
-            $(e.target).toggleClass('active');
-            this.$contentDocumentBody.toggleClass('haven-search-view-document-highlighting-on');
+        toggleHighlighting: function() {
+            this.highlightingModel.set('highlighting', !this.highlightingModel.get('highlighting'));
+        },
+
+        updateHighlighting: function() {
+            this.$contentDocumentBody.toggleClass('haven-search-view-document-highlighting-on', this.highlightingModel.get('highlighting'));
         }
     });
 
