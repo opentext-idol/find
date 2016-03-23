@@ -9,7 +9,6 @@ define([
     'find/app/page/search/sort-view',
     'find/app/page/search/results/results-number-view',
     'find/app/util/popover',
-    'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
     'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/results-popover.html',
@@ -21,8 +20,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, SortView, ResultsNumberView, popover,
-            viewClient, documentMimeTypes, addLinksToSummary, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
-            loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
+            documentMimeTypes, addLinksToSummary, popoverTemplate, popoverMessageTemplate, template, resultsTemplate, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     var Mode = {
         STATE_TOKEN: 'STATE_TOKEN',
@@ -270,20 +268,11 @@ define([
             var reference = model.get('reference');
             var summary = addLinksToSummary(this.entityCollection, model.get('summary'));
 
-            var href;
-
-            if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
-                href = viewClient.getStaticContentPromotionHref(reference);
-            } else {
-                href = viewClient.getHref(reference, model);
-            }
-
             var $newResult = $(this.resultsTemplate({
                 cid: model.cid,
                 i18n: i18n,
                 title: model.get('title'),
                 reference: reference,
-                href: href,
                 summary: summary,
                 promotion: isPromotion,
                 date: model.has('date') ? model.get('date').fromNow() : null,

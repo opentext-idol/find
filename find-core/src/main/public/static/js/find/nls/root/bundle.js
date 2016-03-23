@@ -84,6 +84,7 @@ define([
         'search.document.date': 'Date',
         'search.document.detail.open': 'Open',
         'search.document.detail.openOriginal': 'Open Original',
+        'search.document.detail.highlightQueryTerms': 'Highlight Query Terms',
         'search.document.detail.tabs.authors': 'Authors',
         'search.document.detail.tabs.location': 'Location',
         'search.document.detail.tabs.location.latitude': 'Latitude',

@@ -10,12 +10,13 @@ define([
          * @param {String} model
          * @return {String}
          */
-        getHref: function(reference, model) {
+        getHref: function(reference, model, highlightExpressions) {
             var database = databaseNameResolver.resolveDatabaseNameForDocumentModel(model);
             return '../api/public/view/viewDocument?' + $.param({
                     reference: reference,
-                    index: database
-                });
+                    index: database,
+                    highlightExpressions: highlightExpressions || null
+                }, true);
         },
 
         /**

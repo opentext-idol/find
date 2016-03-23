@@ -5,6 +5,7 @@
 
 require.config({
     paths: {
+        css: '../css',
         'about-page': '../bower_components/hp-autonomy-about-page/src',
         backbone: 'find/lib/backbone/backbone-extensions',
         'backbone-base': '../bower_components/backbone/backbone',

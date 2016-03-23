@@ -230,7 +230,10 @@ define([
                 mode: searchType === SavedSearchModel.Type.QUERY ? ResultsView.Mode.QUERY : ResultsView.Mode.STATE_TOKEN
             }, resultsViewConstructorArguments));
 
-            this.resultsViewAugmentation = new this.ResultsViewAugmentation({resultsView: this.resultsView});
+            this.resultsViewAugmentation = new this.ResultsViewAugmentation({
+                resultsView: this.resultsView,
+                queryModel: this.queryModel
+            });
 
             this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle', function(toggle) {
                 this.rightSideContainerHideToggle(toggle);
