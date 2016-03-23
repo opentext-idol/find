@@ -55,7 +55,8 @@
       "host": "localhost",
       "port": 10000,
       "productTypeRegex": ".*?CONNECTOR"
-    }
+    },
+    "highlighting": true
   },
   "map": {
     "enabled": false,

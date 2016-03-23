@@ -56,8 +56,14 @@ define([
         $iframe: null,
 
         initialize: function(options) {
-            this.queryText = options.queryText;
+            var queryText = options.queryText;
 
+            if (queryText !== '*') {
+                this.queryText = queryText;
+            }
+
+            this.highlighting = this.queryText && configuration().viewHighlighting;
+            
             this.scrollFollow = _.bind(scrollFollow, this);
         },
 
@@ -70,7 +76,8 @@ define([
             this.$el.html(this.template({
                 i18n:i18n,
                 mmapBaseUrl: configuration().mmapBaseUrl,
-                mmapUrl: this.model.get('mmapUrl')
+                mmapUrl: this.model.get('mmapUrl'),
+                viewHighlighting: this.highlighting
             }));
 
             this.$('.preview-mode-document-title').text(this.model.get('title'));
@@ -116,13 +123,15 @@ define([
 
                     var $contentDocument = $contents[0];
 
-                    highlighting($contentDocument);
+                    if(this.highlighting) {
+                        highlighting($contentDocument);
+                    }
 
                     this.$contentDocumentBody = $($contentDocument.body);
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition
-                var src = viewClient.getHref(this.model.get('reference'), this.model, this.queryText);
+                var src = viewClient.getHref(this.model.get('reference'), this.model, this.highlighting ? this.queryText : null);
                 this.$iframe.attr('src', src);
                 this.$iframe.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
             }
