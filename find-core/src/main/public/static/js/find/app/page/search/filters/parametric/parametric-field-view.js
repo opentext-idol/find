@@ -9,7 +9,7 @@ define([
 ], function(Backbone, _, $, i18n, ListView, Collapsible, ValueView) {
 
     var ValuesView = Backbone.View.extend({
-        className: 'table',
+        className: 'table parametric-fields-table',
         tagName: 'table',
 
         initialize: function() {

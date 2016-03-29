@@ -948,6 +948,24 @@ input:-moz-placeholder::before {
     background-color: #6b7984;
     padding: 0 8px;
 }
+
+.parametric-fields-table {
+    table-layout: fixed;
+}
+
+.parametric-value-count-cell {
+    width: 50px;
+}
+
+.parametric-value-count {
+    text-align: right;
+}
+
+.parametric-value-name,
+.parametric-value-count {
+    white-space: nowrap;
+}
+
 /* Rotating chevrons on collapsible panels *******************/
 .collapsed .rotating-chevron,
 .collapsed.rotating-chevron {
@@ -970,12 +988,12 @@ input:-moz-placeholder::before {
 
 /* Indexes View */
 .database-name,
-.category-name,
-.toggle-more-text {
+.category-name {
     padding: 0 8px; /* Same as table padding so it lines up */
 }
 
-.toggle-more {
+.toggle-more,
+.toggle-more td {
     border-bottom: none !important;
 }
 
