@@ -3,55 +3,59 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.comparison;
+package com.hp.autonomy.frontend.find.idol.comparison;
 
 
+import com.autonomy.aci.client.services.AciErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.frontend.find.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.io.Serializable;
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public abstract class AbstractComparisonServiceIT<S extends Serializable, R extends SearchResult, E extends Exception> extends AbstractFindIT {
+@SpringApplicationConfiguration(classes = IdolFindApplication.class)
+public class ComparisonServiceIT extends AbstractFindIT {
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final QueryRestrictions<String> queryRestrictions = new IdolQueryRestrictionsBuilder().build("*", "", Collections.<String>emptyList(), null, null, Collections.<String>emptyList(), Collections.<String>emptyList());
+
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    protected DocumentsService<S, R, E> documentsService;
+    private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
 
-    protected ObjectMapper mapper = new ObjectMapper();
-
-    protected String twoDocStateToken;
-    protected String sixDocStateToken;
-
-    protected abstract QueryRestrictions<S> buildQueryRestrictions();
+    private String twoDocStateToken;
+    private String sixDocStateToken;
 
     @Before
-    public void createStateTokens() throws E {
-        final QueryRestrictions<S> queryRestrictions = buildQueryRestrictions();
-
+    public void createStateTokens() throws AciErrorException {
         twoDocStateToken = documentsService.getStateToken(queryRestrictions, 2);
         sixDocStateToken = documentsService.getStateToken(queryRestrictions, 6);
     }
 
     @Test
     public void compareQueryStateTokens() throws Exception {
-        final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
+        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
                 .setFirstQueryStateToken(twoDocStateToken)
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
-        mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+        mockMvc.perform(MockMvcRequestBuilders.post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
@@ -62,8 +66,8 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
 
     @Test
     public void compareRestrictionsAndToken() throws Exception {
-        final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstRestrictions(buildQueryRestrictions())
+        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+                .setFirstRestrictions(queryRestrictions)
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
@@ -78,9 +82,9 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
 
     @Test
     public void compareTokenAndRestrictions() throws Exception {
-        final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
+        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
                 .setFirstQueryStateToken(twoDocStateToken)
-                .setSecondRestrictions(buildQueryRestrictions())
+                .setSecondRestrictions(queryRestrictions)
                 .build();
 
         mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
@@ -94,9 +98,9 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
 
     @Test
     public void compareRestrictions() throws Exception {
-        final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstRestrictions(buildQueryRestrictions())
-                .setSecondRestrictions(buildQueryRestrictions())
+        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+                .setFirstRestrictions(queryRestrictions)
+                .setSecondRestrictions(queryRestrictions)
                 .build();
 
         mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')

@@ -3,14 +3,17 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.comparison;
-
+package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -34,8 +37,8 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
     public static final String SORT_PARAM = "sort";
     public static final String HIGHLIGHT_PARAM = "highlight";
 
-    private ComparisonService<R, E> comparisonService;
-    private DocumentsService<S, R, E> documentsService;
+    private final ComparisonService<R, E> comparisonService;
+    private final DocumentsService<S, R, E> documentsService;
 
     @Autowired
     public ComparisonController(final ComparisonService<R, E> comparisonService, final DocumentsService<S, R, E> documentsService) {

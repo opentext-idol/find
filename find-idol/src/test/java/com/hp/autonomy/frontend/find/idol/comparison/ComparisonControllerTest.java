@@ -3,16 +3,18 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.comparison;
+package com.hp.autonomy.frontend.find.idol.comparison;
 
+import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,19 +22,21 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public abstract class ComparisonControllerTest<S extends Serializable, R extends SearchResult, E extends Exception> {
-    protected static final String MOCK_STATE_TOKEN_1 = "abc";
+@RunWith(MockitoJUnitRunner.class)
+public class ComparisonControllerTest {
+    private static final String MOCK_STATE_TOKEN_1 = "abc";
     private static final String MOCK_STATE_TOKEN_2 = "def";
 
     @Mock
-    protected ComparisonService<R, E> comparisonService;
-    @Mock
-    protected DocumentsService<S, R, E> documentsService;
-
-    protected ComparisonController<S, R, E> comparisonController;
+    private ComparisonService<IdolSearchResult, AciErrorException> comparisonService;
 
     @Mock
-    protected QueryRestrictions<S> queryRestrictions;
+    private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
+
+    private ComparisonController<String, IdolSearchResult, AciErrorException> comparisonController;
+
+    @Mock
+    private QueryRestrictions<String> queryRestrictions;
 
     @SuppressWarnings("unchecked")
     @Before
@@ -43,8 +47,8 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
     }
 
     @Test
-    public void compareStateTokens() throws E {
-        final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
+    public void compareStateTokens() throws AciErrorException {
+        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
                 .setFirstQueryStateToken(MOCK_STATE_TOKEN_1)
                 .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
                 .build();
@@ -54,8 +58,8 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
     }
 
     @Test
-    public void compareTokenAndRestriction() throws E {
-        final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
+    public void compareTokenAndRestriction() throws AciErrorException {
+        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
                 .setFirstQueryStateToken(MOCK_STATE_TOKEN_1)
                 .setSecondRestrictions(queryRestrictions)
                 .build();
@@ -65,8 +69,8 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
     }
 
     @Test
-    public void compareRestrictionAndToken() throws E {
-        final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
+    public void compareRestrictionAndToken() throws AciErrorException {
+        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
                 .setFirstRestrictions(queryRestrictions)
                 .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
                 .build();
@@ -76,8 +80,8 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
     }
 
     @Test
-    public void compareRestrictions() throws E {
-        final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
+    public void compareRestrictions() throws AciErrorException {
+        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
                 .setFirstRestrictions(queryRestrictions)
                 .setSecondRestrictions(queryRestrictions)
                 .build();
@@ -87,7 +91,7 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
     }
 
     @Test
-    public void getResults() throws E {
+    public void getResults() throws AciErrorException {
         final List<String> stateMatchIds = Collections.singletonList(MOCK_STATE_TOKEN_1);
         final List<String> stateDontMatchIds = Collections.singletonList(MOCK_STATE_TOKEN_2);
         final String text = "*";
