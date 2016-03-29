@@ -18,18 +18,18 @@ public enum SavedSearchType {
     QUERY(Values.QUERY),
     SNAPSHOT(Values.SNAPSHOT);
 
-    private Integer id;
+    private final Integer id;
 
-    SavedSearchType(String id) {
+    SavedSearchType(final String id) {
         this.id = Integer.parseInt(id);
     }
 
-    public static SavedSearchType getType(Integer id) {
+    public static SavedSearchType getType(final Integer id) {
         if (id == null) {
             return null;
         }
 
-        for (SavedSearchType searchType : SavedSearchType.values()) {
+        for (final SavedSearchType searchType : SavedSearchType.values()) {
             if (id.equals(searchType.getId())) {
                 return searchType;
             }

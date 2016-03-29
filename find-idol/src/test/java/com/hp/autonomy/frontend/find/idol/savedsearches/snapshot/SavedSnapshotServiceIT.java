@@ -1,22 +1,25 @@
-package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
+package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
+import com.autonomy.aci.client.services.AciErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.find.IdolFindApplication;
+import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -28,24 +31,23 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@SpringApplicationConfiguration(classes = IdolFindApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public abstract class AbstractSavedSnapshotServiceIT<S extends Serializable, R extends SearchResult, E extends Exception> extends AbstractFindIT {
+public class SavedSnapshotServiceIT extends AbstractFindIT {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    protected SavedSnapshotService savedSnapshotService;
+    private SavedSnapshotService savedSnapshotService;
 
     @Mock
-    protected DocumentsService<S, R, E> documentsService;
+    private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
 
-    protected SavedSnapshotController controller;
+    private SavedSnapshotController controller;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     private final String QUERY_TEXT = "orange";
     private final Long RESULT_COUNT = 555L;
     private final String STATE_TOKEN = "a state token";
-
-    protected abstract void initController();
 
     private SavedSnapshot getBaseSavedSnapshot() {
         return new SavedSnapshot.Builder()
@@ -55,13 +57,13 @@ public abstract class AbstractSavedSnapshotServiceIT<S extends Serializable, R e
     }
 
     @Before
-    public void setup() throws E {
+    public void setup() throws AciErrorException {
         MockitoAnnotations.initMocks(this);
 
-        when(documentsService.getStateTokenAndResultCount(Matchers.<QueryRestrictions<S>>any(), anyInt()))
+        when(documentsService.getStateTokenAndResultCount(Matchers.<QueryRestrictions<String>>any(), anyInt()))
                 .thenReturn(new StateTokenAndResultCount(STATE_TOKEN, RESULT_COUNT));
 
-        initController();
+        controller = new SavedSnapshotController(savedSnapshotService, documentsService);
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 

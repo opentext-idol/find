@@ -11,20 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-
 @Service
 public class SavedQueryService extends AbstractSavedSearchService<SavedQuery> {
-    private final SavedQueryRepository savedQueryRepository;
-
     @Autowired
     public SavedQueryService(final SavedQueryRepository savedQueryRepository, final AuditorAware<UserEntity> userEntityAuditorAware) {
         super(savedQueryRepository, userEntityAuditorAware);
-        this.savedQueryRepository = savedQueryRepository;
-    }
-
-    @Override
-    protected Set<SavedQuery> getAllForUserId(final Long userId) {
-        return savedQueryRepository.findByActiveTrueAndUser_UserId(userId);
     }
 }

@@ -6,15 +6,14 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.Set;
 
 public abstract class AbstractSavedSearchService<T extends SavedSearch<T>> implements SavedSearchService<T> {
-    private final CrudRepository<T, Long> crudRepository;
+    private final SavedSearchRepository<T> crudRepository;
     private final AuditorAware<UserEntity> userEntityAuditorAware;
 
-    protected AbstractSavedSearchService(final CrudRepository<T, Long> crudRepository, final AuditorAware<UserEntity> userEntityAuditorAware) {
+    protected AbstractSavedSearchService(final SavedSearchRepository<T> crudRepository, final AuditorAware<UserEntity> userEntityAuditorAware) {
         this.crudRepository = crudRepository;
         this.userEntityAuditorAware = userEntityAuditorAware;
     }
@@ -22,10 +21,8 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T>> imple
     @Override
     public Set<T> getAll() {
         final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
-        return getAllForUserId(userId);
+        return crudRepository.findByActiveTrueAndUser_UserId(userId);
     }
-
-    protected abstract Set<T> getAllForUserId(Long userId);
 
     @Override
     public T create(final T search) {

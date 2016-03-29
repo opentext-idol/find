@@ -6,15 +6,11 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 
-import org.springframework.data.repository.CrudRepository;
-
-import java.util.Set;
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchRepository;
 
 /**
  * Repository containing actions which can be performed on the main searches table
  * Spring automatically implements basic operations
  */
-public interface SavedQueryRepository extends CrudRepository<SavedQuery, Long>
-{
-    Set<SavedQuery> findByActiveTrueAndUser_UserId(Long userId);
+public interface SavedQueryRepository extends SavedSearchRepository<SavedQuery> {
 }
