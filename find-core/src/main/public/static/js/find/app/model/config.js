@@ -13,7 +13,7 @@ define([
         url: function(){
             return /\bconfig$/.test(window.location.pathname)
                 ? '../api/config/config/config'
-                : '../api/useradmin/config/config';
+                : '../api/admin/config/config';
         }
     });
 

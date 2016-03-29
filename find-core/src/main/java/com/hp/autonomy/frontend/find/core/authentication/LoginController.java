@@ -12,6 +12,8 @@ import com.hp.autonomy.frontend.configuration.LoginTypes;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.hp.autonomy.frontend.find.core.web.FindController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +25,12 @@ public class LoginController {
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> configService;
 
-    @RequestMapping(value = "/loginPage")
+    @RequestMapping(value = FindController.DEFAULT_LOGIN_PAGE)
     @ResponseBody
     public void login(
         final HttpServletRequest request,
         final HttpServletResponse response
     ) throws IOException {
-        final String baseUrl = "/login";
         String queryString = request.getQueryString();
         final Authentication<?> authentication = this.configService.getConfig().getAuthentication();
 
@@ -44,7 +45,7 @@ public class LoginController {
             }
         }
 
-        String redirectUrl = request.getContextPath() + baseUrl;
+        String redirectUrl = request.getContextPath() + FindController.LOGIN_PATH;
 
         if(queryString != null) {
             redirectUrl += '?' + queryString;

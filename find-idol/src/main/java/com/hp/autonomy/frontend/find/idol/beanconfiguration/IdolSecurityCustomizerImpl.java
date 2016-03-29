@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentica
 import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
 import com.hp.autonomy.frontend.configuration.authentication.Role;
 import com.hp.autonomy.frontend.configuration.authentication.Roles;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfiguration;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.user.UserService;
@@ -47,19 +48,19 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
     @Override
     public void customize(final HttpSecurity http, final AuthenticationManager authenticationManager) throws Exception {
         final AuthenticationSuccessHandler successHandler = new IdolLoginSuccessHandler(
-                "/config",
+                FindController.CONFIG_PATH,
                 FindController.PUBLIC_PATH,
                 FindController.PRIVATE_PATH,
-                UserConfiguration.role(UserConfiguration.CONFIG_ROLE),
-                UserConfiguration.role(UserConfiguration.ADMIN_ROLE),
+                UserConfiguration.role(SecurityConfiguration.CONFIG_ROLE),
+                UserConfiguration.role(SecurityConfiguration.ADMIN_ROLE),
                 authenticationInformationRetriever
         );
 
         http.formLogin()
-            .loginPage("/loginPage")
+            .loginPage(FindController.DEFAULT_LOGIN_PAGE)
             .loginProcessingUrl("/authenticate")
             .successHandler(successHandler)
-            .failureUrl("/loginPage?error=auth");
+            .failureUrl(FindController.DEFAULT_LOGIN_PAGE + "?error=auth");
     }
 
     @Override

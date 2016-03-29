@@ -14,7 +14,7 @@ define([
     'text!find/templates/app/page/settings-page.html'
 ], function(SettingsPage, ValidateOnSaveModal, Confirm, configModel, vent, router, i18n, template) {
 
-    var urlRoot = /\bconfig$/.test(window.location.pathname) ? '../api/config/config/' : '../api/useradmin/config/';
+    var urlRoot = /\bconfig$/.test(window.location.pathname) ? '../api/config/config/' : '../api/admin/config/';
 
     return SettingsPage.extend({
         SaveModalConstructor: ValidateOnSaveModal,

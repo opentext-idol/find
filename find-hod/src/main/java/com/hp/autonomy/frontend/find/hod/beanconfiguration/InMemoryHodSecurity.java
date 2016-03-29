@@ -11,8 +11,10 @@ import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthent
 import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
 import com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthenticationProvider;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryCondition;
-import com.hp.autonomy.frontend.find.hod.web.SsoController;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfiguration;
+import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.hod.web.HodLogoutSuccessHandler;
+import com.hp.autonomy.frontend.find.hod.web.SsoController;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.sso.HodTokenLogoutSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,37 +42,37 @@ public class InMemoryHodSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, "ROLE_DEFAULT"));
-        auth.authenticationProvider(new SingleUserAuthenticationProvider(configService, "ROLE_ADMIN"));
+        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, "ROLE_" + SecurityConfiguration.CONFIG_ROLE));
+        auth.authenticationProvider(new SingleUserAuthenticationProvider(configService, "ROLE_" + SecurityConfiguration.ADMIN_ROLE));
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        final AuthenticationSuccessHandler loginSuccessHandler = new LoginSuccessHandler("ROLE_DEFAULT", "/config/", "/p/");
+        final AuthenticationSuccessHandler loginSuccessHandler = new LoginSuccessHandler("ROLE_" + SecurityConfiguration.CONFIG_ROLE, FindController.CONFIG_PATH, "/p/");
         final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
 
         requestCache.setRequestMatcher(new OrRequestMatcher(
                 new AntPathRequestMatcher("/p/**"),
-                new AntPathRequestMatcher("/config/**")
+                new AntPathRequestMatcher(FindController.CONFIG_PATH)
         ));
 
         http.regexMatcher("/p/.*|/config/.*|/authenticate|/logout")
                 .authorizeRequests()
-                    .antMatchers("/p/**").hasRole("ADMIN")
-                    .antMatchers("/config/**").hasRole("DEFAULT")
+                    .antMatchers("/p/**").hasRole(SecurityConfiguration.ADMIN_ROLE)
+                    .antMatchers(FindController.CONFIG_PATH).hasRole(SecurityConfiguration.CONFIG_ROLE)
                     .and()
                 .requestCache()
                     .requestCache(requestCache)
                     .and()
                 .formLogin()
-                    .loginPage("/loginPage")
+                    .loginPage(FindController.DEFAULT_LOGIN_PAGE)
                     .loginProcessingUrl("/authenticate")
                     .successHandler(loginSuccessHandler)
-                    .failureUrl("/loginPage?error=auth")
+                    .failureUrl(FindController.DEFAULT_LOGIN_PAGE + "?error=auth")
                     .and()
                 .logout()
-                    .logoutSuccessHandler(new HodLogoutSuccessHandler(new HodTokenLogoutSuccessHandler(SsoController.SSO_LOGOUT_PAGE, tokenRepository), "/public/"))
+                    .logoutSuccessHandler(new HodLogoutSuccessHandler(new HodTokenLogoutSuccessHandler(SsoController.SSO_LOGOUT_PAGE, tokenRepository), FindController.PUBLIC_PATH))
                     .and()
                 .csrf()
                     .disable();

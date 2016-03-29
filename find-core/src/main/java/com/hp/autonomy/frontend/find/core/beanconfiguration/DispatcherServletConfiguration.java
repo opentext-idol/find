@@ -47,9 +47,6 @@ public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addViewControllers(final ViewControllerRegistry registry) {
-        registry.addViewController("/p/").setViewName("private");
-        registry.addViewController("/config/").setViewName("config");
-        registry.addViewController("/login").setViewName("login");
         registry.addViewController("/configError").setViewName("configError");
     }
 }

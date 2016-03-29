@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping({"/api/useradmin/config", "/api/config/config"})
+@RequestMapping({"/api/admin/config", "/api/config/config"})
 public abstract class ValidationController<C extends Config<C>> {
 
     @Autowired

@@ -8,8 +8,8 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfiguration;
 import com.hp.autonomy.frontend.find.core.web.FindController;
-import com.hp.autonomy.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
@@ -41,12 +40,6 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     private ConfigService<? extends AuthenticationConfig<?>> configService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private GrantedAuthoritiesMapper grantedAuthoritiesMapper;
-
-    @Autowired
     private IdolSecurityCustomizer idolSecurityCustomizer;
 
     @Override
@@ -57,7 +50,7 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, UserConfiguration.role(UserConfiguration.CONFIG_ROLE)));
+        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, UserConfiguration.role(SecurityConfiguration.CONFIG_ROLE)));
 
         for (final AuthenticationProvider authenticationProvider : idolSecurityCustomizer.getAuthenticationProviders()) {
             auth.authenticationProvider(authenticationProvider);
@@ -69,7 +62,7 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
         entryPoints.put(new AntPathRequestMatcher("/api/**"), new Http403ForbiddenEntryPoint());
-        entryPoints.put(AnyRequestMatcher.INSTANCE, new LoginUrlAuthenticationEntryPoint("/loginPage"));
+        entryPoints.put(AnyRequestMatcher.INSTANCE, new LoginUrlAuthenticationEntryPoint(FindController.DEFAULT_LOGIN_PAGE));
         final AuthenticationEntryPoint authenticationEntryPoint = new DelegatingAuthenticationEntryPoint(entryPoints);
 
         http
@@ -81,16 +74,19 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
                     .and()
                 .logout()
                     .logoutUrl("/logout")
-                    .logoutSuccessUrl("/loginPage")
+                    .logoutSuccessUrl(FindController.DEFAULT_LOGIN_PAGE)
                     .and()
                 .authorizeRequests()
-                    .antMatchers(FindController.PUBLIC_PATH + "/**").hasAnyRole(UserConfiguration.ADMIN_ROLE, UserConfiguration.USER_ROLE)
-                    .antMatchers(FindController.PRIVATE_PATH + "/**").hasAnyRole(UserConfiguration.ADMIN_ROLE)
-                    .antMatchers("/api/public/**").hasAnyRole(UserConfiguration.ADMIN_ROLE, UserConfiguration.USER_ROLE)
-                    .antMatchers("/api/config/**").hasRole(UserConfiguration.CONFIG_ROLE)
-                    .antMatchers("/config/**").hasRole(UserConfiguration.CONFIG_ROLE)
-                    .antMatchers("/api/admin/**").hasRole(UserConfiguration.ADMIN_ROLE)
-                    .anyRequest().permitAll()
+                    .antMatchers(FindController.PUBLIC_PATH + "**").hasAnyRole(SecurityConfiguration.ADMIN_ROLE, SecurityConfiguration.USER_ROLE)
+                    .antMatchers(FindController.PRIVATE_PATH + "**").hasAnyRole(SecurityConfiguration.ADMIN_ROLE)
+                    .antMatchers(FindController.CONFIG_PATH).hasRole(SecurityConfiguration.CONFIG_ROLE)
+                    .antMatchers("/api/public/**").hasAnyRole(SecurityConfiguration.ADMIN_ROLE, SecurityConfiguration.USER_ROLE)
+                    .antMatchers("/api/config/**").hasRole(SecurityConfiguration.CONFIG_ROLE)
+                    .antMatchers("/api/admin/**").hasRole(SecurityConfiguration.ADMIN_ROLE)
+                    .antMatchers(FindController.DEFAULT_LOGIN_PAGE).permitAll()
+                    .antMatchers(FindController.LOGIN_PATH).permitAll()
+                    .antMatchers("/").permitAll()
+                    .anyRequest().denyAll()
                     .and()
                 .headers()
                     .defaultsDisabled()

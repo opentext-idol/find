@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Collections;
 
 @Controller
-@RequestMapping({"/api/useradmin/config", "/api/config/config"})
+@RequestMapping({"/api/admin/config", "/api/config/config"})
 @Slf4j
 // TODO have a think about this (maybe make it a generic type and instantiate in config class)
 public class HodConfigurationController {

@@ -27,12 +27,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class FindController {
-
     public static final String PUBLIC_PATH = "/public/";
     public static final String PRIVATE_PATH = "/private/";
     public static final String LOGIN_PATH = "/login";
-    private static final String DEFAULT_LOGIN_PAGE = "/loginPage";
-    private static final String CONFIG_PATH = "/config";
+    public static final String DEFAULT_LOGIN_PAGE = "/loginPage";
+    public static final String CONFIG_PATH = "/config";
 
     private static final String PUBLIC_JS = "public.js";
     private static final String ADMIN_JS = "admin.js";

@@ -6,6 +6,8 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.DispatcherServletConfiguration;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfiguration;
+import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.hod.authentication.HavenSearchUserMetadata;
 import com.hp.autonomy.frontend.find.hod.authentication.HsodUsernameResolver;
 import com.hp.autonomy.frontend.find.hod.web.SsoController;
@@ -77,7 +79,7 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
                     .accessDeniedPage(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
                     .and()
                 .authorizeRequests()
-                    .antMatchers("/public/**").hasRole("PUBLIC")
+                    .antMatchers(FindController.PUBLIC_PATH + "**").hasRole(SecurityConfiguration.USER_ROLE)
                     .and()
                 .logout()
                     .logoutSuccessHandler(logoutSuccessHandler)
