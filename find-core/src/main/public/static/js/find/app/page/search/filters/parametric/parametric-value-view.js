@@ -32,6 +32,8 @@ define([
 
                 if (count !== null) {
                     this.$count.text(' (' + count + ')');
+                } else {
+                    this.$count.text('');
                 }
 
                 this.$name.text(name);
