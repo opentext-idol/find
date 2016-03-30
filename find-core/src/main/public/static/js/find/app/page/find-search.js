@@ -13,8 +13,6 @@ define([
     'find/app/model/comparisons/comparison-documents-collection',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
-    'find/app/model/saved-searches/saved-query-collection',
-    'find/app/model/saved-searches/saved-snapshot-collection',
     'find/app/util/model-any-changed-attribute-listener',
     'find/app/util/merge-collection',
     'find/app/model/saved-searches/saved-search-model',
@@ -28,9 +26,8 @@ define([
     'underscore',
     'text!find/templates/app/page/find-search.html'
 ], function(BasePage, Backbone, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
-            ComparisonDocumentsCollection, InputView, TabbedSearchView, SavedQueryCollection, SavedSnapshotCollection,
-            addChangeListener, MergeCollection, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView,
-            databaseNameResolver, router, vent, i18n, _, template) {
+            ComparisonDocumentsCollection, InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel,
+            QueryTextModel, DocumentModel, DocumentDetailView, databaseNameResolver, router, vent, i18n, _, template) {
 
     'use strict';
 
@@ -83,19 +80,14 @@ define([
         documentDetailOptions: null,
         suggestOptions: null,
 
-        initialize: function() {
-            this.savedQueryCollection = new SavedQueryCollection();
-            this.savedQueryCollection.fetch({remove: false});
-
-            this.savedSnapshotCollection = new SavedSnapshotCollection();
-            this.savedSnapshotCollection.fetch({remove: false});
+        initialize: function(options) {
+            this.savedQueryCollection = options.savedQueryCollection;
+            this.savedSnapshotCollection = options.savedSnapshotCollection;
+            this.indexesCollection = options.indexesCollection;
 
             this.savedSearchCollection = new MergeCollection([], {
                 collections: [this.savedQueryCollection, this.savedSnapshotCollection]
             });
-
-            this.indexesCollection = new IndexesCollection();
-            this.indexesCollection.fetch();
 
             this.selectedTabModel = new Backbone.Model({
                 selectedSearchCid: null

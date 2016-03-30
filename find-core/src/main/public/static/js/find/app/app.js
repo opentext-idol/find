@@ -7,6 +7,9 @@ define([
     'jquery',
     'backbone',
     'find/app/util/test-browser',
+    'find/app/model/indexes-collection',
+    'find/app/model/saved-searches/saved-query-collection',
+    './model-registry',
     'find/app/navigation',
     'find/app/configuration',
     'find/app/pages',
@@ -14,7 +17,7 @@ define([
     'find/app/vent',
     'find/app/router',
     'text!find/templates/app/app.html'
-], function($, Backbone, testBrowser, Navigation, configuration, Pages, logout, vent, router, template) {
+], function($, Backbone, testBrowser, IndexesCollection, SavedQueryCollection, ModelRegistry, Navigation, configuration, Pages, logout, vent, router, template) {
 
     return Backbone.View.extend({
         el: '.page',
@@ -33,9 +36,19 @@ define([
         initialize: function() {
             $.ajaxSetup({cache: false});
 
+            var modelRegistry = new ModelRegistry(this.getModelData());
             var pageData = this.getPageData();
-            this.pages = new Pages({pageData: pageData, router: router});
-            this.navigation = new this.Navigation({pageData: pageData, router: router});
+
+            this.pages = new Pages({
+                modelRegistry: modelRegistry,
+                pageData: pageData,
+                router: router
+            });
+
+            this.navigation = new this.Navigation({
+                pageData: pageData,
+                router: router
+            });
 
             this.render();
 
@@ -60,6 +73,19 @@ define([
             this.navigation.render();
 
             this.$('.header').prepend(this.navigation.el);
+        },
+
+        // Can be overridden
+        getModelData: function() {
+            return {
+                indexesCollection: {
+                    Constructor: IndexesCollection
+                },
+                savedQueryCollection: {
+                    Constructor: SavedQueryCollection,
+                    fetchOptions: {remove: false}
+                }
+            };
         }
     });
 

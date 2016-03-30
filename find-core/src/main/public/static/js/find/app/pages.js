@@ -35,6 +35,10 @@ define([
             _.each(this.pageData, function(data, name) {
                 var viewOptions = {router: options.router};
 
+                _.each(data.models, function(modelName) {
+                    viewOptions[modelName] = options.modelRegistry.get(modelName);
+                });
+
                 this.pages[name] = {
                     hasRendered: false,
                     view: new data.Constructor(viewOptions)
