@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.DispatcherServletConfiguration;
-import com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfiguration;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.hod.authentication.HavenSearchUserMetadata;
 import com.hp.autonomy.frontend.find.hod.authentication.HsodUsernameResolver;
@@ -52,7 +52,7 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(new HodAuthenticationProvider(
                 tokenRepository,
-                "ROLE_PUBLIC",
+                FindRole.USER.toString(),
                 authenticationService,
                 unboundTokenService,
                 userStoreUsersService,
@@ -79,7 +79,7 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
                     .accessDeniedPage(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
                     .and()
                 .authorizeRequests()
-                    .antMatchers(FindController.PUBLIC_PATH + "**").hasRole(SecurityConfiguration.USER_ROLE)
+                    .antMatchers(FindController.APP_PATH + "**").hasRole(FindRole.USER.name())
                     .and()
                 .logout()
                     .logoutSuccessHandler(logoutSuccessHandler)

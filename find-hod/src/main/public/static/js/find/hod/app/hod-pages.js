@@ -7,17 +7,18 @@ define([
     'find/app/find-pages',
     'find/hod/app/page/hod-find-search'
 ], function(FindPages, FindSearch) {
+
     'use strict';
 
     return FindPages.extend({
-
         initializePages: function() {
             this.pages = [
                 {
-                    constructor: FindSearch
-                    , pageName: 'search'
+                    constructor: FindSearch,
+                    pageName: 'search'
                 }
             ];
         }
     });
+
 });

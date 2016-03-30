@@ -79,7 +79,7 @@ public class SsoController {
 
         final Map<String, Object> ssoConfig = new HashMap<>();
         ssoConfig.put(SsoMvcConstants.LOGOUT_ENDPOINT.value(), logoutEndpoint);
-        ssoConfig.put(SsoMvcConstants.LOGOUT_REDIRECT_URL.value(), hodFindConfig.getHsod().getExternalUrl() + FindController.PUBLIC_PATH);
+        ssoConfig.put(SsoMvcConstants.LOGOUT_REDIRECT_URL.value(), hodFindConfig.getHsod().getExternalUrl() + FindController.APP_PATH);
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);

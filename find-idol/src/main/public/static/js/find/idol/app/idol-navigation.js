@@ -4,7 +4,7 @@
  */
 
 define([
-    'find/public/navigation',
+    'find/app/navigation',
     'text!find/idol/templates/menuItems.html'
 ], function(Navigation, menuItems) {
 

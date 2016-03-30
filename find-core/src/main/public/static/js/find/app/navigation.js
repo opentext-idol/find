@@ -6,21 +6,29 @@
 define([
     'js-whatever/js/navigation',
     'find/app/router',
+    'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/navigation.html'
-], function(Navigation, router, i18n, template) {
+], function(Navigation, router, configuration, i18n, template) {
+
     return Navigation.extend({
 
         event: 'route:find',
 
         router: router,
 
-        template: _.template(template),
+        template: _.template(template, {variable: 'data'}),
+
+        menuItems: $.noop,
 
         getTemplateParameters: function() {
             return {
-                i18n: i18n
+                i18n: i18n,
+                menuItems: this.menuItems,
+                pages: this.pages.pages,
+                username: configuration().username
             }
         }
     })
+
 });

@@ -5,11 +5,13 @@
 
 define([
     'find/app/find-pages',
+    'underscore',
+    'find/app/configuration',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
     'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
-], function(FindPages, FindSearch, AboutPage, SettingsPage, i18n) {
+], function(FindPages, _, configuration, FindSearch, AboutPage, SettingsPage, i18n) {
 
     'use strict';
 
@@ -28,6 +30,15 @@ define([
                     title: i18n['app.about']
                 }
             ];
+
+            if (_.contains(configuration().roles, 'ROLE_ADMIN')) {
+                this.pages.push({
+                    constructor: SettingsPage,
+                    icon: 'hp-icon hp-fw hp-settings',
+                    pageName: 'settings',
+                    title: i18n['app.settings']
+                });
+            }
         }
     });
 

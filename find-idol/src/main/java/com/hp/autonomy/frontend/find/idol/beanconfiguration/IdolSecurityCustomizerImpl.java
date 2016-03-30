@@ -8,10 +8,9 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthenticationProvider;
-import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
 import com.hp.autonomy.frontend.configuration.authentication.Role;
 import com.hp.autonomy.frontend.configuration.authentication.Roles;
-import com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfiguration;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.user.UserService;
@@ -31,7 +30,6 @@ import java.util.Collections;
 @Component
 @ConditionalOnProperty(value = "server.reverseProxy", havingValue = "false", matchIfMissing = true)
 public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
-
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> configService;
 
@@ -49,10 +47,8 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
     public void customize(final HttpSecurity http, final AuthenticationManager authenticationManager) throws Exception {
         final AuthenticationSuccessHandler successHandler = new IdolLoginSuccessHandler(
                 FindController.CONFIG_PATH,
-                FindController.PUBLIC_PATH,
-                FindController.PRIVATE_PATH,
-                UserConfiguration.role(SecurityConfiguration.CONFIG_ROLE),
-                UserConfiguration.role(SecurityConfiguration.ADMIN_ROLE),
+                FindController.APP_PATH,
+                FindRole.CONFIG.toString(),
                 authenticationInformationRetriever
         );
 

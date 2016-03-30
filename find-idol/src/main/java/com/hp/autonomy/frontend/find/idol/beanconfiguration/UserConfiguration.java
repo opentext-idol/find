@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.authentication.OneToOneOrZeroSimpleAuthorityMapper;
-import com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfiguration;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -22,14 +22,10 @@ public class UserConfiguration {
     @Bean
     public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
         final Map<String, String> rolesMap = ImmutableMap.<String, String>builder()
-            .put(IDOL_USER_ROLE, role(SecurityConfiguration.USER_ROLE))
-            .put(IDOL_ADMIN_ROLE, role(SecurityConfiguration.ADMIN_ROLE))
+            .put(IDOL_USER_ROLE, FindRole.USER.toString())
+            .put(IDOL_ADMIN_ROLE, FindRole.ADMIN.toString())
             .build();
 
         return new OneToOneOrZeroSimpleAuthorityMapper(rolesMap);
-    }
-
-    static String role(final String applicationRole) {
-        return "ROLE_" + applicationRole;
     }
 }

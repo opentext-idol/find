@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider;
-import com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfiguration;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +50,7 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, UserConfiguration.role(SecurityConfiguration.CONFIG_ROLE)));
+        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, FindRole.CONFIG.toString()));
 
         for (final AuthenticationProvider authenticationProvider : idolSecurityCustomizer.getAuthenticationProviders()) {
             auth.authenticationProvider(authenticationProvider);
@@ -77,12 +77,11 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
                     .logoutSuccessUrl(FindController.DEFAULT_LOGIN_PAGE)
                     .and()
                 .authorizeRequests()
-                    .antMatchers(FindController.PUBLIC_PATH + "**").hasAnyRole(SecurityConfiguration.ADMIN_ROLE, SecurityConfiguration.USER_ROLE)
-                    .antMatchers(FindController.PRIVATE_PATH + "**").hasAnyRole(SecurityConfiguration.ADMIN_ROLE)
-                    .antMatchers(FindController.CONFIG_PATH).hasRole(SecurityConfiguration.CONFIG_ROLE)
-                    .antMatchers("/api/public/**").hasAnyRole(SecurityConfiguration.ADMIN_ROLE, SecurityConfiguration.USER_ROLE)
-                    .antMatchers("/api/config/**").hasRole(SecurityConfiguration.CONFIG_ROLE)
-                    .antMatchers("/api/admin/**").hasRole(SecurityConfiguration.ADMIN_ROLE)
+                    .antMatchers(FindController.APP_PATH + "**").hasAnyRole(FindRole.ADMIN.name(), FindRole.USER.name())
+                    .antMatchers(FindController.CONFIG_PATH).hasRole(FindRole.CONFIG.name())
+                    .antMatchers("/api/public/**").hasAnyRole(FindRole.ADMIN.name(), FindRole.USER.name())
+                    .antMatchers("/api/config/**").hasRole(FindRole.CONFIG.name())
+                    .antMatchers("/api/admin/**").hasRole(FindRole.ADMIN.name())
                     .antMatchers(FindController.DEFAULT_LOGIN_PAGE).permitAll()
                     .antMatchers(FindController.LOGIN_PATH).permitAll()
                     .antMatchers("/").permitAll()

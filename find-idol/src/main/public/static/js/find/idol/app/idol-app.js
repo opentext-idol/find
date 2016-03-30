@@ -4,9 +4,9 @@
  */
 
 define([
-    'find/public/app',
-    'find/idol/public/idol-pages',
-    'find/idol/public/idol-navigation'
+    'find/app/app',
+    'find/idol/app/idol-pages',
+    'find/idol/app/idol-navigation'
 ], function(BaseApp, Pages, Navigation) {
     'use strict';
 

@@ -19,7 +19,7 @@ import java.net.URI;
  */
 @Controller
 public class IdolErrorController extends CustomErrorController {
-    public static final String BASE_SEARCH_URL = FindController.PUBLIC_PATH + "#find/search/query";
+    public static final String BASE_SEARCH_URL = FindController.APP_PATH + "#find/search/query";
 
     @Autowired
     public IdolErrorController(final ControllerUtils controllerUtils) {

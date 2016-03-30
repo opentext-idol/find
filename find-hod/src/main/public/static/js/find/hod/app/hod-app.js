@@ -4,9 +4,10 @@
  */
 
 define([
-    'find/public/app',
-    'find/hod/public/hod-pages'
+    'find/app/app',
+    'find/hod/app/hod-pages'
 ], function(BaseApp, Pages) {
+
     'use strict';
 
     return BaseApp.extend({
@@ -14,4 +15,5 @@ define([
             return new Pages();
         }
     });
+
 });

@@ -3,9 +3,12 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-require(['require-config'], function () {
+require(['require-config'], function() {
+
     'use strict';
-    require(['find/idol/public/idol-app'], function (App) {
+
+    require(['find/idol/app/idol-app'], function(App) {
         new App();
     });
+
 });

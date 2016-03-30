@@ -5,7 +5,7 @@
 
 require(['require-config'], function () {
     'use strict';
-    require(['find/hod/public/hod-app'], function (App) {
+    require(['find/hod/app/hod-app'], function (App) {
         new App();
     });
 });

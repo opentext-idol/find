@@ -17,37 +17,32 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    public static final String USER_ROLE = "PUBLIC";
-    public static final String ADMIN_ROLE = "ADMIN";
-    public static final String CONFIG_ROLE = "DEFAULT";
-
     @Override
     public void configure(final WebSecurity web) {
         web.ignoring()
-                .antMatchers("/static-*/**");
+            .antMatchers("/static-*/**");
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
-        requestCache.setRequestMatcher(new AntPathRequestMatcher(FindController.PUBLIC_PATH));
+        requestCache.setRequestMatcher(new AntPathRequestMatcher(FindController.APP_PATH));
 
         http
-                .authorizeRequests()
-                    .antMatchers("/api/public/**").hasRole(USER_ROLE)
-                    .antMatchers("/api/admin/**").hasRole(ADMIN_ROLE)
-                    .antMatchers("/api/config/**").hasRole(CONFIG_ROLE)
-                    .and()
-                .requestCache()
-                    .requestCache(requestCache)
-                    .and()
-                .csrf()
-                    .disable()
-                .headers()
-                    .defaultsDisabled()
-                    .frameOptions()
-                    .sameOrigin();
+            .authorizeRequests()
+                .antMatchers("/api/public/**").hasRole(FindRole.USER.name())
+                .antMatchers("/api/admin/**").hasRole(FindRole.ADMIN.name())
+                .antMatchers("/api/config/**").hasRole(FindRole.CONFIG.name())
+                .and()
+            .requestCache()
+                .requestCache(requestCache)
+                .and()
+            .csrf()
+                .disable()
+            .headers()
+                .defaultsDisabled()
+                .frameOptions()
+                .sameOrigin();
     }
 }

@@ -10,8 +10,8 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
 import com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthenticationProvider;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryCondition;
-import com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfiguration;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.hod.web.HodLogoutSuccessHandler;
 import com.hp.autonomy.frontend.find.hod.web.SsoController;
@@ -42,14 +42,14 @@ public class InMemoryHodSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, "ROLE_" + SecurityConfiguration.CONFIG_ROLE));
-        auth.authenticationProvider(new SingleUserAuthenticationProvider(configService, "ROLE_" + SecurityConfiguration.ADMIN_ROLE));
+        auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, FindRole.CONFIG.toString()));
+        auth.authenticationProvider(new SingleUserAuthenticationProvider(configService, FindRole.ADMIN.toString()));
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        final AuthenticationSuccessHandler loginSuccessHandler = new LoginSuccessHandler("ROLE_" + SecurityConfiguration.CONFIG_ROLE, FindController.CONFIG_PATH, "/p/");
+        final AuthenticationSuccessHandler loginSuccessHandler = new LoginSuccessHandler(FindRole.CONFIG.toString(), FindController.CONFIG_PATH, "/p/");
         final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
 
         requestCache.setRequestMatcher(new OrRequestMatcher(
@@ -59,8 +59,8 @@ public class InMemoryHodSecurity extends WebSecurityConfigurerAdapter {
 
         http.regexMatcher("/p/.*|/config/.*|/authenticate|/logout")
                 .authorizeRequests()
-                    .antMatchers("/p/**").hasRole(SecurityConfiguration.ADMIN_ROLE)
-                    .antMatchers(FindController.CONFIG_PATH).hasRole(SecurityConfiguration.CONFIG_ROLE)
+                    .antMatchers("/p/**").hasRole(FindRole.ADMIN.name())
+                    .antMatchers(FindController.CONFIG_PATH).hasRole(FindRole.CONFIG.name())
                     .and()
                 .requestCache()
                     .requestCache(requestCache)
@@ -72,7 +72,7 @@ public class InMemoryHodSecurity extends WebSecurityConfigurerAdapter {
                     .failureUrl(FindController.DEFAULT_LOGIN_PAGE + "?error=auth")
                     .and()
                 .logout()
-                    .logoutSuccessHandler(new HodLogoutSuccessHandler(new HodTokenLogoutSuccessHandler(SsoController.SSO_LOGOUT_PAGE, tokenRepository), FindController.PUBLIC_PATH))
+                    .logoutSuccessHandler(new HodLogoutSuccessHandler(new HodTokenLogoutSuccessHandler(SsoController.SSO_LOGOUT_PAGE, tokenRepository), FindController.APP_PATH))
                     .and()
                 .csrf()
                     .disable();

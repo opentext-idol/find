@@ -20,7 +20,7 @@ public abstract class AbstractFindControllerIT extends AbstractFindIT {
 
     @Test
     public void mainPage() throws Exception {
-        mockMvc.perform(get(FindController.PUBLIC_PATH))
+        mockMvc.perform(get(FindController.APP_PATH))
                 .andExpect(status().isOk());
     }
 

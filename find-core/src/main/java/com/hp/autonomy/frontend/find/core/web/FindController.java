@@ -14,7 +14,7 @@ import com.hp.autonomy.frontend.find.core.configuration.MapConfig;
 import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,17 +24,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public abstract class FindController {
-    public static final String PUBLIC_PATH = "/public/";
-    public static final String PRIVATE_PATH = "/private/";
+    public static final String APP_PATH = "/public/";
     public static final String LOGIN_PATH = "/login";
     public static final String DEFAULT_LOGIN_PAGE = "/loginPage";
     public static final String CONFIG_PATH = "/config";
-
-    private static final String PUBLIC_JS = "public.js";
-    private static final String ADMIN_JS = "admin.js";
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
@@ -65,24 +63,23 @@ public abstract class FindController {
         if (LoginTypes.DEFAULT.equals(authenticationConfigService.getConfig().getAuthentication().getMethod())) {
             response.sendRedirect(contextPath + DEFAULT_LOGIN_PAGE);
         } else {
-            response.sendRedirect(contextPath + PUBLIC_PATH);
+            response.sendRedirect(contextPath + APP_PATH);
         }
     }
 
-    @RequestMapping(value = PUBLIC_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = APP_PATH, method = RequestMethod.GET)
     public ModelAndView mainPage() throws JsonProcessingException {
-        return getPageModelAndView(PUBLIC_JS);
-    }
-
-    @RequestMapping(value = PRIVATE_PATH, method = RequestMethod.GET)
-    public ModelAndView adminPage() throws JsonProcessingException {
-        return getPageModelAndView(ADMIN_JS);
-    }
-
-    private ModelAndView getPageModelAndView(final String mainJs) throws JsonProcessingException {
         final String username = authenticationInformationRetriever.getAuthentication().getName();
+
+        final List<String> roles = new LinkedList<>();
+
+        for (final GrantedAuthority authority : authenticationInformationRetriever.getAuthentication().getAuthorities()) {
+            roles.add(authority.getAuthority());
+        }
+
         final Map<String, Object> config = new HashMap<>();
         config.put(MvcConstants.USERNAME.value(), username);
+        config.put(MvcConstants.ROLES.value(), roles);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
         config.put(MvcConstants.MAP.value(), mapConfigService.getConfig().getMap());
@@ -91,7 +88,6 @@ public abstract class FindController {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(config));
-        attributes.put(MvcConstants.MAIN_JS.value(), mainJs);
 
         return new ModelAndView(ViewNames.APP.viewName(), attributes);
     }

@@ -14,27 +14,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class IdolLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
-
     private final String configUrl;
     private final String applicationUrl;
-    private final String adminUrl;
     private final String roleDefault;
-    private final String roleAdmin;
     private final AuthenticationInformationRetriever<?> authenticationInformationRetriever;
 
     public IdolLoginSuccessHandler(
-        final String configUrl,
-        final String applicationUrl,
-        final String adminUrl,
-        final String roleDefault,
-        final String roleAdmin,
-        final AuthenticationInformationRetriever<?> authenticationInformationRetriever
+            final String configUrl,
+            final String applicationUrl,
+            final String roleDefault,
+            final AuthenticationInformationRetriever<?> authenticationInformationRetriever
     ) {
         this.configUrl = configUrl;
         this.applicationUrl = applicationUrl;
-        this.adminUrl = adminUrl;
         this.roleDefault = roleDefault;
-        this.roleAdmin = roleAdmin;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
     }
 
@@ -42,14 +35,11 @@ public class IdolLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
     protected String determineTargetUrl(final HttpServletRequest request, final HttpServletResponse response) {
         final Authentication authentication = authenticationInformationRetriever.getAuthentication();
 
-        for(final GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+        for (final GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             final String authority = grantedAuthority.getAuthority();
 
-            if(roleDefault.equalsIgnoreCase(authority)) {
+            if (roleDefault.equalsIgnoreCase(authority)) {
                 return configUrl;
-            }
-            else if (roleAdmin.equalsIgnoreCase(authority)) {
-                return adminUrl;
             }
         }
 

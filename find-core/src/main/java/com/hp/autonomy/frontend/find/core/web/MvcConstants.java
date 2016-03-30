@@ -10,6 +10,7 @@ public enum MvcConstants {
     GIT_COMMIT("commit"),
     MAIN_JS("mainJs"),
     RELEASE_VERSION("version"),
+    ROLES("roles"),
     USERNAME("username"),
     MAP("map");
 
