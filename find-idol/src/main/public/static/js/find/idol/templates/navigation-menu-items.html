@@ -1,6 +1,6 @@
 <% _.each(pages, function(page) { %>
     <li data-pagename="<%-page.pageName%>">
-        <a href="#<%-page.pageName%>">
+        <a href="#find/<%-page.pageName%>" data-pagename="<%-page.pageName%>">
             <i class="<%-page.icon%>"></i> <%-page.title%>
         </a>
     </li>

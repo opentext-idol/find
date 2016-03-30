@@ -9,16 +9,20 @@ define([
     'find/app/util/test-browser',
     'find/app/navigation',
     'find/app/configuration',
+    'find/app/pages',
     'find/app/util/logout',
     'find/app/vent',
+    'find/app/router',
     'text!find/templates/app/app.html'
-], function($, Backbone, testBrowser, Navigation, configuration, logout, vent, template) {
+], function($, Backbone, testBrowser, Navigation, configuration, Pages, logout, vent, router, template) {
 
     return Backbone.View.extend({
         el: '.page',
         template: _.template(template),
-        defaultRoute: 'find/search/splash',
         Navigation: Navigation,
+
+        // Abstract
+        getPageData: null,
 
         events: {
             'click .navigation-logout': function() {
@@ -29,25 +33,20 @@ define([
         initialize: function() {
             $.ajaxSetup({cache: false});
 
-            this.pages = this.constructPages();
-
-            this.navigation = new this.Navigation({
-                pages: this.pages
-            });
+            var pageData = this.getPageData();
+            this.pages = new Pages({pageData: pageData, router: router});
+            this.navigation = new this.Navigation({pageData: pageData, router: router});
 
             this.render();
 
             var matchedRoute = Backbone.history.start();
 
             if (!matchedRoute) {
-                vent.navigate(this.defaultRoute);
+                vent.navigate('find/search/splash');
             }
 
             testBrowser();
         },
-
-        // will be overridden
-        constructPages: $.noop(),
 
         render: function() {
             this.$el.html(this.template({

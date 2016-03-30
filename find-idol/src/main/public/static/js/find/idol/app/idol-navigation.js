@@ -5,13 +5,13 @@
 
 define([
     'find/app/navigation',
-    'text!find/idol/templates/menuItems.html'
+    'text!find/idol/templates/navigation-menu-items.html'
 ], function(Navigation, menuItems) {
 
     return Navigation.extend({
 
         menuItems: _.template(menuItems)
 
-    })
+    });
 
 });

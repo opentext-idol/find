@@ -4,31 +4,56 @@
  */
 
 define([
-    'js-whatever/js/navigation',
-    'find/app/router',
+    'underscore',
+    'backbone',
+    'jquery',
+    'find/app/vent',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/navigation.html'
-], function(Navigation, router, configuration, i18n, template) {
+], function(_, Backbone, $, vent, configuration, i18n, template) {
 
-    return Navigation.extend({
-
-        event: 'route:find',
-
-        router: router,
+    return Backbone.View.extend({
 
         template: _.template(template, {variable: 'data'}),
 
-        menuItems: $.noop,
+        menuItems: _.constant(''),
 
-        getTemplateParameters: function() {
-            return {
+        events: {
+            'click a[data-pagename]': function(event) {
+                if (event.which !== 2) {
+                    event.preventDefault();
+                    var pageName = $(event.target).attr('data-pagename');
+                    vent.navigate('find/' + pageName);
+                }
+            }
+        },
+
+        initialize: function(options) {
+            this.pageData = options.pageData;
+            this.listenTo(options.router, 'route:find', this.selectPage);
+        },
+
+        render: function() {
+            var pages = _.chain(this.pageData)
+                .map(function(data, name) {
+                    return _.extend({pageName: name}, data);
+                })
+                .sortBy('order')
+                .value();
+
+            this.$el.html(this.template({
                 i18n: i18n,
                 menuItems: this.menuItems,
-                pages: this.pages.pages,
+                pages: pages,
                 username: configuration().username
-            }
+            }));
+        },
+
+        selectPage: function(pageName) {
+            this.$('li').removeClass('active');
+            this.$('li[data-pagename="' + pageName + '"]').addClass('active');
         }
-    })
+    });
 
 });

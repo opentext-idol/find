@@ -5,17 +5,46 @@
 
 define([
     'find/app/app',
-    'find/idol/app/idol-pages',
-    'find/idol/app/idol-navigation'
-], function(BaseApp, Pages, Navigation) {
+    'find/app/configuration',
+    'find/idol/app/idol-navigation',
+    'find/idol/app/page/idol-find-search',
+    'find/idol/app/page/find-about-page',
+    'find/app/page/find-settings-page',
+    'i18n!find/nls/bundle'
+], function(BaseApp, configuration, Navigation, FindSearch, AboutPage, SettingsPage, i18n) {
+
     'use strict';
 
     return BaseApp.extend({
-
         Navigation: Navigation,
 
-        constructPages: function() {
-            return new Pages();
+        getPageData: function() {
+            var pageData = {
+                search: {
+                    Constructor: FindSearch,
+                    icon: 'hp-icon hp-fw hp-search',
+                    title: i18n['app.search'],
+                    order: 0
+                },
+                about: {
+                    Constructor: AboutPage,
+                    icon: 'hp-icon hp-fw hp-info',
+                    title: i18n['app.about'],
+                    order: 1
+                }
+            };
+
+            if (_.contains(configuration().roles, 'ROLE_ADMIN')) {
+                pageData.settings = {
+                    Constructor: SettingsPage,
+                    icon: 'hp-icon hp-fw hp-settings',
+                    title: i18n['app.settings'],
+                    order: 2
+                };
+            }
+
+            return pageData;
         }
     });
+
 });

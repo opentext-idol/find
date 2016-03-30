@@ -5,14 +5,18 @@
 
 define([
     'find/app/app',
-    'find/hod/app/hod-pages'
-], function(BaseApp, Pages) {
+    'find/hod/app/page/hod-find-search'
+], function(BaseApp, FindSearch) {
 
     'use strict';
 
     return BaseApp.extend({
-        constructPages: function() {
-            return new Pages();
+        getPageData: function() {
+            return {
+                search: {
+                    Constructor: FindSearch
+                }
+            };
         }
     });
 
