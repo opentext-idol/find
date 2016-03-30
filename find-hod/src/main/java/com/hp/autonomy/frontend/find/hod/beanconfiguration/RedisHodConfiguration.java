@@ -32,6 +32,7 @@ public class RedisHodConfiguration {
     public RedisTokenRepository tokenRepository() {
         final RedisConfig redisConfig = configService.getConfig().getRedis();
         final Integer database = redisConfig.getDatabase();
+        final String password = redisConfig.getPassword();
 
         if (redisConfig.getSentinels().isEmpty()) {
             final HostAndPort address = redisConfig.getAddress();
@@ -39,6 +40,7 @@ public class RedisHodConfiguration {
             return new RedisTokenRepository(new RedisTokenRepositoryConfig.Builder()
                     .setHost(address.getHost())
                     .setPort(address.getPort())
+                    .setPassword(password)
                     .setDatabase(database)
                     .build());
         } else {
@@ -52,6 +54,7 @@ public class RedisHodConfiguration {
                     .setHostsAndPorts(sentinels)
                     .setMasterName(redisConfig.getMasterName())
                     .setDatabase(database)
+                    .setPassword(password)
                     .build());
         }
     }
