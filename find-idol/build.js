@@ -11,12 +11,6 @@
     mainConfigFile: '${static-resources-dir}/static/js/require-config.js',
     modules: [
         {
-            name: "admin",
-            include: [
-                'require-config',
-                'find/idol/admin/admin-idol-app'
-            ]
-        }, {
             name: "login",
             include: [
                 'require-config',
@@ -33,7 +27,7 @@
             name: "public",
             include: [
                 'require-config',
-                'find/idol/public/idol-app'
+                'find/idol/app/idol-app'
             ]
         }
     ]

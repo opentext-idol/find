@@ -27,7 +27,7 @@
             name: "public",
             include: [
                 'require-config',
-                'find/hod/public/hod-app'
+                'find/hod/app/hod-app'
             ]
         }
     ]
