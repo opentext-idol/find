@@ -2,19 +2,20 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/vent',
     'find/app/util/string-blank',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/input-view.html',
     'typeahead',
     'bootstrap'
-], function (Backbone, $, _, stringBlank, i18n, template) {
+], function(Backbone, $, _, vent, stringBlank, i18n, template) {
 
     var html = _.template(template)({i18n: i18n});
     var relatedConceptsTemplate = _.template('<span class="selected-related-concept" data-id="<%-concept%>" data-toggle="tooltip" title="<%-concept%>">' +
         '<span class="selected-related-concept-text shorten"><%-concept%></span> ' +
         '<i class="clickable hp-icon hp-fw hp-close concept-remove-icon"></i>' +
-        '</span> ');
-    var scrollingButtons = _.template('<span class="scrolling-buttons">' +
+        '</span>');
+    var scrollingButtons = _.template('<span class="scrolling-buttons pull-right">' +
         '<button class="btn btn-xs btn-white left-scroll"><i class="hp-icon hp-chevron-left"></i></button> ' +
         '<button class="btn btn-xs btn-white right-scroll"><i class="hp-icon hp-chevron-right"></i></button> ' +
         '</span>');
@@ -54,6 +55,10 @@ define([
         initialize: function() {
             this.listenTo(this.model, 'change:inputText', this.updateText);
             this.listenTo(this.model, 'change:relatedConcepts', this.updateRelatedConcepts);
+
+            this.listenTo(vent, 'vent:resize', this.updateScrollingButtons);
+
+            _.bindAll(this, 'updateScrollingButtons');
         },
 
         render: function () {
@@ -124,7 +129,7 @@ define([
                 this.$('.scrolling-buttons').remove();
 
                 _.each(this.model.get('relatedConcepts'), function (concept) {
-                    this.$additionalConcepts.append(relatedConceptsTemplate({
+                    this.$additionalConcepts.prepend(relatedConceptsTemplate({
                         concept: concept
                     }));
                 }, this);
@@ -136,16 +141,26 @@ define([
 
                 this.$alsoSearchingFor.toggleClass('hide', _.isEmpty(this.model.get('relatedConcepts')));
 
+                this.updateScrollingButtons();
+            }
+        },
+
+        updateScrollingButtons: function() {
+            if (this.$additionalConcepts) {
                 //calculate the total width of all the related concepts
                 var relatedConceptsWidth = 0;
 
-                this.$('.selected-related-concept').each(function() {
-                    relatedConceptsWidth += parseInt($(this).width(), 10);
+                this.$('.selected-related-concept').each(function () {
+                    relatedConceptsWidth += parseInt($(this).outerWidth(true), 10);
                 });
 
                 //add scrolling template if total width of rc's is bigger than their container
                 if (this.$additionalConcepts.width() < relatedConceptsWidth) {
-                    this.$additionalConcepts.after(scrollingButtons);
+                    if(!this.$('.scrolling-buttons').length) {
+                        this.$additionalConcepts.after(scrollingButtons);
+                    }
+                } else {
+                    this.$('.scrolling-buttons').remove();
                 }
             }
         },

@@ -31,6 +31,10 @@ public class HodGlobalExceptionHandler extends GlobalExceptionHandler {
     @ResponseBody
     public ResponseEntity<HodErrorResponse> hodErrorHandler(final HodErrorException exception) {
         final HodErrorResponse hodErrorResponse = new HodErrorResponse("HOD Error", exception.getErrorCode());
+
+        log.error("Unhandled HodErrorException with uuid {}", hodErrorResponse.getUuid());
+        log.error("Stack trace", exception);
+
         return new ResponseEntity<>(hodErrorResponse, exception.isServerError() ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.BAD_REQUEST);
     }
 }

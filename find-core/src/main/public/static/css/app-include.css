@@ -326,8 +326,8 @@ html, body {
 
 .find {
     text-align: center;
-    /* We need to be on top of the static navbar */
-    z-index: 9999;
+    /* We need to be on top of the static navbar but below the modal backdrop */
+    z-index: 1020;
 }
 
 .find-logo {
@@ -347,10 +347,6 @@ html, body {
     background-size: 100px 20px;
     width: 100px;
     height: 20px;
-}
-
-.find-logo-small.reduced {
-    display: none;
 }
 
 .find-logo-large {
@@ -660,26 +656,31 @@ input.find-input {
     font-family: Metric-Bold;
 }
 
-.also-searching-for,
-.also-searching-for:hover {
+.also-searching-for {
     color:#fff;
-    padding: 3px;
+    padding: 0 3px;
     font-weight: lighter;
     vertical-align: top;
 }
 
 .selected-related-concept {
-    padding: 0 2px;
+    padding: 1px 6px;
+    border: solid 2px #fff;
+    border-radius: 0;
     font-size: 100%;
     font-weight: normal;
     color: #fff;
-    border: solid 1px #00b388;
-    border-radius: 0;
     display: inline-flex;
+    height: 22px;
+    line-height: 15px;
+}
+
+.selected-related-concept:not(:first-child) {
+    margin-left: 5px;
 }
 
 .selected-related-concept-text {
-    width: 80px;
+    max-width: 100px;
 }
 
 .concept-remove-icon {
@@ -688,7 +689,7 @@ input.find-input {
 
 .additional-concepts {
     overflow: hidden;
-    width: 350px;
+    width: calc(100% - 218px); /* 218 is the width of 'also searching for' and scrolling buttons */
     float: left;
     white-space: nowrap;
 }
@@ -739,18 +740,15 @@ input.find-input {
 }
 
 .find-navbar .dropdown-toggle:hover,
-.find-navbar .nav li.open a.dropdown-toggle {
+.find-navbar .nav li.open a.dropdown-toggle,
+.find-navbar .settings-logout a:focus,
+.find-navbar .settings-logout a:hover {
     background-color: #949494;
 }
 
-.find-navbar .navbar-brand {
-    padding: 25px 15px;
-    height: 70px;
-}
-
-.find-navbar .nav > li > a {
-    padding-bottom: 24px;
-    padding-top: 24px;
+.find-navbar .settings-logout-icon {
+    margin-right: 10px;
+    vertical-align: middle;
 }
 
 .list-indexes {
@@ -862,20 +860,13 @@ input:-moz-placeholder::before {
     border-bottom-color:#353535;
 }
 
-@media (min-width: 980px) {
-    .page .body {
-        left: 0;
-        position: fixed;
-        right: 0;
-    }
-
-    .page .body {
-        bottom: 32px;
-        top: 50px;
-        overflow: auto;
-        -webkit-transition: bottom 0.5s ease;
-        transition: bottom 0.5s ease;
-    }
+.page .body {
+    left: 0;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    top: 70px;
+    overflow: auto;
 }
 
 @media (max-width: 991px) {
@@ -893,13 +884,13 @@ input:-moz-placeholder::before {
 }
 
 .shorten {
-    max-width: 130px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
 
 .filter-display-text {
+    max-width: 130px;
     vertical-align: middle;
     line-height: 1.2em;
 }

@@ -4,10 +4,18 @@
  */
 
 define([
-    'find/app/model/find-base-collection'
-], function(FindBaseCollection) {
+    'find/app/model/find-base-collection',
+    'underscore'
+], function(FindBaseCollection, _) {
 
     return FindBaseCollection.extend({
-        url: '../api/public/search/find-related-concepts'
+        url: '../api/public/search/find-related-concepts',
+
+        parse: function(response) {
+            return _.reject(response, function(model) {
+                // A negative cluster indicates that the associated documents did not fall into a cluster
+                return model.cluster < 0;
+            })
+        }
     })
 });

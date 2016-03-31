@@ -14,7 +14,7 @@
 
     <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>find</artifactId>
-    <version>11.0.0</version>
+    <version>11.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -26,7 +26,7 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.12.4</haven.search.components.version>
+        <haven.search.components.version>0.12.9</haven.search.components.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <npm.binExtension/>
     </properties>

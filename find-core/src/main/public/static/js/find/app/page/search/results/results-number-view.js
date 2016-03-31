@@ -12,7 +12,7 @@ define([
 
             this.listenTo(this.documentsCollection, 'reset update sync', function(){
                 this.$currentNumber.text(this.documentsCollection.length);
-                this.$totalNumber.text(this.documentsCollection.totalResults);
+                this.$totalNumber.text(this.documentsCollection.totalResults || 0);
                 this.$firstNumber.text(this.documentsCollection.length ? 1 : 0);
             })
         },
