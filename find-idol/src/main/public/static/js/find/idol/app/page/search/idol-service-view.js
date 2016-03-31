@@ -5,17 +5,17 @@
 
 define([
     'find/app/page/search/service-view',
-    'find/idol/app/page/search/filters/indexes/idol-indexes-view',
     'find/idol/app/page/search/results/idol-results-view-augmentation',
-    'find/idol/app/page/search/results/idol-results-view'
-], function(ServiceView, IndexesView, ResultsViewAugmentation, ResultsView) {
+    'find/idol/app/page/search/results/idol-results-view',
+    'find/idol/app/page/search/idol-query-left-side-view'
+], function(ServiceView, ResultsViewAugmentation, ResultsView, IdolQueryLeftSideView) {
 
     'use strict';
 
     return ServiceView.extend({
         ResultsViewAugmentation: ResultsViewAugmentation,
         ResultsView: ResultsView,
-        IndexesView: IndexesView
+        QueryLeftSideView: IdolQueryLeftSideView
     });
 
 });

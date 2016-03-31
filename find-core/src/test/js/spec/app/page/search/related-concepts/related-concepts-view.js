@@ -19,9 +19,11 @@ define([
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel,
                 clickHandler: this.clickHandler,
-                highlightModel: this.highlightModel
+                highlightModel: this.highlightModel,
+                queryState: {
+                    queryTextModel: this.queryTextModel
+                }
             });
 
             this.view.render();

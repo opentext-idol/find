@@ -6,11 +6,8 @@ define([
     'find/app/model/entity-collection',
     'find/app/model/query-model',
     'find/app/model/saved-searches/saved-search-model',
-    'find/app/model/search-filters-collection',
-    'find/app/page/search/filters/parametric/parametric-view',
     'find/app/model/parametric-collection',
-    'find/app/page/search/filter-display/filter-display-view',
-    'find/app/page/search/filters/date/dates-filter-view',
+    'find/app/page/search/query-middle-column-header-view',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/page/search/results/results-view-augmentation',
@@ -18,51 +15,33 @@ define([
     'find/app/page/search/results/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
-    'find/app/page/search/spellcheck-view',
     'find/app/page/search/snapshots/snapshot-data-view',
     'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
-    'parametric-refinement/selected-values-collection',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/compare-modal',
     'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, SearchFiltersCollection,
-            ParametricView, ParametricCollection, FilterDisplayView, DateView, queryStrategy, stateTokenStrategy, ResultsViewAugmentation,
-            ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, relatedConceptsClickHandlers, SpellCheckView, SnapshotDataView, Collapsible,
-            addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, i18nIndexes, template) {
+], function(Backbone, $, _, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
+            QueryMiddleColumnHeaderView, queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
+            ResultsViewSelection, RelatedConceptsView, relatedConceptsClickHandlers, SnapshotDataView, Collapsible,
+            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, template) {
 
     'use strict';
-
-    // Invoke the method on each item in the list if it exists
-    function safeInvoke(method, list) {
-        return _.map(list, function(item) {
-            return item && item[method]();
-        });
-    }
-
-    var collapseView = function(title, view) {
-        return new Collapsible({
-            view: view,
-            collapsed: false,
-            title: title
-        });
-    };
 
     return Backbone.View.extend({
         className: 'full-height',
         template: _.template(template),
 
         // May be overridden
-        SearchFiltersCollection: SearchFiltersCollection,
+        QueryMiddleColumnHeaderView: QueryMiddleColumnHeaderView,
 
         // Abstract
         ResultsView: null,
         ResultsViewAugmentation: null,
-        IndexesView: null,
+        QueryLeftSideView: null,
 
         events: {
             'click .compare-modal-button': function() {
@@ -121,64 +100,31 @@ define([
                 }
             });
 
-            this.savedSearchControlView = new SavedSearchControlView({
+            this.parametricCollection = new ParametricCollection();
+
+            var subViewArguments = {
+                indexesCollection: this.indexesCollection,
+                entityCollection: this.entityCollection,
                 savedSearchModel: this.savedSearchModel,
                 savedSearchCollection: this.savedSearchCollection,
                 savedSnapshotCollection: this.savedSnapshotCollection,
                 savedQueryCollection: this.savedQueryCollection,
                 documentsCollection: this.documentsCollection,
                 selectedTabModel: this.selectedTabModel,
-                queryModel: this.queryModel,
-                queryState: this.queryState
-            });
-
-            this.parametricCollection = new ParametricCollection();
-
-            var resultsViewConstructorArguments = {
-                documentsCollection: this.documentsCollection,
-                entityCollection: this.entityCollection,
-                indexesCollection: this.indexesCollection,
                 parametricCollection: this.parametricCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryState.queryTextModel
+                queryState: this.queryState,
+                highlightModel: this.highlightModel
             };
+
+            this.savedSearchControlView = new SavedSearchControlView(subViewArguments);
 
             var relatedConceptsClickHandler;
             var topicMapClickHandler;
 
             if (searchType === SavedSearchModel.Type.QUERY) {
-                this.spellCheckView = new SpellCheckView({
-                    documentsCollection: this.documentsCollection,
-                    queryModel: this.queryModel
-                });
-
-                this.indexesView = new this.IndexesView({
-                    queryModel: this.queryModel,
-                    indexesCollection: this.indexesCollection,
-                    selectedDatabasesCollection: this.queryState.selectedIndexes
-                });
-
-                this.dateView = new DateView({
-                    datesFilterModel: this.queryState.datesFilterModel,
-                    savedSearchModel: this.savedSearchModel
-                });
-
-                this.parametricView = new ParametricView({
-                    queryModel: this.queryModel,
-                    queryState: this.queryState,
-                    indexesCollection: this.indexesCollection,
-                    parametricCollection: this.parametricCollection
-                });
-
-                this.filtersCollection = new this.SearchFiltersCollection([], {
-                    queryState: this.queryState,
-                    indexesCollection: this.indexesCollection
-                });
-
-                this.filterDisplayView = new FilterDisplayView({collection: this.filtersCollection});
-
-                this.indexesViewWrapper = collapseView(i18nIndexes['search.indexes'], this.indexesView);
-                this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
+                this.leftSideFooterView = new this.QueryLeftSideView(subViewArguments);
+                this.middleColumnHeaderView = new this.QueryMiddleColumnHeaderView(subViewArguments);
 
                 relatedConceptsClickHandler = relatedConceptsClickHandlers.updateQuery({queryTextModel: this.queryState.queryTextModel});
 
@@ -186,9 +132,7 @@ define([
                     this.queryState.queryTextModel.set('inputText', text);
                 }, this);
             } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
-                this.snapshotDataView = new SnapshotDataView({
-                    savedSearchModel: this.savedSearchModel
-                });
+                this.leftSideFooterView = new SnapshotDataView(subViewArguments);
 
                 relatedConceptsClickHandler = relatedConceptsClickHandlers.newQuery({
                     selectedTabModel: this.selectedTabModel,
@@ -210,38 +154,33 @@ define([
                 }, this);
             }
 
-            var relatedConceptsView = new RelatedConceptsView({
-                entityCollection: this.entityCollection,
-                indexesCollection: this.indexesCollection,
-                queryModel: this.queryModel,
-                queryTextModel: this.queryState.queryTextModel,
+            var relatedConceptsView = new RelatedConceptsView(_.extend({
                 clickHandler: relatedConceptsClickHandler,
                 highlightModel: this.highlightModel
-            });
+            }, subViewArguments));
 
-            this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], relatedConceptsView);
+            this.relatedConceptsViewWrapper = new Collapsible({
+                view: relatedConceptsView,
+                collapsed: false,
+                title: i18n['search.relatedConcepts']
+            });
 
             this.resultsView = new this.ResultsView(_.defaults({
                 enablePreview: true,
                 // TODO: Display promotions when QMS supports state tokens
                 displayPromotions: searchType === SavedSearchModel.Type.QUERY,
                 fetchStrategy: searchType === SavedSearchModel.Type.QUERY ? queryStrategy : stateTokenStrategy,
-                highlightModel: this.highlightModel,
-                indexesCollection: this.indexesCollection,
-                selectedIndexesCollection: this.queryState.selectedIndexes
-            }, resultsViewConstructorArguments));
+                highlightModel: this.highlightModel
+            }, subViewArguments));
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({resultsView: this.resultsView});
-
-            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle', function(toggle) {
-                this.rightSideContainerHideToggle(toggle);
-            }, this);
+            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle', this.rightSideContainerHideToggle);
 
             this.topicMapView = new TopicMapView(_.extend({
                 clickHandler: topicMapClickHandler
-            }, resultsViewConstructorArguments));
+            }, subViewArguments));
 
-            this.sunburstView = new SunburstView(resultsViewConstructorArguments);
+            this.sunburstView = new SunburstView(subViewArguments);
 
             var resultsViews = [{
                 content: this.resultsViewAugmentation,
@@ -306,18 +245,13 @@ define([
             this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
             this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
 
-            this.$('.container-toggle').on('click', this.containerToggle);
+            this.leftSideFooterView.setElement(this.$('.left-side-footer')).render();
 
-            if (searchType === SavedSearchModel.Type.QUERY) {
-                this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
-                this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
-                this.parametricView.setElement(this.$('.parametric-container')).render();
-                this.dateViewWrapper.setElement(this.$('.date-container')).render();
-                this.spellCheckView.setElement(this.$('.spellcheck-container')).render();
-            } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
-                this.snapshotDataView.setElement(this.$('.snapshot-view-container')).render();
+            if (this.middleColumnHeaderView) {
+                this.middleColumnHeaderView.setElement(this.$('.middle-column-header')).render();
             }
 
+            this.$('.container-toggle').on('click', this.containerToggle);
             this.updateCompareModalButton();
         },
 
@@ -358,12 +292,9 @@ define([
         },
 
         remove: function() {
-            safeInvoke('stopListening', [
-                this.queryModel,
-                this.filtersCollection
-            ]);
+            this.queryModel.stopListening();
 
-            safeInvoke('remove', [
+            _.chain([
                 this.savedSearchControlView,
                 this.resultsView,
                 this.resultsViewAugmentation,
@@ -371,14 +302,12 @@ define([
                 this.resultsViewContainer,
                 this.resultsViewSelection,
                 this.relatedConceptsViewWrapper,
-                this.spellCheckView,
-                this.parametricView,
-                this.filterDisplayView,
-                this.snapshotDataView,
-                this.indexesViewWrapper,
-                this.dateViewWrapper,
-                this.sunburstView
-            ]);
+                this.sunburstView,
+                this.leftSideFooterView,
+                this.middleColumnHeaderView
+            ])
+                .compact()
+                .invoke('remove');
 
             Backbone.View.prototype.remove.call(this);
         }
