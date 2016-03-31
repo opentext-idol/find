@@ -121,11 +121,6 @@ define([
                 }
             });
 
-            this.filtersCollection = new this.SearchFiltersCollection([], {
-                queryState: this.queryState,
-                indexesCollection: this.indexesCollection
-            });
-
             this.savedSearchControlView = new SavedSearchControlView({
                 savedSearchModel: this.savedSearchModel,
                 savedSearchCollection: this.savedSearchCollection,
