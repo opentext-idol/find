@@ -19,6 +19,9 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -149,7 +152,16 @@ public class EditDocumentReferencesPageITCase extends SOTestBase {
     private void verifyRefreshing() {
         getWindow().refresh();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
-        Waits.loadOrFadeWait();
+
+        new WebDriverWait(getDriver(), 5)
+                .withMessage("Waiting for promotion bucket to have results")
+                .until(new ExpectedCondition<Boolean>() {
+                    @Override
+                    public Boolean apply(WebDriver driver) {
+                        return !editReferencesPage.getBucketTitles().isEmpty();
+                    }
+                });
+
         verifyThat(editReferencesPage.saveButton(), not(disabled()));
         verifyThat(editReferencesPage.getBucketTitles(), not(empty()));
     }

@@ -56,9 +56,9 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
     }
 
     public Removable additionalConcept(String conceptText) {
-        WebElement concept = inputContainer.findElement(new Locator()
+        WebElement concept = ElementUtil.ancestor(inputContainer.findElement(new Locator()
                 .havingClass("selected-related-concept")
-                .containingCaseInsensitive(conceptText));
+                .containingCaseInsensitive(conceptText)), 1);
         return new HPRemovable(concept, driver);
     }
 
