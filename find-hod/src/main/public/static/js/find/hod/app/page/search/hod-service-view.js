@@ -6,16 +6,12 @@
 define([
     'find/app/page/search/service-view',
     'find/hod/app/page/search/results/hod-results-view-augmentation',
-    'find/hod/app/page/search/results/hod-results-view',
-    'find/hod/app/page/search/hod-query-left-side-view',
-    'find/hod/app/page/search/hod-query-middle-column-header-view'
-], function(ServiceView, ResultsViewAugmentation, ResultsView, HodQueryLeftSideView, HodQueryMiddleColumnHeaderView) {
+    'find/hod/app/page/search/results/hod-results-view'
+], function(ServiceView, ResultsViewAugmentation, ResultsView) {
 
     'use strict';
 
     return ServiceView.extend({
-        QueryMiddleColumnHeaderView: HodQueryMiddleColumnHeaderView,
-        QueryLeftSideView: HodQueryLeftSideView,
         ResultsView: ResultsView,
         ResultsViewAugmentation: ResultsViewAugmentation
     });

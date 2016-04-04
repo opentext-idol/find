@@ -7,15 +7,12 @@ define([
     'find/app/model/query-model',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/parametric-collection',
-    'find/app/page/search/query-middle-column-header-view',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/page/search/results/results-view-augmentation',
     'find/app/page/search/results/results-view-container',
     'find/app/page/search/results/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
-    'find/app/page/search/related-concepts/related-concepts-click-handlers',
-    'find/app/page/search/snapshots/snapshot-data-view',
     'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
     'find/app/page/search/saved-searches/saved-search-control-view',
@@ -25,23 +22,20 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
-            QueryMiddleColumnHeaderView, queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, relatedConceptsClickHandlers, SnapshotDataView, Collapsible,
+            queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
+            ResultsViewSelection, RelatedConceptsView, Collapsible,
             addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, template) {
 
     'use strict';
 
+    var html = _.template(template)({i18n: i18n});
+
     return Backbone.View.extend({
         className: 'full-height',
-        template: _.template(template),
-
-        // May be overridden
-        QueryMiddleColumnHeaderView: QueryMiddleColumnHeaderView,
 
         // Abstract
         ResultsView: null,
         ResultsViewAugmentation: null,
-        QueryLeftSideView: null,
 
         events: {
             'click .compare-modal-button': function() {
@@ -58,10 +52,10 @@ define([
             this.selectedTabModel = options.selectedTabModel;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
-            this.savedSnapshotCollection = options.savedSnapshotCollection;
-            this.savedQueryCollection = options.savedQueryCollection;
             this.queryState = options.queryState;
             this.documentsCollection = options.documentsCollection;
+            this.searchTypes = options.searchTypes;
+            this.searchCollections = options.searchCollections;
 
             this.comparisonSuccessCallback = options.comparisonSuccessCallback;
 
@@ -71,8 +65,8 @@ define([
             var searchType = this.savedSearchModel.get('type');
 
             this.queryModel = new QueryModel({
-                autoCorrect: searchType === SavedSearchModel.Type.QUERY,
-                stateMatchIds: searchType === SavedSearchModel.Type.SNAPSHOT ? this.savedSearchModel.get('stateTokens') : []
+                autoCorrect: this.searchTypes[searchType].autoCorrect,
+                stateMatchIds: this.savedSearchModel.get('stateTokens')
             }, {queryState: this.queryState});
 
             this.listenTo(this.queryModel, 'change:indexes', function() {
@@ -107,60 +101,32 @@ define([
                 entityCollection: this.entityCollection,
                 savedSearchModel: this.savedSearchModel,
                 savedSearchCollection: this.savedSearchCollection,
-                savedSnapshotCollection: this.savedSnapshotCollection,
-                savedQueryCollection: this.savedQueryCollection,
                 documentsCollection: this.documentsCollection,
                 selectedTabModel: this.selectedTabModel,
                 parametricCollection: this.parametricCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
-                highlightModel: this.highlightModel
+                highlightModel: this.highlightModel,
+                searchCollections: this.searchCollections,
+                searchTypes: this.searchTypes
             };
 
-            this.savedSearchControlView = new SavedSearchControlView(_.extend({
-                searchTypes: {
-                    QUERY: {collection: this.savedQueryCollection, isMutable: true},
-                    SNAPSHOT: {collection: this.savedSnapshotCollection, isMutable: false}
-                }
-            }, subViewArguments));
+            var clickHandlerArguments = {
+                queryTextModel: this.queryState.queryTextModel,
+                savedQueryCollection: this.searchCollections.QUERY,
+                savedSearchModel: this.savedSearchModel,
+                selectedTabModel: this.selectedTabModel
+            };
 
-            var relatedConceptsClickHandler;
-            var topicMapClickHandler;
+            this.savedSearchControlView = new SavedSearchControlView(subViewArguments);
 
-            if (searchType === SavedSearchModel.Type.QUERY) {
-                this.leftSideFooterView = new this.QueryLeftSideView(subViewArguments);
-                this.middleColumnHeaderView = new this.QueryMiddleColumnHeaderView(subViewArguments);
+            this.leftSideFooterView = new this.searchTypes[searchType].LeftSideFooterView(subViewArguments);
 
-                relatedConceptsClickHandler = relatedConceptsClickHandlers.updateQuery({queryTextModel: this.queryState.queryTextModel});
-
-                topicMapClickHandler = _.bind(function(text) {
-                    this.queryState.queryTextModel.set('inputText', text);
-                }, this);
-            } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
-                this.leftSideFooterView = new SnapshotDataView(subViewArguments);
-
-                relatedConceptsClickHandler = relatedConceptsClickHandlers.newQuery({
-                    selectedTabModel: this.selectedTabModel,
-                    savedSearchModel: this.savedSearchModel,
-                    savedQueryCollection: this.savedQueryCollection
-                });
-
-                topicMapClickHandler = _.bind(function(text) {
-                    // Create a new search if the user clicks on a related concept in a snapshot topic map
-                    var newQuery = new SavedSearchModel(_.defaults({
-                        id: null,
-                        queryText: text,
-                        title: i18n['search.newSearch'],
-                        type: SavedSearchModel.Type.QUERY
-                    }, this.savedSearchModel.attributes));
-
-                    this.savedQueryCollection.add(newQuery);
-                    this.selectedTabModel.set('selectedSearchCid', newQuery.cid);
-                }, this);
-            }
+            var MiddleColumnHeaderView = this.searchTypes[searchType].MiddleColumnHeaderView;
+            this.middleColumnHeaderView = MiddleColumnHeaderView ? new MiddleColumnHeaderView(subViewArguments) : null;
 
             var relatedConceptsView = new RelatedConceptsView(_.extend({
-                clickHandler: relatedConceptsClickHandler,
+                clickHandler: this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments),
                 highlightModel: this.highlightModel
             }, subViewArguments));
 
@@ -172,9 +138,8 @@ define([
 
             this.resultsView = new this.ResultsView(_.defaults({
                 enablePreview: true,
-                // TODO: Display promotions when QMS supports state tokens
-                displayPromotions: searchType === SavedSearchModel.Type.QUERY,
-                fetchStrategy: searchType === SavedSearchModel.Type.QUERY ? queryStrategy : stateTokenStrategy,
+                displayPromotions: this.searchTypes[searchType].displayPromotions,
+                fetchStrategy: this.searchTypes[searchType].fetchStrategy,
                 highlightModel: this.highlightModel
             }, subViewArguments));
 
@@ -182,7 +147,7 @@ define([
             this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle', this.rightSideContainerHideToggle);
 
             this.topicMapView = new TopicMapView(_.extend({
-                clickHandler: topicMapClickHandler
+                clickHandler: this.searchTypes[searchType].topicMapClickHandler(clickHandlerArguments)
             }, subViewArguments));
 
             this.sunburstView = new SunburstView(subViewArguments);
@@ -235,13 +200,7 @@ define([
         },
 
         render: function() {
-            var searchType = this.savedSearchModel.get('type');
-
-            this.$el.html(this.template({
-                i18n: i18n,
-                searchType: searchType,
-                SearchType: SavedSearchModel.Type
-            }));
+            this.$el.html(html);
 
             this.savedSearchControlView.setElement(this.$('.search-options-container')).render();
             this.relatedConceptsViewWrapper.render();

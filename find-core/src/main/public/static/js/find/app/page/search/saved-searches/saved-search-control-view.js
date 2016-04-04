@@ -61,7 +61,7 @@ define([
                     type: SavedSearchModel.Type.QUERY
                 }, this.savedSearchModel.attributes));
 
-                this.searchTypes.QUERY.collection.add(newSearch);
+                this.searchCollections.QUERY.add(newSearch);
                 this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
             },
             'click .save-search-button': function() {
@@ -134,8 +134,7 @@ define([
             this.documentsCollection = options.documentsCollection;
             this.queryState = options.queryState;
             this.selectedTabModel = options.selectedTabModel;
-
-            // Map of search type name to {collection : Collection, isMutable : Boolean}
+            this.searchCollections = options.searchCollections;
             this.searchTypes = options.searchTypes;
 
             this.model = new Backbone.Model({
@@ -289,7 +288,7 @@ define([
                         };
 
                         if (titleEditState === TitleEditState.SAVE_AS && (savedState !== SavedState.NEW || !this.searchTypes[searchType].isMutable)) {
-                            this.searchTypes[searchType].collection.create(attributes, saveOptions);
+                            this.searchCollections[searchType].create(attributes, saveOptions);
                         } else {
                             this.savedSearchModel.save(attributes, saveOptions);
                         }

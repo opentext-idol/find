@@ -185,9 +185,13 @@ define([
                 savedSearchCollection: this.savedSearchCollection,
                 queryState: this.queryState,
                 selectedTabModel: this.selectedTabModel,
+                searchCollections: {
+                    QUERY: this.savedQueryCollection,
+                    SNAPSHOT: this.savedSnapshotCollection
+                },
                 searchTypes: {
-                    QUERY: {collection: this.savedQueryCollection, isMutable: true},
-                    SNAPSHOT: {collection: this.savedSnapshotCollection, isMutable: false}
+                    QUERY: {isMutable: true},
+                    SNAPSHOT: {isMutable: false}
                 }
             };
         });
