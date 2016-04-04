@@ -85,6 +85,60 @@ define([
                         expect(this.view.$message).toHaveText(i18n['search.resultsView.sunburst.error.query']);
                     });
                 });
+
+                describe('then the parametric collection syncs and returns results', function() {
+                    beforeEach(function() {
+                        this.parametricCollection.fetching = false;
+
+                        var sources = {
+                            field: 'SOURCE',
+                            values: [
+                                {
+                                    value: 'GOOGLE',
+                                    count: '89687'
+                                },
+                                {
+                                    value: 'SPACE',
+                                    count: '156235'
+                                }
+                            ]
+                        };
+
+                        var category = {
+                            field: 'CATEGORY',
+                            values: [
+                                {
+                                    value: 'SCIENCE',
+                                    count: '43454'
+                                }, {
+                                    value: 'BUSINESS',
+                                    count: '543534'
+                                }, {
+                                    value: 'COMPUTERS',
+                                    count: '324663'
+                                }
+                            ]
+                        };
+
+                        var collectionContents = [sources, category];
+
+                        this.parametricCollection.add(collectionContents);
+                        this.parametricCollection.trigger('sync');
+
+                        this.view.dependentParametricCollection.add(sources);
+                        this.view.dependentParametricCollection.trigger('sync');
+                    });
+
+                    it('should not display a loading spinner or a message', function() {
+                        expect(this.view.$loadingSpinner).toHaveClass('hide');
+                        expect(this.view.$message).toHaveText('');
+                    });
+
+                    it('should display the dropdowns and the sunburst view', function() {
+                        expect(this.view.$parametricSelections).not.toHaveClass('hide');
+                        expect(this.view.$sunburst).not.toHaveClass('hide');
+                    });
+                })
             });
         });
     })
