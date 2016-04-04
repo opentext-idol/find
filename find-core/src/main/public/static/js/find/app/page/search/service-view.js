@@ -117,7 +117,12 @@ define([
                 highlightModel: this.highlightModel
             };
 
-            this.savedSearchControlView = new SavedSearchControlView(subViewArguments);
+            this.savedSearchControlView = new SavedSearchControlView(_.extend({
+                searchTypes: {
+                    QUERY: {collection: this.savedQueryCollection, isMutable: true},
+                    SNAPSHOT: {collection: this.savedSnapshotCollection, isMutable: false}
+                }
+            }, subViewArguments));
 
             var relatedConceptsClickHandler;
             var topicMapClickHandler;

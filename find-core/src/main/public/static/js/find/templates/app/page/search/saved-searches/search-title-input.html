@@ -3,9 +3,9 @@
 </div>
 <% if (showSearchTypes) { %>
     <div class="form-group">
-        <% _.each(savedSearchTypes, function(type) { %>
+        <% _.each(searchTypeNames, function(name) { %>
             <label class="radio-inline i-check">
-                <input type="radio" value="<%- type %>" name="saved-search-type"> <%- i18n['search.savedSearchControl.searchType.' + type] %>
+                <input type="radio" value="<%- name %>" name="saved-search-type"> <%- i18n['search.savedSearchControl.searchType.' + name] %>
             </label>
         <% }); %>
     </div>

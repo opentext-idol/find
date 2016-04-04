@@ -61,7 +61,7 @@ define([
                     type: SavedSearchModel.Type.QUERY
                 }, this.savedSearchModel.attributes));
 
-                this.savedQueryCollection.add(newSearch);
+                this.searchTypes.QUERY.collection.add(newSearch);
                 this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
             },
             'click .save-search-button': function() {
@@ -129,13 +129,14 @@ define([
         },
 
         initialize: function(options) {
-            this.savedQueryCollection = options.savedQueryCollection;
-            this.savedSnapshotCollection = options.savedSnapshotCollection;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
             this.documentsCollection = options.documentsCollection;
             this.queryState = options.queryState;
             this.selectedTabModel = options.selectedTabModel;
+
+            // Map of search type name to {collection : Collection, isMutable : Boolean}
+            this.searchTypes = options.searchTypes;
 
             this.model = new Backbone.Model({
                 // Is the saved search new, modified or up to date with the server?
@@ -189,10 +190,12 @@ define([
         },
 
         render: function() {
+            var isMutable = this.searchTypes[this.savedSearchModel.get('type')].isMutable;
+
             this.$el.html(this.template({
                 i18n: i18n,
-                searchType: this.savedSearchModel.get('type'),
-                SearchType: SavedSearchModel.Type
+                showSaveAs: isMutable,
+                showOpenAsQuery: !isMutable
             }));
 
             this.renderTitleInput();
@@ -240,7 +243,7 @@ define([
             this.$('.search-reset-option, .save-search-button').toggleClass('hide', savedState !== SavedState.MODIFIED);
             this.$('.show-rename-button').toggleClass('hide', savedState === SavedState.NEW);
 
-            if (this.savedSearchModel.get('type') === SavedSearchModel.Type.QUERY) {
+            if (this.searchTypes[this.savedSearchModel.get('type')].isMutable) {
                 var createOrEdit = savedState === SavedState.NEW ? 'create' : 'edit';
                 this.$('.show-save-as-button').text(i18n['search.savedSearchControl.openEdit.' + createOrEdit]);
             }
@@ -249,7 +252,7 @@ define([
         updateForTitleEditState: function() {
             var titleEditState = this.model.get('titleEditState');
 
-            if (this.savedSearchModel.get('type') === SavedSearchModel.Type.QUERY) {
+            if (this.searchTypes[this.savedSearchModel.get('type')].isMutable) {
                 this.$('.show-save-as-button')
                     .toggleClass('active', TitleEditState.SAVE_AS === titleEditState)
                     .attr('aria-pressed', TitleEditState.SAVE_AS === titleEditState);
@@ -269,6 +272,7 @@ define([
                 this.titleInput = new SearchTitleInput({
                     savedSearchModel: this.savedSearchModel,
                     savedSearchCollection: this.savedSearchCollection,
+                    searchTypeNames: _.keys(this.searchTypes).sort(),
                     showSearchTypes: titleEditState !== TitleEditState.RENAME,
                     saveCallback: _.bind(function(newAttributes, success, error) {
                         var savedState = this.model.get('savedState');
@@ -284,10 +288,8 @@ define([
                             timeout: 90000
                         };
 
-                        if (titleEditState === TitleEditState.SAVE_AS && searchType === SavedSearchModel.Type.SNAPSHOT) {
-                            this.savedSnapshotCollection.create(attributes, saveOptions);
-                        } else if (titleEditState === TitleEditState.SAVE_AS && savedState !== SavedState.NEW) {
-                            this.savedQueryCollection.create(attributes, saveOptions);
+                        if (titleEditState === TitleEditState.SAVE_AS && (savedState !== SavedState.NEW || !this.searchTypes[searchType].isMutable)) {
+                            this.searchTypes[searchType].collection.create(attributes, saveOptions);
                         } else {
                             this.savedSearchModel.save(attributes, saveOptions);
                         }

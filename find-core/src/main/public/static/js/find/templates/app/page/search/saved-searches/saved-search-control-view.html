@@ -4,7 +4,7 @@
 <button type="button" class="btn btn-secondary popover-control show-rename-button" aria-pressed="false">
     <%- i18n['search.savedSearchControl.rename'] %>
 </button>
-    <% if (searchType === SearchType.QUERY) { %>
+    <% if (showSaveAs) { %>
         <button type="button" class="btn button-primary popover-control show-save-as-button save-button" aria-pressed="false"></button>
     <% } %>
 <div class="btn-group m-r-sm">
@@ -15,7 +15,7 @@
         <li class="search-reset-option">
             <a><%-i18n['app.reset']%></a>
         </li>
-            <% if (searchType === SearchType.SNAPSHOT) { %>
+            <% if (showOpenAsQuery) { %>
                 <li class="open-as-query-option">
                     <a><%-i18n['search.savedSearchControl.openAsSearch']%></a>
                 </li>

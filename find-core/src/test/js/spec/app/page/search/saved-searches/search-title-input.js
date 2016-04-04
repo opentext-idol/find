@@ -29,7 +29,8 @@ define([
                     saveCallback: this.saveCallback,
                     showSearchTypes: true,
                     savedSearchModel: this.savedSearchModel,
-                    savedSearchCollection: new Backbone.Collection()
+                    savedSearchCollection: new Backbone.Collection(),
+                    searchTypeNames: [SavedSearchModel.Type.QUERY, SavedSearchModel.Type.SNAPSHOT]
                 });
 
                 this.view.render();
