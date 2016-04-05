@@ -7,7 +7,7 @@ define([
     'find/app/app',
     'underscore',
     'find/app/configuration',
-    'find/app/model/saved-searches/saved-snapshot-collection',
+    'find/idol/app/model/saved-searches/saved-snapshot-collection',
     'find/idol/app/idol-navigation',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
