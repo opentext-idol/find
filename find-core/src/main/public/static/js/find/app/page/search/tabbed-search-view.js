@@ -34,7 +34,8 @@ define([
                 ItemView: TabItemView,
                 headerHtml: startNewSearchHtml,
                 itemOptions: {
-                    queryStates: options.queryStates
+                    queryStates: options.queryStates,
+                    searchTypes: options.searchTypes
                 }
             });
 
@@ -42,7 +43,8 @@ define([
                 collection: this.savedSearchCollection,
                 ItemView: TabItemView,
                 itemOptions: {
-                    queryStates: options.queryStates
+                    queryStates: options.queryStates,
+                    searchTypes: options.searchTypes
                 }
             });
 

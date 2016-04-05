@@ -29,7 +29,7 @@ define([
                 templateOptions: {
                     i18n: i18n,
                     searchCid: cid,
-                    isSnapshot: this.model.get('type') === SavedSearchModel.Type.SNAPSHOT
+                    icon: options.searchTypes[this.model.get('type')].icon
                 }
             }, options));
 

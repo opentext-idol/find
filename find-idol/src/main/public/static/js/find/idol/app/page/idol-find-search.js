@@ -33,6 +33,7 @@ define([
                     autoCorrect: false,
                     queryTextModelChange: _.constant(_.noop),
                     collection: 'savedSnapshotCollection',
+                    icon: 'hp-camera',
                     isMutable: false,
                     fetchStrategy: stateTokenStrategy,
                     // TODO: Display promotions when QMS supports state tokens

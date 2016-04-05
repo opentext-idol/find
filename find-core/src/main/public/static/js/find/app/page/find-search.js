@@ -159,7 +159,8 @@ define([
             this.tabView = new TabbedSearchView({
                 savedSearchCollection: this.savedSearchCollection,
                 model: this.selectedTabModel,
-                queryStates: this.queryStates
+                queryStates: this.queryStates,
+                searchTypes: this.searchTypes
             });
 
             this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
@@ -255,15 +256,16 @@ define([
             return {
                 QUERY: {
                     autoCorrect: true,
-                        collection: 'savedQueryCollection',
-                        displayPromotions: true,
-                        fetchStrategy: queryStrategy,
-                        isMutable: true,
-                        relatedConceptsClickHandler: relatedConceptsClickHandlers.updateQuery,
-                        LeftSideFooterView: this.QueryLeftSideView,
-                        DocumentsCollection: DocumentsCollection,
-                        MiddleColumnHeaderView: this.QueryMiddleColumnHeaderView,
-                        createSearchModelAttributes: function(queryTextModel) {
+                    collection: 'savedQueryCollection',
+                    displayPromotions: true,
+                    fetchStrategy: queryStrategy,
+                    icon: 'hp-search',
+                    isMutable: true,
+                    relatedConceptsClickHandler: relatedConceptsClickHandlers.updateQuery,
+                    LeftSideFooterView: this.QueryLeftSideView,
+                    DocumentsCollection: DocumentsCollection,
+                    MiddleColumnHeaderView: this.QueryMiddleColumnHeaderView,
+                    createSearchModelAttributes: function(queryTextModel) {
                         return queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES);
                     },
                     queryTextModelChange: function(options) {
