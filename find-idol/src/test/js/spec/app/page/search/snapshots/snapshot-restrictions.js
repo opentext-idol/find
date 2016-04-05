@@ -4,7 +4,7 @@
  */
 
 define([
-    'find/app/page/search/snapshots/snapshot-restrictions',
+    'find/idol/app/page/search/snapshots/snapshot-restrictions',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'underscore',

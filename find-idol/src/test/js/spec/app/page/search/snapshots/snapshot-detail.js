@@ -4,7 +4,7 @@
  */
 
 define([
-    'find/app/page/search/snapshots/snapshot-detail',
+    'find/idol/app/page/search/snapshots/snapshot-detail',
     'i18n!find/nls/bundle',
     'underscore',
     'moment'

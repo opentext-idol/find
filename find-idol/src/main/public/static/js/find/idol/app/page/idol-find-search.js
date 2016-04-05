@@ -11,7 +11,7 @@ define([
     'find/idol/app/page/search/idol-service-view',
     'find/idol/app/page/search/suggest/idol-suggest-view',
     'find/idol/app/page/search/saved-searches/comparison/idol-comparison-view',
-    'find/app/page/search/snapshots/snapshot-data-view',
+    'find/idol/app/page/search/snapshots/snapshot-data-view',
     'find/app/page/search/results/state-token-strategy',
     'find/app/model/comparisons/comparison-documents-collection',
     'find/app/page/search/related-concepts/related-concepts-click-handlers',

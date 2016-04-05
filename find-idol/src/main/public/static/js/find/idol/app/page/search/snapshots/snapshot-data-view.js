@@ -8,9 +8,9 @@ define([
     'underscore',
     'i18n!find/nls/bundle',
     'find/app/util/collapsible',
-    'find/app/page/search/snapshots/data-panel-view',
-    'find/app/page/search/snapshots/snapshot-detail',
-    'find/app/page/search/snapshots/snapshot-restrictions'
+    './data-panel-view',
+    './snapshot-detail',
+    './snapshot-restrictions'
 ], function(Backbone, _, i18n, Collapsible, DataPanelView, snapshotDetail, snapshotRestrictions) {
 
     /**

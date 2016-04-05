@@ -4,8 +4,9 @@
  */
 
 define([
-    'find/app/page/search/snapshots/data-panel-view',
-    'backbone'
+    'find/idol/app/page/search/snapshots/data-panel-view',
+    'backbone',
+    'jasmine-jquery'
 ], function(DataPanelView, Backbone) {
 
     describe('Snapshot data panel view', function() {

@@ -7,7 +7,7 @@ define([
     'backbone',
     'underscore',
     'moment',
-    'find/app/page/search/snapshots/snapshot-data-view'
+    'find/idol/app/page/search/snapshots/snapshot-data-view'
 ], function(Backbone, _, moment, SnapshotFilterView) {
 
     var CREATED_DATE = 1454668000000;
