@@ -137,6 +137,11 @@ public class QueryTestHelper<T extends QueryResultsPage> {
                     public Result next() {
                         return resultFor(queryIterator.next());
                     }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException("remove");
+                    }
                 };
             }
         };
