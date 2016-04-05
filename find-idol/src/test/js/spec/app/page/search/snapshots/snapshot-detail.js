@@ -6,9 +6,10 @@
 define([
     'find/idol/app/page/search/snapshots/snapshot-detail',
     'i18n!find/nls/bundle',
+    'i18n!find/idol/nls/snapshots',
     'underscore',
     'moment'
-], function(snapshotDetail, i18n, _, moment) {
+], function(snapshotDetail, i18n, snapshotsI18n, _, moment) {
 
     function runProcessAttributes(input) {
         // Only pick the target attributes to reflect how processAttributes is called in the DataPanelView
@@ -23,9 +24,9 @@ define([
             });
 
             expect(output.length).toBe(2);
-            expect(output[0].title).toBe(i18n['search.snapshot.detail.dateCreated']);
+            expect(output[0].title).toBe(snapshotsI18n['detail.dateCreated']);
             expect(output[0].content).toContain('2016/02/09');
-            expect(output[1].title).toBe(i18n['search.snapshot.detail.resultCount']);
+            expect(output[1].title).toBe(snapshotsI18n['detail.resultCount']);
             expect(output[1].content).toEqual(25);
         });
 
@@ -34,7 +35,7 @@ define([
                 dateCreated: moment(1455026659454)
             });
 
-            expect(output[1].title).toBe(i18n['search.snapshot.detail.resultCount']);
+            expect(output[1].title).toBe(snapshotsI18n['detail.resultCount']);
             expect(output[1].content).toBe(i18n['app.unknown']);
         });
 
@@ -44,7 +45,7 @@ define([
                 resultCount: 0
             });
 
-            expect(output[1].title).toBe(i18n['search.snapshot.detail.resultCount']);
+            expect(output[1].title).toBe(snapshotsI18n['detail.resultCount']);
             expect(output[1].content).toEqual(0);
         });
     });

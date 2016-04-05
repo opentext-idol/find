@@ -7,9 +7,10 @@ define([
     'find/idol/app/page/search/snapshots/snapshot-restrictions',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
+    'i18n!find/idol/nls/snapshots',
     'underscore',
     'moment'
-], function(snapshotRestrictions, i18n, indexesI18n, _, moment) {
+], function(snapshotRestrictions, i18n, indexesI18n, snapshotsI18n, _, moment) {
 
     function runProcessAttributes(input) {
         // Only pick the target attributes to reflect how processAttributes is called in the DataPanelView
@@ -26,7 +27,7 @@ define([
             });
 
             expect(output.length).toBe(2);
-            expect(output[0].title).toBe(i18n['search.snapshot.restrictions.queryText']);
+            expect(output[0].title).toBe(snapshotsI18n['restrictions.queryText']);
             expect(output[0].content).toBe('cat');
             expect(output[1].title).toBe(indexesI18n['search.indexes']);
             expect(output[1].content).toContain('Wikipedia');
@@ -42,7 +43,7 @@ define([
             });
 
             expect(output.length).toBe(3);
-            expect(output[1].title).toBe(i18n['search.snapshot.restrictions.relatedConcepts']);
+            expect(output[1].title).toBe(snapshotsI18n['restrictions.relatedConcepts']);
             expect(output[1].content).toContain('Copenhagen');
             expect(output[1].content).toContain('Quantum');
         });
@@ -57,7 +58,7 @@ define([
             });
 
             expect(output.length).toBe(3);
-            expect(output[2].title).toBe(i18n['search.snapshot.restrictions.minDate']);
+            expect(output[2].title).toBe(snapshotsI18n['restrictions.minDate']);
             expect(output[2].content).toContain('2016/02/09');
         });
 
@@ -71,7 +72,7 @@ define([
             });
 
             expect(output.length).toBe(3);
-            expect(output[2].title).toBe(i18n['search.snapshot.restrictions.maxDate']);
+            expect(output[2].title).toBe(snapshotsI18n['restrictions.maxDate']);
             expect(output[2].content).toContain('2016/02/09');
         });
 

@@ -7,11 +7,12 @@ define([
     'backbone',
     'underscore',
     'i18n!find/nls/bundle',
+    'i18n!find/idol/nls/snapshots',
     'find/app/util/collapsible',
     './data-panel-view',
     './snapshot-detail',
     './snapshot-restrictions'
-], function(Backbone, _, i18n, Collapsible, DataPanelView, snapshotDetail, snapshotRestrictions) {
+], function(Backbone, _, i18n, snapshotsI18n, Collapsible, DataPanelView, snapshotDetail, snapshotRestrictions) {
 
     /**
      * Contents of the left side panel for a saved snapshot.
@@ -22,13 +23,13 @@ define([
         initialize: function(options) {
             this.collapsibles = [
                 new Collapsible({
-                    title: i18n['search.snapshot.detailTitle'],
+                    title: snapshotsI18n['detailTitle'],
                     view: new DataPanelView(_.extend({
                         model: options.savedSearchModel
                     }, snapshotDetail))
                 }),
                 new Collapsible({
-                    title: i18n['search.snapshot.restrictionsTitle'],
+                    title: snapshotsI18n['restrictionsTitle'],
                     view: new DataPanelView(_.extend({
                         model: options.savedSearchModel
                     }, snapshotRestrictions))

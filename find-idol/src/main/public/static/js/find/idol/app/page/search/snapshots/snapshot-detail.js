@@ -4,8 +4,9 @@
  */
 
 define([
-    'i18n!find/nls/bundle'
-], function(i18n) {
+    'i18n!find/nls/bundle',
+    'i18n!find/idol/nls/snapshots'
+], function(i18n, snapshotsI18n) {
 
     var DATE_FORMAT = 'YYYY/MM/DD HH:mm';
 
@@ -27,10 +28,10 @@ define([
             var resultCountContent = attributes.resultCount != null ? attributes.resultCount : i18n['app.unknown'];
 
             return [{
-                title: i18n['search.snapshot.detail.dateCreated'],
+                title: snapshotsI18n['detail.dateCreated'],
                 content: attributes.dateCreated.format(DATE_FORMAT)
             }, {
-                title: i18n['search.snapshot.detail.resultCount'],
+                title: snapshotsI18n['detail.resultCount'],
                 content: resultCountContent
             }];
         }

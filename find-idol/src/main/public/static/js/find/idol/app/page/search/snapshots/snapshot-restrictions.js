@@ -6,9 +6,10 @@
 define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
+    'i18n!find/idol/nls/snapshots',
     'parametric-refinement/prettify-field-name',
     'underscore'
-], function(i18n, indexesI18n, prettifyFieldName, _) {
+], function(i18n, indexesI18n, snapshotsI18n, prettifyFieldName, _) {
 
     var DATE_FORMAT = 'YYYY/MM/DD HH:mm';
 
@@ -17,7 +18,7 @@ define([
     }
 
     function relatedConcepts(concepts) {
-        return concepts.length ? {title: i18n['search.snapshot.restrictions.relatedConcepts'], content: concepts.join(', ')} : null;
+        return concepts.length ? {title: snapshotsI18n['restrictions.relatedConcepts'], content: concepts.join(', ')} : null;
     }
 
     /**
@@ -48,7 +49,7 @@ define([
 
             return [
                 {
-                    title: i18n['search.snapshot.restrictions.queryText'],
+                    title: snapshotsI18n['restrictions.queryText'],
                     content: attributes.queryText
                 },
                 relatedConcepts(attributes.relatedConcepts),
@@ -56,8 +57,8 @@ define([
                     title: indexesI18n['search.indexes'],
                     content: indexesContent
                 },
-                dateRestriction(i18n['search.snapshot.restrictions.minDate'], attributes.minDate),
-                dateRestriction(i18n['search.snapshot.restrictions.maxDate'], attributes.maxDate)
+                dateRestriction(snapshotsI18n['restrictions.minDate'], attributes.minDate),
+                dateRestriction(snapshotsI18n['restrictions.maxDate'], attributes.maxDate)
             ].concat(parametricRestrictions);
         }
     };
