@@ -52,6 +52,24 @@ define([
                             referenceFieldPlaceholder: i18n['settings.view.referenceFieldPlaceholder'],
                             viewingMode: i18n['settings.view.viewingMode']
                         })
+                    }),
+                    new QueryManipulationWidget({
+                        configItem: 'queryManipulation',
+                        description: i18n['settings.queryManipulation.description'],
+                        isOpened: true,
+                        title: i18n['settings.queryManipulation'],
+                        strings: _.extend(this.serverStrings(), {
+                            blacklist: i18n['settings.queryManipulation.blacklist'],
+                            disable: i18n['settings.queryManipulation.disable'],
+                            disabled: i18n['settings.queryManipulation.disabled'],
+                            dictionary: i18n['settings.queryManipulation.dictionary'],
+                            expandQuery: i18n['settings.queryManipulation.expandQuery'],
+                            enable: i18n['settings.queryManipulation.enable'],
+                            enabled: i18n['settings.queryManipulation.enabled'],
+                            index: i18n['settings.queryManipulation.index'],
+                            loading: i18n['settings.queryManipulation.loading'],
+                            typeaheadMode: i18n['settings.queryManipulation.typeaheadMode']
+                        })
                     })
                 ], [
                     new MmapWidget({
