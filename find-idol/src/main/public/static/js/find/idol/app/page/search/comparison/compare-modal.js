@@ -1,12 +1,13 @@
 define([
     'js-whatever/js/modal',
     'jquery',
-    'find/app/page/search/search-to-compare-view',
-    'find/app/model/comparisons/comparison-model',
-    'text!find/templates/app/page/search/compare-modal-footer.html',
+    'find/idol/app/page/search/comparison/search-to-compare-view',
+    'find/idol/app/model/comparison/comparison-model',
+    'text!find/idol/templates/comparison/compare-modal-footer.html',
     'text!find/templates/app/page/loading-spinner.html',
+    'i18n!find/idol/nls/comparisons',
     'i18n!find/nls/bundle'
-], function(Modal, $, SearchToCompare, ComparisonModel, compareModalFooter, loadingSpinnerTemplate, i18n) {
+], function(Modal, $, SearchToCompare, ComparisonModel, compareModalFooter, loadingSpinnerTemplate, comparisonsI18n, i18n) {
 
     return Modal.extend({
         footerTemplate: _.template(compareModalFooter),
@@ -24,10 +25,10 @@ define([
 
             Modal.prototype.initialize.call(this, {
                 actionButtonClass: 'button-primary disabled not-clickable',
-                actionButtonText: i18n['search.compare'],
+                actionButtonText: comparisonsI18n['compare'],
                 secondaryButtonText: i18n['app.cancel'],
                 contentView: this.searchToCompare,
-                title: i18n['search.compare.comparedSaved'],
+                title: comparisonsI18n['search.compare.compareSaved'],
                 actionButtonCallback: _.bind(function() {
                     this.$errorMessage.text('');
                     this.$loadingSpinner.removeClass('hide');
@@ -43,10 +44,10 @@ define([
                     this.xhr = comparisonModel.save({}, {
                         success: _.bind(function() {
                             this.comparisonSuccessCallback(comparisonModel, searchModels);
-                            this.hide()
+                            this.hide();
                         }, this),
                         error: _.bind(function() {
-                            this.$errorMessage.text(i18n['search.compare.error.default']);
+                            this.$errorMessage.text(comparisonsI18n['error.default']);
                             this.$loadingSpinner.addClass('hide');
                             this.$confirmButton.prop('disabled', false);
                         }, this)

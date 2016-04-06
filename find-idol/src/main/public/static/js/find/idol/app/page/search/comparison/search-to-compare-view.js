@@ -2,9 +2,9 @@ define([
     'backbone',
     'jquery',
     'underscore',
-    'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/search-to-compare-view.html'
-], function(Backbone, $, _, i18n, template) {
+    'i18n!find/idol/nls/comparisons',
+    'text!find/idol/templates/comparison/search-to-compare-view.html'
+], function(Backbone, $, _, comparisonsI18n, template) {
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -27,7 +27,7 @@ define([
 
         render: function() {
             this.$el.html(this.template({
-                i18n:i18n,
+                i18n:comparisonsI18n,
                 selectedSearchTitle: this.selectedSearch.get('title'),
                 searches: this.savedSearchCollection.reject(function(model){
                     return model.cid === this.selectedSearch.cid;

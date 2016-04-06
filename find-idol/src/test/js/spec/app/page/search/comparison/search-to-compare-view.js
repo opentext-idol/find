@@ -4,7 +4,7 @@
  */
 
 define([
-    'find/app/page/search/search-to-compare-view',
+    'find/idol/app/page/search/comparison/search-to-compare-view',
     'jquery',
     'backbone'
 ], function(SearchToCompareView, $, Backbone) {

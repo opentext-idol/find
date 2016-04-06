@@ -4,9 +4,9 @@
  */
 
 define([
-    'find/app/page/search/compare-modal',
+    'find/idol/app/page/search/comparison/compare-modal',
     'js-whatever/js/modal',
-    'find/app/model/comparisons/comparison-model',
+    'find/idol/app/model/comparison/comparison-model',
     'jquery',
     'backbone'
 ], function (CompareModal, Modal, ComparisonModel, $, Backbone) {

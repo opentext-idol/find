@@ -18,34 +18,26 @@ define([
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
-    'find/app/page/search/compare-modal',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
             queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
             ResultsViewSelection, RelatedConceptsView, Collapsible,
-            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, template) {
+            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, i18n, templateString) {
 
     'use strict';
 
-    var html = _.template(template)({i18n: i18n});
+    var template = _.template(templateString);
 
     return Backbone.View.extend({
         className: 'full-height',
 
+        // Can be overridden
+        headerControlsHtml: '',
+
         // Abstract
         ResultsView: null,
         ResultsViewAugmentation: null,
-
-        events: {
-            'click .compare-modal-button': function() {
-                new CompareModal({
-                    savedSearchCollection: this.savedSearchCollection,
-                    selectedSearch: this.savedSearchModel,
-                    comparisonSuccessCallback: this.comparisonSuccessCallback
-                });
-            }
-        },
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
@@ -56,8 +48,6 @@ define([
             this.documentsCollection = options.documentsCollection;
             this.searchTypes = options.searchTypes;
             this.searchCollections = options.searchCollections;
-
-            this.comparisonSuccessCallback = options.comparisonSuccessCallback;
 
             this.highlightModel = new Backbone.Model({highlightEntities: false});
             this.entityCollection = new EntityCollection();
@@ -193,14 +183,15 @@ define([
                 model: resultsViewSelectionModel
             });
 
-            this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
-
             addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchData);
             this.fetchData();
         },
 
         render: function() {
-            this.$el.html(html);
+            this.$el.html(template({
+                i18n: i18n,
+                headerControlsHtml: this.headerControlsHtml
+            }));
 
             this.savedSearchControlView.setElement(this.$('.search-options-container')).render();
             this.relatedConceptsViewWrapper.render();
@@ -216,11 +207,6 @@ define([
             }
 
             this.$('.container-toggle').on('click', this.containerToggle);
-            this.updateCompareModalButton();
-        },
-
-        updateCompareModalButton: function() {
-            this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
         },
 
         fetchData: function() {

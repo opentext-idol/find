@@ -78,10 +78,10 @@ define([
 
         // May be overridden
         QueryMiddleColumnHeaderView: QueryMiddleColumnHeaderView,
+        serviceViewOptions: _.constant({}),
 
         // Abstract
         ServiceView: null,
-        ComparisonView: null,
         SuggestView: null,
         documentDetailOptions: null,
         suggestOptions: null,
@@ -358,7 +358,7 @@ define([
                     this.serviceViews[cid] = viewData = {
                         queryTextModel: queryTextModel,
                         documentsCollection: documentsCollection,
-                        view: new this.ServiceView({
+                        view: new this.ServiceView(_.extend({
                             indexesCollection: this.indexesCollection,
                             documentsCollection: documentsCollection,
                             selectedTabModel: this.selectedTabModel,
@@ -366,26 +366,8 @@ define([
                             searchCollections: this.searchCollections,
                             searchTypes: this.searchTypes,
                             queryState: queryState,
-                            savedSearchModel: savedSearchModel,
-                            comparisonSuccessCallback: function(model, searchModels) {
-                                this.removeComparisonView();
-
-                                this.$('.service-view-container').addClass('hide');
-                                this.$('.comparison-service-view-container').removeClass('hide');
-
-                                this.comparisonView = new this.ComparisonView({
-                                    model: model,
-                                    searchModels: searchModels,
-                                    escapeCallback: function() {
-                                        this.removeComparisonView();
-                                        this.$('.service-view-container').addClass('hide');
-                                        this.$('.query-service-view-container').removeClass('hide');
-                                    }.bind(this)
-                                });
-
-                                this.comparisonView.setElement(this.$('.comparison-service-view-container')).render();
-                            }.bind(this)
-                        })
+                            savedSearchModel: savedSearchModel
+                        }, this.serviceViewOptions()))
                     };
 
                     this.$('.query-service-view-container').append(viewData.view.$el);
@@ -473,16 +455,6 @@ define([
             }
         },
 
-        removeComparisonView: function() {
-            if (this.comparisonView) {
-                // Setting the element to nothing prevents the containing element from being removed when the view is removed
-                this.comparisonView.setElement();
-                this.comparisonView.remove();
-                this.stopListening(this.comparisonView);
-                this.comparisonView = null;
-            }
-        },
-
         removeSuggestView: function() {
             if (this.suggestView) {
                 this.suggestView.remove();
@@ -493,7 +465,7 @@ define([
 
         remove: function() {
             this.removeDocumentDetailView();
-            this.removeComparisonView();
+            Backbone.View.prototype.remove.call(this);
         }
     });
 });

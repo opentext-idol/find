@@ -10,20 +10,19 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'find/idol/app/page/search/idol-service-view',
     'find/idol/app/page/search/suggest/idol-suggest-view',
-    'find/idol/app/page/search/saved-searches/comparison/idol-comparison-view',
     'find/idol/app/page/search/snapshots/snapshot-data-view',
+    'find/idol/app/page/search/comparison/comparison-view',
     'find/app/page/search/results/state-token-strategy',
-    'find/app/model/comparisons/comparison-documents-collection',
+    'find/idol/app/model/comparison/comparison-documents-collection',
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/idol/app/page/search/idol-query-left-side-view'
-], function(FindSearch, _, i18n, SavedSearchModel, ServiceView, SuggestView, ComparisonView, SnapshotDataView, stateTokenStrategy,
+], function(FindSearch, _, i18n, SavedSearchModel, ServiceView, SuggestView, SnapshotDataView, ComparisonView, stateTokenStrategy,
             ComparisonDocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView) {
 
     'use strict';
 
     return FindSearch.extend({
         ServiceView: ServiceView,
-        ComparisonView: ComparisonView,
         SuggestView: SuggestView,
         QueryLeftSideView: IdolQueryLeftSideView,
 
@@ -75,6 +74,30 @@ define([
             }, FindSearch.prototype.getSearchTypes.call(this));
         },
 
+        serviceViewOptions: function() {
+            return {
+                comparisonSuccessCallback: function(model, searchModels) {
+                    this.removeComparisonView();
+
+                    this.$('.service-view-container').addClass('hide');
+                    this.$('.comparison-service-view-container').removeClass('hide');
+
+                    this.comparisonView = new ComparisonView({
+                        model: model,
+                        searchModels: searchModels,
+                        escapeCallback: function() {
+                            this.removeComparisonView();
+                            this.$('.service-view-container').addClass('hide');
+                            this.$('.query-service-view-container').removeClass('hide');
+                        }.bind(this)
+                    });
+
+                    this.comparisonView.$el.insertBefore(this.$('.hp-logo-footer'));
+                    this.comparisonView.render();
+                }.bind(this)
+            };
+        },
+
         documentDetailOptions: function (database, reference) {
             return {
                 reference: reference,
@@ -87,6 +110,21 @@ define([
                 database: database,
                 reference: reference
             };
+        },
+
+        removeComparisonView: function() {
+            if (this.comparisonView) {
+                // Setting the element to nothing prevents the containing element from being removed when the view is removed
+                this.comparisonView.setElement();
+                this.comparisonView.remove();
+                this.stopListening(this.comparisonView);
+                this.comparisonView = null;
+            }
+        },
+
+        remove: function() {
+            this.removeComparisonView();
+            FindSearch.prototype.remove.call(this);
         }
     });
 });
