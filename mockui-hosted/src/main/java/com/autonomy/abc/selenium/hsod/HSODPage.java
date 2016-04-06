@@ -18,8 +18,8 @@ import com.autonomy.abc.selenium.promotions.HsodPromotionsPage;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.search.HsodSearchPage;
-import com.autonomy.abc.selenium.users.HSODDevelopersPage;
-import com.autonomy.abc.selenium.users.HSODUsersPage;
+import com.autonomy.abc.selenium.users.HsodDevelopersPage;
+import com.autonomy.abc.selenium.users.HsodUsersPage;
 import com.autonomy.abc.selenium.users.SOHasLoggedIn;
 import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
@@ -61,8 +61,8 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
 
     GETTING_STARTED(NavBarTabId.GETTING_STARTED, new GettingStartedPage.Factory()),
 
-    DEVELOPERS(NavBarTabId.DEVELOPERS, new HSODDevelopersPage.Factory()),
-    USERS(NavBarTabId.USERS, new HSODUsersPage.Factory());
+    DEVELOPERS(NavBarTabId.DEVELOPERS, new HsodDevelopersPage.Factory()),
+    USERS(NavBarTabId.USERS, new HsodUsersPage.Factory());
 
     private PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
     private AppPageFactory<?> factory;

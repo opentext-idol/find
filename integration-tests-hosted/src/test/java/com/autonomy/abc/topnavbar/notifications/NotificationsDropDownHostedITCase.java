@@ -173,7 +173,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         AuthenticationStrategy authenticationStrategy = getConfig().getAuthenticationStrategy();
         Session secondSession = null;
 
-        HSODDevelopersPage hsoDevelopersPage = getApplication().switchTo(HSODDevelopersPage.class);
+        HsodDevelopersPage hsoDevelopersPage = getApplication().switchTo(HsodDevelopersPage.class);
 
         User dev = new User(null, hsoDevelopersPage.getUsernames().get(0));
         String devUsername = "Brendon Urie";

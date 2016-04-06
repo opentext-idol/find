@@ -10,14 +10,14 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSODDeveloperService extends ServiceBase<IsoHsodElementFactory> {
-    private HSODDevelopersPage devsPage;
+    private HsodDevelopersPage devsPage;
 
     public HSODDeveloperService(SearchOptimizerApplication<? extends IsoHsodElementFactory> application){
         super(application);
     }
 
-    public HSODDevelopersPage goToDevs(){
-        devsPage = getApplication().switchTo(HSODDevelopersPage.class);
+    public HsodDevelopersPage goToDevs(){
+        devsPage = getApplication().switchTo(HsodDevelopersPage.class);
         return devsPage;
     }
 

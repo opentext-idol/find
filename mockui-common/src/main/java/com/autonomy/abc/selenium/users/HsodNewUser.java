@@ -4,18 +4,18 @@ import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 
-public class HSODNewUser implements NewUser {
+public class HsodNewUser implements NewUser {
 
     private final String username;
     private final String email;
     private AuthProvider provider;
 
-    public HSODNewUser(String username, String email) {
+    public HsodNewUser(String username, String email) {
         this.username = username;
         this.email = email;
     }
 
-    public HSODNewUser(String username, String email, AuthProvider provider){
+    public HsodNewUser(String username, String email, AuthProvider provider){
         this(username, email);
         this.provider = provider;
     }

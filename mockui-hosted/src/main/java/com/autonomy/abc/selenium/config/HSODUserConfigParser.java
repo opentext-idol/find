@@ -44,7 +44,7 @@ public class HSODUserConfigParser implements JsonUserConfigParser {
         String username = newUserNode.path("username").asText();
         String email = newUserNode.path("email").asText();
 
-        return new HSODNewUser(username, email, provider);
+        return new HsodNewUser(username, email, provider);
     }
 
     private AuthProvider authProvider(JsonNode authNode){
@@ -55,7 +55,7 @@ public class HSODUserConfigParser implements JsonUserConfigParser {
 
     @Override
     public NewUser generateNewUser(String identifier) {
-        return new HSODNewUser(identifier, gmailString(identifier), getAuthProvider());
+        return new HsodNewUser(identifier, gmailString(identifier), getAuthProvider());
     }
 
     private String gmailString(String extra) {

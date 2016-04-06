@@ -11,8 +11,8 @@ import com.autonomy.abc.selenium.promotions.HsodCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.promotions.HsodPromotionsPage;
 import com.autonomy.abc.selenium.search.HsodSearchPage;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.users.HSODDevelopersPage;
-import com.autonomy.abc.selenium.users.HSODUsersPage;
+import com.autonomy.abc.selenium.users.HsodDevelopersPage;
+import com.autonomy.abc.selenium.users.HsodUsersPage;
 import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
@@ -59,12 +59,12 @@ public class IsoHsodElementFactory extends SOElementFactory {
     }
 
     @Override
-    public HSODUsersPage getUsersPage(){
-        return loadPage(HSODUsersPage.class);
+    public HsodUsersPage getUsersPage(){
+        return loadPage(HsodUsersPage.class);
     }
 
-    public HSODDevelopersPage getDevsPage() {
-        return loadPage(HSODDevelopersPage.class);
+    public HsodDevelopersPage getDevsPage() {
+        return loadPage(HsodDevelopersPage.class);
     }
 
     protected static class SideNavStrategy extends SOElementFactory.SideNavStrategy {

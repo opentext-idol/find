@@ -13,15 +13,15 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSODUserService extends UserService<IsoHsodElementFactory> {
-    private HSODUsersPage usersPage;
+    private HsodUsersPage usersPage;
 
     public HSODUserService(SearchOptimizerApplication<? extends IsoHsodElementFactory> application) {
         super(application);
     }
 
     @Override
-    public HSODUsersPage goToUsers() {
-        usersPage = getApplication().switchTo(HSODUsersPage.class);
+    public HsodUsersPage goToUsers() {
+        usersPage = getApplication().switchTo(HsodUsersPage.class);
         setUsersPage(usersPage);
         return usersPage;
     }

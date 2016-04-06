@@ -12,21 +12,21 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HSODUsersPage extends HSODUserManagementPage {
-    private HSODUsersPage(WebDriver driver) {
+public class HsodUsersPage extends HsodUserManagementBase {
+    private HsodUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
     }
 
     @Override
     public HsodUser addNewUser(NewUser newUser, Role role) {
-        if (newUser instanceof HSODNewUser) {
-            return addHSONewUser((HSODNewUser) newUser, role);
+        if (newUser instanceof HsodNewUser) {
+            return addHSONewUser((HsodNewUser) newUser, role);
         }
         throw new IllegalStateException("Cannot create new user " + newUser);
     }
 
-    private HsodUser addHSONewUser(HSODNewUser newUser, Role role) {
+    private HsodUser addHSONewUser(HsodNewUser newUser, Role role) {
         addUsername(newUser.getUsername());
         addEmail(newUser.getEmail());
         selectRole(role);
@@ -87,13 +87,13 @@ public class HSODUsersPage extends HSODUserManagementPage {
         getEmailInput().clear();
     }
 
-    public static class Factory extends SOPageFactory<HSODUsersPage> {
+    public static class Factory extends SOPageFactory<HsodUsersPage> {
         public Factory() {
-            super(HSODUsersPage.class);
+            super(HsodUsersPage.class);
         }
 
-        public HSODUsersPage create(WebDriver context) {
-            return new HSODUsersPage(context);
+        public HsodUsersPage create(WebDriver context) {
+            return new HsodUsersPage(context);
         }
     }
 }

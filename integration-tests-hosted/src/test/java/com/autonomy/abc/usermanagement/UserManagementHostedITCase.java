@@ -35,10 +35,10 @@ import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.contains
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
+public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
 
     private HSODUserService userService;
-    private HSODUsersPage usersPage;
+    private HsodUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
 
     public UserManagementHostedITCase(TestConfig config) {
@@ -48,19 +48,19 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
     @Before
     public void hostedSetUp(){
         userService = (HSODUserService) super.userService;
-        usersPage = (HSODUsersPage) super.usersPage;
+        usersPage = (HsodUsersPage) super.usersPage;
     }
 
     @Test
     @KnownBug({"CSA-1775", "CSA-1800"})
     public void testCannotAddInvalidEmail(){
-        HSODNewUser newUser = new HSODNewUser("jeremy","jeremy");
+        HsodNewUser newUser = new HsodNewUser("jeremy","jeremy");
 
         verifyAddingInvalidUser(newUser);
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
 
         //Sometimes it requires us to add a valid user before invalid users show up
-        userService.createNewUser(new HSODNewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN);
+        userService.createNewUser(new HsodNewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN);
 
         Waits.loadOrFadeWait();
 
@@ -72,19 +72,19 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
     public void testDuplicateUsername() {
         User user = userService.createNewUser(aNewUser, Role.ADMIN);
         assertThat(usersPage.getUsernames(), hasSize(1));
-        verifyAddingValidUser(new HSODNewUser(user.getUsername(), gmailString("isValid")));
+        verifyAddingValidUser(new HsodNewUser(user.getUsername(), gmailString("isValid")));
     }
 
     @Test
     @KnownBug({"CSA-1776", "CSA-1800"})
     public void testAddingValidDuplicateAfterInvalid() {
         final String username = "bob";
-        verifyAddingInvalidUser(new HSODNewUser(username, "INVALID_EMAIL"));
-        verifyAddingValidUser(new HSODNewUser(username, gmailString("isValid")));
-        verifyAddingValidUser(new HSODNewUser(username, gmailString("alsoValid")));
+        verifyAddingInvalidUser(new HsodNewUser(username, "INVALID_EMAIL"));
+        verifyAddingValidUser(new HsodNewUser(username, gmailString("isValid")));
+        verifyAddingValidUser(new HsodNewUser(username, gmailString("alsoValid")));
     }
 
-    private void verifyAddingInvalidUser(HSODNewUser invalidUser) {
+    private void verifyAddingInvalidUser(HsodNewUser invalidUser) {
         int existingUsers = usersPage.getUsernames().size();
         usersPage.createUserButton().click();
 
@@ -105,7 +105,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
         verifyThat("number of users has not increased after refresh", usersPage.getUsernames(), hasSize(existingUsers));
     }
 
-    private HsodUser verifyAddingValidUser(HSODNewUser validUser) {
+    private HsodUser verifyAddingValidUser(HsodNewUser validUser) {
         int existingUsers = usersPage.getUsernames().size();
         usersPage.createUserButton().click();
 
@@ -203,7 +203,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
 
     @Test
     public void testEditingUsername(){
-        User user = userService.createNewUser(new HSODNewUser("editUsername", gmailString("editUsername")), Role.ADMIN);
+        User user = userService.createNewUser(new HsodNewUser("editUsername", gmailString("editUsername")), Role.ADMIN);
 
         verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
 
@@ -281,7 +281,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
     @Test
     public void testAddStupidlyLongUsername() {
         final String longUsername = StringUtils.repeat("a", 100);
-        verifyCreateDeleteInTable(new HSODNewUser(longUsername, "hodtestqa401+longusername@gmail.com"));
+        verifyCreateDeleteInTable(new HsodNewUser(longUsername, "hodtestqa401+longusername@gmail.com"));
     }
 
     @Test
@@ -312,7 +312,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
         @Override
         public Boolean apply(WebDriver driver) {
             getWindow().refresh();
-            usersPage = (HSODUsersPage) getElementFactory().getUsersPage();
+            usersPage = (HsodUsersPage) getElementFactory().getUsersPage();
             Waits.loadOrFadeWait();
             return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
         }

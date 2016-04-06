@@ -7,8 +7,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class HSODDevelopersPage extends HSODUserManagementPage {
-    private HSODDevelopersPage(WebDriver driver) {
+public class HsodDevelopersPage extends HsodUserManagementBase {
+    private HsodDevelopersPage(WebDriver driver) {
         super(driver);
     }
 
@@ -41,13 +41,13 @@ public class HSODDevelopersPage extends HSODUserManagementPage {
         editUsernameInput(dev).setAndSubmit(devUsername);
     }
 
-    public static class Factory extends SOPageFactory<HSODDevelopersPage> {
+    public static class Factory extends SOPageFactory<HsodDevelopersPage> {
         public Factory() {
-            super(HSODDevelopersPage.class);
+            super(HsodDevelopersPage.class);
         }
 
-        public HSODDevelopersPage create(WebDriver context) {
-            return new HSODDevelopersPage(context);
+        public HsodDevelopersPage create(WebDriver context) {
+            return new HsodDevelopersPage(context);
         }
     }
 }

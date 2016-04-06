@@ -3,7 +3,7 @@ package com.autonomy.abc.usermanagement;
 import com.autonomy.abc.base.HostedTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.users.HSODDeveloperService;
-import com.autonomy.abc.selenium.users.HSODDevelopersPage;
+import com.autonomy.abc.selenium.users.HsodDevelopersPage;
 import com.hp.autonomy.frontend.selenium.users.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class DevelopersITCase extends HostedTestBase {
     private HSODDeveloperService developerService;
-    private HSODDevelopersPage developersPage;
+    private HsodDevelopersPage developersPage;
 
     public DevelopersITCase(TestConfig config) {
         super(config);
