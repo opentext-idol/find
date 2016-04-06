@@ -78,11 +78,7 @@ define([
 
                 var $target = $(e.target);
                 var queryText = $target.attr('data-entity-text');
-
-                this.queryTextModel.set({
-                    inputText: queryText,
-                    relatedConcepts: []
-                });
+                this.entityClickHandler(queryText);
             },
             'click .preview-mode [data-cid]': function(e) {
                 var $target = $(e.currentTarget);
@@ -130,6 +126,7 @@ define([
                 this.queryTextModel = options.queryState.queryTextModel;
                 this.highlightModel = options.highlightModel;
                 this.listenTo(this.highlightModel, 'change:highlightEntities', this.updateEntityHighlighting);
+                this.entityClickHandler = options.entityClickHandler;
             }
 
             if (this.displayPromotions) {

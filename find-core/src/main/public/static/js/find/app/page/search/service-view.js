@@ -115,6 +115,8 @@ define([
             var MiddleColumnHeaderView = this.searchTypes[searchType].MiddleColumnHeaderView;
             this.middleColumnHeaderView = MiddleColumnHeaderView ? new MiddleColumnHeaderView(subViewArguments) : null;
 
+            var entityClickHandler = this.searchTypes[searchType].entityClickHandler(clickHandlerArguments);
+
             var relatedConceptsView = new RelatedConceptsView(_.extend({
                 clickHandler: this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments),
                 highlightModel: this.highlightModel
@@ -128,6 +130,7 @@ define([
 
             this.resultsView = new this.ResultsView(_.defaults({
                 enablePreview: true,
+                entityClickHandler: entityClickHandler,
                 displayPromotions: this.searchTypes[searchType].displayPromotions,
                 fetchStrategy: this.searchTypes[searchType].fetchStrategy,
                 highlightModel: this.highlightModel
@@ -137,7 +140,7 @@ define([
             this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle', this.rightSideContainerHideToggle);
 
             this.topicMapView = new TopicMapView(_.extend({
-                clickHandler: this.searchTypes[searchType].topicMapClickHandler(clickHandlerArguments)
+                clickHandler: entityClickHandler
             }, subViewArguments));
 
             this.sunburstView = new SunburstView(subViewArguments);

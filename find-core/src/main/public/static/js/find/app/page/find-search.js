@@ -278,7 +278,7 @@ define([
                             options.queryTextModel.set(options.searchModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
                         };
                     },
-                    topicMapClickHandler: function(options) {
+                    entityClickHandler: function(options) {
                         return function(text) {
                             options.queryTextModel.set('inputText', text);
                         };

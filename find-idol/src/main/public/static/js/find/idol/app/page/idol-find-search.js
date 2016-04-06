@@ -57,7 +57,7 @@ define([
                             options.selectedTabModel.set('selectedSearchCid', newSearch.cid);
                         };
                     },
-                    topicMapClickHandler: function(options) {
+                    entityClickHandler: function(options) {
                         return function(text) {
                             var newQuery = new SavedSearchModel(_.defaults({
                                 id: null,
