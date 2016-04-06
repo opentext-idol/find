@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.application.SOPageBase;
-import com.autonomy.abc.selenium.element.*;
+import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.hp.autonomy.frontend.selenium.element.*;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Locator;

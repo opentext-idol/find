@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.element;
 
 import com.autonomy.abc.selenium.indexes.Index;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;

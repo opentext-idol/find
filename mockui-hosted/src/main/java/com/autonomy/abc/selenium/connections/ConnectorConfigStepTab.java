@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.connections;
 
-import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.autonomy.abc.selenium.icma.ICMAPageBase;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

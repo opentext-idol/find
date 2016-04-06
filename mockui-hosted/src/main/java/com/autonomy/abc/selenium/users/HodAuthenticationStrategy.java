@@ -1,10 +1,10 @@
 package com.autonomy.abc.selenium.users;
 
+import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Factory;
-import com.hp.autonomy.frontend.selenium.login.LoginPage;
-import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 

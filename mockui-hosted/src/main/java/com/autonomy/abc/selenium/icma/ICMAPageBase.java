@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.icma;
 import com.autonomy.abc.selenium.application.AppPageFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.application.SOPageBase;
-import com.autonomy.abc.selenium.element.*;
+import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
 import com.hp.autonomy.frontend.selenium.element.*;

@@ -2,9 +2,9 @@ package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.indexes.Index;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;

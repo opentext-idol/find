@@ -1,10 +1,7 @@
 package com.autonomy.abc.selenium.icma;
 
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

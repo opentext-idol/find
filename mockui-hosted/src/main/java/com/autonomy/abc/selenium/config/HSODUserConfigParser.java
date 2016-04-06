@@ -1,17 +1,20 @@
 package com.autonomy.abc.selenium.config;
 
 import com.autonomy.abc.selenium.external.GoesToHodAuthPageFromGmail;
-import com.autonomy.abc.selenium.users.*;
-import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
-import com.hp.autonomy.frontend.selenium.users.NewUser;
-import com.hp.autonomy.frontend.selenium.users.Role;
-import com.hp.autonomy.frontend.selenium.users.User;
-import com.hp.autonomy.frontend.selenium.util.Factory;
+import com.autonomy.abc.selenium.users.HSODNewUser;
+import com.autonomy.abc.selenium.users.HSODUser;
+import com.autonomy.abc.selenium.users.HodAuthenticationStrategy;
+import com.autonomy.abc.selenium.users.JsonUserConfigParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
+import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
+import com.hp.autonomy.frontend.selenium.users.NewUser;
+import com.hp.autonomy.frontend.selenium.users.Role;
+import com.hp.autonomy.frontend.selenium.users.User;
+import com.hp.autonomy.frontend.selenium.util.Factory;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Map;

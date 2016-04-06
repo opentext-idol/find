@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
-import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
@@ -22,6 +21,7 @@ import com.autonomy.abc.selenium.search.HSODSearchPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.users.HSODDevelopersPage;
 import com.autonomy.abc.selenium.users.HSODUsersPage;
+import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;

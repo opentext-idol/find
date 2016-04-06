@@ -1,9 +1,8 @@
 package com.autonomy.abc.selenium.indexes;
 
-import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.icma.ICMAPageBase;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

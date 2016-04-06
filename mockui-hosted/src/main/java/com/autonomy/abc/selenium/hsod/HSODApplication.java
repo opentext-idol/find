@@ -2,11 +2,11 @@ package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.users.HSODDeveloperService;
 import com.autonomy.abc.selenium.users.HSODUserService;
+import com.hp.autonomy.frontend.selenium.control.Window;
 
 public class HSODApplication extends SearchOptimizerApplication<HSODElementFactory> {
     private Window window;

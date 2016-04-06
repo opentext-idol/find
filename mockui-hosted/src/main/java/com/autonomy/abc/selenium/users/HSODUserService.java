@@ -1,12 +1,12 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
