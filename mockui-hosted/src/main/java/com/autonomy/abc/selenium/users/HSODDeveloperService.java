@@ -28,7 +28,8 @@ public class HSODDeveloperService extends ServiceBase<IsoHsodElementFactory> {
         devsPage.editUsernameInput(user).setAndSubmit(newUsername);
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(pencil));
         Waits.loadOrFadeWait();
-        ((HSODUser) user).setUsername(newUsername);
-        return user;
+        return new HsodUserBuilder(user)
+                .setUsername(newUsername)
+                .build();
     }
 }

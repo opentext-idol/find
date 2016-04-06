@@ -105,11 +105,11 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
         verifyThat("number of users has not increased after refresh", usersPage.getUsernames(), hasSize(existingUsers));
     }
 
-    private HSODUser verifyAddingValidUser(HSODNewUser validUser) {
+    private HsodUser verifyAddingValidUser(HSODNewUser validUser) {
         int existingUsers = usersPage.getUsernames().size();
         usersPage.createUserButton().click();
 
-        HSODUser user = usersPage.addNewUser(validUser, Role.ADMIN);
+        HsodUser user = usersPage.addNewUser(validUser, Role.ADMIN);
 
         verifyModalElements();
         verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), not(containsString(Errors.User.CREATING)));

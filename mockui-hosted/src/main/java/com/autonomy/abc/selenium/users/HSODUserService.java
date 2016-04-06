@@ -47,7 +47,7 @@ public class HSODUserService extends UserService<IsoHsodElementFactory> {
     }
 
     @Override
-    public HSODUser changeRole(User user, Role newRole) {
+    public HsodUser changeRole(User user, Role newRole) {
         usersPage = goToUsers();
 
         WebElement roleLink = usersPage.roleLinkFor(user);
@@ -55,14 +55,15 @@ public class HSODUserService extends UserService<IsoHsodElementFactory> {
         if (user.getRole().equals(newRole)) {
             roleLink.click();
             roleLink.click();
-            return (HSODUser) user;
+            return (HsodUser) user;
         }
 
         roleLink.click();
         usersPage.setRoleValueFor(user, newRole);
         new WebDriverWait(getDriver(),5).until(ExpectedConditions.textToBePresentInElement(roleLink, newRole.toString()));
-        user.setRole(newRole);
-        return (HSODUser) user;
+        return new HsodUserBuilder(user)
+                .setRole(newRole)
+                .build();
     }
 
     public void resetAuthentication(User user) {
@@ -80,7 +81,8 @@ public class HSODUserService extends UserService<IsoHsodElementFactory> {
         usersPage.editUsernameInput(user).setAndSubmit(newUsername);
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(pencil));
         Waits.loadOrFadeWait();
-        ((HSODUser) user).setUsername(newUsername);
-        return user;
+        return new HsodUserBuilder(user)
+                .setUsername(newUsername)
+                .build();
     }
 }

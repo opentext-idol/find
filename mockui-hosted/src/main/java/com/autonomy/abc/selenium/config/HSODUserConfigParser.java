@@ -1,10 +1,7 @@
 package com.autonomy.abc.selenium.config;
 
 import com.autonomy.abc.selenium.external.GoesToHodAuthPageFromGmail;
-import com.autonomy.abc.selenium.users.HSODNewUser;
-import com.autonomy.abc.selenium.users.HSODUser;
-import com.autonomy.abc.selenium.users.HodAuthenticationStrategy;
-import com.autonomy.abc.selenium.users.JsonUserConfigParser;
+import com.autonomy.abc.selenium.users.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,9 +30,12 @@ public class HSODUserConfigParser implements JsonUserConfigParser {
         String apiKey = userNode.path("apikey").asText();
         String domain = userNode.path("domain").asText();
 
-        return new HSODUser(provider, username, role)
-                .withApiKey(apiKey)
-                .withDomain(domain);
+        return new HsodUserBuilder(username)
+                .setAuthProvider(provider)
+                .setRole(role)
+                .setApiKey(apiKey)
+                .setDomain(domain)
+                .build();
     }
 
     @Override

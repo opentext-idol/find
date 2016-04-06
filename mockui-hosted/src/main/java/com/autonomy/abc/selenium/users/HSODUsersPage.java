@@ -19,14 +19,14 @@ public class HSODUsersPage extends HSODUserManagementPage {
     }
 
     @Override
-    public HSODUser addNewUser(NewUser newUser, Role role) {
+    public HsodUser addNewUser(NewUser newUser, Role role) {
         if (newUser instanceof HSODNewUser) {
             return addHSONewUser((HSODNewUser) newUser, role);
         }
         throw new IllegalStateException("Cannot create new user " + newUser);
     }
 
-    private HSODUser addHSONewUser(HSODNewUser newUser, Role role) {
+    private HsodUser addHSONewUser(HSODNewUser newUser, Role role) {
         addUsername(newUser.getUsername());
         addEmail(newUser.getEmail());
         selectRole(role);
@@ -52,7 +52,7 @@ public class HSODUsersPage extends HSODUserManagementPage {
     }
 
     public WebElement getUserRow(User user){
-        return findElement(By.xpath("//*[contains(@class,'user-email') and text()='" + ((HSODUser) user).getEmail() + "']/.."));
+        return findElement(By.xpath("//*[contains(@class,'user-email') and text()='" + ((HsodUser) user).getEmail() + "']/.."));
     }
 
     public FormInput getUsernameInput(){

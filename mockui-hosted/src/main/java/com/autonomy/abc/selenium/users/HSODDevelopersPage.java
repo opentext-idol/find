@@ -26,7 +26,9 @@ public class HSODDevelopersPage extends HSODUserManagementPage {
         WebElement row = findElement(By.cssSelector(".users-table tbody tr:nth-of-type(" + (index+1) + ")"));
         String username = row.findElement(By.className("user-name")).getText();
         Role role = Role.fromString(row.findElement(By.className("user-role")).getText());
-        return new HSODUser(username, null, role);
+        return new HsodUserBuilder(username)
+                .setRole(role)
+                .build();
     }
 
     @Override

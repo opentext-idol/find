@@ -20,8 +20,12 @@ public class HSODNewUser implements NewUser {
         this.provider = provider;
     }
 
-    public HSODUser createWithRole(Role role) {
-        return new HSODUser(username, email, role, provider);
+    public HsodUser createWithRole(Role role) {
+        return new HsodUserBuilder(username)
+                .setEmail(email)
+                .setRole(role)
+                .setAuthProvider(provider)
+                .build();
     }
 
     public String getUsername() {
