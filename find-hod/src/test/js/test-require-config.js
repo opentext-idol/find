@@ -8,7 +8,7 @@ require.config({
     paths: {
         'jasmine-jquery': '../bower_components/jasmine-jquery/lib/jasmine-jquery',
         'js-testing': '../bower_components/hp-autonomy-js-testing-utils/src/js',
-        'mock': '../../../../test/js/mock'
+        'mock': '../../../../src/test/js/mock'
     },
     shim: {
         'jasmine-jquery': ['jquery']

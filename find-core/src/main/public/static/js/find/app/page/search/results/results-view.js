@@ -116,12 +116,21 @@ define([
 
             this.queryModel = options.queryModel;
             this.documentsCollection = options.documentsCollection;
-            this.indexesCollection = options.indexesCollection;
-            this.selectedIndexesCollection = options.selectedIndexesCollection;
 
-            this.queryTextModel = options.queryTextModel;
+            this.indexesCollection = options.indexesCollection;
+
+            if (this.indexesCollection) {
+                this.selectedIndexesCollection = options.queryState.selectedIndexes;
+            }
+
             this.entityCollection = options.entityCollection;
-            this.highlightModel = options.highlightModel || new Backbone.Model({highlightEntities: false});
+
+            if (this.entityCollection) {
+                // Only required if we are highlighting entities
+                this.queryTextModel = options.queryState.queryTextModel;
+                this.highlightModel = options.highlightModel;
+                this.listenTo(this.highlightModel, 'change:highlightEntities', this.updateEntityHighlighting);
+            }
 
             if (this.displayPromotions) {
                 this.promotionsCollection = new PromotionsCollection();
@@ -137,8 +146,6 @@ define([
 
             this.checkScroll = checkScroll.bind(this);
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
-
-            this.listenTo(this.highlightModel, 'change:highlightEntities', this.updateEntityHighlighting);
         },
 
         refreshResults: function() {
@@ -250,7 +257,9 @@ define([
                 this.refreshResults();
             }
 
-            this.updateEntityHighlighting();
+            if (this.entityCollection) {
+                this.updateEntityHighlighting();
+            }
         },
 
         updateEntityHighlighting: function() {

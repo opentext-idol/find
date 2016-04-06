@@ -7,7 +7,10 @@ define([
         beforeEach(function() {
             this.findSearch = new (FindSearch.extend({
                 ServiceView: Backbone.View
-            }))();
+            }))({
+                savedQueryCollection: new Backbone.Collection(),
+                indexesCollection: new Backbone.Collection()
+            });
         });
 
         it('should show the service view when the inputText is not the empty string', function() {

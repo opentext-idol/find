@@ -7,16 +7,18 @@ define([
     'underscore',
     'find/app/page/find-search',
     'find/hod/app/page/search/hod-service-view',
-    'find/hod/app/page/search/saved-searches/comparison/hod-comparison-view',
     'find/hod/app/page/search/suggest/hod-suggest-view',
-    'find/app/util/database-name-resolver'
-], function(_, FindSearch, ServiceView, ComparisonView, SuggestView, databaseNameResolver) {
+    'find/app/util/database-name-resolver',
+    'find/hod/app/page/search/hod-query-left-side-view',
+    'find/hod/app/page/search/hod-query-middle-column-header-view'
+], function(_, FindSearch, ServiceView, SuggestView, databaseNameResolver, HodQueryLeftSideView, HodQueryMiddleColumnHeaderView) {
     'use strict';
 
     return FindSearch.extend({
         ServiceView: ServiceView,
-        ComparisonView: ComparisonView,
         SuggestView: SuggestView,
+        QueryMiddleColumnHeaderView: HodQueryMiddleColumnHeaderView,
+        QueryLeftSideView: HodQueryLeftSideView,
 
         documentDetailOptions: function (domain, index, reference) {
             return {

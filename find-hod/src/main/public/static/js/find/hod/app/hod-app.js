@@ -14,7 +14,8 @@ define([
         getPageData: function() {
             return {
                 search: {
-                    Constructor: FindSearch
+                    Constructor: FindSearch,
+                    models: ['savedQueryCollection', 'indexesCollection']
                 }
             };
         }

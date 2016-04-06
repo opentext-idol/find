@@ -10,17 +10,17 @@ define([
     'parametric-refinement/selected-values-collection',
     'find/app/model/indexes-collection',
     'find/app/model/documents-collection',
-    'find/app/model/comparisons/comparison-documents-collection',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
-    'find/app/model/saved-searches/saved-query-collection',
-    'find/app/model/saved-searches/saved-snapshot-collection',
     'find/app/util/model-any-changed-attribute-listener',
     'find/app/util/merge-collection',
     'find/app/model/saved-searches/saved-search-model',
+    'find/app/page/search/query-middle-column-header-view',
     'find/app/model/query-text-model',
     'find/app/model/document-model',
     'find/app/page/search/document/document-detail-view',
+    'find/app/page/search/results/query-strategy',
+    'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/app/util/database-name-resolver',
     'find/app/router',
     'find/app/vent',
@@ -28,9 +28,8 @@ define([
     'underscore',
     'text!find/templates/app/page/find-search.html'
 ], function(BasePage, Backbone, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
-            ComparisonDocumentsCollection, InputView, TabbedSearchView, SavedQueryCollection, SavedSnapshotCollection,
-            addChangeListener, MergeCollection, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView,
-            databaseNameResolver, router, vent, i18n, _, template) {
+            InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView,
+            QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, router, vent, i18n, _, template) {
 
     'use strict';
 
@@ -73,29 +72,34 @@ define([
         className: 'search-page',
         template: _.template(template),
 
-        // Callback to bind the search bar to the active tab; will be removed and added as the user changes tabs
+        // Callbacks to bind the search bar to the active tab; will be removed and added as the user changes tabs
         searchChangeCallback: null,
+        queryTextCallback: null,
+
+        // May be overridden
+        QueryMiddleColumnHeaderView: QueryMiddleColumnHeaderView,
+        serviceViewOptions: _.constant({}),
 
         // Abstract
         ServiceView: null,
-        ComparisonView: null,
         SuggestView: null,
         documentDetailOptions: null,
         suggestOptions: null,
+        QueryLeftSideView: null,
 
-        initialize: function() {
-            this.savedQueryCollection = new SavedQueryCollection();
-            this.savedQueryCollection.fetch({remove: false});
+        initialize: function(options) {
+            this.savedQueryCollection = options.savedQueryCollection;
+            this.indexesCollection = options.indexesCollection;
 
-            this.savedSnapshotCollection = new SavedSnapshotCollection();
-            this.savedSnapshotCollection.fetch({remove: false});
+            this.searchTypes = this.getSearchTypes();
 
-            this.savedSearchCollection = new MergeCollection([], {
-                collections: [this.savedQueryCollection, this.savedSnapshotCollection]
+            this.searchCollections = _.mapObject(this.searchTypes, function(data) {
+                return options[data.collection];
             });
 
-            this.indexesCollection = new IndexesCollection();
-            this.indexesCollection.fetch();
+            this.savedSearchCollection = new MergeCollection([], {
+                collections: _.values(this.searchCollections)
+            });
 
             this.selectedTabModel = new Backbone.Model({
                 selectedSearchCid: null
@@ -155,7 +159,8 @@ define([
             this.tabView = new TabbedSearchView({
                 savedSearchCollection: this.savedSearchCollection,
                 model: this.selectedTabModel,
-                queryStates: this.queryStates
+                queryStates: this.queryStates,
+                searchTypes: this.searchTypes
             });
 
             this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
@@ -246,6 +251,42 @@ define([
             this.selectContentView();
         },
 
+        // Can be overridden
+        getSearchTypes: function() {
+            return {
+                QUERY: {
+                    autoCorrect: true,
+                    collection: 'savedQueryCollection',
+                    displayPromotions: true,
+                    fetchStrategy: queryStrategy,
+                    icon: 'hp-search',
+                    isMutable: true,
+                    relatedConceptsClickHandler: relatedConceptsClickHandlers.updateQuery,
+                    LeftSideFooterView: this.QueryLeftSideView,
+                    DocumentsCollection: DocumentsCollection,
+                    MiddleColumnHeaderView: this.QueryMiddleColumnHeaderView,
+                    createSearchModelAttributes: function(queryTextModel) {
+                        return queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES);
+                    },
+                    queryTextModelChange: function(options) {
+                        return function() {
+                            options.searchModel.set(options.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                        };
+                    },
+                    searchModelChange: function(options) {
+                        return function() {
+                            options.queryTextModel.set(options.searchModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                        };
+                    },
+                    topicMapClickHandler: function(options) {
+                        return function(text) {
+                            options.queryTextModel.set('inputText', text);
+                        };
+                    }
+                }
+            };
+        },
+
         createNewTab: function(queryText) {
             var newSearch = new SavedSearchModel({
                 queryText: queryText || '*',
@@ -266,9 +307,14 @@ define([
                 this.stopListening(data.queryTextModel);
             }, this);
 
-            if (this.searchChangeCallback) {
+            if (this.searchChangeCallback !== null) {
                 this.stopListening(this.searchModel, 'change', this.searchChangeCallback);
                 this.searchChangeCallback = null;
+            }
+
+            if (this.queryTextCallback !== null) {
+                this.stopListening(this.searchModel, 'change', this.queryTextCallback);
+                this.queryTextCallback = null;
             }
 
             if (cid) {
@@ -280,8 +326,7 @@ define([
                     viewData = this.serviceViews[cid];
                 } else {
                     var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
-
-                    var documentsCollection = searchType === SavedSearchModel.Type.QUERY ? new DocumentsCollection() : new ComparisonDocumentsCollection();
+                    var documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
 
                     var queryState = {
                         queryTextModel: queryTextModel,
@@ -292,7 +337,7 @@ define([
                     var initialSelectedIndexes;
                     var savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
 
-                    if (savedSelectedIndexes.length === 0 && searchType === SavedSearchModel.Type.QUERY) {
+                    if (savedSelectedIndexes.length === 0) {
                         if (this.indexesCollection.isEmpty()) {
                             initialSelectedIndexes = [];
 
@@ -313,63 +358,33 @@ define([
                     this.serviceViews[cid] = viewData = {
                         queryTextModel: queryTextModel,
                         documentsCollection: documentsCollection,
-                        view: new this.ServiceView({
+                        view: new this.ServiceView(_.extend({
                             indexesCollection: this.indexesCollection,
                             documentsCollection: documentsCollection,
                             selectedTabModel: this.selectedTabModel,
                             savedSearchCollection: this.savedSearchCollection,
-                            savedSnapshotCollection: this.savedSnapshotCollection,
-                            savedQueryCollection: this.savedQueryCollection,
+                            searchCollections: this.searchCollections,
+                            searchTypes: this.searchTypes,
                             queryState: queryState,
-                            savedSearchModel: savedSearchModel,
-                            comparisonSuccessCallback: function(model, searchModels) {
-                                this.removeComparisonView();
-
-                                this.$('.service-view-container').addClass('hide');
-                                this.$('.comparison-service-view-container').removeClass('hide');
-
-                                this.comparisonView = new this.ComparisonView({
-                                    model: model,
-                                    searchModels: searchModels,
-                                    escapeCallback: function() {
-                                        this.removeComparisonView();
-                                        this.$('.service-view-container').addClass('hide');
-                                        this.$('.query-service-view-container').removeClass('hide');
-                                    }.bind(this)
-                                });
-
-                                this.comparisonView.setElement(this.$('.comparison-service-view-container')).render();
-                            }.bind(this)
-                        })
+                            savedSearchModel: savedSearchModel
+                        }, this.serviceViewOptions()))
                     };
 
                     this.$('.query-service-view-container').append(viewData.view.$el);
                     viewData.view.render();
                 }
 
-                if (searchType === SavedSearchModel.Type.QUERY) {
-                    // Bind the tab content to the search bar
-                    addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
-                        this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
-                    });
+                this.searchModel.set(this.searchTypes[searchType].createSearchModelAttributes(viewData.queryTextModel));
 
-                    this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                var changeListenerOptions = {
+                    savedQueryCollection: this.savedQueryCollection,
+                    selectedTabModel: this.selectedTabModel,
+                    searchModel: this.searchModel,
+                    queryTextModel: viewData.queryTextModel
+                };
 
-                    // Bind the search bar to the tab content
-                    this.searchChangeCallback = addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
-                        viewData.queryTextModel.set(this.searchModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
-                    });
-                } else {
-                    // Don't bind the search bar to the tab content for snapshots; clear the search bar instead
-                    this.searchModel.set({
-                        inputText: '',
-                        relatedConcepts: []
-                    });
-
-                    this.searchChangeCallback = addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
-                        this.createNewTab(this.searchModel.get('inputText'));
-                    });
-                }
+                this.queryTextCallback = addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, this.searchTypes[searchType].queryTextModelChange(changeListenerOptions));
+                this.searchChangeCallback = addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, this.searchTypes[searchType].searchModelChange(changeListenerOptions));
 
                 viewData.view.$el.removeClass('hide');
             }
@@ -440,16 +455,6 @@ define([
             }
         },
 
-        removeComparisonView: function() {
-            if (this.comparisonView) {
-                // Setting the element to nothing prevents the containing element from being removed when the view is removed
-                this.comparisonView.setElement();
-                this.comparisonView.remove();
-                this.stopListening(this.comparisonView);
-                this.comparisonView = null;
-            }
-        },
-
         removeSuggestView: function() {
             if (this.suggestView) {
                 this.suggestView.remove();
@@ -460,7 +465,7 @@ define([
 
         remove: function() {
             this.removeDocumentDetailView();
-            this.removeComparisonView();
+            Backbone.View.prototype.remove.call(this);
         }
     });
 });

@@ -81,6 +81,7 @@ define([
             this.savedSearchModel = options.savedSearchModel;
             this.showSearchTypes = options.showSearchTypes;
             this.savedSearchCollection = options.savedSearchCollection;
+            this.searchTypeNames = options.searchTypeNames;
 
             // Called with the new title, search type, and a success callback and an error callback
             this.saveCallback = options.saveCallback;
@@ -101,11 +102,8 @@ define([
         render: function() {
             this.$el.html(this.template({
                 i18n: i18n,
-                showSearchTypes: this.showSearchTypes,
-                savedSearchTypes: [
-                    SavedSearchModel.Type.QUERY,
-                    SavedSearchModel.Type.SNAPSHOT
-                ]
+                showSearchTypes: this.showSearchTypes && _.size(this.searchTypeNames) > 1,
+                searchTypeNames: this.searchTypeNames
             }));
 
             this.$confirmButton = this.$('.save-title-confirm-button');

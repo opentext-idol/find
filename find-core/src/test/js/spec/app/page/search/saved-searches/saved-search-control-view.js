@@ -16,7 +16,7 @@ define([
 ], function(Backbone, $, SavedSearchControlView, SavedSearchModel, DatesFilterModel, MockConfirmView, DatabasesCollection, moment, i18n) {
 
     function checkPopoverExists(view) {
-        return Boolean(view.$('.popover').length)
+        return Boolean(view.$('.popover').length);
     }
 
     function checkButtonEnabled(view) {
@@ -182,11 +182,17 @@ define([
                 savedSearchModel: this.savedSearchModel,
                 queryModel: this.queryModel,
                 documentsCollection: this.documentsCollection,
-                savedQueryCollection: this.savedQueryCollection,
                 savedSearchCollection: this.savedSearchCollection,
-                savedSnapshotCollection: this.savedSnapshotCollection,
                 queryState: this.queryState,
-                selectedTabModel: this.selectedTabModel
+                selectedTabModel: this.selectedTabModel,
+                searchCollections: {
+                    QUERY: this.savedQueryCollection,
+                    SNAPSHOT: this.savedSnapshotCollection
+                },
+                searchTypes: {
+                    QUERY: {isMutable: true},
+                    SNAPSHOT: {isMutable: false}
+                }
             };
         });
 

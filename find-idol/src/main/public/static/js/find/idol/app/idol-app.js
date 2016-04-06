@@ -5,24 +5,36 @@
 
 define([
     'find/app/app',
+    'underscore',
     'find/app/configuration',
+    'find/idol/app/model/saved-searches/saved-snapshot-collection',
     'find/idol/app/idol-navigation',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
     'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
-], function(BaseApp, configuration, Navigation, FindSearch, AboutPage, SettingsPage, i18n) {
+], function(BaseApp, _, configuration, SavedSnapshotCollection, Navigation, FindSearch, AboutPage, SettingsPage, i18n) {
 
     'use strict';
 
     return BaseApp.extend({
         Navigation: Navigation,
 
+        getModelData: function() {
+            return _.extend({
+                savedSnapshotCollection: {
+                    Constructor: SavedSnapshotCollection,
+                    fetchOptions: {remove: false}
+                }
+            }, BaseApp.prototype.getModelData.call(this));
+        },
+
         getPageData: function() {
             var pageData = {
                 search: {
                     Constructor: FindSearch,
                     icon: 'hp-icon hp-fw hp-search',
+                    models: ['savedQueryCollection', 'savedSnapshotCollection', 'indexesCollection'],
                     title: i18n['app.search'],
                     order: 0
                 },

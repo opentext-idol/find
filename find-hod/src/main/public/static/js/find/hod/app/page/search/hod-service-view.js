@@ -5,17 +5,13 @@
 
 define([
     'find/app/page/search/service-view',
-    'find/hod/app/model/hod-search-filters-collection',
-    'find/hod/app/page/search/filters/indexes/hod-indexes-view',
     'find/hod/app/page/search/results/hod-results-view-augmentation',
     'find/hod/app/page/search/results/hod-results-view'
-], function(ServiceView, SearchFiltersCollection, IndexesView, ResultsViewAugmentation, ResultsView) {
+], function(ServiceView, ResultsViewAugmentation, ResultsView) {
 
     'use strict';
 
     return ServiceView.extend({
-        IndexesView: IndexesView,
-        SearchFiltersCollection: SearchFiltersCollection,
         ResultsView: ResultsView,
         ResultsViewAugmentation: ResultsViewAugmentation
     });
