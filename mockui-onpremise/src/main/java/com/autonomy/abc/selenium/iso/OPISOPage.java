@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.analytics.OverviewPage;
 import com.autonomy.abc.selenium.application.AppPageFactory;
-import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.keywords.OPCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.OPKeywordsPage;
@@ -15,7 +14,7 @@ import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.search.OPSearchPage;
 import com.autonomy.abc.selenium.users.OPLoginPage;
 import com.autonomy.abc.selenium.users.OPUsersPage;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
@@ -39,40 +38,26 @@ enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFa
     USERS(OPISOTopNavBar.TabId.USERS, new OPUsersPage.Factory()),
     SETTINGS(OPISOTopNavBar.TabId.SETTINGS, new SettingsPage.Factory());
 
-    private final Class<?> pageType;
     private PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
-    private ParametrizedFactory<WebDriver, ?> factory;
+    private AppPageFactory<?> factory;
 
-    <T extends AppPage> OPISOPage(ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
-        pageType = type;
+    <T extends AppPage> OPISOPage(AppPageFactory<T> factory) {
         this.factory = factory;
     }
 
-    <T extends AppPage> OPISOPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
-        this(factory, type);
+    <T extends AppPage> OPISOPage(NavBarTabId tab, AppPageFactory<T> factory) {
+        this(factory);
         switchStrategy = new OPISOElementFactory.SideNavStrategy(tab);
     }
 
-    <T extends AppPage> OPISOPage(OPISOTopNavBar.TabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
-        this(factory, type);
-        switchStrategy = new OPISOElementFactory.TopNavStrategy(tab);
-    }
-
-    <T extends AppPage> OPISOPage(AppPageFactory<T> factory) {
-        this(factory, factory.getPageType());
-    }
-
-    <T extends AppPage> OPISOPage(NavBarTabId tab, AppPageFactory<T> factory) {
-        this(tab, factory, factory.getPageType());
-    }
-
     <T extends AppPage> OPISOPage(OPISOTopNavBar.TabId tab, AppPageFactory<T> factory) {
-        this(tab, factory, factory.getPageType());
+        this(factory);
+        switchStrategy = new OPISOElementFactory.TopNavStrategy(tab);
     }
 
     @Override
     public Class<?> getPageType() {
-        return pageType;
+        return factory.getPageType();
     }
 
     public Object loadAsObject(WebDriver driver) {

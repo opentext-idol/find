@@ -24,7 +24,6 @@ import com.autonomy.abc.selenium.users.SOHasLoggedIn;
 import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
 enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
@@ -65,22 +64,16 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
     DEVELOPERS(NavBarTabId.DEVELOPERS, new HSODDevelopersPage.Factory()),
     USERS(NavBarTabId.USERS, new HSODUsersPage.Factory());
 
-    private final Class<?> pageType;
-    private final PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
-    private ParametrizedFactory<WebDriver, ?> factory;
+    private PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
+    private AppPageFactory<?> factory;
 
-    <T extends AppPage> HSODPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
-        switchStrategy = new HSODElementFactory.SideNavStrategy(tab);
-        pageType = type;
+    <T extends AppPage> HSODPage(AppPageFactory<T> factory) {
         this.factory = factory;
     }
 
-    <T extends AppPage> HSODPage(AppPageFactory<T> factory) {
-        this(null, factory, factory.getPageType());
-    }
-
     <T extends AppPage> HSODPage(NavBarTabId tab, AppPageFactory<T> factory) {
-        this(tab, factory, factory.getPageType());
+        this(factory);
+        this.switchStrategy = new HSODElementFactory.SideNavStrategy(tab);
     }
 
     @Override
@@ -90,7 +83,7 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
 
     @Override
     public Class<?> getPageType() {
-        return pageType;
+        return factory.getPageType();
     }
 
     @Override
