@@ -8,7 +8,7 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.hp.autonomy.frontend.selenium.element.Editable;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
-import com.autonomy.abc.selenium.promotions.HSODPromotionService;
+import com.autonomy.abc.selenium.promotions.HsodPromotionService;
 import com.autonomy.abc.selenium.promotions.HsodPromotionsPage;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
@@ -37,7 +37,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
     private HsodPromotionsPage promotionsPage;
     private PromotionsDetailPage promotionsDetailPage;
     private SearchPage searchPage;
-    private HSODPromotionService promotionService;
+    private HsodPromotionService promotionService;
     private final String title = "title";
     private final String content = "content";
     private final String trigger = "dog";

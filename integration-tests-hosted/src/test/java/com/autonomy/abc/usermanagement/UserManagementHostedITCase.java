@@ -1,5 +1,6 @@
 package com.autonomy.abc.usermanagement;
 
+import com.autonomy.abc.selenium.users.HsodUserService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
@@ -37,7 +38,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
 
-    private HSODUserService userService;
+    private HsodUserService userService;
     private HsodUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
 
@@ -47,7 +48,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
 
     @Before
     public void hostedSetUp(){
-        userService = (HSODUserService) super.userService;
+        userService = (HsodUserService) super.userService;
         usersPage = (HsodUsersPage) super.usersPage;
     }
 

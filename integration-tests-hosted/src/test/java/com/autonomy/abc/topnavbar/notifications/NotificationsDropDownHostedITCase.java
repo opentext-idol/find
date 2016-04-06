@@ -17,7 +17,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.menu.Notification;
-import com.autonomy.abc.selenium.promotions.HSODPromotionService;
+import com.autonomy.abc.selenium.promotions.HsodPromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
@@ -60,7 +60,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
     @Test
     public void testStaticPromotionNotifications(){
-        HSODPromotionService ps = getApplication().promotionService();
+        HsodPromotionService ps = getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";
@@ -78,7 +78,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
     @Test
     public void testRemovingStaticPromotionNotifications(){
-        HSODPromotionService ps = getApplication().promotionService();
+        HsodPromotionService ps = getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";

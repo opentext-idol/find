@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.*;
 
 public class CreateStaticPromotionsITCase extends HostedTestBase {
     private HsodCreateNewPromotionsPage createPromotionsPage;
-    private HSODPromotionService promotionService;
+    private HsodPromotionService promotionService;
     private Wizard wizard;
 
     public CreateStaticPromotionsITCase(TestConfig config) {

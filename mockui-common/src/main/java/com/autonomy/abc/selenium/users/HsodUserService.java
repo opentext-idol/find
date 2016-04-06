@@ -2,6 +2,10 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.hsod.IsoHsodElementFactory;
+import com.autonomy.abc.selenium.users.HsodUser;
+import com.autonomy.abc.selenium.users.HsodUserBuilder;
+import com.autonomy.abc.selenium.users.HsodUsersPage;
+import com.autonomy.abc.selenium.users.UserService;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.Role;
@@ -12,10 +16,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HSODUserService extends UserService<IsoHsodElementFactory> {
+public class HsodUserService extends UserService<IsoHsodElementFactory> {
     private HsodUsersPage usersPage;
 
-    public HSODUserService(SearchOptimizerApplication<? extends IsoHsodElementFactory> application) {
+    public HsodUserService(SearchOptimizerApplication<? extends IsoHsodElementFactory> application) {
         super(application);
     }
 

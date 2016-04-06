@@ -3,9 +3,9 @@ package com.autonomy.abc.selenium.hsod;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.promotions.HSODPromotionService;
-import com.autonomy.abc.selenium.users.HSODDeveloperService;
-import com.autonomy.abc.selenium.users.HSODUserService;
+import com.autonomy.abc.selenium.promotions.HsodPromotionService;
+import com.autonomy.abc.selenium.users.HsodDeveloperService;
+import com.autonomy.abc.selenium.users.HsodUserService;
 import com.hp.autonomy.frontend.selenium.control.Window;
 
 public class HSODApplication extends SearchOptimizerApplication<HSODElementFactory> {
@@ -28,12 +28,12 @@ public class HSODApplication extends SearchOptimizerApplication<HSODElementFacto
     }
 
     @Override
-    public HSODPromotionService promotionService() {
+    public HsodPromotionService promotionService() {
         return delegate.promotionService();
     }
 
     @Override
-    public HSODUserService userService() {
+    public HsodUserService userService() {
         return delegate.userService();
     }
 
@@ -45,7 +45,7 @@ public class HSODApplication extends SearchOptimizerApplication<HSODElementFacto
         return new IndexService(this);
     }
 
-    public HSODDeveloperService developerService() {
+    public HsodDeveloperService developerService() {
         return delegate.developerService();
     }
 

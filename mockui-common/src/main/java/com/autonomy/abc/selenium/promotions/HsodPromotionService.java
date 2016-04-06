@@ -4,8 +4,8 @@ import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.hsod.IsoHsodElementFactory;
 import com.autonomy.abc.selenium.search.SearchPage;
 
-public class HSODPromotionService extends PromotionService<IsoHsodElementFactory> {
-    public HSODPromotionService(SearchOptimizerApplication<? extends IsoHsodElementFactory> application) {
+public class HsodPromotionService extends PromotionService<IsoHsodElementFactory> {
+    public HsodPromotionService(SearchOptimizerApplication<? extends IsoHsodElementFactory> application) {
         super(application);
     }
 

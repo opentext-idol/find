@@ -13,7 +13,7 @@ import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.promotions.HSODPromotionService;
+import com.autonomy.abc.selenium.promotions.HsodPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
@@ -237,7 +237,7 @@ public class AnalyticsITCase extends HostedTestBase {
     public void testExistingPromotion() {
         final StaticPromotion promotion = new StaticPromotion("title", "body", "trigger");
 
-        HSODPromotionService promotionService = getApplication().promotionService();
+        HsodPromotionService promotionService = getApplication().promotionService();
 
         try {
             promotionService.goToPromotions().getPromotionLinkWithTitleContaining(promotion.getTrigger());
@@ -269,7 +269,7 @@ public class AnalyticsITCase extends HostedTestBase {
     public void testDeletedPromotion() {
         final StaticPromotion promotion = new StaticPromotion("title", "body", "deleted");
 
-        HSODPromotionService promotionService = getApplication().promotionService();
+        HsodPromotionService promotionService = getApplication().promotionService();
         promotionService.setUpStaticPromotion(promotion);
         try {
             goToAnalytics();

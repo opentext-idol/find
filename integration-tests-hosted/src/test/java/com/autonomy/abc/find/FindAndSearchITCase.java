@@ -42,7 +42,7 @@ public class FindAndSearchITCase extends FindTestBase {
     private SearchPage searchPage;
 
     private FindService findService;
-    private HSODPromotionService promotionService;
+    private HsodPromotionService promotionService;
     private KeywordService keywordService;
     private Window searchWindow;
     private Window findWindow;

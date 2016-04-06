@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.promotions.HSODPromotionService;
-import com.autonomy.abc.selenium.users.HSODDeveloperService;
-import com.autonomy.abc.selenium.users.HSODUserService;
+import com.autonomy.abc.selenium.promotions.HsodPromotionService;
+import com.autonomy.abc.selenium.users.HsodDeveloperService;
+import com.autonomy.abc.selenium.users.HsodUserService;
 import com.hp.autonomy.frontend.selenium.control.Window;
 
 public class IsoHsodApplication extends SearchOptimizerApplication<IsoHsodElementFactory> {
@@ -20,17 +20,17 @@ public class IsoHsodApplication extends SearchOptimizerApplication<IsoHsodElemen
     }
 
     @Override
-    public HSODPromotionService promotionService() {
-        return new HSODPromotionService(this);
+    public HsodPromotionService promotionService() {
+        return new HsodPromotionService(this);
     }
 
     @Override
-    public HSODUserService userService() {
-        return new HSODUserService(this);
+    public HsodUserService userService() {
+        return new HsodUserService(this);
     }
 
-    public HSODDeveloperService developerService() {
-        return new HSODDeveloperService(this);
+    public HsodDeveloperService developerService() {
+        return new HsodDeveloperService(this);
     }
 
     @Override
