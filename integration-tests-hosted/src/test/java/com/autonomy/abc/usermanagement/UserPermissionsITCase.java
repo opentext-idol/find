@@ -24,8 +24,8 @@ import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
-import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HsodCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HsodPromotionsPage;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SearchPage;
@@ -179,10 +179,10 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     @Test
     public void testCannotAddStaticPromotion(){
-        HSODPromotionsPage promotionsPage = userApp.promotionService().goToPromotions();
+        HsodPromotionsPage promotionsPage = userApp.promotionService().goToPromotions();
 
         promotionsPage.staticPromotionButton().click();
-        HSODCreateNewPromotionsPage createNewPromotionsPage = userElementFactory.getCreateNewPromotionsPage();
+        HsodCreateNewPromotionsPage createNewPromotionsPage = userElementFactory.getCreateNewPromotionsPage();
 
         deleteUser();
 

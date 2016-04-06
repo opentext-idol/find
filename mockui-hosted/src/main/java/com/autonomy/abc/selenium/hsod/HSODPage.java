@@ -10,14 +10,14 @@ import com.autonomy.abc.selenium.icma.GettingStartedPage;
 import com.autonomy.abc.selenium.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.indexes.IndexesPage;
-import com.autonomy.abc.selenium.keywords.HSODCreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.HSODKeywordsPage;
+import com.autonomy.abc.selenium.keywords.HsodCreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.HsodKeywordsPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
-import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HsodCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HsodPromotionsPage;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
-import com.autonomy.abc.selenium.search.HSODSearchPage;
+import com.autonomy.abc.selenium.search.HsodSearchPage;
 import com.autonomy.abc.selenium.users.HSODDevelopersPage;
 import com.autonomy.abc.selenium.users.HSODUsersPage;
 import com.autonomy.abc.selenium.users.SOHasLoggedIn;
@@ -41,7 +41,7 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
 
     ANALYTICS(NavBarTabId.ANALYTICS, new AnalyticsPage.Factory()),
 
-    SEARCH(NavBarTabId.SEARCH, new HSODSearchPage.Factory()),
+    SEARCH(NavBarTabId.SEARCH, new HsodSearchPage.Factory()),
 
     CONNECTIONS(NavBarTabId.CONNECTIONS, new ConnectionsPage.Factory()),
     CONNECTION_WIZARD(new NewConnectionPage.Factory()),
@@ -51,13 +51,13 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
     INDEX_WIZARD(new CreateNewIndexPage.Factory()),
     INDEX_DETAILS(new IndexesDetailPage.Factory()),
 
-    PROMOTIONS(NavBarTabId.PROMOTIONS, new HSODPromotionsPage.Factory()),
-    PROMOTION_WIZARD(new HSODCreateNewPromotionsPage.Factory()),
+    PROMOTIONS(NavBarTabId.PROMOTIONS, new HsodPromotionsPage.Factory()),
+    PROMOTION_WIZARD(new HsodCreateNewPromotionsPage.Factory()),
     PROMOTION_DETAILS(new PromotionsDetailPage.Factory()),
     EDIT_REFERENCES(new EditDocumentReferencesPage.Factory()),
 
-    KEYWORDS(NavBarTabId.KEYWORDS, new HSODKeywordsPage.Factory()),
-    KEYWORD_WIZARD(new HSODCreateNewKeywordsPage.Factory()),
+    KEYWORDS(NavBarTabId.KEYWORDS, new HsodKeywordsPage.Factory()),
+    KEYWORD_WIZARD(new HsodCreateNewKeywordsPage.Factory()),
 
     GETTING_STARTED(NavBarTabId.GETTING_STARTED, new GettingStartedPage.Factory()),
 

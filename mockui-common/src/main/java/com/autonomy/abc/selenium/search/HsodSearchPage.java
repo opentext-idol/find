@@ -4,9 +4,9 @@ import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
 import org.openqa.selenium.WebDriver;
 
-public class HSODSearchPage extends SearchPage {
+public class HsodSearchPage extends SearchPage {
 
-    private HSODSearchPage(final WebDriver driver) {
+    private HsodSearchPage(final WebDriver driver) {
         super(driver);
     }
 
@@ -15,14 +15,14 @@ public class HSODSearchPage extends SearchPage {
         return new WarningLanguageDropdown();
     }
 
-    public static class Factory extends SOPageFactory<HSODSearchPage> {
+    public static class Factory extends SOPageFactory<HsodSearchPage> {
         public Factory() {
-            super(HSODSearchPage.class);
+            super(HsodSearchPage.class);
         }
 
         @Override
-        public HSODSearchPage create(WebDriver context) {
-            return new HSODSearchPage(context);
+        public HsodSearchPage create(WebDriver context) {
+            return new HsodSearchPage(context);
         }
     }
 

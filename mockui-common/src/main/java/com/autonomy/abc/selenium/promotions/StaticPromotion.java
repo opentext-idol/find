@@ -22,11 +22,11 @@ public class StaticPromotion extends Promotion {
 
     @Override
     public Wizard makeWizard(CreateNewPromotionsBase newPromotionsBase) {
-        return new StaticPromotionWizard((HSODCreateNewPromotionsPage) newPromotionsBase);
+        return new StaticPromotionWizard((HsodCreateNewPromotionsPage) newPromotionsBase);
     }
 
     private class StaticPromotionWizard extends PromotionWizard {
-        public StaticPromotionWizard(HSODCreateNewPromotionsPage page) {
+        public StaticPromotionWizard(HsodCreateNewPromotionsPage page) {
             super(page);
             add(new NewDocumentDetailsStep(page, title, content));
             add(new BlankWizardStep("Language"));

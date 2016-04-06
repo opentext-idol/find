@@ -10,8 +10,8 @@ import org.openqa.selenium.WebElement;
 import java.util.Arrays;
 import java.util.List;
 
-public class HSODCreateNewPromotionsPage extends CreateNewPromotionsPage {
-    private HSODCreateNewPromotionsPage(WebDriver driver) {
+public class HsodCreateNewPromotionsPage extends CreateNewPromotionsPage {
+    private HsodCreateNewPromotionsPage(WebDriver driver) {
         super(driver);
     }
 
@@ -54,14 +54,14 @@ public class HSODCreateNewPromotionsPage extends CreateNewPromotionsPage {
         return dataInput("staticContent");
     }
 
-    public static class Factory extends SOPageFactory<HSODCreateNewPromotionsPage> {
+    public static class Factory extends SOPageFactory<HsodCreateNewPromotionsPage> {
         public Factory() {
-            super(HSODCreateNewPromotionsPage.class);
+            super(HsodCreateNewPromotionsPage.class);
         }
 
         @Override
-        public HSODCreateNewPromotionsPage create(WebDriver context) {
-            return new HSODCreateNewPromotionsPage(context);
+        public HsodCreateNewPromotionsPage create(WebDriver context) {
+            return new HsodCreateNewPromotionsPage(context);
         }
     }
 }

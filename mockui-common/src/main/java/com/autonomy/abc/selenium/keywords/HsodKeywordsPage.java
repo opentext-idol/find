@@ -4,8 +4,8 @@ import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
 import org.openqa.selenium.WebDriver;
 
-public class HSODKeywordsPage extends KeywordsPage {
-    private HSODKeywordsPage(WebDriver driver) {
+public class HsodKeywordsPage extends KeywordsPage {
+    private HsodKeywordsPage(WebDriver driver) {
         super(driver);
     }
 
@@ -15,14 +15,14 @@ public class HSODKeywordsPage extends KeywordsPage {
     }
 
 
-    public static class Factory extends SOPageFactory<HSODKeywordsPage> {
+    public static class Factory extends SOPageFactory<HsodKeywordsPage> {
         public Factory() {
-            super(HSODKeywordsPage.class);
+            super(HsodKeywordsPage.class);
         }
 
         @Override
-        public HSODKeywordsPage create(WebDriver context) {
-            return new HSODKeywordsPage(context);
+        public HsodKeywordsPage create(WebDriver context) {
+            return new HsodKeywordsPage(context);
         }
     }
 }

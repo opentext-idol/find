@@ -2,14 +2,14 @@ package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.HSODCreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.HSODKeywordsPage;
+import com.autonomy.abc.selenium.keywords.HsodCreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.HsodKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
-import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
-import com.autonomy.abc.selenium.search.HSODSearchPage;
+import com.autonomy.abc.selenium.promotions.HsodCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HsodPromotionsPage;
+import com.autonomy.abc.selenium.search.HsodSearchPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.users.HSODDevelopersPage;
 import com.autonomy.abc.selenium.users.HSODUsersPage;
@@ -29,8 +29,8 @@ public class IsoHsodElementFactory extends SOElementFactory {
     }
 
     @Override
-    public HSODPromotionsPage getPromotionsPage() {
-        return loadPage(HSODPromotionsPage.class);
+    public HsodPromotionsPage getPromotionsPage() {
+        return loadPage(HsodPromotionsPage.class);
     }
 
     @Override
@@ -40,22 +40,22 @@ public class IsoHsodElementFactory extends SOElementFactory {
 
     @Override
     public KeywordsPage getKeywordsPage() {
-        return loadPage(HSODKeywordsPage.class);
+        return loadPage(HsodKeywordsPage.class);
     }
 
     @Override
     public CreateNewKeywordsPage getCreateNewKeywordsPage() {
-        return loadPage(HSODCreateNewKeywordsPage.class);
+        return loadPage(HsodCreateNewKeywordsPage.class);
     }
 
     @Override
     public SearchPage getSearchPage() {
-        return loadPage(HSODSearchPage.class);
+        return loadPage(HsodSearchPage.class);
     }
 
     @Override
-    public HSODCreateNewPromotionsPage getCreateNewPromotionsPage() {
-        return loadPage(HSODCreateNewPromotionsPage.class);
+    public HsodCreateNewPromotionsPage getCreateNewPromotionsPage() {
+        return loadPage(HsodCreateNewPromotionsPage.class);
     }
 
     @Override

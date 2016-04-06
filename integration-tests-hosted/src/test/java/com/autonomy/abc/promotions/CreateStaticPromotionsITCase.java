@@ -21,7 +21,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disable
 import static org.hamcrest.Matchers.*;
 
 public class CreateStaticPromotionsITCase extends HostedTestBase {
-    private HSODCreateNewPromotionsPage createPromotionsPage;
+    private HsodCreateNewPromotionsPage createPromotionsPage;
     private HSODPromotionService promotionService;
     private Wizard wizard;
 

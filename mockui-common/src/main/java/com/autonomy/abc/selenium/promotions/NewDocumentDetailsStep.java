@@ -7,9 +7,9 @@ class NewDocumentDetailsStep implements WizardStep {
     private String docTitle;
     private String docContent;
 
-    private HSODCreateNewPromotionsPage page;
+    private HsodCreateNewPromotionsPage page;
 
-    NewDocumentDetailsStep(HSODCreateNewPromotionsPage createNewPromotionsPage, String title, String content) {
+    NewDocumentDetailsStep(HsodCreateNewPromotionsPage createNewPromotionsPage, String title, String content) {
         docTitle = title;
         docContent = content;
         page = createNewPromotionsPage;

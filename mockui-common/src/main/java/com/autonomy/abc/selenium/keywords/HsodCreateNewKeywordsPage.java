@@ -4,9 +4,9 @@ import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
 import org.openqa.selenium.WebDriver;
 
-public class HSODCreateNewKeywordsPage extends CreateNewKeywordsPage {
+public class HsodCreateNewKeywordsPage extends CreateNewKeywordsPage {
 
-    private HSODCreateNewKeywordsPage(WebDriver driver) {
+    private HsodCreateNewKeywordsPage(WebDriver driver) {
         super(driver);
     }
 
@@ -15,15 +15,15 @@ public class HSODCreateNewKeywordsPage extends CreateNewKeywordsPage {
         return new WarningLanguageDropdown();
     }
     
-    public static class Factory extends SOPageFactory<HSODCreateNewKeywordsPage> {
+    public static class Factory extends SOPageFactory<HsodCreateNewKeywordsPage> {
         public Factory() {
-            super(HSODCreateNewKeywordsPage.class);
+            super(HsodCreateNewKeywordsPage.class);
         }
 
         @Override
-        public HSODCreateNewKeywordsPage create(WebDriver context) {
+        public HsodCreateNewKeywordsPage create(WebDriver context) {
             CreateNewKeywordsPage.waitForLoad(context);
-            return new HSODCreateNewKeywordsPage(context);
+            return new HsodCreateNewKeywordsPage(context);
         }
     }
 }

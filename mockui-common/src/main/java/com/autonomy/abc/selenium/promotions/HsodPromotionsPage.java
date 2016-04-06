@@ -4,8 +4,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class HSODPromotionsPage extends PromotionsPage {
-    private HSODPromotionsPage(WebDriver driver) {
+public class HsodPromotionsPage extends PromotionsPage {
+    private HsodPromotionsPage(WebDriver driver) {
         super(driver);
     }
 
@@ -13,14 +13,14 @@ public class HSODPromotionsPage extends PromotionsPage {
         return findElement(By.linkText("NEW"));
     }
 
-    public static class Factory extends SOPageFactory<HSODPromotionsPage> {
+    public static class Factory extends SOPageFactory<HsodPromotionsPage> {
         public Factory() {
-            super(HSODPromotionsPage.class);
+            super(HsodPromotionsPage.class);
         }
 
         @Override
-        public HSODPromotionsPage create(WebDriver context) {
-            return new HSODPromotionsPage(context);
+        public HsodPromotionsPage create(WebDriver context) {
+            return new HsodPromotionsPage(context);
         }
     }
 }
