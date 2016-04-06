@@ -99,7 +99,11 @@ public class IndexesDetailPage extends ICMAPageBase {
         return findElement(By.cssSelector("div:not(.affix-clone)>div>#nav-back"));
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, IndexesDetailPage> {
+    public static class Factory extends ICMAPageFactory<IndexesDetailPage> {
+        public Factory() {
+            super(IndexesDetailPage.class);
+        }
+
         @Override
         public IndexesDetailPage create(WebDriver context) {
             new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()[contains(.,'Index fields')]]")));

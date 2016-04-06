@@ -11,7 +11,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class GettingStartedPage extends AppElement implements AppPage {
+public class GettingStartedPage extends ICMAPageBase {
+
     private GettingStartedPage(WebDriver driver) {
         super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".wrapper-content:not(.page-banner)"))), driver);
         waitForLoad();
@@ -39,7 +40,11 @@ public class GettingStartedPage extends AppElement implements AppPage {
         new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Document \"" + url + "\" was uploaded successfully"));
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, GettingStartedPage> {
+    public static class Factory extends ICMAPageFactory<GettingStartedPage> {
+        public Factory() {
+            super(GettingStartedPage.class);
+        }
+
         public GettingStartedPage create(WebDriver context) {
             return new GettingStartedPage(context);
         }

@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
@@ -88,7 +89,11 @@ public class HSODUsersPage extends HSODUserManagementPage {
         getEmailInput().clear();
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, HSODUsersPage> {
+    public static class Factory extends SOPageFactory<HSODUsersPage> {
+        public Factory() {
+            super(HSODUsersPage.class);
+        }
+
         public HSODUsersPage create(WebDriver context) {
             return new HSODUsersPage(context);
         }

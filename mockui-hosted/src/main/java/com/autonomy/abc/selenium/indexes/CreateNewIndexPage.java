@@ -42,7 +42,11 @@ public class CreateNewIndexPage extends ICMAPageBase {
         return IndexSummaryStepTab.make(getDriver());
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, CreateNewIndexPage> {
+    public static class Factory extends ICMAPageFactory<CreateNewIndexPage> {
+        public Factory() {
+            super(CreateNewIndexPage.class);
+        }
+
         @Override
         public CreateNewIndexPage create(WebDriver context) {
             new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("content")));

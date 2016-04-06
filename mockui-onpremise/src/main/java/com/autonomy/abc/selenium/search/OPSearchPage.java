@@ -53,7 +53,11 @@ public class OPSearchPage extends SearchPage {
         return ElementUtil.getTexts(findElements(By.className("promotion-name")));
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, OPSearchPage> {
+    public static class Factory extends SOPageFactory<OPSearchPage> {
+        public Factory() {
+            super(OPSearchPage.class);
+        }
+
         public OPSearchPage create(WebDriver context) {
             return new OPSearchPage(context);
         }

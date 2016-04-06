@@ -22,7 +22,11 @@ public class OPCreateNewPromotionsPage extends CreateNewPromotionsPage {
         );
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, OPCreateNewPromotionsPage> {
+    public static class Factory extends SOPageFactory<OPCreateNewPromotionsPage> {
+        public Factory() {
+            super(OPCreateNewPromotionsPage.class);
+        }
+
         public OPCreateNewPromotionsPage create(WebDriver context) {
             return new OPCreateNewPromotionsPage(context);
         }

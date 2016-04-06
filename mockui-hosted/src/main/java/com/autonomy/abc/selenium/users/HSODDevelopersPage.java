@@ -40,7 +40,11 @@ public class HSODDevelopersPage extends HSODUserManagementPage {
         editUsernameInput(dev).setAndSubmit(devUsername);
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, HSODDevelopersPage> {
+    public static class Factory extends SOPageFactory<HSODDevelopersPage> {
+        public Factory() {
+            super(HSODDevelopersPage.class);
+        }
+
         public HSODDevelopersPage create(WebDriver context) {
             return new HSODDevelopersPage(context);
         }

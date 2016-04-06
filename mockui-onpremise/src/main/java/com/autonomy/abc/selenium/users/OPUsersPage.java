@@ -64,7 +64,11 @@ public class OPUsersPage extends UsersPage {
         ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-passwordConfirm")).clear();
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, OPUsersPage> {
+    public static class Factory extends SOPageFactory<OPUsersPage> {
+        public Factory() {
+            super(OPUsersPage.class);
+        }
+
         public OPUsersPage create(WebDriver context) {
             return new OPUsersPage(context);
         }

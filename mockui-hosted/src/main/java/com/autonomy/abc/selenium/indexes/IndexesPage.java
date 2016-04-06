@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.indexes;
 
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -14,7 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IndexesPage extends AppElement implements AppPage {
+public class IndexesPage extends ICMAPageBase {
 
     private IndexesPage(WebDriver driver) {
         super(driver.findElement(By.className("wrapper-content")), driver);
@@ -72,7 +73,11 @@ public class IndexesPage extends AppElement implements AppPage {
         return Integer.parseInt(indexRow(index.getDisplayName()).findElement(By.cssSelector(".listItemNormalText>.ng-scope")).getText().split(" ")[1]);
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, IndexesPage> {
+    public static class Factory extends ICMAPageFactory<IndexesPage> {
+        public Factory() {
+            super(IndexesPage.class);
+        }
+
         @Override
         public IndexesPage create(WebDriver context) {
             IndexesPage.waitForLoad(context);

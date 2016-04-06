@@ -16,7 +16,11 @@ public class HSODSearchPage extends SearchPage {
         return new WarningLanguageDropdown();
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, HSODSearchPage> {
+    public static class Factory extends SOPageFactory<HSODSearchPage> {
+        public Factory() {
+            super(HSODSearchPage.class);
+        }
+
         @Override
         public HSODSearchPage create(WebDriver context) {
             return new HSODSearchPage(context);

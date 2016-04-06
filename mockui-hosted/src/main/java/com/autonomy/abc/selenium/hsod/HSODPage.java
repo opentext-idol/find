@@ -28,37 +28,42 @@ import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
 enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
-    LOGIN(new ParametrizedFactory<WebDriver, HSOLoginPage>() {
+    LOGIN(new AppPageFactory<HSOLoginPage>() {
+        @Override
+        public Class<HSOLoginPage> getPageType() {
+            return HSOLoginPage.class;
+        }
+
         @Override
         public HSOLoginPage create(WebDriver context) {
             return new HSOLoginPage(context, new SOHasLoggedIn(context));
         }
-    }, HSOLoginPage.class),
+    }),
 
     ANALYTICS(NavBarTabId.ANALYTICS, new AnalyticsPage.Factory()),
 
-    SEARCH(NavBarTabId.SEARCH, new HSODSearchPage.Factory(), HSODSearchPage.class),
+    SEARCH(NavBarTabId.SEARCH, new HSODSearchPage.Factory()),
 
-    CONNECTIONS(NavBarTabId.CONNECTIONS, new ConnectionsPage.Factory(), ConnectionsPage.class),
-    CONNECTION_WIZARD(new NewConnectionPage.Factory(), NewConnectionPage.class),
-    CONNECTION_DETAILS(new ConnectionsDetailPage.Factory(), ConnectionsDetailPage.class),
+    CONNECTIONS(NavBarTabId.CONNECTIONS, new ConnectionsPage.Factory()),
+    CONNECTION_WIZARD(new NewConnectionPage.Factory()),
+    CONNECTION_DETAILS(new ConnectionsDetailPage.Factory()),
 
-    INDEXES(NavBarTabId.INDEXES, new IndexesPage.Factory(), IndexesPage.class),
-    INDEX_WIZARD(new CreateNewIndexPage.Factory(), CreateNewIndexPage.class),
-    INDEX_DETAILS(new IndexesDetailPage.Factory(), IndexesDetailPage.class),
+    INDEXES(NavBarTabId.INDEXES, new IndexesPage.Factory()),
+    INDEX_WIZARD(new CreateNewIndexPage.Factory()),
+    INDEX_DETAILS(new IndexesDetailPage.Factory()),
 
-    PROMOTIONS(NavBarTabId.PROMOTIONS, new HSODPromotionsPage.Factory(), HSODPromotionsPage.class),
-    PROMOTION_WIZARD(new HSODCreateNewPromotionsPage.Factory(), HSODCreateNewPromotionsPage.class),
-    PROMOTION_DETAILS(new PromotionsDetailPage.Factory(), PromotionsDetailPage.class),
-    EDIT_REFERENCES(new EditDocumentReferencesPage.Factory(), EditDocumentReferencesPage.class),
+    PROMOTIONS(NavBarTabId.PROMOTIONS, new HSODPromotionsPage.Factory()),
+    PROMOTION_WIZARD(new HSODCreateNewPromotionsPage.Factory()),
+    PROMOTION_DETAILS(new PromotionsDetailPage.Factory()),
+    EDIT_REFERENCES(new EditDocumentReferencesPage.Factory()),
 
-    KEYWORDS(NavBarTabId.KEYWORDS, new HSODKeywordsPage.Factory(), HSODKeywordsPage.class),
-    KEYWORD_WIZARD(new HSODCreateNewKeywordsPage.Factory(), HSODCreateNewKeywordsPage.class),
+    KEYWORDS(NavBarTabId.KEYWORDS, new HSODKeywordsPage.Factory()),
+    KEYWORD_WIZARD(new HSODCreateNewKeywordsPage.Factory()),
 
-    GETTING_STARTED(NavBarTabId.GETTING_STARTED, new GettingStartedPage.Factory(), GettingStartedPage.class),
+    GETTING_STARTED(NavBarTabId.GETTING_STARTED, new GettingStartedPage.Factory()),
 
-    DEVELOPERS(NavBarTabId.DEVELOPERS, new HSODDevelopersPage.Factory(), HSODDevelopersPage.class),
-    USERS(NavBarTabId.USERS, new HSODUsersPage.Factory(), HSODUsersPage.class);
+    DEVELOPERS(NavBarTabId.DEVELOPERS, new HSODDevelopersPage.Factory()),
+    USERS(NavBarTabId.USERS, new HSODUsersPage.Factory());
 
     private final Class<?> pageType;
     private final PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
@@ -68,10 +73,6 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
         switchStrategy = new HSODElementFactory.SideNavStrategy(tab);
         pageType = type;
         this.factory = factory;
-    }
-
-    <T extends AppPage> HSODPage(ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
-        this(null, factory, type);
     }
 
     <T extends AppPage> HSODPage(AppPageFactory<T> factory) {

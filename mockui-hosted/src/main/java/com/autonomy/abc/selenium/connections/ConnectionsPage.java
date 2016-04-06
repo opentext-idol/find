@@ -69,7 +69,11 @@ public class ConnectionsPage extends ICMAPageBase {
         return connections;
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, ConnectionsPage> {
+    public static class Factory extends ICMAPageFactory<ConnectionsPage> {
+        public Factory() {
+            super(ConnectionsPage.class);
+        }
+
         @Override
         public ConnectionsPage create(WebDriver context) {
             new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("base-page-content")));

@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.iso;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -11,7 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class SettingsPage extends AppElement implements AppPage {
+public class SettingsPage extends SOPageBase {
 
     private SettingsPage(final WebDriver driver) {
         super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
@@ -147,7 +148,11 @@ public class SettingsPage extends AppElement implements AppPage {
         new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".settings-control")));
     }
 
-	public static class Factory implements ParametrizedFactory<WebDriver, SettingsPage> {
+	public static class Factory extends SOPageFactory<SettingsPage> {
+		public Factory() {
+			super(SettingsPage.class);
+		}
+
 		public SettingsPage create(WebDriver context) {
 			SettingsPage.waitForLoad(context);
 			return new SettingsPage(context);
@@ -155,5 +160,3 @@ public class SettingsPage extends AppElement implements AppPage {
 	}
 
 }
-
-

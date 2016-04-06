@@ -16,7 +16,11 @@ public class OPKeywordsPage extends KeywordsPage {
         return new OPLanguageDropdown(findElement(By.cssSelector(".languages-select-view-container .dropdown:nth-of-type(2)")), getDriver());
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, OPKeywordsPage> {
+    public static class Factory extends SOPageFactory<OPKeywordsPage> {
+        public Factory() {
+            super(OPKeywordsPage.class);
+        }
+
         public OPKeywordsPage create(WebDriver context) {
             return new OPKeywordsPage(context);
         }

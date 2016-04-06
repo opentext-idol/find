@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.search;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
@@ -19,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public abstract class SearchBase extends AppElement implements AppPage,
+public abstract class SearchBase extends SOPageBase implements
 		QueryFilter.Filterable,
 		IndexFilter.Filterable,
 		DatePickerFilter.Filterable,

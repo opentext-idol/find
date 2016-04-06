@@ -46,7 +46,11 @@ public class NewConnectionPage extends ICMAPageBase {
         return new AppElement(findElement(By.id("stepAnchor1")), getDriver());
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, NewConnectionPage> {
+    public static class Factory extends ICMAPageFactory<NewConnectionPage> {
+        public Factory() {
+            super(NewConnectionPage.class);
+        }
+
         @Override
         public NewConnectionPage create(WebDriver context) {
             new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wizard")));

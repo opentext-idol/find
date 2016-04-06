@@ -80,7 +80,11 @@ public class OPPromotionsDetailPage extends PromotionsDetailPage {
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.elementToBeClickable(findElement(By.className("promotion-view-schedule")))).click();
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, OPPromotionsDetailPage> {
+    public static class Factory extends SOPageFactory<OPPromotionsDetailPage> {
+        public Factory() {
+            super(OPPromotionsDetailPage.class);
+        }
+
         public OPPromotionsDetailPage create(WebDriver context) {
             return new OPPromotionsDetailPage(context);
         }

@@ -2,10 +2,9 @@ package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -15,7 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class CreateNewPromotionsBase extends AppElement implements AppPage {
+public abstract class CreateNewPromotionsBase extends SOPageBase {
 
 	public CreateNewPromotionsBase(final WebDriver driver) {
 		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);

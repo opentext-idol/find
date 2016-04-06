@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.keywords;
 
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
 public class HSODCreateNewKeywordsPage extends CreateNewKeywordsPage {
@@ -16,7 +15,11 @@ public class HSODCreateNewKeywordsPage extends CreateNewKeywordsPage {
         return new WarningLanguageDropdown();
     }
     
-    public static class Factory implements ParametrizedFactory<WebDriver, HSODCreateNewKeywordsPage> {
+    public static class Factory extends SOPageFactory<HSODCreateNewKeywordsPage> {
+        public Factory() {
+            super(HSODCreateNewKeywordsPage.class);
+        }
+
         @Override
         public HSODCreateNewKeywordsPage create(WebDriver context) {
             CreateNewKeywordsPage.waitForLoad(context);

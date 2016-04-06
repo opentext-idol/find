@@ -16,7 +16,11 @@ public class OPCreateNewKeywordsPage extends CreateNewKeywordsPage {
         return new OPLanguageDropdown(findElement(By.cssSelector(".wizard-steps .language-select-view-container")), getDriver());
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, OPCreateNewKeywordsPage> {
+    public static class Factory extends SOPageFactory<OPCreateNewKeywordsPage> {
+        public Factory() {
+            super(OPCreateNewKeywordsPage.class);
+        }
+
         public OPCreateNewKeywordsPage create(WebDriver context) {
             return new OPCreateNewKeywordsPage(context);
         }

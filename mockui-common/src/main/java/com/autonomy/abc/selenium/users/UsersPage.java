@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.PasswordBox;
@@ -19,7 +20,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class UsersPage extends AppElement implements AppPage {
+public abstract class UsersPage extends SOPageBase {
 
 	protected UsersPage(final WebDriver driver) {
 		super(driver.findElement(By.cssSelector(".wrapper-content")), driver);

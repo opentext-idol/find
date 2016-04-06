@@ -20,24 +20,24 @@ import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
 enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
-    LOGIN(new OPLoginPage.Factory(), OPLoginPage.class),
+    LOGIN(new OPLoginPage.Factory()),
 
     OVERVIEW(NavBarTabId.OVERVIEW, new OverviewPage.Factory()),
 
-    PROMOTIONS(NavBarTabId.PROMOTIONS, new OPPromotionsPage.Factory(), OPPromotionsPage.class),
-    PROMOTION_WIZARD(new OPCreateNewPromotionsPage.Factory(), OPCreateNewPromotionsPage.class),
-    PROMOTION_DETAILS(new OPPromotionsDetailPage.Factory(), OPPromotionsDetailPage.class),
-    EDIT_REFERENCES(new EditDocumentReferencesPage.Factory(), EditDocumentReferencesPage.class),
-    SCHEDULE(new SchedulePage.Factory(), SchedulePage.class),
+    PROMOTIONS(NavBarTabId.PROMOTIONS, new OPPromotionsPage.Factory()),
+    PROMOTION_WIZARD(new OPCreateNewPromotionsPage.Factory()),
+    PROMOTION_DETAILS(new OPPromotionsDetailPage.Factory()),
+    EDIT_REFERENCES(new EditDocumentReferencesPage.Factory()),
+    SCHEDULE(new SchedulePage.Factory()),
 
-    KEYWORDS(NavBarTabId.KEYWORDS, new OPKeywordsPage.Factory(), OPKeywordsPage.class),
-    KEYWORD_WIZARD(new OPCreateNewKeywordsPage.Factory(), OPCreateNewKeywordsPage.class),
+    KEYWORDS(NavBarTabId.KEYWORDS, new OPKeywordsPage.Factory()),
+    KEYWORD_WIZARD(new OPCreateNewKeywordsPage.Factory()),
 
-    SEARCH(NavBarTabId.SEARCH, new OPSearchPage.Factory(), OPSearchPage.class),
+    SEARCH(NavBarTabId.SEARCH, new OPSearchPage.Factory()),
 
-    ABOUT(OPISOTopNavBar.TabId.ABOUT, new AboutPage.Factory(), AboutPage.class),
-    USERS(OPISOTopNavBar.TabId.USERS, new OPUsersPage.Factory(), OPUsersPage.class),
-    SETTINGS(OPISOTopNavBar.TabId.SETTINGS, new SettingsPage.Factory(), SettingsPage.class);
+    ABOUT(OPISOTopNavBar.TabId.ABOUT, new AboutPage.Factory()),
+    USERS(OPISOTopNavBar.TabId.USERS, new OPUsersPage.Factory()),
+    SETTINGS(OPISOTopNavBar.TabId.SETTINGS, new SettingsPage.Factory());
 
     private final Class<?> pageType;
     private PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;

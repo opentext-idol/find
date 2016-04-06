@@ -8,7 +8,11 @@ public class OPPromotionsPage extends PromotionsPage {
         super(driver);
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, OPPromotionsPage> {
+    public static class Factory extends SOPageFactory<OPPromotionsPage> {
+        public Factory() {
+            super(OPPromotionsPage.class);
+        }
+
         public OPPromotionsPage create(WebDriver context) {
             return new OPPromotionsPage(context);
         }
