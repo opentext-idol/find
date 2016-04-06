@@ -6,6 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public abstract class DashboardBase extends AppElement implements AppPage {
+    // this is an abstract class rather than an interface because
+    // PageMapper does not currently support interfaces
     public DashboardBase(WebElement element, WebDriver driver) {
         super(element, driver);
     }

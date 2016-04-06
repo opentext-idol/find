@@ -35,7 +35,7 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
         }
     }, HSOLoginPage.class),
 
-    ANALYTICS(NavBarTabId.ANALYTICS, new AnalyticsPage.Factory(), AnalyticsPage.class),
+    ANALYTICS(NavBarTabId.ANALYTICS, new AnalyticsPage.Factory()),
 
     SEARCH(NavBarTabId.SEARCH, new HSODSearchPage.Factory(), HSODSearchPage.class),
 

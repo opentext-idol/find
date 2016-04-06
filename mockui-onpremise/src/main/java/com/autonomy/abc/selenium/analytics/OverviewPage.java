@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.analytics;
 
 
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import com.autonomy.abc.selenium.application.AppPageFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -79,7 +79,12 @@ public class OverviewPage extends DashboardBase {
         new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h3[text()='Zero Hit Terms']")));
     }
 
-	public static class Factory implements ParametrizedFactory<WebDriver, OverviewPage> {
+	public static class Factory implements AppPageFactory<OverviewPage> {
+		@Override
+		public Class<OverviewPage> getPageType() {
+			return OverviewPage.class;
+		}
+
 		public OverviewPage create(WebDriver context) {
 			OverviewPage.waitForLoad(context);
 			return new OverviewPage(context);

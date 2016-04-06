@@ -22,7 +22,7 @@ import org.openqa.selenium.WebDriver;
 enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
     LOGIN(new OPLoginPage.Factory(), OPLoginPage.class),
 
-    OVERVIEW(NavBarTabId.OVERVIEW, new OverviewPage.Factory(), OverviewPage.class),
+    OVERVIEW(NavBarTabId.OVERVIEW, new OverviewPage.Factory()),
 
     PROMOTIONS(NavBarTabId.PROMOTIONS, new OPPromotionsPage.Factory(), OPPromotionsPage.class),
     PROMOTION_WIZARD(new OPCreateNewPromotionsPage.Factory(), OPCreateNewPromotionsPage.class),
