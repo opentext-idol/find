@@ -10,7 +10,6 @@ import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.SOPageUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,9 +98,9 @@ public class OverviewPageITCase extends SOTestBase {
 					if (tableRowLink.isDisplayed()) {
 						final String searchTerm = tableRowLink.getText();
 						tableRowLink.click();
-						getElementFactory().getSearchPage();
+						SearchPage searchPage = getElementFactory().getSearchPage();
 						assertThat(getWindow(), urlContains("search/modified/" + searchTerm));
-						assertThat(searchTerm + " Title incorrect", SOPageUtil.getPageTitle(getDriver()), containsString("Results for " + searchTerm));
+						assertThat(searchTerm + " Title incorrect", searchPage.getPageTitle(), containsString("Results for " + searchTerm));
 
 						getApplication().switchTo(OverviewPage.class);
 					}
@@ -169,8 +168,8 @@ public class OverviewPageITCase extends SOTestBase {
 			final SearchPage searchPage = getElementFactory().getSearchPage();
 
 			if (!searchPage.getText().contains("An error occurred executing the search action")) {
-				assertThat("page title incorrect", SOPageUtil.getPageTitle(getDriver()), containsString(linkText));
-				assertThat("page title incorrect", SOPageUtil.getPageTitle(getDriver()), containsString(extraSynonym));
+				assertThat("page title incorrect", searchPage.getPageTitle(), containsString(linkText));
+				assertThat("page title incorrect", searchPage.getPageTitle(), containsString(extraSynonym));
 				assertThat(searchPage.getSearchResults(), not(empty()));
 				assertThat("you searched for section incorrect", searchPage.youSearchedFor(), hasItems(linkText, extraSynonym));
 				assertThat(searchPage.countSynonymLists(), is(2));
@@ -179,7 +178,7 @@ public class OverviewPageITCase extends SOTestBase {
 
 				final String searchResultTitle = searchPage.getSearchResult(1).getTitleString();
                 getElementFactory().getTopNavBar().search(linkText);
-				assertThat("page title incorrect", SOPageUtil.getPageTitle(getDriver()), containsString(linkText));
+				assertThat("page title incorrect", searchPage.getPageTitle(), containsString(linkText));
 				assertThat(searchPage.getSearchResults(), not(empty()));
 				assertThat(searchPage.getSearchResult(1).getTitleString(), is(searchResultTitle));
 				assertThat(searchPage.countSynonymLists(), is(1));

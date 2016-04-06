@@ -14,12 +14,21 @@ import java.util.List;
 public abstract class ICMAPageBase implements AppPage {
     private AppElement page;
 
-    public ICMAPageBase(WebDriver driver) {
+    protected ICMAPageBase(WebDriver driver) {
         this(waitForLoad(driver), driver);
     }
 
-    public ICMAPageBase(WebElement element, WebDriver driver) {
+    protected ICMAPageBase(WebElement element, WebDriver driver) {
         page = new AppElement(element, driver);
+    }
+
+    public AppElement getWrapperContent() {
+        waitForPageLoadIndicatorToDisappear();
+        return new AppElement(getDriver().findElement(By.className("wrapper-content")), getDriver());
+    }
+
+    private void waitForPageLoadIndicatorToDisappear() {
+        new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
     }
 
     protected AppElement getPage() {

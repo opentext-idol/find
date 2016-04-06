@@ -2,8 +2,6 @@ package com.autonomy.abc.indexes;
 
 import com.autonomy.abc.base.HSODTearDown;
 import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
@@ -11,17 +9,19 @@ import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.connections.WebConnector;
-import com.hp.autonomy.frontend.selenium.control.Window;
-import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.icma.UnknownICMAPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
-import com.autonomy.abc.selenium.util.SOPageUtil;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,7 +73,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
         AnalyticsPage analyticsPage = getApplication().switchTo(AnalyticsPage.class);
         analyticsPage.indexSizeChart().click();
 
-        verifyThat(SOPageUtil.getWrapperContent(getDriver()), not(containsText(Errors.Index.INVALID_INDEX)));
+        verifyThat(new UnknownICMAPage(getDriver()).getWrapperContent(), not(containsText(Errors.Index.INVALID_INDEX)));
     }
 
     @Test
