@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.analytics.OverviewPage;
+import com.autonomy.abc.selenium.application.AppPageFactory;
 import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.keywords.OPCreateNewKeywordsPage;
@@ -55,6 +56,18 @@ enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFa
     <T extends AppPage> OPISOPage(OPISOTopNavBar.TabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
         this(factory, type);
         switchStrategy = new OPISOElementFactory.TopNavStrategy(tab);
+    }
+
+    <T extends AppPage> OPISOPage(AppPageFactory<T> factory) {
+        this(factory, factory.getPageType());
+    }
+
+    <T extends AppPage> OPISOPage(NavBarTabId tab, AppPageFactory<T> factory) {
+        this(tab, factory, factory.getPageType());
+    }
+
+    <T extends AppPage> OPISOPage(OPISOTopNavBar.TabId tab, AppPageFactory<T> factory) {
+        this(tab, factory, factory.getPageType());
     }
 
     @Override

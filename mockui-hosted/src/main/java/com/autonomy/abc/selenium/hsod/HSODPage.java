@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
-import com.hp.autonomy.frontend.selenium.application.PageMapper;
+import com.autonomy.abc.selenium.application.AppPageFactory;
 import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
@@ -18,12 +18,13 @@ import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.search.HSODSearchPage;
-import com.autonomy.abc.selenium.users.SOHasLoggedIn;
 import com.autonomy.abc.selenium.users.HSODDevelopersPage;
 import com.autonomy.abc.selenium.users.HSODUsersPage;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import com.autonomy.abc.selenium.users.SOHasLoggedIn;
+import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
 enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
@@ -71,6 +72,14 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
 
     <T extends AppPage> HSODPage(ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
         this(null, factory, type);
+    }
+
+    <T extends AppPage> HSODPage(AppPageFactory<T> factory) {
+        this(null, factory, factory.getPageType());
+    }
+
+    <T extends AppPage> HSODPage(NavBarTabId tab, AppPageFactory<T> factory) {
+        this(tab, factory, factory.getPageType());
     }
 
     @Override
