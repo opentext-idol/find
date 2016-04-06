@@ -6,7 +6,7 @@ import com.hp.autonomy.frontend.selenium.sso.*;
 
 import java.util.Map;
 
-enum HSODAuthFactory {
+enum HsodAuthFactory {
     API_KEY() {
         @Override
         AuthProvider getProvider(Map<String, Object> map) {
@@ -56,14 +56,14 @@ enum HSODAuthFactory {
         }
     };
 
-    private static HSODAuthFactory getFactory(String string) {
-        return HSODAuthFactory.valueOf(string.toUpperCase().replace(' ', '_'));
+    private static HsodAuthFactory getFactory(String string) {
+        return HsodAuthFactory.valueOf(string.toUpperCase().replace(' ', '_'));
     }
 
     abstract AuthProvider getProvider(Map<String, Object> map);
 
     static AuthProvider fromMap(Map<String, Object> map) {
-        HSODAuthFactory factory = getFactory(map.get("type").toString());
+        HsodAuthFactory factory = getFactory(map.get("type").toString());
         return factory.getProvider(map);
     }
 }

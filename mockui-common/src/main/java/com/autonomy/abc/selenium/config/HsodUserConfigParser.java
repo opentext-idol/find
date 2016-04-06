@@ -16,7 +16,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.util.Map;
 
-public class HSODUserConfigParser implements JsonUserConfigParser {
+public class HsodUserConfigParser implements JsonUserConfigParser {
     // TODO: move to config
     private final String emailPrefix = "hodtestqa401";
     private final String emailSuffix = "@gmail.com";
@@ -50,7 +50,7 @@ public class HSODUserConfigParser implements JsonUserConfigParser {
     private AuthProvider authProvider(JsonNode authNode){
         Map<String, Object> authMap = new ObjectMapper().convertValue(authNode, new TypeReference<Map<String, Object>>() {
         });
-        return HSODAuthFactory.fromMap(authMap);
+        return HsodAuthFactory.fromMap(authMap);
     }
 
     @Override
