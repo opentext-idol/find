@@ -53,7 +53,7 @@ enum IsoHsodPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElement
 
     <T extends AppPage> IsoHsodPage(NavBarTabId tab, AppPageFactory<T> factory) {
         this(factory);
-        this.switchStrategy = new HSODElementFactory.SideNavStrategy(tab);
+        this.switchStrategy = new IsoHsodElementFactory.SideNavStrategy(tab);
     }
 
     @Override
