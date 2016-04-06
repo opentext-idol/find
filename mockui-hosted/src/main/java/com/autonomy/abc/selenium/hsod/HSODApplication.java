@@ -9,13 +9,17 @@ import com.autonomy.abc.selenium.users.HSODUserService;
 import com.hp.autonomy.frontend.selenium.control.Window;
 
 public class HSODApplication extends SearchOptimizerApplication<HSODElementFactory> {
-    private Window window;
+    private final IsoHsodApplication delegate;
     private HSODElementFactory factory;
+
+    public HSODApplication() {
+        delegate = new IsoHsodApplication();
+    }
 
     @Override
     public HSODApplication inWindow(Window window) {
-        this.window = window;
         this.factory = new HSODElementFactory(window.getSession().getDriver());
+        delegate.inWindow(window);
         return this;
     }
 
@@ -25,12 +29,12 @@ public class HSODApplication extends SearchOptimizerApplication<HSODElementFacto
 
     @Override
     public HSODPromotionService promotionService() {
-        return new HSODPromotionService(this);
+        return delegate.promotionService();
     }
 
     @Override
     public HSODUserService userService() {
-        return new HSODUserService(this);
+        return delegate.userService();
     }
 
     public ConnectionService connectionService() {
@@ -42,7 +46,7 @@ public class HSODApplication extends SearchOptimizerApplication<HSODElementFacto
     }
 
     public HSODDeveloperService developerService() {
-        return new HSODDeveloperService(this);
+        return delegate.developerService();
     }
 
     @Override

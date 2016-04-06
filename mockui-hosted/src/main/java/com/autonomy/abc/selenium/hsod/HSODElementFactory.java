@@ -2,10 +2,12 @@ package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.application.SOElementFactory;
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.icma.GettingStartedPage;
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.autonomy.abc.selenium.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.indexes.IndexesPage;
@@ -27,60 +29,63 @@ import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
 
 public class HSODElementFactory extends SOElementFactory {
+    private final IsoHsodElementFactory delegate;
+
     HSODElementFactory(final WebDriver driver) {
         super(driver, new PageMapper<>(HSODPage.class));
+        delegate = new IsoHsodElementFactory(driver);
     }
 
     @Override
     public TopNavBar getTopNavBar() {
-        return new HSODTopNavBar(getDriver());
+        return delegate.getTopNavBar();
     }
 
     @Override
     public HSODPromotionsPage getPromotionsPage() {
-        return loadPage(HSODPromotionsPage.class);
+        return loadIsoPage(HSODPromotionsPage.class);
     }
 
     @Override
     public LoginPage getLoginPage() {
-        return loadPage(HSOLoginPage.class);
+        return delegate.loadPage(HSOLoginPage.class);
     }
 
     @Override
     public KeywordsPage getKeywordsPage() {
-        return loadPage(HSODKeywordsPage.class);
+        return loadIsoPage(HSODKeywordsPage.class);
     }
 
     @Override
     public CreateNewKeywordsPage getCreateNewKeywordsPage() {
-        return loadPage(HSODCreateNewKeywordsPage.class);
+        return loadIsoPage(HSODCreateNewKeywordsPage.class);
     }
 
     @Override
     public SearchPage getSearchPage() {
-        return loadPage(HSODSearchPage.class);
+        return loadIsoPage(HSODSearchPage.class);
     }
 
     @Override
     public HSODCreateNewPromotionsPage getCreateNewPromotionsPage() {
-        return loadPage(HSODCreateNewPromotionsPage.class);
+        return loadIsoPage(HSODCreateNewPromotionsPage.class);
     }
 
     @Override
     public HSODUsersPage getUsersPage(){
-        return loadPage(HSODUsersPage.class);
+        return loadIsoPage(HSODUsersPage.class);
     }
 
     public ConnectionsPage getConnectionsPage() {
-        return loadPage(ConnectionsPage.class);
+        return loadIcmaPage(ConnectionsPage.class);
     }
 
     public NewConnectionPage getNewConnectionPage() {
-        return loadPage(NewConnectionPage.class);
+        return loadIcmaPage(NewConnectionPage.class);
     }
 
     public ConnectionsDetailPage getConnectionsDetailPage() {
-        return loadPage(ConnectionsDetailPage.class);
+        return loadIcmaPage(ConnectionsDetailPage.class);
     }
 
     public AnalyticsPage getAnalyticsPage() {
@@ -88,23 +93,31 @@ public class HSODElementFactory extends SOElementFactory {
     }
 
     public IndexesPage getIndexesPage() {
-        return loadPage(IndexesPage.class);
+        return loadIcmaPage(IndexesPage.class);
     }
 
     public CreateNewIndexPage getCreateNewIndexPage() {
-        return loadPage(CreateNewIndexPage.class);
+        return loadIcmaPage(CreateNewIndexPage.class);
     }
 
     public IndexesDetailPage getIndexesDetailPage() {
-        return loadPage(IndexesDetailPage.class);
+        return loadIcmaPage(IndexesDetailPage.class);
     }
 
     public GettingStartedPage getGettingStartedPage() {
-        return loadPage(GettingStartedPage.class);
+        return loadIcmaPage(GettingStartedPage.class);
     }
 
     public HSODDevelopersPage getDevsPage() {
-        return loadPage(HSODDevelopersPage.class);
+        return loadIsoPage(HSODDevelopersPage.class);
+    }
+
+    private <T extends ICMAPageBase> T loadIcmaPage(Class<T> pageType) {
+        return loadPage(pageType);
+    }
+
+    private <T extends SOPageBase> T loadIsoPage(Class<T> pageType) {
+        return delegate.loadPage(pageType);
     }
 
     protected static class SideNavStrategy extends SOElementFactory.SideNavStrategy {

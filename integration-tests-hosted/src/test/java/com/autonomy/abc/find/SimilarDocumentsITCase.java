@@ -151,7 +151,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         Waits.loadOrFadeWait();
 
         String trigger = "Riga";
-        HSODPromotionService promotionService = new HSODPromotionService(searchApp);
+        HSODPromotionService promotionService = searchApp.promotionService();
         try {
             promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), "Have Mercy", 3);
 
