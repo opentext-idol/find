@@ -9,7 +9,7 @@ import com.autonomy.abc.selenium.analytics.Container;
 import com.autonomy.abc.selenium.analytics.ContainerItem;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.find.HsodFind;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
@@ -216,7 +216,7 @@ public class AnalyticsITCase extends HostedTestBase {
 
     private void repeatedFind(String term, int repeats) {
         Window searchWindow = getWindow();
-        HSODFind findApp = new HSODFind();
+        HsodFind findApp = new HsodFind();
         Window findWindow = launchInNewWindow(findApp);
 
         try {

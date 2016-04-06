@@ -4,8 +4,8 @@ import com.autonomy.abc.config.SOConfigLocator;
 import com.hp.autonomy.frontend.selenium.base.SeleniumTest;
 import com.hp.autonomy.frontend.selenium.base.TestParameterFactory;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.autonomy.abc.selenium.find.HSODFind;
-import com.autonomy.abc.selenium.find.HSODFindElementFactory;
+import com.autonomy.abc.selenium.find.HsodFind;
+import com.autonomy.abc.selenium.find.HsodFindElementFactory;
 import com.hp.autonomy.frontend.selenium.users.User;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -16,12 +16,12 @@ import java.io.IOException;
 import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
-public abstract class FindTestBase extends SeleniumTest<HSODFind, HSODFindElementFactory> {
+public abstract class FindTestBase extends SeleniumTest<HsodFind, HsodFindElementFactory> {
     private User initialUser;
     private User currentUser;
 
     protected FindTestBase(TestConfig config) {
-        super(config, new HSODFind());
+        super(config, new HsodFind());
         this.initialUser = config.getDefaultUser();
     }
 

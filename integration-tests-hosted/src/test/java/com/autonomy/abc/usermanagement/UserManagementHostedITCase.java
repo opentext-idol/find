@@ -9,7 +9,7 @@ import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.error.ErrorPage;
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.find.HsodFind;
 import com.autonomy.abc.selenium.users.*;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
@@ -189,7 +189,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
             secondWindow.goTo(getAppUrl().split("/searchoptimizer")[0]);
             verify401(secondDriver);
 
-            secondWindow.goTo(getConfig().getAppUrl(new HSODFind()));
+            secondWindow.goTo(getConfig().getAppUrl(new HsodFind()));
             Waits.loadOrFadeWait();
             verifyThat(secondDriver.findElement(By.className("error-body")), containsText("401"));
         } finally {
@@ -266,7 +266,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
         authenticate(user);
 
         getApplication().loginService().logout();
-        HSODFind findApp = new HSODFind();
+        HsodFind findApp = new HsodFind();
         redirectTo(findApp);
 
         boolean success = true;

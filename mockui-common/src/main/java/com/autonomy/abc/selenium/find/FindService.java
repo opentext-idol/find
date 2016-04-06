@@ -5,10 +5,10 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryService;
 
 public class FindService implements QueryService<FindResultsPage> {
-    private HSODFindElementFactory elementFactory;
+    private HsodFindElementFactory elementFactory;
     private FindPage findPage;
 
-    FindService(HSODFind find) {
+    FindService(HsodFind find) {
         elementFactory = find.elementFactory();
         findPage = elementFactory.getFindPage();
     }

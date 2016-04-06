@@ -30,7 +30,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
 
     private Window searchWindow;
     private Window findWindow;
-    private HSODFindElementFactory findFactory;
+    private HsodFindElementFactory findFactory;
 
     private PromotionService<?> promotionService;
     private FindService findService;
@@ -48,7 +48,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         promotionService.deleteAll();
         searchWindow = getWindow();
 
-        HSODFind findApp = new HSODFind();
+        HsodFind findApp = new HsodFind();
         findWindow = launchInNewWindow(findApp);
         findFactory = findApp.elementFactory();
         findService = findApp.findService();

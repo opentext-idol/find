@@ -9,7 +9,7 @@ import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.find.HsodFind;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
@@ -81,7 +81,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         assertThat(searchPage.getPromotedDocumentTitles(true), containsInAnyOrder(promotedTitles.toArray()));
 
         Window searchOptimizerWindow = getWindow();
-        HSODFind findApp = new HSODFind();
+        HsodFind findApp = new HsodFind();
         Window findWindow = launchInNewWindow(findApp);
         findWindow.activate();
 

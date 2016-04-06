@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.find.HsodFind;
 import com.autonomy.abc.selenium.icma.UnknownICMAPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
@@ -242,7 +242,7 @@ public class IndexesPageITCase extends HostedTestBase {
         indexService.setUpIndex(index);
 
         Window searchWindow = getWindow();
-        HSODFind findApp = new HSODFind();
+        HsodFind findApp = new HsodFind();
         Window findWindow = launchInNewWindow(findApp);
 
         try {
@@ -266,7 +266,7 @@ public class IndexesPageITCase extends HostedTestBase {
         indexService.setUpIndex(index);
 
         Window searchWindow = getWindow();
-        HSODFind findApp = new HSODFind();
+        HsodFind findApp = new HsodFind();
         Window findWindow = launchInNewWindow(findApp);
         FindService findService = findApp.findService();
 

@@ -9,7 +9,7 @@ import com.autonomy.abc.selenium.devconsole.DevConsole;
 import com.autonomy.abc.selenium.devconsole.DevConsoleHomePage;
 import com.autonomy.abc.selenium.devconsole.HSODLandingPage;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.find.HsodFind;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -31,7 +31,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
  */
 public class LoginPageHostedITCase extends HostedTestBase {
     private HSODApplication searchApp;
-    private HSODFind findApp;
+    private HsodFind findApp;
     private DevConsole devConsole;
 
     public LoginPageHostedITCase(TestConfig config) {
@@ -42,7 +42,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     @Before
     public void setUp() {
         searchApp = getApplication();
-        findApp = new HSODFind(getWindow());
+        findApp = new HsodFind(getWindow());
         devConsole = new DevConsole(getWindow());
 
         // wait before doing anything

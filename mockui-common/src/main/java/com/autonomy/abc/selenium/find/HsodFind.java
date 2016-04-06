@@ -4,15 +4,15 @@ import com.hp.autonomy.frontend.selenium.application.Application;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.control.Window;
 
-public class HSODFind implements Application<HSODFindElementFactory> {
+public class HsodFind implements Application<HsodFindElementFactory> {
     private Window window;
-    private HSODFindElementFactory factory;
+    private HsodFindElementFactory factory;
     private LoginService loginService;
 
-    public HSODFind() {
+    public HsodFind() {
     }
 
-    public HSODFind(Window window) {
+    public HsodFind(Window window) {
         inWindow(window);
     }
 
@@ -29,7 +29,7 @@ public class HSODFind implements Application<HSODFindElementFactory> {
     }
 
     @Override
-    public HSODFindElementFactory elementFactory() {
+    public HsodFindElementFactory elementFactory() {
         return factory;
     }
 
@@ -44,9 +44,9 @@ public class HSODFind implements Application<HSODFindElementFactory> {
     }
 
     @Override
-    public HSODFind inWindow(Window window) {
+    public HsodFind inWindow(Window window) {
         this.window = window;
-        this.factory = new HSODFindElementFactory(window.getSession().getDriver());
+        this.factory = new HsodFindElementFactory(window.getSession().getDriver());
         return this;
     }
 }

@@ -9,8 +9,8 @@ import com.hp.autonomy.frontend.selenium.util.AppPage;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
-public class HSODFindElementFactory extends ElementFactoryBase {
-    HSODFindElementFactory(WebDriver driver) {
+public class HsodFindElementFactory extends ElementFactoryBase {
+    HsodFindElementFactory(WebDriver driver) {
         super(driver, new PageMapper<>(Page.class));
     }
 

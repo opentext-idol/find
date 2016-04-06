@@ -11,7 +11,7 @@ import com.autonomy.abc.selenium.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.find.HsodFind;
 import com.autonomy.abc.selenium.icma.UnknownICMAPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
@@ -79,7 +79,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
     @Test
     public void testFindIndex(){
         Window searchWindow = getWindow();
-        HSODFind findApp = new HSODFind();
+        HsodFind findApp = new HsodFind();
         Window findWindow = launchInNewWindow(findApp);
 
         try {

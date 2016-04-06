@@ -9,7 +9,7 @@ import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.find.HsodFind;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.PromotionService;
@@ -45,7 +45,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         keywordService = getApplication().keywordService();
 
         searchWindow = getWindow();
-        HSODFind findApp = new HSODFind();
+        HsodFind findApp = new HsodFind();
         findWindow = launchInNewWindow(findApp);
 
         findService = findApp.findService();
