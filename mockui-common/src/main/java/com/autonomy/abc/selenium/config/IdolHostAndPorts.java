@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-@JsonDeserialize(builder = HostAndPorts.Builder.class)
+@JsonDeserialize(builder = IdolHostAndPorts.Builder.class)
 
-public class HostAndPorts {
+public class IdolHostAndPorts {
 
 	private final String protocol;
 	private final String host;
 	private final int port;
 	private final String name;
 
-	private HostAndPorts(final Builder builder) {
+	private IdolHostAndPorts(final Builder builder) {
 		this.protocol = (builder.protocol) == null ? "http" : builder.protocol;
 		this.host = builder.host;
 		this.port = builder.port;
@@ -72,8 +72,8 @@ public class HostAndPorts {
 			return this;
 		}
 
-		public HostAndPorts build() {
-			return new HostAndPorts(this);
+		public IdolHostAndPorts build() {
+			return new IdolHostAndPorts(this);
 		}
 	}
 

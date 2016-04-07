@@ -1,6 +1,7 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.config.HsodUserConfigParser;
+import com.autonomy.abc.selenium.config.IdolIsoUserConfigParser;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.users.UserConfigParser;
 import com.autonomy.abc.selenium.users.JsonUserConfigParser;
@@ -15,7 +16,7 @@ class UserConfigParserFactory implements ParametrizedFactory<ApplicationType, Us
             case HOSTED:
                 return new HsodUserConfigParser();
             case ON_PREM:
-                return new SafeClassLoader<>(JsonUserConfigParser.class, "com.autonomy.abc.selenium.config.OPUserConfigParser").create();
+                return new IdolIsoUserConfigParser();
             default:
                 throw new IllegalStateException("Unexpected application type: " + context);
         }

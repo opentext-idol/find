@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.promotions.IdolPromotionService;
 import com.autonomy.abc.selenium.users.IdolIsoUserService;
 
 
-public class OPISOApplication extends SearchOptimizerApplication<IdolIsoElementFactory> {
+public class IdolIsoApplication extends SearchOptimizerApplication<IdolIsoElementFactory> {
     private Window window;
     private IdolIsoElementFactory factory;
 
@@ -16,7 +16,7 @@ public class OPISOApplication extends SearchOptimizerApplication<IdolIsoElementF
     }
 
     @Override
-    public OPISOApplication inWindow(Window window) {
+    public IdolIsoApplication inWindow(Window window) {
         this.window = window;
         this.factory = new IdolIsoElementFactory(window.getSession().getDriver());
         return this;

@@ -4,7 +4,7 @@ import com.autonomy.abc.config.SOConfigLocator;
 import com.autonomy.abc.base.SOTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.config.HostAndPorts;
+import com.autonomy.abc.selenium.config.IdolHostAndPorts;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 import com.autonomy.abc.selenium.iso.IsoSettingsPage;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -27,7 +27,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 
 public class SettingsPageITCase extends SOTestBase {
-	private final static Map<IsoSettingsPage.Panel, HostAndPorts> HOSTS_AND_PORTS;
+	private final static Map<IsoSettingsPage.Panel, IdolHostAndPorts> HOSTS_AND_PORTS;
 	private final static EnumSet<IsoSettingsPage.Panel> SERVER_PANELS = EnumSet.of(IsoSettingsPage.Panel.COMMUNITY, IsoSettingsPage.Panel.CONTENT, IsoSettingsPage.Panel.QMS, IsoSettingsPage.Panel.QMS_AGENTSTORE, IsoSettingsPage.Panel.STATSSERVER, IsoSettingsPage.Panel.VIEW);
 
 	private IsoSettingsPage settingsPage;
@@ -35,7 +35,7 @@ public class SettingsPageITCase extends SOTestBase {
 	static {
 		try {
 			JsonNode node = new SOConfigLocator().getJsonNode().path("servers");
-			HOSTS_AND_PORTS = new ObjectMapper().convertValue(node, new TypeReference<Map<IsoSettingsPage.Panel, HostAndPorts>>() {});
+			HOSTS_AND_PORTS = new ObjectMapper().convertValue(node, new TypeReference<Map<IsoSettingsPage.Panel, IdolHostAndPorts>>() {});
 			System.out.println(HOSTS_AND_PORTS);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
@@ -230,7 +230,7 @@ public class SettingsPageITCase extends SOTestBase {
 	@After
 	public void setDefaultSettings() {
 		for (final IsoSettingsPage.Panel panel : IsoSettingsPage.Panel.values()) {
-			final HostAndPorts hostAndPort = HOSTS_AND_PORTS.get(panel);
+			final IdolHostAndPorts hostAndPort = HOSTS_AND_PORTS.get(panel);
 
 			if (hostAndPort.getPortNumber() != 0) {
 				settingsPage.changePort(hostAndPort.getPortNumber(), panel);
