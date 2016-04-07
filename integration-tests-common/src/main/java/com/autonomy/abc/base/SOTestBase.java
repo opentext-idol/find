@@ -23,12 +23,11 @@ import static org.junit.Assert.fail;
 @Ignore
 @RunWith(Parameterized.class)
 public abstract class SOTestBase extends SeleniumTest<SearchOptimizerApplication<?>, SOElementFactory> {
-	private User initialUser;
-	private boolean hasSetUp = false;
+	private IsoSetupStrategy setup;
 
 	public SOTestBase(final TestConfig config) {
 		super(config, SearchOptimizerApplication.ofType(config.getType()));
-		this.initialUser = config.getDefaultUser();
+		setInitialUser(config.getDefaultUser());
 	}
 
 	@Parameterized.Parameters
@@ -41,37 +40,20 @@ public abstract class SOTestBase extends SeleniumTest<SearchOptimizerApplication
 		return new HybridTestParameterFactory(applicationTypes).create(new SOConfigLocator().getJsonConfig());
 	}
 
-	protected void postLogin() throws Exception {
-		//Wait for page to load
-		Thread.sleep(2000);
-		// wait for the first page to load
-		getElementFactory().getPromotionsPage();
-	}
-
 	@Before
 	public final void maybeLogIn() {
-		if (!initialUser.equals(User.NULL)) {
-			try {
-				getApplication().loginService().login(initialUser);
-				postLogin();
-				hasSetUp = true;
-			} catch (Exception e) {
-				LOGGER.error("Unable to login");
-				LOGGER.error(e.toString());
-				fail("Unable to login");
-			}
-		}
+		setup.setUp();
 	}
 
 	protected final void setInitialUser(User user) {
-		initialUser = user;
+		setup = new IsoSetupStrategy(getApplication(), user);
 	}
 
 	protected final User getInitialUser() {
-		return initialUser;
+		return setup.getInitialUser();
 	}
 
 	public boolean hasSetUp() {
-		return hasSetUp;
+		return setup.hasSetUp();
 	}
 }
