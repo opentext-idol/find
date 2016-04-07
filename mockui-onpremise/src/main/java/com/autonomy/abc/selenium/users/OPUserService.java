@@ -1,19 +1,19 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.iso.OPISOApplication;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class OPUserService extends UserService<IdolIsoElementFactory> {
     private IdolUsersPage usersPage;
 
-    public OPUserService(OPISOApplication application) {
+    public OPUserService(SearchOptimizerApplication<? extends IdolIsoElementFactory> application) {
         super(application);
     }
 

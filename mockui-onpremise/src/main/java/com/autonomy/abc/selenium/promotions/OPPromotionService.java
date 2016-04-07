@@ -1,10 +1,10 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.iso.OPISOApplication;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 
 public class OPPromotionService extends PromotionService<IdolIsoElementFactory> {
-    public OPPromotionService(OPISOApplication application) {
+    public OPPromotionService(SearchOptimizerApplication<? extends IdolIsoElementFactory> application) {
         super(application);
     }
 
