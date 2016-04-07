@@ -6,7 +6,7 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.HostAndPorts;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
-import com.autonomy.abc.selenium.iso.SettingsPage;
+import com.autonomy.abc.selenium.iso.IsoSettingsPage;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,15 +27,15 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 
 public class SettingsPageITCase extends SOTestBase {
-	private final static Map<SettingsPage.Panel, HostAndPorts> HOSTS_AND_PORTS;
-	private final static EnumSet<SettingsPage.Panel> SERVER_PANELS = EnumSet.of(SettingsPage.Panel.COMMUNITY, SettingsPage.Panel.CONTENT, SettingsPage.Panel.QMS, SettingsPage.Panel.QMS_AGENTSTORE, SettingsPage.Panel.STATSSERVER, SettingsPage.Panel.VIEW);
+	private final static Map<IsoSettingsPage.Panel, HostAndPorts> HOSTS_AND_PORTS;
+	private final static EnumSet<IsoSettingsPage.Panel> SERVER_PANELS = EnumSet.of(IsoSettingsPage.Panel.COMMUNITY, IsoSettingsPage.Panel.CONTENT, IsoSettingsPage.Panel.QMS, IsoSettingsPage.Panel.QMS_AGENTSTORE, IsoSettingsPage.Panel.STATSSERVER, IsoSettingsPage.Panel.VIEW);
 
-	private SettingsPage settingsPage;
+	private IsoSettingsPage settingsPage;
 
 	static {
 		try {
 			JsonNode node = new SOConfigLocator().getJsonNode().path("servers");
-			HOSTS_AND_PORTS = new ObjectMapper().convertValue(node, new TypeReference<Map<SettingsPage.Panel, HostAndPorts>>() {});
+			HOSTS_AND_PORTS = new ObjectMapper().convertValue(node, new TypeReference<Map<IsoSettingsPage.Panel, HostAndPorts>>() {});
 			System.out.println(HOSTS_AND_PORTS);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
@@ -59,7 +59,7 @@ public class SettingsPageITCase extends SOTestBase {
 
 	@Before
 	public void setUp() throws InterruptedException {
-		settingsPage = getApplication().switchTo(SettingsPage.class);
+		settingsPage = getApplication().switchTo(IsoSettingsPage.class);
 	}
 
 	@Test
@@ -102,8 +102,8 @@ public class SettingsPageITCase extends SOTestBase {
 
 	@Test
 	public void testAllSettingsPanelsPresent() {
-		for (final SettingsPage.Panel panel : SettingsPage.Panel.values()) {
-			if (panel.equals(SettingsPage.Panel.LOCALE)) continue;
+		for (final IsoSettingsPage.Panel panel : IsoSettingsPage.Panel.values()) {
+			if (panel.equals(IsoSettingsPage.Panel.LOCALE)) continue;
 
 			assertThat(settingsPage.getPanelWithName(panel.getTitle()), displayed());
 		}
@@ -112,9 +112,9 @@ public class SettingsPageITCase extends SOTestBase {
 	@Test
 	public void testRevertChangesPort() {
 		settingsPage.saveChanges();
-		final EnumMap<SettingsPage.Panel, Integer> originalPortValues = new EnumMap<>(SettingsPage.Panel.class);
+		final EnumMap<IsoSettingsPage.Panel, Integer> originalPortValues = new EnumMap<>(IsoSettingsPage.Panel.class);
 
-		for (final SettingsPage.Panel panel : SERVER_PANELS) {
+		for (final IsoSettingsPage.Panel panel : SERVER_PANELS) {
 			final WebElement portBox = settingsPage.portBox(panel);
 			originalPortValues.put(panel, Integer.parseInt(portBox.getAttribute("value")));
 			settingsPage.changePort(1000, panel);
@@ -122,9 +122,9 @@ public class SettingsPageITCase extends SOTestBase {
 		}
 
 		settingsPage.revertChanges();
-		final EnumMap<SettingsPage.Panel, Integer> finalPortValues = new EnumMap<>(SettingsPage.Panel.class);
+		final EnumMap<IsoSettingsPage.Panel, Integer> finalPortValues = new EnumMap<>(IsoSettingsPage.Panel.class);
 
-		for (final SettingsPage.Panel settingsPanel : SERVER_PANELS) {
+		for (final IsoSettingsPage.Panel settingsPanel : SERVER_PANELS) {
 			finalPortValues.put(settingsPanel, Integer.parseInt(settingsPage.portBox(settingsPanel).getAttribute("value")));
 		}
 
@@ -134,9 +134,9 @@ public class SettingsPageITCase extends SOTestBase {
 	@Test
 	public void testRevertChangesHostname() {
 		settingsPage.saveChanges();
-		final EnumMap<SettingsPage.Panel, String> originalHostNames = new EnumMap<>(SettingsPage.Panel.class);
+		final EnumMap<IsoSettingsPage.Panel, String> originalHostNames = new EnumMap<>(IsoSettingsPage.Panel.class);
 
-		for (final SettingsPage.Panel panel : SERVER_PANELS) {
+		for (final IsoSettingsPage.Panel panel : SERVER_PANELS) {
 			final WebElement hostBox = settingsPage.hostBox(panel);
 			originalHostNames.put(panel, hostBox.getAttribute("value"));
 			settingsPage.changeHost("richard", panel);
@@ -144,9 +144,9 @@ public class SettingsPageITCase extends SOTestBase {
 		}
 
 		settingsPage.revertChanges();
-		final EnumMap<SettingsPage.Panel, String> finalHostNames = new EnumMap<>(SettingsPage.Panel.class);
+		final EnumMap<IsoSettingsPage.Panel, String> finalHostNames = new EnumMap<>(IsoSettingsPage.Panel.class);
 
-		for (final SettingsPage.Panel settingsPanel : SERVER_PANELS) {
+		for (final IsoSettingsPage.Panel settingsPanel : SERVER_PANELS) {
 			assertThat(settingsPanel + " hostname should not equal richard", !settingsPage.hostBox(settingsPanel).getAttribute("value").equals("richard"));
 			finalHostNames.put(settingsPanel, settingsPage.hostBox(settingsPanel).getAttribute("value"));
 		}
@@ -157,17 +157,17 @@ public class SettingsPageITCase extends SOTestBase {
 	@Test
 	public void testRevertChangesProtocol() {
 		settingsPage.saveChanges();
-		final EnumMap<SettingsPage.Panel, String> originalProtocol = new EnumMap<>(SettingsPage.Panel.class);
+		final EnumMap<IsoSettingsPage.Panel, String> originalProtocol = new EnumMap<>(IsoSettingsPage.Panel.class);
 
-		for (final SettingsPage.Panel settingsPanel : SERVER_PANELS) {
+		for (final IsoSettingsPage.Panel settingsPanel : SERVER_PANELS) {
 			originalProtocol.put(settingsPanel, settingsPage.protocolBox(settingsPanel.getTitle()).getAttribute("value"));
 			settingsPage.selectProtocol("HTTPS", settingsPanel);
 			assertThat(settingsPanel + " protocol should be changed to https", settingsPage.protocolBox(settingsPanel.getTitle()).getAttribute("value").equals("HTTPS"));
 		}
 		settingsPage.revertChanges();
-		final EnumMap<SettingsPage.Panel, String> finalProtocol = new EnumMap<>(SettingsPage.Panel.class);
+		final EnumMap<IsoSettingsPage.Panel, String> finalProtocol = new EnumMap<>(IsoSettingsPage.Panel.class);
 
-		for (final SettingsPage.Panel settingsPanel : SERVER_PANELS) {
+		for (final IsoSettingsPage.Panel settingsPanel : SERVER_PANELS) {
 			assertThat(settingsPanel + " hostname should not equal https", !settingsPage.protocolBox(settingsPanel.getTitle()).getAttribute("value").equals("HTTPS"));
 			finalProtocol.put(settingsPanel, settingsPage.protocolBox(settingsPanel.getTitle()).getAttribute("value"));
 		}
@@ -178,10 +178,10 @@ public class SettingsPageITCase extends SOTestBase {
 	@Test
 	public void testRevertToNewlySaved() {
 		settingsPage.saveChanges();
-		final List<SettingsPage.Panel> settingsPanels = Arrays.asList(SettingsPage.Panel.COMMUNITY, SettingsPage.Panel.QMS_AGENTSTORE);
+		final List<IsoSettingsPage.Panel> settingsPanels = Arrays.asList(IsoSettingsPage.Panel.COMMUNITY, IsoSettingsPage.Panel.QMS_AGENTSTORE);
 		final List<String> originalHostNames = new ArrayList<>();
 
-		for (final SettingsPage.Panel settingsPanel : settingsPanels) {
+		for (final IsoSettingsPage.Panel settingsPanel : settingsPanels) {
 			originalHostNames.add(settingsPage.hostBox(settingsPanel).getAttribute("value"));
 			settingsPage.changeHost("idol-admin-test-01", settingsPanel);
 			assertThat(settingsPanel + " hostname should be changed to idol-admin-test-01", settingsPage.hostBox(settingsPanel).getAttribute("value").equals("idol-admin-test-01"));
@@ -189,14 +189,14 @@ public class SettingsPageITCase extends SOTestBase {
 
 		settingsPage.saveChanges();
 
-		for (final SettingsPage.Panel settingsPanel : settingsPanels) {
+		for (final IsoSettingsPage.Panel settingsPanel : settingsPanels) {
 			settingsPage.changeHost("andrew", settingsPanel);
 			assertThat(settingsPanel + " hostname should be changed to andrew", settingsPage.hostBox(settingsPanel).getAttribute("value").equals("andrew"));
 		}
 
 		settingsPage.revertChanges();
 
-		for (final SettingsPage.Panel settingsPanel : settingsPanels) {
+		for (final IsoSettingsPage.Panel settingsPanel : settingsPanels) {
 			assertThat(settingsPanel + " hostname should not be andrew", !settingsPage.hostBox(settingsPanel).getAttribute("value").equals("andrew"));
 			assertThat(settingsPanel + " hostname should equal idol-admin-test-01", settingsPage.hostBox(settingsPanel).getAttribute("value").equals("idol-admin-test-01"));
 		}
@@ -209,13 +209,13 @@ public class SettingsPageITCase extends SOTestBase {
 	@Test
 	public void testEnterBadHostAndPortNames() {
 		settingsPage.saveChanges();
-		settingsPage.changeHost("richard", SettingsPage.Panel.CONTENT);
+		settingsPage.changeHost("richard", IsoSettingsPage.Panel.CONTENT);
 		settingsPage.testConnection("Content");
 	}
 
 	@Test
 	public void testBlankPortsAndHosts() {
-		for (final SettingsPage.Panel settingsPanel : SERVER_PANELS) {
+		for (final IsoSettingsPage.Panel settingsPanel : SERVER_PANELS) {
 			settingsPage.changeHost("", settingsPanel);
 			settingsPage.testConnection(settingsPanel.getTitle());
 			assertThat("Incorrect/No Error Message", settingsPage.getPanelWithName(settingsPanel.getTitle()).getText().contains("Host name must not be blank!"));
@@ -229,7 +229,7 @@ public class SettingsPageITCase extends SOTestBase {
 
 	@After
 	public void setDefaultSettings() {
-		for (final SettingsPage.Panel panel : SettingsPage.Panel.values()) {
+		for (final IsoSettingsPage.Panel panel : IsoSettingsPage.Panel.values()) {
 			final HostAndPorts hostAndPort = HOSTS_AND_PORTS.get(panel);
 
 			if (hostAndPort.getPortNumber() != 0) {

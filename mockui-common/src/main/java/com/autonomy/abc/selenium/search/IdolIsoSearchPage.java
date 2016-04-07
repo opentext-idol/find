@@ -1,12 +1,11 @@
 package com.autonomy.abc.selenium.search;
 
 import com.hp.autonomy.frontend.selenium.element.Pagination;
-import com.autonomy.abc.selenium.indexes.OPDatabaseTree;
+import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
-import com.autonomy.abc.selenium.language.OPLanguageDropdown;
+import com.autonomy.abc.selenium.language.IdolLanguageDropdown;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -14,14 +13,14 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OPSearchPage extends SearchPage {
-    private OPSearchPage(WebDriver driver) {
+public class IdolIsoSearchPage extends SearchPage {
+    private IdolIsoSearchPage(WebDriver driver) {
         super(driver);
     }
 
     @Override
     protected LanguageDropdown languageDropdown() {
-        return new OPLanguageDropdown(findElement(By.cssSelector(".search-language")), getDriver());
+        return new IdolLanguageDropdown(findElement(By.cssSelector(".search-language")), getDriver());
     }
 
     public WebElement promotionsLabel() {
@@ -30,7 +29,7 @@ public class OPSearchPage extends SearchPage {
 
     @Override
     public IndexesTree indexesTree() {
-        return new OPDatabaseTree(super.indexesTree());
+        return new IdolDatabaseTree(super.indexesTree());
     }
 
     public List<String> getPromotionLabels() {
@@ -53,13 +52,13 @@ public class OPSearchPage extends SearchPage {
         return ElementUtil.getTexts(findElements(By.className("promotion-name")));
     }
 
-    public static class Factory extends SOPageFactory<OPSearchPage> {
+    public static class Factory extends SOPageFactory<IdolIsoSearchPage> {
         public Factory() {
-            super(OPSearchPage.class);
+            super(IdolIsoSearchPage.class);
         }
 
-        public OPSearchPage create(WebDriver context) {
-            return new OPSearchPage(context);
+        public IdolIsoSearchPage create(WebDriver context) {
+            return new IdolIsoSearchPage(context);
         }
     }
 }

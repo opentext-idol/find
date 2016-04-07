@@ -1,20 +1,17 @@
 package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.application.SOPageBase;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class SettingsPage extends SOPageBase {
+public class IsoSettingsPage extends SOPageBase {
 
-    private SettingsPage(final WebDriver driver) {
+    private IsoSettingsPage(final WebDriver driver) {
         super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
     }
 
@@ -148,14 +145,14 @@ public class SettingsPage extends SOPageBase {
         new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".settings-control")));
     }
 
-	public static class Factory extends SOPageFactory<SettingsPage> {
+	public static class Factory extends SOPageFactory<IsoSettingsPage> {
 		public Factory() {
-			super(SettingsPage.class);
+			super(IsoSettingsPage.class);
 		}
 
-		public SettingsPage create(WebDriver context) {
-			SettingsPage.waitForLoad(context);
-			return new SettingsPage(context);
+		public IsoSettingsPage create(WebDriver context) {
+			IsoSettingsPage.waitForLoad(context);
+			return new IsoSettingsPage(context);
 		}
 	}
 

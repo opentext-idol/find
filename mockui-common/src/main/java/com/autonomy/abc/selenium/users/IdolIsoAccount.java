@@ -5,11 +5,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class OPAccount implements AuthProvider {
+public class IdolIsoAccount implements AuthProvider {
     private final String username;
     private final String password;
 
-    public OPAccount(final String username, final String password) {
+    public IdolIsoAccount(final String username, final String password) {
         this.username = username;
         this.password = password;
     }
@@ -28,6 +28,6 @@ public class OPAccount implements AuthProvider {
 
     @Override
     public String toString() {
-        return "OPAccount:" + username;
+        return "IdolIsoAccount:" + username;
     }
 }

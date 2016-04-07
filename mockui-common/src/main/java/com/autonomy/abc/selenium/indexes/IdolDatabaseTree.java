@@ -4,8 +4,8 @@ import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 
 // decorate an IndexesTree - on-prem all indexes (databases) are private
-public class OPDatabaseTree extends IndexesTree {
-    public OPDatabaseTree(IndexesTree tree) {
+public class IdolDatabaseTree extends IndexesTree {
+    public IdolDatabaseTree(IndexesTree tree) {
         super(tree.allIndexes());
     }
 

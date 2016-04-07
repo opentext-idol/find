@@ -11,19 +11,19 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class OPUserService extends UserService<OPISOElementFactory> {
-    private OPUsersPage usersPage;
+    private IdolUsersPage usersPage;
 
     public OPUserService(OPISOApplication application) {
         super(application);
     }
 
-    public OPUsersPage goToUsers() {
+    public IdolUsersPage goToUsers() {
         getElementFactory().getTopNavBar().findElement(By.cssSelector(".dropdown-toggle .hp-settings")).click();
         Waits.loadOrFadeWait();
         getElementFactory().getTopNavBar().findElement(By.cssSelector("li[data-pagename='users'] a")).click();
         Waits.loadOrFadeWait();
         setUsersPage(getElementFactory().getUsersPage());
-        return (OPUsersPage) getUsersPage();
+        return (IdolUsersPage) getUsersPage();
     }
 
     @Override

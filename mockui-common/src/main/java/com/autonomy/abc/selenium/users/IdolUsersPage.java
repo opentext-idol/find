@@ -4,28 +4,27 @@ import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.ReplacementAuth;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class OPUsersPage extends UsersPage {
-    private OPUsersPage(WebDriver driver) {
+public class IdolUsersPage extends UsersPage {
+    private IdolUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
     }
 
     @Override
     public User addNewUser(NewUser newUser, Role role) {
-        if (newUser instanceof OPNewUser) {
-            return addOPNewUser((OPNewUser) newUser, role);
+        if (newUser instanceof IdolIsoNewUser) {
+            return addIdolNewUser((IdolIsoNewUser) newUser, role);
         }
         throw new IllegalStateException("Cannot create user " + newUser);
     }
 
-    private User addOPNewUser(OPNewUser newUser, Role role) {
+    private User addIdolNewUser(IdolIsoNewUser newUser, Role role) {
         addUsername(newUser.getUsername());
         addAndConfirmPassword(newUser.getPassword(), newUser.getPassword());
         selectRole(role);
@@ -35,8 +34,8 @@ public class OPUsersPage extends UsersPage {
     }
 
     public User replaceAuthFor(User user, ReplacementAuth newAuth) {
-        if (newAuth instanceof OPPassword) {
-            ((OPPassword) newAuth).sendTo(passwordBoxFor(user));
+        if (newAuth instanceof IdolIsoReplacementAuth) {
+            ((IdolIsoReplacementAuth) newAuth).sendTo(passwordBoxFor(user));
             passwordBoxFor(user).waitForUpdate();
         }
         return newAuth.replaceAuth(user);
@@ -64,13 +63,13 @@ public class OPUsersPage extends UsersPage {
         ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-passwordConfirm")).clear();
     }
 
-    public static class Factory extends SOPageFactory<OPUsersPage> {
+    public static class Factory extends SOPageFactory<IdolUsersPage> {
         public Factory() {
-            super(OPUsersPage.class);
+            super(IdolUsersPage.class);
         }
 
-        public OPUsersPage create(WebDriver context) {
-            return new OPUsersPage(context);
+        public IdolUsersPage create(WebDriver context) {
+            return new IdolUsersPage(context);
         }
     }
 }

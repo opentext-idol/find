@@ -1,10 +1,10 @@
 package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.selenium.users.IdolIsoAccount;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
-import com.autonomy.abc.selenium.users.OPAccount;
-import com.autonomy.abc.selenium.users.OPLoginPage;
+import com.autonomy.abc.selenium.users.IdolIsoLoginPage;
 import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.users.UsersPage;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -38,7 +38,7 @@ public class LoginPageOnPremiseITCase extends SOTestBase {
 		super(config);
 	}
 
-	private OPLoginPage loginPage;
+	private IdolIsoLoginPage loginPage;
 
 	@Override
 	public OPISOElementFactory getElementFactory() {
@@ -61,21 +61,21 @@ public class LoginPageOnPremiseITCase extends SOTestBase {
 
 	@Test
 	public void testLoginAsNewlyCreatedAdmin() {
-        loginPage.loginWith(new OPAccount("admin", "qwerty"));
+        loginPage.loginWith(new IdolIsoAccount("admin", "qwerty"));
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".initial-loading-indicator")));
 		assertThat("Overview page has not loaded", getWindow(), urlContains("overview"));
 	}
 
 	@Test
 	public void testLoginNotCaseSensitive() {
-        loginPage.loginWith(new OPAccount("ADmIn", "qwerty"));
+        loginPage.loginWith(new IdolIsoAccount("ADmIn", "qwerty"));
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".initial-loading-indicator")));
 		assertThat("Overview page has not loaded - login should not be case sensitive", getWindow(), urlContains("overview"));
 	}
 
 	@Test
 	public void testPasswordCaseSensitive() {
-		loginPage.loginWith(new OPAccount("admin", "QWERTY"));
+		loginPage.loginWith(new IdolIsoAccount("admin", "QWERTY"));
 		assertThat("Navigated away from login page with invalid password", getWindow(), urlContains("login"));
 		loginPage = getElementFactory().getLoginPage();
 		assertThat("Correct error message not showing", loginPage.getText().contains("Please check your username and password"));
@@ -83,7 +83,7 @@ public class LoginPageOnPremiseITCase extends SOTestBase {
 
 	@Test
 	public void testIncorrectPassword() {
-		loginPage.loginWith(new OPAccount("admin", "WroNG"));
+		loginPage.loginWith(new IdolIsoAccount("admin", "WroNG"));
 		assertThat("Navigated away from login page with invalid password", getWindow(), urlContains("login"));
 		loginPage = getElementFactory().getLoginPage();
 		assertThat("Correct error message not showing", loginPage.getText().contains("Please check your username and password"));
@@ -92,7 +92,7 @@ public class LoginPageOnPremiseITCase extends SOTestBase {
 	@Test
 	public void testInvalidUsernames() {
 		for (final String invalidUserName : Arrays.asList("aadmin", " ", "admin.", "admin*", "admin/")) {
-			loginPage.loginWith(new OPAccount(invalidUserName, "qwerty"));
+			loginPage.loginWith(new IdolIsoAccount(invalidUserName, "qwerty"));
 			assertThat("Navigated away from login page with invalid username " + invalidUserName, getWindow(), urlContains("login"));
 			loginPage = getElementFactory().getLoginPage();
 			assertThat("Correct error message not showing", loginPage.getText().contains("Please check your username and password"));
@@ -118,7 +118,7 @@ public class LoginPageOnPremiseITCase extends SOTestBase {
 	@Test
 	public void testSQLInjection() throws IOException {
 		for (final String password : loadTextFileLineByLineIntoList("C://dev//res//sqlInj.txt")) {
-			loginPage.loginWith(new OPAccount("admin", password));
+			loginPage.loginWith(new IdolIsoAccount("admin", password));
 			assertThat("Navigated away from login page with invalid password", getWindow(), urlContains("login"));
 			loginPage = getElementFactory().getLoginPage();
 			assertThat("Correct error message not showing", loginPage.getText().contains("Please check your username and password"));

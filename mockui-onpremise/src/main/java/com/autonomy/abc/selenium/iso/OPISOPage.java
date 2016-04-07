@@ -1,42 +1,42 @@
 package com.autonomy.abc.selenium.iso;
 
-import com.autonomy.abc.selenium.analytics.OverviewPage;
+import com.autonomy.abc.selenium.analytics.IsoOverviewPage;
 import com.autonomy.abc.selenium.application.AppPageFactory;
 import com.autonomy.abc.selenium.application.SOElementFactory;
-import com.autonomy.abc.selenium.keywords.OPCreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.OPKeywordsPage;
+import com.autonomy.abc.selenium.keywords.IdolCreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.IdolKeywordsPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.promotions.OPCreateNewPromotionsPage;
-import com.autonomy.abc.selenium.promotions.OPPromotionsDetailPage;
-import com.autonomy.abc.selenium.promotions.OPPromotionsPage;
+import com.autonomy.abc.selenium.promotions.IdolCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.IdolPromotionsDetailPage;
+import com.autonomy.abc.selenium.promotions.IdolPromotionsPage;
 import com.autonomy.abc.selenium.promotions.SchedulePage;
 import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
-import com.autonomy.abc.selenium.search.OPSearchPage;
-import com.autonomy.abc.selenium.users.OPLoginPage;
-import com.autonomy.abc.selenium.users.OPUsersPage;
+import com.autonomy.abc.selenium.search.IdolIsoSearchPage;
+import com.autonomy.abc.selenium.users.IdolIsoLoginPage;
+import com.autonomy.abc.selenium.users.IdolUsersPage;
 import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
 enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
-    LOGIN(new OPLoginPage.Factory()),
+    LOGIN(new IdolIsoLoginPage.Factory()),
 
-    OVERVIEW(NavBarTabId.OVERVIEW, new OverviewPage.Factory()),
+    OVERVIEW(NavBarTabId.OVERVIEW, new IsoOverviewPage.Factory()),
 
-    PROMOTIONS(NavBarTabId.PROMOTIONS, new OPPromotionsPage.Factory()),
-    PROMOTION_WIZARD(new OPCreateNewPromotionsPage.Factory()),
-    PROMOTION_DETAILS(new OPPromotionsDetailPage.Factory()),
+    PROMOTIONS(NavBarTabId.PROMOTIONS, new IdolPromotionsPage.Factory()),
+    PROMOTION_WIZARD(new IdolCreateNewPromotionsPage.Factory()),
+    PROMOTION_DETAILS(new IdolPromotionsDetailPage.Factory()),
     EDIT_REFERENCES(new EditDocumentReferencesPage.Factory()),
     SCHEDULE(new SchedulePage.Factory()),
 
-    KEYWORDS(NavBarTabId.KEYWORDS, new OPKeywordsPage.Factory()),
-    KEYWORD_WIZARD(new OPCreateNewKeywordsPage.Factory()),
+    KEYWORDS(NavBarTabId.KEYWORDS, new IdolKeywordsPage.Factory()),
+    KEYWORD_WIZARD(new IdolCreateNewKeywordsPage.Factory()),
 
-    SEARCH(NavBarTabId.SEARCH, new OPSearchPage.Factory()),
+    SEARCH(NavBarTabId.SEARCH, new IdolIsoSearchPage.Factory()),
 
-    ABOUT(OPISOTopNavBar.TabId.ABOUT, new AboutPage.Factory()),
-    USERS(OPISOTopNavBar.TabId.USERS, new OPUsersPage.Factory()),
-    SETTINGS(OPISOTopNavBar.TabId.SETTINGS, new SettingsPage.Factory());
+    ABOUT(IdolIsoTopNavBar.TabId.ABOUT, new IsoAboutPage.Factory()),
+    USERS(IdolIsoTopNavBar.TabId.USERS, new IdolUsersPage.Factory()),
+    SETTINGS(IdolIsoTopNavBar.TabId.SETTINGS, new IsoSettingsPage.Factory());
 
     private PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
     private AppPageFactory<?> factory;
@@ -50,7 +50,7 @@ enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFa
         switchStrategy = new OPISOElementFactory.SideNavStrategy(tab);
     }
 
-    <T extends AppPage> OPISOPage(OPISOTopNavBar.TabId tab, AppPageFactory<T> factory) {
+    <T extends AppPage> OPISOPage(IdolIsoTopNavBar.TabId tab, AppPageFactory<T> factory) {
         this(factory);
         switchStrategy = new OPISOElementFactory.TopNavStrategy(tab);
     }

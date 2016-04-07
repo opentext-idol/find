@@ -2,7 +2,7 @@ package com.autonomy.abc.overview;
 
 import com.autonomy.abc.base.SOTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.autonomy.abc.selenium.analytics.OverviewPage;
+import com.autonomy.abc.selenium.analytics.IsoOverviewPage;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
@@ -32,7 +32,7 @@ public class OverviewPageITCase extends SOTestBase {
 		super(config);
 	}
 
-	private OverviewPage overviewPage;
+	private IsoOverviewPage overviewPage;
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws IOException {
@@ -47,7 +47,7 @@ public class OverviewPageITCase extends SOTestBase {
 
 	@Before
 	public void setUp() {
-		overviewPage = getApplication().switchTo(OverviewPage.class);
+		overviewPage = getApplication().switchTo(IsoOverviewPage.class);
 	}
 
 	@Test
@@ -84,15 +84,15 @@ public class OverviewPageITCase extends SOTestBase {
             }
         }
 
-        assertThat("Widget text not changed", overviewPage.getWidget(OverviewPage.Widget.TOP_SEARCH_TERMS).getText().contains("Top terms searched for " + widgetText));
+        assertThat("Widget text not changed", overviewPage.getWidget(IsoOverviewPage.Widget.TOP_SEARCH_TERMS).getText().contains("Top terms searched for " + widgetText));
     }
 	@Test
 	public void testTopSearchTermsLinks() {
 		for (final String timeUnit : Arrays.asList("hour", "day", "week")) {
 			overviewPage.topSearchTermsLastTimePeriodButton(timeUnit).click();
 
-			if (!overviewPage.getWidget(OverviewPage.Widget.TOP_SEARCH_TERMS).getText().contains("No data")) {
-				final List<WebElement> tableRowLinks = overviewPage.getWidget(OverviewPage.Widget.TOP_SEARCH_TERMS).findElements(By.cssSelector(OverviewPage.ACTIVE_TABLE_SELECTOR + " .table a"));
+			if (!overviewPage.getWidget(IsoOverviewPage.Widget.TOP_SEARCH_TERMS).getText().contains("No data")) {
+				final List<WebElement> tableRowLinks = overviewPage.getWidget(IsoOverviewPage.Widget.TOP_SEARCH_TERMS).findElements(By.cssSelector(IsoOverviewPage.ACTIVE_TABLE_SELECTOR + " .table a"));
 
 				for (final WebElement tableRowLink : tableRowLinks) {
 					if (tableRowLink.isDisplayed()) {
@@ -102,7 +102,7 @@ public class OverviewPageITCase extends SOTestBase {
 						assertThat(getWindow(), urlContains("search/modified/" + searchTerm));
 						assertThat(searchTerm + " Title incorrect", searchPage.getPageTitle(), containsString("Results for " + searchTerm));
 
-						getApplication().switchTo(OverviewPage.class);
+						getApplication().switchTo(IsoOverviewPage.class);
 					}
 				}
 			} else {
@@ -117,8 +117,8 @@ public class OverviewPageITCase extends SOTestBase {
 			overviewPage.topSearchTermsLastTimePeriodButton(timeUnit).click();
 			Waits.loadOrFadeWait();
 
-			if (!overviewPage.getWidget(OverviewPage.Widget.TOP_SEARCH_TERMS).getText().contains("No data")) {
-				final List<WebElement> tableRowLinks = overviewPage.getWidget(OverviewPage.Widget.TOP_SEARCH_TERMS).findElements(By.cssSelector(OverviewPage.ACTIVE_TABLE_SELECTOR + " a"));
+			if (!overviewPage.getWidget(IsoOverviewPage.Widget.TOP_SEARCH_TERMS).getText().contains("No data")) {
+				final List<WebElement> tableRowLinks = overviewPage.getWidget(IsoOverviewPage.Widget.TOP_SEARCH_TERMS).findElements(By.cssSelector(IsoOverviewPage.ACTIVE_TABLE_SELECTOR + " a"));
 				final List<Integer> searchCounts = new ArrayList<>(Collections.nCopies(10, 0));
 
 				for (final WebElement tableRowLink : tableRowLinks) {
@@ -139,10 +139,10 @@ public class OverviewPageITCase extends SOTestBase {
 	@Test
 	public void testZeroHitTermsLinks() throws UnsupportedEncodingException, InterruptedException {
 		getApplication().keywordService().deleteAll(KeywordFilter.ALL);
-		getApplication().switchTo(OverviewPage.class);
+		getApplication().switchTo(IsoOverviewPage.class);
 		String extraSynonym = "apple";
 
-		final List<WebElement> tableLinks = overviewPage.getWidget(OverviewPage.Widget.ZERO_HIT_TERMS).findElements(By.cssSelector(".table a"));
+		final List<WebElement> tableLinks = overviewPage.getWidget(IsoOverviewPage.Widget.ZERO_HIT_TERMS).findElements(By.cssSelector(".table a"));
 
 		for (final WebElement tableLink : tableLinks) {
 			final String linkText = tableLink.getText();
@@ -189,11 +189,11 @@ public class OverviewPageITCase extends SOTestBase {
 				System.out.println(linkText + " returns a search error as part of a synonym group");
 			}
 
-			getApplication().switchTo(OverviewPage.class);
+			getApplication().switchTo(IsoOverviewPage.class);
 		}
 	}
 
-    private boolean percentageIsNumber(OverviewPage.Widget widgetElement) {
+    private boolean percentageIsNumber(IsoOverviewPage.Widget widgetElement) {
         try {
             overviewPage.getZeroHitPercentageParseInt(widgetElement);
         } catch(NumberFormatException e) {
@@ -206,29 +206,29 @@ public class OverviewPageITCase extends SOTestBase {
 	@Test
 	public void testPercentageOfQueriesWithZeroHits() {
 
-		assertThat(overviewPage.getZeroHitQueries(OverviewPage.Widget.TODAY_SEARCH), lessThanOrEqualTo(overviewPage.getTotalSearches(OverviewPage.Widget.TODAY_SEARCH)));
-		assertThat(overviewPage.getZeroHitQueries(OverviewPage.Widget.YESTERDAY_SEARCH), lessThanOrEqualTo(overviewPage.getTotalSearches(OverviewPage.Widget.YESTERDAY_SEARCH)));
-		assertThat(overviewPage.getZeroHitQueries(OverviewPage.Widget.WEEKLY_SEARCH), lessThanOrEqualTo(overviewPage.getTotalSearches(OverviewPage.Widget.WEEKLY_SEARCH)));
+		assertThat(overviewPage.getZeroHitQueries(IsoOverviewPage.Widget.TODAY_SEARCH), lessThanOrEqualTo(overviewPage.getTotalSearches(IsoOverviewPage.Widget.TODAY_SEARCH)));
+		assertThat(overviewPage.getZeroHitQueries(IsoOverviewPage.Widget.YESTERDAY_SEARCH), lessThanOrEqualTo(overviewPage.getTotalSearches(IsoOverviewPage.Widget.YESTERDAY_SEARCH)));
+		assertThat(overviewPage.getZeroHitQueries(IsoOverviewPage.Widget.WEEKLY_SEARCH), lessThanOrEqualTo(overviewPage.getTotalSearches(IsoOverviewPage.Widget.WEEKLY_SEARCH)));
 
-        if(percentageIsNumber(OverviewPage.Widget.TODAY_SEARCH)) {
-			assertThat(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.TODAY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.TODAY_SEARCH)),
-					is(overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.TODAY_SEARCH)));
+        if(percentageIsNumber(IsoOverviewPage.Widget.TODAY_SEARCH)) {
+			assertThat(Math.round((overviewPage.getZeroHitQueries(IsoOverviewPage.Widget.TODAY_SEARCH) * 100f) / overviewPage.getTotalSearches(IsoOverviewPage.Widget.TODAY_SEARCH)),
+					is(overviewPage.getZeroHitPercentageParseInt(IsoOverviewPage.Widget.TODAY_SEARCH)));
         } else {
-			assertThat(overviewPage.getZeroHitPercentage(OverviewPage.Widget.TODAY_SEARCH), is("N/A"));
+			assertThat(overviewPage.getZeroHitPercentage(IsoOverviewPage.Widget.TODAY_SEARCH), is("N/A"));
         }
 
-        if (percentageIsNumber(OverviewPage.Widget.YESTERDAY_SEARCH)) {
-			assertThat(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.YESTERDAY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.YESTERDAY_SEARCH)),
-					is(overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.YESTERDAY_SEARCH)));
+        if (percentageIsNumber(IsoOverviewPage.Widget.YESTERDAY_SEARCH)) {
+			assertThat(Math.round((overviewPage.getZeroHitQueries(IsoOverviewPage.Widget.YESTERDAY_SEARCH) * 100f) / overviewPage.getTotalSearches(IsoOverviewPage.Widget.YESTERDAY_SEARCH)),
+					is(overviewPage.getZeroHitPercentageParseInt(IsoOverviewPage.Widget.YESTERDAY_SEARCH)));
         } else {
-			assertThat(overviewPage.getZeroHitPercentage(OverviewPage.Widget.YESTERDAY_SEARCH), is("N/A"));
+			assertThat(overviewPage.getZeroHitPercentage(IsoOverviewPage.Widget.YESTERDAY_SEARCH), is("N/A"));
         }
 
-        if (percentageIsNumber(OverviewPage.Widget.WEEKLY_SEARCH)) {
-			assertThat(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.WEEKLY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.WEEKLY_SEARCH)),
-					is(overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.WEEKLY_SEARCH)));
+        if (percentageIsNumber(IsoOverviewPage.Widget.WEEKLY_SEARCH)) {
+			assertThat(Math.round((overviewPage.getZeroHitQueries(IsoOverviewPage.Widget.WEEKLY_SEARCH) * 100f) / overviewPage.getTotalSearches(IsoOverviewPage.Widget.WEEKLY_SEARCH)),
+					is(overviewPage.getZeroHitPercentageParseInt(IsoOverviewPage.Widget.WEEKLY_SEARCH)));
         } else {
-			assertThat(overviewPage.getZeroHitPercentage(OverviewPage.Widget.WEEKLY_SEARCH), is("N/A"));
+			assertThat(overviewPage.getZeroHitPercentage(IsoOverviewPage.Widget.WEEKLY_SEARCH), is("N/A"));
         }
 	}
 }

@@ -5,14 +5,14 @@ import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class OPLanguageDropdown implements LanguageDropdown {
+public class IdolLanguageDropdown implements LanguageDropdown {
     private Dropdown dropdown;
 
-    public OPLanguageDropdown(AppElement element) {
+    public IdolLanguageDropdown(AppElement element) {
         dropdown = new Dropdown(element);
     }
 
-    public OPLanguageDropdown(WebElement element, WebDriver driver) {
+    public IdolLanguageDropdown(WebElement element, WebDriver driver) {
         this(new AppElement(element, driver));
     }
 

@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.hp.autonomy.frontend.selenium.element.*;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
@@ -11,10 +10,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class OPPromotionsDetailPage extends PromotionsDetailPage {
+public class IdolPromotionsDetailPage extends PromotionsDetailPage {
     private AppElement fieldTextContainer;
 
-    private OPPromotionsDetailPage(WebDriver driver) {
+    private IdolPromotionsDetailPage(WebDriver driver) {
         super(driver);
         fieldTextContainer = new AppElement(findElement(By.cssSelector(".promotion-field-text")), driver);
     }
@@ -80,13 +79,13 @@ public class OPPromotionsDetailPage extends PromotionsDetailPage {
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.elementToBeClickable(findElement(By.className("promotion-view-schedule")))).click();
     }
 
-    public static class Factory extends SOPageFactory<OPPromotionsDetailPage> {
+    public static class Factory extends SOPageFactory<IdolPromotionsDetailPage> {
         public Factory() {
-            super(OPPromotionsDetailPage.class);
+            super(IdolPromotionsDetailPage.class);
         }
 
-        public OPPromotionsDetailPage create(WebDriver context) {
-            return new OPPromotionsDetailPage(context);
+        public IdolPromotionsDetailPage create(WebDriver context) {
+            return new IdolPromotionsDetailPage(context);
         }
     }
 }

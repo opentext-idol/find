@@ -3,7 +3,7 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 import com.autonomy.abc.base.SOTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.iso.AboutPage;
+import com.autonomy.abc.selenium.iso.IsoAboutPage;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class AboutPageITCase extends SOTestBase {
 		super(config);
 	}
 
-	private AboutPage aboutPage;
+	private IsoAboutPage aboutPage;
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws IOException {
@@ -38,7 +38,7 @@ public class AboutPageITCase extends SOTestBase {
 
 	@Before
 	public void setUp() throws InterruptedException {
-		aboutPage = getApplication().switchTo(AboutPage.class);
+		aboutPage = getApplication().switchTo(IsoAboutPage.class);
 	}
 
 	@Test

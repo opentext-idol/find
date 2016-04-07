@@ -10,22 +10,22 @@ public class OPPromotionService extends PromotionService<OPISOElementFactory> {
 
     // TODO: is there a better way to do this? generics?
     @Override
-    public OPPromotionsPage goToPromotions() {
-        return (OPPromotionsPage) super.goToPromotions();
+    public IdolPromotionsPage goToPromotions() {
+        return (IdolPromotionsPage) super.goToPromotions();
     }
 
     @Override
-    public OPPromotionsPage deleteAll() {
-        return (OPPromotionsPage) super.deleteAll();
+    public IdolPromotionsPage deleteAll() {
+        return (IdolPromotionsPage) super.deleteAll();
     }
 
     @Override
-    public OPPromotionsDetailPage goToDetails(String title) {
-        return (OPPromotionsDetailPage) super.goToDetails(title);
+    public IdolPromotionsDetailPage goToDetails(String title) {
+        return (IdolPromotionsDetailPage) super.goToDetails(title);
     }
 
     @Override
-    public OPPromotionsDetailPage goToDetails(Promotion promotion) {
-        return (OPPromotionsDetailPage) super.goToDetails(promotion);
+    public IdolPromotionsDetailPage goToDetails(Promotion promotion) {
+        return (IdolPromotionsDetailPage) super.goToDetails(promotion);
     }
 }

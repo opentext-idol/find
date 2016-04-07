@@ -10,7 +10,7 @@ public class OPUserConfigParser implements JsonUserConfigParser {
     @Override
     public User parseUser(JsonNode userNode) {
         String username = userNode.path("username").asText();
-        OPAccount auth = new OPAccount(username, userNode.path("password").asText());
+        IdolIsoAccount auth = new IdolIsoAccount(username, userNode.path("password").asText());
         Role role = Role.fromString(userNode.path("role").asText());
         return new User(auth, username, role);
     }
@@ -19,12 +19,12 @@ public class OPUserConfigParser implements JsonUserConfigParser {
     public NewUser parseNewUser(JsonNode newUserNode) {
         String username = newUserNode.path("username").asText();
         String password = newUserNode.path("password").asText();
-        return new OPNewUser(username, password);
+        return new IdolIsoNewUser(username, password);
     }
 
     @Override
     public NewUser generateNewUser(String identifier) {
-        return new OPNewUser(identifier, "pw");
+        return new IdolIsoNewUser(identifier, "pw");
     }
 
     @Override

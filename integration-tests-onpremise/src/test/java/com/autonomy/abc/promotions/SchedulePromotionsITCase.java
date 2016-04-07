@@ -49,7 +49,7 @@ public class SchedulePromotionsITCase extends SOTestBase {
 	public void setUp() throws MalformedURLException, InterruptedException {
         promotionService = getApplication().promotionService();
 
-		OPPromotionsPage promotionsPage = (OPPromotionsPage) promotionService.deleteAll();
+		IdolPromotionsPage promotionsPage = (IdolPromotionsPage) promotionService.deleteAll();
 		elementFactory = (OPISOElementFactory) getElementFactory();
 	}
 
@@ -58,7 +58,7 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "wand magic spells");
         promotionService.setUpPromotion(spotlight, "wizard", 4);
 		promotionService.goToDetails(spotlight);
-		OPPromotionsDetailPage promotionsDetailPage = elementFactory.getPromotionsDetailPage();
+		IdolPromotionsDetailPage promotionsDetailPage = elementFactory.getPromotionsDetailPage();
 		promotionsDetailPage.schedulePromotion();
 
 		try {

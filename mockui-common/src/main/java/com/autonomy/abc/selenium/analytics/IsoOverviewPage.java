@@ -8,9 +8,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class OverviewPage extends DashboardBase {
+public class IsoOverviewPage extends DashboardBase {
 
-    private OverviewPage(final WebDriver driver) {
+    private IsoOverviewPage(final WebDriver driver) {
         super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
     }
 
@@ -79,15 +79,15 @@ public class OverviewPage extends DashboardBase {
         new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h3[text()='Zero Hit Terms']")));
     }
 
-	public static class Factory implements AppPageFactory<OverviewPage> {
+	public static class Factory implements AppPageFactory<IsoOverviewPage> {
 		@Override
-		public Class<OverviewPage> getPageType() {
-			return OverviewPage.class;
+		public Class<IsoOverviewPage> getPageType() {
+			return IsoOverviewPage.class;
 		}
 
-		public OverviewPage create(WebDriver context) {
-			OverviewPage.waitForLoad(context);
-			return new OverviewPage(context);
+		public IsoOverviewPage create(WebDriver context) {
+			IsoOverviewPage.waitForLoad(context);
+			return new IsoOverviewPage(context);
 		}
 	}
 }

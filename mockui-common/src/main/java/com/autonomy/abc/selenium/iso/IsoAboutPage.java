@@ -1,18 +1,15 @@
 package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.application.SOPageBase;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class AboutPage extends SOPageBase {
+public class IsoAboutPage extends SOPageBase {
 
-    private AboutPage(final WebDriver driver) {
+    private IsoAboutPage(final WebDriver driver) {
         super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
     }
 
@@ -63,14 +60,14 @@ public class AboutPage extends SOPageBase {
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h3[text()='FOSS Acknowledgements']")));
     }
 
-	public static class Factory extends SOPageFactory<AboutPage> {
+	public static class Factory extends SOPageFactory<IsoAboutPage> {
 		public Factory() {
-			super(AboutPage.class);
+			super(IsoAboutPage.class);
 		}
 
-		public AboutPage create(WebDriver context) {
-			AboutPage.waitForLoad(context);
-			return new AboutPage(context);
+		public IsoAboutPage create(WebDriver context) {
+			IsoAboutPage.waitForLoad(context);
+			return new IsoAboutPage(context);
 		}
 	}
 }

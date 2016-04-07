@@ -2,17 +2,17 @@ package com.autonomy.abc.selenium.iso;
 
 import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.autonomy.abc.selenium.application.SOElementFactory;
-import com.autonomy.abc.selenium.keywords.OPCreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.OPKeywordsPage;
+import com.autonomy.abc.selenium.keywords.IdolCreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.IdolKeywordsPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.promotions.OPCreateNewPromotionsPage;
-import com.autonomy.abc.selenium.promotions.OPPromotionsDetailPage;
-import com.autonomy.abc.selenium.promotions.OPPromotionsPage;
+import com.autonomy.abc.selenium.promotions.IdolCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.IdolPromotionsDetailPage;
+import com.autonomy.abc.selenium.promotions.IdolPromotionsPage;
 import com.autonomy.abc.selenium.promotions.SchedulePage;
-import com.autonomy.abc.selenium.search.OPSearchPage;
-import com.autonomy.abc.selenium.users.OPLoginPage;
-import com.autonomy.abc.selenium.users.OPUsersPage;
+import com.autonomy.abc.selenium.search.IdolIsoSearchPage;
+import com.autonomy.abc.selenium.users.IdolIsoLoginPage;
+import com.autonomy.abc.selenium.users.IdolUsersPage;
 import com.autonomy.abc.selenium.users.UsersPage;
 import org.openqa.selenium.WebDriver;
 
@@ -23,42 +23,42 @@ public class OPISOElementFactory extends SOElementFactory {
 
     @Override
     public TopNavBar getTopNavBar() {
-        return new OPISOTopNavBar(getDriver());
+        return new IdolIsoTopNavBar(getDriver());
     }
 
     @Override
-    public OPPromotionsPage getPromotionsPage() {
-        return loadPage(OPPromotionsPage.class);
+    public IdolPromotionsPage getPromotionsPage() {
+        return loadPage(IdolPromotionsPage.class);
     }
 
     @Override
-    public OPLoginPage getLoginPage() {
-        return loadPage(OPLoginPage.class);
+    public IdolIsoLoginPage getLoginPage() {
+        return loadPage(IdolIsoLoginPage.class);
     }
 
     @Override
-    public OPPromotionsDetailPage getPromotionsDetailPage() {
-        return loadPage(OPPromotionsDetailPage.class);
+    public IdolPromotionsDetailPage getPromotionsDetailPage() {
+        return loadPage(IdolPromotionsDetailPage.class);
     }
 
     @Override
-    public OPCreateNewPromotionsPage getCreateNewPromotionsPage() {
-        return loadPage(OPCreateNewPromotionsPage.class);
+    public IdolCreateNewPromotionsPage getCreateNewPromotionsPage() {
+        return loadPage(IdolCreateNewPromotionsPage.class);
     }
 
     @Override
-    public OPKeywordsPage getKeywordsPage() {
-        return loadPage(OPKeywordsPage.class);
+    public IdolKeywordsPage getKeywordsPage() {
+        return loadPage(IdolKeywordsPage.class);
     }
 
     @Override
-    public OPCreateNewKeywordsPage getCreateNewKeywordsPage() {
-        return loadPage(OPCreateNewKeywordsPage.class);
+    public IdolCreateNewKeywordsPage getCreateNewKeywordsPage() {
+        return loadPage(IdolCreateNewKeywordsPage.class);
     }
 
     @Override
-    public OPSearchPage getSearchPage() {
-        return loadPage(OPSearchPage.class);
+    public IdolIsoSearchPage getSearchPage() {
+        return loadPage(IdolIsoSearchPage.class);
     }
 
     public SchedulePage getSchedulePage() {
@@ -67,7 +67,7 @@ public class OPISOElementFactory extends SOElementFactory {
 
     @Override
     public UsersPage getUsersPage() {
-        return loadPage(OPUsersPage.class);
+        return loadPage(IdolUsersPage.class);
     }
 
     protected static class SideNavStrategy extends SOElementFactory.SideNavStrategy {
@@ -77,15 +77,15 @@ public class OPISOElementFactory extends SOElementFactory {
     }
 
     static class TopNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
-        private final OPISOTopNavBar.TabId tab;
+        private final IdolIsoTopNavBar.TabId tab;
 
-        TopNavStrategy(OPISOTopNavBar.TabId tabId) {
+        TopNavStrategy(IdolIsoTopNavBar.TabId tabId) {
             tab = tabId;
         }
 
         @Override
         public void switchUsing(SOElementFactory context) {
-            ((OPISOTopNavBar) context.getTopNavBar()).switchPage(tab);
+            ((IdolIsoTopNavBar) context.getTopNavBar()).switchPage(tab);
         }
     }
 }
