@@ -1,32 +1,29 @@
 package com.autonomy.abc.config;
 
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.config.json.JsonConfig;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.config.json.JsonConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 
 public class SOConfigLocator {
-    private final static String DEFAULT_CONFIG_LOCATION = "../config/hsod-dev.json";
     private final static String BASE_CONFIG_LOCATION = System.getProperty("com.autonomy.baseConfig");
     private final static String OVERRIDE_CONFIG_LOCATION = System.getProperty("com.autonomy.configFile");
-    // system property set in the POM
-    private final static boolean MAVEN = System.getProperty("com.autonomy.mavenFlag") != null;
     private final static Logger LOGGER = LoggerFactory.getLogger(TestConfig.class);
 
-    private final JsonConfigReader reader;
+    private final ResourceJsonConfigReader reader;
 
     public SOConfigLocator() {
-        reader = MAVEN ? new MavenJsonConfigReader() : new LocalJsonConfigReader();
+        reader = new ResourceJsonConfigReader();
     }
 
     public JsonConfig getJsonConfig() throws IOException {
-        JsonConfig base = maybeReadConfig(getBaseLocation());
+        JsonConfig base = maybeReadConfig(BASE_CONFIG_LOCATION);
         JsonConfig override = maybeReadConfig(OVERRIDE_CONFIG_LOCATION);
         if (base == null) {
             LOGGER.warn("base config not found");
@@ -36,56 +33,32 @@ public class SOConfigLocator {
     }
 
     public JsonNode getJsonNode() throws IOException {
-        return reader.toJsonNode(getBaseLocation());
-    }
-
-    private String getBaseLocation() {
-        return BASE_CONFIG_LOCATION == null ? DEFAULT_CONFIG_LOCATION : BASE_CONFIG_LOCATION;
+        return reader.toJsonNode(BASE_CONFIG_LOCATION);
     }
 
     private JsonConfig maybeReadConfig(String path) throws IOException {
         if (path == null) {
             return null;
         }
-        LOGGER.info("using config " + path);
         return reader.toJsonConfig(path);
     }
 
-    private static class MavenJsonConfigReader implements JsonConfigReader {
-        @Override
+    private static class ResourceJsonConfigReader {
         public JsonConfig toJsonConfig(String path) throws IOException {
             return path == null ? null : new JsonConfig(toJsonNode(path), new UserConfigParserFactory());
         }
 
-        @Override
         public JsonNode toJsonNode(String path) throws IOException {
             return new ObjectMapper().readTree(urlForPath(path));
         }
 
-        private static URL urlForPath(String path) {
-            return SOConfigLocator.class.getClassLoader().getResource(path);
+        private static URL urlForPath(String path) throws FileNotFoundException {
+            URL resource = ClassLoader.getSystemResource(path);
+            if (resource == null) {
+                throw new FileNotFoundException("Config file " + path + " not found in the resources directory");
+            }
+            LOGGER.info("using config " + resource);
+            return resource;
         }
     }
-
-    private static class LocalJsonConfigReader implements JsonConfigReader {
-        @Override
-        public JsonConfig toJsonConfig(String path) throws IOException {
-            return path == null ? null : new JsonConfig(toJsonNode(path), new UserConfigParserFactory());
-        }
-
-        @Override
-        public JsonNode toJsonNode(String path) throws IOException {
-            return new ObjectMapper().readTree(fileForPath(path));
-        }
-
-        private static File fileForPath(String path) {
-            return new File(path);
-        }
-    }
-
-    private interface JsonConfigReader {
-        JsonConfig toJsonConfig(String path) throws IOException;
-        JsonNode toJsonNode(String path) throws IOException;
-    }
-
 }
