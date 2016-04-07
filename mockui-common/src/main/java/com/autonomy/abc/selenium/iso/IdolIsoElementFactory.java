@@ -16,9 +16,9 @@ import com.autonomy.abc.selenium.users.IdolUsersPage;
 import com.autonomy.abc.selenium.users.UsersPage;
 import org.openqa.selenium.WebDriver;
 
-public class OPISOElementFactory extends SOElementFactory {
-    public OPISOElementFactory(final WebDriver driver) {
-        super(driver, new PageMapper<>(OPISOPage.class));
+public class IdolIsoElementFactory extends SOElementFactory {
+    public IdolIsoElementFactory(final WebDriver driver) {
+        super(driver, new PageMapper<>(IdolIsoPage.class));
     }
 
     @Override

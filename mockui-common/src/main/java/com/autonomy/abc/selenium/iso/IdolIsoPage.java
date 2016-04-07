@@ -18,7 +18,7 @@ import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
-enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
+enum IdolIsoPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
     LOGIN(new IdolIsoLoginPage.Factory()),
 
     OVERVIEW(NavBarTabId.OVERVIEW, new IsoOverviewPage.Factory()),
@@ -41,18 +41,18 @@ enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFa
     private PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
     private AppPageFactory<?> factory;
 
-    <T extends AppPage> OPISOPage(AppPageFactory<T> factory) {
+    <T extends AppPage> IdolIsoPage(AppPageFactory<T> factory) {
         this.factory = factory;
     }
 
-    <T extends AppPage> OPISOPage(NavBarTabId tab, AppPageFactory<T> factory) {
+    <T extends AppPage> IdolIsoPage(NavBarTabId tab, AppPageFactory<T> factory) {
         this(factory);
-        switchStrategy = new OPISOElementFactory.SideNavStrategy(tab);
+        switchStrategy = new IdolIsoElementFactory.SideNavStrategy(tab);
     }
 
-    <T extends AppPage> OPISOPage(IdolIsoTopNavBar.TabId tab, AppPageFactory<T> factory) {
+    <T extends AppPage> IdolIsoPage(IdolIsoTopNavBar.TabId tab, AppPageFactory<T> factory) {
         this(factory);
-        switchStrategy = new OPISOElementFactory.TopNavStrategy(tab);
+        switchStrategy = new IdolIsoElementFactory.TopNavStrategy(tab);
     }
 
     @Override

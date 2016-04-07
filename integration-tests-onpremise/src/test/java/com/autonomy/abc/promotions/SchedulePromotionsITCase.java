@@ -3,7 +3,7 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.base.SOTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
-import com.autonomy.abc.selenium.iso.OPISOElementFactory;
+import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.query.LanguageFilter;
@@ -43,14 +43,14 @@ public class SchedulePromotionsITCase extends SOTestBase {
 	private DatePicker datePicker;
 	private final Pattern pattern = Pattern.compile("\\s+");
     private PromotionService promotionService;
-	private OPISOElementFactory elementFactory;
+	private IdolIsoElementFactory elementFactory;
 
 	@Before
 	public void setUp() throws MalformedURLException, InterruptedException {
         promotionService = getApplication().promotionService();
 
 		IdolPromotionsPage promotionsPage = (IdolPromotionsPage) promotionService.deleteAll();
-		elementFactory = (OPISOElementFactory) getElementFactory();
+		elementFactory = (IdolIsoElementFactory) getElementFactory();
 	}
 
 	@Test

@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.iso.OPISOApplication;
-import com.autonomy.abc.selenium.iso.OPISOElementFactory;
+import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 
-public class OPPromotionService extends PromotionService<OPISOElementFactory> {
+public class OPPromotionService extends PromotionService<IdolIsoElementFactory> {
     public OPPromotionService(OPISOApplication application) {
         super(application);
     }

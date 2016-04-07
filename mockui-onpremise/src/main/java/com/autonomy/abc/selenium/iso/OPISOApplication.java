@@ -6,19 +6,19 @@ import com.autonomy.abc.selenium.promotions.OPPromotionService;
 import com.autonomy.abc.selenium.users.OPUserService;
 
 
-public class OPISOApplication extends SearchOptimizerApplication<OPISOElementFactory> {
+public class OPISOApplication extends SearchOptimizerApplication<IdolIsoElementFactory> {
     private Window window;
-    private OPISOElementFactory factory;
+    private IdolIsoElementFactory factory;
 
     @Override
-    public OPISOElementFactory elementFactory() {
+    public IdolIsoElementFactory elementFactory() {
         return factory;
     }
 
     @Override
     public OPISOApplication inWindow(Window window) {
         this.window = window;
-        this.factory = new OPISOElementFactory(window.getSession().getDriver());
+        this.factory = new IdolIsoElementFactory(window.getSession().getDriver());
         return this;
     }
 

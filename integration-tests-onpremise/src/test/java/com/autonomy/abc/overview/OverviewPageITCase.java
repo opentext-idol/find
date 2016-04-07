@@ -5,7 +5,7 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.analytics.IsoOverviewPage;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.TriggerForm;
-import com.autonomy.abc.selenium.iso.OPISOElementFactory;
+import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
@@ -41,8 +41,8 @@ public class OverviewPageITCase extends SOTestBase {
 	}
 
 	@Override
-	public OPISOElementFactory getElementFactory() {
-		return (OPISOElementFactory) super.getElementFactory();
+	public IdolIsoElementFactory getElementFactory() {
+		return (IdolIsoElementFactory) super.getElementFactory();
 	}
 
 	@Before

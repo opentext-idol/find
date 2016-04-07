@@ -5,7 +5,7 @@ import com.autonomy.abc.base.SOTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.HostAndPorts;
-import com.autonomy.abc.selenium.iso.OPISOElementFactory;
+import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 import com.autonomy.abc.selenium.iso.IsoSettingsPage;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -53,8 +53,8 @@ public class SettingsPageITCase extends SOTestBase {
 	}
 
 	@Override
-	public OPISOElementFactory getElementFactory() {
-		return (OPISOElementFactory) super.getElementFactory();
+	public IdolIsoElementFactory getElementFactory() {
+		return (IdolIsoElementFactory) super.getElementFactory();
 	}
 
 	@Before

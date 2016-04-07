@@ -3,7 +3,7 @@ package com.autonomy.abc.topnavbar.login;
 import com.autonomy.abc.base.SOTestBase;
 import com.autonomy.abc.selenium.users.IdolIsoAccount;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.autonomy.abc.selenium.iso.OPISOElementFactory;
+import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 import com.autonomy.abc.selenium.users.IdolIsoLoginPage;
 import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.users.UsersPage;
@@ -41,8 +41,8 @@ public class LoginPageOnPremiseITCase extends SOTestBase {
 	private IdolIsoLoginPage loginPage;
 
 	@Override
-	public OPISOElementFactory getElementFactory() {
-		return (OPISOElementFactory) super.getElementFactory();
+	public IdolIsoElementFactory getElementFactory() {
+		return (IdolIsoElementFactory) super.getElementFactory();
 	}
 
 
