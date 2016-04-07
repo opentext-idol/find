@@ -2,20 +2,24 @@ package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.promotions.HSODPromotionService;
-import com.autonomy.abc.selenium.users.HSODDeveloperService;
-import com.autonomy.abc.selenium.users.HSODUserService;
+import com.autonomy.abc.selenium.promotions.HsodPromotionService;
+import com.autonomy.abc.selenium.users.HsodDeveloperService;
+import com.autonomy.abc.selenium.users.HsodUserService;
+import com.hp.autonomy.frontend.selenium.control.Window;
 
 public class HSODApplication extends SearchOptimizerApplication<HSODElementFactory> {
-    private Window window;
+    private final IsoHsodApplication delegate;
     private HSODElementFactory factory;
+
+    public HSODApplication() {
+        delegate = new IsoHsodApplication();
+    }
 
     @Override
     public HSODApplication inWindow(Window window) {
-        this.window = window;
         this.factory = new HSODElementFactory(window.getSession().getDriver());
+        delegate.inWindow(window);
         return this;
     }
 
@@ -24,13 +28,13 @@ public class HSODApplication extends SearchOptimizerApplication<HSODElementFacto
     }
 
     @Override
-    public HSODPromotionService promotionService() {
-        return new HSODPromotionService(this);
+    public HsodPromotionService promotionService() {
+        return delegate.promotionService();
     }
 
     @Override
-    public HSODUserService userService() {
-        return new HSODUserService(this);
+    public HsodUserService userService() {
+        return delegate.userService();
     }
 
     public ConnectionService connectionService() {
@@ -41,8 +45,8 @@ public class HSODApplication extends SearchOptimizerApplication<HSODElementFacto
         return new IndexService(this);
     }
 
-    public HSODDeveloperService developerService() {
-        return new HSODDeveloperService(this);
+    public HsodDeveloperService developerService() {
+        return delegate.developerService();
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.autonomy.abc.base.SOTearDown;
 import com.autonomy.abc.base.HostedTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
-import com.autonomy.abc.selenium.promotions.HSODPromotionService;
+import com.autonomy.abc.selenium.promotions.HsodPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.not;
 
 @Category(CoreFeature.class)
 public class StaticPromotionsCoreITCase extends HostedTestBase {
-    private HSODPromotionService promotionService;
+    private HsodPromotionService promotionService;
     private SearchService searchService;
 
     public StaticPromotionsCoreITCase(TestConfig config) {

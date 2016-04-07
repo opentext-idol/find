@@ -8,7 +8,7 @@ import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.query.Query;
-import com.autonomy.abc.selenium.search.OPSearchPage;
+import com.autonomy.abc.selenium.search.IdolIsoSearchPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
@@ -108,7 +108,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends SOTestBase {
 		assertThat(searchPage.getSelectedLanguage(), is(language));
 		assertThat("Wrong search performed", searchPage.getHeadingSearchTerm(), containsString(trigger));
 		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstDocTitle));
-		assertThat(((OPSearchPage) searchPage).promotionsLabel().getText(), equalToIgnoringCase(promotionType.getOption()));
+		assertThat(((IdolIsoSearchPage) searchPage).promotionsLabel().getText(), equalToIgnoringCase(promotionType.getOption()));
 	}
 
 	@Test
@@ -145,7 +145,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends SOTestBase {
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "Ida"), query, 1);
 
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
-		assertThat("promotions aren't labelled as Sponsored", ((OPSearchPage) searchPage).promotionsLabel().getText(), equalToIgnoringCase("Sponsored"));
+		assertThat("promotions aren't labelled as Sponsored", ((IdolIsoSearchPage) searchPage).promotionsLabel().getText(), equalToIgnoringCase("Sponsored"));
 
         searchService.search(query);
         promotionResultsCount = promotionResultsCount + searchPage.getHeadingResultsCount();
@@ -156,7 +156,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends SOTestBase {
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "Ida"), query, 1);
 
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
-		final List<String> promotionLabels = ((OPSearchPage) searchPage).getPromotionLabels();
+		final List<String> promotionLabels = ((IdolIsoSearchPage) searchPage).getPromotionLabels();
 		assertThat("No Hotwire labels in promotions summary", promotionLabels, hasItem(Promotion.SpotlightType.HOTWIRE.getOption().toUpperCase()));
 		assertThat("No Sponsored labels in promotions summary", promotionLabels, hasItem(Promotion.SpotlightType.SPONSORED.getOption().toUpperCase()));
 		assertThat(searchPage.getPromotedDocumentTitles(true), hasSize(promotionResultsCount));

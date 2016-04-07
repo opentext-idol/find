@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.analytics;
 
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import com.autonomy.abc.selenium.application.AppPageFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -100,7 +100,12 @@ public class AnalyticsPage extends DashboardBase {
         return false;
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, AnalyticsPage> {
+    public static class Factory implements AppPageFactory<AnalyticsPage> {
+        @Override
+        public Class<AnalyticsPage> getPageType() {
+            return AnalyticsPage.class;
+        }
+
         @Override
         public AnalyticsPage create(WebDriver context) {
             return new AnalyticsPage(context);

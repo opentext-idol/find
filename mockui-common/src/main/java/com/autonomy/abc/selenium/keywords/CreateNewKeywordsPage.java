@@ -1,11 +1,10 @@
 package com.autonomy.abc.selenium.keywords;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -15,7 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CreateNewKeywordsPage extends AppElement implements AppPage {
+public abstract class CreateNewKeywordsPage extends SOPageBase {
 
 	public CreateNewKeywordsPage(final WebDriver driver) {
 		super(containerElement(driver), driver);

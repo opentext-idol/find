@@ -2,14 +2,12 @@ package com.autonomy.abc.indexes;
 
 import com.autonomy.abc.base.HSODTearDown;
 import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.connections.*;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.find.HsodFind;
+import com.autonomy.abc.selenium.icma.UnknownICMAPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
@@ -20,8 +18,10 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.users.User;
-import com.autonomy.abc.selenium.util.SOPageUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -37,9 +37,7 @@ import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasClass;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTextThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -213,7 +211,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @KnownBug("CSA-1735")
     public void testNavigatingToNonExistingIndexByURL(){
         getDriver().get(getAppUrl().split("searchoptimizer")[0] + "search/#/index/doesntexistmate");
-        verifyThat(SOPageUtil.getWrapperContent(getDriver()), containsText(Errors.Index.INVALID_INDEX));
+        verifyThat(new UnknownICMAPage(getDriver()).getWrapperContent(), containsText(Errors.Index.INVALID_INDEX));
     }
 
     @Test
@@ -244,7 +242,7 @@ public class IndexesPageITCase extends HostedTestBase {
         indexService.setUpIndex(index);
 
         Window searchWindow = getWindow();
-        HSODFind findApp = new HSODFind();
+        HsodFind findApp = new HsodFind();
         Window findWindow = launchInNewWindow(findApp);
 
         try {
@@ -268,7 +266,7 @@ public class IndexesPageITCase extends HostedTestBase {
         indexService.setUpIndex(index);
 
         Window searchWindow = getWindow();
-        HSODFind findApp = new HSODFind();
+        HsodFind findApp = new HsodFind();
         Window findWindow = launchInNewWindow(findApp);
         FindService findService = findApp.findService();
 

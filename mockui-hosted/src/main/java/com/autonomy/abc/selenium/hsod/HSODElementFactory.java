@@ -1,86 +1,91 @@
 package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
-import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.autonomy.abc.selenium.application.SOElementFactory;
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.icma.GettingStartedPage;
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.autonomy.abc.selenium.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.HSODCreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.HSODKeywordsPage;
+import com.autonomy.abc.selenium.keywords.HsodCreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.HsodKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
-import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
-import com.autonomy.abc.selenium.search.HSODSearchPage;
+import com.autonomy.abc.selenium.promotions.HsodCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HsodPromotionsPage;
+import com.autonomy.abc.selenium.search.HsodSearchPage;
 import com.autonomy.abc.selenium.search.SearchPage;
-import com.autonomy.abc.selenium.users.HSODDevelopersPage;
-import com.autonomy.abc.selenium.users.HSODUsersPage;
+import com.autonomy.abc.selenium.users.HsodDevelopersPage;
+import com.autonomy.abc.selenium.users.HsodUsersPage;
+import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
 
 public class HSODElementFactory extends SOElementFactory {
+    private final IsoHsodElementFactory delegate;
+
     HSODElementFactory(final WebDriver driver) {
         super(driver, new PageMapper<>(HSODPage.class));
+        delegate = new IsoHsodElementFactory(driver);
     }
 
     @Override
     public TopNavBar getTopNavBar() {
-        return new HSODTopNavBar(getDriver());
+        return delegate.getTopNavBar();
     }
 
     @Override
-    public HSODPromotionsPage getPromotionsPage() {
-        return loadPage(HSODPromotionsPage.class);
+    public HsodPromotionsPage getPromotionsPage() {
+        return loadIsoPage(HsodPromotionsPage.class);
     }
 
     @Override
     public LoginPage getLoginPage() {
-        return loadPage(HSOLoginPage.class);
+        return delegate.loadPage(HSOLoginPage.class);
     }
 
     @Override
     public KeywordsPage getKeywordsPage() {
-        return loadPage(HSODKeywordsPage.class);
+        return loadIsoPage(HsodKeywordsPage.class);
     }
 
     @Override
     public CreateNewKeywordsPage getCreateNewKeywordsPage() {
-        return loadPage(HSODCreateNewKeywordsPage.class);
+        return loadIsoPage(HsodCreateNewKeywordsPage.class);
     }
 
     @Override
     public SearchPage getSearchPage() {
-        return loadPage(HSODSearchPage.class);
+        return loadIsoPage(HsodSearchPage.class);
     }
 
     @Override
-    public HSODCreateNewPromotionsPage getCreateNewPromotionsPage() {
-        return loadPage(HSODCreateNewPromotionsPage.class);
+    public HsodCreateNewPromotionsPage getCreateNewPromotionsPage() {
+        return loadIsoPage(HsodCreateNewPromotionsPage.class);
     }
 
     @Override
-    public HSODUsersPage getUsersPage(){
-        return loadPage(HSODUsersPage.class);
+    public HsodUsersPage getUsersPage(){
+        return loadIsoPage(HsodUsersPage.class);
     }
 
     public ConnectionsPage getConnectionsPage() {
-        return loadPage(ConnectionsPage.class);
+        return loadIcmaPage(ConnectionsPage.class);
     }
 
     public NewConnectionPage getNewConnectionPage() {
-        return loadPage(NewConnectionPage.class);
+        return loadIcmaPage(NewConnectionPage.class);
     }
 
     public ConnectionsDetailPage getConnectionsDetailPage() {
-        return loadPage(ConnectionsDetailPage.class);
+        return loadIcmaPage(ConnectionsDetailPage.class);
     }
 
     public AnalyticsPage getAnalyticsPage() {
@@ -88,23 +93,31 @@ public class HSODElementFactory extends SOElementFactory {
     }
 
     public IndexesPage getIndexesPage() {
-        return loadPage(IndexesPage.class);
+        return loadIcmaPage(IndexesPage.class);
     }
 
     public CreateNewIndexPage getCreateNewIndexPage() {
-        return loadPage(CreateNewIndexPage.class);
+        return loadIcmaPage(CreateNewIndexPage.class);
     }
 
     public IndexesDetailPage getIndexesDetailPage() {
-        return loadPage(IndexesDetailPage.class);
+        return loadIcmaPage(IndexesDetailPage.class);
     }
 
     public GettingStartedPage getGettingStartedPage() {
-        return loadPage(GettingStartedPage.class);
+        return loadIcmaPage(GettingStartedPage.class);
     }
 
-    public HSODDevelopersPage getDevsPage() {
-        return loadPage(HSODDevelopersPage.class);
+    public HsodDevelopersPage getDevsPage() {
+        return loadIsoPage(HsodDevelopersPage.class);
+    }
+
+    private <T extends ICMAPageBase> T loadIcmaPage(Class<T> pageType) {
+        return loadPage(pageType);
+    }
+
+    private <T extends SOPageBase> T loadIsoPage(Class<T> pageType) {
+        return delegate.loadPage(pageType);
     }
 
     protected static class SideNavStrategy extends SOElementFactory.SideNavStrategy {

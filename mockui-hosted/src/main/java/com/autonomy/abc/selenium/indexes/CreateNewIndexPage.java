@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.indexes;
 
 import com.autonomy.abc.selenium.icma.ICMAPageBase;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -42,7 +41,11 @@ public class CreateNewIndexPage extends ICMAPageBase {
         return IndexSummaryStepTab.make(getDriver());
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, CreateNewIndexPage> {
+    public static class Factory extends ICMAPageFactory<CreateNewIndexPage> {
+        public Factory() {
+            super(CreateNewIndexPage.class);
+        }
+
         @Override
         public CreateNewIndexPage create(WebDriver context) {
             new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("content")));

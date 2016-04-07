@@ -3,7 +3,7 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.base.SOTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
-import com.autonomy.abc.selenium.iso.OPISOElementFactory;
+import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.query.LanguageFilter;
@@ -43,14 +43,14 @@ public class SchedulePromotionsITCase extends SOTestBase {
 	private DatePicker datePicker;
 	private final Pattern pattern = Pattern.compile("\\s+");
     private PromotionService promotionService;
-	private OPISOElementFactory elementFactory;
+	private IdolIsoElementFactory elementFactory;
 
 	@Before
 	public void setUp() throws MalformedURLException, InterruptedException {
         promotionService = getApplication().promotionService();
 
-		OPPromotionsPage promotionsPage = (OPPromotionsPage) promotionService.deleteAll();
-		elementFactory = (OPISOElementFactory) getElementFactory();
+		IdolPromotionsPage promotionsPage = (IdolPromotionsPage) promotionService.deleteAll();
+		elementFactory = (IdolIsoElementFactory) getElementFactory();
 	}
 
 	@Test
@@ -58,7 +58,7 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "wand magic spells");
         promotionService.setUpPromotion(spotlight, "wizard", 4);
 		promotionService.goToDetails(spotlight);
-		OPPromotionsDetailPage promotionsDetailPage = elementFactory.getPromotionsDetailPage();
+		IdolPromotionsDetailPage promotionsDetailPage = elementFactory.getPromotionsDetailPage();
 		promotionsDetailPage.schedulePromotion();
 
 		try {

@@ -63,7 +63,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
     @Test
     public void testChangeOfPasswordWorksOnLogin() {
         User initialUser = singleSignUp();
-        User updatedUser = ((OPUsersPage) usersPage).replaceAuthFor(initialUser, new OPPassword("bob"));
+        User updatedUser = ((IdolUsersPage) usersPage).replaceAuthFor(initialUser, new IdolIsoReplacementAuth("bob"));
 
         logoutAndNavigateToWebApp();
         loginAs(initialUser);
@@ -100,7 +100,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
         verifyThat(newUserModal, containsText("Error! Username must not be blank"));
 
         usersPage.addUsername("Andrew");
-        ((OPUsersPage) usersPage).clearPasswords();
+        ((IdolUsersPage) usersPage).clearPasswords();
         usersPage.createButton().click();
         verifyThat(newUserModal, containsText("Error! Password must not be blank"));
 
@@ -157,6 +157,6 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
     @Test
     public void testAddStupidlyLongUsername() {
         final String longUsername = StringUtils.repeat("a", 100);
-        verifyCreateDeleteInTable(new OPNewUser(longUsername, "b"));
+        verifyCreateDeleteInTable(new IdolIsoNewUser(longUsername, "b"));
     }
 }

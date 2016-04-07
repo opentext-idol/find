@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -74,7 +73,11 @@ public class ConnectionsDetailPage extends ICMAPageBase {
         return ElementUtil.ancestor(findElement(By.className("hp-schedule")),1).findElement(By.cssSelector("div:nth-child(1)")).getText();
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, ConnectionsDetailPage> {
+    public static class Factory extends ICMAPageFactory<ConnectionsDetailPage> {
+        public Factory() {
+            super(ConnectionsDetailPage.class);
+        }
+
         @Override
         public ConnectionsDetailPage create(WebDriver context) {
             new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("first-cable")));

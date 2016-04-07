@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.indexes.tree;
 
-import com.hp.autonomy.frontend.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.element.SOCheckbox;
+import com.hp.autonomy.frontend.selenium.element.Checkbox;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 

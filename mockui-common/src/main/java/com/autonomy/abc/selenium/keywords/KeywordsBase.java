@@ -1,9 +1,8 @@
 package com.autonomy.abc.selenium.keywords;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.hp.autonomy.frontend.selenium.element.LabelBox;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public abstract class KeywordsBase extends AppElement implements AppPage {
+public abstract class KeywordsBase extends SOPageBase {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public KeywordsBase(final WebElement element, final WebDriver driver) {

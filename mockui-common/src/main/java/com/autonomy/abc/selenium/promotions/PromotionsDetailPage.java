@@ -1,13 +1,11 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.element.*;
+import com.autonomy.abc.selenium.application.SOPageBase;
+import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.hp.autonomy.frontend.selenium.element.*;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Locator;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -19,7 +17,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PromotionsDetailPage extends AppElement implements AppPage {
+public class PromotionsDetailPage extends SOPageBase {
     protected PromotionsDetailPage(WebDriver driver) {
         super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
         waitForLoad();
@@ -216,7 +214,11 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return new PromotionsDetailTriggerForm(findElement(By.className("promotion-match-terms-wrapper")), getDriver());
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, PromotionsDetailPage> {
+    public static class Factory extends SOPageFactory<PromotionsDetailPage> {
+        public Factory() {
+            super(PromotionsDetailPage.class);
+        }
+
         @Override
         public PromotionsDetailPage create(WebDriver context) {
             return new PromotionsDetailPage(context);

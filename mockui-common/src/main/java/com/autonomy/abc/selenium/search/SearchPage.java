@@ -1,17 +1,17 @@
 package com.autonomy.abc.selenium.search;
 
-import com.hp.autonomy.frontend.selenium.element.Checkbox;
-import com.hp.autonomy.frontend.selenium.element.Dropdown;
-import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
+import com.hp.autonomy.frontend.selenium.element.Checkbox;
+import com.hp.autonomy.frontend.selenium.element.Dropdown;
+import com.hp.autonomy.frontend.selenium.element.Pagination;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;

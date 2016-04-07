@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.icma;
 
+import com.autonomy.abc.selenium.application.AppPageFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -13,8 +14,21 @@ import java.util.List;
 public abstract class ICMAPageBase implements AppPage {
     private AppElement page;
 
-    public ICMAPageBase(WebDriver driver) {
-        page = new AppElement(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[ui-view]"))), driver);
+    protected ICMAPageBase(WebDriver driver) {
+        this(waitForLoad(driver), driver);
+    }
+
+    protected ICMAPageBase(WebElement element, WebDriver driver) {
+        page = new AppElement(element, driver);
+    }
+
+    public AppElement getWrapperContent() {
+        waitForPageLoadIndicatorToDisappear();
+        return new AppElement(getDriver().findElement(By.className("wrapper-content")), getDriver());
+    }
+
+    private void waitForPageLoadIndicatorToDisappear() {
+        new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
     }
 
     protected AppElement getPage() {
@@ -35,6 +49,22 @@ public abstract class ICMAPageBase implements AppPage {
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[ui-view]")));
+        waitForLoad(getDriver());
+    }
+
+    private static WebElement waitForLoad(WebDriver driver) {
+        return new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[ui-view]")));
+    }
+
+    public abstract static class ICMAPageFactory<T extends ICMAPageBase> implements AppPageFactory<T> {
+        private final Class<T> returnType;
+
+        protected ICMAPageFactory(Class<T> returnType) {
+            this.returnType = returnType;
+        }
+
+        public Class<T> getPageType() {
+            return returnType;
+        }
     }
 }

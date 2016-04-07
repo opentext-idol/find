@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.icma.ICMAPageBase;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -46,7 +45,11 @@ public class NewConnectionPage extends ICMAPageBase {
         return new AppElement(findElement(By.id("stepAnchor1")), getDriver());
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, NewConnectionPage> {
+    public static class Factory extends ICMAPageFactory<NewConnectionPage> {
+        public Factory() {
+            super(NewConnectionPage.class);
+        }
+
         @Override
         public NewConnectionPage create(WebDriver context) {
             new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wizard")));

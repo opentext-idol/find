@@ -1,9 +1,8 @@
 package com.autonomy.abc.selenium.indexes;
 
-import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.icma.ICMAPageBase;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -99,7 +98,11 @@ public class IndexesDetailPage extends ICMAPageBase {
         return findElement(By.cssSelector("div:not(.affix-clone)>div>#nav-back"));
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, IndexesDetailPage> {
+    public static class Factory extends ICMAPageFactory<IndexesDetailPage> {
+        public Factory() {
+            super(IndexesDetailPage.class);
+        }
+
         @Override
         public IndexesDetailPage create(WebDriver context) {
             new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()[contains(.,'Index fields')]]")));

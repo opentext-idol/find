@@ -13,7 +13,7 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.SimilarDocumentsView;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.promotions.HSODPromotionService;
+import com.autonomy.abc.selenium.promotions.HsodPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -151,7 +151,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         Waits.loadOrFadeWait();
 
         String trigger = "Riga";
-        HSODPromotionService promotionService = new HSODPromotionService(searchApp);
+        HsodPromotionService promotionService = searchApp.promotionService();
         try {
             promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), "Have Mercy", 3);
 

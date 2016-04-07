@@ -36,11 +36,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
-            <artifactId>mockui</artifactId>
-            <version>10.9.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.autonomy.aci.client</groupId>
             <artifactId>autonomy-aci-client-api</artifactId>
             <version>4.1.2</version>

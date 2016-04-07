@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 
 public abstract class CreateNewPromotionsPage extends CreateNewPromotionsBase {
 
-	public CreateNewPromotionsPage(final WebDriver driver) {
+	protected CreateNewPromotionsPage(final WebDriver driver) {
 		super(driver);
 		waitForLoad();
 	}
