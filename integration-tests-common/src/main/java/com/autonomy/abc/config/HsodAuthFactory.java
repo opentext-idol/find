@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.config;
+package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.users.NewHPPassport;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;

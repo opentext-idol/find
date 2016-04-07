@@ -4,7 +4,7 @@ import com.autonomy.abc.config.SOConfigLocator;
 import com.autonomy.abc.base.SOTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.config.IdolHostAndPorts;
+import com.autonomy.abc.config.IdolHostAndPorts;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 import com.autonomy.abc.selenium.iso.IsoSettingsPage;
 import com.hp.autonomy.frontend.selenium.util.Waits;

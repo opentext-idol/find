@@ -81,5 +81,10 @@
             <artifactId>integration-tests-framework</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>2.46.0</version>
+        </dependency>
     </dependencies>
 </project>

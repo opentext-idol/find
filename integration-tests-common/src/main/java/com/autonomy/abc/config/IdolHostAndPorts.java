@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.config;
+package com.autonomy.abc.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
