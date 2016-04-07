@@ -4,7 +4,6 @@ import com.autonomy.abc.selenium.application.SOElementFactory;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.users.UsersPage;
-import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
@@ -31,7 +30,6 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 public class UserTestHelper {
     private SearchOptimizerApplication<?> app;
     private AuthenticationStrategy authStrategy;
-    private LoginService loginService;
     private UserService userService;
     private TestConfig config;
     private SOElementFactory factory;
@@ -40,7 +38,6 @@ public class UserTestHelper {
         this.app = app;
         this.authStrategy = config.getAuthenticationStrategy();
         this.userService = app.userService();
-        this.loginService = app.loginService();
         this.config = config;
         this.factory = app.elementFactory();
     }
@@ -90,7 +87,7 @@ public class UserTestHelper {
         logoutAndNavigateToWebApp(window);
 
         try {
-            loginService.login(user);
+            app.loginService().login(user);
         } catch (TimeoutException | NoSuchElementException e) { /* Probably because of the sessions you're already logged in */ }
 
         factory.getPromotionsPage();
@@ -119,8 +116,8 @@ public class UserTestHelper {
     }
 
     public void logoutAndNavigateToWebApp(Window window) {
-        if (loginService.getCurrentUser() != null) {
-            loginService.logout();
+        if (app.loginService().getCurrentUser() != null) {
+            app.loginService().logout();
         }
         window.goTo(config.getAppUrl(app));
     }
