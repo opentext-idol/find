@@ -30,6 +30,10 @@ public abstract class UsersPage extends SOPageBase {
 		return findElement(By.id("create-user"));
 	}
 
+	public ModalView userCreationModal() {
+		return ModalView.getVisibleModalView(getDriver());
+	}
+
 	public WebElement createButton() {
 		return ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//button[contains(text(), 'Create')]"));
 	}
