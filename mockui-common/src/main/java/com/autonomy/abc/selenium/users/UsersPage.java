@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.application.SOPageBase;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.element.PasswordBox;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
@@ -30,31 +29,25 @@ public abstract class UsersPage extends SOPageBase {
 		return findElement(By.id("create-user"));
 	}
 
-	public ModalView userCreationModal() {
-		return ModalView.getVisibleModalView(getDriver());
+	public UserCreationModal userCreationModal() {
+		return new UserCreationModal(getDriver());
 	}
 
 	public WebElement createButton() {
-		return ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//button[contains(text(), 'Create')]"));
+		return userCreationModal().createButton();
 	}
 
 	public void addUsername(final String userName) {
-		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[name='create-users-username']")).clear();
-		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[name='create-users-username']")).sendKeys(userName);
+		userCreationModal().usernameInput().setValue(userName);
 	}
 
 	public void addAndConfirmPassword(final String password, final String passwordConfirm) {
-		final WebElement passwordElement = ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-password"));
-		passwordElement.clear();
-		passwordElement.sendKeys(password);
-
-		final WebElement passwordConfirmElement = ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-passwordConfirm"));
-		passwordConfirmElement.clear();
-		passwordConfirmElement.sendKeys(passwordConfirm);
+		userCreationModal().passwordInput().setValue(password);
+		userCreationModal().passwordConfirmInput().setValue(passwordConfirm);
 	}
 
 	public void selectRole(Role role) {
-		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[contains(text(),'" + role + "')]")).click();
+		userCreationModal().selectRole(role);
 	}
 
 	@Deprecated
@@ -65,14 +58,13 @@ public abstract class UsersPage extends SOPageBase {
 		Waits.loadOrFadeWait();
 		addUsername(userName);
 		addAndConfirmPassword(password, password);
-		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[text() = '" + userLevel + "']")).click();
+		userCreationModal().findElement(By.xpath(".//option[text() = '" + userLevel + "']")).click();
 		createButton().click();
 		Waits.loadOrFadeWait();
 	}
 
 	public void closeModal() {
-		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[data-dismiss='modal']")).click();
-		Waits.loadOrFadeWait();
+		userCreationModal().close();
 	}
 
 	public int countNumberOfUsers() {

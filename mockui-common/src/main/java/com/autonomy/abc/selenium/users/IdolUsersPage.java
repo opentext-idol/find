@@ -59,8 +59,8 @@ public class IdolUsersPage extends UsersPage {
     }
 
     public void clearPasswords() {
-        ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-password")).clear();
-        ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-passwordConfirm")).clear();
+        userCreationModal().passwordInput().clear();
+        userCreationModal().passwordConfirmInput().clear();
     }
 
     public static class Factory extends SOPageFactory<IdolUsersPage> {
