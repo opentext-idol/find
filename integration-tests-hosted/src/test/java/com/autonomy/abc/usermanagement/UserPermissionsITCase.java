@@ -206,7 +206,7 @@ public class UserPermissionsITCase extends HostedTestBase {
             try {
                 usersPage.addNewUser(getConfig().generateNewUser(), Role.ADMIN);
             } finally {
-                usersPage.closeModal();
+                usersPage.userCreationModal().close();
             }
 
            verifyError();

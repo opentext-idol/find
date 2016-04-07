@@ -1,16 +1,17 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
-import com.hp.autonomy.frontend.selenium.element.Editable;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.shared.UsersPageTestBase;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.Editable;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
+import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import com.autonomy.abc.shared.UsersPageTestBase;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -30,8 +31,15 @@ import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
+    private IdolUsersPage usersPage;
+
     public UsersPageOnPremITCase(TestConfig config) {
         super(config);
+    }
+
+    @Before
+    public void pageSetUp() {
+        usersPage = (IdolUsersPage) userService.getUsersPage();
     }
 
     @Test
@@ -63,7 +71,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
     @Test
     public void testChangeOfPasswordWorksOnLogin() {
         User initialUser = singleSignUp();
-        User updatedUser = ((IdolUsersPage) usersPage).replaceAuthFor(initialUser, new IdolIsoReplacementAuth("bob"));
+        User updatedUser = usersPage.replaceAuthFor(initialUser, new IdolIsoReplacementAuth("bob"));
 
         logoutAndNavigateToWebApp();
         loginAs(initialUser);
@@ -93,25 +101,31 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
     public void testCreateUser() {
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
-        final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
+        final IdolUserCreationModal newUserModal = usersPage.userCreationModal();
         verifyThat(newUserModal, hasTextThat(startsWith("Create New Users")));
 
-        usersPage.createButton().click();
+        newUserModal.createButton().click();
         verifyThat(newUserModal, containsText("Error! Username must not be blank"));
 
-        usersPage.addUsername("Andrew");
-        ((IdolUsersPage) usersPage).clearPasswords();
-        usersPage.createButton().click();
+        newUserModal.usernameInput().setValue("Andrew");
+        newUserModal.passwordInput().clear();
+        newUserModal.passwordConfirmInput().clear();
+        newUserModal.createButton().click();
         verifyThat(newUserModal, containsText("Error! Password must not be blank"));
 
-        usersPage.addAndConfirmPassword("password", "wordpass");
-        usersPage.createButton().click();
+        newUserModal.passwordInput().setValue("password");
+        newUserModal.passwordConfirmInput().setValue("wordpass");
+        newUserModal.createButton().click();
         verifyThat(newUserModal, containsText("Error! Password confirmation failed"));
 
-        usersPage.createNewUser("Andrew", "qwerty", "Admin");
+        newUserModal.usernameInput().setValue("Andrew");
+        newUserModal.passwordInput().setValue("qwerty");
+        newUserModal.passwordConfirmInput().setValue("qwerty");
+        newUserModal.selectRole(Role.ADMIN);
+        newUserModal.createUser();
         verifyThat(newUserModal, containsText("Done! User Andrew successfully created"));
 
-        usersPage.closeModal();
+        newUserModal.close();
         verifyThat(usersPage, not(containsText("Create New Users")));
     }
 

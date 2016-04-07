@@ -29,43 +29,7 @@ public abstract class UsersPage extends SOPageBase {
 		return findElement(By.id("create-user"));
 	}
 
-	public UserCreationModal userCreationModal() {
-		return new UserCreationModal(getDriver());
-	}
-
-	public WebElement createButton() {
-		return userCreationModal().createButton();
-	}
-
-	public void addUsername(final String userName) {
-		userCreationModal().usernameInput().setValue(userName);
-	}
-
-	public void addAndConfirmPassword(final String password, final String passwordConfirm) {
-		userCreationModal().passwordInput().setValue(password);
-		userCreationModal().passwordConfirmInput().setValue(passwordConfirm);
-	}
-
-	public void selectRole(Role role) {
-		userCreationModal().selectRole(role);
-	}
-
-	@Deprecated
-	/**
-	 * @deprecated Use UserService instead
-	 */
-	public void createNewUser(final String userName, final String password, final String userLevel) {
-		Waits.loadOrFadeWait();
-		addUsername(userName);
-		addAndConfirmPassword(password, password);
-		userCreationModal().findElement(By.xpath(".//option[text() = '" + userLevel + "']")).click();
-		createButton().click();
-		Waits.loadOrFadeWait();
-	}
-
-	public void closeModal() {
-		userCreationModal().close();
-	}
+	public abstract UserCreationModal userCreationModal();
 
 	public int countNumberOfUsers() {
 		Waits.loadOrFadeWait();

@@ -97,7 +97,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
 
         verifyModalElements();
         verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), containsString(Errors.User.CREATING));
-        usersPage.closeModal();
+        usersPage.userCreationModal().close();
 
         verifyThat("number of users has not increased", usersPage.getUsernames(), hasSize(existingUsers));
 
@@ -114,7 +114,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
 
         verifyModalElements();
         verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), not(containsString(Errors.User.CREATING)));
-        usersPage.closeModal();
+        usersPage.userCreationModal().close();
 
         verifyThat(usersPage.getUsernames(), hasItem(validUser.getUsername()));
 
@@ -124,10 +124,11 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
     }
 
     private void verifyModalElements() {
-        verifyModalElement(usersPage.getUsernameInput().getElement());
-        verifyModalElement(usersPage.getEmailInput().getElement());
-        verifyModalElement(usersPage.userLevelDropdown());
-        verifyModalElement(usersPage.createButton());
+        HsodUserCreationModal modal = usersPage.userCreationModal();
+        verifyModalElement(modal.usernameInput().getElement());
+        verifyModalElement(modal.emailInput().getElement());
+        verifyModalElement(modal.roleDropdown());
+        verifyModalElement(modal.createButton());
     }
 
     private void verifyModalElement(WebElement input) {
@@ -235,25 +236,25 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
     public void testCreateUser(){
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
-        final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
+        final HsodUserCreationModal newUserModal = usersPage.userCreationModal();
         verifyThat(newUserModal, hasTextThat(startsWith("Create New Users")));
 
-        usersPage.createButton().click();
+        newUserModal.createButton().click();
         verifyThat(newUserModal, containsText(Errors.User.BLANK_EMAIL));
 
         String username = "Andrew";
 
-        usersPage.addUsername(username);
-        usersPage.clearEmail();
-        usersPage.createButton().click();
+        newUserModal.usernameInput().setValue(username);
+        newUserModal.emailInput().clear();
+        newUserModal.createButton().click();
         verifyThat(newUserModal, containsText(Errors.User.BLANK_EMAIL));
 
-        usersPage.getEmailInput().setValue("hodtestqa401+CreateUserTest@gmail.com");
-        usersPage.selectRole(Role.USER);
-        usersPage.createButton().click();
+        newUserModal.emailInput().setValue("hodtestqa401+CreateUserTest@gmail.com");
+        newUserModal.selectRole(Role.USER);
+        newUserModal.createUser();
 //        verifyThat(newUserModal, containsText("Done! User Andrew successfully created"));
 
-        usersPage.closeModal();
+        usersPage.userCreationModal().close();
         verifyThat(usersPage, not(containsText("Create New Users")));   //Not sure what this is meant to be doing? Verifying modal no longer open??
 
         verifyThat(usersPage.getUsernames(),hasItem(username));

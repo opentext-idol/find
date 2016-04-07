@@ -1,12 +1,13 @@
 package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.base.SOTestBase;
-import com.autonomy.abc.selenium.users.IdolIsoAccount;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
+import com.autonomy.abc.selenium.users.IdolIsoAccount;
 import com.autonomy.abc.selenium.users.IdolIsoLoginPage;
+import com.autonomy.abc.selenium.users.IdolIsoNewUser;
 import com.autonomy.abc.selenium.users.UserService;
-import com.autonomy.abc.selenium.users.UsersPage;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -28,7 +29,6 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.url;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasAttribute;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.modalIsDisplayed;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
@@ -49,12 +49,8 @@ public class LoginPageOnPremiseITCase extends SOTestBase {
 	@Before
 	public void setUp() throws InterruptedException {
         UserService userService = getApplication().userService();
-		UsersPage usersPage = userService.goToUsers();
 		userService.deleteOtherUsers();
-		usersPage.createUserButton().click();
-		assertThat(usersPage, modalIsDisplayed());
-		usersPage.createNewUser("admin", "qwerty", "Admin");
-		usersPage.closeModal();
+		userService.createNewUser(new IdolIsoNewUser("admin", "qwerty"), Role.ADMIN);
 		getApplication().loginService().logout();
 		loginPage = getElementFactory().getLoginPage();
 	}

@@ -44,7 +44,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		assertThat(usersPage, modalIsDisplayed());
 		User user = usersPage.addNewUser(aNewUser, Role.USER);
 		User admin = usersPage.addNewUser(newUser2, Role.ADMIN);
-		usersPage.closeModal();
+		usersPage.userCreationModal().close();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
 		deleteAndVerify(admin);
@@ -57,7 +57,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		verifyThat(usersPage, modalIsDisplayed());
 		usersPage.addNewUser(aNewUser, Role.USER);
 		usersPage.addNewUser(newUser2, Role.ADMIN);
-		usersPage.closeModal();
+		usersPage.userCreationModal().close();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
 		userService.deleteOtherUsers();
@@ -83,7 +83,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		verifyDuplicateError(newUserModal);
 
-		usersPage.closeModal();
+		usersPage.userCreationModal().close();
 		verifyThat(usersPage.countNumberOfUsers(), is(1 + defaultNumberOfUsers));
 	}
 
@@ -109,7 +109,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		User user = usersPage.addNewUser(newUser2, Role.USER);
 		verifyUserAdded(newUserModal, user);
 
-		usersPage.closeModal();
+		usersPage.userCreationModal().close();
 		List<String> usernames = usersPage.getUsernames();
 		assertThat(usernames, hasItem(admin.getUsername()));
 		assertThat(usersPage.getRoleOf(admin), is(Role.ADMIN));

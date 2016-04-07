@@ -9,7 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class UserCreationModal extends ModalView {
+public abstract class UserCreationModal extends ModalView {
     UserCreationModal(WebDriver driver) {
         super(ModalView.getVisibleModalView(driver), driver);
     }
@@ -25,12 +25,8 @@ public class UserCreationModal extends ModalView {
         return new FormInput(findElement(By.name("create-users-username")), getDriver());
     }
 
-    public FormInput passwordInput() {
-        return new FormInput(findElement(By.id("create-users-password")), getDriver());
-    }
-
-    public FormInput passwordConfirmInput() {
-        return new FormInput(findElement(By.id("create-users-passwordConfirm")), getDriver());
+    public WebElement roleDropdown() {
+        return findElement(By.id("create-users-role"));
     }
 
     public void selectRole(Role role) {
@@ -39,6 +35,8 @@ public class UserCreationModal extends ModalView {
                 .containingText(role.toString())
         ).click();
     }
+
+    public abstract void createUser();
 
     @Override
     public void close() {

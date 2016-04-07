@@ -65,7 +65,7 @@ public class UserTestHelper {
         authStrategy.authenticate(user);
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
         verifyUserAdded(newUserModal, user);
-        usersPage.closeModal();
+        newUserModal.close();
         return user;
     }
 
@@ -78,7 +78,7 @@ public class UserTestHelper {
 
         User user = usersPage.addNewUser(newUser, Role.USER);
         authStrategy.authenticate(user);
-        usersPage.closeModal();
+        usersPage.userCreationModal().close();
 
         try {
             Waits.waitForGritterToClear();

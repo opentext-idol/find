@@ -34,7 +34,7 @@ public abstract class UserService<T extends SOElementFactory> extends ServiceBas
         try {
             return usersPage.addNewUser(newUser, role);
         } finally {
-            usersPage.closeModal();
+            usersPage.userCreationModal().close();
         }
     }
 }
