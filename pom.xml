@@ -18,7 +18,6 @@
     <modules>
         <module>mockui-common</module>
         <module>mockui-hosted</module>
-        <module>mockui-onpremise</module>
         <module>integration-tests-common</module>
         <module>integration-tests-hosted</module>
         <module>integration-tests-onpremise</module>
