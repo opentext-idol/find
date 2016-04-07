@@ -3,8 +3,8 @@ package com.autonomy.abc.selenium.promotions;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 
-public class OPPromotionService extends PromotionService<IdolIsoElementFactory> {
-    public OPPromotionService(SearchOptimizerApplication<? extends IdolIsoElementFactory> application) {
+public class IdolPromotionService extends PromotionService<IdolIsoElementFactory> {
+    public IdolPromotionService(SearchOptimizerApplication<? extends IdolIsoElementFactory> application) {
         super(application);
     }
 

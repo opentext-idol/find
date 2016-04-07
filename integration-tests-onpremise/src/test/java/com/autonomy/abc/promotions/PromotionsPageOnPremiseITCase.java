@@ -4,7 +4,7 @@ import com.autonomy.abc.base.SOTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Editable;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
-import com.autonomy.abc.selenium.promotions.OPPromotionService;
+import com.autonomy.abc.selenium.promotions.IdolPromotionService;
 import com.autonomy.abc.selenium.promotions.IdolPromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
@@ -34,12 +34,12 @@ public class PromotionsPageOnPremiseITCase extends SOTestBase {
 
 	private IdolPromotionsDetailPage promotionsDetailPage;
 	private SearchPage searchPage;
-    private OPPromotionService promotionService;
+    private IdolPromotionService promotionService;
     private SearchService searchService;
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		promotionService = (OPPromotionService) getApplication().promotionService();
+		promotionService = (IdolPromotionService) getApplication().promotionService();
         searchService = getApplication().searchService();
 
 		promotionService.deleteAll();

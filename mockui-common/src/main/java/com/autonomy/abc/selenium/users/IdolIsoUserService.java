@@ -10,10 +10,10 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class OPUserService extends UserService<IdolIsoElementFactory> {
+public class IdolIsoUserService extends UserService<IdolIsoElementFactory> {
     private IdolUsersPage usersPage;
 
-    public OPUserService(SearchOptimizerApplication<? extends IdolIsoElementFactory> application) {
+    public IdolIsoUserService(SearchOptimizerApplication<? extends IdolIsoElementFactory> application) {
         super(application);
     }
 
