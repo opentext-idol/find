@@ -1,4 +1,4 @@
-package com.autonomy.abc.base;
+package com.autonomy.abc.fixtures;
 
 import com.autonomy.abc.selenium.actions.Command;
 import com.autonomy.abc.selenium.application.IsoApplication;
@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.application.IsoApplication;
 public class IsoPostLoginHook implements Command {
     private final IsoApplication<?> app;
 
-    IsoPostLoginHook(IsoApplication<?> app) {
+    public IsoPostLoginHook(IsoApplication<?> app) {
         this.app = app;
     }
 

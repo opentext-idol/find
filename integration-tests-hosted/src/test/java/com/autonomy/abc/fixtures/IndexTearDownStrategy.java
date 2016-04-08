@@ -1,6 +1,6 @@
-package com.autonomy.abc.base;
+package com.autonomy.abc.fixtures;
 
-import com.autonomy.abc.selenium.application.IsoApplication;
+import com.autonomy.abc.base.HostedTestBase;
 import com.hp.autonomy.frontend.selenium.base.TearDown;
 
 public class IndexTearDownStrategy implements TearDown<HostedTestBase> {

@@ -1,5 +1,6 @@
 package com.autonomy.abc.base;
 
+import com.autonomy.abc.fixtures.IsoPostLoginHook;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;

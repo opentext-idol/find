@@ -1,7 +1,7 @@
 package com.autonomy.abc.indexes;
 
 import com.autonomy.abc.base.HostedTestBase;
-import com.autonomy.abc.base.IndexTearDownStrategy;
+import com.autonomy.abc.fixtures.IndexTearDownStrategy;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.connections.ConnectionService;

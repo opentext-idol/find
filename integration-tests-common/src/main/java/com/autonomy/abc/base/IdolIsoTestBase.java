@@ -1,5 +1,6 @@
 package com.autonomy.abc.base;
 
+import com.autonomy.abc.fixtures.IsoPostLoginHook;
 import com.autonomy.abc.selenium.iso.IdolIsoApplication;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;

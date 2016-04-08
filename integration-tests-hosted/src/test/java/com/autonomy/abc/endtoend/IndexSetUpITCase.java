@@ -1,7 +1,7 @@
 package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.base.HostedTestBase;
-import com.autonomy.abc.base.IndexTearDownStrategy;
+import com.autonomy.abc.fixtures.IndexTearDownStrategy;
 import com.autonomy.abc.fixtures.PromotionTearDownStrategy;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;

@@ -1,7 +1,7 @@
 package com.autonomy.abc.indexes;
 
 import com.autonomy.abc.base.HostedTestBase;
-import com.autonomy.abc.base.IndexTearDownStrategy;
+import com.autonomy.abc.fixtures.IndexTearDownStrategy;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
