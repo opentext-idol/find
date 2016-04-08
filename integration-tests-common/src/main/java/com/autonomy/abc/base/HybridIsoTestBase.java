@@ -13,6 +13,5 @@ public abstract class HybridIsoTestBase extends HybridAppTestBase<IsoApplication
 
 	public HybridIsoTestBase(final TestConfig config) {
 		super(config, IsoApplication.ofType(config.getType()));
-		setInitialUser(config.getDefaultUser());
 	}
 }

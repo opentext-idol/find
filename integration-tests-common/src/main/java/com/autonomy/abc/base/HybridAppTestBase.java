@@ -25,6 +25,7 @@ public class HybridAppTestBase<A extends Application<? extends F>, F extends Ele
 
     protected HybridAppTestBase(TestConfig config, A appUnderTest) {
         super(config, appUnderTest);
+        setInitialUser(config.getDefaultUser());
     }
 
     @Parameterized.Parameters

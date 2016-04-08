@@ -50,7 +50,7 @@ public class NotificationsDropDownHostedITCase extends HostedTestBase {
     public NotificationsDropDownHostedITCase(final TestConfig config) {
         super(config);
         helper = new NotificationTestHelper(getApplication());
-        setInitialUser(config.getUser("index_tests"));
+        useIndexTestsUser();
     }
 
     @Test
