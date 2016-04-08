@@ -1,34 +1,29 @@
 package com.autonomy.abc.base;
 
+import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
+import com.autonomy.abc.fixtures.PromotionTearDownStrategy;
+import com.autonomy.abc.fixtures.UserTearDownStrategy;
 import com.autonomy.abc.selenium.application.IsoApplication;
-import com.hp.autonomy.frontend.selenium.base.TearDown;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
-import com.autonomy.abc.selenium.keywords.KeywordFilter;
+import com.hp.autonomy.frontend.selenium.base.TearDown;
 
 public enum IsoTearDown implements TearDown<HybridAppTestBase<? extends IsoApplication<?>, ?>> {
     KEYWORDS {
         @Override
         void tearDownSafely(HybridAppTestBase<? extends IsoApplication<?>, ?> test) {
-            test.getApplication().keywordService().deleteAll(KeywordFilter.ALL);
+            new KeywordTearDownStrategy().tearDown(test);
         }
     },
     PROMOTIONS {
         @Override
         void tearDownSafely(HybridAppTestBase<? extends IsoApplication<?>, ?> test) {
-            test.getApplication().promotionService().deleteAll();
+            new PromotionTearDownStrategy().tearDown(test);
         }
     },
     USERS {
         @Override
         void tearDownSafely(HybridAppTestBase<? extends IsoApplication<?>, ?> test) {
-            LoginService service = test.getApplication().loginService();
-            if (service.getCurrentUser() == null) {
-                service.login(test.getInitialUser());
-            } else if (!service.getCurrentUser().equals(test.getInitialUser())) {
-                service.logout();
-                service.login(test.getInitialUser());
-            }
-            test.getApplication().userService().deleteOtherUsers();
+            new UserTearDownStrategy(test.getInitialUser()).tearDown(test);
         }
     };
 

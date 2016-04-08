@@ -1,4 +1,4 @@
-package com.autonomy.abc.base;
+package com.autonomy.abc.fixtures;
 
 import com.autonomy.abc.selenium.actions.Command;
 import com.autonomy.abc.selenium.actions.NullCommand;

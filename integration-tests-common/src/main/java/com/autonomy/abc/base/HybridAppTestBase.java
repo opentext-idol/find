@@ -1,6 +1,7 @@
 package com.autonomy.abc.base;
 
 import com.autonomy.abc.config.SOConfigLocator;
+import com.autonomy.abc.fixtures.HybridTestSetupStrategy;
 import com.autonomy.abc.selenium.actions.Command;
 import com.autonomy.abc.selenium.actions.NullCommand;
 import com.hp.autonomy.frontend.selenium.application.Application;
