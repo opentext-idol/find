@@ -1,6 +1,10 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.users.IdolIsoNewUser;
+import com.autonomy.abc.selenium.users.IdolIsoReplacementAuth;
+import com.autonomy.abc.selenium.users.IdolUserCreationModal;
+import com.autonomy.abc.selenium.users.IdolUsersPage;
+import com.autonomy.abc.shared.UserTestHelper;
 import com.autonomy.abc.shared.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -31,10 +35,12 @@ import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
+    private UserTestHelper helper;
     private IdolUsersPage usersPage;
 
     public UsersPageOnPremITCase(TestConfig config) {
         super(config);
+        helper = new UserTestHelper(getApplication(), config);
     }
 
     @Before
@@ -44,7 +50,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
 
     @Test
     public void testAnyUserCanNotAccessConfigPage() {
-        signUpAndLoginAs(aNewUser);
+        this.helper.signUpAndLoginAs(aNewUser, getWindow());
 
         String baseUrl = getAppUrl();
         baseUrl = baseUrl.replace("/p/","/config");
@@ -55,7 +61,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
 
     @Test
     public void testUserCannotAccessUsersPageOrSettingsPage() {
-        signUpAndLoginAs(aNewUser);
+        this.helper.signUpAndLoginAs(aNewUser, getWindow());
 
         getDriver().get(getAppUrl() + "settings");
         Waits.loadOrFadeWait();
@@ -70,15 +76,15 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
 
     @Test
     public void testChangeOfPasswordWorksOnLogin() {
-        User initialUser = singleSignUp();
+        User initialUser = helper.singleSignUp(aNewUser);
         User updatedUser = usersPage.replaceAuthFor(initialUser, new IdolIsoReplacementAuth("bob"));
 
-        logoutAndNavigateToWebApp();
-        loginAs(initialUser);
+        this.helper.logoutAndNavigateToWebApp(getWindow());
+        getApplication().loginService().login(initialUser);
         Waits.loadOrFadeWait();
         assertThat("old password does not work", getWindow(), urlContains("login"));
 
-        loginAs(updatedUser);
+        getApplication().loginService().login(updatedUser);
         Waits.loadOrFadeWait();
         assertThat("new password works", getWindow(), url(not(containsString("login"))));
     }
@@ -86,7 +92,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
     @Test
     public void testEditUserPassword() {
         assumeThat(getConfig().getType(), is(ApplicationType.ON_PREM));
-        User user = singleSignUp();
+        User user = helper.singleSignUp(aNewUser);
 
         Editable passwordBox = usersPage.passwordBoxFor(user);
         passwordBox.setValueAsync("");
@@ -132,20 +138,20 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
     @Test
     //TO BE MOVED BACK TO COMMON IF FUNCTIONALITY IS IMPLEMENTED
     public void testWontDeleteSelf() {
-        assertThat(usersPage.deleteButton(getLoginService().getCurrentUser()), hasClass("not-clickable"));
+        assertThat(usersPage.deleteButton(getApplication().loginService().getCurrentUser()), hasClass("not-clickable"));
     }
 
     @Test
     public void testXmlHttpRequestToUserConfigBlockedForInadequatePermissions() throws UnhandledAlertException {
-        signUpAndLoginAs(aNewUser);
+        this.helper.signUpAndLoginAs(aNewUser, getWindow());
 
         final JavascriptExecutor executor = (JavascriptExecutor) getDriver();
         executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function(xhr) {$('body').attr('data-status', xhr.status);});");
         Waits.loadOrFadeWait();
         Assert.assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
 
-        logoutAndNavigateToWebApp();
-        loginAs(getConfig().getDefaultUser());
+        this.helper.logoutAndNavigateToWebApp(getWindow());
+        getApplication().loginService().login(getConfig().getDefaultUser());
         Waits.loadOrFadeWait();
         assertThat(getWindow(), url(not(containsString("login"))));
 
@@ -165,12 +171,12 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
 
     @Test
     public void testLogOutAndLogInWithNewUser() {
-        signUpAndLoginAs(aNewUser);
+        this.helper.signUpAndLoginAs(aNewUser, getWindow());
     }
 
     @Test
     public void testAddStupidlyLongUsername() {
         final String longUsername = StringUtils.repeat("a", 100);
-        verifyCreateDeleteInTable(new IdolIsoNewUser(longUsername, "b"));
+        this.helper.verifyCreateDeleteInTable(new IdolIsoNewUser(longUsername, "b"));
     }
 }

@@ -1,16 +1,17 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
+import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.users.UserNotCreatedException;
+import com.autonomy.abc.shared.UserTestHelper;
+import com.autonomy.abc.shared.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
-import com.autonomy.abc.selenium.error.Errors;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
-import com.autonomy.abc.selenium.users.UserNotCreatedException;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import com.autonomy.abc.shared.UsersPageTestBase;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -32,9 +33,12 @@ import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 
-public class UsersPageITCase extends UsersPageTestBase {
+public class UsersPageITCase extends UsersPageTestBase<NewUser> {
+	private UserTestHelper helper;
+
 	public UsersPageITCase(final TestConfig config) {
 		super(config);
+		helper = new UserTestHelper(getApplication(), getConfig());
 	}
 
 	@Test
@@ -47,10 +51,10 @@ public class UsersPageITCase extends UsersPageTestBase {
 		usersPage.userCreationModal().close();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
-		deleteAndVerify(admin);
+		this.helper.deleteAndVerify(admin);
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 1));
 
-		deleteAndVerify(user);
+		this.helper.deleteAndVerify(user);
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers));
 
 		usersPage.createUserButton().click();
@@ -70,7 +74,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		assertThat(usersPage, modalIsDisplayed());
 		User original = usersPage.addNewUser(aNewUser, Role.USER);
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
-		verifyUserAdded(newUserModal, original);
+		this.helper.verifyUserAdded(newUserModal, original);
 
 		try {
 			usersPage.addNewUser(aNewUser, Role.USER);
@@ -104,10 +108,10 @@ public class UsersPageITCase extends UsersPageTestBase {
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 
 		User admin = usersPage.addNewUser(aNewUser, Role.ADMIN);
-		verifyUserAdded(newUserModal, admin);
+		this.helper.verifyUserAdded(newUserModal, admin);
 
 		User user = usersPage.addNewUser(newUser2, Role.USER);
-		verifyUserAdded(newUserModal, user);
+		this.helper.verifyUserAdded(newUserModal, user);
 
 		usersPage.userCreationModal().close();
 		List<String> usernames = usersPage.getUsernames();
@@ -120,7 +124,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 	@Test
 	public void testEditUserType() {
-		User user = singleSignUp();
+		User user = helper.singleSignUp(aNewUser);
 
 		userService.changeRole(user, Role.ADMIN);
 		Waits.loadOrFadeWait();
@@ -149,7 +153,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 	@Test
 	public void testCreateUserPermissionNoneAndTestLogin() throws InterruptedException {
-		User user = singleSignUp();
+		User user = helper.singleSignUp(aNewUser);
 
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(user.getRole()));
@@ -160,10 +164,10 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		Waits.waitForGritterToClear();
 
-		logoutAndNavigateToWebApp();
+		this.helper.logoutAndNavigateToWebApp(getWindow());
 
 		try {
-			loginAs(user);
+			getApplication().loginService().login(user);
 		} catch (NoSuchElementException e) {
 			try {
 				if (getDriver().findElement(By.linkText("Google")).isDisplayed()) {

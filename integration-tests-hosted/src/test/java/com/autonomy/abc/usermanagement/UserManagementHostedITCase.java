@@ -1,23 +1,23 @@
 package com.autonomy.abc.usermanagement;
 
-import com.autonomy.abc.selenium.users.HsodUserService;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.hp.autonomy.frontend.selenium.control.Window;
-import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.error.ErrorPage;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.HsodFind;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.shared.UserTestHelper;
+import com.autonomy.abc.shared.UsersPageTestBase;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import com.autonomy.abc.shared.UsersPageTestBase;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,13 +37,14 @@ import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
-
+    private UserTestHelper helper;
     private HsodUserService userService;
     private HsodUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
 
     public UserManagementHostedITCase(TestConfig config) {
         super(config);
+        helper = new UserTestHelper(getApplication(), config);
     }
 
     @Before
@@ -140,7 +141,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
         NewUser newUser = getConfig().generateNewUser();
 
         final User user = userService.createNewUser(newUser,Role.USER);
-        authenticate(user);
+        getConfig().getAuthenticationStrategy().authenticate(user);
 
 
         waitForUserConfirmed(user);
@@ -159,7 +160,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
                 LOGGER.info("User reset their authentication notification shown");
             }
         }.start();
-        authenticate(user);
+        getConfig().getAuthenticationStrategy().authenticate(user);
     }
 
     @Test
@@ -169,7 +170,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
         userService.changeRole(user, Role.NONE);
         verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
 
-        authenticate(user);
+        getConfig().getAuthenticationStrategy().authenticate(user);
         waitForUserConfirmed(user);
         verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
 
@@ -224,7 +225,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
     @Test
     public void testAddingAndAuthenticatingUser(){
         final User user = userService.createNewUser(getConfig().generateNewUser(), Role.USER);
-        authenticate(user);
+        getConfig().getAuthenticationStrategy().authenticate(user);
 
         waitForUserConfirmed(user);
         verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
@@ -264,7 +265,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
     @KnownBug("HOD-532")
     public void testLogOutAndLogInWithNewUser() {
         final User user = userService.createNewUser(getConfig().generateNewUser(), Role.ADMIN);
-        authenticate(user);
+        getConfig().getAuthenticationStrategy().authenticate(user);
 
         getApplication().loginService().logout();
         HsodFind findApp = new HsodFind();
@@ -283,14 +284,14 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
     @Test
     public void testAddStupidlyLongUsername() {
         final String longUsername = StringUtils.repeat("a", 100);
-        verifyCreateDeleteInTable(new HsodNewUser(longUsername, "hodtestqa401+longusername@gmail.com"));
+        helper.verifyCreateDeleteInTable(new HsodNewUser(longUsername, "hodtestqa401+longusername@gmail.com"));
     }
 
     @Test
     @KnownBug("HOD-532")
     public void testUserConfirmedWithoutRefreshing(){
         final User user = userService.createNewUser(getConfig().generateNewUser(), Role.USER);
-        authenticate(user);
+        getConfig().getAuthenticationStrategy().authenticate(user);
 
         new WebDriverWait(getDriver(), 30).pollingEvery(5,TimeUnit.SECONDS).until(new ExpectedCondition<Boolean>() {
             @Override
