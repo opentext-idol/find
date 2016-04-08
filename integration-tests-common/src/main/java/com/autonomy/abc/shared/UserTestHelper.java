@@ -48,7 +48,7 @@ public class UserTestHelper {
         try {
             authStrategy.cleanUp(session.getDriver());
         } catch (TimeoutException e) {
-            LoggerFactory.getLogger(UsersPageTestBase.class).warn("Could not tear down");
+            LoggerFactory.getLogger(UserTestHelper.class).warn("Could not tear down");
         } finally {
             secondWindow.close();
             firstWindow.activate();

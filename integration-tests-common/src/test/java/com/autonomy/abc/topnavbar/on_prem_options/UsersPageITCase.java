@@ -1,9 +1,12 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
+import com.autonomy.abc.base.SOTearDown;
+import com.autonomy.abc.base.SOTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.users.UserNotCreatedException;
+import com.autonomy.abc.selenium.users.UserService;
+import com.autonomy.abc.selenium.users.UsersPage;
 import com.autonomy.abc.shared.UserTestHelper;
-import com.autonomy.abc.shared.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
@@ -12,6 +15,8 @@ import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -33,12 +38,39 @@ import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 
-public class UsersPageITCase extends UsersPageTestBase<NewUser> {
-	private UserTestHelper helper;
+public class UsersPageITCase extends SOTestBase {
+	private final int defaultNumberOfUsers = isHosted() ? 0 : 1;
+	private final NewUser aNewUser;
+	private final NewUser newUser2;
+	private final UserTestHelper helper;
+
+	private UsersPage usersPage;
+	private UserService<?> userService;
 
 	public UsersPageITCase(final TestConfig config) {
 		super(config);
+		aNewUser = config.getNewUser("james");
+		newUser2 = config.getNewUser("john");
 		helper = new UserTestHelper(getApplication(), getConfig());
+	}
+
+	@Before
+	public void setUp() {
+		userService = getApplication().userService();
+		usersPage = userService.goToUsers();
+		userService.deleteOtherUsers();
+	}
+
+	@After
+	public void emailTearDown() {
+		if (hasSetUp() && isHosted()) {
+			helper.deleteEmails(getMainSession());
+		}
+	}
+
+	@After
+	public void userTearDown() {
+		SOTearDown.USERS.tearDown(this);
 	}
 
 	@Test

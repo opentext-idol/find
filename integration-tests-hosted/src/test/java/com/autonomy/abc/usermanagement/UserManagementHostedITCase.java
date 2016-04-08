@@ -1,12 +1,13 @@
 package com.autonomy.abc.usermanagement;
 
+import com.autonomy.abc.base.HostedTestBase;
+import com.autonomy.abc.base.SOTearDown;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.error.ErrorPage;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.HsodFind;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.shared.UserTestHelper;
-import com.autonomy.abc.shared.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
@@ -19,13 +20,12 @@ import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang.StringUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -36,21 +36,36 @@ import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.contains
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
-    private UserTestHelper helper;
+public class UserManagementHostedITCase extends HostedTestBase {
+    private final NewUser aNewUser;
+    private final UserTestHelper helper;
+
     private HsodUserService userService;
     private HsodUsersPage usersPage;
-    private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
 
     public UserManagementHostedITCase(TestConfig config) {
         super(config);
+        aNewUser = config.getNewUser("james");
         helper = new UserTestHelper(getApplication(), config);
     }
 
     @Before
-    public void hostedSetUp(){
-        userService = (HsodUserService) super.userService;
-        usersPage = (HsodUsersPage) super.usersPage;
+    public void setUp() {
+        userService = getApplication().userService();
+        usersPage = userService.goToUsers();
+        userService.deleteOtherUsers();
+    }
+
+    @After
+    public void emailTearDown() {
+        if (hasSetUp()) {
+            helper.deleteEmails(getMainSession());
+        }
+    }
+
+    @After
+    public void userTearDown() {
+        SOTearDown.USERS.tearDown(this);
     }
 
     @Test
@@ -315,7 +330,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HsodNewUser> {
         @Override
         public Boolean apply(WebDriver driver) {
             getWindow().refresh();
-            usersPage = (HsodUsersPage) getElementFactory().getUsersPage();
+            usersPage = getElementFactory().getUsersPage();
             Waits.loadOrFadeWait();
             return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
         }

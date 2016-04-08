@@ -1,11 +1,9 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.selenium.users.IdolIsoNewUser;
-import com.autonomy.abc.selenium.users.IdolIsoReplacementAuth;
-import com.autonomy.abc.selenium.users.IdolUserCreationModal;
-import com.autonomy.abc.selenium.users.IdolUsersPage;
+import com.autonomy.abc.base.IdolIsoTestBase;
+import com.autonomy.abc.base.SOTearDown;
+import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.shared.UserTestHelper;
-import com.autonomy.abc.shared.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Editable;
@@ -14,6 +12,7 @@ import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,18 +33,28 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
-    private UserTestHelper helper;
+public class UsersPageOnPremITCase extends IdolIsoTestBase {
+    private final NewUser aNewUser;
+    private final UserTestHelper helper;
+
     private IdolUsersPage usersPage;
 
     public UsersPageOnPremITCase(TestConfig config) {
         super(config);
+        aNewUser = config.getNewUser("james");
         helper = new UserTestHelper(getApplication(), config);
     }
 
     @Before
-    public void pageSetUp() {
-        usersPage = (IdolUsersPage) userService.getUsersPage();
+    public void setUp() {
+        IdolIsoUserService userService = getApplication().userService();
+        usersPage = userService.goToUsers();
+        userService.deleteOtherUsers();
+    }
+
+    @After
+    public void userTearDown() {
+        SOTearDown.USERS.tearDown(this);
     }
 
     @Test
