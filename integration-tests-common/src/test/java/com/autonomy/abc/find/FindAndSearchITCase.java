@@ -1,21 +1,21 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.hsod.HSODApplication;
+import com.autonomy.abc.selenium.hsod.IsoHsodApplication;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -46,7 +46,7 @@ public class FindAndSearchITCase extends FindTestBase {
     private KeywordService keywordService;
     private Window searchWindow;
     private Window findWindow;
-    private HSODApplication searchApp = new HSODApplication();
+    private IsoHsodApplication searchApp = new IsoHsodApplication();
 
     public FindAndSearchITCase(TestConfig config) {
         super(config);

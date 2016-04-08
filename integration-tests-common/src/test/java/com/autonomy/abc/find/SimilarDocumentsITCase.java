@@ -1,6 +1,7 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
+import com.autonomy.abc.selenium.hsod.IsoHsodApplication;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
@@ -11,7 +12,6 @@ import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.SimilarDocumentsView;
-import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.promotions.HsodPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -145,7 +145,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     public void testPromotedDocuments(){
         Window findWindow = getWindow();
 
-        HSODApplication searchApp = new HSODApplication();
+        IsoHsodApplication searchApp = new IsoHsodApplication();
         Window searchWindow = launchInNewWindow(searchApp);
         searchWindow.activate();
         Waits.loadOrFadeWait();
