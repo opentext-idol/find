@@ -1,12 +1,7 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.hp.autonomy.frontend.selenium.element.Editable;
-import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.promotions.HsodPromotionService;
 import com.autonomy.abc.selenium.promotions.HsodPromotionsPage;
@@ -15,7 +10,12 @@ import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SOSearchResult;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.shared.SharedTriggerTests;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.element.Editable;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -24,15 +24,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.autonomy.abc.matchers.PromotionsMatchers.promotionsList;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsTextIgnoringCase;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTextThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
-public class StaticPromotionsITCase extends HostedTestBase {
+public class StaticPromotionsITCase extends IsoHsodTestBase {
 
     private HsodPromotionsPage promotionsPage;
     private PromotionsDetailPage promotionsDetailPage;

@@ -1,12 +1,12 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.base.IsoTearDown;
-import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.shared.SharedTriggerTests;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +20,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
 
-public class CreateStaticPromotionsITCase extends HostedTestBase {
+public class CreateStaticPromotionsITCase extends IsoHsodTestBase {
     private HsodCreateNewPromotionsPage createPromotionsPage;
     private HsodPromotionService promotionService;
     private Wizard wizard;

@@ -1,13 +1,13 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.base.IsoTearDown;
-import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.promotions.HsodCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
@@ -22,7 +22,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disable
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class CreateNewDynamicPromotionsHostedITCase extends HostedTestBase {
+public class CreateNewDynamicPromotionsHostedITCase extends IsoHsodTestBase {
     private TriggerForm triggerForm;
 
     private SearchService searchService;

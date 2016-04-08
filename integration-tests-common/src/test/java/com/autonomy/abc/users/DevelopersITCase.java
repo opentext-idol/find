@@ -1,9 +1,9 @@
-package com.autonomy.abc.usermanagement;
+package com.autonomy.abc.users;
 
-import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.selenium.users.HsodDeveloperService;
 import com.autonomy.abc.selenium.users.HsodDevelopersPage;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.users.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +11,7 @@ import org.junit.Test;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class DevelopersITCase extends HostedTestBase {
+public class DevelopersITCase extends IsoHsodTestBase {
     private HsodDeveloperService developerService;
     private HsodDevelopersPage developersPage;
 

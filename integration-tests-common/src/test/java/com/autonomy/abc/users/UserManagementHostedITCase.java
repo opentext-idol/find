@@ -1,6 +1,6 @@
-package com.autonomy.abc.usermanagement;
+package com.autonomy.abc.users;
 
-import com.autonomy.abc.base.HostedTestBase;
+import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.error.ErrorPage;
@@ -36,7 +36,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.contains
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class UserManagementHostedITCase extends HostedTestBase {
+public class UserManagementHostedITCase extends IsoHsodTestBase {
     private final NewUser aNewUser;
     private final UserTestHelper helper;
 

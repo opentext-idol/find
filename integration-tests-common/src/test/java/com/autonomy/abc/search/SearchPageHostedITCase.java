@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.base.HostedTestBase;
+import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class SearchPageHostedITCase extends HostedTestBase {
+public class SearchPageHostedITCase extends IsoHsodTestBase {
 	private SearchPage searchPage;
 	private SearchService searchService;
 

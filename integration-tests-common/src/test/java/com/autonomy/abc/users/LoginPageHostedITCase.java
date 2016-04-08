@@ -1,19 +1,19 @@
-package com.autonomy.abc.topnavbar.login;
+package com.autonomy.abc.users;
 
-import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
-import com.hp.autonomy.frontend.selenium.application.Application;
+import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.selenium.devconsole.DevConsole;
 import com.autonomy.abc.selenium.devconsole.DevConsoleHomePage;
 import com.autonomy.abc.selenium.devconsole.HSODLandingPage;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.HsodFind;
-import com.autonomy.abc.selenium.hsod.HSODApplication;
+import com.autonomy.abc.selenium.hsod.IsoHsodApplication;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
-import com.hp.autonomy.frontend.selenium.users.User;
+import com.hp.autonomy.frontend.selenium.application.Application;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -29,8 +29,8 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 /*
  * TODO Possibly make sure a gritter with 'Signed in' comes up, correct colour circle etc. May be difficult to do considering it occurs during tryLogIn()
  */
-public class LoginPageHostedITCase extends HostedTestBase {
-    private HSODApplication searchApp;
+public class LoginPageHostedITCase extends IsoHsodTestBase {
+    private IsoHsodApplication searchApp;
     private HsodFind findApp;
     private DevConsole devConsole;
 

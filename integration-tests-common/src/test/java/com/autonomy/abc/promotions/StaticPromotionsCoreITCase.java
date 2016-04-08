@@ -1,13 +1,13 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.base.IsoTearDown;
-import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.promotions.HsodPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 
 @Category(CoreFeature.class)
-public class StaticPromotionsCoreITCase extends HostedTestBase {
+public class StaticPromotionsCoreITCase extends IsoHsodTestBase {
     private HsodPromotionService promotionService;
     private SearchService searchService;
 
