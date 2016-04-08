@@ -1,15 +1,14 @@
 package com.autonomy.abc.base;
 
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 
 @Ignore
@@ -21,10 +20,8 @@ public abstract class HostedTestBase extends SOTestBase {
 
     @Parameterized.Parameters
     public static Iterable<Object[]> parameters() throws IOException {
-        final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.HOSTED);
-        return parameters(applicationTypes);
+        return parameters(Collections.singleton(ApplicationType.HOSTED));
     }
-
 
     @Override
     public HSODElementFactory getElementFactory() {
