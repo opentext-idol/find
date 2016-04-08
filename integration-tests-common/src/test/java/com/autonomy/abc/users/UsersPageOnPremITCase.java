@@ -1,4 +1,4 @@
-package com.autonomy.abc.topnavbar.on_prem_options;
+package com.autonomy.abc.users;
 
 import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.fixtures.UserTearDownStrategy;
