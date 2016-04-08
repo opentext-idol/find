@@ -16,7 +16,6 @@ import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
@@ -29,12 +28,13 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 /*
  * TODO Possibly make sure a gritter with 'Signed in' comes up, correct colour circle etc. May be difficult to do considering it occurs during tryLogIn()
  */
-public class LoginPageHostedITCase extends IsoHsodTestBase {
+// these tests check that logging in/out of one app also logs in/out of another
+public class SingleSignOnITCase extends IsoHsodTestBase {
     private IsoHsodApplication searchApp;
     private HsodFind findApp;
     private DevConsole devConsole;
 
-    public LoginPageHostedITCase(TestConfig config) {
+    public SingleSignOnITCase(TestConfig config) {
         super(config);
         setInitialUser(User.NULL);
     }
@@ -49,51 +49,6 @@ public class LoginPageHostedITCase extends IsoHsodTestBase {
         getElementFactory().getLoginPage();
     }
 
-    @Test   @Ignore("No account")
-    public void testAPIKeyLogin(){
-       testLogin("api_key");
-    }
-
-    @Test
-    public void testGoogleLogin(){
-        testLogin("google");
-    }
-
-    @Test
-    public void testTwitterLogin(){
-        testLogin("twitter");
-    }
-
-    @Test
-    public void testFacebookLogin(){
-        testLogin("facebook");
-    }
-
-    @Test
-    public void testYahooLogin(){
-        testLogin("yahoo");
-    }
-
-    @Test   @Ignore("No account")
-    public void testOpenIDLogin(){
-        testLogin("open_id");
-    }
-
-    @Test
-    public void testHPPassportLogin(){
-        testLogin("hp_passport");
-    }
-
-    private void testLogin(String account) {
-        try {
-            searchApp.loginService().login(getConfig().getUser(account));
-            verifyOn(searchApp, PromotionsPage.class);
-        } catch (Exception e) {
-            throw new AssertionError("unable to log in as " + account, e);
-        }
-    }
-
-    // these tests check that logging in/out of one app also logs in/out of another
     @Test
     public void testLogInSearchOptimizerToFind(){
         verifyLogin(searchApp, PromotionsPage.class);

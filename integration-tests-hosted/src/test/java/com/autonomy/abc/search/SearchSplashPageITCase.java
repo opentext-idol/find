@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.base.IsoHsodTestBase;
+import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.SideNavBar;
@@ -20,7 +20,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class SearchSplashPageITCase extends IsoHsodTestBase {
+public class SearchSplashPageITCase extends HostedTestBase {
     private TopNavBar topNavBar;
     private SideNavBar sideNavBar;
     private SearchPage searchPage;
