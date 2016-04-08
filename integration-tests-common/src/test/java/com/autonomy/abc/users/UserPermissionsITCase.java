@@ -3,7 +3,6 @@ package com.autonomy.abc.users;
 import com.autonomy.abc.base.HybridIsoTestBase;
 import com.autonomy.abc.fixtures.EmailTearDownStrategy;
 import com.autonomy.abc.fixtures.UserTearDownStrategy;
-import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.hsod.IsoHsodApplication;
@@ -34,8 +33,6 @@ import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,23 +100,6 @@ public class UserPermissionsITCase extends HybridIsoTestBase {
     @After
     public void emailTearDown() {
         new EmailTearDownStrategy(getMainSession(), authStrategy).tearDown(this);
-    }
-
-    @Test
-    public void testCannotNavigate(){
-        verifyThat(userElementFactory.getPromotionsPage(), displayed());
-
-        deleteUser();
-
-        try {
-            userApp.switchTo(AnalyticsPage.class);
-        } catch (StaleElementReferenceException | NoSuchElementException | TimeoutException e){
-            //Expected as you'll be logged out
-        }
-
-        new WebDriverWait(userSession.getDriver(), 10).until(ExpectedConditions.titleIs("Haven Search OnDemand - Error"));
-
-        verifyAuthFailed();
     }
 
     @Test
