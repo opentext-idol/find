@@ -1,39 +1,20 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.base.SOTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
+import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.selenium.iso.IsoAboutPage;
-import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 
 
-public class AboutPageITCase extends SOTestBase {
+public class AboutPageITCase extends IdolIsoTestBase {
+	private IsoAboutPage aboutPage;
 
 	public AboutPageITCase(final TestConfig config) {
 		super(config);
-	}
-
-	private IsoAboutPage aboutPage;
-
-	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws IOException {
-		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
-		return parameters(applicationTypes);
-	}
-
-	@Override
-	public IdolIsoElementFactory getElementFactory() {
-		return (IdolIsoElementFactory) super.getElementFactory();
 	}
 
 	@Before

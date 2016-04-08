@@ -1,18 +1,18 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.base.SOTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
-import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.element.Pagination;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -29,7 +29,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.contains
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class SearchLanguageITCase extends SOTestBase {
+public class SearchLanguageITCase extends IdolIsoTestBase {
     private SearchService searchService;
     private SearchPage searchPage;
 

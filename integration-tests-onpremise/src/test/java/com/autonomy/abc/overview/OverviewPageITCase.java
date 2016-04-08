@@ -1,49 +1,37 @@
 package com.autonomy.abc.overview;
 
-import com.autonomy.abc.base.SOTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.selenium.analytics.IsoOverviewPage;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.TriggerForm;
-import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.*;
 
-public class OverviewPageITCase extends SOTestBase {
+public class OverviewPageITCase extends IdolIsoTestBase {
 
 	public OverviewPageITCase(final TestConfig config) {
 		super(config);
 	}
 
 	private IsoOverviewPage overviewPage;
-
-	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws IOException {
-		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
-		return parameters(applicationTypes);
-	}
-
-	@Override
-	public IdolIsoElementFactory getElementFactory() {
-		return (IdolIsoElementFactory) super.getElementFactory();
-	}
 
 	@Before
 	public void setUp() {

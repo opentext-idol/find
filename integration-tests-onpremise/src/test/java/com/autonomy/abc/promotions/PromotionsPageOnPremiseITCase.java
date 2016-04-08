@@ -1,9 +1,6 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.base.SOTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.element.Editable;
-import com.hp.autonomy.frontend.selenium.element.FormInput;
+import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.selenium.promotions.IdolPromotionService;
 import com.autonomy.abc.selenium.promotions.IdolPromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -12,6 +9,9 @@ import com.autonomy.abc.selenium.query.FieldTextFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.Editable;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 
-public class PromotionsPageOnPremiseITCase extends SOTestBase {
+public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 
 	public PromotionsPageOnPremiseITCase(final TestConfig config) {
 		super(config);
@@ -39,7 +39,7 @@ public class PromotionsPageOnPremiseITCase extends SOTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		promotionService = (IdolPromotionService) getApplication().promotionService();
+		promotionService = getApplication().promotionService();
         searchService = getApplication().searchService();
 
 		promotionService.deleteAll();

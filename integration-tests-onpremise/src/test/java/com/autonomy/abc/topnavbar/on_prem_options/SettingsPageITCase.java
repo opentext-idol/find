@@ -1,21 +1,18 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.config.SOConfigLocator;
-import com.autonomy.abc.base.SOTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
+import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.config.IdolHostAndPorts;
-import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
+import com.autonomy.abc.config.SOConfigLocator;
 import com.autonomy.abc.selenium.iso.IsoSettingsPage;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
@@ -26,7 +23,7 @@ import static org.hamcrest.Matchers.is;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 
-public class SettingsPageITCase extends SOTestBase {
+public class SettingsPageITCase extends IdolIsoTestBase {
 	private final static Map<IsoSettingsPage.Panel, IdolHostAndPorts> HOSTS_AND_PORTS;
 	private final static EnumSet<IsoSettingsPage.Panel> SERVER_PANELS = EnumSet.of(IsoSettingsPage.Panel.COMMUNITY, IsoSettingsPage.Panel.CONTENT, IsoSettingsPage.Panel.QMS, IsoSettingsPage.Panel.QMS_AGENTSTORE, IsoSettingsPage.Panel.STATSSERVER, IsoSettingsPage.Panel.VIEW);
 
@@ -44,17 +41,6 @@ public class SettingsPageITCase extends SOTestBase {
 
 	public SettingsPageITCase(final TestConfig config) {
 		super(config);
-	}
-
-	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws IOException {
-		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
-		return parameters(applicationTypes);
-	}
-
-	@Override
-	public IdolIsoElementFactory getElementFactory() {
-		return (IdolIsoElementFactory) super.getElementFactory();
 	}
 
 	@Before

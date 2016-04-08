@@ -1,7 +1,6 @@
 package com.autonomy.abc.topnavbar.login;
 
-import com.autonomy.abc.base.SOTestBase;
-import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
+import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.selenium.users.IdolIsoAccount;
 import com.autonomy.abc.selenium.users.IdolIsoLoginPage;
 import com.autonomy.abc.selenium.users.IdolIsoNewUser;
@@ -32,19 +31,12 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasAttr
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
-public class LoginPageOnPremiseITCase extends SOTestBase {
+public class LoginPageOnPremiseITCase extends IdolIsoTestBase {
+	private IdolIsoLoginPage loginPage;
 
 	public LoginPageOnPremiseITCase(final TestConfig config) {
 		super(config);
 	}
-
-	private IdolIsoLoginPage loginPage;
-
-	@Override
-	public IdolIsoElementFactory getElementFactory() {
-		return (IdolIsoElementFactory) super.getElementFactory();
-	}
-
 
 	@Before
 	public void setUp() throws InterruptedException {

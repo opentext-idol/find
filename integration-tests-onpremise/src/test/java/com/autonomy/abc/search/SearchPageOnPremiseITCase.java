@@ -1,7 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.base.SOTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -14,6 +13,7 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class SearchPageOnPremiseITCase extends SOTestBase {
+public class SearchPageOnPremiseITCase extends IdolIsoTestBase {
 
     private SearchService searchService;
     private SearchPage searchPage;

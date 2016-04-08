@@ -1,14 +1,13 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.base.SOTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.element.DatePicker;
-import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
+import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.time.DateUtils;
@@ -32,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class SchedulePromotionsITCase extends SOTestBase {
+public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 	public SchedulePromotionsITCase(final TestConfig config) {
 		super(config);
@@ -43,14 +42,11 @@ public class SchedulePromotionsITCase extends SOTestBase {
 	private DatePicker datePicker;
 	private final Pattern pattern = Pattern.compile("\\s+");
     private PromotionService promotionService;
-	private IdolIsoElementFactory elementFactory;
 
 	@Before
 	public void setUp() throws MalformedURLException, InterruptedException {
         promotionService = getApplication().promotionService();
-
-		IdolPromotionsPage promotionsPage = (IdolPromotionsPage) promotionService.deleteAll();
-		elementFactory = (IdolIsoElementFactory) getElementFactory();
+		promotionService.deleteAll();
 	}
 
 	@Test
@@ -58,11 +54,11 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "wand magic spells");
         promotionService.setUpPromotion(spotlight, "wizard", 4);
 		promotionService.goToDetails(spotlight);
-		IdolPromotionsDetailPage promotionsDetailPage = elementFactory.getPromotionsDetailPage();
+		IdolPromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 		promotionsDetailPage.schedulePromotion();
 
 		try {
-			schedulePage = elementFactory.getSchedulePage();
+			schedulePage = getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -145,7 +141,7 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		Waits.loadOrFadeWait();
 
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
-		promotionsDetailPage = elementFactory.getPromotionsDetailPage();
+		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 		assertThat("Correct Scheduling text not visible", promotionsDetailPage.getText(), containsString("The promotion is scheduled to run starting on " + startDate + " for the duration of 4 days, ending on " + endDate));
 		assertThat("Correct Scheduling text not visible", promotionsDetailPage.getText(), containsString("This promotion schedule will run monthly until " + finalDate));
 
@@ -155,14 +151,14 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		assertThat("promotions aren't scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(false));
 
 		promotionService.goToDetails("magic");
-		promotionsDetailPage = elementFactory.getPromotionsDetailPage();
+		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 		promotionsDetailPage.schedulePromotion();
 		Waits.loadOrFadeWait();
-		schedulePage = elementFactory.getSchedulePage();
+		schedulePage = getElementFactory().getSchedulePage();
 		schedulePage.alwaysActive().click();
 		schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
 		Waits.loadOrFadeWait();
-		promotionsDetailPage = elementFactory.getPromotionsDetailPage();
+		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 		assert(promotionsDetailPage.getText().contains("The promotion is always active"));
 
 		getElementFactory().getTopNavBar().search("magic");
@@ -176,10 +172,10 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "\"ice cream\" chips");
 		promotionService.setUpPromotion(spotlight, "wizard", 4);
 		promotionService.goToDetails(spotlight);
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 
 		try {
-			schedulePage = elementFactory.getSchedulePage();
+			schedulePage = getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -270,7 +266,7 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		Waits.loadOrFadeWait();
 		schedulePage.never().click();
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
-		PromotionsDetailPage promotionsDetailPage = elementFactory.getPromotionsDetailPage();
+		PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 		assertThat("Correct promotion summary text not present", promotionsDetailPage.getText(), containsString("The promotion is scheduled to run starting on " + SchedulePage.parseDateForPromotionsPage(startDate) + " for the duration of 2 days, ending on " + SchedulePage.parseDateForPromotionsPage(endDate)));
 		assertThat("Correct promotion summary text not present", promotionsDetailPage.getText(), containsString("This promotion schedule will run yearly forever."));
 
@@ -280,8 +276,8 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		assertThat("promotions aren't scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(false));
 
 		promotionService.goToDetails("chips");
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
-		schedulePage = elementFactory.getSchedulePage();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
+		schedulePage = getElementFactory().getSchedulePage();
 		Waits.loadOrFadeWait();
 		assertThat("Schedule should be selected due to prepopulated schedule", schedulePage.schedule().getAttribute("class"), containsString("progressive-disclosure-selection"));
 
@@ -318,7 +314,7 @@ public class SchedulePromotionsITCase extends SOTestBase {
 
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		Waits.loadOrFadeWait();
-		promotionsDetailPage = elementFactory.getPromotionsDetailPage();
+		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 		assertThat("Correct schedule summary text not visible", promotionsDetailPage.getText(), containsString("The promotion is scheduled to run starting on " + SchedulePage.parseDateForPromotionsPage(startDate) + " for the duration of 4 days, ending on " + SchedulePage.parseDateForPromotionsPage(endDate)));
 		assertThat("Correct schedule summary text not visible", promotionsDetailPage.getText(), containsString("This promotion schedule will run yearly until " + SchedulePage.parseDateForPromotionsPage(finalDate)));
 
@@ -333,9 +329,9 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Korea".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
 		promotionService.setUpPromotion(spotlight, new Query("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
 		promotionService.goToDetails(spotlight);
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 		try {
-			schedulePage = elementFactory.getSchedulePage();
+			schedulePage = getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -356,9 +352,9 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Korea".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
 		promotionService.setUpPromotion(spotlight, new Query("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
 		promotionService.goToDetails(spotlight);
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 		try {
-			schedulePage = elementFactory.getSchedulePage();
+			schedulePage = getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -410,9 +406,9 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "Kaz".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
 		promotionService.setUpPromotion(spotlight, new Query("Қазақстан").withFilter(new LanguageFilter(Language.KAZAKH)), 5);
 		promotionService.goToDetails(spotlight);
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 		try {
-			schedulePage = elementFactory.getSchedulePage();
+			schedulePage = getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -468,9 +464,9 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Korea".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
 		promotionService.setUpPromotion(spotlight, new Query("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
 		promotionService.goToDetails(spotlight);
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 		try {
-			schedulePage = elementFactory.getSchedulePage();
+			schedulePage = getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -480,9 +476,9 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		final Date finalDate = DateUtils.addMonths(schedulePage.getTodayDate(), 6);
 		schedulePage.schedulePromotion(startDate, endDate, SchedulePage.Frequency.MONTHLY, finalDate);
 
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 		Waits.loadOrFadeWait();
-		schedulePage = elementFactory.getSchedulePage();
+		schedulePage = getElementFactory().getSchedulePage();
 		assertThat("Due to pre-population 'schedule' should be pre-selected", schedulePage.schedule().getAttribute("class"),containsString("progressive-disclosure-selection"));
 
 		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
@@ -509,9 +505,9 @@ public class SchedulePromotionsITCase extends SOTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Georgia".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
 		promotionService.setUpPromotion(spotlight, new Query("საქართველო").withFilter(new LanguageFilter(Language.GEORGIAN)), 4);
 		promotionService.goToDetails(spotlight);
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 		try {
-			schedulePage = elementFactory.getSchedulePage();
+			schedulePage = getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -527,8 +523,8 @@ public class SchedulePromotionsITCase extends SOTestBase {
 
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		Waits.loadOrFadeWait();
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
-		schedulePage = elementFactory.getSchedulePage();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
+		schedulePage = getElementFactory().getSchedulePage();
 		schedulePage.navigateWizardAndSetEndDate(DateUtils.addDays(schedulePage.getTodayDate(), 4));
 
 		availableFrequencies = schedulePage.getAvailableFrequencies();
@@ -544,8 +540,8 @@ public class SchedulePromotionsITCase extends SOTestBase {
 
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		Waits.loadOrFadeWait();
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
-		schedulePage = elementFactory.getSchedulePage();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
+		schedulePage = getElementFactory().getSchedulePage();
 		schedulePage.navigateWizardAndSetEndDate(DateUtils.addWeeks(schedulePage.getTodayDate(), 2));
 
 		availableFrequencies = schedulePage.getAvailableFrequencies();
@@ -561,8 +557,8 @@ public class SchedulePromotionsITCase extends SOTestBase {
 
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		Waits.loadOrFadeWait();
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
-		schedulePage = elementFactory.getSchedulePage();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
+		schedulePage = getElementFactory().getSchedulePage();
 		schedulePage.navigateWizardAndSetEndDate(DateUtils.addMonths(schedulePage.getTodayDate(), 1));
 
 		availableFrequencies = schedulePage.getAvailableFrequencies();
@@ -578,8 +574,8 @@ public class SchedulePromotionsITCase extends SOTestBase {
 
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		Waits.loadOrFadeWait();
-		elementFactory.getPromotionsDetailPage().schedulePromotion();
-		schedulePage = elementFactory.getSchedulePage();
+		getElementFactory().getPromotionsDetailPage().schedulePromotion();
+		schedulePage = getElementFactory().getSchedulePage();
 		Waits.loadOrFadeWait();
 		schedulePage.schedule().click();
 		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();

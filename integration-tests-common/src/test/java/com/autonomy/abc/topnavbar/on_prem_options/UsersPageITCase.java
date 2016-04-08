@@ -265,7 +265,7 @@ public class UsersPageITCase extends SOTestBase {
 	public void testUserFilter(){
 		LoggerFactory.getLogger(UsersPageITCase.class).warn("CANNOT FILTER BY 'NONE' - NEEDS TO BE UNCOMMENTED WHEN WORKING");
 
-		NewUser newUser3 = getConfig().getNewUser("bob");
+//		NewUser newUser3 = getConfig().getNewUser("bob");
 
 		String[] addedUsers = new String[2];
 

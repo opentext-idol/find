@@ -1,11 +1,6 @@
 package com.autonomy.abc.search;
 
 import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.autonomy.abc.shared.SharedPreviewTests;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -16,16 +11,16 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.shared.SharedPreviewTests;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -42,12 +37,6 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 	public SearchPageHostedITCase(final TestConfig config) {
 		super(config);
-	}
-
-	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws IOException {
-		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.HOSTED);
-		return parameters(applicationTypes);
 	}
 
 	@Before

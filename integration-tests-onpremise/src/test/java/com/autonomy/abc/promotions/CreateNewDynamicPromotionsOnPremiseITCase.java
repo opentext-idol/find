@@ -1,8 +1,7 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.base.SOTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
@@ -11,6 +10,7 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.IdolIsoSearchPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
@@ -30,7 +30,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class CreateNewDynamicPromotionsOnPremiseITCase extends SOTestBase {
+public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 
 	public CreateNewDynamicPromotionsOnPremiseITCase(final TestConfig config) {
 		super(config);
