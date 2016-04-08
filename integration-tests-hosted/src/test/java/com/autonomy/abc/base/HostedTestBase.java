@@ -13,24 +13,15 @@ import java.util.Collections;
 
 @Ignore
 @RunWith(Parameterized.class)
-public abstract class HostedTestBase extends SOTestBase {
+public abstract class HostedTestBase extends HybridAppTestBase<HSODApplication, HSODElementFactory> {
     public HostedTestBase(TestConfig config) {
-        super(config);
+        super(config, new HSODApplication());
+        setPostLoginHook(new IsoPostLoginHook(getApplication()));
     }
 
     @Parameterized.Parameters
     public static Iterable<Object[]> parameters() throws IOException {
         return parameters(Collections.singleton(ApplicationType.HOSTED));
-    }
-
-    @Override
-    public HSODElementFactory getElementFactory() {
-        return (HSODElementFactory) super.getElementFactory();
-    }
-
-    @Override
-    public HSODApplication getApplication() {
-        return (HSODApplication) super.getApplication();
     }
 
     /**

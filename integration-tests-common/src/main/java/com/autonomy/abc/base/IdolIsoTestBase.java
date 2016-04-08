@@ -13,23 +13,14 @@ import java.util.Collections;
 
 @Ignore
 @RunWith(Parameterized.class)
-public abstract class IdolIsoTestBase extends SOTestBase {
+public abstract class IdolIsoTestBase extends HybridAppTestBase<IdolIsoApplication, IdolIsoElementFactory> {
     public IdolIsoTestBase(TestConfig config) {
-        super(config);
+        super(config, new IdolIsoApplication());
+        setPostLoginHook(new IsoPostLoginHook(getApplication()));
     }
 
     @Parameterized.Parameters
     public static Iterable<Object[]> parameters() throws IOException {
         return parameters(Collections.singleton(ApplicationType.ON_PREM));
-    }
-
-    @Override
-    public IdolIsoElementFactory getElementFactory() {
-        return (IdolIsoElementFactory) super.getElementFactory();
-    }
-
-    @Override
-    public IdolIsoApplication getApplication() {
-        return (IdolIsoApplication) super.getApplication();
     }
 }
