@@ -1,7 +1,7 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.base.IdolIsoTestBase;
-import com.autonomy.abc.base.IsoTearDown;
+import com.autonomy.abc.fixtures.UserTearDownStrategy;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.shared.UserTestHelper;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
@@ -54,7 +54,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
 
     @After
     public void userTearDown() {
-        IsoTearDown.USERS.tearDown(this);
+        new UserTearDownStrategy(getInitialUser()).tearDown(this);
     }
 
     @Test

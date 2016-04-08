@@ -1,7 +1,7 @@
 package com.autonomy.abc.keywords;
 
+import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
 import com.autonomy.abc.shared.SharedTriggerTests;
-import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
@@ -68,7 +68,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
 
     @After
     public void tearDown() {
-        IsoTearDown.KEYWORDS.tearDown(this);
+        new KeywordTearDownStrategy().tearDown(this);
     }
 
     @Test

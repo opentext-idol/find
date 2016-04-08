@@ -1,11 +1,9 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
+import com.autonomy.abc.fixtures.PromotionTearDownStrategy;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.find.FindService;
@@ -14,6 +12,9 @@ import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,13 +58,13 @@ public class AnalyticsToFindITCase extends HostedTestBase {
     @After
     public void promotionTearDown() {
         searchWindow.activate();
-        IsoTearDown.PROMOTIONS.tearDown(this);
+        new PromotionTearDownStrategy().tearDown(this);
     }
 
     @After
     public void keywordTearDown() {
         searchWindow.activate();
-        IsoTearDown.KEYWORDS.tearDown(this);
+        new KeywordTearDownStrategy().tearDown(this);
     }
 
     @Test

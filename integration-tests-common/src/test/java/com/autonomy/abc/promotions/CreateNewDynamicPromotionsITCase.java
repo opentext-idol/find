@@ -1,10 +1,7 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.shared.SharedTriggerTests;
-import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HybridIsoTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.autonomy.abc.fixtures.PromotionTearDownStrategy;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
@@ -12,6 +9,9 @@ import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.shared.SharedTriggerTests;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
@@ -46,7 +46,7 @@ public class CreateNewDynamicPromotionsITCase extends HybridIsoTestBase {
 
     @After
     public void tearDown(){
-        IsoTearDown.PROMOTIONS.tearDown(this);
+        new PromotionTearDownStrategy().tearDown(this);
     }
 
     @Test

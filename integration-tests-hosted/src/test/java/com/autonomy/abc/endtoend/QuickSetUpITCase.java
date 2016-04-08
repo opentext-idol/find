@@ -1,7 +1,7 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HostedTestBase;
+import com.autonomy.abc.fixtures.PromotionTearDownStrategy;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.element.DocumentViewer;
@@ -47,7 +47,7 @@ public class QuickSetUpITCase extends HostedTestBase {
 
     @After
     public void tearDown(){
-        IsoTearDown.PROMOTIONS.tearDown(this);
+        new PromotionTearDownStrategy().tearDown(this);
     }
 
     @Test

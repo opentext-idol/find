@@ -1,7 +1,7 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.base.IsoHsodTestBase;
-import com.autonomy.abc.base.IsoTearDown;
+import com.autonomy.abc.fixtures.PromotionTearDownStrategy;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.promotions.*;
@@ -48,7 +48,7 @@ public class CreateStaticPromotionsITCase extends IsoHsodTestBase {
 
     @After
     public void tearDown() {
-        IsoTearDown.PROMOTIONS.tearDown(this);
+        new PromotionTearDownStrategy().tearDown(this);
     }
 
     @Test

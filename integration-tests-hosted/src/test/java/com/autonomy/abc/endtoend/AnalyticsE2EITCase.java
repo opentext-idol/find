@@ -1,12 +1,10 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
+import com.autonomy.abc.fixtures.PromotionTearDownStrategy;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
-import com.hp.autonomy.frontend.selenium.element.Removable;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -15,6 +13,9 @@ import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.Removable;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Matcher;
 import org.junit.After;
@@ -73,12 +74,12 @@ public class AnalyticsE2EITCase extends HostedTestBase {
 
     @After
     public void tearDownKeywords() {
-        IsoTearDown.KEYWORDS.tearDown(this);
+        new KeywordTearDownStrategy().tearDown(this);
     }
 
     @After
     public void tearDownPromotions() {
-        IsoTearDown.PROMOTIONS.tearDown(this);
+        new PromotionTearDownStrategy().tearDown(this);
     }
 
     @Test

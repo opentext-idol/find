@@ -1,7 +1,7 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HybridIsoTestBase;
+import com.autonomy.abc.fixtures.PromotionTearDownStrategy;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.promotions.*;
@@ -36,7 +36,7 @@ public class PromotionsCoreITCase extends HybridIsoTestBase {
 
     @After
     public void tearDown() {
-        IsoTearDown.PROMOTIONS.tearDown(this);
+        new PromotionTearDownStrategy().tearDown(this);
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.autonomy.abc.usermanagement;
 
 import com.autonomy.abc.base.HostedTestBase;
-import com.autonomy.abc.base.IsoTearDown;
+import com.autonomy.abc.fixtures.UserTearDownStrategy;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
@@ -107,7 +107,7 @@ public class UserPermissionsITCase extends HostedTestBase {
 
     @After
     public void tearDown(){
-        IsoTearDown.USERS.tearDown(this);
+        new UserTearDownStrategy(getInitialUser()).tearDown(this);
         authStrategy.cleanUp(getDriver());
     }
 

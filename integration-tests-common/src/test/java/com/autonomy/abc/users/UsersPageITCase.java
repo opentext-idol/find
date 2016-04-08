@@ -1,8 +1,8 @@
 package com.autonomy.abc.users;
 
-import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HybridIsoTestBase;
 import com.autonomy.abc.fixtures.EmailTearDownStrategy;
+import com.autonomy.abc.fixtures.UserTearDownStrategy;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.users.UserNotCreatedException;
 import com.autonomy.abc.selenium.users.UserService;
@@ -69,7 +69,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 
 	@After
 	public void userTearDown() {
-		IsoTearDown.USERS.tearDown(this);
+		new UserTearDownStrategy(getInitialUser()).tearDown(this);
 	}
 
 	@Test

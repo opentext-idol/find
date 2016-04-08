@@ -1,8 +1,8 @@
 package com.autonomy.abc.users;
 
 import com.autonomy.abc.base.IsoHsodTestBase;
-import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.fixtures.EmailTearDownStrategy;
+import com.autonomy.abc.fixtures.UserTearDownStrategy;
 import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.error.ErrorPage;
 import com.autonomy.abc.selenium.error.Errors;
@@ -64,7 +64,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
 
     @After
     public void userTearDown() {
-        IsoTearDown.USERS.tearDown(this);
+        new UserTearDownStrategy(getInitialUser()).tearDown(this);
     }
 
     @Test

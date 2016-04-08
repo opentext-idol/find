@@ -1,7 +1,7 @@
 package com.autonomy.abc.keywords;
 
-import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HybridIsoTestBase;
+import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
@@ -73,7 +73,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
 
     @After
     public void tearDown() {
-        IsoTearDown.KEYWORDS.tearDown(this);
+        new KeywordTearDownStrategy().tearDown(this);
     }
 
     //Blacklisted terms can be created on the searchpage. This link has often broken
