@@ -1,11 +1,10 @@
 package com.autonomy.abc.shared;
 
-import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.application.IsoApplication;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.users.UsersPage;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
@@ -14,7 +13,6 @@ import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.TimeoutException;
-import org.slf4j.LoggerFactory;
 
 import java.util.NoSuchElementException;
 
@@ -40,19 +38,6 @@ public class UserTestHelper {
         this.userService = app.userService();
         this.config = config;
         this.factory = app.elementFactory();
-    }
-
-    public void deleteEmails(Session session) {
-        Window firstWindow = session.getActiveWindow();
-        Window secondWindow = session.openWindow("about:blank");
-        try {
-            authStrategy.cleanUp(session.getDriver());
-        } catch (TimeoutException e) {
-            LoggerFactory.getLogger(UserTestHelper.class).warn("Could not tear down");
-        } finally {
-            secondWindow.close();
-            firstWindow.activate();
-        }
     }
 
     public User singleSignUp(NewUser toCreate) {

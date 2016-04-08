@@ -2,6 +2,7 @@ package com.autonomy.abc.users;
 
 import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HybridIsoTestBase;
+import com.autonomy.abc.fixtures.EmailTearDownStrategy;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.users.UserNotCreatedException;
 import com.autonomy.abc.selenium.users.UserService;
@@ -63,9 +64,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 
 	@After
 	public void emailTearDown() {
-		if (hasSetUp() && isHosted()) {
-			helper.deleteEmails(getMainSession());
-		}
+		new EmailTearDownStrategy(getMainSession(), getConfig().getAuthenticationStrategy()).tearDown(this);
 	}
 
 	@After
