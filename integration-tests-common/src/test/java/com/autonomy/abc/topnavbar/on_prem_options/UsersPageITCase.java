@@ -1,7 +1,7 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.IsoTearDown;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.users.UserNotCreatedException;
 import com.autonomy.abc.selenium.users.UserService;
@@ -38,7 +38,7 @@ import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 
-public class UsersPageITCase extends SOTestBase {
+public class UsersPageITCase extends HybridIsoTestBase {
 	private final int defaultNumberOfUsers = isHosted() ? 0 : 1;
 	private final NewUser aNewUser;
 	private final NewUser newUser2;
@@ -70,7 +70,7 @@ public class UsersPageITCase extends SOTestBase {
 
 	@After
 	public void userTearDown() {
-		SOTearDown.USERS.tearDown(this);
+		IsoTearDown.USERS.tearDown(this);
 	}
 
 	@Test

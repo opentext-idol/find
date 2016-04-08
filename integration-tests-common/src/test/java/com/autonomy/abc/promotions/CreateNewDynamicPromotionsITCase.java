@@ -1,8 +1,8 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.shared.SharedTriggerTests;
-import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.IsoTearDown;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.autonomy.abc.selenium.element.TriggerForm;
@@ -22,7 +22,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.url;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
 
-public class CreateNewDynamicPromotionsITCase extends SOTestBase {
+public class CreateNewDynamicPromotionsITCase extends HybridIsoTestBase {
 
     private SearchPage searchPage;
     private PromotionsPage promotionsPage;
@@ -46,7 +46,7 @@ public class CreateNewDynamicPromotionsITCase extends SOTestBase {
 
     @After
     public void tearDown(){
-        SOTearDown.PROMOTIONS.tearDown(this);
+        IsoTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

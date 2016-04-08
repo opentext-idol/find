@@ -1,6 +1,6 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.element.Editable;
@@ -20,7 +20,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
 
-public class PromotionDetailPageITCase extends SOTestBase {
+public class PromotionDetailPageITCase extends HybridIsoTestBase {
 
     private SearchService searchService;
     private PromotionService<?> promotionService;

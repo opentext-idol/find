@@ -1,7 +1,7 @@
 package com.autonomy.abc.keywords;
 
-import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.IsoTearDown;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
@@ -52,7 +52,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class KeywordsFromSearchITCase extends SOTestBase {
+public class KeywordsFromSearchITCase extends HybridIsoTestBase {
     private CreateNewKeywordsPage createKeywordsPage;
     private SearchPage searchPage;
     private KeywordsPage keywordsPage;
@@ -73,7 +73,7 @@ public class KeywordsFromSearchITCase extends SOTestBase {
 
     @After
     public void tearDown() {
-        SOTearDown.KEYWORDS.tearDown(this);
+        IsoTearDown.KEYWORDS.tearDown(this);
     }
 
     //Blacklisted terms can be created on the searchpage. This link has often broken

@@ -1,14 +1,14 @@
 package com.autonomy.abc.selenium.actions;
 
-import com.autonomy.abc.selenium.application.SOElementFactory;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import org.openqa.selenium.WebDriver;
 
-public abstract class ServiceBase<T extends SOElementFactory> {
-    private final SearchOptimizerApplication<? extends T> application;
+public abstract class ServiceBase<T extends IsoElementFactory> {
+    private final IsoApplication<? extends T> application;
     private final T elementFactory;
 
-    protected ServiceBase(SearchOptimizerApplication<? extends T> application) {
+    protected ServiceBase(IsoApplication<? extends T> application) {
         this.application = application;
         this.elementFactory = application.elementFactory();
     }
@@ -21,7 +21,7 @@ public abstract class ServiceBase<T extends SOElementFactory> {
         return elementFactory;
     }
 
-    protected SearchOptimizerApplication<? extends T> getApplication() {
+    protected IsoApplication<? extends T> getApplication() {
         return application;
     }
 }

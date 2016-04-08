@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.iso;
 
 import com.hp.autonomy.frontend.selenium.application.PageMapper;
-import com.autonomy.abc.selenium.application.SOElementFactory;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.keywords.IdolCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.IdolKeywordsPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -16,7 +16,7 @@ import com.autonomy.abc.selenium.users.IdolUsersPage;
 import com.autonomy.abc.selenium.users.UsersPage;
 import org.openqa.selenium.WebDriver;
 
-public class IdolIsoElementFactory extends SOElementFactory {
+public class IdolIsoElementFactory extends IsoElementFactory {
     public IdolIsoElementFactory(final WebDriver driver) {
         super(driver, new PageMapper<>(IdolIsoPage.class));
     }
@@ -70,13 +70,13 @@ public class IdolIsoElementFactory extends SOElementFactory {
         return loadPage(IdolUsersPage.class);
     }
 
-    protected static class SideNavStrategy extends SOElementFactory.SideNavStrategy {
+    protected static class SideNavStrategy extends IsoElementFactory.SideNavStrategy {
         protected SideNavStrategy(NavBarTabId tabId) {
             super(tabId);
         }
     }
 
-    static class TopNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
+    static class TopNavStrategy implements PageMapper.SwitchStrategy<IsoElementFactory> {
         private final IdolIsoTopNavBar.TabId tab;
 
         TopNavStrategy(IdolIsoTopNavBar.TabId tabId) {
@@ -84,7 +84,7 @@ public class IdolIsoElementFactory extends SOElementFactory {
         }
 
         @Override
-        public void switchUsing(SOElementFactory context) {
+        public void switchUsing(IsoElementFactory context) {
             ((IdolIsoTopNavBar) context.getTopNavBar()).switchPage(tab);
         }
     }

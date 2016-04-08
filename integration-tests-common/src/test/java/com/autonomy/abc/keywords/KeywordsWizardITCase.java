@@ -1,8 +1,8 @@
 package com.autonomy.abc.keywords;
 
 import com.autonomy.abc.shared.SharedTriggerTests;
-import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.IsoTearDown;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
@@ -45,7 +45,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class KeywordsWizardITCase extends SOTestBase {
+public class KeywordsWizardITCase extends HybridIsoTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(KeywordsWizardITCase.class); 
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage createKeywordsPage;
@@ -68,7 +68,7 @@ public class KeywordsWizardITCase extends SOTestBase {
 
     @After
     public void tearDown() {
-        SOTearDown.KEYWORDS.tearDown(this);
+        IsoTearDown.KEYWORDS.tearDown(this);
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.application.SOElementFactory;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
@@ -28,7 +28,7 @@ import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
 
-public class HSODElementFactory extends SOElementFactory {
+public class HSODElementFactory extends IsoElementFactory {
     private final IsoHsodElementFactory delegate;
 
     HSODElementFactory(final WebDriver driver) {
@@ -120,7 +120,7 @@ public class HSODElementFactory extends SOElementFactory {
         return delegate.loadPage(pageType);
     }
 
-    protected static class SideNavStrategy extends SOElementFactory.SideNavStrategy {
+    protected static class SideNavStrategy extends IsoElementFactory.SideNavStrategy {
         protected SideNavStrategy(NavBarTabId tabId) {
             super(tabId);
         }

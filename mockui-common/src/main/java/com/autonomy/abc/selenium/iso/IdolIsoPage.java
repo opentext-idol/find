@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.analytics.IsoOverviewPage;
 import com.autonomy.abc.selenium.application.AppPageFactory;
-import com.autonomy.abc.selenium.application.SOElementFactory;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.keywords.IdolCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.IdolKeywordsPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -18,7 +18,7 @@ import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
-enum IdolIsoPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
+enum IdolIsoPage implements PageMapper.Page, PageMapper.SwitchStrategy<IsoElementFactory> {
     LOGIN(new IdolIsoLoginPage.Factory()),
 
     OVERVIEW(NavBarTabId.OVERVIEW, new IsoOverviewPage.Factory()),
@@ -38,7 +38,7 @@ enum IdolIsoPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElement
     USERS(IdolIsoTopNavBar.TabId.USERS, new IdolUsersPage.Factory()),
     SETTINGS(IdolIsoTopNavBar.TabId.SETTINGS, new IsoSettingsPage.Factory());
 
-    private PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
+    private PageMapper.SwitchStrategy<IsoElementFactory> switchStrategy;
     private AppPageFactory<?> factory;
 
     <T extends AppPage> IdolIsoPage(AppPageFactory<T> factory) {
@@ -66,7 +66,7 @@ enum IdolIsoPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElement
 
 
     @Override
-    public void switchUsing(SOElementFactory context) {
+    public void switchUsing(IsoElementFactory context) {
         switchStrategy.switchUsing(context);
     }
 }

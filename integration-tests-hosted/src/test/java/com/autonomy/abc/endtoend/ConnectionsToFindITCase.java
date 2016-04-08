@@ -1,6 +1,6 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.base.SOTearDown;
+import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HSODTearDown;
 import com.autonomy.abc.base.HostedTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -56,7 +56,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        SOTearDown.PROMOTIONS.tearDown(this);
+        IsoTearDown.PROMOTIONS.tearDown(this);
     }
 
     @After

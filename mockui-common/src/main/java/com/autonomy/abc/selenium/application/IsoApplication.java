@@ -15,13 +15,13 @@ import com.hp.autonomy.frontend.selenium.util.SafeClassLoader;
 import java.util.EnumMap;
 import java.util.Map;
 
-public abstract class SearchOptimizerApplication<T extends SOElementFactory> implements Application<T> {
-    private final static Map<ApplicationType, Factory<? extends SearchOptimizerApplication>> FACTORY_MAP = new EnumMap<>(ApplicationType.class);
+public abstract class IsoApplication<T extends IsoElementFactory> implements Application<T> {
+    private final static Map<ApplicationType, Factory<? extends IsoApplication>> FACTORY_MAP = new EnumMap<>(ApplicationType.class);
     private LoginService loginService;
 
     static {
-        FACTORY_MAP.put(ApplicationType.HOSTED, new SafeClassLoader<>(SearchOptimizerApplication.class, "com.autonomy.abc.selenium.hsod.HSODApplication"));
-        FACTORY_MAP.put(ApplicationType.ON_PREM, new SafeClassLoader<>(SearchOptimizerApplication.class, "com.autonomy.abc.selenium.iso.IdolIsoApplication"));
+        FACTORY_MAP.put(ApplicationType.HOSTED, new SafeClassLoader<>(IsoApplication.class, "com.autonomy.abc.selenium.hsod.HSODApplication"));
+        FACTORY_MAP.put(ApplicationType.ON_PREM, new SafeClassLoader<>(IsoApplication.class, "com.autonomy.abc.selenium.iso.IdolIsoApplication"));
     }
 
     public abstract PromotionService promotionService();
@@ -54,10 +54,10 @@ public abstract class SearchOptimizerApplication<T extends SOElementFactory> imp
         return "Search";
     }
 
-    public static SearchOptimizerApplication<?> ofType(ApplicationType type) {
+    public static IsoApplication<?> ofType(ApplicationType type) {
         return FACTORY_MAP.get(type).create();
     }
 
     @Override
-    public abstract SearchOptimizerApplication<T> inWindow(Window window);
+    public abstract IsoApplication<T> inWindow(Window window);
 }

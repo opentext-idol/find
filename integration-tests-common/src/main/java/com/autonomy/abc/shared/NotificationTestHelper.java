@@ -1,7 +1,6 @@
 package com.autonomy.abc.shared;
 
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
@@ -11,10 +10,10 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.core.Is.is;
 
 public class NotificationTestHelper {
-    private final SearchOptimizerApplication<?> app;
+    private final IsoApplication<?> app;
     private TopNavBar topNavBar;
 
-    public NotificationTestHelper(SearchOptimizerApplication<?> app) {
+    public NotificationTestHelper(IsoApplication<?> app) {
         this.app = app;
     }
 

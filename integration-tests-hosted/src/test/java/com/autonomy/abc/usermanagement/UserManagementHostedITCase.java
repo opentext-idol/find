@@ -1,8 +1,8 @@
 package com.autonomy.abc.usermanagement;
 
 import com.autonomy.abc.base.HostedTestBase;
-import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.base.IsoTearDown;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.error.ErrorPage;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.HsodFind;
@@ -65,7 +65,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
     @After
     public void userTearDown() {
-        SOTearDown.USERS.tearDown(this);
+        IsoTearDown.USERS.tearDown(this);
     }
 
     @Test
@@ -190,7 +190,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
         verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
 
         // TODO: use a single driver once 401 page has logout button
-        SearchOptimizerApplication<?> secondApp = SearchOptimizerApplication.ofType(getConfig().getType());
+        IsoApplication<?> secondApp = IsoApplication.ofType(getConfig().getType());
         Window secondWindow = launchInNewSession(secondApp).getActiveWindow();
         try {
             try {

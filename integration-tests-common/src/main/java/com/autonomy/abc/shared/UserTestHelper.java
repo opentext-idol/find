@@ -1,7 +1,7 @@
 package com.autonomy.abc.shared;
 
-import com.autonomy.abc.selenium.application.SOElementFactory;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.users.UsersPage;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -28,13 +28,13 @@ import static org.hamcrest.Matchers.containsString;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UserTestHelper {
-    private SearchOptimizerApplication<?> app;
+    private IsoApplication<?> app;
     private AuthenticationStrategy authStrategy;
     private UserService userService;
     private TestConfig config;
-    private SOElementFactory factory;
+    private IsoElementFactory factory;
 
-    public UserTestHelper(SearchOptimizerApplication<?> app, TestConfig config) {
+    public UserTestHelper(IsoApplication<?> app, TestConfig config) {
         this.app = app;
         this.authStrategy = config.getAuthenticationStrategy();
         this.userService = app.userService();

@@ -1,8 +1,8 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
-import com.autonomy.abc.selenium.application.SOElementFactory;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
@@ -18,10 +18,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public class PromotionService<T extends SOElementFactory> extends ServiceBase<T> {
+public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T> {
     private PromotionsPage promotionsPage;
 
-    public PromotionService(SearchOptimizerApplication<? extends T> application) {
+    public PromotionService(IsoApplication<? extends T> application) {
         super(application);
     }
 

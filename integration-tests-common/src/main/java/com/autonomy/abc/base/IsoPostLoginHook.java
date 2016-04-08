@@ -1,12 +1,12 @@
 package com.autonomy.abc.base;
 
 import com.autonomy.abc.selenium.actions.Command;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoApplication;
 
 public class IsoPostLoginHook implements Command {
-    private final SearchOptimizerApplication<?> app;
+    private final IsoApplication<?> app;
 
-    IsoPostLoginHook(SearchOptimizerApplication<?> app) {
+    IsoPostLoginHook(IsoApplication<?> app) {
         this.app = app;
     }
 

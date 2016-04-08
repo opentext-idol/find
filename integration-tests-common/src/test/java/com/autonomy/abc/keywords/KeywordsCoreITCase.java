@@ -1,7 +1,7 @@
 package com.autonomy.abc.keywords;
 
-import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.IsoTearDown;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.keywords.KeywordService;
@@ -17,7 +17,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.contain
 import static org.hamcrest.Matchers.*;
 
 @Category(CoreFeature.class)
-public class KeywordsCoreITCase extends SOTestBase {
+public class KeywordsCoreITCase extends HybridIsoTestBase {
     private KeywordService keywordService;
     private SearchService searchService;
 
@@ -33,7 +33,7 @@ public class KeywordsCoreITCase extends SOTestBase {
 
     @After
     public void tearDown() {
-        SOTearDown.KEYWORDS.tearDown(this);
+        IsoTearDown.KEYWORDS.tearDown(this);
     }
 
     @Test

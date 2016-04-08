@@ -1,7 +1,7 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.IsoTearDown;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.promotions.*;
@@ -18,7 +18,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.contain
 import static org.hamcrest.Matchers.*;
 
 @Category(CoreFeature.class)
-public class PromotionsCoreITCase extends SOTestBase {
+public class PromotionsCoreITCase extends HybridIsoTestBase {
     private SearchPage searchPage;
 
     private PromotionService<?> promotionService;
@@ -36,7 +36,7 @@ public class PromotionsCoreITCase extends SOTestBase {
 
     @After
     public void tearDown() {
-        SOTearDown.PROMOTIONS.tearDown(this);
+        IsoTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

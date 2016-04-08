@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
@@ -35,7 +35,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasText
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 
-public class EditDocumentReferencesPageITCase extends SOTestBase {
+public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
 
     public EditDocumentReferencesPageITCase(final TestConfig config) {
         super(config);

@@ -1,26 +1,26 @@
 package com.autonomy.abc.base;
 
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.hp.autonomy.frontend.selenium.base.TearDown;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 
-public enum SOTearDown implements TearDown<HybridAppTestBase<? extends SearchOptimizerApplication<?>, ?>> {
+public enum IsoTearDown implements TearDown<HybridAppTestBase<? extends IsoApplication<?>, ?>> {
     KEYWORDS {
         @Override
-        void tearDownSafely(HybridAppTestBase<? extends SearchOptimizerApplication<?>, ?> test) {
+        void tearDownSafely(HybridAppTestBase<? extends IsoApplication<?>, ?> test) {
             test.getApplication().keywordService().deleteAll(KeywordFilter.ALL);
         }
     },
     PROMOTIONS {
         @Override
-        void tearDownSafely(HybridAppTestBase<? extends SearchOptimizerApplication<?>, ?> test) {
+        void tearDownSafely(HybridAppTestBase<? extends IsoApplication<?>, ?> test) {
             test.getApplication().promotionService().deleteAll();
         }
     },
     USERS {
         @Override
-        void tearDownSafely(HybridAppTestBase<? extends SearchOptimizerApplication<?>, ?> test) {
+        void tearDownSafely(HybridAppTestBase<? extends IsoApplication<?>, ?> test) {
             LoginService service = test.getApplication().loginService();
             if (service.getCurrentUser() == null) {
                 service.login(test.getInitialUser());
@@ -32,10 +32,10 @@ public enum SOTearDown implements TearDown<HybridAppTestBase<? extends SearchOpt
         }
     };
 
-    abstract void tearDownSafely(HybridAppTestBase<? extends SearchOptimizerApplication<?>, ?> test);
+    abstract void tearDownSafely(HybridAppTestBase<? extends IsoApplication<?>, ?> test);
 
     @Override
-    public void tearDown(HybridAppTestBase<? extends SearchOptimizerApplication<?>, ?> test) {
+    public void tearDown(HybridAppTestBase<? extends IsoApplication<?>, ?> test) {
         if (test.hasSetUp()) {
             tearDownSafely(test);
         }

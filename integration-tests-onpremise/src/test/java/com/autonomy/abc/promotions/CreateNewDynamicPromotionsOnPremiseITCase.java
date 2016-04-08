@@ -1,7 +1,7 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.base.IdolIsoTestBase;
-import com.autonomy.abc.base.SOTearDown;
+import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
@@ -52,7 +52,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 
 	@After
 	public void tearDown(){
-		SOTearDown.PROMOTIONS.tearDown(this);
+		IsoTearDown.PROMOTIONS.tearDown(this);
 	}
 
 	@Test

@@ -1,6 +1,6 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.base.SOTearDown;
+import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HostedTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
@@ -48,7 +48,7 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        SOTearDown.PROMOTIONS.tearDown(this);
+        IsoTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

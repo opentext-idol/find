@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.Role;
@@ -13,7 +13,7 @@ import org.openqa.selenium.WebElement;
 public class IdolIsoUserService extends UserService<IdolIsoElementFactory> {
     private IdolUsersPage usersPage;
 
-    public IdolIsoUserService(SearchOptimizerApplication<? extends IdolIsoElementFactory> application) {
+    public IdolIsoUserService(IsoApplication<? extends IdolIsoElementFactory> application) {
         super(application);
     }
 

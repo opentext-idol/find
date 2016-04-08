@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.indexes;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.users.HsodUser;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
@@ -18,7 +18,7 @@ import java.util.List;
 public class IndexService extends ServiceBase<HSODElementFactory> {
     private IndexesPage indexesPage;
 
-    public IndexService(SearchOptimizerApplication<? extends HSODElementFactory> application) {
+    public IndexService(IsoApplication<? extends HSODElementFactory> application) {
         super(application);
     }
 

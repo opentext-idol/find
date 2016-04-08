@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.hsod;
 
-import com.autonomy.abc.selenium.application.SOElementFactory;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.HsodCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.HsodKeywordsPage;
@@ -18,7 +18,7 @@ import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
 
-public class IsoHsodElementFactory extends SOElementFactory {
+public class IsoHsodElementFactory extends IsoElementFactory {
     IsoHsodElementFactory(final WebDriver driver) {
         super(driver, new PageMapper<>(IsoHsodPage.class));
     }
@@ -67,7 +67,7 @@ public class IsoHsodElementFactory extends SOElementFactory {
         return loadPage(HsodDevelopersPage.class);
     }
 
-    protected static class SideNavStrategy extends SOElementFactory.SideNavStrategy {
+    protected static class SideNavStrategy extends IsoElementFactory.SideNavStrategy {
         protected SideNavStrategy(NavBarTabId tabId) {
             super(tabId);
         }

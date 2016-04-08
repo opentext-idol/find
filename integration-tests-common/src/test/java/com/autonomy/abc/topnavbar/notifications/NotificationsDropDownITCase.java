@@ -1,8 +1,8 @@
 package com.autonomy.abc.topnavbar.notifications;
 
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.autonomy.abc.selenium.analytics.DashboardBase;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordWizardType;
@@ -33,7 +33,7 @@ import static org.hamcrest.Matchers.*;
 /*
  *   IMPORTANT - HOSTED ALLOWS CAPITALS IN PROMOTION TITLES/TRIGGERS WHILE OP DOESN'T (hence the .toLowerCase() everywhere so I don't forget
  */
-public class NotificationsDropDownITCase extends SOTestBase {
+public class NotificationsDropDownITCase extends HybridIsoTestBase {
 	private final NotificationTestHelper helper;
 
 	private KeywordService keywordService;
@@ -105,7 +105,7 @@ public class NotificationsDropDownITCase extends SOTestBase {
 		assertThat(notifications.countNotifications(), is(0));
 
 		final Window mainWindow = getWindow();
-		final SearchOptimizerApplication<?> secondApp = SearchOptimizerApplication.ofType(getConfig().getType());
+		final IsoApplication<?> secondApp = IsoApplication.ofType(getConfig().getType());
 		final Window secondWindow = launchInNewWindow(secondApp);
 		secondWindow.activate();
 		TopNavBar topNavBarWindowTwo = secondApp.elementFactory().getTopNavBar();

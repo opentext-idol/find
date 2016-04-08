@@ -1,8 +1,8 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.shared.SharedTriggerTests;
-import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.IsoTearDown;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
@@ -37,7 +37,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasText
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 
-public class CreateNewPromotionsITCase extends SOTestBase {
+public class CreateNewPromotionsITCase extends HybridIsoTestBase {
 
     public CreateNewPromotionsITCase(final TestConfig config) {
         super(config);
@@ -85,7 +85,7 @@ public class CreateNewPromotionsITCase extends SOTestBase {
 
     @After
     public void cleanUp() {
-        SOTearDown.PROMOTIONS.tearDown(this);
+        IsoTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

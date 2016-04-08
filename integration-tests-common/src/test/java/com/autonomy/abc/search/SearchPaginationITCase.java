@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
@@ -22,7 +22,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasText
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class SearchPaginationITCase extends SOTestBase {
+public class SearchPaginationITCase extends HybridIsoTestBase {
     private SearchPage searchPage;
     private SearchService searchService;
 

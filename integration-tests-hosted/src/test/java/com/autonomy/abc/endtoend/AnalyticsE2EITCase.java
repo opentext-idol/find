@@ -1,6 +1,6 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.base.SOTearDown;
+import com.autonomy.abc.base.IsoTearDown;
 import com.autonomy.abc.base.HostedTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
@@ -73,12 +73,12 @@ public class AnalyticsE2EITCase extends HostedTestBase {
 
     @After
     public void tearDownKeywords() {
-        SOTearDown.KEYWORDS.tearDown(this);
+        IsoTearDown.KEYWORDS.tearDown(this);
     }
 
     @After
     public void tearDownPromotions() {
-        SOTearDown.PROMOTIONS.tearDown(this);
+        IsoTearDown.PROMOTIONS.tearDown(this);
     }
 
     @Test

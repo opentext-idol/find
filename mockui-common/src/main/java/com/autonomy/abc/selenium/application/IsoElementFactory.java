@@ -17,10 +17,10 @@ import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
-public abstract class SOElementFactory extends ElementFactoryBase {
-    private PageMapper<? extends PageMapper.SwitchStrategy<? super SOElementFactory>> switchMapper;
+public abstract class IsoElementFactory extends ElementFactoryBase {
+    private PageMapper<? extends PageMapper.SwitchStrategy<? super IsoElementFactory>> switchMapper;
 
-    protected SOElementFactory(WebDriver driver, PageMapper<? extends PageMapper.SwitchStrategy<? super SOElementFactory>> mapper) {
+    protected IsoElementFactory(WebDriver driver, PageMapper<? extends PageMapper.SwitchStrategy<? super IsoElementFactory>> mapper) {
         super(driver, mapper);
         switchMapper = mapper;
     }
@@ -65,7 +65,7 @@ public abstract class SOElementFactory extends ElementFactoryBase {
         switchMapper.get(pageType).switchUsing(this);
     }
 
-    protected static class SideNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
+    protected static class SideNavStrategy implements PageMapper.SwitchStrategy<IsoElementFactory> {
         private final NavBarTabId tab;
 
         protected SideNavStrategy(NavBarTabId tabId) {
@@ -73,7 +73,7 @@ public abstract class SOElementFactory extends ElementFactoryBase {
         }
 
         @Override
-        public void switchUsing(SOElementFactory context) {
+        public void switchUsing(IsoElementFactory context) {
             context.getSideNavBar().switchPage(tab);
         }
     }

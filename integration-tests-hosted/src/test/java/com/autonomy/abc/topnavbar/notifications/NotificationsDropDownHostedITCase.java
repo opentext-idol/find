@@ -2,7 +2,7 @@ package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.application.SOElementFactory;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.WebConnector;
@@ -218,7 +218,7 @@ public class NotificationsDropDownHostedITCase extends HostedTestBase {
         }
     }
 
-    private void verifyNotificationCorrectUsername(String username, SOElementFactory secondFactory){
+    private void verifyNotificationCorrectUsername(String username, IsoElementFactory secondFactory){
         verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(username));
         verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(username));
     }

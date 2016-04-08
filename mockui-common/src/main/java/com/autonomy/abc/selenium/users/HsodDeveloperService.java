@@ -1,10 +1,8 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.hsod.IsoHsodElementFactory;
-import com.autonomy.abc.selenium.users.HsodDevelopersPage;
-import com.autonomy.abc.selenium.users.HsodUserBuilder;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.WebElement;
@@ -14,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class HsodDeveloperService extends ServiceBase<IsoHsodElementFactory> {
     private HsodDevelopersPage devsPage;
 
-    public HsodDeveloperService(SearchOptimizerApplication<? extends IsoHsodElementFactory> application){
+    public HsodDeveloperService(IsoApplication<? extends IsoHsodElementFactory> application){
         super(application);
     }
 
