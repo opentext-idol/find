@@ -1,12 +1,12 @@
 package com.autonomy.abc.base;
 
 import com.autonomy.abc.config.SOConfigLocator;
+import com.autonomy.abc.selenium.application.SOElementFactory;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.base.HybridTestParameterFactory;
 import com.hp.autonomy.frontend.selenium.base.SeleniumTest;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.application.SOElementFactory;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.hp.autonomy.frontend.selenium.users.User;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import static org.junit.Assert.fail;
 
 @Ignore
 @RunWith(Parameterized.class)
