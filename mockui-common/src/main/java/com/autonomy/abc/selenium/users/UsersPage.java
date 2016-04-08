@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.application.SOPageBase;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.element.PasswordBox;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
@@ -30,46 +29,7 @@ public abstract class UsersPage extends SOPageBase {
 		return findElement(By.id("create-user"));
 	}
 
-	public WebElement createButton() {
-		return ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//button[contains(text(), 'Create')]"));
-	}
-
-	public void addUsername(final String userName) {
-		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[name='create-users-username']")).clear();
-		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[name='create-users-username']")).sendKeys(userName);
-	}
-
-	public void addAndConfirmPassword(final String password, final String passwordConfirm) {
-		final WebElement passwordElement = ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-password"));
-		passwordElement.clear();
-		passwordElement.sendKeys(password);
-
-		final WebElement passwordConfirmElement = ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-passwordConfirm"));
-		passwordConfirmElement.clear();
-		passwordConfirmElement.sendKeys(passwordConfirm);
-	}
-
-	public void selectRole(Role role) {
-		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[contains(text(),'" + role + "')]")).click();
-	}
-
-	@Deprecated
-	/**
-	 * @deprecated Use UserService instead
-	 */
-	public void createNewUser(final String userName, final String password, final String userLevel) {
-		Waits.loadOrFadeWait();
-		addUsername(userName);
-		addAndConfirmPassword(password, password);
-		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[text() = '" + userLevel + "']")).click();
-		createButton().click();
-		Waits.loadOrFadeWait();
-	}
-
-	public void closeModal() {
-		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[data-dismiss='modal']")).click();
-		Waits.loadOrFadeWait();
-	}
+	public abstract UserCreationModal userCreationModal();
 
 	public int countNumberOfUsers() {
 		Waits.loadOrFadeWait();

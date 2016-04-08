@@ -13,6 +13,11 @@ public class HsodDevelopersPage extends HsodUserManagementBase {
     }
 
     @Override
+    public UserCreationModal userCreationModal() {
+        throw new UnsupportedOperationException("Cannot add new developers to a tenancy");
+    }
+
+    @Override
     public User addNewUser(NewUser newUser, Role role) {
         throw new UnsupportedOperationException("Cannot add new developers to a tenancy");
     }

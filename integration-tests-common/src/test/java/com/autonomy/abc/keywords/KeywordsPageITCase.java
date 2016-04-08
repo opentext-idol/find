@@ -1,7 +1,7 @@
 package com.autonomy.abc.keywords;
 
-import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.HybridIsoTestBase;
+import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
@@ -41,7 +41,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class KeywordsPageITCase extends SOTestBase {
+public class KeywordsPageITCase extends HybridIsoTestBase {
 	private KeywordsPage keywordsPage;
 	private SearchPage searchPage;
 	private NotificationsDropDown notifications;
@@ -59,7 +59,7 @@ public class KeywordsPageITCase extends SOTestBase {
 
 	@After
 	public void tearDown() {
-		SOTearDown.KEYWORDS.tearDown(this);
+		new KeywordTearDownStrategy().tearDown(this);
 	}
 
 	@Test

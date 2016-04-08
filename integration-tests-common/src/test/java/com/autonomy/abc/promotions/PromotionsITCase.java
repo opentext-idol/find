@@ -1,7 +1,7 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.shared.SharedTriggerTests;
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
@@ -45,7 +45,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class PromotionsITCase extends SOTestBase {
+public class PromotionsITCase extends HybridIsoTestBase {
 
 	public PromotionsITCase(final TestConfig config) {
 		super(config);

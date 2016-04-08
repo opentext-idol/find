@@ -1,13 +1,10 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.base.HSODTearDown;
 import com.autonomy.abc.base.HostedTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.autonomy.abc.fixtures.IndexTearDownStrategy;
+import com.autonomy.abc.fixtures.PromotionTearDownStrategy;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.HsodFind;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -20,6 +17,9 @@ import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,12 +56,12 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        SOTearDown.PROMOTIONS.tearDown(this);
+        new PromotionTearDownStrategy().tearDown(this);
     }
 
     @After
     public void indexTearDown() {
-        HSODTearDown.INDEXES.tearDown(this);
+        new IndexTearDownStrategy().tearDown(this);
     }
 
     @Test

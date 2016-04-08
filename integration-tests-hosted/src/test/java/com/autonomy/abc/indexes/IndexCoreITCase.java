@@ -1,7 +1,7 @@
 package com.autonomy.abc.indexes;
 
-import com.autonomy.abc.base.HSODTearDown;
 import com.autonomy.abc.base.HostedTestBase;
+import com.autonomy.abc.fixtures.IndexTearDownStrategy;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -30,7 +30,7 @@ public class IndexCoreITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        HSODTearDown.INDEXES.tearDown(this);
+        new IndexTearDownStrategy().tearDown(this);
     }
 
     @Test

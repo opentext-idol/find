@@ -20,7 +20,6 @@
         <module>mockui-hosted</module>
         <module>integration-tests-common</module>
         <module>integration-tests-hosted</module>
-        <module>integration-tests-onpremise</module>
     </modules>
 
     <!-- specify defaults -->

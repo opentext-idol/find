@@ -1,11 +1,11 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.hsod.IsoHsodElementFactory;
 import com.autonomy.abc.selenium.search.SearchPage;
 
 public class HsodPromotionService extends PromotionService<IsoHsodElementFactory> {
-    public HsodPromotionService(SearchOptimizerApplication<? extends IsoHsodElementFactory> application) {
+    public HsodPromotionService(IsoApplication<? extends IsoHsodElementFactory> application) {
         super(application);
     }
 

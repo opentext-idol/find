@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
@@ -21,7 +21,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.contains
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 
-public class SearchErrorMessageITCase extends SOTestBase {
+public class SearchErrorMessageITCase extends HybridIsoTestBase {
     private SearchService searchService;
 
     public SearchErrorMessageITCase(TestConfig config) {

@@ -1,8 +1,8 @@
 package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
-import com.autonomy.abc.selenium.application.SOElementFactory;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.query.AggregateQueryFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryService;
@@ -11,10 +11,10 @@ import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class SearchService extends ServiceBase<SOElementFactory> implements QueryService<SearchPage> {
+public class SearchService extends ServiceBase<IsoElementFactory> implements QueryService<SearchPage> {
     SearchPage searchPage;
 
-    public SearchService(SearchOptimizerApplication<?> application) {
+    public SearchService(IsoApplication<?> application) {
         super(application);
     }
 

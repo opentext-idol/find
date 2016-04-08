@@ -1,8 +1,8 @@
 package com.autonomy.abc.selenium.keywords;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
-import com.autonomy.abc.selenium.application.SOElementFactory;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
+import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
@@ -19,12 +19,12 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-public class KeywordService extends ServiceBase<SOElementFactory> {
+public class KeywordService extends ServiceBase<IsoElementFactory> {
     private final static Logger LOGGER = LoggerFactory.getLogger(KeywordService.class);
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage newKeywordsPage;
 
-    public KeywordService(SearchOptimizerApplication<? extends SOElementFactory> application) {
+    public KeywordService(IsoApplication<? extends IsoElementFactory> application) {
         super(application);
     }
 

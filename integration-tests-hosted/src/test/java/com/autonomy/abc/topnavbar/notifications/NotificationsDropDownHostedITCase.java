@@ -1,14 +1,11 @@
 package com.autonomy.abc.topnavbar.notifications;
 
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.autonomy.abc.base.HostedTestBase;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.application.SOElementFactory;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.WebConnector;
-import com.hp.autonomy.frontend.selenium.control.Session;
 import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -17,19 +14,24 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.menu.Notification;
+import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.promotions.HsodPromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
-import com.autonomy.abc.selenium.users.*;
-import com.autonomy.abc.shared.NotificationsDropDownTestBase;
+import com.autonomy.abc.selenium.users.HsodDevelopersPage;
+import com.autonomy.abc.selenium.users.UserService;
+import com.autonomy.abc.selenium.users.UsersPage;
+import com.autonomy.abc.shared.NotificationTestHelper;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Session;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,22 +42,15 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 
 @RelatedTo("CSA-1583")
-public class NotificationsDropDownHostedITCase extends NotificationsDropDownTestBase {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class NotificationsDropDownHostedITCase extends HostedTestBase {
+    private final NotificationTestHelper helper;
+
+    private NotificationsDropDown notifications;
 
     public NotificationsDropDownHostedITCase(final TestConfig config) {
         super(config);
-        setInitialUser(config.getUser("index_tests"));
-    }
-
-    @Override
-    public HSODElementFactory getElementFactory() {
-        return (HSODElementFactory) super.getElementFactory();
-    }
-
-    @Override
-    public HSODApplication getApplication() {
-        return (HSODApplication) super.getApplication();
+        helper = new NotificationTestHelper(getApplication());
+        useIndexTestsUser();
     }
 
     @Test
@@ -70,7 +65,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         ps.setUpStaticPromotion(new StaticPromotion(docTitle, docContent, promotionTrigger));
         try {
             getElementFactory().getSearchPage();
-            checkForNotification(promotionNotificationText);
+            helper.checkForNotification(promotionNotificationText);
         } finally {
             ps.deleteAll();
         }
@@ -90,7 +85,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         ps.setUpStaticPromotion(staticPromotion);
         ps.delete(staticPromotion);
 
-        checkForNotification(promotionNotificationText);
+        helper.checkForNotification(promotionNotificationText);
     }
 
     @Test
@@ -106,11 +101,11 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         IndexService indexService = getApplication().indexService();
         try {
             indexService.setUpIndex(index);
-            checkForNotificationNoWait("Created a new index: " + expectedName);
+            helper.checkForNotificationNoWait("Created a new index: " + expectedName);
         } finally {
             indexService.deleteIndex(index);
-            checkForNotificationNoWait("Index " + expectedName + " successfully deleted");
-            checkForNotificationNoWait("Deleting index " + expectedName, 2);
+            helper.checkForNotificationNoWait("Index " + expectedName + " successfully deleted");
+            helper.checkForNotificationNoWait("Deleting index " + expectedName, 2);
         }
     }
 
@@ -223,7 +218,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         }
     }
 
-    private void verifyNotificationCorrectUsername(String username, SOElementFactory secondFactory){
+    private void verifyNotificationCorrectUsername(String username, IsoElementFactory secondFactory){
         verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(username));
         verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(username));
     }
@@ -255,7 +250,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
     private void navigateAndVerifyNotifications(Class<? extends AppPage> page, List<Notification> notifications) {
         getApplication().switchTo(page);
-        logger.info("on page " + page);
+        LOGGER.info("on page " + page);
 
         getElementFactory().getTopNavBar().openNotifications();
 

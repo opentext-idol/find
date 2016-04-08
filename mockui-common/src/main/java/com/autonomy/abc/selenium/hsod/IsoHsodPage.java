@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.application.AppPageFactory;
-import com.autonomy.abc.selenium.application.SOElementFactory;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.keywords.HsodCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.HsodKeywordsPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -18,7 +18,7 @@ import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
-enum IsoHsodPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
+enum IsoHsodPage implements PageMapper.Page, PageMapper.SwitchStrategy<IsoElementFactory> {
     LOGIN(new AppPageFactory<HSOLoginPage>() {
         @Override
         public Class<HSOLoginPage> getPageType() {
@@ -44,7 +44,7 @@ enum IsoHsodPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElement
     DEVELOPERS(NavBarTabId.DEVELOPERS, new HsodDevelopersPage.Factory()),
     USERS(NavBarTabId.USERS, new HsodUsersPage.Factory());
 
-    private PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
+    private PageMapper.SwitchStrategy<IsoElementFactory> switchStrategy;
     private AppPageFactory<?> factory;
 
     <T extends AppPage> IsoHsodPage(AppPageFactory<T> factory) {
@@ -67,7 +67,7 @@ enum IsoHsodPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElement
     }
 
     @Override
-    public void switchUsing(SOElementFactory context) {
+    public void switchUsing(IsoElementFactory context) {
         switchStrategy.switchUsing(context);
     }
 }

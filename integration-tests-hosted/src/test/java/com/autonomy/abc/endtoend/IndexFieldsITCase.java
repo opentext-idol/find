@@ -1,7 +1,7 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.base.HSODTearDown;
 import com.autonomy.abc.base.HostedTestBase;
+import com.autonomy.abc.fixtures.IndexTearDownStrategy;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
@@ -75,7 +75,7 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     @After
     public void tearDown() {
-        HSODTearDown.INDEXES.tearDown(this);
+        new IndexTearDownStrategy().tearDown(this);
     }
 
     @Test

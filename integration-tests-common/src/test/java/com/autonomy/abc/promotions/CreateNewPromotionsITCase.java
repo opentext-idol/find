@@ -1,18 +1,18 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.shared.SharedTriggerTests;
-import com.autonomy.abc.base.SOTearDown;
-import com.autonomy.abc.base.SOTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.autonomy.abc.base.HybridIsoTestBase;
+import com.autonomy.abc.fixtures.PromotionTearDownStrategy;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
-import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.shared.SharedTriggerTests;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -31,13 +31,11 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.url;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasAttribute;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTextThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 
-public class CreateNewPromotionsITCase extends SOTestBase {
+public class CreateNewPromotionsITCase extends HybridIsoTestBase {
 
     public CreateNewPromotionsITCase(final TestConfig config) {
         super(config);
@@ -85,7 +83,7 @@ public class CreateNewPromotionsITCase extends SOTestBase {
 
     @After
     public void cleanUp() {
-        SOTearDown.PROMOTIONS.tearDown(this);
+        new PromotionTearDownStrategy().tearDown(this);
     }
 
     @Test

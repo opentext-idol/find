@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.base.SOTestBase;
+import com.autonomy.abc.base.HybridIsoTestBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
@@ -52,7 +52,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class SearchPageITCase extends SOTestBase {
+public class SearchPageITCase extends HybridIsoTestBase {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private SearchPage searchPage;
 	private TopNavBar topNavBar;

@@ -4,8 +4,6 @@ import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.ReplacementAuth;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
-import com.hp.autonomy.frontend.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,6 +15,11 @@ public class IdolUsersPage extends UsersPage {
     }
 
     @Override
+    public IdolUserCreationModal userCreationModal() {
+        return new IdolUserCreationModal(getDriver());
+    }
+
+    @Override
     public User addNewUser(NewUser newUser, Role role) {
         if (newUser instanceof IdolIsoNewUser) {
             return addIdolNewUser((IdolIsoNewUser) newUser, role);
@@ -24,12 +27,14 @@ public class IdolUsersPage extends UsersPage {
         throw new IllegalStateException("Cannot create user " + newUser);
     }
 
+    // TODO: move to IdolIsoSignupService
     private User addIdolNewUser(IdolIsoNewUser newUser, Role role) {
-        addUsername(newUser.getUsername());
-        addAndConfirmPassword(newUser.getPassword(), newUser.getPassword());
-        selectRole(role);
-        createButton().click();
-        Waits.loadOrFadeWait();
+        IdolUserCreationModal modal = new IdolUserCreationModal(getDriver());
+        modal.usernameInput().setValue(newUser.getUsername());
+        modal.passwordInput().setValue(newUser.getPassword());
+        modal.passwordConfirmInput().setValue(newUser.getPassword());
+        modal.selectRole(role);
+        modal.createUser();
         return newUser.createWithRole(role);
     }
 
@@ -56,11 +61,6 @@ public class IdolUsersPage extends UsersPage {
 
     public void setRoleValueFor(User user, Role newRole) {
         selectTableUserType(user, newRole.toString());
-    }
-
-    public void clearPasswords() {
-        ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-password")).clear();
-        ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-passwordConfirm")).clear();
     }
 
     public static class Factory extends SOPageFactory<IdolUsersPage> {
