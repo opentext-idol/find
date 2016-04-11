@@ -32,7 +32,7 @@ Find is an end-user search interface for [HPE IDOL](http://www8.hp.com/uk/en/sof
 
 # What license does it use?
 
-The MIT license - see https://github.com/hpautonomy/find/blob/master/LICENSE for details
+The MIT license - see [the license file](https://github.com/hpe-idol/find/blob/master/LICENSE) for details
 
 # Branches and Tags
 
