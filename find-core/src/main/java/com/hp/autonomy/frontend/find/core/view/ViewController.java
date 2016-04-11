@@ -25,6 +25,7 @@ public abstract class ViewController<S extends Serializable, E extends Exception
     public static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
     public static final String REFERENCE_PARAM = "reference";
     public static final String DATABASE_PARAM = "index";
+    public static final String HIGHLIGHT_PARAM = "highlightExpressions";
 
     protected final ViewServerService<S, E> viewServerService;
 
@@ -36,11 +37,12 @@ public abstract class ViewController<S extends Serializable, E extends Exception
     public void viewDocument(
             @RequestParam(REFERENCE_PARAM) final String reference,
             @RequestParam(DATABASE_PARAM) final S database,
+            @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
             final HttpServletResponse response
     ) throws E, IOException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         ViewContentSecurityPolicy.addContentSecurityPolicy(response);
-        viewServerService.viewDocument(reference, database, response.getOutputStream());
+        viewServerService.viewDocument(reference, database, highlightExpression, response.getOutputStream());
     }
 
     @RequestMapping(value = VIEW_STATIC_CONTENT_PROMOTION_PATH, method = RequestMethod.GET)

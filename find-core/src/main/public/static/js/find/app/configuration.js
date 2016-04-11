@@ -1,6 +1,6 @@
 define([
     'jquery'
-], function() {
+], function($) {
 
     var config;
 
@@ -16,4 +16,4 @@ define([
         return config;
     }
 
-})
+});

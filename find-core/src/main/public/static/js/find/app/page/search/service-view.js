@@ -136,7 +136,11 @@ define([
                 highlightModel: this.highlightModel
             }, subViewArguments));
 
-            this.resultsViewAugmentation = new this.ResultsViewAugmentation({resultsView: this.resultsView});
+            this.resultsViewAugmentation = new this.ResultsViewAugmentation({
+                resultsView: this.resultsView,
+                queryModel: this.queryModel
+            });
+            
             this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle', this.rightSideContainerHideToggle);
 
             this.topicMapView = new TopicMapView(_.extend({

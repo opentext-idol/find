@@ -17,11 +17,11 @@ useradd $USER
 mkdir $BASE_DIR
 mkdir $HOME_DIR
 
-cp ../../$NAME.jar $BASE_DIR
+cp ../../../$NAME.war $BASE_DIR
 
 chown -R $USER:$GROUP $BASE_DIR
 
-cp init/upstart/$NAME.conf /etc/init
+cp $NAME.conf /etc/init
 chmod +x /etc/init/$NAME.conf
 
 service $NAME start

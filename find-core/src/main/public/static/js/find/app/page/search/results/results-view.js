@@ -267,20 +267,11 @@ define([
             var reference = model.get('reference');
             var summary = addLinksToSummary(this.entityCollection, model.get('summary'));
 
-            var href;
-
-            if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
-                href = viewClient.getStaticContentPromotionHref(reference);
-            } else {
-                href = viewClient.getHref(reference, model);
-            }
-
             var $newResult = $(this.resultsTemplate({
                 cid: model.cid,
                 i18n: i18n,
                 title: model.get('title'),
                 reference: reference,
-                href: href,
                 summary: summary,
                 promotion: isPromotion,
                 date: model.has('date') ? model.get('date').fromNow() : null,
