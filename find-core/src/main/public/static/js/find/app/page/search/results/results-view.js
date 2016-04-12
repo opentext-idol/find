@@ -98,7 +98,6 @@ define([
         initialize: function(options) {
             this.fetchStrategy = options.fetchStrategy;
             this.enablePreview = options.enablePreview || false;
-            this.displayPromotions = options.displayPromotions || false;
 
             this.queryModel = options.queryModel;
             this.documentsCollection = options.documentsCollection;
@@ -119,9 +118,7 @@ define([
                 this.entityClickHandler = options.entityClickHandler;
             }
 
-            if (this.displayPromotions) {
-                this.promotionsCollection = new PromotionsCollection();
-            }
+            this.promotionsCollection = new PromotionsCollection();
 
             this.sortView = new SortView({
                 queryModel: this.queryModel
@@ -158,7 +155,7 @@ define([
         },
 
         clearLoadingSpinner: function() {
-            if (this.resultsFinished && (this.promotionsFinished || !this.displayPromotions)) {
+            if (this.resultsFinished && this.promotionsFinished) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
@@ -177,23 +174,21 @@ define([
             this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
-            if (this.displayPromotions) {
-                this.listenTo(this.promotionsCollection, 'add', function(model) {
-                    this.formatResult(model, true);
-                });
+            this.listenTo(this.promotionsCollection, 'add', function(model) {
+                this.formatResult(model, true);
+            });
 
-                this.listenTo(this.promotionsCollection, 'sync', function() {
-                    this.promotionsFinished = true;
-                    this.clearLoadingSpinner();
-                });
+            this.listenTo(this.promotionsCollection, 'sync', function() {
+                this.promotionsFinished = true;
+                this.clearLoadingSpinner();
+            });
 
-                this.listenTo(this.promotionsCollection, 'error', function(collection, xhr) {
-                    this.promotionsFinished = true;
-                    this.clearLoadingSpinner();
+            this.listenTo(this.promotionsCollection, 'error', function(collection, xhr) {
+                this.promotionsFinished = true;
+                this.clearLoadingSpinner();
 
-                    this.$('.main-results-content .promotions').append(this.handleError(i18n['app.feature.promotions'], xhr));
-                });
-            }
+                this.$('.main-results-content .promotions').append(this.handleError(i18n['app.feature.promotions'], xhr));
+            });
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
                 this.formatResult(model, false);
@@ -228,13 +223,10 @@ define([
                             this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
                         }, this);
 
-                        if (this.displayPromotions) {
-                            this.promotionsCollection.each(function(document) {
-                                var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
-
-                                this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
-                            }, this);
-                        }
+                        this.promotionsCollection.each(function(document) {
+                            var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
+                            this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
+                        }, this);
                     }
                 });
             }
@@ -329,7 +321,7 @@ define([
                 }.bind(this)
             });
 
-            if (this.displayPromotions && !infiniteScroll) {
+            if (!infiniteScroll) {
                 this.promotionsFinished = false;
 
                 this.promotionsCollection.fetch({

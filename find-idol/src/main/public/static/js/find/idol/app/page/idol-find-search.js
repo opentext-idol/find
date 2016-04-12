@@ -35,8 +35,6 @@ define([
                     icon: 'hp-camera',
                     isMutable: false,
                     fetchStrategy: stateTokenStrategy,
-                    // TODO: Display promotions when QMS supports state tokens
-                    displayPromotions: false,
                     DocumentsCollection: ComparisonDocumentsCollection,
                     LeftSideFooterView: SnapshotDataView,
                     MiddleColumnHeaderView: null,

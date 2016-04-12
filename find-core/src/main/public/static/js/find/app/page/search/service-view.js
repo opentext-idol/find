@@ -136,7 +136,6 @@ define([
             this.resultsView = new this.ResultsView(_.defaults({
                 enablePreview: true,
                 entityClickHandler: entityClickHandler,
-                displayPromotions: this.searchTypes[searchType].displayPromotions,
                 fetchStrategy: this.searchTypes[searchType].fetchStrategy,
                 highlightModel: this.highlightModel
             }, subViewArguments));

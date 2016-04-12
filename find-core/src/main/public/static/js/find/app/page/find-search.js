@@ -257,7 +257,6 @@ define([
                 QUERY: {
                     autoCorrect: true,
                     collection: 'savedQueryCollection',
-                    displayPromotions: true,
                     fetchStrategy: queryStrategy,
                     icon: 'hp-search',
                     isMutable: true,
