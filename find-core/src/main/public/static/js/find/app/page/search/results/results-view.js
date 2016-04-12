@@ -24,31 +24,21 @@ define([
         var triggerPoint = 500;
         var resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
 
-        if (resultsPresent && this.resultsFinished && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
+        if (resultsPresent && this.resultsFinished && this.el.scrollHeight > 0 && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
             this.infiniteScroll();
         }
     }
 
     function infiniteScroll() {
-        var totalResults = this.documentsCollection.totalResults;
-
         if (!this.endOfResults) {
-            if (this.maxResults < totalResults && this.maxResults + SCROLL_INCREMENT > totalResults) {
-                this.start = this.maxResults;
-                this.maxResults = totalResults;
-                this.endOfResults = true;
-            } else {
-                this.start += SCROLL_INCREMENT;
-                this.maxResults += SCROLL_INCREMENT;
-                if (this.maxResults === totalResults) {
-                    this.endOfResults = true;
-                }
-            }
+            this.start = this.maxResults + 1;
+            this.maxResults += SCROLL_INCREMENT;
+
             this.loadData(true);
         }
     }
 
-    var getContentTypeClass = function(model) {
+    function getContentTypeClass(model) {
         var contentType = model.get('contentType') || '';
 
         var matchedType = _.find(documentMimeTypes, function(mimeType) {
@@ -58,13 +48,13 @@ define([
         });
 
         return matchedType.className;
-    };
+    }
 
     var SCROLL_INCREMENT = 30;
 
     return Backbone.View.extend({
         //to be overridden
-        generateErrorMessage: _.noop,
+        generateErrorMessage: null,
 
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
@@ -141,6 +131,8 @@ define([
                 documentsCollection: this.documentsCollection
             });
 
+            this.listenTo(this.queryModel, 'change', this.refreshResults);
+
             this.checkScroll = checkScroll.bind(this);
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
         },
@@ -211,6 +203,8 @@ define([
                 this.resultsFinished = true;
                 this.clearLoadingSpinner();
 
+                this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
+
                 if (this.endOfResults) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noMoreResults"]}));
                 } else if (this.documentsCollection.isEmpty()) {
@@ -224,8 +218,6 @@ define([
 
                 this.$('.main-results-content .results').append(this.handleError(i18n['app.feature.search'], xhr));
             });
-
-            this.listenTo(this.queryModel, 'change', this.refreshResults);
 
             if (this.entityCollection) {
                 this.listenTo(this.entityCollection, 'reset', function() {
@@ -276,6 +268,7 @@ define([
                 promotion: isPromotion,
                 date: model.has('date') ? model.get('date').fromNow() : null,
                 contentType: getContentTypeClass(model),
+                staticPromotion: model.get('promotionCategory') === 'STATIC_CONTENT_PROMOTION',
                 thumbnail: model.get('thumbnail')
             }));
 

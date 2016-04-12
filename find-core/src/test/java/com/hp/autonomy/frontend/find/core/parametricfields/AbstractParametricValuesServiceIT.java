@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
-    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaAutowiredMembersInspection"})
     @Autowired
     protected MvcIntegrationTestUtils mvcIntegrationTestUtils;
 
@@ -26,11 +26,10 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
         mockMvc.perform(
                 get(ParametricValuesController.PARAMETRIC_VALUES_PATH)
                         .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                        .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getParametricFields())
                         .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
                         .param(ParametricValuesController.FIELD_TEXT_PARAM, ""))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", CoreMatchers.not(empty())));
+                .andExpect(jsonPath("$.parametricValues", CoreMatchers.not(empty())));
     }
 }

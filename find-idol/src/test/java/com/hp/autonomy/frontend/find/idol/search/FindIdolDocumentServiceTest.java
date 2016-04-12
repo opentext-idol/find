@@ -14,7 +14,6 @@ import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentServiceTest;
 import com.hp.autonomy.types.idol.QueryResponseData;
-import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;

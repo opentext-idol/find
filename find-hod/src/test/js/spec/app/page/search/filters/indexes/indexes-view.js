@@ -1,9 +1,15 @@
+/*
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'underscore',
     'jquery',
-    'find/app/page/search/filters/indexes/indexes-view',
-    'databases-view/js/databases-collection'
+    'find/hod/app/page/search/filters/indexes/hod-indexes-view',
+    'databases-view/js/databases-collection',
+    'jasmine-jquery'
 ], function(Backbone, _, $, IndexesView, DatabasesCollection) {
 
     describe('Indexes View', function() {

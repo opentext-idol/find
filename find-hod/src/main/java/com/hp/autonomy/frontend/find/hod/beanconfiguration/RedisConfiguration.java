@@ -22,6 +22,8 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.session.data.redis.config.ConfigureNotifyKeyspaceEventsAction;
+import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @Configuration
@@ -82,6 +84,16 @@ public class RedisConfiguration {
         final RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory());
         return template;
+    }
+
+    @Bean
+    public ConfigureRedisAction configureRedisAction() {
+        // The config action might not be available in a secure redis (eg: Azure)
+        if (configService.getConfig().getRedis().getAutoConfigure()) {
+            return new ConfigureNotifyKeyspaceEventsAction();
+        } else {
+            return ConfigureRedisAction.NO_OP;
+        }
     }
 
 }

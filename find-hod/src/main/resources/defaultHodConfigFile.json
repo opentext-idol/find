@@ -29,6 +29,7 @@
             "host": "hp-find-backend",
             "port": 6379
         },
+        "autoConfigure": true,
         "database": 0,
         "password": null,
         "sentinels": []

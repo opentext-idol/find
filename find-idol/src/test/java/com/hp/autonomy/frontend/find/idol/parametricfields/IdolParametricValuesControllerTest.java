@@ -10,10 +10,23 @@ import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricVal
 import com.hp.autonomy.frontend.find.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
 import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Matchers;
+
+import java.util.Collections;
+
+import static org.mockito.Mockito.verify;
+
 
 public class IdolParametricValuesControllerTest extends AbstractParametricValuesControllerTest<IdolParametricRequest, String, AciErrorException> {
     @Before
     public void setUp() {
         parametricValuesController = new IdolParametricValuesController(parametricValuesService, new IdolQueryRestrictionsBuilder());
+    }
+
+    @Test
+    public void getParametricValues() throws AciErrorException {
+        parametricValuesController.getParametricValues("Some query text", null, Collections.<String>emptyList(), null, null, null);
+        verify(parametricValuesService).getAllParametricValues(Matchers.<IdolParametricRequest>any());
     }
 }

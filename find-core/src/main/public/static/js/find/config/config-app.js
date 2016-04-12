@@ -7,13 +7,15 @@ define([
     'find/app/page/find-settings-page',
     'js-whatever/js/empty-navbar',
     'find/app/util/test-browser',
+    'jquery',
     'i18n!find/nls/bundle',
     'text!find/templates/config/config.html',
     'text!find/templates/config/empty-navbar.html',
     'underscore'
-], function(SettingsPage, EmptyNavbar, testBrowser, i18n, template, emptyNavbar, _) {
-    return function () {
-        jQuery.ajaxSetup({ cache: false });
+], function(SettingsPage, EmptyNavbar, testBrowser, $, i18n, template, emptyNavbar, _) {
+
+    return function() {
+        $.ajaxSetup({cache: false});
 
         var $page = $('.page');
 
@@ -27,7 +29,7 @@ define([
 
             events: {
                 'click a': function(e) {
-                    if(!this.options.settingsPage.hasSavedSettings) {
+                    if (!this.options.settingsPage.hasSavedSettings) {
                         e.preventDefault();
 
                         alert('You should save your settings before you can log out.');
@@ -50,5 +52,6 @@ define([
         $('.content').append(this.settingsPage.el);
 
         testBrowser();
-    }
+    };
+
 });

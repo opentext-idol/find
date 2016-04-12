@@ -6,13 +6,14 @@
 package com.hp.autonomy.frontend.find.idol.typeahead;
 
 import com.autonomy.aci.client.services.AciService;
+import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.typeahead.GetSuggestionsFailedException;
 import com.hp.autonomy.frontend.find.core.typeahead.TypeAheadConstants;
 import com.hp.autonomy.frontend.find.core.typeahead.TypeAheadService;
-import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
+import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.types.idol.TypeAheadResponseData;
 import com.hp.autonomy.types.requests.qms.actions.typeahead.TypeAheadActions;
 import com.hp.autonomy.types.requests.qms.actions.typeahead.params.ModeParam;
@@ -25,21 +26,22 @@ import java.util.List;
 
 @Service
 public class QmsTypeAheadService implements TypeAheadService {
-    private final ConfigService<IdolFindConfig> configService;
-    private final GetSuggestionsAciExecutor<TypeAheadResponseData> executor;
+    private final ConfigService<? extends IdolSearchCapable> configService;
+    private final GetSuggestionsAciExecutor executor;
+    private final AciService qmsAciService;
+    private final Processor<TypeAheadResponseData> processor;
 
     @Autowired
     public QmsTypeAheadService(
-            final ConfigService<IdolFindConfig> configService,
+            final ConfigService<? extends IdolSearchCapable> configService,
+            final GetSuggestionsAciExecutor executor,
             final AciService qmsAciService,
             final AciResponseJaxbProcessorFactory processorFactory
     ) {
         this.configService = configService;
-
-        executor = new GetSuggestionsAciExecutor<>(
-                qmsAciService,
-                processorFactory.createAciResponseProcessor(TypeAheadResponseData.class)
-        );
+        this.executor = executor;
+        this.qmsAciService = qmsAciService;
+        processor = processorFactory.createAciResponseProcessor(TypeAheadResponseData.class);
     }
 
     @Override
@@ -51,18 +53,13 @@ public class QmsTypeAheadService implements TypeAheadService {
         parameters.add(TypeAheadParams.MaxResults.name(), TypeAheadConstants.MAX_RESULTS);
         parameters.add(TypeAheadParams.Text.name(), text);
 
-        final TypeAheadResponseData response = executor.executeAction(parameters);
+        final TypeAheadResponseData response = executor.executeAction(qmsAciService, processor, parameters);
         final List<String> output = new LinkedList<>();
 
         for (final TypeAheadResponseData.Expansion expansion : response.getExpansion()) {
             final String value = expansion.getValue();
-
-            if (ModeParam.Index.equals(mode)) {
-                output.add(value.toLowerCase());
-            } else {
-                // Do not lower case dictionary suggestions (they are explicitly defined by the user)
-                output.add(value);
-            }
+            // Do not lower case dictionary suggestions (they are explicitly defined by the user)
+            output.add(ModeParam.Index == mode ? value.toLowerCase() : value);
         }
 
         return output;

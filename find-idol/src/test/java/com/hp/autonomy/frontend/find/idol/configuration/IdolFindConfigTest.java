@@ -88,6 +88,12 @@ public class IdolFindConfigTest {
     }
 
     @Test
+    public void getContentAciServerDetails() {
+        when(serverConfig.toAciServerDetails()).thenReturn(mock(AciServerDetails.class));
+        assertNotNull(idolFindConfig.getContentAciServerDetails());
+    }
+
+    @Test
     public void getAuthentication() {
         assertEquals(communityAuthentication, idolFindConfig.getAuthentication());
     }

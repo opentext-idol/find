@@ -4,48 +4,46 @@
  */
 
 define([
-    'backbone'
-], function(Backbone) {
-
-    function changePage(name) {
-        if (this.currentPage !== name && this.pageData[name]) {
-            if (this.currentPage) {
-                var currentView = this.pages[this.currentPage].view;
-                currentView.hide();
-                this.stopListening(currentView, 'change-title');
-            }
-
-            if (!this.pages[name].hasRendered) {
-                this.pages[name].view.render();
-                this.$el.append(this.pages[name].view.$el);
-                this.pages[name].hasRendered = true;
-            }
-
-            var view = this.pages[name].view;
-            view.show();
-            this.currentPage = name;
-        }
-    }
+    'backbone',
+    'underscore'
+], function(Backbone, _) {
 
     return Backbone.View.extend({
         initialize: function(options) {
-            this.pageData = options.pageData;
-            this.pages = {};
-
-            _.each(this.pageData, function(data, name) {
+            this.pages = _.mapObject(options.pageData, function(data) {
                 var viewOptions = {router: options.router};
 
                 _.each(data.models, function(modelName) {
                     viewOptions[modelName] = options.modelRegistry.get(modelName);
                 });
 
-                this.pages[name] = {
+                return {
                     hasRendered: false,
                     view: new data.Constructor(viewOptions)
                 };
-            }, this);
+            });
 
-            this.listenTo(options.router, 'route:find', changePage);
+            this.listenTo(options.router, 'route:find', function(name) {
+                var pageName = this.pages[name] ? name : options.defaultPage;
+
+                if (pageName && this.currentPage !== pageName) {
+                    if (this.currentPage) {
+                        var currentView = this.pages[this.currentPage].view;
+                        currentView.hide();
+                        this.stopListening(currentView, 'change-title');
+                    }
+
+                    if (!this.pages[pageName].hasRendered) {
+                        this.pages[pageName].view.render();
+                        this.$el.append(this.pages[pageName].view.$el);
+                        this.pages[pageName].hasRendered = true;
+                    }
+
+                    var view = this.pages[pageName].view;
+                    view.show();
+                    this.currentPage = pageName;
+                }
+            });
         }
     });
 

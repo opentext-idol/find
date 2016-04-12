@@ -42,11 +42,11 @@ define([
 
     // Get an array of filter model attributes from the selected parametric values collection
     function extractParametricFilters(selectedParametricValues) {
-        return _.map(selectedParametricValues.toFieldsAndValues(), function(values, field) {
+        return _.map(selectedParametricValues.toFieldsAndValues(), function(data, field) {
             return {
                 id: parametricFilterId(field),
                 field: field,
-                text: parametricFilterText(values),
+                text: parametricFilterText(data.values),
                 type: FilterType.PARAMETRIC
             };
         });

@@ -67,6 +67,7 @@ public abstract class CustomErrorController {
     @RequestMapping(DispatcherServletConfiguration.SERVER_ERROR_PATH)
     public ModelAndView serverErrorPage(final HttpServletRequest request, final HttpServletResponse response) {
         final Exception exception = (Exception) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+
         return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
                 .setRequest(request)
                 .setMainMessageCode(MESSAGE_CODE_INTERNAL_SERVER_ERROR_MAIN)

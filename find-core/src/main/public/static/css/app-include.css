@@ -292,6 +292,12 @@ fieldset.radio-fieldset > label {
     margin-right: 10px;
 }
 
+/*sizes determined by HPE Elements .middle-box*/
+.middle-box-wrapper {
+    height: 400px;
+    width: 300px;
+}
+
 /* find 2.0 */
 .main-content {
     background-color: white;
@@ -319,10 +325,6 @@ fieldset.radio-fieldset > label {
 .left-side-container {
     font-size:13px;
     background-color: #E2E2E2;
-}
-
-.small-container {
-    width: initial;
 }
 
 .right-side-container {
@@ -377,6 +379,10 @@ fieldset.radio-fieldset > label {
     font-weight: bold;
     font-size: 18px;
     overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    width: 100%;
 }
 
 .middle-container.shorten h4 {
@@ -473,8 +479,8 @@ fieldset.radio-fieldset > label {
 
 .find {
     text-align: center;
-    /* We need to be on top of the static navbar */
-    z-index: 9999;
+    /* We need to be on top of the static navbar but below the modal backdrop */
+    z-index: 1020;
 }
 
 .find-logo {
@@ -482,20 +488,21 @@ fieldset.radio-fieldset > label {
     font-weight: bolder;
 }
 
-.find-logo-small {
-    font-family: Metric-Semibold;
-    float: left;
-    font-size: 22px;
-    line-height: 20px;
+.find-logo-large {
+    font-size: 90px;
+    color: #425563;
+    display: inline-block;
+    vertical-align: middle;
+    background: url('../img/Find_Logo_lge.png') no-repeat;
+    width: 240px;
+    height: 45px;
 }
 
-.find-logo-large {
-    font-size: 49px;
-    font-family: Metric-Semibold;
-    color: #000;
-    line-height: 46px;
-    text-align: center;
-    display: inline-block;
+.find-logo-small {
+    background: url('../img/Find_Logo_sml.png') no-repeat;
+    background-size: 100px 20px;
+    width: 100px;
+    height: 20px;
 }
 
 .hp-logo-footer {
@@ -634,6 +641,10 @@ input.find-input {
     border: 3px solid #c0c0c0;
 }
 
+.promoted-document h4 {
+    width: 80%;
+}
+
 .suggestions-content li {
     list-style: none;
 }
@@ -714,7 +725,7 @@ input.find-input {
     font-size: 23px !important;
     border: 2px solid #CCC !important;
     transition: all 1s ease;
-    padding: 10px;
+    padding-left: 10px;
     font-family: inherit;
     font-style: italic;
 }
@@ -874,6 +885,35 @@ input.find-input {
 
 .selected-related-concept:not(:first-child) {
     margin-left: 5px;
+}
+
+.selected-related-concept-text {
+    max-width: 100px;
+}
+
+.concept-remove-icon {
+    line-height: inherit;
+}
+
+.additional-concepts {
+    overflow: hidden;
+    width: calc(100% - 218px); /* 218 is the width of 'also searching for' and scrolling buttons */
+    float: left;
+    white-space: nowrap;
+}
+
+.left-scroll,
+.right-scroll,
+.left-scroll:hover,
+.right-scroll:hover {
+    box-shadow: none;
+}
+
+.service-view-container {
+    height: 100%;
+    width: 100%;
+    display: table;
+    table-layout: fixed;
 }
 
 .selected-related-concept-text {
@@ -1123,6 +1163,15 @@ input:-moz-placeholder::before {
     overflow: auto;
 }
 
+.page .body {
+    left: 0;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    top: 70px;
+    overflow: auto;
+}
+
 @media (max-width: 991px) {
     .reverse-animated-container .find-form {
         width: 100%;
@@ -1220,6 +1269,24 @@ input:-moz-placeholder::before {
     display: none;
 }
 
+
+.parametric-fields-table {
+    table-layout: fixed;
+}
+
+.parametric-value-count-cell {
+    width: 50px;
+}
+
+.parametric-value-count {
+    text-align: right;
+}
+
+.parametric-value-name,
+.parametric-value-count {
+    white-space: nowrap;
+}
+
 /* Rotating chevrons on collapsible panels *******************/
 .collapsed .rotating-chevron,
 .collapsed.rotating-chevron {
@@ -1247,12 +1314,12 @@ input:-moz-placeholder::before {
 
 /* Indexes View */
 .database-name,
-.category-name,
-.toggle-more-text {
+.category-name {
     padding: 0 8px; /* Same as table padding so it lines up */
 }
 
-.toggle-more {
+.toggle-more,
+.toggle-more td {
     border-bottom: none !important;
 }
 

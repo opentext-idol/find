@@ -22,7 +22,7 @@ define([
             this.totalResults = null;
             this.warnings = null;
 
-            FindBaseCollection.prototype.fetch.call(this, options);
+            return FindBaseCollection.prototype.fetch.call(this, options);
         },
 
         parse: function(response) {

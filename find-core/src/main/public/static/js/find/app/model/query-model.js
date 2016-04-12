@@ -7,7 +7,9 @@ define([
     'backbone',
     'find/app/util/search-data-util'
 ], function(Backbone, searchDataUtil) {
-
+    
+    'use strict';
+    
     /**
      * @readonly
      * @enum {String}

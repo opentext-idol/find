@@ -22,7 +22,7 @@ EXECUTABLE="${FIND_INSTALL_DIR}/${NAME}.war"
 JAVA_BIN="/usr/bin/java"
 
 ## Don't change these
-PRODUCT_NAME="HPE BI for Human Information"
+PRODUCT_NAME="HPE Find"
 LOCKFILE="/var/lock/${NAME}.pid"
 STARTUP_LOG="${FIND_INSTALL_DIR}/console.log"
 ARGS=("-Dhp.find.home=${FIND_HOME_DIR}" "-Dserver.port=${FIND_PORT}" "-jar" "${EXECUTABLE}")

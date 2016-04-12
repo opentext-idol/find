@@ -8,10 +8,26 @@ define([
 
         model: Backbone.Model.extend({
             idAttribute: 'name',
-
             defaults: {
                 values: []
             }
-        })
+        }),
+
+        parse: function(response) {
+            var parametricArray = _.map(response.parametricValues, function(model){
+                return _.extend({
+                    numeric: false
+                }, model)
+            });
+
+            var numericArray = _.map(response.numericParametricValues, function(model){
+                return _.extend({
+                    numeric: true
+                }, model)
+            });
+
+            return parametricArray.concat(numericArray);
+        }
+
     });
 });

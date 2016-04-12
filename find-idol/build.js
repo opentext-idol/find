@@ -21,7 +21,7 @@
             name: "config",
             include: [
                 'require-config',
-                'find/config/app'
+                'find/config/config-app'
             ]
         }, {
             name: "public",

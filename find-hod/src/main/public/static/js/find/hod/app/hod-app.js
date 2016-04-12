@@ -5,17 +5,23 @@
 
 define([
     'find/app/app',
+    'find/app/page/default/default-page',
     'find/hod/app/page/hod-find-search'
-], function(BaseApp, FindSearch) {
+], function(BaseApp, DefaultPage, FindSearch) {
 
     'use strict';
 
     return BaseApp.extend({
+        defaultPage: 'default',
+
         getPageData: function() {
             return {
                 search: {
                     Constructor: FindSearch,
                     models: ['savedQueryCollection', 'indexesCollection']
+                },
+                'default': {
+                    Constructor: DefaultPage
                 }
             };
         }

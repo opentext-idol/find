@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(RelatedConceptsController.RELATED_CONCEPTS_PATH)
 public class IdolRelatedConceptsController extends RelatedConceptsController<QsElement, String, AciErrorException> {
-
     public static final int QUERY_SUMMARY_LENGTH = 50;
 
     @Autowired
@@ -29,9 +28,9 @@ public class IdolRelatedConceptsController extends RelatedConceptsController<QsE
 
     @Override
     protected IdolRelatedConceptsRequest buildRelatedConceptsRequest(final QueryRestrictions<String> queryRestrictions) {
-        final IdolRelatedConceptsRequest idolRelatedConceptsRequest = new IdolRelatedConceptsRequest();
-        idolRelatedConceptsRequest.setQueryRestrictions(queryRestrictions);
-        idolRelatedConceptsRequest.setQuerySummaryLength(QUERY_SUMMARY_LENGTH);
-        return idolRelatedConceptsRequest;
+        return new IdolRelatedConceptsRequest.Builder()
+                .setQueryRestrictions(queryRestrictions)
+                .setQuerySummaryLength(QUERY_SUMMARY_LENGTH)
+                .build();
     }
 }

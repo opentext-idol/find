@@ -17,15 +17,15 @@ public class TypeAheadController {
     public static final String URL = "/api/public/typeahead";
     public static final String TEXT_PARAMETER = "text";
 
-    private final TypeAheadService service;
+    private final TypeAheadService typeAheadService;
 
     @Autowired
-    public TypeAheadController(final TypeAheadService service) {
-        this.service = service;
+    public TypeAheadController(final TypeAheadService typeAheadService) {
+        this.typeAheadService = typeAheadService;
     }
 
     @RequestMapping(URL)
     public List<String> getSuggestions(@RequestParam(TEXT_PARAMETER) final String text) throws GetSuggestionsFailedException {
-        return service.getSuggestions(text);
+        return typeAheadService.getSuggestions(text);
     }
 }

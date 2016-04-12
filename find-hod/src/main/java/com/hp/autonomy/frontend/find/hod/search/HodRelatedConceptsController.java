@@ -27,9 +27,9 @@ public class HodRelatedConceptsController extends RelatedConceptsController<Enti
     }
 
     @Override
-    protected RelatedConceptsRequest<ResourceIdentifier> buildRelatedConceptsRequest(QueryRestrictions<ResourceIdentifier> queryRestrictions) {
-        final HodRelatedConceptsRequest hodRelatedConceptsRequest = new HodRelatedConceptsRequest();
-        hodRelatedConceptsRequest.setQueryRestrictions(queryRestrictions);
-        return hodRelatedConceptsRequest;
+    protected RelatedConceptsRequest<ResourceIdentifier> buildRelatedConceptsRequest(final QueryRestrictions<ResourceIdentifier> queryRestrictions) {
+        return new HodRelatedConceptsRequest.Builder()
+                .setQueryRestrictions(queryRestrictions)
+                .build();
     }
 }

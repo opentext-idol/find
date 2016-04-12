@@ -61,12 +61,12 @@ public class ControllerUtilsImpl implements ControllerUtils {
         modelAndView.addObject(ErrorAttributes.BASE_URL.value(), getBaseUrl(errorInfo.getRequest()));
         modelAndView.addObject(ErrorAttributes.STATUS_CODE.value(), errorInfo.getStatusCode());
         modelAndView.addObject(ErrorAttributes.AUTH_ERROR.value(), errorInfo.isAuthError());
+
         if (errorInfo.isContactSupport()) {
-            final Exception exception = errorInfo.getException();
-            if(exception != null) {
+            if (errorInfo.getException() != null) {
                 final UUID uuid = UUID.randomUUID();
                 log.error("Unhandled exception with uuid {}", uuid);
-                log.error("Stack trace", exception);
+                log.error("Stack trace", errorInfo.getException());
                 modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(), getMessage(MESSAGE_CODE_CONTACT_SUPPORT_UUID, new Object[]{uuid}));
             } else {
                 modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(), getMessage(MESSAGE_CODE_CONTACT_SUPPORT_NO_UUID, null));

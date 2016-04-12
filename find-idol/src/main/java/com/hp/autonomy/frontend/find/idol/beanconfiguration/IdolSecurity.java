@@ -32,7 +32,6 @@ import java.util.LinkedHashMap;
 @Configuration
 @Order(99)
 public class IdolSecurity extends WebSecurityConfigurerAdapter {
-
     @Value("${server.reverseProxy}")
     private boolean reverseProxy;
 

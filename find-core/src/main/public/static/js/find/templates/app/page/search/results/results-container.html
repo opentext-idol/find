@@ -8,7 +8,7 @@
     <div class="results-contents">
         <% if (promotion) { %>
             <span class="pull-right m-t-xs text-muted promoted-label">
-                <i class="hp-icon hp-fw hp-star"></i> Promoted
+                <i class="hp-icon hp-fw hp-favorite"></i> Promoted
             </span>
         <% } %>
         <h4 class="pull-left m-b-nil m-t-xs result-header"><%- title %></h4>
@@ -23,7 +23,9 @@
             <%= summary %>
         </p>
         <p class="text-right">
-            <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
+            <% if (!staticPromotion) { %>
+                <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
+            <% } %>
         </p>
     </div>
 </div>

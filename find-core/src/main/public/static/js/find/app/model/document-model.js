@@ -8,6 +8,8 @@ define([
     'underscore',
     'moment'
 ], function(Backbone, _, moment) {
+    
+    'use strict';
 
     var MEDIA_TYPES = ['audio', 'image', 'video'];
     var WEB_TYPES = ['text/html', 'text/xhtml'];

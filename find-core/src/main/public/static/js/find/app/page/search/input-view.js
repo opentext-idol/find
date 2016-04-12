@@ -14,6 +14,7 @@ define([
     var html = _.template(template)({i18n: i18n});
 
     var conceptsTemplate = _.template(relatedConceptTemplate);
+    
     var scrollingButtons = _.template('<span class="scrolling-buttons">' +
             '<button class="btn btn-xs btn-white left-scroll"><i class="hp-icon hp-chevron-left"></i></button> ' +
             '<button class="btn btn-xs btn-white right-scroll"><i class="hp-icon hp-chevron-right"></i></button> ' +

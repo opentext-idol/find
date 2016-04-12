@@ -70,17 +70,17 @@
   "fieldsInfo": {
     "contentType": {
       "names": [
-        "CONTENT_TYPE"
+        "AU_REPOSITORY_METADATA_TYPE_STRING"
       ]
     },
     "url": {
       "names": [
-        "URL"
+        "AU_REPOSITORY_METADATA_URL_FILE_STRING"
       ]
     },
     "offset": {
       "names": [
-        "offset"
+        "OFFSET"
       ]
     },
     "authors": {

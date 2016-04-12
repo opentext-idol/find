@@ -40,19 +40,6 @@ define([
                         })
                     })
                 ], [
-                    new ViewWidget({
-                        configItem: 'view',
-                        description: i18n['settings.view.description'],
-                        isOpened: true,
-                        title: i18n['settings.view'],
-                        strings: _.extend(this.serverStrings(), {
-                            connector: i18n['settings.view.connector'],
-                            referenceFieldLabel: i18n['settings.view.referenceFieldLabel'],
-                            referenceFieldBlank: i18n['settings.view.referenceFieldBlank'],
-                            referenceFieldPlaceholder: i18n['settings.view.referenceFieldPlaceholder'],
-                            viewingMode: i18n['settings.view.viewingMode']
-                        })
-                    }),
                     new QueryManipulationWidget({
                         configItem: 'queryManipulation',
                         description: i18n['settings.queryManipulation.description'],
@@ -69,6 +56,19 @@ define([
                             index: i18n['settings.queryManipulation.index'],
                             loading: i18n['settings.queryManipulation.loading'],
                             typeaheadMode: i18n['settings.queryManipulation.typeaheadMode']
+                        })
+                    }),
+                    new ViewWidget({
+                        configItem: 'view',
+                        description: i18n['settings.view.description'],
+                        isOpened: true,
+                        title: i18n['settings.view'],
+                        strings: _.extend(this.serverStrings(), {
+                            connector: i18n['settings.view.connector'],
+                            referenceFieldLabel: i18n['settings.view.referenceFieldLabel'],
+                            referenceFieldBlank: i18n['settings.view.referenceFieldBlank'],
+                            referenceFieldPlaceholder: i18n['settings.view.referenceFieldPlaceholder'],
+                            viewingMode: i18n['settings.view.viewingMode']
                         })
                     })
                 ], [

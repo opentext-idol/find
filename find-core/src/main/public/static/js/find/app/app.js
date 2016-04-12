@@ -6,6 +6,7 @@
 define([
     'jquery',
     'backbone',
+    'underscore',
     'find/app/util/test-browser',
     'find/app/model/indexes-collection',
     'find/app/model/saved-searches/saved-query-collection',
@@ -17,11 +18,14 @@ define([
     'find/app/vent',
     'find/app/router',
     'text!find/templates/app/app.html'
-], function($, Backbone, testBrowser, IndexesCollection, SavedQueryCollection, ModelRegistry, Navigation, configuration, Pages, logout, vent, router, template) {
+], function($, Backbone, _, testBrowser, IndexesCollection, SavedQueryCollection, ModelRegistry, Navigation, configuration, Pages, logout, vent, router, template) {
 
     return Backbone.View.extend({
         el: '.page',
         template: _.template(template),
+
+        // Can be overridden
+        defaultPage: null,
         Navigation: Navigation,
 
         // Abstract
@@ -36,29 +40,30 @@ define([
         initialize: function() {
             $.ajaxSetup({cache: false});
 
-            var modelRegistry = new ModelRegistry(this.getModelData());
-            var pageData = this.getPageData();
+            testBrowser().done(function() {
+                var modelRegistry = new ModelRegistry(this.getModelData());
+                var pageData = this.getPageData();
 
-            this.pages = new Pages({
-                modelRegistry: modelRegistry,
-                pageData: pageData,
-                router: router
-            });
+                this.pages = new Pages({
+                    defaultPage: this.defaultPage,
+                    modelRegistry: modelRegistry,
+                    pageData: pageData,
+                    router: router
+                });
 
-            this.navigation = new this.Navigation({
-                pageData: pageData,
-                router: router
-            });
+                this.navigation = new this.Navigation({
+                    pageData: pageData,
+                    router: router
+                });
 
-            this.render();
+                this.render();
 
-            var matchedRoute = Backbone.history.start();
+                var matchedRoute = Backbone.history.start();
 
-            if (!matchedRoute) {
-                vent.navigate('find/search/splash');
-            }
-
-            testBrowser();
+                if (!matchedRoute) {
+                    vent.navigate('find/search/splash');
+                }
+            }.bind(this));
         },
 
         render: function() {

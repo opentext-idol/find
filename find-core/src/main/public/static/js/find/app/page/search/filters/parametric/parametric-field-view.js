@@ -9,7 +9,7 @@ define([
 ], function(Backbone, _, $, i18n, ListView, Collapsible, ValueView) {
 
     var ValuesView = Backbone.View.extend({
-        className: 'table',
+        className: 'table parametric-fields-table',
         tagName: 'table',
 
         initialize: function() {
@@ -47,6 +47,7 @@ define([
         initialize: function() {
             this.$el.attr('data-field', this.model.id);
             this.$el.attr('data-field-display-name', this.model.get('displayName'));
+            this.$el.attr('data-numeric-type', this.model.get('numeric'));
 
             this.collapsible = new Collapsible({
                 title: this.model.get('displayName'),
