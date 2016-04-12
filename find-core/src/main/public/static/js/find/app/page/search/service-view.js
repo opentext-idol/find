@@ -39,6 +39,7 @@ define([
 
         // Can be overridden
         headerControlsHtml: '',
+        displaySunburst: true,
 
         // Abstract
         ResultsView: null,
@@ -151,8 +152,6 @@ define([
                 clickHandler: entityClickHandler
             }, subViewArguments));
 
-            this.sunburstView = new SunburstView(subViewArguments);
-
             var resultsViews = [{
                 content: this.resultsViewAugmentation,
                 id: 'list',
@@ -169,15 +168,21 @@ define([
                     displayNameKey: 'topic-map',
                     icon: 'hp-grid'
                 }
-            }, {
-                content: this.sunburstView,
-                id: 'sunburst',
-                uniqueId: _.uniqueId('results-view-item-'),
-                selector: {
-                    displayNameKey: 'sunburst',
-                    icon: 'hp-favorite'
-                }
             }];
+
+            if (this.displaySunburst) {
+                this.sunburstView = new SunburstView(subViewArguments);
+
+                resultsViews.push({
+                    content: this.sunburstView,
+                    id: 'sunburst',
+                    uniqueId: _.uniqueId('results-view-item-'),
+                    selector: {
+                        displayNameKey: 'sunburst',
+                        icon: 'hp-favorite'
+                    }
+                });
+            }
 
             var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab

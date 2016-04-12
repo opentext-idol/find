@@ -13,7 +13,10 @@ define([
 
     return ServiceView.extend({
         ResultsView: ResultsView,
-        ResultsViewAugmentation: ResultsViewAugmentation
+        ResultsViewAugmentation: ResultsViewAugmentation,
+
+        // TODO: Enable sunburst in HOD when IOD-9173 is complete
+        displaySunburst: false
     });
 
 });
