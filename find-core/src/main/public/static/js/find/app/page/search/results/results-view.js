@@ -248,20 +248,25 @@ define([
         },
 
         formatResult: function(model, isPromotion) {
-            var reference = model.get('reference');
-            var summary = addLinksToSummary(this.entityCollection, model.get('summary'));
+            var data = {
+                contentType: getContentTypeClass(model),
+                date: model.has('date') ? model.get('date').fromNow() : null,
+                highlightedSummary: addLinksToSummary(this.entityCollection, model.get('summary')),
+                isPromotion: isPromotion,
+                staticPromotion: model.get('promotionCategory') === 'STATIC_CONTENT_PROMOTION'
+            };
 
             var $newResult = $(this.resultsTemplate({
-                cid: model.cid,
                 i18n: i18n,
+                cid: model.cid,
                 title: model.get('title'),
-                reference: reference,
-                summary: summary,
-                promotion: isPromotion,
-                date: model.has('date') ? model.get('date').fromNow() : null,
-                contentType: getContentTypeClass(model),
-                staticPromotion: model.get('promotionCategory') === 'STATIC_CONTENT_PROMOTION',
-                thumbnail: model.get('thumbnail')
+                reference: model.get('reference'),
+                thumbnail: model.get('thumbnail'),
+                contentType: data.contentType,
+                date: data.date,
+                isPromotion: data.isPromotion,
+                summary: data.highlightedSummary,
+                staticPromotion: data.staticPromotion
             }));
 
             if (isPromotion) {

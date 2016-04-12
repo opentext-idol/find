@@ -1,4 +1,4 @@
-<% var promoted = promotion ? 'promoted-document' : ''; %>
+<% var promoted = isPromotion ? 'promoted-document' : ''; %>
 
 <div class="main-results-container m-b-sm <%-promoted%>" data-cid="<%-cid %>">
     <span class="pull-left m-t-xs text-muted m-r-sm content-type">
@@ -6,7 +6,7 @@
     </span>
 
     <div class="results-contents">
-        <% if (promotion) { %>
+        <% if (isPromotion) { %>
             <span class="pull-right m-t-xs text-muted promoted-label">
                 <i class="hp-icon hp-fw hp-favorite"></i> Promoted
             </span>
