@@ -8,6 +8,11 @@ define([
     'backbone'
 ], function (ResultRenderer, Backbone) {
 
+    /*
+     * This config array represents how to configure the results renderer to render document models
+     * into a particular template for the specific example where they present with a particular type of
+     * field in the model's fields attribute.
+     */
     var organismsConfig = [
         {
             template: _.template('<div>This is a document about trees</div>'),

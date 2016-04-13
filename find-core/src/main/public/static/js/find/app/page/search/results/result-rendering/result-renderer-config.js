@@ -22,6 +22,7 @@ define([
         return matchedType.className;
     }
 
+    // Derived data for the default template is provided as a separate function for reuse.
     var defaultData = function(model, isPromotion) {
         return {
             contentType: getContentTypeClass(model),
@@ -32,6 +33,11 @@ define([
         };
     };
 
+    /*
+     * Add new custom templates for particular types of document model to this array,
+     * with predicates in descending precedence order. All models must be matched by at least
+     * one predicate.
+     */
     return [
         {
             template: _.template(resultsTemplate),
