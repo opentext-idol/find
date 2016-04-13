@@ -27,7 +27,7 @@ public abstract class MvcIntegrationTestUtils {
                     @SuppressWarnings("InnerClassTooDeeplyNested")
                     @Override
                     public void handle(final MvcResult result) throws Exception {
-                        final Pattern pattern = Pattern.compile(".+\"reference\"\\s+:\\s+\"(?<reference>[^\"]+)\".+");
+                        final Pattern pattern = Pattern.compile(".*\"reference\"\\s*:\\s*\"(?<reference>[^\"]+)\".*");
                         final Matcher matcher = pattern.matcher(result.getResponse().getContentAsString());
                         if (matcher.find()) {
                             reference[0] = matcher.group("reference");
