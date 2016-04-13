@@ -7,8 +7,8 @@ define([
     'find/app/model/promotions-collection',
     'find/app/page/search/sort-view',
     'find/app/page/search/results/results-number-view',
+    'find/app/page/search/results/result-renderer',
     'find/app/util/view-server-client',
-    'find/app/util/document-mime-types',
     'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/search/results/results-container.html',
@@ -17,7 +17,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            viewClient, documentMimeTypes, addLinksToSummary, template, resultsTemplate,
+            ResultRenderer, viewClient, addLinksToSummary, template, resultsTemplate,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     function checkScroll() {
@@ -36,18 +36,6 @@ define([
 
             this.loadData(true);
         }
-    }
-
-    function getContentTypeClass(model) {
-        var contentType = model.get('contentType') || '';
-
-        var matchedType = _.find(documentMimeTypes, function(mimeType) {
-            return Boolean(_.find(mimeType.typeRegex, function(regex) {
-                return regex().test(contentType);
-            }));
-        });
-
-        return matchedType.className;
     }
 
     var SCROLL_INCREMENT = 30;
@@ -109,6 +97,10 @@ define([
             }
 
             this.entityCollection = options.entityCollection;
+
+            this.resultRenderer = new ResultRenderer({
+                entityCollection: options.entityCollection
+            });
 
             if (this.entityCollection) {
                 // Only required if we are highlighting entities
@@ -248,26 +240,7 @@ define([
         },
 
         formatResult: function(model, isPromotion) {
-            var data = {
-                contentType: getContentTypeClass(model),
-                date: model.has('date') ? model.get('date').fromNow() : null,
-                highlightedSummary: addLinksToSummary(this.entityCollection, model.get('summary')),
-                isPromotion: isPromotion,
-                staticPromotion: model.get('promotionCategory') === 'STATIC_CONTENT_PROMOTION'
-            };
-
-            var $newResult = $(this.resultsTemplate({
-                i18n: i18n,
-                cid: model.cid,
-                title: model.get('title'),
-                reference: model.get('reference'),
-                thumbnail: model.get('thumbnail'),
-                contentType: data.contentType,
-                date: data.date,
-                isPromotion: data.isPromotion,
-                summary: data.highlightedSummary,
-                staticPromotion: data.staticPromotion
-            }));
+            var $newResult = this.resultRenderer.getResult(model, isPromotion);
 
             if (isPromotion) {
                 this.$('.main-results-content .promotions').append($newResult);
