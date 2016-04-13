@@ -9,17 +9,25 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.configuration.AbstractFindSpringSecurityAuditorAware;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
+import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepository;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class IdolFindSpringSecurityAuditorAware extends AbstractFindSpringSecurityAuditorAware {
+public class IdolFindSpringSecurityAuditorAware extends AbstractFindSpringSecurityAuditorAware<CommunityPrincipal> {
+    @Autowired
+    public IdolFindSpringSecurityAuditorAware(
+            final AuthenticationInformationRetriever<CommunityPrincipal> authenticationInformationRetriever,
+            final UserEntityRepository userRepository
+    ) {
+        super(authenticationInformationRetriever, userRepository);
+    }
 
     @Override
-    protected UserEntity principalToUser(Object principal) {
-        final CommunityPrincipal communityPrincipal = (CommunityPrincipal) principal;
-
+    protected UserEntity principalToUser(final CommunityPrincipal principal) {
         final UserEntity userEntity = new UserEntity();
-        userEntity.setUid(communityPrincipal.getId());
+        userEntity.setUid(principal.getId());
 
         return userEntity;
     }

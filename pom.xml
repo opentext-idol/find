@@ -26,8 +26,10 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.12.12</haven.search.components.version>
+        <haven.search.components.version>0.12.14</haven.search.components.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
+        <!-- Disabling integration tests by default until we figure out how to run them on the build servers (CCUK-3480) -->
+        <skipITs>true</skipITs>
         <npm.binExtension/>
         <skipTests/>
     </properties>
@@ -44,8 +46,7 @@
                             <goal>integration-test</goal>
                         </goals>
                         <configuration>
-                            <!-- Temporarily disabling until we figure out how to run integration tests (CCUK-3480) -->
-                            <skip>true</skip>
+                            <skipITs>${skipITs}</skipITs>
                         </configuration>
                     </execution>
                 </executions>
