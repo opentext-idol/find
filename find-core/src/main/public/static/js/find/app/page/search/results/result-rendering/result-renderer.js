@@ -17,7 +17,7 @@ define([
     _.extend(ResultRenderer.prototype, {
         getResult: function(model, isPromotion) {
             var templateData = _.find(this.config, function(templateData) {
-                return templateData.predicate.call(this, model);
+                return templateData.predicate.call(this, model, isPromotion);
             });
 
             return templateData.template({
