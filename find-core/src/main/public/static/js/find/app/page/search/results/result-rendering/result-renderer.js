@@ -4,7 +4,7 @@
  */
 
 define([
-    '../../../../../../../bower_components/backbone/backbone',
+    'backbone',
     'underscore',
     'i18n!find/nls/bundle'
 ], function(Backbone, _, i18n) {
