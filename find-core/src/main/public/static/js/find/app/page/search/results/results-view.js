@@ -7,7 +7,8 @@ define([
     'find/app/model/promotions-collection',
     'find/app/page/search/sort-view',
     'find/app/page/search/results/results-number-view',
-    'find/app/page/search/results/result-renderer',
+    'find/app/page/search/results/result-rendering/result-renderer',
+    'find/app/page/search/results/result-rendering/result-renderer-config',
     'find/app/util/view-server-client',
     'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/results/results-view.html',
@@ -17,7 +18,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            ResultRenderer, viewClient, addLinksToSummary, template, resultsTemplate,
+            ResultRenderer, resultsRendererConfig, viewClient, addLinksToSummary, template, resultsTemplate,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     function checkScroll() {
@@ -99,6 +100,7 @@ define([
             this.entityCollection = options.entityCollection;
 
             this.resultRenderer = new ResultRenderer({
+                config: resultsRendererConfig,
                 entityCollection: options.entityCollection
             });
 
