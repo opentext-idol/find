@@ -7,8 +7,9 @@ define([
     'find/app/model/promotions-collection',
     'find/app/page/search/sort-view',
     'find/app/page/search/results/results-number-view',
+    'find/app/page/search/results/result-rendering/result-renderer',
+    'find/app/page/search/results/result-rendering/result-renderer-config',
     'find/app/util/view-server-client',
-    'find/app/util/document-mime-types',
     'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/search/results/results-container.html',
@@ -17,7 +18,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            viewClient, documentMimeTypes, addLinksToSummary, template, resultsTemplate,
+            ResultRenderer, resultsRendererConfig, viewClient, addLinksToSummary, template, resultsTemplate,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     function checkScroll() {
@@ -36,18 +37,6 @@ define([
 
             this.loadData(true);
         }
-    }
-
-    function getContentTypeClass(model) {
-        var contentType = model.get('contentType') || '';
-
-        var matchedType = _.find(documentMimeTypes, function(mimeType) {
-            return Boolean(_.find(mimeType.typeRegex, function(regex) {
-                return regex().test(contentType);
-            }));
-        });
-
-        return matchedType.className;
     }
 
     var SCROLL_INCREMENT = 30;
@@ -109,6 +98,11 @@ define([
             }
 
             this.entityCollection = options.entityCollection;
+
+            this.resultRenderer = new ResultRenderer({
+                config: resultsRendererConfig,
+                entityCollection: options.entityCollection
+            });
 
             if (this.entityCollection) {
                 // Only required if we are highlighting entities
@@ -248,21 +242,7 @@ define([
         },
 
         formatResult: function(model, isPromotion) {
-            var reference = model.get('reference');
-            var summary = addLinksToSummary(this.entityCollection, model.get('summary'));
-
-            var $newResult = $(this.resultsTemplate({
-                cid: model.cid,
-                i18n: i18n,
-                title: model.get('title'),
-                reference: reference,
-                summary: summary,
-                promotion: isPromotion,
-                date: model.has('date') ? model.get('date').fromNow() : null,
-                contentType: getContentTypeClass(model),
-                staticPromotion: model.get('promotionCategory') === 'STATIC_CONTENT_PROMOTION',
-                thumbnail: model.get('thumbnail')
-            }));
+            var $newResult = this.resultRenderer.getResult(model, isPromotion);
 
             if (isPromotion) {
                 this.$('.main-results-content .promotions').append($newResult);

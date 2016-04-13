@@ -1,29 +1,29 @@
-<% var promoted = promotion ? 'promoted-document' : ''; %>
+<% var promoted = data.isPromotion ? 'promoted-document' : ''; %>
 
-<div class="main-results-container m-b-sm <%-promoted%>" data-cid="<%-cid %>">
+<div class="main-results-container m-b-sm <%-promoted%>" data-cid="<%-model.cid %>">
     <span class="pull-left m-t-xs text-muted m-r-sm content-type">
-        <i class="icomoon-file-<%-contentType%>"></i>
+        <i class="icomoon-file-<%-data.contentType%>"></i>
     </span>
 
     <div class="results-contents">
-        <% if (promotion) { %>
+        <% if (data.isPromotion) { %>
             <span class="pull-right m-t-xs text-muted promoted-label">
                 <i class="hp-icon hp-fw hp-favorite"></i> Promoted
             </span>
         <% } %>
-        <h4 class="pull-left m-b-nil m-t-xs result-header"><%- title %></h4>
+        <h4 class="pull-left m-b-nil m-t-xs result-header"><%- model.get('title') %></h4>
         <span class="document-date pull-left m-t-xs m-l-xs">
-            <%- date %>
+            <%- data.date %>
         </span>
-        <span class="document-reference shorten"><%-reference %></span>
-        <% if(thumbnail) { %>
-            <img class="document-thumbnail m-r-sm pull-left" src="data:image/jpeg;base64,<%=thumbnail%>"/>
+        <span class="document-reference shorten"><%- model.get('reference') %></span>
+        <% if(model.get('thumbnail')) { %>
+            <img class="document-thumbnail m-r-sm pull-left" src="data:image/jpeg;base64,<%=model.get('thumbnail')%>"/>
         <% } %>
         <p class="result-summary">
-            <%= summary %>
+            <%= data.highlightedSummary %>
         </p>
         <p class="text-right">
-            <% if (!staticPromotion) { %>
+            <% if (!data.staticPromotion) { %>
                 <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
             <% } %>
         </p>
