@@ -30,6 +30,10 @@ Find is an end-user search interface for [HPE IDOL](http://www8.hp.com/uk/en/sof
 - [[Find Java System Properties]] - changing some runtime settings
 - [[Configuring Find for Haven OnDemand]] - guide to the Find for Haven OnDemand config file
 
+# Modifying Find
+
+- [[Custom Document Templates]]
+
 # What license does it use?
 
 The MIT license - see [the license file](https://github.com/hpe-idol/find/blob/master/LICENSE) for details
