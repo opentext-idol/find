@@ -65,6 +65,8 @@ define([
                     return color(data.parent);
                 }
 
+                if (data.hidden || data.parent.hidden) return '';
+
                 if (!data.parent.parent) {
                     return data.color = d3.hsl(data[SUNBURST_SIZE_ATTR] ? color(data[SUNBURST_NAME_ATTR]) : 'black');
                 }

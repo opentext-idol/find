@@ -13,27 +13,28 @@ define([
         url: '../api/public/parametric/second-parametric',
 
         parse: function(results) {
+            var totalCount = _.reduce(results, function(mem, val) { return mem + Number(val.count) }, 0);
             return _.chain(results)
                 .map(function(result) {
                     var children = _.chain(result.field)
                         .map(function(child) {
                             return {
+                                hidden: child.count / result.count * 100 < 5,
                                 text: child.value,
                                 count: Number(child.count)
                             };
                         })
                         .sortBy('count')
-                        .last(10)
                         .value();
 
                     return {
                         text: result.value,
                         count: Number(result.count),
-                        children: children
+                        children: children,
+                        hidden: result.count / totalCount * 100 < 5
                     };
                 })
                 .sortBy('count')
-                .last(10)
                 .value();
         }
     });
