@@ -22,12 +22,12 @@ import java.io.Serializable;
 public abstract class ViewController<S extends Serializable, E extends Exception> {
     public static final String VIEW_PATH = "/api/public/view";
     public static final String VIEW_DOCUMENT_PATH = "/viewDocument";
-    public static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
+    private static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
     public static final String REFERENCE_PARAM = "reference";
     public static final String DATABASE_PARAM = "index";
     public static final String HIGHLIGHT_PARAM = "highlightExpressions";
 
-    protected final ViewServerService<S, E> viewServerService;
+    private final ViewServerService<S, E> viewServerService;
 
     protected ViewController(final ViewServerService<S, E> viewServerService) {
         this.viewServerService = viewServerService;
