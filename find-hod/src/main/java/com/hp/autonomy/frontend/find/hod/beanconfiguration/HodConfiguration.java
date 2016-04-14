@@ -11,9 +11,6 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
-import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
-import com.hp.autonomy.hod.client.api.analysis.autocomplete.AutocompleteService;
-import com.hp.autonomy.hod.client.api.analysis.autocomplete.AutocompleteServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
@@ -35,11 +32,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.interceptor.CacheResolver;
-import org.springframework.cache.interceptor.SimpleCacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -48,19 +41,15 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
 @EnableCaching
-public class HodConfiguration extends CachingConfigurerSupport {
+public class HodConfiguration {
     public static final String SSO_PAGE_PROPERTY = "${find.hod.sso:https://www.idolondemand.com/sso.html}";
     public static final String HOD_API_URL_PROPERTY = "${find.iod.api:https://api.havenondemand.com}";
-    public static final String SIMPLE_CACHE_RESOLVER_NAME = "simpleCacheResolver";
 
     @Autowired
     private Environment environment;
 
     @Autowired
     private TokenRepository tokenRepository;
-
-    @Autowired
-    private CacheManager cacheManager;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
@@ -78,23 +67,6 @@ public class HodConfiguration extends CachingConfigurerSupport {
         singleUserAuthenticationValidator.setConfigService(configService);
 
         return singleUserAuthenticationValidator;
-    }
-
-    @Override
-    @Bean
-    public CacheResolver cacheResolver() {
-        final HodApplicationCacheResolver hodApplicationCacheResolver = new HodApplicationCacheResolver();
-        hodApplicationCacheResolver.setCacheManager(cacheManager);
-
-        return hodApplicationCacheResolver;
-    }
-
-    // Resolver for caches which are not application-specific
-    @Bean(name = SIMPLE_CACHE_RESOLVER_NAME)
-    public CacheResolver simpleCacheResolver() {
-        final SimpleCacheResolver resolver = new SimpleCacheResolver();
-        resolver.setCacheManager(cacheManager);
-        return resolver;
     }
 
     @Bean
@@ -155,10 +127,5 @@ public class HodConfiguration extends CachingConfigurerSupport {
     @Bean
     public UserStoreUsersService userStoreUsersService(final HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig) {
         return new UserStoreUsersServiceImpl(hodServiceConfig);
-    }
-
-    @Bean
-    public AutocompleteService autocompleteService(final HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig) {
-        return new AutocompleteServiceImpl(hodServiceConfig);
     }
 }

@@ -131,11 +131,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>hod-spring-caching</artifactId>
-            <version>0.2.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-hod</artifactId>
             <version>${haven.search.components.version}</version>
