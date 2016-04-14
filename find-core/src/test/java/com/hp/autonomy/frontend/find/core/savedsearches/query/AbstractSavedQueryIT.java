@@ -5,41 +5,249 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
+import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
 import java.util.HashSet;
 import java.util.Set;
 
 import static com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController.NEW_RESULTS_PATH;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.isA;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired
-    private SavedQueryService savedQueryService;
-
-    private final ObjectMapper mapper = new ObjectMapper();
+public abstract class AbstractSavedQueryIT extends AbstractFindIT {
+    private static final TypeReference<Set<SavedQuery>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedQuery>>() {};
 
     private static final String TITLE = "Any old saved search";
     private static final String QUERY_TEXT = "orange";
     private static final String PRIMARY_PHRASE = "manhattan";
     private static final String OTHER_PHRASE = "mid-town";
+
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
+    @Autowired
+    private DataSource dataSource;
+
+    private JdbcTemplate jdbcTemplate;
+
+    @PostConstruct
+    public void initialise() {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    @Test
+    public void create() throws Exception {
+        createSavedQuery(getBaseSavedQuery())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.id", not(nullValue())))
+                .andExpect(jsonPath("$.title", equalTo(TITLE)))
+                .andExpect(jsonPath("$.queryText", equalTo(QUERY_TEXT)))
+                .andExpect(jsonPath("$.conceptClusterPhrases", hasSize(2)))
+                .andExpect(jsonPath("$.conceptClusterPhrases[*].phrase", containsInAnyOrder(PRIMARY_PHRASE, OTHER_PHRASE)))
+                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase=='" + PRIMARY_PHRASE + "')].primary", contains(true)))
+                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase== '" + PRIMARY_PHRASE + "')].clusterId", contains(0)))
+                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase== '" + OTHER_PHRASE + "')].primary", contains(false)))
+                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase=='" + OTHER_PHRASE + "')].clusterId", contains(0)));
+    }
+
+    @Test
+    public void update() throws Exception {
+        final SavedQuery createdEntity = createAndParseSavedQuery(getBaseSavedQuery());
+
+        final String updatedQueryText = "banana";
+        final String updatedPhrase = "jersey";
+        final Set<ConceptClusterPhrase> conceptClusterPhrases = new HashSet<>();
+        conceptClusterPhrases.add(new ConceptClusterPhrase(updatedPhrase, true, 1));
+
+        final SavedQuery updatedQuery = new SavedQuery.Builder()
+                .setQueryText(updatedQueryText)
+                .setConceptClusterPhrases(conceptClusterPhrases)
+                .build();
+
+        mockMvc.perform(put(SavedQueryController.PATH + '/' + createdEntity.getId())
+                .content(mapper.writeValueAsString(updatedQuery))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.id", is(createdEntity.getId().intValue())))
+                .andExpect(jsonPath("$.queryText", equalTo(updatedQueryText)))
+                .andExpect(jsonPath("$.conceptClusterPhrases", hasSize(1)))
+                .andExpect(jsonPath("$.conceptClusterPhrases[*].phrase", contains(updatedPhrase)))
+                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase=='" + updatedPhrase + "')].primary", contains(true)))
+                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase== '" + updatedPhrase + "')].clusterId", contains(1)));
+    }
+
+    @Test
+    public void fetch() throws Exception {
+        final SavedQuery createdEntity = createAndParseSavedQuery(getBaseSavedQuery());
+
+        listSavedQueries()
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$[0].id", is(createdEntity.getId().intValue())))
+                .andExpect(jsonPath("$[0].queryText", is(createdEntity.getQueryText())))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases", hasSize(createdEntity.getConceptClusterPhrases().size())))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[*].phrase", containsInAnyOrder(PRIMARY_PHRASE, OTHER_PHRASE)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='" + PRIMARY_PHRASE + "')].primary", contains(true)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase== '" + PRIMARY_PHRASE + "')].clusterId", contains(0)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase== '" + OTHER_PHRASE + "')].primary", contains(false)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase== '" + OTHER_PHRASE + "')].clusterId", contains(0)));
+    }
+
+    @Test
+    public void deleteById() throws Exception {
+        final SavedQuery createdEntity = createAndParseSavedQuery(getBaseSavedQuery());
+
+        mockMvc.perform(delete(SavedQueryController.PATH + '/' + createdEntity.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        final Set<SavedQuery> queries = listAndParseSavedQueries();
+        assertThat(queries, is(empty()));
+    }
+
+    @Test
+    public void getAllReturnsNothing() throws Exception {
+        assertThat(listAndParseSavedQueries(), is(empty()));
+    }
+
+    @Test
+    public void checkTimeAuditDataInsertedUpdated() throws Exception {
+        final SavedQuery inputSavedQuery = new SavedQuery.Builder()
+                .setTitle("title")
+                .setQueryText("*")
+                .build();
+
+        final SavedQuery savedQuery = createAndParseSavedQuery(inputSavedQuery);
+
+        assertNotNull(savedQuery.getId());
+        assertThat(savedQuery.getDateCreated(), isA(DateTime.class));
+        assertThat(savedQuery.getDateModified(), isA(DateTime.class));
+        assertTrue(savedQuery.getDateCreated().isEqual(savedQuery.getDateModified().toInstant()));
+
+        // Safe to assume completed in an hour
+        // TODO: mock out the datetime service used by spring auditing to check this properly
+        assertTrue(savedQuery.getDateCreated().plusHours(1).isAfterNow());
+
+        savedQuery.setQueryText("*");
+
+        final SavedQuery savedQueryUpdate = new SavedQuery.Builder()
+                .setId(savedQuery.getId())
+                .setTitle("new title")
+                .build();
+
+        final SavedQuery updatedSavedQuery = updateAndParseSavedQuery(savedQueryUpdate);
+
+        assertThat(updatedSavedQuery.getDateCreated(), isA(DateTime.class));
+        assertThat(updatedSavedQuery.getDateModified(), isA(DateTime.class));
+        assertTrue(updatedSavedQuery.getDateModified().isAfter(savedQuery.getDateCreated().toInstant()));
+    }
+
+    @Test
+    public void checkUserNotDuplicated() throws Exception {
+        final SavedQuery savedQuery1 = new SavedQuery.Builder()
+                .setTitle("title1")
+                .setQueryText("*")
+                .build();
+
+        final SavedQuery savedQuery2 = new SavedQuery.Builder()
+                .setTitle("title2")
+                .setQueryText("*")
+                .build();
+
+        createSavedQuery(savedQuery1);
+        createSavedQuery(savedQuery2);
+
+        final int userRows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "find." + UserEntity.Table.NAME);
+        assertThat(userRows, is(1));
+    }
+
+    @Test
+    public void checkForNewQueryResults() throws Exception {
+        final SavedQuery saveRequest1 = new SavedQuery.Builder()
+                .setTitle("title1")
+                .setQueryText("*")
+                .build();
+
+        final SavedQuery saveRequest2 = new SavedQuery.Builder()
+                .setDateNewDocsLastFetched(DateTime.now())
+                .setTitle("title2")
+                .setQueryText("*")
+                .build();
+
+        final SavedQuery savedQuery1 = createAndParseSavedQuery(saveRequest1);
+        final long id1 = savedQuery1.getId();
+
+        final SavedQuery savedQuery2 = createAndParseSavedQuery(saveRequest2);
+        final long id2 = savedQuery2.getId();
+
+        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id1))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", is(true)));
+
+        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id2))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", is(false))); // likely to work though not full-proof
+    }
+
+    private ResultActions createSavedQuery(final SavedQuery savedQuery) throws Exception {
+        return mockMvc.perform(post(SavedQueryController.PATH + '/')
+                .content(mapper.writeValueAsString(savedQuery))
+                .contentType(MediaType.APPLICATION_JSON));
+    }
+
+    private SavedQuery createAndParseSavedQuery(final SavedQuery savedQuery) throws Exception {
+        final MvcResult mvcResult = createSavedQuery(savedQuery).andReturn();
+        final String response = mvcResult.getResponse().getContentAsString();
+        return mapper.readValue(response, SavedQuery.class);
+    }
+
+    private SavedQuery updateAndParseSavedQuery(final SavedQuery update) throws Exception {
+        final MvcResult mvcResult = mockMvc.perform(put(SavedQueryController.PATH + '/' + update.getId())
+                .content(mapper.writeValueAsString(update))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        final String response = mvcResult.getResponse().getContentAsString();
+        return mapper.readValue(response, SavedQuery.class);
+    }
+
+    private ResultActions listSavedQueries() throws Exception {
+        return mockMvc.perform(get(SavedQueryController.PATH));
+    }
+
+    private Set<SavedQuery> listAndParseSavedQueries() throws Exception {
+        final MvcResult listResult = listSavedQueries()
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return mapper.readValue(listResult.getResponse().getContentAsString(), LIST_TYPE_REFERENCE);
+    }
 
     private Set<ConceptClusterPhrase> getBaseConceptClusterPhrases() {
         final Set<ConceptClusterPhrase> conceptClusterPhrases = new HashSet<>();
@@ -57,172 +265,5 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
                 .setQueryText(QUERY_TEXT)
                 .setConceptClusterPhrases(getBaseConceptClusterPhrases())
                 .build();
-    }
-
-    @Test
-    public void create() throws Exception {
-        mockMvc.perform(post(SavedQueryController.PATH + '/')
-                .content(mapper.writeValueAsString(getBaseSavedQuery()))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.id", not(nullValue())))
-                .andExpect(jsonPath("$.title", equalTo(TITLE)))
-                .andExpect(jsonPath("$.queryText", equalTo(QUERY_TEXT)))
-                .andExpect(jsonPath("$.conceptClusterPhrases", hasSize(2)))
-                .andExpect(jsonPath("$.conceptClusterPhrases[*].phrase", containsInAnyOrder(PRIMARY_PHRASE, OTHER_PHRASE)))
-                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase=='" + PRIMARY_PHRASE + "')].primary", contains(true)))
-                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase== '" + PRIMARY_PHRASE + "')].clusterId", contains(0)))
-                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase== '" + OTHER_PHRASE + "')].primary", contains(false)))
-                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase=='" + OTHER_PHRASE + "')].clusterId", contains(0)));
-    }
-
-    @Test
-    public void update() throws Exception {
-        final SavedQuery createdEntity = savedQueryService.create(getBaseSavedQuery());
-
-        final String UPDATED_PHRASE = "jersey";
-        final Set<ConceptClusterPhrase> conceptClusterPhrases = new HashSet<>();
-        conceptClusterPhrases.add(new ConceptClusterPhrase(UPDATED_PHRASE, true, 1));
-
-        final String UPDATED_QUERY_TEXT = "banana";
-        final SavedQuery updatedQuery = new SavedQuery.Builder()
-                .setQueryText(UPDATED_QUERY_TEXT)
-                .setConceptClusterPhrases(conceptClusterPhrases)
-                .build();
-
-        mockMvc.perform(put(SavedQueryController.PATH + '/' + createdEntity.getId())
-                .content(mapper.writeValueAsString(updatedQuery))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.id", is(createdEntity.getId().intValue())))
-                .andExpect(jsonPath("$.queryText", equalTo(UPDATED_QUERY_TEXT)))
-                .andExpect(jsonPath("$.conceptClusterPhrases", hasSize(1)))
-                .andExpect(jsonPath("$.conceptClusterPhrases[*].phrase", contains(UPDATED_PHRASE)))
-                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase=='" + UPDATED_PHRASE + "')].primary", contains(true)))
-                .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase== '" + UPDATED_PHRASE + "')].clusterId", contains(1)));
-    }
-
-    @Test
-    public void fetch() throws Exception {
-        final SavedQuery createdEntity = savedQueryService.create(getBaseSavedQuery());
-
-        mockMvc.perform(get(SavedQueryController.PATH + '/')
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$[0].id", is(createdEntity.getId().intValue())))
-                .andExpect(jsonPath("$[0].queryText", is(createdEntity.getQueryText())))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases", hasSize(createdEntity.getConceptClusterPhrases().size())))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[*].phrase", containsInAnyOrder(PRIMARY_PHRASE, OTHER_PHRASE)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='" + PRIMARY_PHRASE + "')].primary", contains(true)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase== '" + PRIMARY_PHRASE + "')].clusterId", contains(0)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase== '" + OTHER_PHRASE + "')].primary", contains(false)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase== '" + OTHER_PHRASE + "')].clusterId", contains(0)));
-    }
-
-    @Test
-    public void deleteById() throws Exception {
-        final SavedQuery createdEntity = savedQueryService.create(getBaseSavedQuery());
-
-        mockMvc.perform(delete(SavedQueryController.PATH + '/' + createdEntity.getId())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        final Set<SavedQuery> queries = savedQueryService.getAll();
-        assertThat(queries, is(empty()));
-    }
-
-    @Test
-    public void getAllReturnsNothing() throws Exception {
-        assertThat(savedQueryService.getAll(), is(empty()));
-    }
-
-    @Test
-    public void checkUserAuditDataInserted() {
-        final SavedQuery savedQuery = new SavedQuery.Builder()
-                .setTitle("title")
-                .setQueryText("*")
-                .build();
-
-        savedQueryService.create(savedQuery);
-
-        assertNotNull(savedQuery.getId());
-        assertThat(savedQuery.getUser().getUserId(), isA(Long.class));
-        assertNotNull(savedQuery.getUser().getUserId());
-    }
-
-    @Test
-    public void checkTimeAuditDataInsertedUpdated() {
-        final SavedQuery savedQuery = savedQueryService.create(new SavedQuery.Builder()
-                .setTitle("title")
-                .setQueryText("*")
-                .build());
-
-        assertNotNull(savedQuery.getId());
-        assertThat(savedQuery.getDateCreated(), isA(DateTime.class));
-        assertThat(savedQuery.getDateModified(), isA(DateTime.class));
-        assertTrue(savedQuery.getDateCreated().isEqual(savedQuery.getDateModified().toInstant()));
-
-        // Safe to assume completed in an hour
-        // TODO: mock out the datetime service used by spring auditing to check this properly
-        assertTrue(savedQuery.getDateCreated().plusHours(1).isAfterNow());
-
-        savedQuery.setQueryText("*");
-
-        final SavedQuery updatedQuery = savedQueryService.update(new SavedQuery.Builder()
-                .setId(savedQuery.getId())
-                .setTitle("new title")
-                .build());
-
-        assertThat(updatedQuery.getDateCreated(), isA(DateTime.class));
-        assertThat(updatedQuery.getDateModified(), isA(DateTime.class));
-        assertTrue(updatedQuery.getDateModified().isAfter(savedQuery.getDateCreated().toInstant()));
-    }
-
-    @Test
-    public void checkUserNotDuplicated() {
-        final SavedQuery savedQuery1 = new SavedQuery.Builder()
-                .setTitle("title1")
-                .setQueryText("*")
-                .build();
-
-        final SavedQuery savedQuery2 = new SavedQuery.Builder()
-                .setTitle("title2")
-                .setQueryText("*")
-                .build();
-
-        savedQueryService.create(savedQuery1);
-        savedQueryService.create(savedQuery2);
-
-        assertNotNull(savedQuery1.getUser().getUserId());
-        assertNotNull(savedQuery2.getUser().getUserId());
-        assertEquals(savedQuery1.getUser().getUserId(), savedQuery2.getUser().getUserId());
-    }
-
-    @Test
-    public void checkForNewQueryResults() throws Exception {
-        final SavedQuery savedQuery1 = new SavedQuery.Builder()
-                .setTitle("title1")
-                .setQueryText("*")
-                .build();
-        final SavedQuery savedQuery2 = new SavedQuery.Builder()
-                .setDateNewDocsLastFetched(DateTime.now())
-                .setTitle("title2")
-                .setQueryText("*")
-                .build();
-        final SavedQuery updatedQuery1 = savedQueryService.create(savedQuery1);
-        final long id1 = updatedQuery1.getId();
-        final SavedQuery updatedQuery2 = savedQueryService.create(savedQuery2);
-        final long id2 = updatedQuery2.getId();
-        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id1))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", is(true)));
-        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id2))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", is(false))); // likely to work though not full-proof
     }
 }

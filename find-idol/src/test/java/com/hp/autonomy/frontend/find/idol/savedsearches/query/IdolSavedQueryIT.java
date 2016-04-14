@@ -6,8 +6,8 @@
 package com.hp.autonomy.frontend.find.idol.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.IdolFindApplication;
-import com.hp.autonomy.frontend.find.core.savedsearches.query.AbstractSavedQueryServiceIT;
+import com.hp.autonomy.frontend.find.core.savedsearches.query.AbstractSavedQueryIT;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
-public class IdolSavedQueryServiceIT extends AbstractSavedQueryServiceIT {}
+public class IdolSavedQueryIT extends AbstractSavedQueryIT {}

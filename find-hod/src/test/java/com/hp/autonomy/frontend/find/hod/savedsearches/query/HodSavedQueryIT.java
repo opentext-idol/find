@@ -6,11 +6,9 @@
 package com.hp.autonomy.frontend.find.hod.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.HodFindApplication;
-import com.hp.autonomy.frontend.find.core.savedsearches.query.AbstractSavedQueryServiceIT;
-import org.junit.Ignore;
+import com.hp.autonomy.frontend.find.core.savedsearches.query.AbstractSavedQueryIT;
+import com.hp.autonomy.searchcomponents.hod.test.HodTestConfiguration;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@Ignore //TODO
-@SpringApplicationConfiguration(classes = HodFindApplication.class)
-public class HodSavedQueryServiceIT extends AbstractSavedQueryServiceIT {
-}
+@SpringApplicationConfiguration(classes = {HodTestConfiguration.class, HodFindApplication.class})
+public class HodSavedQueryIT extends AbstractSavedQueryIT {}
