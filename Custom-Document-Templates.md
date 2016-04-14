@@ -48,7 +48,7 @@ return [
 ];
 ```
 
-This array is where we add our new templates.  Each object in the array has three things in it - a `template` function (Underscore.js' `_.template()` function is your friend here), some a `data` processing function to generate an object to pass into the template, and a `predicate` function that is run to select a template to render.
+This array is where we add our new templates.  Each object in the array has three things in it - a `template` function (Underscore.js' `_.template()` function is your friend here), a `data` processing function to generate an object to pass into the template, and a `predicate` function that is run to select a template to render.
 
 The single object in the array is the default template - it uses `resultsTemplate` (which you can find imported at the top of the file in the line `'text!find/templates/app/page/search/results/results-container.html'`), takes `defaultData` (look for the function definition in the middle of the file), and has a predicate that always returns true.
 
