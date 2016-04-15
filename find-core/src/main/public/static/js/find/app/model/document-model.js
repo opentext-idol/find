@@ -71,6 +71,7 @@ define([
             }
 
             response.thumbnail = getFieldValue(response.fieldMap.thumbnail);
+            response.thumbnailUrl = getFieldValue(response.fieldMap.thumbnailUrl);
             response.contentType = getFieldValue(response.fieldMap.contentType);
             response.url = getFieldValue(response.fieldMap.url);
             response.offset = getFieldValue(response.fieldMap.offset);

@@ -115,6 +115,11 @@
         "PREVIEW_THUMBNAIL_BASE64"
       ]
     },
+    "thumbnailUrl": {
+      "names": [
+        "THUMBNAIL_URL"
+      ]
+    },
     "sourceType": {
       "names": [
         "SOURCETYPE"
