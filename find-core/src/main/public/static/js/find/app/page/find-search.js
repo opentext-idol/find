@@ -25,11 +25,12 @@ define([
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
+    'jquery',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
-            InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView,
-            QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, router, vent, i18n, _, template) {
+], function (BasePage, Backbone, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
+             InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView,
+             QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, router, vent, i18n, $, _, template) {
 
     'use strict';
 
@@ -49,7 +50,7 @@ define([
             selectedIndexes = indexesCollection.models;
         }
 
-        return _.map(selectedIndexes, function(indexModel) {
+        return _.map(selectedIndexes, function (indexModel) {
             return indexModel.pick('domain', 'name');
         });
     }
@@ -63,9 +64,9 @@ define([
                     reference: options.reference,
                     database: options.database
                 }
-            }).done(function() {
-                callback(documentModel);
-            });
+            }).done(function () {
+            callback(documentModel);
+        });
     }
 
     return BasePage.extend({
@@ -87,13 +88,13 @@ define([
         suggestOptions: null,
         QueryLeftSideView: null,
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.savedQueryCollection = options.savedQueryCollection;
             this.indexesCollection = options.indexesCollection;
 
             this.searchTypes = this.getSearchTypes();
 
-            this.searchCollections = _.mapObject(this.searchTypes, function(data) {
+            this.searchCollections = _.mapObject(this.searchTypes, function (data) {
                 return options[data.collection];
             });
 
@@ -116,7 +117,7 @@ define([
 
             this.listenTo(this.selectedTabModel, 'change', this.selectContentView);
 
-            this.listenTo(this.searchModel, 'change', function() {
+            this.listenTo(this.searchModel, 'change', function () {
                 // Bind search model to routing
                 vent.navigate(this.generateURL(), {trigger: false});
 
@@ -130,13 +131,13 @@ define([
                 }
             });
 
-            this.listenTo(this.savedSearchCollection, 'add', function(model) {
+            this.listenTo(this.savedSearchCollection, 'add', function (model) {
                 if (this.selectedTabModel.get('selectedCid') === null) {
                     this.selectedTabModel.set('selectedCid', model.cid);
                 }
             });
 
-            this.listenTo(this.savedSearchCollection, 'remove', function(savedSearch) {
+            this.listenTo(this.savedSearchCollection, 'remove', function (savedSearch) {
                 var cid = savedSearch.cid;
                 this.serviceViews[cid].view.remove();
                 this.queryStates.unset(cid);
@@ -165,7 +166,7 @@ define([
 
             this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
 
-            this.listenTo(router, 'route:searchSplash', function() {
+            this.listenTo(router, 'route:searchSplash', function () {
                 this.selectedTabModel.set('selectedSearchCid', null);
 
                 this.searchModel.set({
@@ -177,7 +178,7 @@ define([
             }, this);
 
             // Bind routing to search model
-            this.listenTo(router, 'route:search', function(text) {
+            this.listenTo(router, 'route:search', function (text) {
                 this.removeDocumentDetailView();
 
                 this.searchModel.set({
@@ -190,7 +191,7 @@ define([
                 }
             }, this);
 
-            this.listenTo(router, 'route:documentDetail', function() {
+            this.listenTo(router, 'route:documentDetail', function () {
                 this.expandedState();
                 this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
@@ -199,7 +200,7 @@ define([
 
                 var options = this.documentDetailOptions.apply(this, arguments);
 
-                fetchDocument(options, function(documentModel) {
+                fetchDocument(options, function (documentModel) {
                     this.documentDetailView = new DocumentDetailView({
                         backUrl: this.generateURL(),
                         model: documentModel,
@@ -211,14 +212,14 @@ define([
                 }.bind(this));
             }, this);
 
-            this.listenTo(router, 'route:suggest', function() {
+            this.listenTo(router, 'route:suggest', function () {
                 this.expandedState();
                 this.$('.service-view-container').addClass('hide');
                 this.$('.suggest-service-view-container').removeClass('hide');
 
                 var options = this.suggestOptions.apply(this, arguments);
 
-                fetchDocument(options, function(documentModel) {
+                fetchDocument(options, function (documentModel) {
                     this.suggestView = new this.SuggestView({
                         backUrl: this.generateURL(),
                         documentModel: documentModel,
@@ -229,9 +230,20 @@ define([
                     this.suggestView.render();
                 }.bind(this));
             }, this);
+
+            this.savedSearchScheduleId = setInterval(_.bind(function () {
+                this.savedQueryCollection.fetch().done(_.bind(function () {
+                    this.savedQueryCollection.forEach(function (savedQuery) {
+                        $.ajax('../api/public/saved-query/new-results/' + savedQuery.id)
+                            .success(function (newResults) {
+                                // TODO: FIND-23
+                            })
+                    })
+                }, this))
+            }, this), 5 * 60 * 1000);
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(html);
 
             this.inputView.setElement(this.$('.input-view-container')).render();
@@ -243,7 +255,7 @@ define([
                 this.expandedState();
             }
 
-            _.each(this.serviceViews, function(data) {
+            _.each(this.serviceViews, function (data) {
                 this.$('.query-service-view-container').append(data.view.$el);
                 data.view.render();
             }, this);
@@ -252,7 +264,7 @@ define([
         },
 
         // Can be overridden
-        getSearchTypes: function() {
+        getSearchTypes: function () {
             return {
                 QUERY: {
                     autoCorrect: true,
@@ -264,21 +276,21 @@ define([
                     LeftSideFooterView: this.QueryLeftSideView,
                     DocumentsCollection: DocumentsCollection,
                     MiddleColumnHeaderView: this.QueryMiddleColumnHeaderView,
-                    createSearchModelAttributes: function(queryTextModel) {
+                    createSearchModelAttributes: function (queryTextModel) {
                         return queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES);
                     },
-                    queryTextModelChange: function(options) {
-                        return function() {
+                    queryTextModelChange: function (options) {
+                        return function () {
                             options.searchModel.set(options.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
                         };
                     },
-                    searchModelChange: function(options) {
-                        return function() {
+                    searchModelChange: function (options) {
+                        return function () {
                             options.queryTextModel.set(options.searchModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
                         };
                     },
-                    entityClickHandler: function(options) {
-                        return function(text) {
+                    entityClickHandler: function (options) {
+                        return function (text) {
                             options.queryTextModel.set('inputText', text);
                         };
                     }
@@ -286,7 +298,7 @@ define([
             };
         },
 
-        createNewTab: function(queryText) {
+        createNewTab: function (queryText) {
             var newSearch = new SavedSearchModel({
                 queryText: queryText || '*',
                 relatedConcepts: [],
@@ -298,10 +310,10 @@ define([
             this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
         },
 
-        selectContentView: function() {
+        selectContentView: function () {
             var cid = this.selectedTabModel.get('selectedSearchCid');
 
-            _.each(this.serviceViews, function(data) {
+            _.each(this.serviceViews, function (data) {
                 data.view.$el.addClass('hide');
                 this.stopListening(data.queryTextModel);
             }, this);
@@ -340,7 +352,7 @@ define([
                         if (this.indexesCollection.isEmpty()) {
                             initialSelectedIndexes = [];
 
-                            this.listenToOnce(this.indexesCollection, 'sync', function() {
+                            this.listenToOnce(this.indexesCollection, 'sync', function () {
                                 queryState.selectedIndexes.set(selectInitialIndexes(this.indexesCollection));
                             });
                         } else {
@@ -389,7 +401,7 @@ define([
             }
         },
 
-        generateURL: function() {
+        generateURL: function () {
             var inputText = this.searchModel.get('inputText');
 
             if (this.searchModel.isEmpty()) {
@@ -404,7 +416,7 @@ define([
         },
 
         // Run fancy animation from large central search bar to main search page
-        expandedState: function() {
+        expandedState: function () {
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
             this.$('.service-view-container').addClass('hide');
@@ -424,7 +436,7 @@ define([
         },
 
         // Set view to initial state (large central search bar)
-        reducedState: function() {
+        reducedState: function () {
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
             this.$('.service-view-container').addClass('hide');
@@ -442,11 +454,11 @@ define([
             $('.container-fluid, .find-logo-small').addClass('reduced');
         },
 
-        isExpanded: function() {
+        isExpanded: function () {
             return this.$('.find').hasClass(expandedClasses);
         },
 
-        removeDocumentDetailView: function() {
+        removeDocumentDetailView: function () {
             if (this.documentDetailView) {
                 this.documentDetailView.remove();
                 this.stopListening(this.documentDetailView);
@@ -454,7 +466,7 @@ define([
             }
         },
 
-        removeSuggestView: function() {
+        removeSuggestView: function () {
             if (this.suggestView) {
                 this.suggestView.remove();
                 this.stopListening(this.suggestView);
@@ -462,7 +474,8 @@ define([
             }
         },
 
-        remove: function() {
+        remove: function () {
+            clearInterval(this.savedSearchScheduleId);
             this.removeDocumentDetailView();
             Backbone.View.prototype.remove.call(this);
         }

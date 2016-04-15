@@ -82,7 +82,7 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
                     null,
                     Collections.<String>emptyList(),
                     Collections.<String>emptyList());
-            final SearchRequest<S> searchRequest = new SearchRequest<>(queryRestrictions, 0, 1, null, null, null, false, false, SearchRequest.QueryType.MODIFIED);
+            final SearchRequest<S> searchRequest = new SearchRequest<>(queryRestrictions, 1, 1, null, null, null, false, false, SearchRequest.QueryType.MODIFIED);
             final Documents<?> searchResults = documentsService.queryTextIndex(searchRequest);
             newResults = searchResults.getTotalResults() > 0;
         }
