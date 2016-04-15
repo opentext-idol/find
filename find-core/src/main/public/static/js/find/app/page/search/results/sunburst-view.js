@@ -63,19 +63,17 @@ define([
             sizeAttr: SUNBURST_SIZE_ATTR,
             colorFn: function (data) {
                 if (!data.parent) {
-                    return color(data.parent);
+                    // set the centre of the sunburst to always be white
+                    return 'white';
                 }
 
                 if (data.hidden || data.parent.hidden) return '';
 
                 if (!data.parent.parent) {
-                    return data.color = d3.hsl(data[SUNBURST_SIZE_ATTR] ? color(data[SUNBURST_NAME_ATTR]) : 'black');
+                    return data.color = data[SUNBURST_SIZE_ATTR] ? color(data.parent.children.indexOf(data)) : 'black';
                 }
 
-                var parentColour = data.parent.color;
-                var index = data.parent.children.indexOf(data);
-                var saturationShift = index / data.parent.children.length;
-                return data.color = d3.hsl(parentColour.h, (parentColour.s + saturationShift) % 1, parentColour.l + 0.05);
+                return data.color = color(data[SUNBURST_NAME_ATTR]);
             },
             labelFormatter: function (data, prevClicked) {
                 var zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
