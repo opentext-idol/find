@@ -17,6 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController.NEW_RESULTS_PATH;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -33,12 +34,12 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
     @Autowired
     private SavedQueryService savedQueryService;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
-    private final String TITLE = "Any old saved search";
-    private final String QUERY_TEXT = "orange";
-    private final String PRIMARY_PHRASE = "manhattan";
-    private final String OTHER_PHRASE = "mid-town";
+    private static final String TITLE = "Any old saved search";
+    private static final String QUERY_TEXT = "orange";
+    private static final String PRIMARY_PHRASE = "manhattan";
+    private static final String OTHER_PHRASE = "mid-town";
 
     private Set<ConceptClusterPhrase> getBaseConceptClusterPhrases() {
         final Set<ConceptClusterPhrase> conceptClusterPhrases = new HashSet<>();
@@ -80,11 +81,11 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
     public void update() throws Exception {
         final SavedQuery createdEntity = savedQueryService.create(getBaseSavedQuery());
 
-        final String UPDATED_QUERY_TEXT = "banana";
         final String UPDATED_PHRASE = "jersey";
         final Set<ConceptClusterPhrase> conceptClusterPhrases = new HashSet<>();
         conceptClusterPhrases.add(new ConceptClusterPhrase(UPDATED_PHRASE, true, 1));
 
+        final String UPDATED_QUERY_TEXT = "banana";
         final SavedQuery updatedQuery = new SavedQuery.Builder()
                 .setQueryText(UPDATED_QUERY_TEXT)
                 .setConceptClusterPhrases(conceptClusterPhrases)
@@ -198,5 +199,30 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
         assertNotNull(savedQuery1.getUser().getUserId());
         assertNotNull(savedQuery2.getUser().getUserId());
         assertEquals(savedQuery1.getUser().getUserId(), savedQuery2.getUser().getUserId());
+    }
+
+    @Test
+    public void checkForNewQueryResults() throws Exception {
+        final SavedQuery savedQuery1 = new SavedQuery.Builder()
+                .setTitle("title1")
+                .setQueryText("*")
+                .build();
+        final SavedQuery savedQuery2 = new SavedQuery.Builder()
+                .setDateNewDocsLastFetched(DateTime.now())
+                .setTitle("title2")
+                .setQueryText("*")
+                .build();
+        final SavedQuery updatedQuery1 = savedQueryService.create(savedQuery1);
+        final long id1 = updatedQuery1.getId();
+        final SavedQuery updatedQuery2 = savedQueryService.create(savedQuery2);
+        final long id2 = updatedQuery2.getId();
+        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id1))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", is(true)));
+        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id2))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", is(false))); // likely to work though not full-proof
     }
 }
