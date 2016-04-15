@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.savedsearches.query;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
@@ -16,11 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class IdolSavedQueryController extends SavedQueryController<String, IdolSearchResult, AciErrorException> {
+class IdolSavedQueryController extends SavedQueryController<String, IdolSearchResult, AciErrorException> {
     @Autowired
     public IdolSavedQueryController(final SavedSearchService<SavedQuery> service,
                                     final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService,
                                     final QueryRestrictionsBuilder<String> queryRestrictionsBuilder) {
         super(service, documentsService, queryRestrictionsBuilder);
+    }
+
+    @Override
+    protected String convertEmbeddableIndex(final EmbeddableIndex embeddableIndex) {
+        return embeddableIndex.getName();
     }
 }

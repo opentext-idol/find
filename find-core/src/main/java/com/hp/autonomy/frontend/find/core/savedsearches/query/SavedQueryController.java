@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
@@ -19,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 @RequestMapping(SavedQueryController.PATH)
@@ -38,6 +42,8 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
         this.documentsService = documentsService;
         this.queryRestrictionsBuilder = queryRestrictionsBuilder;
     }
+
+    protected abstract S convertEmbeddableIndex(EmbeddableIndex embeddableIndex);
 
     @RequestMapping(method = RequestMethod.GET)
     public Set<SavedQuery> getAll() {
@@ -77,7 +83,7 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
         if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateNewDocsLastFetched)) {
             final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(savedQuery.getQueryText(),
                     savedQuery.toFieldText(),
-                    Collections.<S>emptyList(),
+                    convertEmbeddableIndexes(savedQuery.getIndexes()),
                     savedQuery.getDateNewDocsLastFetched(),
                     null,
                     Collections.<String>emptyList(),
@@ -88,5 +94,14 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
         }
 
         return newResults;
+    }
+
+    private List<S> convertEmbeddableIndexes(final Collection<EmbeddableIndex> embeddableIndexes) {
+        final List<S> indexes = new ArrayList<>(embeddableIndexes.size());
+        for (final EmbeddableIndex embeddableIndex : embeddableIndexes) {
+            indexes.add(convertEmbeddableIndex(embeddableIndex));
+        }
+
+        return indexes;
     }
 }

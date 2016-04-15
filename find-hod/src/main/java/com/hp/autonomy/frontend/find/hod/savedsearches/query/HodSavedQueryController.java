@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
@@ -17,11 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class HodSavedQueryController extends SavedQueryController<ResourceIdentifier, HodSearchResult, HodErrorException> {
+class HodSavedQueryController extends SavedQueryController<ResourceIdentifier, HodSearchResult, HodErrorException> {
     @Autowired
     public HodSavedQueryController(final SavedSearchService<SavedQuery> service,
                                    final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService,
                                    final QueryRestrictionsBuilder<ResourceIdentifier> queryRestrictionsBuilder) {
         super(service, documentsService, queryRestrictionsBuilder);
+    }
+
+    @Override
+    protected ResourceIdentifier convertEmbeddableIndex(final EmbeddableIndex embeddableIndex) {
+        return new ResourceIdentifier(embeddableIndex.getDomain(), embeddableIndex.getName());
     }
 }
