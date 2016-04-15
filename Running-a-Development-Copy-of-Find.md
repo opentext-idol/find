@@ -17,8 +17,20 @@ It's important to run the `install` step, as this "installs" the modules to your
 - `cd` into either `find-hod` or `find-idol`, depending on whether you want to run Find against Haven OnDemand or IDOL.
 - Run `mvn spring-boot:run -Dhp.find.home=<path_to_find_home_directory>`.  You will need to create a home directory for Find - have a look at [[Home-directory]].
 
-## Step Three: Open Find in your web browser
+Any changes you make to Java files will be recompiled and redeployed automatically.
 
-- Navigate to http://localhost:8080 and you should see Find.  A config file has been generated in the Find home directory that you specified on the command line.
+## Step Three: Use Grunt to keep HTML, CSS, and JavaScript files up to date
+
+From your `find-hod` or `find-idol` folder (as appropriate), run the following command:
+
+- `grunt copy-resources`
+
+This will take any changes you make to static files (HTML, CSS, JavaScript, images, etc) in `find-core` and deploy them into your running Spring Boot server from step two.
+
+## Step Four: Open Find in your web browser
+
+- Navigate to http://localhost:8080 and you should see Find.  A config file has been generated in the Find home directory that you specified on the command line in step two.
+
+Any code changes you make will appear after a short delay (should be less than a couple of seconds) - refresh your browser to pick up client side changes.
 
 You now want to read either [[Configuring Find for IDOL]] or [[Configuring Find for Haven OnDemand]] to get Find configured.
