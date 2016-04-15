@@ -12,63 +12,50 @@ define([
     function getArrayTotal(array) {
         return _.reduce(array, function(mem, val) { return mem + Number(val.count) }, 0);
     }
+    
+    function parseResult(array, total) {
+        var minimumSize = Math.round(total / 100 * 5); // this is the smallest area of the chart an element will be visible at.
+        var sunburstData = _.chain(array)
+            .map(function(entry) {
+                var entryHash = {
+                    hidden: false,
+                    text: entry.value,
+                    count: Number(entry.count)
+                };
+                return _.isEmpty(entry.field) ? entryHash : _.extend(entryHash, {children: parseResult(entry.field, entry.count)}); // recurse for children
+            })
+            .filter(function(child) { //filter out any smaller than minimumSize
+                return child.count > minimumSize;
+            })
+            .sortBy('count')
+            .value();
+        if (!_.isEmpty(sunburstData)) { //if there are items being displayed
+            var childCount = getArrayTotal(sunburstData); // get total amount of displayed elements
+            var remaining = total - childCount; // get the total amount of the hidden children
+            if (remaining > minimumSize) {
+                var dividersNo = Math.floor(remaining / minimumSize); // work out how many minimum size padding elements we need
+                for (var i = 0; i < dividersNo; i++) {
+                    sunburstData.unshift({text: '', hidden: true, count: minimumSize}); // add the padding containers
+                }
+                var remainingPadding = remaining - minimumSize * dividersNo; // get the remaining padding, it will rarely divide evenly into minimumSize pieces
+                if (remainingPadding > 0) {
+                    sunburstData.unshift({text: '', hidden: true, count: remainingPadding}); // add the remaining padding
+                }
+            }
+            else if (remaining > 0){
+                sunburstData.unshift({text: '', hidden: true, count: remaining}); // pad out the remaining area
+            }
+        }
+        return sunburstData;
+    }
 
     return BaseCollection.extend({
         url: '../api/public/parametric/second-parametric',
 
         parse: function(results) {
             var totalCount = getArrayTotal(results);
-            var parentFivePercent = Math.round(totalCount / 100 * 5);
-            var data = _.chain(results)
-                .map(function(result) {
-                    var fivePercent = Math.round(result.count / 100 * 5);
-                    var children = _.chain(result.field)
-                        .map(function(child) {
-                            return {
-                                hidden: false,
-                                text: child.value,
-                                count: Number(child.count)
-                            };
-                        })
-                        .filter(function(child) {
-                            return child.count > fivePercent;
-                        })
-                        .sortBy('count')
-                        .value();
-                    if (!_.isEmpty(children)) {
-                        var childCount = getArrayTotal(children);
-                        var remaining = result.count - childCount;
-                        var dividersNo = Math.round(remaining / fivePercent);
-                        for (var i = 0; i < dividersNo; i++) {
-                            children.unshift({text: 'padding', hidden: true, count: fivePercent})
-                        }
-                        children.unshift({text: 'padding', hidden: true, count: remaining - fivePercent  * dividersNo})
-                    }
-                    
-                    return {
-                        text: result.value,
-                        count: Number(result.count),
-                        children: children,
-                        hidden: false
-                    };
-                })
-                .sortBy('count')
-                .filter(function(parent) {
-                    return parent.count > parentFivePercent;
-                })
-                .value();
 
-            if (!_.isEmpty(data)) {
-                var newCount = getArrayTotal(data);
-                var parentRemaining = totalCount - newCount;
-                var dividersNo = Math.round(parentRemaining / parentFivePercent);
-                for (var i = 0; i < dividersNo; i++) {
-                    data.unshift({text: 'padding', hidden: true, count: parentFivePercent, children: []})
-                }
-                data.unshift({text: 'padding', hidden: true, count: parentRemaining - parentFivePercent * dividersNo});
-            }
-
-            return data;
+            return parseResult(results, totalCount);
         }
     });
 
