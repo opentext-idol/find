@@ -10,7 +10,7 @@ define([
     describe('DependentParametricCollection', function () {
         describe('parse method', function () {
             it('parses the response for one field name', function () {
-                var actual = DependentParametricCollection.prototype.parse([
+                var output = DependentParametricCollection.prototype.parse([
                     {field: [], count: '2', value: 'THE AUSTRALIAN'},
                     {field: [], count: '1', value: 'THE DAILY HERALD'},
                     {field: [], count: '2122', value: 'ALBUQUERQUE JOURNAL'},
@@ -26,55 +26,43 @@ define([
                 ]);
                 var expected = [
                     {
-                        text: "padding",
+                        text: "",
                         hidden: true,
-                        count: -726
+                        count: 750
                     },
                     {
-                        text: "padding",
+                        text: "",
                         hidden: true,
-                        count: 1476,
-                        children: []
+                        count: 1476
                     },
                     {
-                        text: "padding",
-                        hidden: true,
-                        count: 1476,
-                        children: []
-                    },
-                    {
+                        hidden: false,
                         text: "ALBUQUERQUE JOURNAL",
-                        count: 2122,
-                        children: [],
-                        hidden: false
+                        count: 2122
                     },
                     {
+                        hidden: false,
                         text: "THE MIAMI HERALD",
-                        count: 2893,
-                        children: [],
-                        hidden: false
+                        count: 2893
                     },
                     {
+                        hidden: false,
                         text: "THE WASHINGTON POST",
-                        count: 5396,
-                        children: [],
-                        hidden: false
+                        count: 5396
                     },
                     {
+                        hidden: false,
                         text: "BBC",
-                        count: 8082,
-                        children: [],
-                        hidden: false
+                        count: 8082
                     },
                     {
+                        hidden: false,
                         text: "ABC NEWS",
-                        count: 8803,
-                        children: [],
-                        hidden: false
+                        count: 8803
                     }
                 ];
-                debugger;
-                expect(actual).toEqual(expected);
+
+                expect(output).toEqual(expected);
             });
 
             it('parses the response for two field names', function () {
@@ -154,28 +142,22 @@ define([
 
                 var expected = [
                     {
-                        text: "padding",
+                        text: "",
                         hidden: true,
-                        count: -693
+                        count: 785
                     },
                     {
-                        text: "padding",
+                        text: "",
                         hidden: true,
-                        count: 1478,
-                        children: []
+                        count: 1478
                     },
                     {
-                        text: "padding",
-                        hidden: true,
-                        count: 1478,
-                        children: []
-                    },
-                    {
+                        hidden: false,
                         text: "ALBUQUERQUE JOURNAL",
                         count: 2122,
                         children: [
                             {
-                                text: "padding",
+                                text: "",
                                 hidden: true,
                                 count: 22
                             },
@@ -184,76 +166,55 @@ define([
                                 text: "LIVING PEOPLE",
                                 count: 2100
                             }
-                        ],
-                        hidden: false
+                        ]
                     },
                     {
+                        hidden: false,
                         text: "THE MIAMI HERALD",
                         count: 2893,
                         children: [
-                            {
-                                text: "padding",
-                                hidden: true,
-                                count: 0
-                            },
                             {
                                 hidden: false,
                                 text: "BUSINESS",
                                 count: 2893
                             }
-                        ],
-                        hidden: false
+                        ]
                     },
                     {
+                        hidden: false,
                         text: "THE WASHINGTON POST",
                         count: 5396,
                         children: [
-                            {
-                                text: "padding",
-                                hidden: true,
-                                count: 0
-                            },
                             {
                                 hidden: false,
                                 text: "BUSINESS",
                                 count: 5396
                             }
-                        ],
-                        hidden: false
+                        ]
                     },
                     {
+                        hidden: false,
                         text: "BBC",
                         count: 8082,
                         children: [
-                            {
-                                text: "padding",
-                                hidden: true,
-                                count: 0
-                            },
                             {
                                 hidden: false,
                                 text: "BUSINESS",
                                 count: 8082
                             }
-                        ],
-                        hidden: false
+                        ]
                     },
                     {
+                        hidden: false,
                         text: "ABC NEWS",
                         count: 8803,
                         children: [
-                            {
-                                text: "padding",
-                                hidden: true,
-                                count: 0
-                            },
                             {
                                 hidden: false,
                                 text: "BUSINESS",
                                 count: 8803
                             }
-                        ],
-                        hidden: false
+                        ]
                     }
                 ];
 
