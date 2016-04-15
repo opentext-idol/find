@@ -119,10 +119,7 @@ define([
                     title: i18n['search.savedSearches.confirm.resetMessage.title'],
                     hiddenEvent: 'hidden.bs.modal',
                     okHandler: _.bind(function() {
-                        this.queryState.queryTextModel.set(this.savedSearchModel.toQueryTextModelAttributes());
-                        this.queryState.datesFilterModel.set(this.savedSearchModel.toDatesFilterModelAttributes());
-                        this.queryState.selectedIndexes.set(this.savedSearchModel.toSelectedIndexes());
-                        this.queryState.selectedParametricValues.set(this.savedSearchModel.toSelectedParametricValues());
+                        this.resetQueryState();
                     }, this)
                 });
             }
@@ -282,13 +279,19 @@ define([
 
                         var saveOptions = {
                             error: error,
-                            success: success,
+                            success: _.bind(function(model) {
+                                this.selectedTabModel.set('selectedSearchCid', model.cid);
+
+                                success();
+                            }, this)
+                            ,
                             wait: true,
                             timeout: 90000
                         };
 
                         if (titleEditState === TitleEditState.SAVE_AS && (savedState !== SavedState.NEW || !this.searchTypes[searchType].isMutable)) {
                             this.searchCollections[searchType].create(attributes, saveOptions);
+                            this.resetQueryState();
                         } else {
                             this.savedSearchModel.save(attributes, saveOptions);
                         }
@@ -301,6 +304,13 @@ define([
                     this.$('.popover-control.active').click();
                 });
             }
+        },
+
+        resetQueryState: function() {
+            this.queryState.queryTextModel.set(this.savedSearchModel.toQueryTextModelAttributes());
+            this.queryState.datesFilterModel.set(this.savedSearchModel.toDatesFilterModelAttributes());
+            this.queryState.selectedIndexes.set(this.savedSearchModel.toSelectedIndexes());
+            this.queryState.selectedParametricValues.set(this.savedSearchModel.toSelectedParametricValues());
         },
 
         updateErrorMessage: function() {
