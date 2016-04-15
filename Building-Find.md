@@ -11,7 +11,7 @@ Building Find requires the following to be installed:
 
 First, we use Git to clone Find from GitHub.  From your command line (hint: Git Bash is better than the Windows Command Prompt), run:
 
-`git clone https://github.com/hpautonomy/find.git`
+`git clone https://github.com/hpe-idol/find.git`
 
 By default, this will create a folder called `find` with the `master` branch checked out.
 
