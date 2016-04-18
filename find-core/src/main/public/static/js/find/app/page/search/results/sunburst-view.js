@@ -45,11 +45,12 @@ define([
         return !field || !_.contains(fields, field);
     };
 
-    function drawSunburst($el, data, secondField) {
+    function drawSunburst($el, data, secondField, onClick) {
         var color = d3.scale.category20c();
         $el.empty();
 
         return new Sunburst($el, {
+            animate: false,
             data: {
                 text: i18n['search.sunburst.title'],
                 children: data,
@@ -94,7 +95,8 @@ define([
                 }
 
                 return sunburstLabelTemplate(templateArguments);
-            }
+            },
+            onClick: onClick
         });
     }
 
@@ -105,8 +107,9 @@ define([
         initialize: function (options) {
             this.queryModel = options.queryModel;
             this.parametricCollection = options.parametricCollection;
-            this.dependentParametricCollection = new DependentParametricCollection();
+            this.selectedParametricValues = options.queryState.selectedParametricValues;
 
+            this.dependentParametricCollection = new DependentParametricCollection();
             this.fieldsCollection = new Backbone.Collection([{text: ''}, {text: ''}]);
 
             this.model = new Backbone.Model({
@@ -126,13 +129,13 @@ define([
         },
 
         resolveFieldSelections: function () {
-            var fields = this.parametricCollection.pluck('name').sort();
+            var fields = _.difference(this.parametricCollection.pluck('name'), this.selectedParametricValues.pluck('field'));
 
             var primaryModel = this.fieldsCollection.at(0);
             var secondaryModel = this.fieldsCollection.at(1);
 
             if (fieldInvalid(primaryModel.get('field'), fields)) {
-                primaryModel.set('field', fields[0]);
+                primaryModel.set('field', fields.sort()[0]);
                 secondaryModel.set('field', '');
             }
 
@@ -166,7 +169,7 @@ define([
             this.firstChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(0),
                 name: 'first',
-                fields: this.parametricCollection.pluck('name'),
+                fields: _.difference(this.parametricCollection.pluck('name'), this.selectedParametricValues.pluck('field')).sort(),
                 allowEmpty: false
             });
 
@@ -182,7 +185,7 @@ define([
             this.secondChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(1),
                 name: 'second',
-                fields: _.without(this.parametricCollection.pluck('name'), this.fieldsCollection.at(0).get('field')).sort(),
+                fields: _.difference(this.parametricCollection.pluck('name'), _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))).sort(),
                 allowEmpty: true
             });
 
@@ -191,7 +194,7 @@ define([
         },
 
         update: function () {
-            drawSunburst(this.$sunburst, this.dependentParametricCollection.toJSON(), this.fieldsCollection.at(1).get('field'));
+            drawSunburst(this.$sunburst, this.dependentParametricCollection.toJSON(), this.fieldsCollection.at(1).get('field'), _.bind(this.onClick, this));
         },
 
         updateSelections: function() {
@@ -224,6 +227,7 @@ define([
 
             this.updateSelections();
             this.listenTo(this.parametricCollection, 'sync', this.updateSelections);
+            this.listenTo(this.selectedParametricValues, 'add remove reset', this.updateSelections);
 
             this.uiUpdate();
             this.listenTo(this.model, 'change', this.uiUpdate);
@@ -274,6 +278,17 @@ define([
             }
 
             this.$message.text(message);
+        },
+
+        onClick: function(data) {
+            var selectedParameters = [{field: this.fieldsCollection.at(data.depth - 1).get('field'), value: data.text}];
+            
+            if (data.depth === 2) {
+                var parentParameter = {field: this.fieldsCollection.at(0).get('field'), value: data.parent.text};
+                selectedParameters.push(parentParameter);
+
+            }
+            this.selectedParametricValues.add(selectedParameters)
         }
     });
 
