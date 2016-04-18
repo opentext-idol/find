@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.test;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -20,6 +21,7 @@ public abstract class MvcIntegrationTestUtils {
 
     public abstract String[] getDatabases();
     public abstract String[] getParametricFields();
+    public abstract EmbeddableIndex getEmbeddableIndex();
 
     public String getValidReference(final MockMvc mockMvc) throws Exception {
         final MockHttpServletRequestBuilder request = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*")

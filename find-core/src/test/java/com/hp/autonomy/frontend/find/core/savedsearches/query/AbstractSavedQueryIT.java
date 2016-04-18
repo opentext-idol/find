@@ -6,13 +6,20 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
+import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
+import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.jdbc.JdbcTestUtils;
@@ -21,6 +28,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,9 +56,20 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
-    private DataSource dataSource;
+    protected DataSource dataSource;
+
+    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
+    @Autowired
+    protected MvcIntegrationTestUtils integrationTestUtils;
+
+    @Value("classpath:save-query-request.json")
+    private Resource saveQueryRequestResource;
 
     private JdbcTemplate jdbcTemplate;
+
+    public AbstractSavedQueryIT() {
+        mapper.registerModule(new JodaModule());
+    }
 
     @PostConstruct
     public void initialise() {
@@ -101,20 +120,43 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     }
 
     @Test
-    public void fetch() throws Exception {
-        final SavedQuery createdEntity = createAndParseSavedQuery(getBaseSavedQuery());
+    public void createAndFetch() throws Exception {
+        // Query text containing U+1F435
+        final String queryText = "monkey face character \uD83D\uDC35";
+
+        final byte[] requestBytes = IOUtils.toByteArray(saveQueryRequestResource.getInputStream());
+
+        final MvcResult createResult = mockMvc.perform(post(SavedQueryController.PATH + '/')
+                .content(requestBytes)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        final JsonNode responseTree = mapper.readTree(createResult.getResponse().getContentAsString());
+        final int id = responseTree.get("id").asInt();
 
         listSavedQueries()
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$[0].id", is(createdEntity.getId().intValue())))
-                .andExpect(jsonPath("$[0].queryText", is(createdEntity.getQueryText())))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases", hasSize(createdEntity.getConceptClusterPhrases().size())))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[*].phrase", containsInAnyOrder(PRIMARY_PHRASE, OTHER_PHRASE)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='" + PRIMARY_PHRASE + "')].primary", contains(true)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase== '" + PRIMARY_PHRASE + "')].clusterId", contains(0)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase== '" + OTHER_PHRASE + "')].primary", contains(false)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase== '" + OTHER_PHRASE + "')].clusterId", contains(0)));
+                .andExpect(jsonPath("$[0].id", is(id)))
+                .andExpect(jsonPath("$[0].title", is("\u30e2\u30f3\u30ad\u30fc")))
+                .andExpect(jsonPath("$[0].queryText", is(queryText)))
+                .andExpect(jsonPath("$[0].minDate", is(1400000000)))
+                .andExpect(jsonPath("$[0].maxDate", is(1500000000)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases", hasSize(3)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[*].phrase", containsInAnyOrder("characters", "faces", "animals")))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='characters')].primary", contains(true)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='characters')].clusterId", contains(1)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='faces')].primary", contains(false)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='faces')].clusterId", contains(1)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='animals')].primary", contains(true)))
+                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='animals')].clusterId", contains(2)))
+                .andExpect(jsonPath("$[0].parametricValues", hasSize(1)))
+                .andExpect(jsonPath("$[0].parametricValues[0].field", is("CATEGORY")))
+                .andExpect(jsonPath("$[0].parametricValues[0].value", is("COMPUTING")))
+                .andExpect(jsonPath("$[0].indexes", hasSize(2)))
+                .andExpect(jsonPath("$[0].indexes[*].name", containsInAnyOrder("English Wikipedia", "\u65e5\u672c\u8a9e Wikipedia")))
+                .andExpect(jsonPath("$[0].indexes[?(@.name=='English Wikipedia')].domain", contains("MY_DOMAIN")))
+                .andExpect(jsonPath("$[0].indexes[?(@.name=='\u65e5\u672c\u8a9e Wikipedia')].domain", contains("MY_DOMAIN")));
     }
 
     @Test
@@ -187,15 +229,19 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
     @Test
     public void checkForNewQueryResults() throws Exception {
+        final Set<EmbeddableIndex> indexes = Collections.singleton(integrationTestUtils.getEmbeddableIndex());
+
         final SavedQuery saveRequest1 = new SavedQuery.Builder()
                 .setTitle("title1")
                 .setQueryText("*")
+                .setIndexes(indexes)
                 .build();
 
         final SavedQuery saveRequest2 = new SavedQuery.Builder()
                 .setDateNewDocsLastFetched(DateTime.now())
                 .setTitle("title2")
                 .setQueryText("*")
+                .setIndexes(indexes)
                 .build();
 
         final SavedQuery savedQuery1 = createAndParseSavedQuery(saveRequest1);

@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.test;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
 import org.springframework.stereotype.Component;
 
@@ -18,5 +19,10 @@ public class IdolMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
     @Override
     public String[] getParametricFields() {
         return new String[]{"CATEGORY", "AUTHOR"};
+    }
+
+    @Override
+    public EmbeddableIndex getEmbeddableIndex() {
+        return new EmbeddableIndex("Wookiepedia", null);
     }
 }

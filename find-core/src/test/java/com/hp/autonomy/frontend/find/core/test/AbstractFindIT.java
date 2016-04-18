@@ -23,7 +23,20 @@ import java.io.IOException;
 
 @SuppressWarnings("UtilityClass")
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebIntegrationTest({"application.buildNumber=test", "server.port=0", "hp.find.persistentState = INMEMORY", "hp.find.home = ./target/test", "find.https.proxyHost = web-proxy.sdc.hpecorp.net", "find.https.proxyPort: 8080", "hp.find.databaseType = H2INMEMORY", "hp.find.home = ./target/test", "find.https.proxyHost = web-proxy.sdc.hpecorp.net", "find.https.proxyPort: 8080", "find.iod.api = https://api.havenondemand.com", "find.hod.sso = https://dev.havenondemand.com/sso.html"})
+@WebIntegrationTest({
+        "application.buildNumber=test",
+        "server.port=0",
+        "hp.find.persistentState = INMEMORY",
+        "hp.find.home = ./target/test",
+        "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
+        "find.https.proxyPort: 8080",
+        "hp.find.databaseType = H2INMEMORY",
+        "hp.find.home = ./target/test",
+        "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
+        "find.https.proxyPort: 8080",
+        "find.iod.api = https://api.havenondemand.com",
+        "find.hod.sso = https://dev.havenondemand.com/sso.html"
+})
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/clean-database.sql")
 public abstract class AbstractFindIT {
     protected static final String TEST_DIR = "./target/test";

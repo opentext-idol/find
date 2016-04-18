@@ -1,7 +1,7 @@
 -- Delete all data from all tables
-DELETE FROM FIND.SEARCH_INDEXES;
-DELETE FROM FIND.SEARCH_PARAMETRIC_VALUES;
-DELETE FROM FIND.SEARCH_STORED_STATE;
-DELETE FROM FIND.SEARCH_CONCEPT_CLUSTER_PHRASES;
-DELETE FROM FIND.SEARCHES;
-DELETE FROM FIND.USERS;
+DELETE FROM find.search_indexes;
+DELETE FROM find.search_parametric_values;
+DELETE FROM find.search_stored_state;
+DELETE FROM find.search_concept_cluster_phrases;
+DELETE FROM find.searches;
+DELETE FROM find.users;
