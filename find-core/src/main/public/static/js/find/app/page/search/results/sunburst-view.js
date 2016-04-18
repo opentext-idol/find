@@ -81,12 +81,14 @@ define([
 
                 var templateArguments = {
                     size: data[SUNBURST_SIZE_ATTR],
-                    icon: !zoomedOnRoot && hoveringCenter ? sunburstLabelIcon : ''
+                    icon: !zoomedOnRoot && hoveringCenter ? sunburstLabelIcon : '',
+                    noVal: false
                 };
 
                 if (data[SUNBURST_NAME_ATTR] === '') {
-                    templateArguments.name = i18n['search.sunburst.noValue'](secondField);
+                    templateArguments.name = i18n['search.sunburst.noValue'];
                     templateArguments.italic = true;
+                    templateArguments.noVal = true;
                 } else {
                     templateArguments.name = data[SUNBURST_NAME_ATTR];
                     templateArguments.italic = false;
@@ -95,6 +97,21 @@ define([
                 return sunburstLabelTemplate(templateArguments);
             },
             onClick: onClick
+            outerRingAnimateSize: 15,
+            hoverAnimation: function (d, arc, outerRingAnimateSize, arcEls, arcData, paper) {
+                _.chain(_.zip(arcData, arcEls))
+                    .filter(function(dataEl) {
+                        var data = dataEl[0];
+
+                        // TODO Assumes depth=2 is the outer ring - will need to change if this changes
+                        return data.depth === 2 && data.text === d.text;
+                    })
+                    .each(function(dataEl) {
+                        var el = dataEl[1];
+
+                        paper.set(el).animate({path: arc(outerRingAnimateSize)(dataEl[0])}, 100);
+                    });
+            }
         });
     }
 
@@ -253,6 +270,7 @@ define([
 
             var empty = this.model.get('parametricCollectionState') === collectionState.EMPTY;
             var error = parametricCollectionState === collectionState.ERROR || (!parametricLoading && dependentParametricCollectionState === collectionState.ERROR);
+            var emptyDependentParametric = dependentParametricCollectionState === collectionState.EMPTY;
 
             // Show if loading either collection
             this.$loadingSpinner.toggleClass('hide', !(parametricLoading || dependentParametricLoading));
@@ -263,16 +281,19 @@ define([
             // Show if not loading and not failure
             this.$sunburst.toggleClass('hide', dependentParametricCollectionState !== collectionState.DATA || parametricCollectionState !== collectionState.DATA);
 
-            this.updateMessage(error, empty);
+            this.updateMessage(error, empty, emptyDependentParametric);
+
         },
 
-        updateMessage: function (error, empty) {
+        updateMessage: function (error, empty, emptyDependentParametric) {
             var message = '';
 
             if (error) {
                 message = i18n['search.resultsView.sunburst.error.query'];
             } else if (empty) {
                 message = i18n['search.resultsView.sunburst.error.noParametricValues'];
+            } else if (emptyDependentParametric) {
+                message = i18n['search.resultsView.sunburst.error.noDependentParametricValues'];
             }
 
             this.$message.text(message);
