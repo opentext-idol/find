@@ -5,6 +5,12 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
+import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.types.requests.Documents;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,28 +18,36 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
+import java.io.Serializable;
+
+import static org.junit.Assert.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SavedQueryControllerTest {
-
+public abstract class SavedQueryControllerTest<S extends Serializable, D extends SearchResult, E extends Exception> {
     @Mock
-    private SavedQueryService savedQueryService;
+    protected SavedQueryService savedQueryService;
+    @Mock
+    protected DocumentsService<S, D, E> documentsService;
+    @Mock
+    protected QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
+    @Mock
+    private Documents<D> searchResults;
 
-    private SavedQueryController savedQueryController;
+    private SavedQueryController<S, D, E> savedQueryController;
 
     private final SavedQuery savedQuery = new SavedQuery.Builder()
             .setTitle("Any old saved search")
             .build();
 
+    protected abstract SavedQueryController<S, D, E> constructController();
+
     @Before
     public void setUp() {
-        savedQueryController = new SavedQueryController(savedQueryService);
+        savedQueryController = constructController();
     }
 
     @Test
@@ -48,7 +62,7 @@ public class SavedQueryControllerTest {
 
         final SavedQuery updatedQuery = savedQueryController.update(42, savedQuery);
         verify(savedQueryService).update(Matchers.isA(SavedQuery.class));
-        assertEquals(updatedQuery.getId(), new Long(42L));
+        assertEquals(42L, (long) updatedQuery.getId());
     }
 
     @Test
@@ -61,5 +75,42 @@ public class SavedQueryControllerTest {
     public void delete() {
         savedQueryController.delete(42L);
         verify(savedQueryService).deleteById(eq(42L));
+    }
+
+    @Test
+    public void checkForNewQueryResults() throws E {
+        final long id = 123L;
+        final SavedQuery savedQuery = new SavedQuery.Builder()
+                .setId(id)
+                .build();
+        when(savedQueryService.get(id)).thenReturn(savedQuery);
+        when(searchResults.getTotalResults()).thenReturn(1);
+        when(documentsService.queryTextIndex(Matchers.<SearchRequest<S>>any())).thenReturn(searchResults);
+        assertTrue(savedQueryController.checkForNewQueryResults(id));
+    }
+
+    @Test
+    public void checkForNewQueryResultsNoNewResults() throws E {
+        final long id = 123L;
+        final SavedQuery savedQuery = new SavedQuery.Builder()
+                .setId(id)
+                .build();
+        when(savedQueryService.get(id)).thenReturn(savedQuery);
+        when(documentsService.queryTextIndex(Matchers.<SearchRequest<S>>any())).thenReturn(searchResults);
+        assertFalse(savedQueryController.checkForNewQueryResults(id));
+    }
+
+    @Test
+    public void checkForNewQueryResultsButIncompatibleRestrictions() throws E {
+        final long id = 123L;
+        final DateTime lastFetchTime = DateTime.now();
+        final SavedQuery savedQuery = new SavedQuery.Builder()
+                .setDateNewDocsLastFetched(lastFetchTime)
+                .setId(id)
+                .setMaxDate(lastFetchTime.minus(1))
+                .build();
+        when(savedQueryService.get(id)).thenReturn(savedQuery);
+        assertFalse(savedQueryController.checkForNewQueryResults(id));
+        verify(documentsService, never()).queryTextIndex(Matchers.<SearchRequest<S>>any());
     }
 }

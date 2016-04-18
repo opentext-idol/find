@@ -25,7 +25,7 @@ public class ComparisonServiceImpl<S extends Serializable, R extends SearchResul
     private final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
 
     @Autowired
-    public ComparisonServiceImpl(final DocumentsService<S, R, E> documentsService, final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
+    public ComparisonServiceImpl(final DocumentsService<S, R, E> documentsService, @SuppressWarnings("SpringJavaAutowiringInspection") final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
         this.documentsService = documentsService;
         this.queryRestrictionsBuilder = queryRestrictionsBuilder;
     }
@@ -41,12 +41,22 @@ public class ComparisonServiceImpl<S extends Serializable, R extends SearchResul
 
     @Override
     public Documents<R> getResults(final List<String> stateMatchIds, final List<String> stateDontMatchIds, final String text, final int resultsStart, final int maxResults, final String summary, final String sort, final boolean highlight) throws E {
-        if(stateMatchIds.isEmpty()) {
+        if (stateMatchIds.isEmpty()) {
             return getEmptyResults();
         }
 
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, "", Collections.<S>emptyList(), null, null, stateMatchIds, stateDontMatchIds);
-        final SearchRequest<S> searchRequest = new SearchRequest<>(queryRestrictions, resultsStart, maxResults, summary, DocumentsController.MAX_SUMMARY_CHARACTERS, sort, highlight, false, SearchRequest.QueryType.RAW);
+        final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
+                .setQueryRestrictions(queryRestrictions)
+                .setStart(resultsStart)
+                .setMaxResults(maxResults)
+                .setSummary(summary)
+                .setSummaryCharacters(DocumentsController.MAX_SUMMARY_CHARACTERS)
+                .setSort(sort)
+                .setHighlight(highlight)
+                .setAutoCorrect(false)
+                .setQueryType(SearchRequest.QueryType.RAW)
+                .build();
         return documentsService.queryTextIndex(searchRequest);
     }
 

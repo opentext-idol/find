@@ -11,6 +11,8 @@ public interface SavedSearchService<T extends SavedSearch<T>> {
 
     Set<T> getAll();
 
+    T get(long id);
+
     T create(T search);
 
     T update(T search);

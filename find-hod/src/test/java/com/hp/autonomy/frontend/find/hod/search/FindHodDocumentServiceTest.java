@@ -93,7 +93,17 @@ public class FindHodDocumentServiceTest extends HodDocumentServiceTest {
                 .setDatabases(Arrays.asList(goodIndex, badIndex))
                 .setAnyLanguage(true)
                 .build();
-        final SearchRequest<ResourceIdentifier> searchRequest = new SearchRequest<>(queryRestrictions, 1, 30, "concept", 250, null, true, false, SearchRequest.QueryType.MODIFIED);
+        final SearchRequest<ResourceIdentifier> searchRequest = new SearchRequest.Builder<ResourceIdentifier>()
+                .setQueryRestrictions(queryRestrictions)
+                .setStart(1)
+                .setMaxResults(30)
+                .setSummary("concept")
+                .setSummaryCharacters(250)
+                .setSort(null)
+                .setHighlight(true)
+                .setAutoCorrect(false)
+                .setQueryType(SearchRequest.QueryType.MODIFIED)
+                .build();
         final Documents<HodSearchResult> results = documentsService.queryTextIndex(searchRequest);
         assertThat(results.getDocuments(), hasSize(1));
         assertNotNull(results.getWarnings());
@@ -108,7 +118,17 @@ public class FindHodDocumentServiceTest extends HodDocumentServiceTest {
         when(queryTextIndexService.queryTextIndexWithText(anyString(), any(QueryRequestBuilder.class))).thenThrow(new HodErrorException(miscellaneousError, HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
         final QueryRestrictions<ResourceIdentifier> queryRestrictions = testUtils.buildQueryRestrictions();
-        final SearchRequest<ResourceIdentifier> searchRequest = new SearchRequest<>(queryRestrictions, 1, 30, "concept", 250, null, true, false, SearchRequest.QueryType.MODIFIED);
+        final SearchRequest<ResourceIdentifier> searchRequest = new SearchRequest.Builder<ResourceIdentifier>()
+                .setQueryRestrictions(queryRestrictions)
+                .setStart(1)
+                .setMaxResults(30)
+                .setSummary("concept")
+                .setSummaryCharacters(250)
+                .setSort(null)
+                .setHighlight(true)
+                .setAutoCorrect(false)
+                .setQueryType(SearchRequest.QueryType.MODIFIED)
+                .build();
         documentsService.queryTextIndex(searchRequest);
     }
 }

@@ -25,6 +25,11 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T>> imple
     }
 
     @Override
+    public T get(final long id) {
+        return crudRepository.findOne(id);
+    }
+
+    @Override
     public T create(final T search) {
         return crudRepository.save(search);
     }

@@ -58,6 +58,10 @@
     },
     "highlighting": true
   },
+  "savedSearches": {
+    "pollForUpdates": true,
+    "pollingInterval": 5
+  },
   "map": {
     "enabled": false,
     "attribution": null,

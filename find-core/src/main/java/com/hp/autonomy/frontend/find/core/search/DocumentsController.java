@@ -31,23 +31,23 @@ import java.util.List;
 public abstract class DocumentsController<S extends Serializable, R extends SearchResult, E extends Exception> {
     public static final String SEARCH_PATH = "/api/public/search";
     public static final String QUERY_PATH = "query-text-index/results";
-    public static final String PROMOTIONS_PATH = "query-text-index/promotions";
-    public static final String SIMILAR_DOCUMENTS_PATH = "similar-documents";
-    public static final String GET_DOCUMENT_CONTENT_PATH = "get-document-content";
+    static final String PROMOTIONS_PATH = "query-text-index/promotions";
+    static final String SIMILAR_DOCUMENTS_PATH = "similar-documents";
+    static final String GET_DOCUMENT_CONTENT_PATH = "get-document-content";
 
     public static final String TEXT_PARAM = "text";
     public static final String RESULTS_START_PARAM = "start";
     public static final String MAX_RESULTS_PARAM = "max_results";
     public static final String SUMMARY_PARAM = "summary";
     public static final String INDEXES_PARAM = "indexes";
-    public static final String FIELD_TEXT_PARAM = "field_text";
-    public static final String SORT_PARAM = "sort";
-    public static final String MIN_DATE_PARAM = "min_date";
-    public static final String MAX_DATE_PARAM = "max_date";
-    public static final String HIGHLIGHT_PARAM = "highlight";
-    public static final String REFERENCE_PARAM = "reference";
-    public static final String AUTO_CORRECT_PARAM = "auto_correct";
-    public static final String DATABASE_PARAM = "database";
+    private static final String FIELD_TEXT_PARAM = "field_text";
+    private static final String SORT_PARAM = "sort";
+    private static final String MIN_DATE_PARAM = "min_date";
+    private static final String MAX_DATE_PARAM = "max_date";
+    private static final String HIGHLIGHT_PARAM = "highlight";
+    static final String REFERENCE_PARAM = "reference";
+    static final String AUTO_CORRECT_PARAM = "auto_correct";
+    static final String DATABASE_PARAM = "database";
 
     public static final int MAX_SUMMARY_CHARACTERS = 250;
 
@@ -104,7 +104,16 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     @SuppressWarnings("MethodWithTooManyParameters")
     protected SearchRequest<S> parseRequestParamsToObject(final String text, final int resultsStart, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight, final boolean autoCorrect) {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, fieldText, databases, minDate, maxDate, Collections.<String>emptyList(), Collections.<String>emptyList());
-        return new SearchRequest<>(queryRestrictions, resultsStart, maxResults, summary, MAX_SUMMARY_CHARACTERS, sort, highlight, autoCorrect, null);
+        return new SearchRequest.Builder<S>()
+                .setQueryRestrictions(queryRestrictions)
+                .setStart(resultsStart)
+                .setMaxResults(maxResults)
+                .setSummary(summary)
+                .setSummaryCharacters(MAX_SUMMARY_CHARACTERS)
+                .setSort(sort)
+                .setHighlight(highlight)
+                .setAutoCorrect(autoCorrect)
+                .build();
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -132,7 +141,16 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
                 Collections.<String>emptyList()
         );
 
-        final SuggestRequest<S> suggestRequest = new SuggestRequest<>(reference, queryRestrictions, resultsStart, maxResults, summary, MAX_SUMMARY_CHARACTERS, sort, highlight);
+        final SuggestRequest<S> suggestRequest = new SuggestRequest.Builder<S>()
+                .setReference(reference)
+                .setQueryRestrictions(queryRestrictions)
+                .setStart(resultsStart)
+                .setMaxResults(maxResults)
+                .setSummary(summary)
+                .setSummaryCharacters(MAX_SUMMARY_CHARACTERS)
+                .setSort(sort)
+                .setHighlight(highlight)
+                .build();
         return documentsService.findSimilar(suggestRequest);
     }
 
