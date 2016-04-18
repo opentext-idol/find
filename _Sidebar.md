@@ -23,4 +23,5 @@
 
 # Modifying Find
 
+- [[Changing the logo]]
 - [[Custom Document Templates]]
