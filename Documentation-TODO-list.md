@@ -22,7 +22,6 @@ The list of things to document on the Wiki :)
 
 # Guides
 
-- Changing the logo
 - Changing the colours
 - Internationalization
 - Changing the default fields we use
