@@ -5,8 +5,10 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
-public interface MapConfig {
+public interface FindConfig {
 
     MapConfiguration getMap();
+
+    SavedSearchConfig getSavedSearchConfig();
 
 }

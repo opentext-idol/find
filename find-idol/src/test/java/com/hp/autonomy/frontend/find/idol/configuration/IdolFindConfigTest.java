@@ -9,6 +9,7 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
+import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import org.junit.Before;
@@ -33,6 +34,9 @@ public class IdolFindConfigTest {
     private QueryManipulation queryManipulation;
 
     @Mock
+    private SavedSearchConfig savedSearchConfig;
+
+    @Mock
     private ViewConfig viewConfig;
 
     private IdolFindConfig idolFindConfig;
@@ -43,6 +47,7 @@ public class IdolFindConfigTest {
                 .setContent(serverConfig)
                 .setLogin(communityAuthentication)
                 .setQueryManipulation(queryManipulation)
+                .setSavedSearchConfig(savedSearchConfig)
                 .setView(viewConfig)
                 .build();
     }
@@ -63,6 +68,7 @@ public class IdolFindConfigTest {
         when(serverConfig.merge(any(ServerConfig.class))).thenReturn(serverConfig);
         when(communityAuthentication.merge(any(CommunityAuthentication.class))).thenReturn(communityAuthentication);
         when(queryManipulation.merge(any(QueryManipulation.class))).thenReturn(queryManipulation);
+        when(savedSearchConfig.merge(any(SavedSearchConfig.class))).thenReturn(savedSearchConfig);
         when(viewConfig.merge(any(ViewConfig.class))).thenReturn(viewConfig);
 
         final IdolFindConfig defaults = new IdolFindConfig.Builder().setContent(mock(ServerConfig.class)).build();
@@ -70,6 +76,7 @@ public class IdolFindConfigTest {
         assertEquals(serverConfig, mergedConfig.getContent());
         assertEquals(communityAuthentication, mergedConfig.getLogin());
         assertEquals(queryManipulation, mergedConfig.getQueryManipulation());
+        assertEquals(savedSearchConfig, mergedConfig.getSavedSearchConfig());
         assertEquals(viewConfig, mergedConfig.getViewConfig());
         assertEquals(idolFindConfig, mergedConfig);
     }

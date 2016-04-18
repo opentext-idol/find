@@ -10,7 +10,7 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
-import com.hp.autonomy.frontend.find.core.configuration.MapConfig;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,9 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public abstract class FindController {
@@ -38,8 +38,9 @@ public abstract class FindController {
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    private ConfigService<? extends MapConfig> mapConfigService;
+    private ConfigService<? extends FindConfig> configService;
 
     @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
     private String gitCommit;
@@ -71,7 +72,7 @@ public abstract class FindController {
     public ModelAndView mainPage() throws JsonProcessingException {
         final String username = authenticationInformationRetriever.getAuthentication().getName();
 
-        final List<String> roles = new LinkedList<>();
+        final Collection<String> roles = new LinkedList<>();
 
         for (final GrantedAuthority authority : authenticationInformationRetriever.getAuthentication().getAuthorities()) {
             roles.add(authority.getAuthority());
@@ -82,7 +83,8 @@ public abstract class FindController {
         config.put(MvcConstants.ROLES.value(), roles);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
-        config.put(MvcConstants.MAP.value(), mapConfigService.getConfig().getMap());
+        config.put(MvcConstants.MAP.value(), configService.getConfig().getMap());
+        config.put(MvcConstants.SAVED_SEARCH_CONFIG.value(), configService.getConfig().getSavedSearchConfig());
         config.putAll(getPublicConfig());
 
         final Map<String, Object> attributes = new HashMap<>();

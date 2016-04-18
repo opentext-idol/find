@@ -6,6 +6,7 @@
 define([
     'js-whatever/js/base-page',
     'backbone',
+    'find/app/configuration',
     'find/app/model/dates-filter-model',
     'parametric-refinement/selected-values-collection',
     'find/app/model/indexes-collection',
@@ -28,7 +29,7 @@ define([
     'jquery',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function (BasePage, Backbone, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
+], function (BasePage, Backbone, config, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
              InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView,
              QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, router, vent, i18n, $, _, template) {
 
@@ -231,16 +232,19 @@ define([
                 }.bind(this));
             }, this);
 
-            this.savedSearchScheduleId = setInterval(_.bind(function () {
-                this.savedQueryCollection.fetch().done(_.bind(function () {
-                    this.savedQueryCollection.forEach(function (savedQuery) {
-                        $.ajax('../api/public/saved-query/new-results/' + savedQuery.id)
-                            .success(function (newResults) {
-                                // TODO: FIND-23
-                            })
-                    })
-                }, this))
-            }, this), 5 * 60 * 1000);
+            var savedSearchConfig = config().savedSearchConfig;
+            if (savedSearchConfig.pollForUpdates) {
+                this.savedSearchScheduleId = setInterval(_.bind(function () {
+                    this.savedQueryCollection.fetch().done(_.bind(function () {
+                        this.savedQueryCollection.forEach(function (savedQuery) {
+                            $.ajax('../api/public/saved-query/new-results/' + savedQuery.id)
+                                .success(function (newResults) {
+                                    // TODO: FIND-23
+                                })
+                        })
+                    }, this))
+                }, this), savedSearchConfig.pollingInterval * 60 * 1000);
+            }
         },
 
         render: function () {

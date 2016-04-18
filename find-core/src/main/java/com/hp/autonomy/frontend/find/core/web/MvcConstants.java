@@ -9,10 +9,11 @@ public enum MvcConstants {
     CONFIG("configJson"),
     GIT_COMMIT("commit"),
     MAIN_JS("mainJs"),
+    MAP("map"),
     RELEASE_VERSION("version"),
     ROLES("roles"),
-    USERNAME("username"),
-    MAP("map");
+    SAVED_SEARCH_CONFIG("savedSearchConfig"),
+    USERNAME("username");
 
     private final String value;
 

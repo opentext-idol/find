@@ -16,8 +16,9 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
-import com.hp.autonomy.frontend.find.core.configuration.MapConfig;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
@@ -29,16 +30,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-@SuppressWarnings("InstanceVariableOfConcreteClass")
+@SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
 @Data
 @EqualsAndHashCode(callSuper = false)
 @JsonDeserialize(builder = IdolFindConfig.Builder.class)
-public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, AuthenticationConfig<IdolFindConfig>, IdolSearchCapable, MapConfig {
+public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, AuthenticationConfig<IdolFindConfig>, IdolSearchCapable, FindConfig {
 
     private final CommunityAuthentication login;
     private final ServerConfig content;
     private final QueryManipulation queryManipulation;
     private final ViewConfig view;
+    @JsonProperty("savedSearches")
+    private final SavedSearchConfig savedSearchConfig;
     private final MMAP mmap;
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
@@ -54,6 +57,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .setLogin(login == null ? other.login : login.merge(other.login))
                 .setQueryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
                 .setView(view == null ? other.view : view.merge(other.view))
+                .setSavedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
                 .setMmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
                 .setFieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
                 .setMap(map == null ? other.map : map.merge(other.map))
@@ -96,6 +100,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     public void basicValidate() throws ConfigException {
         login.basicValidate();
         content.basicValidate("content");
+        savedSearchConfig.basicValidate();
 
         if (map != null) {
             map.basicValidate("map");
@@ -127,6 +132,8 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         private ServerConfig content;
         private QueryManipulation queryManipulation;
         private ViewConfig view;
+        @JsonProperty("savedSearches")
+        private SavedSearchConfig savedSearchConfig;
         private MMAP mmap;
         private FieldsInfo fieldsInfo;
         private MapConfiguration map;
@@ -136,13 +143,14 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             content = config.content;
             queryManipulation = config.queryManipulation;
             view = config.view;
+            savedSearchConfig = config.savedSearchConfig;
             mmap = config.mmap;
             fieldsInfo = config.fieldsInfo;
             map = config.map;
         }
 
         public IdolFindConfig build() {
-            return new IdolFindConfig(login, content, queryManipulation, view, mmap, fieldsInfo, map);
+            return new IdolFindConfig(login, content, queryManipulation, view, savedSearchConfig, mmap, fieldsInfo, map);
         }
     }
 
