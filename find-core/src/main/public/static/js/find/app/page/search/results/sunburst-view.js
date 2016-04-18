@@ -96,7 +96,7 @@ define([
 
                 return sunburstLabelTemplate(templateArguments);
             },
-            onClick: onClick
+            onClick: onClick,
             outerRingAnimateSize: 15,
             hoverAnimation: function (d, arc, outerRingAnimateSize, arcEls, arcData, paper) {
                 _.chain(_.zip(arcData, arcEls))

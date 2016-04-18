@@ -45,7 +45,7 @@ define([
                 });
 
                 it('should not display a message, sunburst view or field selections', function() {
-                    expect(this.view.$message).toHaveText('');
+                    expect(this.view.$message).toHaveText(i18n['search.resultsView.sunburst.error.noDependentParametricValues']);
                     expect(this.view.$sunburst).toHaveClass('hide');
                     expect(this.view.$parametricSelections).toHaveClass('hide');
                 });
