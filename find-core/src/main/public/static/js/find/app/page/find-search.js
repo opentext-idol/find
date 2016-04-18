@@ -235,7 +235,7 @@ define([
             var savedSearchConfig = config().savedSearchConfig;
             if (savedSearchConfig.pollForUpdates) {
                 this.savedSearchScheduleId = setInterval(_.bind(function () {
-                    this.savedQueryCollection.fetch().done(_.bind(function () {
+                    this.savedQueryCollection.fetch({remove:false}).done(_.bind(function () {
                         this.savedQueryCollection.forEach(function (savedQuery) {
                             $.ajax('../api/public/saved-query/new-results/' + savedQuery.id)
                                 .success(function (newResults) {
