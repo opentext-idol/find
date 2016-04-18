@@ -5,16 +5,18 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @JsonDeserialize(builder = SavedSearchConfig.Builder.class)
 @Data
-public class SavedSearchConfig {
+public class SavedSearchConfig implements ConfigurationComponent {
     private final Boolean pollForUpdates;
     private final Integer pollingInterval;
 
@@ -36,6 +38,12 @@ public class SavedSearchConfig {
         if (pollForUpdates != null && pollForUpdates && (pollingInterval == null || pollingInterval <= 0)) {
             throw new ConfigException("Saved Searches", "Polling interval must be positive");
         }
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return true;
     }
 
     @Setter

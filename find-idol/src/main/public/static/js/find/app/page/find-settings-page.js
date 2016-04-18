@@ -10,9 +10,10 @@ define([
     'find/app/page/settings/map-widget',
     'find/app/page/settings/mmap-widget',
     'find/app/page/settings/query-manipulation-widget',
+    'find/app/page/settings/saved-search-widget',
     'find/app/page/settings/view-widget',
     'i18n!find/nls/bundle'
-], function(SettingsPage, AciWidget, CommunityWidget, MapWidget, MmapWidget, QueryManipulationWidget, ViewWidget, i18n) {
+], function(SettingsPage, AciWidget, CommunityWidget, MapWidget, MmapWidget, QueryManipulationWidget, SavedSearchWidget, ViewWidget, i18n) {
 
     return SettingsPage.extend({
         initializeWidgets: function() {
@@ -72,6 +73,20 @@ define([
                         })
                     })
                 ], [
+                    new SavedSearchWidget({
+                        configItem: 'savedSearches',
+                        description: i18n['settings.savedSearches.description'],
+                        isOpened: true,
+                        title: i18n['settings.savedSearches'],
+                        strings: _.extend(this.serverStrings(), {
+                            loading: i18n['settings.mmap.loading'],
+                            disablePolling: i18n['settings.savedSearches.polling.disable'],
+                            enablePolling: i18n['settings.savedSearches.polling.enable'],
+                            pollingDisabled: i18n['settings.savedSearches.polling.disabled'],
+                            pollingEnabled: i18n['settings.savedSearches.polling.enabled'],
+                            pollingInterval: i18n['settings.savedSearches.polling.interval']
+                        })
+                    }),
                     new MmapWidget({
                         configItem: 'mmap',
                         description: i18n['settings.mmap.description'],
