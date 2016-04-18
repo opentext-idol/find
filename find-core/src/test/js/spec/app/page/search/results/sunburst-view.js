@@ -12,12 +12,15 @@ define([
     describe('Sunburst View', function() {
         beforeEach(function() {
             this.parametricCollection = new Backbone.Collection();
+            this.selectedParametricValues = new Backbone.Collection();
             this.queryModel = new Backbone.Model();
             this.queryModel.getIsoDate = jasmine.createSpy('getIsoDate');
+            this.queryState = {selectedParametricValues: this.selectedParametricValues};
 
             var sunburstViewConstructorArguments = {
                 parametricCollection: this.parametricCollection,
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                queryState: this.queryState
             };
 
             this.view = new SunburstView(sunburstViewConstructorArguments);
