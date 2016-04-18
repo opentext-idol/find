@@ -1,10 +1,17 @@
 define([
     'find/app/page/find-search',
+    'find/app/configuration',
     'backbone'
-], function (FindSearch, Backbone) {
+], function (FindSearch, configuration, Backbone) {
 
     describe('Find Search', function() {
         beforeEach(function() {
+            configuration.and.returnValue({
+                savedSearchConfig: {
+                    pollForUpdates: false
+                }
+            });
+
             this.findSearch = new (FindSearch.extend({
                 ServiceView: Backbone.View
             }))({
