@@ -1,25 +1,23 @@
-## Compiling and Running Find
+# Compiling and Running Find
 
-### Basics
+## Basics
 
 - [[Building Find]] - how to get the code and compile a copy of Find
 - [[Running a Development Copy of Find]] - how to test your changes
 - [[Running a Production Copy of Find]] - how to deploy your changed version of Find
 
-### Advanced
-- [[Heroku Deployment Guide]] - how to run Find on Heroku, if that's something you want to do
+## Advanced
 - [[Understanding the Code Structure]] - info about what's going on under the surface
 - [[Vagrant]] - how to set up the Find backend virtual machine with Vagrant
 - [[JetBrains IntelliJ IDEA]] - setting up the IntelliJ IDE to run Find
-- [[Documents Duplication]] - How to prevent documents with the same references being obscured.
 
-## Configuring Find for IDOL
+# Configuring Find for IDOL
 
 - [[Find Java System Properties]] - changing some runtime settings
 - [[Configuring Find for IDOL]] - guide to the Find for IDOL config file
 - [[Find User Roles]] - letting people log into Find
 
-## Configuring Find for HavenOnDemand
+# Configuring Find for HavenOnDemand
 
 - [[Find Java System Properties]] - changing some runtime settings
 - [[Configuring Find for Haven OnDemand]] - guide to the Find for Haven OnDemand config file
