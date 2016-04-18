@@ -13,6 +13,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryControll
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
+import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,5 +29,10 @@ class IdolSavedQueryController extends SavedQueryController<String, IdolSearchRe
     @Override
     protected String convertEmbeddableIndex(final EmbeddableIndex embeddableIndex) {
         return embeddableIndex.getName();
+    }
+
+    @Override
+    protected String getNoResultsPrintParam() {
+        return PrintParam.NoResults.name();
     }
 }

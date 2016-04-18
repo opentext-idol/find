@@ -13,6 +13,7 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
+import org.apache.commons.collections4.CollectionUtils;
 import org.joda.time.DateTime;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +44,8 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
     }
 
     protected abstract S convertEmbeddableIndex(EmbeddableIndex embeddableIndex);
+
+    protected abstract String getNoResultsPrintParam();
 
     @RequestMapping(method = RequestMethod.GET)
     public Set<SavedQuery> getAll() {
@@ -68,9 +70,7 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public void delete(
-            @PathVariable("id") final long id
-    ) {
+    public void delete(@SuppressWarnings("MVCPathVariableInspection") @PathVariable("id") final long id) {
         service.deleteById(id);
     }
 
@@ -88,7 +88,12 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
                     null,
                     Collections.<String>emptyList(),
                     Collections.<String>emptyList());
-            final SearchRequest<S> searchRequest = new SearchRequest<>(queryRestrictions, 1, 1, null, null, null, false, false, SearchRequest.QueryType.MODIFIED);
+            final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
+                    .setQueryRestrictions(queryRestrictions)
+                    .setMaxResults(1)
+                    .setPrint(getNoResultsPrintParam())
+                    .setQueryType(SearchRequest.QueryType.MODIFIED)
+                    .build();
             final Documents<?> searchResults = documentsService.queryTextIndex(searchRequest);
             newResults = searchResults.getTotalResults() > 0;
         }
@@ -96,10 +101,12 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
         return newResults;
     }
 
-    private List<S> convertEmbeddableIndexes(final Collection<EmbeddableIndex> embeddableIndexes) {
-        final List<S> indexes = new ArrayList<>(embeddableIndexes.size());
-        for (final EmbeddableIndex embeddableIndex : embeddableIndexes) {
-            indexes.add(convertEmbeddableIndex(embeddableIndex));
+    private List<S> convertEmbeddableIndexes(final Iterable<EmbeddableIndex> embeddableIndexes) {
+        final List<S> indexes = new ArrayList<>(CollectionUtils.size(embeddableIndexes));
+        if (embeddableIndexes != null) {
+            for (final EmbeddableIndex embeddableIndex : embeddableIndexes) {
+                indexes.add(convertEmbeddableIndex(embeddableIndex));
+            }
         }
 
         return indexes;

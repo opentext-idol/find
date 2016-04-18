@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
@@ -29,5 +30,10 @@ class HodSavedQueryController extends SavedQueryController<ResourceIdentifier, H
     @Override
     protected ResourceIdentifier convertEmbeddableIndex(final EmbeddableIndex embeddableIndex) {
         return new ResourceIdentifier(embeddableIndex.getDomain(), embeddableIndex.getName());
+    }
+
+    @Override
+    protected String getNoResultsPrintParam() {
+        return Print.no_results.name();
     }
 }
