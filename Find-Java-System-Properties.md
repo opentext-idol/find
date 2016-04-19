@@ -16,7 +16,7 @@ Find uses Java System Properties to configure some runtime settings.
 
 ### Database
 
-Find uses a relational database to store users' saved searches. By default, this is an embedded [H2](http://www.h2database.com/) database which persists data to disk in the Find home directory. The application runs schema migration scripts on connection using [Flyway](https://flywaydb.org/). The system properties in this section allow Find to connect to an external database to allow the application to be clustered.
+Find uses a relational database to store users' saved searches. By default, this is an embedded [H2](http://www.h2database.com/) database which persists data to disk in the Find home directory. The application runs schema migration scripts on connection using [Flyway](https://flywaydb.org/). You can use the system properties in this section to configure Find to connect to an external database to allow the application to be clustered.
 
 - `spring.datasource.url` - A JDBC URL for the database, eg "jdbc:mariadb://my-maria-db:3306/find". The Find jar is built with H2 and MariaDB/MySQL connectors included. The application uses a database/schema called "find" which it will attempt to create if running the automatic migration scripts.
 - `spring.datasource.username` - Database username. Must have access to the "find" database or permission to create it.
