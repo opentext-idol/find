@@ -44,8 +44,19 @@ define([
     var fieldInvalid = function (field, fields) {
         return !field || !_.contains(fields, field);
     };
+    
+    function getClickedParameters (data, fields, selectedParameters) {
+        var parameter = {field: fields[data.depth - 1], value: data.text};
+        selectedParameters.push(parameter);
 
-    function drawSunburst($el, data, secondField, onClick) {
+        if (data.parent && data.parent.depth !== 0) {
+            getClickedParameters(data.parent, fields, selectedParameters)
+        }
+
+        return selectedParameters;
+    }
+    
+    function drawSunburst($el, data, onClick) {
         var color = d3.scale.category20c();
         $el.empty();
 
@@ -209,7 +220,7 @@ define([
         },
 
         update: function () {
-            drawSunburst(this.$sunburst, this.dependentParametricCollection.toJSON(), this.fieldsCollection.at(1).get('field'), _.bind(this.onClick, this));
+            drawSunburst(this.$sunburst, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
         },
 
         updateSelections: function() {
@@ -300,15 +311,11 @@ define([
         },
 
         onClick: function(data) {
-            var selectedParameters = [{field: this.fieldsCollection.at(data.depth - 1).get('field'), value: data.text}];
-            
-            if (data.depth === 2) {
-                var parentParameter = {field: this.fieldsCollection.at(0).get('field'), value: data.parent.text};
-                selectedParameters.push(parentParameter);
+            var selectedParameters = getClickedParameters(data, this.fieldsCollection.pluck('field'), []);
 
-            }
             this.selectedParametricValues.add(selectedParameters)
         }
+        
     });
 
 });
