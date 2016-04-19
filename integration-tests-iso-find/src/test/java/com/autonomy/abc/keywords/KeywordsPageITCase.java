@@ -2,20 +2,19 @@ package com.autonomy.abc.keywords;
 
 import com.autonomy.abc.base.HybridIsoTestBase;
 import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
-import com.hp.autonomy.frontend.selenium.framework.categories.SlowTest;
 import com.autonomy.abc.selenium.analytics.DashboardBase;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
-import com.hp.autonomy.frontend.selenium.control.Window;
-import com.hp.autonomy.frontend.selenium.element.FormInput;
-import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.*;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.SearchPage;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.framework.categories.SlowTest;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
@@ -38,7 +37,6 @@ import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlCont
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class KeywordsPageITCase extends HybridIsoTestBase {
@@ -353,41 +351,6 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		// TODO: re-enable query analysis
 //		verifyThat("synonyms appear in query analysis", searchPage.getSynonymGroupSynonyms(synonyms.get(0)), containsItems(synonyms));
 		verifyThat(searchPage.countKeywords(), is(synonyms.size()));
-	}
-
-	@Test
-	public void testOnlyLanguagesWithDocumentsAvailableOnSearchPage() {
-		assumeThat("Language not implemented in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
-
-		keywordService.addBlacklistTerms(Language.AZERI, "Baku");
-
-		getElementFactory().getTopNavBar().search("Baku");
-		searchPage = getElementFactory().getSearchPage();
-		assertThat(searchPage.getLanguageList(), not(hasItem("Azeri")));
-	}
-
-	@Test
-	public void testKeywordsLanguage() {
-		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
-
-		keywordService.addBlacklistTerms(Language.GEORGIAN, "Atlanta");
-		keywordService.addBlacklistTerms(Language.ALBANIAN, "Tirana");
-		keywordService.addSynonymGroup(Language.CROATIAN, "Croatia Kroatia Hrvatska");
-		keywordService.goToKeywords();
-
-		keywordsPage.filterView(KeywordFilter.ALL);
-		keywordsPage.selectLanguage(Language.GEORGIAN);
-		assertThat(keywordsPage.getBlacklistedTerms().size(), is(1));
-		assertThat(keywordsPage.countSynonymLists(), is(0));
-
-		keywordsPage.selectLanguage(Language.ALBANIAN);
-		assertThat(keywordsPage.getBlacklistedTerms().size(), is(1));
-		assertThat(keywordsPage.countSynonymLists(), is(0));
-
-		keywordsPage.selectLanguage(Language.CROATIAN);
-		assertThat(keywordsPage.getBlacklistedTerms().size(), is(0));
-		assertThat(keywordsPage.countSynonymLists(), is(1));
-		assertThat(keywordsPage.countKeywords(), is(3));
 	}
 
 	@Test

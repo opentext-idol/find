@@ -1,0 +1,113 @@
+package com.autonomy.abc.keywords;
+
+import com.autonomy.abc.base.IdolIsoTestBase;
+import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
+import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
+import com.autonomy.abc.selenium.keywords.KeywordService;
+import com.autonomy.abc.selenium.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.search.SearchPage;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.util.Waits;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static org.hamcrest.Matchers.*;
+
+public class KeywordLanguageITCase extends IdolIsoTestBase {
+    private KeywordService keywordService;
+
+    private KeywordsPage keywordsPage;
+    private SearchPage searchPage;
+
+    public KeywordLanguageITCase(TestConfig config) {
+        super(config);
+    }
+
+    @Before
+    public void setUp() {
+        keywordService = getApplication().keywordService();
+    }
+
+    @After
+    public void tearDown() {
+        new KeywordTearDownStrategy().tearDown(this);
+    }
+
+    @Test
+    public void testOnlyLanguagesWithDocumentsAvailableOnSearchPage() {
+        keywordService.addBlacklistTerms(Language.AZERI, "Baku");
+
+        SearchPage searchPage = getApplication().searchService().search("Baku");
+        assertThat(searchPage.getLanguageList(), not(hasItem("Azeri")));
+    }
+
+    @Test
+    public void testKeywordsLanguage() {
+        keywordService.addBlacklistTerms(Language.GEORGIAN, "Atlanta");
+        keywordService.addBlacklistTerms(Language.ALBANIAN, "Tirana");
+        keywordService.addSynonymGroup(Language.CROATIAN, "Croatia Kroatia Hrvatska");
+        keywordsPage = keywordService.goToKeywords();
+
+        keywordsPage.filterView(KeywordFilter.ALL);
+        keywordsPage.selectLanguage(Language.GEORGIAN);
+        assertThat(keywordsPage.getBlacklistedTerms().size(), is(1));
+        assertThat(keywordsPage.countSynonymLists(), is(0));
+
+        keywordsPage.selectLanguage(Language.ALBANIAN);
+        assertThat(keywordsPage.getBlacklistedTerms().size(), is(1));
+        assertThat(keywordsPage.countSynonymLists(), is(0));
+
+        keywordsPage.selectLanguage(Language.CROATIAN);
+        assertThat(keywordsPage.getBlacklistedTerms().size(), is(0));
+        assertThat(keywordsPage.countSynonymLists(), is(1));
+        assertThat(keywordsPage.countKeywords(), is(3));
+    }
+
+
+    @Test
+    public void testLanguageOfSearchPageKeywords() throws InterruptedException {
+        keywordService.addSynonymGroup(Language.FRENCH, "road rue strasse", "French");
+        search("Korea", Language.CHINESE);
+
+        searchPage.createSynonymsLink().click();
+        Waits.loadOrFadeWait();
+        assertThat(getWindow(), urlContains("keywords/create"));
+        CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+
+        createKeywordsPage.getTriggerForm().addTrigger("한국");
+        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(createKeywordsPage.enabledFinishWizardButton())).click();
+        searchPage = getElementFactory().getSearchPage();
+
+        search("Korea", Language.CHINESE);
+        verifyThat("synonyms appear on search page for correct language", searchPage.countSynonymLists(), is(1));
+
+        searchPage.selectLanguage(Language.FRENCH);
+        verifyThat("synonyms do not appear on search page for wrong language", searchPage.countSynonymLists(), is(0));
+
+        keywordsPage = keywordService.goToKeywords();
+        keywordsPage.filterView(KeywordFilter.ALL);
+
+        keywordsPage.selectLanguage(Language.FRENCH);
+        verifyThat("synonym not assigned to wrong language", keywordsPage, not(containsText("한국")));
+
+        keywordsPage.selectLanguage(Language.CHINESE);
+        verifyThat(keywordsPage.countSynonymLists(), is(1));
+        verifyThat("synonym assigned to correct language", keywordsPage, containsText("한국"));
+    }
+
+    private void search(String searchTerm, Language language) {
+        Query query = new Query(searchTerm).withFilter(new LanguageFilter(language));
+        searchPage = getApplication().searchService().search(query);
+    }
+}
