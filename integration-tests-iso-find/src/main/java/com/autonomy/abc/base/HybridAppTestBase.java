@@ -1,6 +1,6 @@
 package com.autonomy.abc.base;
 
-import com.autonomy.abc.config.SOConfigLocator;
+import com.autonomy.abc.config.DualConfigLocator;
 import com.autonomy.abc.fixtures.HybridTestSetupStrategy;
 import com.autonomy.abc.selenium.actions.Command;
 import com.autonomy.abc.selenium.actions.NullCommand;
@@ -35,7 +35,7 @@ public class HybridAppTestBase<A extends Application<? extends F>, F extends Ele
     }
 
     protected static List<Object[]> parameters(final Collection<ApplicationType> applicationTypes) throws IOException {
-        return new HybridTestParameterFactory(applicationTypes).create(new SOConfigLocator().getJsonConfig());
+        return new HybridTestParameterFactory(applicationTypes).create(new DualConfigLocator().getJsonConfig());
     }
 
     @Before

@@ -2,7 +2,7 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.config.IdolHostAndPorts;
-import com.autonomy.abc.config.SOConfigLocator;
+import com.autonomy.abc.config.DualConfigLocator;
 import com.autonomy.abc.selenium.iso.IsoSettingsPage;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,7 +31,7 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 
 	static {
 		try {
-			JsonNode node = new SOConfigLocator().getJsonNode().path("servers");
+			JsonNode node = new DualConfigLocator().getJsonNode().path("servers");
 			HOSTS_AND_PORTS = new ObjectMapper().convertValue(node, new TypeReference<Map<IsoSettingsPage.Panel, IdolHostAndPorts>>() {});
 			System.out.println(HOSTS_AND_PORTS);
 		} catch (IOException e) {
