@@ -58,4 +58,8 @@ public class HybridAppTestBase<A extends Application<? extends F>, F extends Ele
     public boolean hasSetUp() {
         return setup.hasSetUp();
     }
+
+    protected TestConfig getConfig() {
+        return (TestConfig) super.getConfig();
+    }
 }
