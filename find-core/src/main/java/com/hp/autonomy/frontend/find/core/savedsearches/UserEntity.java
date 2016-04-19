@@ -10,8 +10,16 @@ import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,8 +48,11 @@ public class UserEntity {
     private String userStore;
 
     private String domain;
-    private UUID uuid;
     private Long uid;
+
+    // Need to specify char-style UUID for Maria DB, otherwise hibernate tries to send binary
+    @Type(type = "uuid-char")
+    private UUID uuid;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)

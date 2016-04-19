@@ -19,7 +19,13 @@ import java.io.IOException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = HodFindApplication.class)
-@WebIntegrationTest({"server.port=0", "hp.find.persistentState = INMEMORY", "hp.find.databaseType=H2INMEMORY", "application.buildNumber=test", "mock.hod.authentication=false"})
+@WebIntegrationTest({
+        "server.port=0",
+        "hp.find.persistentState = INMEMORY",
+        "application.buildNumber=test",
+        "mock.hod.authentication=false",
+        "spring.datasource.url = jdbc:h2:mem:find-db;DB_CLOSE_ON_EXIT=FALSE"
+})
 public class HodFindApplicationTest {
     private static final String TEST_DIR = "./target/test";
 
