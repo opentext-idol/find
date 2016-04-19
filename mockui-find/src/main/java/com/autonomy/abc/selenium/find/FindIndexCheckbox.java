@@ -8,8 +8,7 @@ import org.openqa.selenium.WebElement;
 
 class FindIndexCheckbox extends Checkbox {
     FindIndexCheckbox(WebElement element, WebDriver driver) {
-        super(element, driver);
-        box = findElement(By.className("check-cell"));
+        super(element, element.findElement(By.className("check-cell")), driver);
     }
 
     @Override
@@ -19,7 +18,7 @@ class FindIndexCheckbox extends Checkbox {
 
     @Override
     public boolean isChecked() {
-        return ElementUtil.hasClass("hp-check", box.findElement(By.tagName("i")));
+        return ElementUtil.hasClass("hp-check", getOuterBoxElement().findElement(By.tagName("i")));
     }
 
     @Override

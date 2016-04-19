@@ -10,8 +10,7 @@ public class FindParametricCheckbox extends Checkbox {
     private final By checkbox = By.cssSelector("td:not(.check-cell)");
 
     FindParametricCheckbox(WebElement element, WebDriver driver) {
-        super(element, driver);
-        box = findElement(By.className("check-cell"));
+        super(element, element.findElement(By.className("check-cell")), driver);
     }
 
     @Override
@@ -21,7 +20,7 @@ public class FindParametricCheckbox extends Checkbox {
 
     @Override
     public boolean isChecked() {
-        return !ElementUtil.hasClass("hide", box.findElement(By.className("hp-check")));
+        return !ElementUtil.hasClass("hide", getOuterBoxElement().findElement(By.className("hp-check")));
     }
 
     public int getResultsCount() {
