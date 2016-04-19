@@ -19,7 +19,7 @@ public abstract class FindTestBase extends HybridAppTestBase<HsodFind, HsodFindE
 
     @Parameterized.Parameters
     public static Iterable<Object[]> parameters() throws IOException {
-        return parameters(Collections.singleton(ApplicationType.HOSTED));
+        return HybridAppTestBase.parameters(Collections.singleton(ApplicationType.HOSTED));
     }
 
     protected final User getCurrentUser() {

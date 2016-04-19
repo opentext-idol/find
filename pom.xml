@@ -18,6 +18,7 @@
     <modules>
         <module>mockui-iso-find</module>
         <module>integration-tests-iso-find</module>
+        <module>integration-tests-find</module>
     </modules>
 
     <!-- specify defaults -->
