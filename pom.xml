@@ -17,9 +17,7 @@
 
     <modules>
         <module>mockui-common</module>
-        <module>mockui-hosted</module>
         <module>integration-tests-common</module>
-        <module>integration-tests-hosted</module>
     </modules>
 
     <!-- specify defaults -->
