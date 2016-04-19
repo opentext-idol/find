@@ -3,14 +3,10 @@ package com.autonomy.abc.users;
 import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.fixtures.EmailTearDownStrategy;
 import com.autonomy.abc.fixtures.UserTearDownStrategy;
-import com.autonomy.abc.selenium.application.IsoApplication;
-import com.autonomy.abc.selenium.error.ErrorPage;
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.find.HsodFind;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.shared.UserTestHelper;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
@@ -24,7 +20,10 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -178,47 +177,6 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
     }
 
     @Test
-    public void testNoneUserConfirmation() {
-        NewUser somebody = getConfig().generateNewUser();
-        User user = userService.createNewUser(somebody, Role.ADMIN);
-        userService.changeRole(user, Role.NONE);
-        verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
-
-        getConfig().getAuthenticationStrategy().authenticate(user);
-        waitForUserConfirmed(user);
-        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
-
-        // TODO: use a single driver once 401 page has logout button
-        IsoApplication<?> secondApp = IsoApplication.ofType(getConfig().getType());
-        Window secondWindow = launchInNewSession(secondApp).getActiveWindow();
-        try {
-            try {
-                secondApp.loginService().login(user);
-            } catch (NoSuchElementException e) {
-                /* Happens when it's trying to log in for the second time */
-            }
-
-            WebDriver secondDriver = secondWindow.getSession().getDriver();
-
-            verify401(secondDriver);
-
-            secondWindow.goTo(getAppUrl().split("/searchoptimizer")[0]);
-            verify401(secondDriver);
-
-            secondWindow.goTo(getConfig().getAppUrl(new HsodFind()));
-            Waits.loadOrFadeWait();
-            verifyThat(secondDriver.findElement(By.className("error-body")), containsText("401"));
-        } finally {
-            secondWindow.close();
-        }
-    }
-
-    private void verify401(WebDriver driver){
-        ErrorPage errorPage = new ErrorPage(driver);
-        verifyThat(errorPage.getErrorCode(), is("401"));
-    }
-
-    @Test
     public void testEditingUsername(){
         User user = userService.createNewUser(new HsodNewUser("editUsername", gmailString("editUsername")), Role.ADMIN);
 
@@ -273,26 +231,6 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
         verifyThat(usersPage, not(containsText("Create New Users")));   //Not sure what this is meant to be doing? Verifying modal no longer open??
 
         verifyThat(usersPage.getUsernames(),hasItem(username));
-    }
-
-    @Test
-    @KnownBug("HOD-532")
-    public void testLogOutAndLogInWithNewUser() {
-        final User user = userService.createNewUser(getConfig().generateNewUser(), Role.ADMIN);
-        getConfig().getAuthenticationStrategy().authenticate(user);
-
-        getApplication().loginService().logout();
-        HsodFind findApp = new HsodFind();
-        redirectTo(findApp);
-
-        boolean success = true;
-        try {
-            findApp.loginService().login(user);
-        } catch (Exception e) {
-            success = false;
-        }
-        verifyThat("logged in", success);
-        verifyThat("taken to Find", getDriver().getTitle(), containsString("Find"));
     }
 
     @Test
