@@ -59,6 +59,7 @@ public class HybridAppTestBase<A extends Application<? extends F>, F extends Ele
         return setup.hasSetUp();
     }
 
+    @Override
     protected TestConfig getConfig() {
         return (TestConfig) super.getConfig();
     }
