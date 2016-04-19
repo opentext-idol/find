@@ -22,7 +22,7 @@ Find uses a relational database to store users' saved searches. By default, this
 - `spring.datasource.username` - Database username. Must have access to the "find" database or permission to create it.
 - `spring.datasource.password` - Database user password.
 - `flyway.enabled` - Set to false to disable automatic schema migration. Automatic migration may not be desirable in a clustered deployment.
-- `spring.datasource.platform` - If Flyway is enabled, this is used to choose which migration script dialect to use. Can be "h2" (the default) or "maria".
+- `spring.datasource.platform` - If Flyway is enabled, this is used to choose which migration script dialect to use. Can be "h2" (the default) or "mysql".
 
 ### Clustering
 
