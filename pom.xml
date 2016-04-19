@@ -16,8 +16,8 @@
     </parent>
 
     <modules>
-        <module>mockui-common</module>
-        <module>integration-tests-common</module>
+        <module>mockui-iso-find</module>
+        <module>integration-tests-iso-find</module>
     </modules>
 
     <!-- specify defaults -->
