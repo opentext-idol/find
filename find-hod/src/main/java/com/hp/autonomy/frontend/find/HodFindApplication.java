@@ -22,8 +22,7 @@ import org.springframework.web.WebApplicationInitializer;
         SecurityAutoConfiguration.class, 
         ManagementWebSecurityAutoConfiguration.class, 
         SessionAutoConfiguration.class, 
-        ErrorMvcAutoConfiguration.class,
-        FlywayAutoConfiguration.class
+        ErrorMvcAutoConfiguration.class
 })
 @Import({HavenSearchHodConfiguration.class, CachingConfiguration.class})
 public class HodFindApplication extends SpringBootServletInitializer implements WebApplicationInitializer {

@@ -22,8 +22,7 @@ import org.springframework.web.WebApplicationInitializer;
         SecurityAutoConfiguration.class,
         ManagementWebSecurityAutoConfiguration.class,
         SessionAutoConfiguration.class,
-        ErrorMvcAutoConfiguration.class,
-        FlywayAutoConfiguration.class
+        ErrorMvcAutoConfiguration.class
 })
 @Import(HavenSearchIdolConfiguration.class)
 @PropertySource("classpath:/custom-application.properties")
