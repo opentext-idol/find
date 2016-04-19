@@ -11,9 +11,10 @@ define([
     'find/app/page/settings/mmap-widget',
     'find/app/page/settings/query-manipulation-widget',
     'find/app/page/settings/saved-search-widget',
+    'find/app/page/settings/stats-server-widget',
     'find/app/page/settings/view-widget',
     'i18n!find/nls/bundle'
-], function(SettingsPage, AciWidget, CommunityWidget, MapWidget, MmapWidget, QueryManipulationWidget, SavedSearchWidget, ViewWidget, i18n) {
+], function(SettingsPage, AciWidget, CommunityWidget, MapWidget, MmapWidget, QueryManipulationWidget, SavedSearchWidget, StatsServerWidget, ViewWidget, i18n) {
 
     return SettingsPage.extend({
         initializeWidgets: function() {
@@ -73,6 +74,19 @@ define([
                         })
                     })
                 ], [
+                    new StatsServerWidget({
+                        configItem: 'statsServer',
+                        description: i18n['settings.statsserver.description'],
+                        isOpened: true,
+                        title: i18n['settings.statsserver.title'],
+                        strings: _.extend(this.serverStrings(), {
+                            disable: i18n['settings.statsserver.disable'],
+                            disabled: i18n['settings.statsserver.disabled'],
+                            enable: i18n['settings.statsserver.enable'],
+                            enabled: i18n['settings.statsserver.enabled'],
+                            loading: i18n['settings.statsserver.loading']
+                        })
+                    }),
                     new SavedSearchWidget({
                         configItem: 'savedSearches',
                         description: i18n['settings.savedSearches.description'],
