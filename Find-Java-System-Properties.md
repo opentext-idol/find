@@ -14,6 +14,16 @@ Find uses Java System Properties to configure some runtime settings.
 
 - `server.port` - The port to run Find on (defaults to 8080).
 
+### Database
+
+Find uses a relational database to store users' saved searches. By default, this is an embedded [H2](http://www.h2database.com/) database which persists data to disk in the Find home directory. The application runs schema migration scripts on connection using [Flyway](https://flywaydb.org/). The system properties in this section allow Find to connect to an external database to allow the application to be clustered.
+
+- `spring.datasource.url` - A JDBC URL for the database, eg "jdbc:mariadb://my-maria-db:3306/find". The Find jar is built with H2 and MariaDB/MySQL connectors included. The application uses a database/schema called "find" which it will attempt to create if running the automatic migration scripts.
+- `spring.datasource.username` - Database username. Must have access to the "find" database or permission to create it.
+- `spring.datasource.password` - Database user password.
+- `flyway.enabled` - Set to false to disable automatic schema migration. Automatic migration may not be desirable in a clustered deployment.
+- `spring.datasource.platform` - If Flyway is enabled, this is used to choose which migration script dialect to use. Can be "h2" (the default) or "maria".
+
 ### Clustering
 
 -` hp.find.persistentState` - possible values are `INMEMORY` (which is the default) or `REDIS`.  We've not documented how to use Find with Redis yet, so ignore this for now.
