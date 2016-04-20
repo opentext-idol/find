@@ -15,7 +15,7 @@
     <dependencySets>
         <dependencySet>
             <includes>
-                <include>${project.groupId}:find-idol:war:*</include>
+                <include>${project.groupId}:idol:war:*</include>
             </includes>
             <outputFileNameMapping>${project.parent.artifactId}.${artifact.extension}</outputFileNameMapping>
             <useProjectArtifact>false</useProjectArtifact>

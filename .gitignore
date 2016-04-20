@@ -14,7 +14,7 @@
 log/
 find-core/target/
 find-hod/target/
-find-idol/target/
+idol/target/
 on-prem-dist/target/
 hsod-dist/target/
 
@@ -30,9 +30,9 @@ find-core/spec-runner.html
 find-hod/.grunt/
 find-hod/node_modules/
 find-hod/spec-runner.html
-find-idol/.grunt/
-find-idol/node_modules/
-find-idol/spec-runner.html
+idol/.grunt/
+idol/node_modules/
+idol/spec-runner.html
 
 # Vagrant
 cookbooks/

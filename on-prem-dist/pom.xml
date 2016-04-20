@@ -47,7 +47,7 @@
     <dependencies>
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
-            <artifactId>find-idol</artifactId>
+            <artifactId>idol</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
