@@ -10,7 +10,7 @@ For the purposes of this guide, we're assuming that you've already cloned Find f
 
 - `mvn install`
 
-It's important to run the `install` step, as this "installs" the modules to your local Maven repository.  This makes the `find-core` module available for `find-idol` and `find-hod` to use as a dependency.
+It's important to run the `install` step, as this "installs" the modules to your local Maven repository.  This makes the `core` module available for `idol` and `hod` to use as a dependency.
 
 ## Step Two: Use Spring Boot to run a local server
 
@@ -21,7 +21,7 @@ Any changes you make to Java files will be recompiled and redeployed automatical
 
 ## Step Three: Use Grunt to keep HTML, CSS, and JavaScript files up to date
 
-From your `find-hod` or `find-idol` folder (as appropriate), run the following command:
+From your `hod` or `idol` folder (as appropriate), run the following command:
 
 - `grunt copy-resources`
 
