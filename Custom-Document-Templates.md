@@ -32,11 +32,11 @@ In the example, the first configuration object checks the document model's field
 
 # Test
 
-There's a very useful Jasmine test in `find-core/src/test/js/spec/app/page/search/results/result-rendering/result-renderer.js` that goes over the expected behaviour.
+There's a very useful Jasmine test in `core/src/test/js/spec/app/page/search/results/result-rendering/result-renderer.js` that goes over the expected behaviour.
 
 # Example
 
-Let's start by looking at `result-renderer-config.js`, in the `find-core` module.  Find the return statement at the bottom of the file:
+Let's start by looking at `result-renderer-config.js`, in the `core` module.  Find the return statement at the bottom of the file:
 
 ```
 return [
@@ -54,7 +54,7 @@ The single object in the array is the default template - it uses `resultsTemplat
 
 ## Let's create a new template
 
-Before we can add a template to `result-renderer-config.js`, we need to create the actual template HTML file.  Start by looking at `find-core/src/main/public/static/js/find/templates/app/page/search/results/results-container.html` - the default results HTML template.  Notice that it isn't pure HTML - there's embedded JavaScript in the template, wrapped in `<% %>` tags - have a look at the [Underscore.js templating documentation](http://underscorejs.org/#template) to learn the syntax.
+Before we can add a template to `result-renderer-config.js`, we need to create the actual template HTML file.  Start by looking at `core/src/main/public/static/js/find/templates/app/page/search/results/results-container.html` - the default results HTML template.  Notice that it isn't pure HTML - there's embedded JavaScript in the template, wrapped in `<% %>` tags - have a look at the [Underscore.js templating documentation](http://underscorejs.org/#template) to learn the syntax.
 
 Create a copy of `results-container.html` in the same directory, but with a different file name.  This is your results template.  For the time being, we'll assume that you've called it "my-results-template.html".
 
