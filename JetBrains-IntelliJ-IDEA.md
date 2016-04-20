@@ -7,7 +7,7 @@ Notes on how to run Find from [JetBrains IntelliJ IDEA](https://www.jetbrains.co
 - Create a new Run/Debug Configuration of the `Spring Boot` type
 - The Main class is `com.hp.autonomy.frontend.find.IdolFindApplication`
 - VM options are `-Dhp.find.home=<path_to_find_home_directory>` (see [[Find Java System Properties]] for other optional settings)
-- "Use classpath of module" should be set to `find-idol`
+- "Use classpath of module" should be set to `idol`
 
 You'll then want to have a look at [[Configuring Find for IDOL]].
 
@@ -16,6 +16,6 @@ You'll then want to have a look at [[Configuring Find for IDOL]].
 - Create a new Run/Debug Configuration of the `Spring Boot` type
 - The Main class is `com.hp.autonomy.frontend.find.HodFindApplication`
 - VM options are: `-Dhp.find.home=<path_to_find_home_directory> -Dfind.iod.api=https://api.havenondemand.com -Dfind.hod.sso=https://www.havenondemand.com/sso.html` (see [[Find Java System Properties]] for other optional settings)
-- "Use classpath of module" should be set to `find-hod`
+- "Use classpath of module" should be set to `hod`
 
 You'll then want to have a look at [[Configuring Find for Haven OnDemand]].
