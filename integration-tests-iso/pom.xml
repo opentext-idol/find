@@ -10,7 +10,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>integration-tests-iso-find</artifactId>
+    <artifactId>integration-tests-iso</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <build>
