@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
+import com.autonomy.abc.selenium.query.SortBy;
 import com.hp.autonomy.frontend.selenium.element.Checkbox;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
@@ -75,8 +76,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return new SOCheckbox(findElement(By.className("search-type-toggle")), getDriver());
 	}
 
-	public void sortBy(final Sort sort) {
-		sortDropdown().select(sort.toString());
+	public void sortBy(final SortBy sortBy) {
+		sortDropdown().select(sortBy.toString());
 	}
 
 	private Dropdown sortDropdown() {
@@ -127,18 +128,18 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* promoted results */
-	public List<SOSearchResult> getPromotedResults() {
+	public List<IsoSearchResult> getPromotedResults() {
 		waitForPromotionsLoadIndicatorToDisappear();
-		List<SOSearchResult> results = new ArrayList<>();
+		List<IsoSearchResult> results = new ArrayList<>();
 		for(WebElement result : findElements(By.cssSelector(".promotions-list li"))){
-			results.add(new SOSearchResult(result, getDriver()));
+			results.add(new IsoSearchResult(result, getDriver()));
 		}
 		return results;
 	}
 
-	public SOSearchResult getPromotedResult(final int resultNumber) {
+	public IsoSearchResult getPromotedResult(final int resultNumber) {
 		waitForPromotionsLoadIndicatorToDisappear();
-		return new SOSearchResult(findElement(By.cssSelector(".promotions-list li:nth-child(" + resultNumber + ")")), getDriver());
+		return new IsoSearchResult(findElement(By.cssSelector(".promotions-list li:nth-child(" + resultNumber + ")")), getDriver());
 	}
 
 	public WebElement promotionsSummary() {

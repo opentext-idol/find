@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.search;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.query.QueryResult;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,8 +11,8 @@ import org.openqa.selenium.WebElement;
 import java.text.ParseException;
 import java.util.Date;
 
-public class SOSearchResult extends SearchResult {
-    public SOSearchResult(WebElement result, WebDriver driver){
+public class IsoSearchResult extends QueryResult {
+    public IsoSearchResult(WebElement result, WebDriver driver){
         super(result, driver);
     }
 

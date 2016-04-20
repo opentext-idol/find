@@ -1,6 +1,7 @@
 package com.autonomy.abc.search;
 
 import com.autonomy.abc.base.HybridIsoTestBase;
+import com.autonomy.abc.selenium.query.*;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
@@ -15,11 +16,7 @@ import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
-import com.autonomy.abc.selenium.query.IndexFilter;
-import com.autonomy.abc.selenium.query.LanguageFilter;
-import com.autonomy.abc.selenium.query.ParametricFilter;
-import com.autonomy.abc.selenium.query.Query;
-import com.autonomy.abc.selenium.search.SOSearchResult;
+import com.autonomy.abc.selenium.search.IsoSearchResult;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
@@ -347,16 +344,16 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	@Test
 	public void testSortByRelevance() {
 		search("string");
-		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
+		searchPage.sortBy(SortBy.RELEVANCE);
 		checkWeightsForPages(5);
 
-		searchPage.sortBy(SearchBase.Sort.DATE);
-		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
+		searchPage.sortBy(SortBy.DATE);
+		searchPage.sortBy(SortBy.RELEVANCE);
 		checkWeightsForPages(5);
 
-		searchPage.sortBy(SearchBase.Sort.DATE);
+		searchPage.sortBy(SortBy.DATE);
 		search("paper packages");
-		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
+		searchPage.sortBy(SortBy.RELEVANCE);
 		checkWeightsForPages(5);
 	}
 
@@ -641,7 +638,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	public void testResultIndex(){
 		searchService.search(new Query("Jamaica"));
 
-		for(SOSearchResult searchResult : searchPage.getSearchResults()){
+		for(IsoSearchResult searchResult : searchPage.getSearchResults()){
 			verifyThat(searchResult.getIndex().getDisplayName(), not(containsString("Object")));
 		}
 	}

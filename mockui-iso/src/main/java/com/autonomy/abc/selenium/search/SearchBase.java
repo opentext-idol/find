@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.search;
 import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
+import com.autonomy.abc.selenium.indexes.tree.IsoIndexCategoryNode;
 import com.autonomy.abc.selenium.query.*;
 import com.hp.autonomy.frontend.selenium.element.*;
 import com.hp.autonomy.frontend.selenium.util.*;
@@ -40,16 +41,16 @@ public abstract class SearchBase extends SOPageBase implements
 	}
 
 	/* search results */
-	public List<SOSearchResult> getSearchResults() {
-		List<SOSearchResult> results = new ArrayList<>();
+	public List<IsoSearchResult> getSearchResults() {
+		List<IsoSearchResult> results = new ArrayList<>();
 		for(WebElement result : findElements(By.cssSelector(".search-results li"))){
-			results.add(new SOSearchResult(result, getDriver()));
+			results.add(new IsoSearchResult(result, getDriver()));
 		}
 		return results;
 	}
 
-	public SOSearchResult getSearchResult(final int searchResult) {
-		return new SOSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
+	public IsoSearchResult getSearchResult(final int searchResult) {
+		return new IsoSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
 	}
 
 	public Checkbox searchResultCheckbox(final int resultNumber) {
@@ -174,7 +175,7 @@ public abstract class SearchBase extends SOPageBase implements
 
 	/* indexes/databases */
 	public IndexesTree indexesTree() {
-		return new IndexesTree(findElement(By.cssSelector(".databases-list")), getDriver());
+		return new IndexesTree(new IsoIndexCategoryNode(findElement(By.cssSelector(".databases-list")), getDriver()));
 	}
 
 	/* date filter */
@@ -359,22 +360,6 @@ public abstract class SearchBase extends SOPageBase implements
 	/* general */
 	public boolean isErrorMessageShowing() {
 		return !findElement(By.cssSelector(".search-information")).getAttribute("class").contains("hidden");
-	}
-
-	public enum Sort {
-		DATE("by date"),
-		RELEVANCE("by relevance");
-
-		private final String name;
-
-		Sort(String content) {
-			name = content;
-		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
 	}
 
 	public List<String> filterLabelList() {

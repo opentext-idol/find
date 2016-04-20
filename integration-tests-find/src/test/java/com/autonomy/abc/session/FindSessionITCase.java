@@ -6,7 +6,7 @@ import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindResultsPage;
-import com.autonomy.abc.selenium.find.FindSearchResult;
+import com.autonomy.abc.selenium.find.FindResult;
 import com.autonomy.abc.selenium.find.FindService;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -56,7 +56,7 @@ public class FindSessionITCase extends FindTestBase {
         assumeThat(((RemoteWebDriver) getDriver()).getCapabilities().getBrowserName(), is("firefox"));
 
         results = findService.search("The Season");
-        FindSearchResult searchResult = results.searchResult(1);
+        FindResult searchResult = results.searchResult(1);
 
         deleteCookies();
 

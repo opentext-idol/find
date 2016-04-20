@@ -5,8 +5,7 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.autonomy.abc.selenium.query.*;
-import com.autonomy.abc.selenium.search.SOSearchResult;
-import com.autonomy.abc.selenium.search.SearchBase;
+import com.autonomy.abc.selenium.search.IsoSearchResult;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -72,7 +71,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
         searchPage.filterBy(new DatePickerFilter().from(june));
 
         for(int i = 0; i < 2; i++) {
-            for (SOSearchResult searchResult : searchPage.getSearchResults()) {
+            for (IsoSearchResult searchResult : searchPage.getSearchResults()) {
                 verifyThat(searchResult.getDate(), greaterThanOrEqualTo(june));
             }
 
@@ -117,7 +116,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
         verifyThat(searchPage.getSearchResults().size(), not(0));
 
         for(int i = 0; i < 2; i++) {
-            for (SOSearchResult searchResult : searchPage.getSearchResults()) {
+            for (IsoSearchResult searchResult : searchPage.getSearchResults()) {
                 verifyThat(searchResult.getDate(), lessThanOrEqualTo(june));
             }
 
@@ -165,11 +164,11 @@ public class SearchDateITCase extends HybridIsoTestBase {
         assertThat("Dates should be equal", searchPage.fromDateInput().getValue(), is(searchPage.untilDateInput().getValue()));
 
         searchPage.filterBy(new StringDateFilter().from(DateUtils.addMinutes(date, 1)).until(date));
-        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
+        searchPage.sortBy(SortBy.RELEVANCE);
         assertThat("From date should be blank", searchPage.fromDateInput().getValue(), isEmptyOrNullString());
 
         searchPage.filterBy(new StringDateFilter().from(date).until(DateUtils.addMinutes(date, -1)));
-        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
+        searchPage.sortBy(SortBy.RELEVANCE);
         assertThat("Until date should be blank", searchPage.untilDateInput().getValue(), isEmptyOrNullString());
     }
 

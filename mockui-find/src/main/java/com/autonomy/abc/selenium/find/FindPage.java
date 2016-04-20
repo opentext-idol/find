@@ -4,7 +4,6 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
-import com.autonomy.abc.selenium.search.SearchBase;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
@@ -71,8 +70,8 @@ public class FindPage extends AppElement implements AppPage,
         return new IndexesTree(new FindIndexCategoryNode(findElement(By.cssSelector(".databases-list [data-category-id='all']")), getDriver()));
     }
 
-    public void sortBy(SearchBase.Sort sort) {
-        sortDropdown().select(sort.toString());
+    public void sortBy(SortBy sortBy) {
+        sortDropdown().select(sortBy.toString());
     }
 
     private Dropdown sortDropdown() {

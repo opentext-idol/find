@@ -5,7 +5,7 @@ import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.search.SearchResult;
+import com.autonomy.abc.selenium.query.QueryResult;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 
 import java.util.List;
@@ -17,9 +17,9 @@ import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 
 public class SharedPreviewTests {
 
-    public static void testDocumentPreviews(Session session, List<? extends SearchResult> searchResults, Index index) {
-        for(SearchResult searchResult : searchResults) {
-            DocumentViewer documentViewer = searchResult.openDocumentPreview();
+    public static void testDocumentPreviews(Session session, List<? extends QueryResult> searchResults, Index index) {
+        for(QueryResult queryResult : searchResults) {
+            DocumentViewer documentViewer = queryResult.openDocumentPreview();
             testDocumentPreview(session, documentViewer, index);
             documentViewer.close();
         }

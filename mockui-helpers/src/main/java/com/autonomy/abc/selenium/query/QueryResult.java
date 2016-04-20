@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.search;
+package com.autonomy.abc.selenium.query;
 
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import org.openqa.selenium.By;
@@ -7,11 +7,11 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-public abstract class SearchResult {
+public abstract class QueryResult {
     private WebElement result;
     private WebDriver driver;
 
-    protected SearchResult(WebElement result, WebDriver driver) {
+    protected QueryResult(WebElement result, WebDriver driver) {
         this.result = result;
         this.driver = driver;
     }
