@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.hp.autonomy.frontend.havensearch</groupId>
-    <artifactId>integration-tests-parent</artifactId>
+    <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
+    <artifactId>iso-find-test-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <parent>
         <groupId>com.autonomy.frontend</groupId>
@@ -16,21 +16,18 @@
     </parent>
 
     <modules>
-        <module>mockui-common</module>
-        <module>mockui-hosted</module>
-        <module>integration-tests-common</module>
-        <module>integration-tests-hosted</module>
+        <module>mockui-iso-find</module>
+        <module>mockui-find</module>
+        <module>integration-tests-helpers</module>
+        <module>integration-tests-iso</module>
+        <module>integration-tests-find</module>
     </modules>
 
     <!-- specify defaults -->
     <properties>
-        <build.config.base>hsod-dev.json</build.config.base>
         <build.config.override>maven.json</build.config.override>
-        <build.skip.hosted>false</build.skip.hosted>
-        <build.skip.onprem>true</build.skip.onprem>
         <config.selenium.url>http://localhost:4444/wd/hub</config.selenium.url>
         <config.selenium.browsers>["chrome"]</config.selenium.browsers>
-        <config.app.type>Hosted</config.app.type>
     </properties>
 
     <build>
@@ -66,6 +63,9 @@
                 <build.skip.onprem>false</build.skip.onprem>
                 <config.app.type>On Premise</config.app.type>
             </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
         <profile>
             <id>hod-jenkins</id>
