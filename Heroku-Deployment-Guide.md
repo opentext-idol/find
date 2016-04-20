@@ -32,12 +32,12 @@ $ heroku buildpacks
 1. heroku/nodejs
 2. heroku/java
 ```
-You want to build only the Find maven modules required in a hosted environment, so you should alter the maven targets to build only ```find-core``` and ```find-hod``` by using the following configuration commands:
+You want to build only the Find maven modules required in a hosted environment, so you should alter the maven targets to build only ```hod``` and its dependencies by using the following configuration commands:
 
 ```bash
-$ heroku config:set MAVEN_CUSTOM_GOALS="clean install -pl find-core,find-hod"
+$ heroku config:set MAVEN_CUSTOM_GOALS="clean install -pl hod -am"
 ```
-This command tells the Java buildpack to run only the ```clean``` and ```install``` maven targets on the ```find-core``` and ```find-hod``` modules.
+This command tells the Java buildpack to run only the ```clean``` and ```install``` maven targets on the ```hod``` module and its dependencies.
 
 ## Configure Find
 Find requires you to specify the configuration file location at the command line as a system property. Heroku does not allow persistent storage on its file system, so you must keep the configuration file under the root of the application source. See the Find documentation for more information on how to configure the application.
@@ -53,7 +53,7 @@ To run find on Heroku, you need a Procfile. This is a file which tells Heroku ho
 The Procfile for Find needs to include only the following line:
 
 ```
-web: java -Dserver.port=${PORT} -Dhp.find.home=. -Dfind.iod.api=https://api.havenondemand.com -Dfind.hod.sso=https://dev.havenondemand.com/sso.html -Dhp.find.persistentState=INMEMORY -jar find-hod/target/find-hod.war
+web: java -Dserver.port=${PORT} -Dhp.find.home=. -Dfind.iod.api=https://api.havenondemand.com -Dfind.hod.sso=https://dev.havenondemand.com/sso.html -Dhp.find.persistentState=INMEMORY -jar hod/target/find-hod.war
 ```
 You must set ```-Dserver.port=$(PORT)``` to specify that Spring-Boot should run on the port that Heroku is providing via ```${PORT}```. Currently the persistence is set to *INMEMORY*, because Redis is not currently tested on Heroku.
 
