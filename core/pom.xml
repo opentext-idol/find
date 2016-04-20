@@ -14,7 +14,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>find-core</artifactId>
+    <artifactId>core</artifactId>
 
     <build>
         <plugins>

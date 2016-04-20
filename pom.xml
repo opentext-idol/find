@@ -18,7 +18,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>find-core</module>
+        <module>core</module>
         <module>idol</module>
         <module>hod</module>
         <module>on-prem-dist</module>

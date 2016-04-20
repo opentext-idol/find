@@ -49,7 +49,7 @@ module.exports = (grunt) ->
         tasks: ['test']
       copyResources:
         files: [
-          '../find-core/src/main/public/static/**/*'
+          '../core/src/main/public/static/**/*'
           'src/main/public/static/**/*'
         ]
         spawn: false
@@ -58,7 +58,7 @@ module.exports = (grunt) ->
       devResources:
         files: [
           {
-            cwd: '../find-core/src/main/public/static'
+            cwd: '../core/src/main/public/static'
             src: '**/*'
             dest: 'target/classes/static'
           }

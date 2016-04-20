@@ -68,7 +68,7 @@
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>find-core</includeArtifactIds>
+                            <includeArtifactIds>core</includeArtifactIds>
                             <includeTypes>jar</includeTypes>
                             <includeClassifiers>full</includeClassifiers>
                             <includes>static/**/*</includes>
@@ -108,12 +108,12 @@
     <dependencies>
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
-            <artifactId>find-core</artifactId>
+            <artifactId>core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
-            <artifactId>find-core</artifactId>
+            <artifactId>core</artifactId>
             <version>${project.version}</version>
             <classifier>full</classifier>
             <scope>provided</scope>
@@ -136,7 +136,7 @@
             <version>${haven.search.components.version}</version>
         </dependency>
 
-        <!-- It's not clear why, but we need to define dependency here as well, not just at the find-core level.  Otherwise the hibernate classloader does not pick this up. -->
+        <!-- It's not clear why, but we need to define dependency here as well, not just at the core level.  Otherwise the hibernate classloader does not pick this up. -->
         <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.core</artifactId>
@@ -145,7 +145,7 @@
 
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
-            <artifactId>find-core</artifactId>
+            <artifactId>core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

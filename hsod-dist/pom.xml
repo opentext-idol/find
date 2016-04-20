@@ -32,7 +32,7 @@
                         </goals>
                         <configuration>
                             <includeGroupIds>${project.groupId}</includeGroupIds>
-                            <includeArtifactIds>find-core</includeArtifactIds>
+                            <includeArtifactIds>core</includeArtifactIds>
                             <includes>db/migration/mysql/**</includes>
                         </configuration>
                     </execution>
@@ -74,7 +74,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>find-core</artifactId>
+            <artifactId>core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
