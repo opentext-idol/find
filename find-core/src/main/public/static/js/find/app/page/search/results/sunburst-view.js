@@ -62,7 +62,7 @@ define([
         var color = d3.scale.category20c();
         $el.empty();
 
-        return new Sunburst($el, {
+        this.sunburst = new Sunburst($el, {
             animate: false,
             data: {
                 text: i18n['search.sunburst.title'],
@@ -126,6 +126,8 @@ define([
                     });
             }
         });
+
+        return this.sunburst;
     }
 
     return Backbone.View.extend({
@@ -222,7 +224,7 @@ define([
         },
 
         update: function () {
-            drawSunburst(this.$sunburst, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
+            drawSunburst.call(this, this.$sunburst, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
         },
 
         updateSelections: function() {
@@ -259,6 +261,12 @@ define([
 
             this.uiUpdate();
             this.listenTo(this.model, 'change', this.uiUpdate);
+
+            $(window).resize(_.bind(function() {
+                if (this.sunburst) {
+                    this.sunburst.resize();
+                }
+            }, this));
         },
 
         makeSelectionsIfData: function() {
@@ -296,6 +304,9 @@ define([
 
             this.updateMessage(error, empty, emptyDependentParametric);
 
+            if (this.sunburst) {
+                this.sunburst.resize();
+            }
         },
 
         updateMessage: function (error, empty, emptyDependentParametric) {
