@@ -22,6 +22,7 @@
         <module>find-idol</module>
         <module>find-hod</module>
         <module>find-dist</module>
+        <module>hsod-dist</module>
     </modules>
 
     <properties>
