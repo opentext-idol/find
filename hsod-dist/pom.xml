@@ -68,7 +68,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>find-hod</artifactId>
+            <artifactId>hod</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>

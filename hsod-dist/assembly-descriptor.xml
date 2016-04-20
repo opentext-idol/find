@@ -13,7 +13,7 @@
     <dependencySets>
         <dependencySet>
             <includes>
-                <include>${project.groupId}:find-hod:war:*</include>
+                <include>${project.groupId}:hod:war:*</include>
             </includes>
             <outputFileNameMapping>${project.parent.artifactId}.${artifact.extension}</outputFileNameMapping>
             <useProjectArtifact>false</useProjectArtifact>

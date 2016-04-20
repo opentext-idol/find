@@ -13,7 +13,7 @@
 # Maven
 log/
 find-core/target/
-find-hod/target/
+hod/target/
 idol/target/
 on-prem-dist/target/
 hsod-dist/target/
@@ -27,9 +27,9 @@ find-core/.grunt/
 find-core/node_modules/
 find-core/src/main/public/static/bower_components/
 find-core/spec-runner.html
-find-hod/.grunt/
-find-hod/node_modules/
-find-hod/spec-runner.html
+hod/.grunt/
+hod/node_modules/
+hod/spec-runner.html
 idol/.grunt/
 idol/node_modules/
 idol/spec-runner.html
