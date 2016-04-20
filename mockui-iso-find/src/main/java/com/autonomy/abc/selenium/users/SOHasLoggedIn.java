@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.login.SSOFailureException;
 import com.hp.autonomy.frontend.selenium.login.HasLoggedIn;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
