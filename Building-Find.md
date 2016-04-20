@@ -34,9 +34,9 @@ If this doesn't work, check that you've installed everything correctly:
 
 # Output Files
 
-- `find-hod/target/find-hod.war` - this is a build of Find with the Haven OnDemand modules included.  Use this if you want to run Find against Haven OnDemand
-- `find-idol/target/find.war` - this is a build of Find with the HPE IDOL modules included.  Use this if you want to run Find against HPE IDOL (note: this only works with IDOL 10 - IDOL 7 is **not supported**).
-- `find-dist/target/find-*.zip` - this is a zip archive containing the IDOL build of Find (find.war) and some scripts for running Find as a service.  You probably don't want to use this - just ignore it.
+- `hod/target/find-hod.war` - this is a build of Find with the Haven OnDemand modules included.  Use this if you want to run Find against Haven OnDemand
+- `idol/target/find.war` - this is a build of Find with the HPE IDOL modules included.  Use this if you want to run Find against HPE IDOL (note: this only works with IDOL 10 - IDOL 7 is **not supported**).
+- `on-prem-dist/target/find-*.zip` - this is a zip archive containing the IDOL build of Find (find.war) and some scripts for running Find as a service.  You probably don't want to use this - just ignore it.
 
 # Build Profiles
 
