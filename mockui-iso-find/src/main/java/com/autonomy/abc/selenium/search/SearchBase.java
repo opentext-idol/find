@@ -41,16 +41,16 @@ public abstract class SearchBase extends SOPageBase implements
 	}
 
 	/* search results */
-	public List<SOSearchResult> getSearchResults() {
-		List<SOSearchResult> results = new ArrayList<>();
+	public List<IsoSearchResult> getSearchResults() {
+		List<IsoSearchResult> results = new ArrayList<>();
 		for(WebElement result : findElements(By.cssSelector(".search-results li"))){
-			results.add(new SOSearchResult(result, getDriver()));
+			results.add(new IsoSearchResult(result, getDriver()));
 		}
 		return results;
 	}
 
-	public SOSearchResult getSearchResult(final int searchResult) {
-		return new SOSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
+	public IsoSearchResult getSearchResult(final int searchResult) {
+		return new IsoSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
 	}
 
 	public Checkbox searchResultCheckbox(final int resultNumber) {

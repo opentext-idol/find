@@ -128,18 +128,18 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* promoted results */
-	public List<SOSearchResult> getPromotedResults() {
+	public List<IsoSearchResult> getPromotedResults() {
 		waitForPromotionsLoadIndicatorToDisappear();
-		List<SOSearchResult> results = new ArrayList<>();
+		List<IsoSearchResult> results = new ArrayList<>();
 		for(WebElement result : findElements(By.cssSelector(".promotions-list li"))){
-			results.add(new SOSearchResult(result, getDriver()));
+			results.add(new IsoSearchResult(result, getDriver()));
 		}
 		return results;
 	}
 
-	public SOSearchResult getPromotedResult(final int resultNumber) {
+	public IsoSearchResult getPromotedResult(final int resultNumber) {
 		waitForPromotionsLoadIndicatorToDisappear();
-		return new SOSearchResult(findElement(By.cssSelector(".promotions-list li:nth-child(" + resultNumber + ")")), getDriver());
+		return new IsoSearchResult(findElement(By.cssSelector(".promotions-list li:nth-child(" + resultNumber + ")")), getDriver());
 	}
 
 	public WebElement promotionsSummary() {

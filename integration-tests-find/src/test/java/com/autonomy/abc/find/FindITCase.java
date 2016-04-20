@@ -16,7 +16,7 @@ import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.ParametricFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.StringDateFilter;
-import com.autonomy.abc.selenium.search.SearchResult;
+import com.autonomy.abc.selenium.query.QueryResult;
 import com.autonomy.abc.selenium.users.HsodUser;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Locator;
@@ -171,7 +171,7 @@ public class FindITCase extends FindTestBase {
 
         assertThat(results.resultsDiv(), not(containsText(Errors.Find.GENERAL)));
 
-        List<FindSearchResult> searchResults = results.getResults();
+        List<FindResult> searchResults = results.getResults();
 
         for(int i = 0; i < 6; i++){
             DocumentViewer documentViewer = searchResults.get(i).openDocumentPreview();
@@ -184,10 +184,10 @@ public class FindITCase extends FindTestBase {
     public void testFilterByIndex(){
         findService.search("Sam");
 
-        SearchResult searchResult = results.searchResult(1);
-        String titleString = searchResult.getTitleString();
+        QueryResult queryResult = results.searchResult(1);
+        String titleString = queryResult.getTitleString();
 
-        DocumentViewer docViewer = searchResult.openDocumentPreview();
+        DocumentViewer docViewer = queryResult.openDocumentPreview();
         Index index = docViewer.getIndex();
 
         docViewer.close();
@@ -313,7 +313,7 @@ public class FindITCase extends FindTestBase {
     public void testViewDocumentsOpenFromFind(){
         findService.search("Review");
 
-        for(FindSearchResult result : results.getResults(5)){
+        for(FindResult result : results.getResults(5)){
             try {
                 DocumentViewer docViewer = result.openDocumentPreview();
                 verifyDocumentViewer(docViewer);
@@ -379,7 +379,7 @@ public class FindITCase extends FindTestBase {
         for(FileType f : FileType.values()) {
             findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
 
-            for(FindSearchResult result : results.getResults()){
+            for(FindResult result : results.getResults()){
                 assertThat(result.icon().getAttribute("class"), containsString(f.getFileIconString()));
             }
 
@@ -623,7 +623,7 @@ public class FindITCase extends FindTestBase {
 
         for(int i = 1; i <= 5; i++){
             Window original = getWindow();
-            FindSearchResult result = results.getResult(i);
+            FindResult result = results.getResult(i);
             String reference = result.getReference();
             result.title().click();
             Waits.loadOrFadeWait();

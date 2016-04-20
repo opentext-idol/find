@@ -4,7 +4,7 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
-import com.autonomy.abc.selenium.find.FindSearchResult;
+import com.autonomy.abc.selenium.find.FindResult;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.hsod.IsoHsodApplication;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
@@ -177,10 +177,10 @@ public class FindAndSearchITCase extends FindTestBase {
             promotionService.setUpStaticPromotion(promotion);
 
             findSearch(trigger);
-            List<FindSearchResult> promotions = findResultsPage.promotions();
+            List<FindResult> promotions = findResultsPage.promotions();
 
             assertThat(promotions.size(), is(1));
-            FindSearchResult staticPromotion = promotions.get(0);
+            FindResult staticPromotion = promotions.get(0);
             assertThat(staticPromotion.getTitleString(), is(title));
             assertThat(staticPromotion.getDescription(), containsString(content));
             promotionShownCorrectly(staticPromotion);
@@ -211,13 +211,13 @@ public class FindAndSearchITCase extends FindTestBase {
         }
     }
 
-    private void promotionShownCorrectly (FindSearchResult promotion){
+    private void promotionShownCorrectly (FindResult promotion){
         verifyThat(promotion.isPromoted(), is(true));
         verifyThat(promotion.star(), displayed());
     }
 
-    private void promotionShownCorrectly (List<FindSearchResult> promotions){
-        for(FindSearchResult promotion : promotions){
+    private void promotionShownCorrectly (List<FindResult> promotions){
+        for(FindResult promotion : promotions){
             promotionShownCorrectly(promotion);
         }
     }

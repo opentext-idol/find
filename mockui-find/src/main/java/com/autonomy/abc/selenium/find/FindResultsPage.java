@@ -52,17 +52,17 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         return findElement(By.cssSelector(".error.well"));
     }
 
-    public List<FindSearchResult> promotions() {
-        List<FindSearchResult> results = new ArrayList<>();
+    public List<FindResult> promotions() {
+        List<FindResult> results = new ArrayList<>();
         for(WebElement result : promotionsDiv().findElements(By.className("promoted-document"))) {
-            results.add(new FindSearchResult(result, getDriver()));
+            results.add(new FindResult(result, getDriver()));
         }
         return results;
     }
 
     public List<String> getPromotionsTitles(){
         List<String> titles = new ArrayList<>();
-        for(FindSearchResult promotion : promotions()){
+        for(FindResult promotion : promotions()){
             titles.add(promotion.getTitleString());
         }
         return titles;
@@ -74,7 +74,7 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
 
     public List<String> getResultTitles() {
         List<String> titles = new ArrayList<>();
-        for(FindSearchResult result : getResults()){
+        for(FindResult result : getResults()){
             titles.add(result.getTitleString());
         }
         return titles;
@@ -132,26 +132,26 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         return getDriver().findElement(By.className("results"));
     }
 
-    public List<FindSearchResult> getResults(){
-        List<FindSearchResult> results = new ArrayList<>();
+    public List<FindResult> getResults(){
+        List<FindResult> results = new ArrayList<>();
         for(WebElement result : findElements(By.cssSelector("[data-rel='results']"))){
-            results.add(new FindSearchResult(result, getDriver()));
+            results.add(new FindResult(result, getDriver()));
         }
         return results;
     }
 
-    public List<FindSearchResult> getResults(int maxResults) {
-        List<FindSearchResult> results = getResults();
+    public List<FindResult> getResults(int maxResults) {
+        List<FindResult> results = getResults();
         return results.subList(0, Math.min(maxResults, results.size()));
     }
 
-    public FindSearchResult getResult(int i) {
-        return new FindSearchResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ")")), getDriver());
+    public FindResult getResult(int i) {
+        return new FindResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ")")), getDriver());
     }
 
     public List<String> getDisplayedDocumentsDocumentTypes(){
         List<String> documentTypes = new ArrayList<>();
-        for(FindSearchResult result : getResults()){
+        for(FindResult result : getResults()){
             documentTypes.add(result.icon().getAttribute("class"));
         }
         return documentTypes;
@@ -185,8 +185,8 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
                 .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(container.asCssClass() + " .fa-spinner")));
     }
 
-    public FindSearchResult searchResult(int searchResultNumber) {
-        return new FindSearchResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ")")), getDriver());
+    public FindResult searchResult(int searchResultNumber) {
+        return new FindResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ")")), getDriver());
     }
 
     public WebElement highlightRelatedConceptsButton() {

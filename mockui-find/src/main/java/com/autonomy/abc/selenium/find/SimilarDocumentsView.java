@@ -54,21 +54,21 @@ public class SimilarDocumentsView implements AppPage {
         return Integer.valueOf(findElement(By.className("total-results-number")).getText());
     }
 
-    public List<FindSearchResult> getResults(){
-        List<FindSearchResult> results = new ArrayList<>();
+    public List<FindResult> getResults(){
+        List<FindResult> results = new ArrayList<>();
         for(WebElement result : findElements(By.cssSelector("[data-rel='results']"))){
-            results.add(new FindSearchResult(result, getDriver()));
+            results.add(new FindResult(result, getDriver()));
         }
         return results;
     }
 
-    public List<FindSearchResult> getResults(int maxResults) {
-        List<FindSearchResult> results = getResults();
+    public List<FindResult> getResults(int maxResults) {
+        List<FindResult> results = getResults();
         return results.subList(0, Math.min(maxResults, results.size()));
     }
 
-    public FindSearchResult getResult(int i) {
-        return new FindSearchResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ")")), getDriver());
+    public FindResult getResult(int i) {
+        return new FindResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ")")), getDriver());
     }
 
     @Override

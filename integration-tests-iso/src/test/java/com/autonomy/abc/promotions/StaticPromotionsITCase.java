@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.promotions.HsodPromotionService;
 import com.autonomy.abc.selenium.promotions.HsodPromotionsPage;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
-import com.autonomy.abc.selenium.search.SOSearchResult;
+import com.autonomy.abc.selenium.search.IsoSearchResult;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.shared.SharedTriggerTests;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -154,7 +154,7 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
     @Test
     @KnownBug("CSA-2059")
     public void testPromotionMetadata() {
-        SOSearchResult promoted = searchPage.getPromotedResult(1);
+        IsoSearchResult promoted = searchPage.getPromotedResult(1);
         verifyThat("promotion label visible", promoted.isPromoted(), is(true));
         verifyThat(promoted.indexLabel(), not(containsTextIgnoringCase("index")));
         verifyThat(promoted.indexLabel(), containsTextIgnoringCase("static"));

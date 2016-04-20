@@ -1,13 +1,13 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.autonomy.abc.selenium.search.SearchResult;
+import com.autonomy.abc.selenium.query.QueryResult;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class FindSearchResult extends SearchResult {
-    FindSearchResult(WebElement result, WebDriver driver){
+public class FindResult extends QueryResult {
+    FindResult(WebElement result, WebDriver driver){
         super(result, driver);
     }
 

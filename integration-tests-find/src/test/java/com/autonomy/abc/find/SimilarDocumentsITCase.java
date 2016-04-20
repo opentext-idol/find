@@ -9,7 +9,7 @@ import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindResultsPage;
-import com.autonomy.abc.selenium.find.FindSearchResult;
+import com.autonomy.abc.selenium.find.FindResult;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.SimilarDocumentsView;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -179,7 +179,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
             //Generate a random number between 1 and 5
             int number = (int) (Math.random() * 5 + 1);
 
-            FindSearchResult doc = similarDocuments.getResult(number);
+            FindResult doc = similarDocuments.getResult(number);
             String docTitle = doc.getTitleString();
 
             doc.similarDocuments().click();
@@ -222,7 +222,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         similarDocuments.sortByDate();
 
-        List<FindSearchResult> searchResults = similarDocuments.getResults();
+        List<FindResult> searchResults = similarDocuments.getResults();
 
         Date previousDate = null;
         for(int i = 1; i <= 10; i++){
