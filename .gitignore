@@ -15,7 +15,7 @@ log/
 find-core/target/
 find-hod/target/
 find-idol/target/
-find-dist/target/
+on-prem-dist/target/
 hsod-dist/target/
 
 # Archetype
