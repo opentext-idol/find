@@ -1,8 +1,6 @@
 package com.autonomy.abc.selenium.indexes.tree;
 
 import com.autonomy.abc.selenium.indexes.Index;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,10 +8,6 @@ import java.util.List;
 
 public class IndexesTree implements Iterable<IndexNodeElement> {
     private final IndexCategoryNode allIndexesNode;
-
-    public IndexesTree(WebElement element, WebDriver driver) {
-        this(new IndexCategoryNode(element, driver));
-    }
 
     public IndexesTree(IndexCategoryNode node) {
         allIndexesNode = node;

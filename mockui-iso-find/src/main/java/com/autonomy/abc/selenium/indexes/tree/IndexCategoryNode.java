@@ -17,11 +17,11 @@ public class IndexCategoryNode implements IndexNodeElement, Collapsible, Iterabl
     private final Collapsible collapsible;
     private final IndexNodeElement delegate;
 
-    public IndexCategoryNode(WebElement element, WebDriver webDriver) {
+    private IndexCategoryNode(WebElement element, WebDriver webDriver) {
         this(new IndexLeafNode(element, webDriver), element, webDriver);
     }
 
-    public IndexCategoryNode(IndexNodeElement inside, WebElement element, WebDriver webDriver) {
+    protected IndexCategoryNode(IndexNodeElement inside, WebElement element, WebDriver webDriver) {
         delegate = inside;
         container = element;
         driver = webDriver;

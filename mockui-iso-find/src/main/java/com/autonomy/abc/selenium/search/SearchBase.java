@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.search;
 import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
+import com.autonomy.abc.selenium.indexes.tree.IsoIndexCategoryNode;
 import com.autonomy.abc.selenium.query.*;
 import com.hp.autonomy.frontend.selenium.element.*;
 import com.hp.autonomy.frontend.selenium.util.*;
@@ -174,7 +175,7 @@ public abstract class SearchBase extends SOPageBase implements
 
 	/* indexes/databases */
 	public IndexesTree indexesTree() {
-		return new IndexesTree(findElement(By.cssSelector(".databases-list")), getDriver());
+		return new IndexesTree(new IsoIndexCategoryNode(findElement(By.cssSelector(".databases-list")), getDriver()));
 	}
 
 	/* date filter */
