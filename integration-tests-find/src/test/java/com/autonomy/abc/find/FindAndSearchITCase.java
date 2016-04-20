@@ -11,7 +11,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.search.SearchBase;
+import com.autonomy.abc.selenium.query.SortBy;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Window;
@@ -87,7 +87,7 @@ public class FindAndSearchITCase extends FindTestBase {
     @Test
     public void testSortByRelevance() {
         adminSearch("stars bbc");
-        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
+        searchPage.sortBy(SortBy.RELEVANCE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);
 
         findSearch("stars bbc");
@@ -97,11 +97,11 @@ public class FindAndSearchITCase extends FindTestBase {
     @Test
     public void testSortByDate(){
         adminSearch("stars bbc");
-        searchPage.sortBy(SearchBase.Sort.DATE);
+        searchPage.sortBy(SortBy.DATE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);
 
         findSearch("stars bbc");
-        findPage.sortBy(SearchBase.Sort.DATE);
+        findPage.sortBy(SortBy.DATE);
 
         assertThat(findResultsPage.getResultTitles(), is(searchTitles));
     }

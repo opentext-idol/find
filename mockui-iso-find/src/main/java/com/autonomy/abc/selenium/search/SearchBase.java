@@ -362,22 +362,6 @@ public abstract class SearchBase extends SOPageBase implements
 		return !findElement(By.cssSelector(".search-information")).getAttribute("class").contains("hidden");
 	}
 
-	public enum Sort {
-		DATE("by date"),
-		RELEVANCE("by relevance");
-
-		private final String name;
-
-		Sort(String content) {
-			name = content;
-		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
-	}
-
 	public List<String> filterLabelList() {
 		return ElementUtil.getTexts(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
 	}

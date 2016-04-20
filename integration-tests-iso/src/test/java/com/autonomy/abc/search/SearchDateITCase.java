@@ -6,7 +6,6 @@ import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.SOSearchResult;
-import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -165,11 +164,11 @@ public class SearchDateITCase extends HybridIsoTestBase {
         assertThat("Dates should be equal", searchPage.fromDateInput().getValue(), is(searchPage.untilDateInput().getValue()));
 
         searchPage.filterBy(new StringDateFilter().from(DateUtils.addMinutes(date, 1)).until(date));
-        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
+        searchPage.sortBy(SortBy.RELEVANCE);
         assertThat("From date should be blank", searchPage.fromDateInput().getValue(), isEmptyOrNullString());
 
         searchPage.filterBy(new StringDateFilter().from(date).until(DateUtils.addMinutes(date, -1)));
-        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
+        searchPage.sortBy(SortBy.RELEVANCE);
         assertThat("Until date should be blank", searchPage.untilDateInput().getValue(), isEmptyOrNullString());
     }
 
