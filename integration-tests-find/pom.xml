@@ -38,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
-            <artifactId>integration-tests-iso-find</artifactId>
+            <artifactId>integration-tests-helpers</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
