@@ -1,6 +1,6 @@
 # Tools
 
-- [Maven](https://maven.apache.org/)is used for Java compilation and constructing the .war files
+- [Maven](https://maven.apache.org/) is used for Java compilation and constructing the .war files
 - [Grunt](http://gruntjs.com/) tasks are used for watching and refreshing static resources (i.e. JavaScript, CSS, and HTML) without having to restart the Sprint Boot Java server.
 - [NPM](https://www.npmjs.com/) and [Bower](http://bower.io/) are used to manage frontend dependencies (i.e. JavaScript libraries, mostly). These are automatically run in the Maven process-sources phase.
 
