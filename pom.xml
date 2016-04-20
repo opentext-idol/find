@@ -16,6 +16,7 @@
     </parent>
 
     <modules>
+        <module>mockui-helpers</module>
         <module>mockui-iso-find</module>
         <module>mockui-find</module>
         <module>integration-tests-helpers</module>
