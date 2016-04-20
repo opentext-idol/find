@@ -16,6 +16,7 @@ find-core/target/
 find-hod/target/
 find-idol/target/
 find-dist/target/
+hsod-dist/target/
 
 # Archetype
 filter-dev.properties
