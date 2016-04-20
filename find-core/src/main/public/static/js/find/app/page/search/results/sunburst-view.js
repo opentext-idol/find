@@ -46,11 +46,13 @@ define([
     };
     
     function getClickedParameters (data, fields, selectedParameters) {
-        var parameter = {field: fields[data.depth - 1], value: data.text};
-        selectedParameters.push(parameter);
+        if(data.depth !== 0){
+            var parameter = {field: fields[data.depth - 1], value: data.text};
+            selectedParameters.push(parameter);
 
-        if (data.parent && data.parent.depth !== 0) {
-            getClickedParameters(data.parent, fields, selectedParameters)
+            if (data.parent && data.parent.depth !== 0) {
+                getClickedParameters(data.parent, fields, selectedParameters)
+            }
         }
 
         return selectedParameters;
