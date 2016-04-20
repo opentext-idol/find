@@ -2,24 +2,17 @@ package com.autonomy.abc.selenium.indexes.tree;
 
 import com.hp.autonomy.frontend.selenium.element.ChevronContainer;
 import com.hp.autonomy.frontend.selenium.element.Collapsible;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class IndexCategoryNode implements IndexNodeElement, Collapsible, Iterable<IndexNodeElement> {
+public abstract class IndexCategoryNode implements IndexNodeElement, Collapsible, Iterable<IndexNodeElement> {
     private final WebElement container;
     private final WebDriver driver;
     private final Collapsible collapsible;
     private final IndexNodeElement delegate;
-
-    private IndexCategoryNode(WebElement element, WebDriver webDriver) {
-        this(new IndexLeafNode(element, webDriver), element, webDriver);
-    }
 
     protected IndexCategoryNode(IndexNodeElement inside, WebElement element, WebDriver webDriver) {
         delegate = inside;
@@ -63,26 +56,22 @@ public class IndexCategoryNode implements IndexNodeElement, Collapsible, Iterabl
         return container.getText();
     }
 
-    protected List<IndexNodeElement> getIndexNodes() {
-        List<IndexNodeElement> nodes = new ArrayList<>();
-        for (WebElement element : container.findElements(By.cssSelector(".checkbox[data-name]"))) {
-            nodes.add(new IndexLeafNode(element, driver));
-        }
-        return nodes;
-    }
+    protected abstract List<IndexNodeElement> getIndexNodes();
 
-    protected IndexNodeElement find(String name) {
-        WebElement childElement = container.findElement(By.cssSelector(".checkbox[data-name='" + name.toLowerCase() + "']"));
-        return new IndexLeafNode(childElement, driver);
-    }
+    protected abstract IndexNodeElement find(String name);
 
-    protected IndexCategoryNode findCategory(String name) {
-        WebElement childElement = ElementUtil.ancestor(container.findElement(By.cssSelector(".checkbox[data-category-id='" + name.toLowerCase() + "']")), 1);
-        return new IndexCategoryNode(childElement, driver);
-    }
+    protected abstract IndexCategoryNode findCategory(String name);
 
     @Override
     public Iterator<IndexNodeElement> iterator() {
         return getIndexNodes().iterator();
+    }
+
+    protected WebElement getContainer() {
+        return container;
+    }
+
+    protected WebDriver getDriver() {
+        return driver;
     }
 }
