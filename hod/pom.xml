@@ -14,7 +14,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <artifactName>${project.artifactId}</artifactName>
+        <artifactName>${project.parent.artifactId}-${project.artifactId}</artifactName>
     </properties>
 
     <build>
