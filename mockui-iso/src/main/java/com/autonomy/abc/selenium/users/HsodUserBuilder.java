@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.auth.UnknownAuth;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;

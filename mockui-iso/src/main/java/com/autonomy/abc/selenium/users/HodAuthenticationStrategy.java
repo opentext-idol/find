@@ -1,5 +1,7 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.auth.AuthHasLoggedIn;
+import com.autonomy.abc.selenium.auth.GoesToAuthPage;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
