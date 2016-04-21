@@ -48,7 +48,6 @@
                     <systemPropertyVariables>
                         <com.autonomy.baseConfig>${build.config.base}</com.autonomy.baseConfig>
                         <com.autonomy.configFile>${build.config.override}</com.autonomy.configFile>
-                        <com.autonomy.mavenFlag>true</com.autonomy.mavenFlag>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -67,6 +66,14 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+        </profile>
+        <profile>
+            <id>hosted</id>
+            <properties>
+                <build.skip.hosted>false</build.skip.hosted>
+                <build.skip.onprem>true</build.skip.onprem>
+                <config.app.type>Hosted</config.app.type>
+            </properties>
         </profile>
         <profile>
             <id>hod-jenkins</id>
