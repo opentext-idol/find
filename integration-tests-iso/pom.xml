@@ -33,13 +33,8 @@
     <dependencies>
         <dependency>
             <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
-            <artifactId>mockui-iso-find</artifactId>
+            <artifactId>mockui-iso</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend.selenium</groupId>
-            <artifactId>integration-tests-framework</artifactId>
-            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
