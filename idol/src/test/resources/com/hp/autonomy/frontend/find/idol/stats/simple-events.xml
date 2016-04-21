@@ -1,0 +1,10 @@
+<events>
+    <find-event>
+        <username>Steve</username>
+        <timestamp>123456789</timestamp>
+    </find-event>
+    <find-event>
+        <username>Bob</username>
+        <timestamp>31415926</timestamp>
+    </find-event>
+</events>

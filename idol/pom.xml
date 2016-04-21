@@ -138,7 +138,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>aci-types</artifactId>
-            <version>0.9.0</version>
+            <version>0.10.0</version>
         </dependency>
 
         <dependency>
@@ -150,6 +150,17 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.6.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>4.4.1</version>
         </dependency>
 
         <!-- It's not clear why, but we need to define dependency here as well, not just at the core level.  Otherwise the hibernate classloader does not pick this up. -->
@@ -179,6 +190,19 @@
             <artifactId>haven-search-components-idol</artifactId>
             <version>${haven.search.components.version}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-core</artifactId>
+            <version>2.1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-matchers</artifactId>
+            <version>2.1.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
