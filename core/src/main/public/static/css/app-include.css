@@ -431,8 +431,17 @@ fieldset.radio-fieldset > label {
 }
 
 .search-tab-title i {
-    font-size: 7px;
+    font-size: 12px;
     vertical-align: super;
+}
+
+.new-document-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    background-color: #D70B50;
+    font-size: 10px;
 }
 
 .compare-modal-error-spinner .loading-spinner {

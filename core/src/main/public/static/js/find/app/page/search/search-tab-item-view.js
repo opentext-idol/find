@@ -52,7 +52,7 @@ define([
         updateSavedness: function() {
             var changed = this.queryState ? !this.model.equalsQueryState(this.queryState) : false;
             this.$('.search-tab-anchor').toggleClass('bold', this.model.isNew() || changed);
-            this.$('.search-tab-anchor .fa-circle').toggleClass('hide', !this.model.isNew() && !changed);
+            this.$('.search-tab-anchor .hp-new').toggleClass('hide', !this.model.isNew() && !changed);
         },
 
         updateQueryStateListeners: function() {
