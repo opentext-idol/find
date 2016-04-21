@@ -17,7 +17,7 @@ import com.autonomy.abc.selenium.query.ParametricFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.autonomy.abc.selenium.query.QueryResult;
-import com.autonomy.abc.selenium.users.HsodUser;
+import com.autonomy.abc.selenium.auth.HsodUser;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.Waits;

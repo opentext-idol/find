@@ -1,7 +1,9 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.selenium.auth.HodAuthenticationStrategy;
+import com.autonomy.abc.selenium.auth.HsodNewUser;
+import com.autonomy.abc.selenium.auth.HsodUserBuilder;
 import com.autonomy.abc.selenium.external.GoesToHodAuthPageFromGmail;
-import com.autonomy.abc.selenium.users.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

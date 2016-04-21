@@ -2,6 +2,8 @@ package com.autonomy.abc.users;
 
 import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.fixtures.UserTearDownStrategy;
+import com.autonomy.abc.selenium.auth.IdolIsoNewUser;
+import com.autonomy.abc.selenium.auth.IdolIsoReplacementAuth;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.shared.UserTestHelper;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;

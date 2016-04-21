@@ -1,5 +1,7 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.auth.HsodNewUser;
+import com.autonomy.abc.selenium.auth.HsodUser;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
