@@ -1,7 +1,6 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
-import com.autonomy.abc.selenium.hsod.IsoHsodApplication;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
@@ -13,9 +12,6 @@ import com.autonomy.abc.selenium.find.FindResult;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.SimilarDocumentsView;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.promotions.HsodPromotionService;
-import com.autonomy.abc.selenium.promotions.Promotion;
-import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.ParametricFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -137,33 +133,6 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         for(int i = 1; i <= 5; i++){
             verifySimilarDocsNotEmpty(i);
-        }
-    }
-
-    @Test
-    @KnownBug("CCUK-3542")
-    public void testPromotedDocuments(){
-        Window findWindow = getWindow();
-
-        IsoHsodApplication searchApp = new IsoHsodApplication();
-        Window searchWindow = launchInNewWindow(searchApp);
-        searchWindow.activate();
-        Waits.loadOrFadeWait();
-
-        String trigger = "Riga";
-        HsodPromotionService promotionService = searchApp.promotionService();
-        try {
-            promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), "Have Mercy", 3);
-
-            findWindow.activate();
-            results = findService.search(trigger);
-
-            for (int i = 1; i <= results.promotions().size(); i++) {
-                verifySimilarDocsNotEmpty(i);
-            }
-        } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
         }
     }
 
