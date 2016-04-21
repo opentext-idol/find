@@ -5,11 +5,11 @@ import com.autonomy.abc.selenium.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
+import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.query.SortBy;
 import com.hp.autonomy.frontend.selenium.element.Checkbox;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -21,7 +21,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class SearchPage extends SearchBase implements AppPage {
+public abstract class SearchPage extends SearchBase implements LanguageFilter.Filterable {
 	public final static int RESULTS_PER_PAGE = 6;
 	public final static int MAX_RESULTS = 2500;
 

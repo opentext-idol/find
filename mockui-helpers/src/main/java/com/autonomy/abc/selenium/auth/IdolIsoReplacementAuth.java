@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.users;
+package com.autonomy.abc.selenium.auth;
 
 import com.hp.autonomy.frontend.selenium.element.PasswordBox;
 import com.hp.autonomy.frontend.selenium.users.ReplacementAuth;

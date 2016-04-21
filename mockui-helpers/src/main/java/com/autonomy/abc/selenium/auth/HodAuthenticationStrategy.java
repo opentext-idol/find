@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.users;
+package com.autonomy.abc.selenium.auth;
 
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;

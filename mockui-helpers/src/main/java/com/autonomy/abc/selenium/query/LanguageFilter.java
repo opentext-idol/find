@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.query;
 
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.search.SearchPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +19,9 @@ public class LanguageFilter implements QueryFilter {
     // TODO: create via app-specific factory
     @Override
     public void apply(QueryFilter.Filterable page) {
-        if (page instanceof SearchPage) {
+        if (page instanceof LanguageFilter.Filterable) {
             try {
-                ((SearchPage) page).selectLanguage(language);
+                ((LanguageFilter.Filterable) page).selectLanguage(language);
             } catch (Exception e) {
                 logger.warn("language not found");
             }
@@ -34,5 +33,9 @@ public class LanguageFilter implements QueryFilter {
     @Override
     public String toString() {
         return "LanguageFilter:" + language;
+    }
+
+    public interface Filterable extends QueryFilter.Filterable {
+        void selectLanguage(Language language);
     }
 }

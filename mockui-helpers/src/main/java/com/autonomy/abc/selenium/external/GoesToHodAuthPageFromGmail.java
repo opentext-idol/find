@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.external;
 
-import com.autonomy.abc.selenium.users.GoesToAuthPage;
+import com.autonomy.abc.selenium.auth.GoesToAuthPage;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.*;

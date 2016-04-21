@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.IsoApplication;
+import com.autonomy.abc.selenium.auth.HsodUserBuilder;
 import com.autonomy.abc.selenium.hsod.IsoHsodElementFactory;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;

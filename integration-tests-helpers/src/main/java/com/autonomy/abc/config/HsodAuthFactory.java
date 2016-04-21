@@ -1,6 +1,6 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.selenium.users.NewHPPassport;
+import com.autonomy.abc.selenium.auth.NewHPPassport;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.sso.*;
 

@@ -1,9 +1,10 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.auth.IdolIsoAccount;
+import com.autonomy.abc.selenium.auth.IdolIsoNewUser;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.hp.autonomy.frontend.selenium.users.*;
 import com.hp.autonomy.frontend.selenium.util.Factory;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.openqa.selenium.WebDriver;
 
 public class IdolIsoUserConfigParser implements UserConfigParser<JsonNode> {

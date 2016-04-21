@@ -1,5 +1,7 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.auth.IdolIsoNewUser;
+import com.autonomy.abc.selenium.auth.IdolIsoReplacementAuth;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.ReplacementAuth;
 import com.hp.autonomy.frontend.selenium.users.Role;

@@ -1,9 +1,9 @@
 package com.autonomy.abc.users;
 
 import com.autonomy.abc.base.IdolIsoTestBase;
-import com.autonomy.abc.selenium.users.IdolIsoAccount;
+import com.autonomy.abc.selenium.auth.IdolIsoAccount;
 import com.autonomy.abc.selenium.users.IdolIsoLoginPage;
-import com.autonomy.abc.selenium.users.IdolIsoNewUser;
+import com.autonomy.abc.selenium.auth.IdolIsoNewUser;
 import com.autonomy.abc.selenium.users.UserService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.users.Role;

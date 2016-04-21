@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.application.IsoApplication;
+import com.autonomy.abc.selenium.auth.HsodUser;
+import com.autonomy.abc.selenium.auth.HsodUserBuilder;
 import com.autonomy.abc.selenium.hsod.IsoHsodElementFactory;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;

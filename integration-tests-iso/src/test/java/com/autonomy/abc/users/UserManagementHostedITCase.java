@@ -3,6 +3,8 @@ package com.autonomy.abc.users;
 import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.fixtures.EmailTearDownStrategy;
 import com.autonomy.abc.fixtures.UserTearDownStrategy;
+import com.autonomy.abc.selenium.auth.HsodNewUser;
+import com.autonomy.abc.selenium.auth.HsodUser;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.shared.UserTestHelper;
