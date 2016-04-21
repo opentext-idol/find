@@ -37,7 +37,7 @@ public class DualConfigLocator {
     }
 
     private JsonConfig maybeReadConfig(String path) throws IOException {
-        if (path == null) {
+        if (path == null || path.isEmpty()) {
             return null;
         }
         return reader.toJsonConfig(path);

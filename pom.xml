@@ -26,7 +26,7 @@
 
     <!-- specify defaults -->
     <properties>
-        <build.config.override>maven.json</build.config.override>
+        <build.config.override><!-- unspecified by default --></build.config.override>
         <config.selenium.url>http://localhost:4444/wd/hub</config.selenium.url>
         <config.selenium.browsers>["chrome"]</config.selenium.browsers>
     </properties>
