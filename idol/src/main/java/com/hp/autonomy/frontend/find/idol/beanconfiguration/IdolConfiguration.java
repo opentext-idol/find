@@ -7,7 +7,10 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciService;
+import com.autonomy.aci.client.services.impl.AciServiceImpl;
+import com.autonomy.aci.client.transport.AciHttpClient;
 import com.autonomy.aci.client.transport.AciServerDetails;
+import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -30,6 +33,7 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.user.UserService;
 import com.hp.autonomy.user.UserServiceImpl;
+import org.apache.http.client.HttpClient;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -101,7 +105,7 @@ public class IdolConfiguration {
     }
 
     @Bean
-    public AciService statsServerAciService(@Qualifier("aciService") final AciService aciService, final ConfigService<IdolFindConfig> configService) {
+    public AciService statsServerAciService(@Qualifier("postingAciService") final AciService aciService, final ConfigService<IdolFindConfig> configService) {
         return new AbstractConfigurableAciService(aciService) {
             @Override
             public AciServerDetails getServerDetails() {
@@ -134,5 +138,13 @@ public class IdolConfiguration {
         serverConfigValidator.setProcessorFactory(processorFactory);
 
         return serverConfigValidator;
+    }
+
+    @Bean
+    public AciService postingAciService(final HttpClient httpClient) {
+        final AciHttpClientImpl aciHttpClient = new AciHttpClientImpl(httpClient);
+        aciHttpClient.setUsePostMethod(true);
+
+        return new AciServiceImpl(aciHttpClient);
     }
 }
