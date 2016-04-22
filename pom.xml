@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.hp.autonomy.frontend.havensearch</groupId>
-    <artifactId>integration-tests-parent</artifactId>
+    <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
+    <artifactId>iso-find-test-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <parent>
         <groupId>com.autonomy.frontend</groupId>
@@ -16,24 +16,19 @@
     </parent>
 
     <modules>
-        <module>mockui-common</module>
-        <module>mockui-hosted</module>
-        <module>mockui-onpremise</module>
-        <module>integration-tests-framework</module>
-        <module>integration-tests-common</module>
-        <module>integration-tests-hosted</module>
-        <module>integration-tests-onpremise</module>
+        <module>mockui-helpers</module>
+        <module>mockui-iso</module>
+        <module>mockui-find</module>
+        <module>integration-tests-helpers</module>
+        <module>integration-tests-iso</module>
+        <module>integration-tests-find</module>
     </modules>
 
     <!-- specify defaults -->
     <properties>
-        <build.config.base>hsod-dev.json</build.config.base>
-        <build.config.override>maven.json</build.config.override>
-        <build.skip.hosted>false</build.skip.hosted>
-        <build.skip.onprem>true</build.skip.onprem>
+        <build.config.override><!-- unspecified by default --></build.config.override>
         <config.selenium.url>http://localhost:4444/wd/hub</config.selenium.url>
         <config.selenium.browsers>["chrome"]</config.selenium.browsers>
-        <config.app.type>Hosted</config.app.type>
     </properties>
 
     <build>
@@ -53,7 +48,6 @@
                     <systemPropertyVariables>
                         <com.autonomy.baseConfig>${build.config.base}</com.autonomy.baseConfig>
                         <com.autonomy.configFile>${build.config.override}</com.autonomy.configFile>
-                        <com.autonomy.mavenFlag>true</com.autonomy.mavenFlag>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -68,6 +62,17 @@
                 <build.skip.hosted>true</build.skip.hosted>
                 <build.skip.onprem>false</build.skip.onprem>
                 <config.app.type>On Premise</config.app.type>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>hosted</id>
+            <properties>
+                <build.skip.hosted>false</build.skip.hosted>
+                <build.skip.onprem>true</build.skip.onprem>
+                <config.app.type>Hosted</config.app.type>
             </properties>
         </profile>
         <profile>
@@ -102,7 +107,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <groups>com.autonomy.abc.framework.categories.CoreFeature</groups>
+                            <groups>com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature</groups>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -116,7 +121,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <excludedGroups>com.autonomy.abc.framework.categories.SlowTest</excludedGroups>
+                            <excludedGroups>com.hp.autonomy.frontend.selenium.framework.categories.SlowTest</excludedGroups>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -144,71 +149,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.hp.autonomy.frontend.selenium</groupId>
-            <artifactId>selenium-utils</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.autonomy</groupId>
-            <artifactId>NonAciNG</artifactId>
-            <version>2.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.3.2</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>2.43.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.4</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.0.9</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>java-hod-client</artifactId>
-            <version>0.12.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>java-parametric-databases</artifactId>
-            <version>0.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>1.3</version>
+            <version>2.46.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.9</version>
         </dependency>
     </dependencies>
 </project>

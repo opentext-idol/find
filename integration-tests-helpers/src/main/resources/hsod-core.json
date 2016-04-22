@@ -1,0 +1,165 @@
+{
+  "app": {
+    "type": "Hosted",
+    "search": "http://search.havenapps.io/searchoptimizer/p",
+    "find": "http://find.havenapps.io",
+    "api" : "https://api.havenondemand.com"
+  },
+  "selenium": {
+    "url": "http://localhost:4444/wd/hub",
+    "browsers": ["chrome", "internet explorer"],
+    "timeout": 3
+  },
+  "newusers": {
+    "james": {
+      "username": "james",
+      "password": "bond",
+      "email": "hodtestqa401+newuser1@gmail.com",
+      "auth": {
+        "type": "Google",
+        "email": "hodtestqa401@gmail.com",
+        "password": "qoxntlozubjaamyszerfk"
+      }
+    },
+    "john": {
+      "username": "john",
+      "password": "lennon",
+      "email": "hodtestqa401+newuser2@gmail.com",
+      "auth": {
+        "type": "Google",
+        "email": "hodtestqa401@gmail.com",
+        "password": "qoxntlozubjaamyszerfk"
+      }
+    },
+    "bob": {
+      "username": "bob",
+      "password": "marley",
+      "email": "hodtestqa401+newuser3@gmail.com",
+      "auth": {
+        "type": "Google",
+        "email": "hodtestqa401@gmail.com",
+        "password": "qoxntlozubjaamyszerfk"
+      }
+    },
+    "testAddDuplicateUser_james": {
+      "username": "james",
+      "password": "giantPeach",
+      "email": "hodtestqa401+newuser1@gmail.com",
+      "auth": {
+        "type": "Google",
+        "email": "hodtestqa401@gmail.com",
+        "password": "qoxntlozubjaamyszerfk"
+      }
+    },
+    "drake": {
+      "username": "drake",
+      "password": "the_six",
+      "email": "hodtestqa401+WITHMYWOES@gmail.com",
+      "auth": {
+        "type":"Facebook",
+        "email": "hodtestqa500+FacebookSignUp@gmail.com",
+        "password": "xE8vnTGeXFKtM3R6"
+      }
+    },
+    "newhppassport": {
+      "username": "nicki",
+      "password": "romanholiday",
+      "email": "hodtestqa401+NEWNEWHPPASSPORT@gmail.com",
+      "auth": {
+        "type":"New HP Passport",
+        "email": "hodtestqa500+thisisanewemail@gmail.com",
+        "password": "t87hy49898qaiu"
+      }
+    }
+  },
+  "users": {
+    "default": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "HP Passport",
+        "username": "hodtest",
+        "password": "Z@s=5rYbw6MEx]?X"
+      },
+      "apikey" : "c4eb9531-531c-4bd2-8707-c31fcb02625e",
+      "domain" : "2b7725de-bd04-4341-a4a0-5754f0655de8"
+    },
+    "index_tests": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Yahoo",
+        "username": "hodtesting",
+        "password": ":Z4jM8vq5`en89d>"
+      },
+      "apikey" : "a11f62bc-51f3-4e25-9e4a-3aeba5a69f4c",
+      "domain" : ""
+    },
+    "analytics_tests": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Facebook",
+        "email": "matthew.williamson@hpe.com",
+        "password": "vdPAuTGU"
+      },
+      "apikey" : "",
+      "domain" : ""
+    },
+    "google": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Google",
+        "email": "hodtestqa401@gmail.com",
+        "password": "qoxntlozubjaamyszerfk"
+      },
+      "apikey" : "",
+      "domain" : ""
+    },
+    "twitter": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Twitter",
+        "username": "hodtesting",
+        "password": "5cUdPhYM"
+      },
+      "apikey" : "",
+      "domain" : ""
+    },
+    "facebook": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Facebook",
+        "email": "matthew.williamson@hpe.com",
+        "password": "vdPAuTGU"
+      },
+      "apikey" : "",
+      "domain" : ""
+    },
+    "hp_passport": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "HP Passport",
+        "username": "hodtest",
+        "password": "Z@s=5rYbw6MEx]?X"
+      },
+      "apikey" : "c4eb9531-531c-4bd2-8707-c31fcb02625e",
+      "domain" : "2b7725de-bd04-4341-a4a0-5754f0655de8"
+    },
+    "yahoo": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Yahoo",
+        "username": "hodtesting",
+        "password": ":Z4jM8vq5`en89d>"
+      },
+      "apikey" : "a11f62bc-51f3-4e25-9e4a-3aeba5a69f4c",
+      "domain" : ""
+    }
+  }
+}
