@@ -1,10 +1,10 @@
 package com.autonomy.abc.selenium.search;
 
-import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
-import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.IdolLanguageDropdown;
+import com.autonomy.abc.selenium.language.LanguageDropdown;
+import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

@@ -1,11 +1,7 @@
 package com.autonomy.abc.keywords;
 
-import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
-import com.autonomy.abc.shared.SharedTriggerTests;
 import com.autonomy.abc.base.HybridIsoTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.element.GritterNotice;
+import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
@@ -15,6 +11,10 @@ import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
+import com.autonomy.abc.shared.SharedTriggerTests;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;

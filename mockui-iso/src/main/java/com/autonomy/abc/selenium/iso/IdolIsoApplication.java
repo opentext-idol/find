@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.application.IsoApplication;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.promotions.IdolPromotionService;
 import com.autonomy.abc.selenium.users.IdolIsoUserService;
+import com.hp.autonomy.frontend.selenium.control.Window;
 
 
 public class IdolIsoApplication extends IsoApplication<IdolIsoElementFactory> {

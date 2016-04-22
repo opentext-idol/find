@@ -1,8 +1,8 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.hp.autonomy.frontend.selenium.element.*;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;

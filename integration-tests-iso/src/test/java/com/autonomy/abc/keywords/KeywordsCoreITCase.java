@@ -2,11 +2,11 @@ package com.autonomy.abc.keywords;
 
 import com.autonomy.abc.base.HybridIsoTestBase;
 import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

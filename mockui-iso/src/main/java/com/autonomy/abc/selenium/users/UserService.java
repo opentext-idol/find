@@ -1,8 +1,8 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
-import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.application.IsoApplication;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;

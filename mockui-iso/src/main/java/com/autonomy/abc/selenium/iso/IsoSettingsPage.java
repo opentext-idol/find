@@ -1,8 +1,8 @@
 package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.application.SOPageBase;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
