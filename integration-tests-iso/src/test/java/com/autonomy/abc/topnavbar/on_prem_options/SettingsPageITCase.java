@@ -1,8 +1,8 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.base.IdolIsoTestBase;
-import com.autonomy.abc.config.IdolHostAndPorts;
 import com.autonomy.abc.config.DualConfigLocator;
+import com.autonomy.abc.config.IdolHostAndPorts;
 import com.autonomy.abc.selenium.iso.IsoSettingsPage;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;

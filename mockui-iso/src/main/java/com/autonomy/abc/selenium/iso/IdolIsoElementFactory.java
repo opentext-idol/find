@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.iso;
 
-import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.keywords.IdolCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.IdolKeywordsPage;
@@ -14,6 +13,7 @@ import com.autonomy.abc.selenium.search.IdolIsoSearchPage;
 import com.autonomy.abc.selenium.users.IdolIsoLoginPage;
 import com.autonomy.abc.selenium.users.IdolUsersPage;
 import com.autonomy.abc.selenium.users.UsersPage;
+import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import org.openqa.selenium.WebDriver;
 
 public class IdolIsoElementFactory extends IsoElementFactory {

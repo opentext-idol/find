@@ -1,52 +1,36 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.autonomy.abc.shared.SharedPreviewTests;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
-import com.autonomy.abc.shared.QueryTestHelper;
-import com.hp.autonomy.frontend.selenium.control.Frame;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.query.IndexFilter;
-import com.autonomy.abc.selenium.query.ParametricFilter;
-import com.autonomy.abc.selenium.query.Query;
-import com.autonomy.abc.selenium.query.StringDateFilter;
-import com.autonomy.abc.selenium.query.QueryResult;
-import com.autonomy.abc.selenium.auth.HsodUser;
+import com.autonomy.abc.selenium.query.*;
+import com.autonomy.abc.shared.QueryTestHelper;
+import com.autonomy.abc.shared.SharedPreviewTests;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import com.hp.autonomy.hod.client.api.authentication.ApiKey;
-import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
-import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
-import com.hp.autonomy.hod.client.api.authentication.TokenType;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.api.textindex.query.fields.*;
-import com.hp.autonomy.hod.client.config.HodServiceConfig;
-import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.hod.client.token.TokenProxy;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 
 import java.util.*;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasClass;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTagName;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
@@ -265,47 +249,6 @@ public class FindITCase extends FindTestBase {
             }
         }
         return cal.getTime();
-    }
-
-    @Ignore //TODO seems to have broken
-    @Test
-    public void testAllParametricFieldsAreShown() throws HodErrorException {
-        final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        httpClientBuilder.setProxy(new HttpHost("proxy.sdc.hp.com", 8080));
-
-
-        final HodServiceConfig config = new HodServiceConfig.Builder("https://api.int.havenondemand.com")
-                .setHttpClient(httpClientBuilder.build()) // use a custom Apache HttpClient - useful if you're behind a proxy
-                .build();
-
-        final AuthenticationService authenticationService = new AuthenticationServiceImpl(config);
-        final RetrieveIndexFieldsService retrieveIndexFieldsService = new RetrieveIndexFieldsServiceImpl(config);
-
-        final TokenProxy tokenProxy = authenticationService.authenticateApplication(
-                new ApiKey("098b8420-f85f-4164-b8a8-42263e9405a1"),
-                "733d64e8-41f7-4c46-a1c8-60d083255159",
-                ((HsodUser) getCurrentUser()).getDomain(),
-                TokenType.simple
-        );
-
-        Set<String> parametricFields = new HashSet<>();
-
-        findService.search("Something");
-
-        for (String indexName : findPage.getPrivateIndexNames()) {
-            RetrieveIndexFieldsResponse retrieveIndexFieldsResponse = retrieveIndexFieldsService.retrieveIndexFields(tokenProxy,
-                    new ResourceIdentifier(((HsodUser)getCurrentUser()).getDomain(), indexName), new RetrieveIndexFieldsRequestBuilder().setFieldType(FieldType.parametric));
-
-            parametricFields.addAll(retrieveIndexFieldsResponse.getAllFields());
-        }
-
-        for(String field : parametricFields) {
-            try {
-                assertThat(results.parametricContainer(field), displayed());
-            } catch (ElementNotVisibleException | NotFoundException e) {
-                fail("Could not find field '"+field+"'");
-            }
-        }
     }
 
     @Test

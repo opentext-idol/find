@@ -2,12 +2,6 @@ package com.autonomy.abc.keywords;
 
 import com.autonomy.abc.base.HybridIsoTestBase;
 import com.autonomy.abc.fixtures.KeywordTearDownStrategy;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
-import com.hp.autonomy.frontend.selenium.framework.categories.SlowTest;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
-import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
@@ -20,6 +14,11 @@ import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.framework.categories.SlowTest;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +48,6 @@ import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.contains
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class KeywordsFromSearchITCase extends HybridIsoTestBase {

@@ -1,11 +1,11 @@
 package com.autonomy.abc.shared;
 
-import com.hp.autonomy.frontend.selenium.control.Frame;
-import com.hp.autonomy.frontend.selenium.control.Session;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.QueryResult;
+import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.control.Session;
+import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 
 import java.util.List;

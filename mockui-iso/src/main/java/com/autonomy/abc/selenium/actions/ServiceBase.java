@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.actions;
 
-import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.application.IsoApplication;
+import com.autonomy.abc.selenium.application.IsoElementFactory;
 import org.openqa.selenium.WebDriver;
 
 public abstract class ServiceBase<T extends IsoElementFactory> {

@@ -1,15 +1,15 @@
 package com.autonomy.abc.search;
 
 import com.autonomy.abc.base.HybridIsoTestBase;
-import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.IsoSearchResult;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.Pagination;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -190,5 +190,4 @@ public class SearchDateITCase extends HybridIsoTestBase {
         searchPage.filterBy(new StringDateFilter().until(nextDate));
         assertThat(searchPage.untilDateInput().getValue(), isEmptyOrNullString());
     }
-
 }
