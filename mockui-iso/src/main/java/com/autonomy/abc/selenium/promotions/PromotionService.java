@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -53,12 +54,20 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
         }
 
         promotion.makeWizard(getElementFactory().getCreateNewPromotionsPage()).apply();
-        getElementFactory().getSearchPage();
+        waitForPromotionToBeCreated();
         return promotedDocTitles;
     }
 
     public List<String> setUpPromotion(Promotion promotion, String searchTerm, int numberOfDocs) {
         return setUpPromotion(promotion, new Query(searchTerm), numberOfDocs);
+    }
+
+    private void waitForPromotionToBeCreated() {
+        try {
+            getElementFactory().getSearchPage();
+        } catch (final TimeoutException e) {
+            getElementFactory().getSearchPage();
+        }
     }
 
     public PromotionsPage delete(Promotion promotion) {
@@ -82,7 +91,9 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
     public PromotionsPage delete(String title) {
         goToPromotions();
         WebElement deleteButton = deleteNoWait(promotionsPage.getPromotionLinkWithTitleContaining(title));
-        new WebDriverWait(getDriver(), 20).until(ExpectedConditions.stalenessOf(deleteButton));
+        new WebDriverWait(getDriver(), 20)
+                .withMessage("deleting promotion with title " + title)
+                .until(ExpectedConditions.stalenessOf(deleteButton));
         return promotionsPage;
     }
 
@@ -94,12 +105,23 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
         for (WebElement promotion : promotionsList) {
             deleteNoWait(promotion);
         }
-        new WebDriverWait(getDriver(), 10*(promotionsList.size() + 1 )).withMessage("Promotions list not cleared").until(new ExpectedCondition<Boolean>() {
+        waitForPromotionsToBeDeleted(promotionsList.size());
+        return promotionsPage;
+    }
+
+    private void waitForPromotionsToBeDeleted(int numberOfPromotions) {
+        int duration = 10 * (numberOfPromotions + 2);
+        new WebDriverWait(getDriver(), duration)
+                .withMessage("deleting promotions")
+                .until(promotionsAreDeleted());
+    }
+
+    private ExpectedCondition<Boolean> promotionsAreDeleted() {
+        return new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver input) {
                 return promotionsPage.promotionsList().isEmpty();
             }
-        });
-        return promotionsPage;
+        };
     }
 }
