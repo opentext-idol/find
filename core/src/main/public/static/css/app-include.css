@@ -404,8 +404,8 @@ fieldset.radio-fieldset > label {
 }
 
 .tab-dropdown {
-    margin-top: 16px;
-    margin-right: 16px;
+    padding-top: 16px;
+    padding-right: 16px;
 }
 
 .tab-dropdown .dropdown-menu {
