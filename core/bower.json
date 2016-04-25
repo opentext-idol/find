@@ -37,7 +37,7 @@
     "hp-autonomy-fieldtext-js": "1.1.0",
     "hp-autonomy-topic-map": "1.0.0",
     "hp-autonomy-sunburst": "1.1.1",
-    "hp-autonomy-js-parametric-refinement": "0.2.0",
+    "hp-autonomy-js-parametric-refinement": "0.3.0",
     "leaflet": "0.7.7",
     "requirejs": "2.1.15",
     "requirejs-text": "2.0.13",
@@ -46,7 +46,7 @@
     "moment": "2.10.3",
     "eonasdan-bootstrap-datetimepicker": "4.14.30",
     "hp-autonomy-hod-sso-js": "0.5.0",
-    "hp-autonomy-js-databases-view": "0.4.4",
+    "hp-autonomy-js-databases-view": "0.5.0",
     "hp-autonomy-about-page": "0.1.0"
   },
   "devDependencies": {

@@ -73,10 +73,13 @@ define([
         },
 
         initialize: function(options) {
+            this.filterModel = options.filterModel;
+
             DatabasesView.prototype.initialize.call(this, {
                 databasesCollection: options.indexesCollection,
                 emptyMessage: i18n['search.indexes.empty'],
                 selectedDatabasesCollection: options.selectedDatabasesCollection,
+                filterModel: this.filterModel,
                 topLevelDisplayName: i18n['search.indexes.all'],
                 childCategories: this.getIndexCategories(),
                 listViewOptions: {

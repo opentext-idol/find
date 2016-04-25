@@ -75,7 +75,8 @@ define([
 
             this.displayCollection = new DisplayCollection([], {
                 parametricCollection: options.parametricCollection,
-                selectedParametricValues: this.selectedParametricValues
+                selectedParametricValues: this.selectedParametricValues,
+                filterModel: options.filterModel
             });
 
             this.fieldNamesListView = new ListView({
