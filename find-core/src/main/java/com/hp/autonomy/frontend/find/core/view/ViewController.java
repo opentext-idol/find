@@ -40,7 +40,7 @@ public abstract class ViewController<S extends Serializable, E extends Exception
     ) throws E, IOException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         ViewContentSecurityPolicy.addContentSecurityPolicy(response);
-        viewServerService.viewDocument(reference, database, response.getOutputStream());
+        viewServerService.viewDocument(reference, database, null, response.getOutputStream());
     }
 
     @RequestMapping(value = VIEW_STATIC_CONTENT_PROMOTION_PATH, method = RequestMethod.GET)

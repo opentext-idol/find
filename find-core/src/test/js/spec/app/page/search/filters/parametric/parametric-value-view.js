@@ -16,6 +16,8 @@ define([
 
             this.$check = this.view.$('.parametric-value-icon');
             this.$text = this.view.$('.parametric-value-text');
+            this.$name = this.view.$('.parametric-value-name');
+            this.$count = this.view.$('.parametric-value-count');
         });
 
         it('sets a data-value attribute', function() {
@@ -23,11 +25,11 @@ define([
         });
 
         it('displays the value name', function() {
-            expect(this.$text).toContainText('cat');
+            expect(this.$name).toContainText('cat');
         });
 
         it('displays the count', function() {
-            expect(this.$text).toContainText('(3)');
+            expect(this.$count).toContainText('(3)');
         });
 
         it('hides the check icon if the value is not selected', function() {
@@ -41,14 +43,14 @@ define([
             });
 
             it('displays the value name', function() {
-                expect(this.$text).toContainText('cat');
+                expect(this.$name).toContainText('cat');
             });
 
             it('does not display the count', function() {
-                expect(this.$text).not.toContainText('(3)');
-                expect(this.$text).not.toContainText('(0)');
-                expect(this.$text).not.toContainText('()');
-                expect(this.$text).not.toContainText('null');
+                expect(this.$count).not.toContainText('(3)');
+                expect(this.$count).not.toContainText('(0)');
+                expect(this.$count).not.toContainText('()');
+                expect(this.$count).not.toContainText('null');
             });
 
             describe('then the count is set to a number', function() {
@@ -58,11 +60,11 @@ define([
                 });
 
                 it('displays the value name', function() {
-                    expect(this.$text).toContainText('cat');
+                    expect(this.$name).toContainText('cat');
                 });
 
                 it('displays the count', function() {
-                    expect(this.$text).toContainText('(50)');
+                    expect(this.$count).toContainText('(50)');
                 });
             });
         });
