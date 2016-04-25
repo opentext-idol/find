@@ -40,7 +40,7 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
     private GrantedAuthoritiesMapper grantedAuthoritiesMapper;
 
     @Autowired
-    private AuthenticationInformationRetriever<?> authenticationInformationRetriever;
+    private AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override

@@ -52,7 +52,7 @@ public class FindHodDocumentService extends HodDocumentsService {
             final ConfigService<HodFindConfig> configService,
             final QueryTextIndexService<HodSearchResult> queryTextIndexService,
             final GetContentService<HodSearchResult> getContentService,
-            final AuthenticationInformationRetriever<HodAuthenticationPrincipal> authenticationRetriever,
+            final AuthenticationInformationRetriever<?, HodAuthenticationPrincipal> authenticationRetriever,
             final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService,
             final DocumentFieldsService documentFieldsService,
             final CacheManager cacheManager
