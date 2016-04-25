@@ -18,6 +18,7 @@ import com.hp.autonomy.frontend.configuration.RedisConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
+import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.hod.configuration.HodSearchCapable;
@@ -44,6 +45,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private final RedisConfig redis;
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
+
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
 
@@ -144,7 +146,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
 
     @Override
     @JsonIgnore
-    public String getApiKey() {
+    public ApiKey getApiKey() {
         return iod.getApiKey();
     }
 
