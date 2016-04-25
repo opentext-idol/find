@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
         <artifactId>iso-find-test-parent</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </parent>
 
     <artifactId>integration-tests-iso</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 
     <build>
         <plugins>
@@ -34,12 +34,12 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
             <artifactId>mockui-iso</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
             <artifactId>integration-tests-helpers</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
