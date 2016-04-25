@@ -19,7 +19,14 @@ define([
     return Backbone.View.extend({
         events: {
             'click .search-tab': function(event) {
-                this.model.set('selectedSearchCid', $(event.currentTarget).find('[data-search-cid]').attr('data-search-cid'));
+                var $currentTarget = $(event.currentTarget);
+                var currentModelCid = $currentTarget.find('[data-search-cid]').attr('data-search-cid');
+                var currentQueryModel = this.savedSearchCollection.get(currentModelCid);
+                this.model.set('selectedSearchCid', currentModelCid);
+
+                currentQueryModel.set({newDocuments: 0});
+                //TODO: rerun the search
+
             },
             'click .start-new-search': function() {
                 this.trigger('startNewSearch');

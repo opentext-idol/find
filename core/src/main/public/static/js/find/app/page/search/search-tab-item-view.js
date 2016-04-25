@@ -34,7 +34,7 @@ define([
             }, options));
 
             this.listenTo(this.model, 'change', this.updateSavedness);
-
+            this.listenTo(this.model, 'change:newDocuments', this.updateTabBadge);
             this.listenTo(this.queryStates, 'change:' + cid, function() {
                 this.updateQueryStateListeners();
                 this.updateSavedness();
@@ -47,6 +47,20 @@ define([
             ListItemView.prototype.render.apply(this, arguments);
 
             this.updateSavedness();
+            this.updateTabBadge();
+        },
+
+        updateTabBadge: function() {
+            var newDocuments = this.model.get('newDocuments');
+
+            if(newDocuments  > 0) {
+                this.$('.new-document-label')
+                    .removeClass('hide')
+                    .text(newDocuments);
+            } else {
+                this.$('.new-document-label')
+                    .addClass('hide');
+            }
         },
 
         updateSavedness: function() {
