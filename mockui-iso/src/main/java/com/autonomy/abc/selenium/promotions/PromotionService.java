@@ -63,11 +63,7 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
     }
 
     private void waitForPromotionToBeCreated() {
-        try {
-            getElementFactory().getSearchPage();
-        } catch (final TimeoutException e) {
-            getElementFactory().getSearchPage();
-        }
+        getElementFactory().getSearchPage();
     }
 
     public PromotionsPage delete(Promotion promotion) {

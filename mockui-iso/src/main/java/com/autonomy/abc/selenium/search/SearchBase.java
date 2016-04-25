@@ -299,7 +299,7 @@ public abstract class SearchBase extends SOPageBase implements
 
 	/* waits */
 	public void waitForSearchLoadIndicatorToDisappear() {
-		waitForSearchLoadIndicatorToDisappear(60);
+		waitForSearchLoadIndicatorToDisappear(30);
 	}
 
 	public void waitForSearchLoadIndicatorToDisappear(int seconds) {
