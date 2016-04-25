@@ -299,11 +299,13 @@ public abstract class SearchBase extends SOPageBase implements
 
 	/* waits */
 	public void waitForSearchLoadIndicatorToDisappear() {
-		waitForSearchLoadIndicatorToDisappear(30);
+		waitForSearchLoadIndicatorToDisappear(60);
 	}
 
 	public void waitForSearchLoadIndicatorToDisappear(int seconds) {
-		new WebDriverWait(getDriver(), seconds).withMessage("Search results didn't load").until(Predicates.invisibilityOfAllElementsLocated(By.className("fa-spin")));
+		new WebDriverWait(getDriver(), seconds)
+				.withMessage("loading search results")
+				.until(Predicates.invisibilityOfAllElementsLocated(By.className("fa-spin")));
 	}
 
 	public void waitForSynonymsLoadingIndicatorToDisappear(){
