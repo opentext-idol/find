@@ -10,6 +10,7 @@ define([
     'find/app/page/search/results/result-rendering/result-renderer',
     'find/app/page/search/results/result-rendering/result-renderer-config',
     'find/app/util/view-server-client',
+    'find/app/util/events',
     'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/search/results/results-container.html',
@@ -18,7 +19,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            ResultRenderer, resultsRendererConfig, viewClient, addLinksToSummary, template, resultsTemplate,
+            ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, template, resultsTemplate,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     function checkScroll() {
@@ -36,6 +37,8 @@ define([
             this.maxResults += SCROLL_INCREMENT;
 
             this.loadData(true);
+
+            events().page(this.maxResults / SCROLL_INCREMENT);
         }
     }
 
@@ -329,6 +332,9 @@ define([
                     data: parametricRequestData,
                     reset: false
                 }, this);
+
+                // we're not scrolling, so should be a new search
+                events().reset(requestData.text);
             }
         },
 
