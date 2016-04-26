@@ -53,7 +53,7 @@ public abstract class FindController {
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    private AuthenticationInformationRetriever<? extends Principal> authenticationInformationRetriever;
+    private AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever;
 
     protected abstract Map<String, Object> getPublicConfig();
 

@@ -17,13 +17,13 @@ public class IdolLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
     private final String configUrl;
     private final String applicationUrl;
     private final String roleDefault;
-    private final AuthenticationInformationRetriever<?> authenticationInformationRetriever;
+    private final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
 
     public IdolLoginSuccessHandler(
             final String configUrl,
             final String applicationUrl,
             final String roleDefault,
-            final AuthenticationInformationRetriever<?> authenticationInformationRetriever
+            final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever
     ) {
         this.configUrl = configUrl;
         this.applicationUrl = applicationUrl;

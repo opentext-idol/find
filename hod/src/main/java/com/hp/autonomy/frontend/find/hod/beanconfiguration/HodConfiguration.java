@@ -24,7 +24,6 @@ import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
-import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
 import org.apache.http.HttpHost;
@@ -93,11 +92,6 @@ public class HodConfiguration {
                 .setHttpClient(httpClient)
                 .setObjectMapper(hodSearchResultObjectMapper)
                 .setTokenRepository(tokenRepository);
-    }
-
-    @Bean
-    public TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService() {
-        return new SpringSecurityTokenProxyService();
     }
 
     @Bean

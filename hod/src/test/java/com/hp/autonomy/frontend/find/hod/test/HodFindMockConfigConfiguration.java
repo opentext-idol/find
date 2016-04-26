@@ -9,6 +9,7 @@ import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HsodConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.IodConfig;
+import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
 import com.hp.autonomy.searchcomponents.hod.test.HodTestConfiguration;
@@ -38,9 +39,7 @@ public class HodFindMockConfigConfiguration {
                 .build();
 
         final IodConfig iodConfig = new IodConfig.Builder()
-                .setApiKey("")
-                .setApplication("")
-                .setDomain("")
+                .setApiKey(new ApiKey("mock-api-key"))
                 .setActiveIndexes(Collections.<ResourceIdentifier>emptyList())
                 .setPublicIndexesEnabled(true)
                 .build();
