@@ -33,7 +33,5 @@ public abstract class FindEvent implements Event {
         return EVENT;
     }
 
-    @XmlElement
-    public abstract String getType();
 
 }

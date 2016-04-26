@@ -5,18 +5,25 @@
 
 package com.hp.autonomy.frontend.find.core.stats;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@JsonTypeName(PageEvent.TYPE)
 public class PageEvent extends FindEvent {
 
-    private static final String TYPE = "page";
+    static final String TYPE = "page";
 
     private final int page;
 
-    public PageEvent(final String search, final String username, final int page) {
+    public PageEvent(
+        @JsonProperty("search") final String search,
+        @JsonProperty("username") final String username,
+        @JsonProperty("page") final int page
+    ) {
         super(search, username);
         this.page = page;
     }

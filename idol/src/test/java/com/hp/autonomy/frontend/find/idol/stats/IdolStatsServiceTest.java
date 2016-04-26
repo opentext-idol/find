@@ -139,5 +139,10 @@ public class IdolStatsServiceTest {
     private static class SimpleEvent implements Event {
         private final String username;
         private final long timestamp;
+
+        @Override
+        public String getType() {
+            return "simple";
+        }
     }
 }

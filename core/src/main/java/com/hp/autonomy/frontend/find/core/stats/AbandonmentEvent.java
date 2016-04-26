@@ -5,16 +5,23 @@
 
 package com.hp.autonomy.frontend.find.core.stats;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@JsonTypeName(AbandonmentEvent.TYPE)
 public class AbandonmentEvent extends ClickEvent {
 
-    private static final String TYPE = "abandonment";
+    static final String TYPE = "abandonment";
 
-    public AbandonmentEvent(final String search, final String username, final ClickType clickType) {
+    public AbandonmentEvent(
+        @JsonProperty("search") final String search,
+        @JsonProperty("username") final String username,
+        @JsonProperty("click-type") final ClickType clickType
+    ) {
         super(search, username, clickType);
     }
 
