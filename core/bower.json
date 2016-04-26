@@ -46,7 +46,7 @@
     "moment": "2.10.3",
     "eonasdan-bootstrap-datetimepicker": "4.14.30",
     "hp-autonomy-hod-sso-js": "0.5.0",
-    "hp-autonomy-js-databases-view": "0.5.0",
+    "hp-autonomy-js-databases-view": "0.5.1",
     "hp-autonomy-about-page": "0.1.0"
   },
   "devDependencies": {
