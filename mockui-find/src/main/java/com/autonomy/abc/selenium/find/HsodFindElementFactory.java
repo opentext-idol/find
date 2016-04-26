@@ -19,6 +19,7 @@ public class HsodFindElementFactory extends FindElementFactory {
         return loadPage(LoginPage.class);
     }
 
+    @Override
     public FindTopNavBar getTopNavBar() {
         return new FindTopNavBar(getDriver());
     }
@@ -28,14 +29,17 @@ public class HsodFindElementFactory extends FindElementFactory {
         return getTopNavBar();
     }
 
+    @Override
     public FindPage getFindPage() {
         return loadPage(FindPage.class);
     }
 
+    @Override
     public FindResultsPage getResultsPage() {
         return getFindPage().getResultsPage();
     }
 
+    @Override
     public SimilarDocumentsView getSimilarDocumentsView() {
         return loadPage(SimilarDocumentsView.class);
     }
