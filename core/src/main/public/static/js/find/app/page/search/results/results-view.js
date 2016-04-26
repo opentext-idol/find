@@ -122,7 +122,7 @@ define([
                 documentsCollection: this.documentsCollection
             });
 
-            this.listenTo(this.queryModel, 'change', this.refreshResults);
+            this.listenTo(this.queryModel, 'change refresh', this.refreshResults);
 
             this.checkScroll = checkScroll.bind(this);
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);

@@ -24,9 +24,11 @@ define([
                 var currentQueryModel = this.savedSearchCollection.get(currentModelCid);
                 this.model.set('selectedSearchCid', currentModelCid);
 
-                currentQueryModel.set({newDocuments: 0});
-                //TODO: rerun the search
+                if (currentQueryModel.get('newDocuments') !== 0) {
+                    currentQueryModel.trigger('refresh');
+                }
 
+                currentQueryModel.set({newDocuments: 0});
             },
             'click .start-new-search': function() {
                 this.trigger('startNewSearch');

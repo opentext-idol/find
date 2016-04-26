@@ -69,6 +69,10 @@ define([
                 this.queryState.selectedParametricValues.reset();
             });
 
+            this.listenTo(this.savedSearchModel, 'refresh', function() {
+                this.queryModel.trigger('refresh');
+            });
+
             // There are 2 conditions where we want to reset the date we last fetched new docs on the date filter model
 
             // Either:
@@ -200,6 +204,7 @@ define([
             });
 
             addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchData);
+            this.listenTo(this.queryModel, 'refresh', this.fetchData);
             this.fetchData();
         },
 
