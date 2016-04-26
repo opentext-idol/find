@@ -20,7 +20,7 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
     private WebElement inputContainer;
     private FormInput input;
 
-    FindTopNavBar(WebDriver driver) {
+    public FindTopNavBar(WebDriver driver) {
         this.driver = driver;
         this.header = driver.findElement(By.className("header"));
         this.inputContainer = driver.findElement(By.className("input-view-container"));
