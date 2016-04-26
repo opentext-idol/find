@@ -2,21 +2,19 @@ package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.find.application.FindElementFactory;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
-import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
 public class HsodFindElementFactory extends FindElementFactory {
     HsodFindElementFactory(WebDriver driver) {
-        super(driver, new PageMapper<>(Page.class));
+        super(driver, null);
     }
 
     @Override
     public LoginPage getLoginPage() {
-        return loadPage(LoginPage.class);
+        return new HSOLoginPage(getDriver(), new FindHasLoggedIn(getDriver()));
     }
 
     @Override
@@ -31,7 +29,7 @@ public class HsodFindElementFactory extends FindElementFactory {
 
     @Override
     public FindPage getFindPage() {
-        return loadPage(FindPage.class);
+        return new FindPage.Factory().create(getDriver());
     }
 
     @Override
@@ -41,34 +39,11 @@ public class HsodFindElementFactory extends FindElementFactory {
 
     @Override
     public SimilarDocumentsView getSimilarDocumentsView() {
-        return loadPage(SimilarDocumentsView.class);
+        return new SimilarDocumentsView.Factory().create(getDriver());
     }
 
-    private enum Page implements PageMapper.Page {
-        LOGIN(new ParametrizedFactory<WebDriver, HSOLoginPage>() {
-            @Override
-            public HSOLoginPage create(WebDriver context) {
-                return new HSOLoginPage(context, new FindHasLoggedIn(context));
-            }
-        }, HSOLoginPage.class),
-        MAIN(new FindPage.Factory(), FindPage.class),
-        SIMILAR_DOCUMENTS(new SimilarDocumentsView.Factory(), SimilarDocumentsView.class);
-
-        private final Class<? extends AppPage> pageType;
-        private ParametrizedFactory<WebDriver, ? extends AppPage> factory;
-
-        <T extends AppPage> Page(ParametrizedFactory<WebDriver, ? extends T> factory, Class<T> type) {
-            pageType = type;
-            this.factory = factory;
-        }
-
-        @Override
-        public Class<?> getPageType() {
-            return pageType;
-        }
-
-        public Object loadAsObject(WebDriver driver) {
-            return this.factory.create(driver);
-        }
+    @Override
+    public <T extends AppPage> T loadPage(Class<T> type) {
+        throw new UnsupportedOperationException("loadPage does not make sense for a single page application");
     }
 }
