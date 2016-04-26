@@ -1,0 +1,16 @@
+package com.autonomy.abc.selenium.find.application;
+
+import com.autonomy.abc.selenium.find.login.IdolFindLoginPage;
+import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import org.openqa.selenium.WebDriver;
+
+public class IdolFindElementFactory extends FindElementFactory {
+    IdolFindElementFactory(WebDriver driver) {
+        super(driver);
+    }
+
+    @Override
+    public LoginPage getLoginPage() {
+        return new IdolFindLoginPage(getDriver());
+    }
+}
