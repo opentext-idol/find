@@ -1,7 +1,9 @@
 package com.autonomy.abc.selenium.find.application;
 
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.HsodFind;
 import com.hp.autonomy.frontend.selenium.application.Application;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 
 public abstract class FindApplication<T extends FindElementFactory> implements Application<T> {
@@ -22,5 +24,16 @@ public abstract class FindApplication<T extends FindElementFactory> implements A
     @Override
     public String getName() {
         return "Find";
+    }
+
+    public static FindApplication<?> ofType(ApplicationType type) {
+        switch (type) {
+            case HOSTED:
+                return new HsodFind();
+            case ON_PREM:
+                return new IdolFind();
+            default:
+                throw new IllegalStateException("Unsupported app type: " + type);
+        }
     }
 }
