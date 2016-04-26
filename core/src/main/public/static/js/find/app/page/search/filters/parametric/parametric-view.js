@@ -73,13 +73,8 @@ define([
                 this.model.set('empty', options.parametricCollection.isEmpty());
             });
 
-            this.displayCollection = new DisplayCollection([], {
-                parametricCollection: options.parametricCollection,
-                selectedParametricValues: this.selectedParametricValues
-            });
-
             this.fieldNamesListView = new ListView({
-                collection: this.displayCollection,
+                collection: options.displayCollection,
                 ItemView: FieldView
             });
         },

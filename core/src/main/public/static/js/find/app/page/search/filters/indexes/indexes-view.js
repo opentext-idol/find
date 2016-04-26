@@ -77,6 +77,8 @@ define([
                 databasesCollection: options.indexesCollection,
                 emptyMessage: i18n['search.indexes.empty'],
                 selectedDatabasesCollection: options.selectedDatabasesCollection,
+                filterModel: options.filterModel,
+                visibleIndexesCallback: options.visibleIndexesCallback,
                 topLevelDisplayName: i18n['search.indexes.all'],
                 childCategories: this.getIndexCategories(),
                 listViewOptions: {
