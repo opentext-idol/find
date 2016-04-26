@@ -1,10 +1,10 @@
 package com.autonomy.abc.selenium.find;
 
-import com.hp.autonomy.frontend.selenium.application.Application;
+import com.autonomy.abc.selenium.find.application.FindApplication;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.control.Window;
 
-public class HsodFind implements Application<HsodFindElementFactory> {
+public class HsodFind extends FindApplication<HsodFindElementFactory> {
     private Window window;
     private HsodFindElementFactory factory;
     private LoginService loginService;

@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
-import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
+import com.autonomy.abc.selenium.find.application.FindElementFactory;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.application.PageMapper;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
@@ -9,7 +9,7 @@ import com.hp.autonomy.frontend.selenium.util.AppPage;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
-public class HsodFindElementFactory extends ElementFactoryBase {
+public class HsodFindElementFactory extends FindElementFactory {
     HsodFindElementFactory(WebDriver driver) {
         super(driver, new PageMapper<>(Page.class));
     }
