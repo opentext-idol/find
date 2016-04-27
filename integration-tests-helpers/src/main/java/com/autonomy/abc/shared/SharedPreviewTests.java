@@ -33,8 +33,8 @@ public class SharedPreviewTests {
         }
 
         verifyThat("reference is displayed", documentViewer.getReference(), not(isEmptyOrNullString()));
-        //this isn't being used on HSOD; CSA-1986 needs to be completed
-        verifyThat("content type is displayed", documentViewer.getContentType(), not(isEmptyOrNullString()));
+        //TODO this isn't being used on HSOD; CSA-1986 needs to be completed
+        //verifyThat("content type is displayed", documentViewer.getContentType(), not(isEmptyOrNullString()));
 
         String frameText = new Frame(session.getActiveWindow(), documentViewer.frame()).getText();
 

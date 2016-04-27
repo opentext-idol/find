@@ -128,10 +128,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
 
     private Date beginDateFilterTest() {
         // not all indexes have times configured
-        searchPage = searchService.search(new Query("Dog")
-                .withFilter(new IndexFilter("news_eng"))
-                .withFilter(new FieldTextFilter("EMPTY{}:Date"))
-        );
+        searchPage = searchService.search(new Query("Dog").withFilter(new IndexFilter("news_eng")));
         Date date = searchPage.getSearchResult(1).getDate();
         assumeThat("test requires first search result to have a date", date, notNullValue());
         LOGGER.info("First Result: " + searchPage.getSearchResult(1).getTitleString() + " " + date);

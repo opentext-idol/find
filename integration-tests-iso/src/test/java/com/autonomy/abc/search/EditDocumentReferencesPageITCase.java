@@ -14,6 +14,7 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
@@ -190,6 +191,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
         verifyThat(editReferencesPage.getCurrentPageNumber(), is(1));
         editReferencesPage.addDocToBucket(5);
         editReferencesPage.addDocToBucket(6);
+        DriverUtil.scrollIntoView(getDriver(), editReferencesPage.cancelButton());
         editReferencesPage.cancelButton().click();
 
         verifyThat(promotionsDetailPage.getPromotedTitles(), hasSize(1));
@@ -231,8 +233,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
     @Test
     @KnownBug("CCUK-3710")
     public void testViewFromBucketAndFromSearchResults() throws InterruptedException {
-        setUpPromotion("apple", "potato", 35);
-
+        setUpPromotion("apple", "potato", 7);
         if (verifyThat(editReferencesPage.getBucketTitles(), not(empty()))) {
             for (int i = 0; i < 5; i++) {
                 final String docTitle = editReferencesPage.getBucketTitles().get(i);
@@ -259,6 +260,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
         for (int i = 1; i < 5; i++) {
             editReferencesPage.addDocToBucket(i);
             final String docTitle = editReferencesPage.getSearchResult(i).getTitleString();
+            DriverUtil.scrollIntoView(getDriver(), editReferencesPage.promotionBucketElementByTitle(docTitle));
             editReferencesPage.promotionBucketElementByTitle(docTitle).click();
             checkDocumentViewable(docTitle);
         }
@@ -286,6 +288,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
         editReferencesPage.addDocToBucket(6);
         final String newPromotedDoc = editReferencesPage.getSearchResult(6).getTitleString();
 
+        DriverUtil.scrollIntoView(getDriver(), editReferencesPage.saveButton());
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
         verifyThat(getWindow(), urlContains("promotions/detail"));
@@ -331,17 +334,19 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
 
         editReferencesPage.addDocToBucket(5);
         String title = editReferencesPage.getSearchResult(5).getTitleString();
-
+        DriverUtil.scrollIntoView(getDriver(), editReferencesPage.saveButton());
         editReferencesPage.saveButton().click();
 
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 
         List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
-
         verifyThat(promotedTitles, not(hasItem("Unknown Document")));
+
         if (verifyThat(promotedTitles, hasItem(title))) {
             promotionsDetailPage.viewDocument(title);
             SharedPreviewTests.testDocumentPreview(getMainSession(), DocumentViewer.make(getDriver()));
         }
     }
+
+
 }
