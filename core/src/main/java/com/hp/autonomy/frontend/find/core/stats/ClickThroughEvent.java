@@ -5,8 +5,10 @@
 
 package com.hp.autonomy.frontend.find.core.stats;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -21,11 +23,11 @@ public class ClickThroughEvent extends ClickEvent {
 
     public ClickThroughEvent(
         @JsonProperty("search") final String search,
-        @JsonProperty("username") final String username,
         @JsonProperty("click-type") final ClickType clickType,
-        @JsonProperty("position") final int position
+        @JsonProperty("position") final int position,
+        @JacksonInject final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever
     ) {
-        super(search, username, clickType);
+        super(search, clickType, authenticationInformationRetriever);
         this.position = position;
     }
 

@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.stats;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,8 +17,12 @@ public abstract class ClickEvent extends FindEvent {
     @JsonProperty("click-type")
     private final ClickType clickType;
 
-    public ClickEvent(final String search, final String username, final ClickType clickType) {
-        super(search, username);
+    public ClickEvent(
+        final String search,
+        final ClickType clickType,
+        final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever
+    ) {
+        super(search, authenticationInformationRetriever);
 
         this.clickType = clickType;
     }

@@ -8,9 +8,9 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.impl.AciServiceImpl;
-import com.autonomy.aci.client.transport.AciHttpClient;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -29,6 +29,7 @@ import com.hp.autonomy.frontend.find.idol.configuration.IdolAuthenticationMixins
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.user.UserService;
@@ -54,12 +55,20 @@ public class IdolConfiguration {
     @Bean
     @Autowired
     @Primary
-    public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder, final QueryRestrictionsDeserializer<?> queryRestrictionsDeserializer) {
-        return builder
-                .createXmlMapper(false)
-                .mixIn(Authentication.class, IdolAuthenticationMixins.class)
-                .deserializerByType(QueryRestrictions.class, queryRestrictionsDeserializer)
-                .build();
+    public ObjectMapper jacksonObjectMapper(
+        final Jackson2ObjectMapperBuilder builder,
+        final QueryRestrictionsDeserializer<?> queryRestrictionsDeserializer,
+        final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever
+    ) {
+        final ObjectMapper mapper = builder
+            .createXmlMapper(false)
+            .mixIn(Authentication.class, IdolAuthenticationMixins.class)
+            .deserializerByType(QueryRestrictions.class, queryRestrictionsDeserializer)
+            .build();
+
+        mapper.setInjectableValues(new InjectableValues.Std().addValue(AuthenticationInformationRetriever.class, authenticationInformationRetriever));
+
+        return mapper;
     }
 
     @Bean

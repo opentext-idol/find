@@ -16,6 +16,7 @@ import com.hp.autonomy.frontend.find.core.stats.ClickType;
 import com.hp.autonomy.frontend.find.core.stats.Event;
 import com.hp.autonomy.frontend.find.core.stats.PageEvent;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import lombok.Data;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,7 @@ import org.xmlunit.matchers.HasXPathMatcher;
 import javax.xml.transform.Source;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +40,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isIdenticalTo;
 import static org.xmlunit.matchers.EvaluateXPathMatcher.hasXPath;
 
@@ -49,6 +52,9 @@ public class IdolStatsServiceTest {
 
     @Mock
     private AciResponseJaxbProcessorFactory processorFactory;
+
+    @Mock
+    private AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
 
     private IdolStatsService statsService;
 
@@ -75,7 +81,9 @@ public class IdolStatsServiceTest {
 
     @Test
     public void testPageEvent() throws IOException {
-        final Event event = new PageEvent("bears", "Bear Man", 1);
+        when(authenticationInformationRetriever.getPrincipal()).thenReturn(new TestPrincipal("Bear Man"));
+
+        final Event event = new PageEvent("bears", 1, authenticationInformationRetriever);
 
         final String xml = submitEvent(event);
 
@@ -90,7 +98,9 @@ public class IdolStatsServiceTest {
 
     @Test
     public void testAbandonmentEvent() throws IOException {
-        final Event event = new AbandonmentEvent("cats", "Cat Man", ClickType.original);
+        when(authenticationInformationRetriever.getPrincipal()).thenReturn(new TestPrincipal("Cat Man"));
+
+        final Event event = new AbandonmentEvent("cats", ClickType.original, authenticationInformationRetriever);
 
         final String xml = submitEvent(event);
 
@@ -104,7 +114,9 @@ public class IdolStatsServiceTest {
 
     @Test
     public void testClickThroughEvent() throws IOException {
-        final Event event = new ClickThroughEvent("bats", "Batman", ClickType.preview, 1);
+        when(authenticationInformationRetriever.getPrincipal()).thenReturn(new TestPrincipal("Batman"));
+
+        final Event event = new ClickThroughEvent("bats", ClickType.preview, 1, authenticationInformationRetriever);
 
         final String xml = submitEvent(event);
 
@@ -132,6 +144,20 @@ public class IdolStatsServiceTest {
         verify(aciService).executeAction(captor.capture(), Matchers.<Processor<Object>>anyObject());
 
         return captor.getValue().get("data");
+    }
+
+    private static class TestPrincipal implements Principal {
+
+        private final String name;
+
+        private TestPrincipal(final String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
     }
 
     @Data

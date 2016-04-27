@@ -5,8 +5,10 @@
 
 package com.hp.autonomy.frontend.find.core.stats;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,10 +21,10 @@ public class AbandonmentEvent extends ClickEvent {
 
     public AbandonmentEvent(
         @JsonProperty("search") final String search,
-        @JsonProperty("username") final String username,
-        @JsonProperty("click-type") final ClickType clickType
+        @JsonProperty("click-type") final ClickType clickType,
+        @JacksonInject final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever
     ) {
-        super(search, username, clickType);
+        super(search, clickType, authenticationInformationRetriever);
     }
 
     @Override

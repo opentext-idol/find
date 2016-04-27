@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.stats;
 
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +22,9 @@ public abstract class FindEvent implements Event {
     private final String username;
     private final long timestamp;
 
-    public FindEvent(final String search, final String username) {
+    public FindEvent(final String search, final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever) {
         this.search = search;
-        this.username = username;
+        this.username = authenticationInformationRetriever.getPrincipal().getName();
 
         // TODO this might need rethinking for HOD
         timestamp = System.currentTimeMillis() / 1000L;
