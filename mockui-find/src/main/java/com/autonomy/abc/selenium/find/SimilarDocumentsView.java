@@ -107,7 +107,7 @@ public class SimilarDocumentsView implements AppPage {
         findElement(By.cssSelector(".search-results-sort li:nth-child(" + dropdownRow + ")")).click();
     }
 
-    static class Factory implements ParametrizedFactory<WebDriver, SimilarDocumentsView> {
+    public static class Factory implements ParametrizedFactory<WebDriver, SimilarDocumentsView> {
         public SimilarDocumentsView create(WebDriver context) {
             return new SimilarDocumentsView(context);
         }

@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.login;
 
 import com.autonomy.abc.selenium.login.SSOFailureException;
 import com.hp.autonomy.frontend.selenium.login.HasLoggedIn;
@@ -7,10 +7,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-class FindHasLoggedIn implements HasLoggedIn {
+public class FindHasLoggedIn implements HasLoggedIn {
     private WebDriver driver;
 
-    FindHasLoggedIn(WebDriver driver) {
+    public FindHasLoggedIn(WebDriver driver) {
         this.driver = driver;
     }
 

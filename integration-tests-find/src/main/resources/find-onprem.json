@@ -1,0 +1,17 @@
+{
+  "app": {
+    "type": "On Premise",
+    "find": "http://find-dev.hpswlabs.hp.com:8080"
+  },
+  "selenium": {
+    "browsers": ["chrome"],
+    "url": "http://localhost:4444/wd/hub"
+  },
+  "users": {
+    "default": {
+      "role": "Admin",
+      "username": "selenium",
+      "password": "q"
+    }
+  }
+}
