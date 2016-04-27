@@ -6,5 +6,5 @@
 package com.hp.autonomy.frontend.find.core.stats;
 
 public enum ClickType {
-    preview, original;
+    preview, full_preview, original;
 }

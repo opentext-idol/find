@@ -174,6 +174,36 @@
               p:type="CumulativeTopN"
               p:period="600"
               p:dynamic="true"/>
+        <bean class="com.hp.autonomy.searchcomponents.idol.statsserver.Statistic"
+              p:idol="Find"
+              p:name="FindClickthroughFullPreview10Minute"
+              p:type="TopN"
+              p:period="600"
+              p:dynamic="true"/>
+        <bean class="com.hp.autonomy.searchcomponents.idol.statsserver.Statistic"
+              p:idol="Find"
+              p:name="FindClickthroughFullPreview1Hour"
+              p:type="TopN"
+              p:period="3600"
+              p:dynamic="true"/>
+        <bean class="com.hp.autonomy.searchcomponents.idol.statsserver.Statistic"
+              p:idol="Find"
+              p:name="FindClickthroughFullPreview1Day"
+              p:type="TopN"
+              p:period="86400"
+              p:dynamic="true"/>
+        <bean class="com.hp.autonomy.searchcomponents.idol.statsserver.Statistic"
+              p:idol="Find"
+              p:name="FindClickthroughFullPreview1Week"
+              p:type="TopN"
+              p:period="604800"
+              p:dynamic="true"/>
+        <bean class="com.hp.autonomy.searchcomponents.idol.statsserver.Statistic"
+              p:idol="Find"
+              p:name="FindClickthroughFullPreviewLifetime"
+              p:type="CumulativeTopN"
+              p:period="600"
+              p:dynamic="true"/>
     </util:set>
 
 </beans>
