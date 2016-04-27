@@ -73,10 +73,15 @@ define([
                     this.$('.main-results-container').removeClass('selected-document');
                 } else {
                     //enable/choose another preview view
-                    if(this.documentsCollection.get($target.data('cid'))) {
-                        this.trigger('preview', this.documentsCollection.get($target.data('cid')));
+                    var cid = $target.data('cid');
+                    var model = this.documentsCollection.get(cid);
+
+                    if(model) {
+                        this.trigger('preview', model);
+
+                        events().preview(this.documentsCollection.indexOf(model) + 1);
                     } else {
-                        this.trigger('preview', this.promotionsCollection.get($target.data('cid')));
+                        this.trigger('preview', this.promotionsCollection.get(cid));
                     }
 
                     //resetting selected-document class and adding it to the target
