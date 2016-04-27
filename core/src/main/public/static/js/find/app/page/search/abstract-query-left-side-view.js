@@ -61,7 +61,10 @@ define([
                 filterModel: this.filterModel
             });
 
-            this.listenTo(this.parametricDisplayCollection, 'update reset', this.updateEmptyMessage);
+            this.listenTo(this.parametricDisplayCollection, 'update reset', function() {
+                this.updateParametricVisibility();
+                this.updateEmptyMessage();
+            });
 
             this.parametricView = new ParametricView({
                 queryModel: options.queryModel,
@@ -86,6 +89,7 @@ define([
 
             this.listenTo(this.filterModel, 'change', function() {
                 this.updateDatesVisibility();
+                this.updateParametricVisibility();
                 this.updateEmptyMessage();
             });
 
@@ -105,6 +109,7 @@ define([
             this.parametricView.render();
             this.dateViewWrapper.render();
 
+            this.updateParametricVisibility();
             this.updateDatesVisibility();
             this.updateIndexesVisibility();
             this.updateEmptyMessage();
@@ -125,8 +130,11 @@ define([
         updateEmptyMessage: function() {
             var noFiltersMatched = !(this.indexesEmpty && this.hideDates && this.parametricDisplayCollection.length === 0);
 
-            this.parametricView.$el.toggleClass('hide', !noFiltersMatched);
             this.$emptyMessage.toggleClass('hide', noFiltersMatched);
+        },
+
+        updateParametricVisibility: function() {
+            this.parametricView.$el.toggleClass('hide', this.parametricDisplayCollection.length === 0 && Boolean(this.filterModel.get('text')))
         },
 
         updateDatesVisibility: function() {
