@@ -1,0 +1,1 @@
+ALTER TABLE searches ADD min_score INT NOT NULL DEFAULT 0;
