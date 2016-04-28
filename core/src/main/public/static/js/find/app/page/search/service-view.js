@@ -23,12 +23,13 @@ define([
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
+    'find/app/page/search/results/map-results-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
             queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
             ResultsViewSelection, RelatedConceptsView, Collapsible,
-            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, i18n, templateString) {
+            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, i18n, templateString) {
 
     'use strict';
 
@@ -183,6 +184,17 @@ define([
                     }
                 });
             }
+
+            this.mapResultsView = new MapResultsView(_.extend({resultsStep: this.mapViewResultsStep, allowIncrement: this.mapViewAllowIncrement}, subViewArguments));
+            resultsViews.push({
+                content: this.mapResultsView,
+                id: 'map',
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'map',
+                    icon: 'hp-map-view'
+                }
+            });
 
             var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab

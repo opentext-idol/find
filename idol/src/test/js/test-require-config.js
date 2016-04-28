@@ -15,6 +15,7 @@ require.config({
     },
     map: {
         '*': {
+            'find/app/configuration': 'mock/configuration',
             'find/lib/backbone/backbone-extensions': 'backbone',
             'find/idol/app/model/comparison/comparison-model': 'mock/idol/model/comparison/comparison-model'
         }

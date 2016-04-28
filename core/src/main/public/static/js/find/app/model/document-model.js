@@ -6,8 +6,9 @@
 define([
     'backbone',
     'underscore',
-    'moment'
-], function(Backbone, _, moment) {
+    'moment',
+    'find/app/configuration'
+], function(Backbone, _, moment, configuration) {
     
     'use strict';
 
@@ -76,10 +77,28 @@ define([
             response.url = getFieldValue(response.fieldMap.url);
             response.offset = getFieldValue(response.fieldMap.offset);
             response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);
-            response.longitude = getFieldValue(response.fieldMap.longitude);
-            response.latitude = getFieldValue(response.fieldMap.latitude);
             response.sourceType = getFieldValue(response.fieldMap.sourceType);
             response.transcript = getFieldValue(response.fieldMap.transcript);
+
+            if (configuration().map.enabled) {
+                response.locations = _.chain(configuration().map.locationFields)
+                    .filter(function (field) {
+                        var latitude = getFieldValue(response.fieldMap[field.latitudeField]);
+                        var longitude = getFieldValue(response.fieldMap[field.longitudeField]);
+                        return longitude && latitude;
+                    })
+                    .map(function (field) {
+                        var latitude = getFieldValue(response.fieldMap[field.latitudeField]);
+                        var longitude = getFieldValue(response.fieldMap[field.longitudeField]);
+
+                        return {
+                            displayName: field.displayName,
+                            latitude: latitude,
+                            longitude: longitude
+                        }
+                    })
+                    .value()
+            }
 
             response.media = getMediaType(response.contentType);
 

@@ -22,10 +22,6 @@ define([
 
     var always = _.constant(true);
 
-    function inRange(min, max, value) {
-        return value >= min && value <= max;
-    }
-
     return [
         {
             TabContentConstructor: TabContentView.extend({TabSubContentConstructor: MetadataTab}),
@@ -49,9 +45,8 @@ define([
             title: i18n['search.document.detail.tabs.location'],
 
             shown: function(documentModel) {
-                var longitude = documentModel.get('longitude');
-                var latitude = documentModel.get('latitude');
-                return configuration().map.enabled && inRange(-180, 180, longitude) && inRange(-90, 90, latitude);
+                var locations = documentModel.get('locations');                
+                return configuration().map.enabled && locations;
             }
         },
         {

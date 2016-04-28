@@ -39,7 +39,19 @@
     "map": {
         "enabled": false,
         "attribution": null,
-        "tileUrlTemplate": null
+        "initialLocation": {
+            "latitude": 51.5074,
+            "longitude":  0.1278
+        },
+        "tileUrlTemplate": null,
+        "resultsStep": 2500,
+        "locationFields": [
+            {
+                "name": "DefaultLocation",
+                "latitudeField": "latitude",
+                "longitudeField": "longitude"
+            }
+        ]
     },
     "fieldsInfo": {
         "contentType": {

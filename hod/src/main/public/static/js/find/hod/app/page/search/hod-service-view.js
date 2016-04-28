@@ -16,7 +16,9 @@ define([
         ResultsViewAugmentation: ResultsViewAugmentation,
 
         // TODO: Enable sunburst in HOD when IOD-9173 is complete
-        displaySunburst: false
+        displaySunburst: false,
+        mapViewResultsStep: 2500,
+        mapViewAllowIncrement: false
     });
 
 });

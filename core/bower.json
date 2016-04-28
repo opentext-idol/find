@@ -39,6 +39,8 @@
     "hp-autonomy-sunburst": "1.1.1",
     "hp-autonomy-js-parametric-refinement": "0.3.0",
     "leaflet": "0.7.7",
+    "Leaflet.awesome-markers": "^2.0.2",
+    "leaflet.markercluster": "leaflet-0.7",
     "requirejs": "2.1.15",
     "requirejs-text": "2.0.13",
     "requirejs-i18n": "2.0.4",

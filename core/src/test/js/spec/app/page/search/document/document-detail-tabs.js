@@ -39,8 +39,11 @@ define([
                     sourceType: 'news',
                     thumbnail: 'VGhlIGJhc2UgNjQgZW5jb2RlZCB0aHVtYm5haWw=',
                     transcript: 'test transcript',
-                    longitude: 123.5,
-                    latitude: -23,
+                    locations: [{
+                        displayName: 'test',
+                        latitude: 12.5,
+                        longitude: 42.2
+                    }],
                     url: true
                 });
 
@@ -89,10 +92,13 @@ define([
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.transcript')).toBeDefined();
             });
 
-            it('displays the location tab if the longitude and latitude attributes are present and within the required ranges', function() {
+            it('displays the location tab if the locations property is preset', function() {
                 var model = new DocumentModel({
-                    longitude: 123.4,
-                    latitude: -23
+                    locations: [{
+                        displayName: 'test',
+                        latitude: 12.5,
+                        longitude: 42.2
+                    }]
                 });
 
                 var tabs = filterTabs(model);
@@ -100,22 +106,8 @@ define([
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeDefined();
             });
 
-            it('does not display the location tab if only the longitude attribute is present', function() {
-                var model = new DocumentModel({
-                    longitude: 123.4,
-                    latitude: undefined
-                });
-
-                var tabs = filterTabs(model);
-                expect(tabs.length).toBe(3);
-                expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeUndefined();
-            });
-
-            it('does not display the location tab if the latitude is less than -90', function() {
-                var model = new DocumentModel({
-                    longitude: 123.4,
-                    latitude: -123
-                });
+            it('does not display the location tab if the locations property is absent', function() {
+                var model = new DocumentModel({locations: undefined});
 
                 var tabs = filterTabs(model);
                 expect(tabs.length).toBe(3);

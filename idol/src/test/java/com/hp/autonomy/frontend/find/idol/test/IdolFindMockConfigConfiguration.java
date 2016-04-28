@@ -34,7 +34,7 @@ public class IdolFindMockConfigConfiguration {
         // The rest of the fields are mocked in the haven-search-components IdolTestConfiguration class
         final IdolFindConfig config = new IdolFindConfig.Builder()
                 .setLogin(loginConfig)
-                .setMap(new MapConfiguration("", false, ""))
+                .setMap(new MapConfiguration("", false, "", null, 2, null))
                 .setMmap(mmapConfig)
                 .build();
 
