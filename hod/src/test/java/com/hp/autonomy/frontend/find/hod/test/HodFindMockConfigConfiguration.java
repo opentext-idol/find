@@ -13,6 +13,7 @@ import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
 import com.hp.autonomy.searchcomponents.hod.test.HodTestConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Component
+@ConditionalOnProperty(value = "mock.hod.configuration", matchIfMissing = true)
 public class HodFindMockConfigConfiguration {
     @Bean
     @Primary
@@ -49,8 +51,8 @@ public class HodFindMockConfigConfiguration {
                 .setHsod(hsodConfig)
                 .setIod(iodConfig)
                 .build();
-        when(baseConfigFileService.getConfig()).thenReturn(config);
 
+        when(baseConfigFileService.getConfig()).thenReturn(config);
         return baseConfigFileService;
     }
 }

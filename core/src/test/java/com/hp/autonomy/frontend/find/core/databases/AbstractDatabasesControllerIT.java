@@ -11,14 +11,14 @@ import org.springframework.http.MediaType;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public abstract class AbstractDatabasesControllerIT extends AbstractFindIT {
     @Test
     public void noExcludedIndexes() throws Exception {
-        mockMvc.perform(
-                get(DatabasesController.GET_DATABASES_PATH))
+        mockMvc.perform(get(DatabasesController.GET_DATABASES_PATH).with(authentication(userAuth())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", not(empty())));

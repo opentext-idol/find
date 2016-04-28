@@ -10,7 +10,9 @@ import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,10 +27,12 @@ public abstract class AbstractViewControllerIT extends AbstractFindIT {
     public void viewDocument() throws Exception {
         final String reference = mvcIntegrationTestUtils.getValidReference(mockMvc);
 
-        mockMvc.perform(
-                get(ViewController.VIEW_PATH + ViewController.VIEW_DOCUMENT_PATH)
-                        .param(ViewController.REFERENCE_PARAM, reference)
-                        .param(ViewController.DATABASE_PARAM, mvcIntegrationTestUtils.getDatabases()[0]))
+        final MockHttpServletRequestBuilder requestBuilder = get(ViewController.VIEW_PATH + ViewController.VIEW_DOCUMENT_PATH)
+                .param(ViewController.REFERENCE_PARAM, reference)
+                .param(ViewController.DATABASE_PARAM, mvcIntegrationTestUtils.getDatabases()[0])
+                .with(authentication(userAuth()));
+
+        mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.TEXT_HTML));
     }

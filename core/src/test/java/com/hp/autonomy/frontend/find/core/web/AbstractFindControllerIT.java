@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.core.web;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.junit.Test;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,7 +21,7 @@ public abstract class AbstractFindControllerIT extends AbstractFindIT {
 
     @Test
     public void mainPage() throws Exception {
-        mockMvc.perform(get(FindController.APP_PATH))
+        mockMvc.perform(get(FindController.APP_PATH).with(authentication(userAuth())))
                 .andExpect(status().isOk());
     }
 

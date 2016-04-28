@@ -10,7 +10,9 @@ import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerIT;
 import com.hp.autonomy.frontend.find.core.view.ViewController;
 import org.junit.Test;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -18,10 +20,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class IdolViewControllerIT extends AbstractViewControllerIT {
     @Test
     public void viewNonExistentDocument() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = get(ViewController.VIEW_PATH + ViewController.VIEW_DOCUMENT_PATH)
+                .param(ViewController.REFERENCE_PARAM, "bad document")
+                .param(ViewController.DATABASE_PARAM, mvcIntegrationTestUtils.getDatabases()[0])
+                .with(authentication(userAuth()));
+
         mockMvc.perform(
-                get(ViewController.VIEW_PATH + ViewController.VIEW_DOCUMENT_PATH)
-                        .param(ViewController.REFERENCE_PARAM, "bad document")
-                        .param(ViewController.DATABASE_PARAM, mvcIntegrationTestUtils.getDatabases()[0]))
+                requestBuilder)
                 .andExpect(status().isNotFound());
     }
 }

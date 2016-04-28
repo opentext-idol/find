@@ -11,8 +11,10 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.hamcrest.Matchers.empty;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -23,11 +25,13 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
 
     @Test
     public void getParametricValues() throws Exception {
-        mockMvc.perform(
-                get(ParametricValuesController.PARAMETRIC_VALUES_PATH)
-                        .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                        .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                        .param(ParametricValuesController.FIELD_TEXT_PARAM, ""))
+        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_VALUES_PATH)
+                .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
+                .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
+                .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
+                .with(authentication(userAuth()));
+
+        mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.parametricValues", CoreMatchers.not(empty())));
