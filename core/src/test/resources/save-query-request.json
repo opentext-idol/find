@@ -14,5 +14,6 @@
         {"phrase": "animals", "primary": true, "clusterId": 2}
     ],
     "minDate": 1400000000,
-    "maxDate": 1500000000
+    "maxDate": 1500000000,
+    "minScore": 88
 }

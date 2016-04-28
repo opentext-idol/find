@@ -43,6 +43,7 @@ public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsService
                 Arrays.asList(mvcIntegrationTestUtils.getDatabases()),
                 null,
                 null,
+                0,
                 Collections.<String>emptyList(),
                 Collections.<String>emptyList()
         );

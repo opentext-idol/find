@@ -35,7 +35,7 @@ public class ComparisonServiceImpl<S extends Serializable, R extends SearchResul
     }
 
     private String generateDifferenceStateToken(final String firstQueryStateToken, final String secondQueryStateToken) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build("*", "", Collections.<S>emptyList(), null, null, Collections.singletonList(firstQueryStateToken), Collections.singletonList(secondQueryStateToken));
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build("*", "", Collections.<S>emptyList(), null, null, 0, Collections.singletonList(firstQueryStateToken), Collections.singletonList(secondQueryStateToken));
         return documentsService.getStateToken(queryRestrictions, ComparisonController.STATE_TOKEN_MAX_RESULTS);
     }
 
@@ -45,7 +45,7 @@ public class ComparisonServiceImpl<S extends Serializable, R extends SearchResul
             return getEmptyResults();
         }
 
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, "", Collections.<S>emptyList(), null, null, stateMatchIds, stateDontMatchIds);
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, "", Collections.<S>emptyList(), null, null, 0, stateMatchIds, stateDontMatchIds);
         final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
                 .setQueryRestrictions(queryRestrictions)
                 .setStart(resultsStart)

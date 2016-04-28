@@ -59,7 +59,7 @@ public class HodParametricValuesControllerTest extends AbstractParametricValuesC
 
         when(parametricValuesService.getAllParametricValues(argThat(new HasPropertyWithValue<HodParametricRequest>("fieldNames", hasItems("field1", "field2"))))).thenReturn(new HashSet<>(Arrays.asList(parametricResponse, numericResponse)));
 
-        final ParametricValues parametricValues = parametricValuesController.getParametricValues("Some query text", null, Collections.<ResourceIdentifier>emptyList(), null, null, null);
+        final ParametricValues parametricValues = parametricValuesController.getParametricValues("Some query text", null, Collections.<ResourceIdentifier>emptyList(), null, null, 0, null);
         assertThat(parametricValues.getParametricValues(), hasSize(1));
         assertThat(parametricValues.getParametricValues(), hasItem(parametricResponse));
 

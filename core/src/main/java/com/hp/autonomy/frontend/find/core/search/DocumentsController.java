@@ -45,6 +45,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     private static final String MIN_DATE_PARAM = "min_date";
     private static final String MAX_DATE_PARAM = "max_date";
     private static final String HIGHLIGHT_PARAM = "highlight";
+    private static final String MIN_SCORE_PARAM = "min_score";
     static final String REFERENCE_PARAM = "reference";
     static final String AUTO_CORRECT_PARAM = "auto_correct";
     static final String DATABASE_PARAM = "database";
@@ -75,9 +76,10 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
+            @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore,
             @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect
     ) throws E {
-        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, resultsStart, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight, autoCorrect);
+        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, resultsStart, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight, minScore, autoCorrect);
         return documentsService.queryTextIndex(searchRequest);
     }
 
@@ -95,15 +97,16 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
+            @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore,
             @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect
     ) throws E {
-        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, resultsStart, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight, autoCorrect);
+        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, resultsStart, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight, minScore, autoCorrect);
         return documentsService.queryTextIndexForPromotions(searchRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    protected SearchRequest<S> parseRequestParamsToObject(final String text, final int resultsStart, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight, final boolean autoCorrect) {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, fieldText, databases, minDate, maxDate, Collections.<String>emptyList(), Collections.<String>emptyList());
+    protected SearchRequest<S> parseRequestParamsToObject(final String text, final int resultsStart, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight, final Integer minScore, final boolean autoCorrect) {
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, fieldText, databases, minDate, maxDate, minScore, Collections.<String>emptyList(), Collections.<String>emptyList());
         return new SearchRequest.Builder<S>()
                 .setQueryRestrictions(queryRestrictions)
                 .setStart(resultsStart)
@@ -129,7 +132,8 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
             @RequestParam(value = SORT_PARAM, required = false) final String sort,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
-            @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight
+            @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
+            @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore
     ) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(
                 null,
@@ -137,6 +141,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
                 databases != null ? databases : Collections.<S>emptyList(),
                 minDate,
                 maxDate,
+                minScore,
                 Collections.<String>emptyList(),
                 Collections.<String>emptyList()
         );

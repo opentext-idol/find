@@ -97,6 +97,7 @@ public class SavedSnapshotController {
                 .setFieldText(snapshot.toFieldText())
                 .setMaxDate(snapshot.getMaxDate())
                 .setMinDate(snapshot.getMinDate())
+                .setMinScore(snapshot.getMinScore())
                 .build();
 
         return documentsService.getStateTokenAndResultCount(restrictions, STATE_TOKEN_MAX_RESULTS);

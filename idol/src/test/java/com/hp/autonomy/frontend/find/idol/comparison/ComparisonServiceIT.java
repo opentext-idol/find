@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class ComparisonServiceIT extends AbstractFindIT {
     private final ObjectMapper mapper = new ObjectMapper();
-    private final QueryRestrictions<String> queryRestrictions = new IdolQueryRestrictionsBuilder().build("*", "", Collections.<String>emptyList(), null, null, Collections.<String>emptyList(), Collections.<String>emptyList());
+    private final QueryRestrictions<String> queryRestrictions = new IdolQueryRestrictionsBuilder().build("*", "", Collections.<String>emptyList(), null, null, 0, Collections.<String>emptyList(), Collections.<String>emptyList());
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired

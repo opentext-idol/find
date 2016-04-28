@@ -86,6 +86,7 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
                     convertEmbeddableIndexes(savedQuery.getIndexes()),
                     savedQuery.getDateNewDocsLastFetched(),
                     null,
+                    savedQuery.getMinScore(),
                     Collections.<String>emptyList(),
                     Collections.<String>emptyList());
             final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
