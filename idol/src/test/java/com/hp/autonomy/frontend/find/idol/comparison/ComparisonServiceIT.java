@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.Collections;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -55,9 +57,12 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(userAuth()));
+
+        mockMvc.perform(requestBuilder)
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                     .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", isEmptyOrNullString()))
@@ -71,9 +76,12 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
-        mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(userAuth()));
+
+        mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", not(isEmptyOrNullString())))
@@ -87,9 +95,12 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondRestrictions(queryRestrictions)
                 .build();
 
-        mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(userAuth()));
+
+        mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", isEmptyOrNullString()))
@@ -103,9 +114,12 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondRestrictions(queryRestrictions)
                 .build();
 
-        mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(userAuth()));
+
+        mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", isEmptyOrNullString()))
@@ -117,7 +131,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
         final String[] stateMatchIds = {sixDocStateToken};
         final String[] stateDontMatchIds = {twoDocStateToken};
 
-        mockMvc.perform(get(ComparisonController.BASE_PATH + '/' + ComparisonController.RESULTS_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = get(ComparisonController.BASE_PATH + '/' + ComparisonController.RESULTS_PATH + '/')
                 .param(ComparisonController.STATE_MATCH_PARAM, stateMatchIds)
                 .param(ComparisonController.STATE_DONT_MATCH_PARAM, stateDontMatchIds)
                 .param(ComparisonController.RESULTS_START_PARAM, "1")
@@ -125,7 +139,10 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .param(ComparisonController.SUMMARY_PARAM, "context")
                 .param(ComparisonController.SORT_PARAM, "relevance")
                 .param(ComparisonController.HIGHLIGHT_PARAM, "false")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(userAuth()));
+
+        mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documents", hasSize(4)));

@@ -10,7 +10,7 @@ import org.junit.Before;
 
 import java.net.MalformedURLException;
 
-public class IdolErrorControllerTest extends AbstractErrorControllerTest {
+public class IdolErrorControllerTest extends AbstractErrorControllerTest<IdolErrorController> {
     @Override
     @Before
     public void setUp() throws MalformedURLException {

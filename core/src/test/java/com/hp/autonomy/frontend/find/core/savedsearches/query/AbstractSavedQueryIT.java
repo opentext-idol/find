@@ -25,6 +25,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -41,11 +42,13 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.isA;
 import static org.junit.Assert.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public abstract class AbstractSavedQueryIT extends AbstractFindIT {
-    private static final TypeReference<Set<SavedQuery>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedQuery>>() {};
+    private static final TypeReference<Set<SavedQuery>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedQuery>>() {
+    };
 
     private static final String TITLE = "Any old saved search";
     private static final String QUERY_TEXT = "orange";
@@ -106,9 +109,12 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .setConceptClusterPhrases(conceptClusterPhrases)
                 .build();
 
-        mockMvc.perform(put(SavedQueryController.PATH + '/' + createdEntity.getId())
+        final MockHttpServletRequestBuilder requestBuilder = put(SavedQueryController.PATH + '/' + createdEntity.getId())
+                .with(authentication(userAuth()))
                 .content(mapper.writeValueAsString(updatedQuery))
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", is(createdEntity.getId().intValue())))
@@ -126,9 +132,12 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
         final byte[] requestBytes = IOUtils.toByteArray(saveQueryRequestResource.getInputStream());
 
-        final MvcResult createResult = mockMvc.perform(post(SavedQueryController.PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(SavedQueryController.PATH + '/')
                 .content(requestBytes)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(userAuth()));
+
+        final MvcResult createResult = mockMvc.perform(requestBuilder)
                 .andReturn();
 
         final JsonNode responseTree = mapper.readTree(createResult.getResponse().getContentAsString());
@@ -163,9 +172,11 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     public void deleteById() throws Exception {
         final SavedQuery createdEntity = createAndParseSavedQuery(getBaseSavedQuery());
 
-        mockMvc.perform(delete(SavedQueryController.PATH + '/' + createdEntity.getId())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        final MockHttpServletRequestBuilder requestBuilder = delete(SavedQueryController.PATH + '/' + createdEntity.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(userAuth()));
+
+        mockMvc.perform(requestBuilder).andExpect(status().isOk());
 
         final Set<SavedQuery> queries = listAndParseSavedQueries();
         assertThat(queries, is(empty()));
@@ -250,21 +261,24 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final SavedQuery savedQuery2 = createAndParseSavedQuery(saveRequest2);
         final long id2 = savedQuery2.getId();
 
-        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id1))
+        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id1).with(authentication(userAuth())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", is(true)));
 
-        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id2))
+        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id2).with(authentication(userAuth())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", is(false))); // likely to work though not full-proof
     }
 
     private ResultActions createSavedQuery(final SavedQuery savedQuery) throws Exception {
-        return mockMvc.perform(post(SavedQueryController.PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(SavedQueryController.PATH + '/')
                 .content(mapper.writeValueAsString(savedQuery))
-                .contentType(MediaType.APPLICATION_JSON));
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(userAuth()));
+
+        return mockMvc.perform(requestBuilder);
     }
 
     private SavedQuery createAndParseSavedQuery(final SavedQuery savedQuery) throws Exception {
@@ -274,17 +288,18 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     }
 
     private SavedQuery updateAndParseSavedQuery(final SavedQuery update) throws Exception {
-        final MvcResult mvcResult = mockMvc.perform(put(SavedQueryController.PATH + '/' + update.getId())
+        final MockHttpServletRequestBuilder requestBuilder = put(SavedQueryController.PATH + '/' + update.getId())
                 .content(mapper.writeValueAsString(update))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(userAuth()));
 
+        final MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
         final String response = mvcResult.getResponse().getContentAsString();
         return mapper.readValue(response, SavedQuery.class);
     }
 
     private ResultActions listSavedQueries() throws Exception {
-        return mockMvc.perform(get(SavedQueryController.PATH));
+        return mockMvc.perform(get(SavedQueryController.PATH).with(authentication(userAuth())));
     }
 
     private Set<SavedQuery> listAndParseSavedQueries() throws Exception {

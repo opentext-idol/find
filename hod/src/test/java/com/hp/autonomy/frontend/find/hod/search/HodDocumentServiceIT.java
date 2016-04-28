@@ -7,9 +7,8 @@ package com.hp.autonomy.frontend.find.hod.search;
 
 import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentServiceIT;
-import com.hp.autonomy.searchcomponents.hod.test.HodTestConfiguration;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = {HodTestConfiguration.class, HodFindApplication.class})
+@SpringApplicationConfiguration(classes = HodFindApplication.class)
 public class HodDocumentServiceIT extends AbstractDocumentServiceIT {
 }

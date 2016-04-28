@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-import org.apache.http.HttpStatus;
 import org.hamcrest.beans.HasPropertyWithValue;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,26 +18,22 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.net.MalformedURLException;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractErrorControllerTest {
+public abstract class AbstractErrorControllerTest<T extends CustomErrorController> {
     @Mock
     protected ControllerUtils controllerUtils;
 
-    protected CustomErrorController errorController;
-
-    private HttpServletRequest request;
-    private HttpServletResponse response;
+    protected T errorController;
+    protected HttpServletRequest request;
+    protected HttpServletResponse response;
 
     @Before
     public void setUp() throws MalformedURLException {
@@ -52,12 +47,6 @@ public abstract class AbstractErrorControllerTest {
     public void authenticationErrorPage() {
         assertNotNull(errorController.authenticationErrorPage(request, response));
         verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<ErrorModelAndViewInfo>("mainMessageCode", is(CustomErrorController.MESSAGE_CODE_AUTHENTICATION_ERROR_MAIN))));
-    }
-
-    @Test
-    public void clientAuthenticationErrorPage() {
-        assertNotNull(errorController.clientAuthenticationErrorPage(HttpStatus.SC_GONE, request));
-        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<ErrorModelAndViewInfo>("mainMessageCode", is(CustomErrorController.MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_MAIN))));
     }
 
     @Test
