@@ -15,12 +15,14 @@ import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
+import com.hp.autonomy.hod.sso.ConstantAuthoritiesResolver;
 import com.hp.autonomy.hod.sso.HodAuthenticationProvider;
 import com.hp.autonomy.hod.sso.HodTokenLogoutSuccessHandler;
 import com.hp.autonomy.hod.sso.SsoAuthenticationEntryPoint;
 import com.hp.autonomy.hod.sso.SsoAuthenticationFilter;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -31,9 +33,14 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 @Configuration
 @Order(99)
 public class HodSecurity extends WebSecurityConfigurerAdapter {
+    @Value("${hp.find.enableBi}")
+    private boolean enableBi;
 
     @Autowired
     private TokenRepository tokenRepository;
@@ -50,9 +57,17 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+        final Collection<String> roles = new LinkedList<>();
+        roles.add(FindRole.USER.toString());
+
+        // TODO: Remove when we can get group information from HOD (HOD-2420)
+        if (enableBi) {
+            roles.add(FindRole.BI.toString());
+        }
+
         auth.authenticationProvider(new HodAuthenticationProvider(
                 tokenRepository,
-                FindRole.USER.toString(),
+                new ConstantAuthoritiesResolver(roles.toArray(new String[roles.size()])),
                 authenticationService,
                 unboundTokenService,
                 userStoreUsersService,

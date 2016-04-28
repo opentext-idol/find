@@ -10,7 +10,7 @@ define([
 
     return FindBaseCollection.extend({
         model: DocumentModel,
-        url: '../api/public/comparison/results',
+        url: '../api/bi/comparison/results',
 
         parse: function(response) {
             this.totalResults = response.totalResults;

@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping(ComparisonController.BASE_PATH)
 public class ComparisonController<S extends Serializable, R extends SearchResult, E extends Exception> {
-    public static final String BASE_PATH = "/api/public/comparison";
+    public static final String BASE_PATH = "/api/bi/comparison";
     public static final String COMPARE_PATH = "compare";
     public static final String RESULTS_PATH = "results";
 

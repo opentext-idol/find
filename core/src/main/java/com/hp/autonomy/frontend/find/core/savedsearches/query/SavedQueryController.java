@@ -28,7 +28,7 @@ import java.util.Set;
 
 @RequestMapping(SavedQueryController.PATH)
 public abstract class SavedQueryController<S extends Serializable, D extends SearchResult, E extends Exception> {
-    public static final String PATH = "/api/public/saved-query";
+    public static final String PATH = "/api/bi/saved-query";
     static final String NEW_RESULTS_PATH = "/new-results/";
 
     private final SavedSearchService<SavedQuery> service;

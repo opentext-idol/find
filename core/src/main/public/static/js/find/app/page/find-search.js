@@ -238,7 +238,7 @@ define([
                 this.savedSearchScheduleId = setInterval(_.bind(function () {
                     this.savedQueryCollection.fetch({remove:false}).done(_.bind(function () {
                         this.savedQueryCollection.forEach(function (savedQuery) {
-                            $.ajax('../api/public/saved-query/new-results/' + savedQuery.id)
+                            $.ajax('../api/bi/saved-query/new-results/' + savedQuery.id)
                                 .success(function (newResults) {
                                     // TODO: FIND-23
                                 })

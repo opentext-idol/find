@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.core.beanconfiguration;
 public enum FindRole {
     USER,
     ADMIN,
+    BI,
     CONFIG;
 
     @Override

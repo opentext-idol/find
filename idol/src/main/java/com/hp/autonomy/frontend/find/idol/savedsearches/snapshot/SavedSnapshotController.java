@@ -24,7 +24,7 @@ import java.util.Set;
 @RestController
 @RequestMapping(SavedSnapshotController.PATH)
 public class SavedSnapshotController {
-    public static final String PATH = "/api/public/saved-snapshot";
+    public static final String PATH = "/api/bi/saved-snapshot";
 
     private static final Integer STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
 

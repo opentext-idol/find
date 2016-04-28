@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
 
@@ -37,7 +36,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
     private final ObjectMapper mapper = new ObjectMapper();
     private final QueryRestrictions<String> queryRestrictions = new IdolQueryRestrictionsBuilder().build("*", "", Collections.<String>emptyList(), null, null, 0, Collections.<String>emptyList(), Collections.<String>emptyList());
 
-    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaAutowiredMembersInspection"})
     @Autowired
     private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
 
@@ -51,22 +50,38 @@ public class ComparisonServiceIT extends AbstractFindIT {
     }
 
     @Test
+    public void basicUserNotAuthorised() throws Exception {
+        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+                .setFirstQueryStateToken(twoDocStateToken)
+                .setSecondQueryStateToken(sixDocStateToken)
+                .build();
+
+        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+                .content(mapper.writeValueAsString(comparisonRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(userAuth()));
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(403));
+    }
+
+    @Test
     public void compareQueryStateTokens() throws Exception {
         final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
                 .setFirstQueryStateToken(twoDocStateToken)
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(authentication(userAuth()));
+                .with(authentication(biAuth()));
 
         mockMvc.perform(requestBuilder)
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                    .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", isEmptyOrNullString()))
-                    .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", not(isEmptyOrNullString())));
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", isEmptyOrNullString()))
+                .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", not(isEmptyOrNullString())));
     }
 
     @Test
@@ -79,7 +94,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
         final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(authentication(userAuth()));
+                .with(authentication(biAuth()));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -98,7 +113,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
         final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(authentication(userAuth()));
+                .with(authentication(biAuth()));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -117,7 +132,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
         final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(authentication(userAuth()));
+                .with(authentication(biAuth()));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -140,7 +155,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .param(ComparisonController.SORT_PARAM, "relevance")
                 .param(ComparisonController.HIGHLIGHT_PARAM, "false")
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(authentication(userAuth()));
+                .with(authentication(biAuth()));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
