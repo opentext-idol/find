@@ -107,6 +107,7 @@ public class FindHodDocumentService extends HodDocumentsService {
                         goodIndexes,
                         queryRestrictions.getMinDate(),
                         queryRestrictions.getMaxDate(),
+                        queryRestrictions.getMinScore(),
                         queryRestrictions.getStateMatchId(),
                         queryRestrictions.getStateDontMatchId()
                 ));

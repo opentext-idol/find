@@ -142,6 +142,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
         return new SavedSnapshot.Builder()
                 .setTitle("Any old saved search")
                 .setQueryText(QUERY_TEXT)
+                .setMinScore(0)
                 .setIndexes(embeddableIndexes)
                 .build();
     }

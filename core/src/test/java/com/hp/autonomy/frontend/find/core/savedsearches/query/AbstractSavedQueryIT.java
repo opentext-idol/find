@@ -54,6 +54,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     private static final String QUERY_TEXT = "orange";
     private static final String PRIMARY_PHRASE = "manhattan";
     private static final String OTHER_PHRASE = "mid-town";
+    private static final Integer MIN_SCORE = 88;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -87,6 +88,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andExpect(jsonPath("$.id", not(nullValue())))
                 .andExpect(jsonPath("$.title", equalTo(TITLE)))
                 .andExpect(jsonPath("$.queryText", equalTo(QUERY_TEXT)))
+                .andExpect(jsonPath("$.minScore", equalTo(MIN_SCORE)))
                 .andExpect(jsonPath("$.conceptClusterPhrases", hasSize(2)))
                 .andExpect(jsonPath("$.conceptClusterPhrases[*].phrase", containsInAnyOrder(PRIMARY_PHRASE, OTHER_PHRASE)))
                 .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase=='" + PRIMARY_PHRASE + "')].primary", contains(true)))
@@ -101,11 +103,13 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
         final String updatedQueryText = "banana";
         final String updatedPhrase = "jersey";
+        final Integer updatedMinScore = 99;
         final Set<ConceptClusterPhrase> conceptClusterPhrases = new HashSet<>();
         conceptClusterPhrases.add(new ConceptClusterPhrase(updatedPhrase, true, 1));
 
         final SavedQuery updatedQuery = new SavedQuery.Builder()
                 .setQueryText(updatedQueryText)
+                .setMinScore(updatedMinScore)
                 .setConceptClusterPhrases(conceptClusterPhrases)
                 .build();
 
@@ -119,6 +123,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", is(createdEntity.getId().intValue())))
                 .andExpect(jsonPath("$.queryText", equalTo(updatedQueryText)))
+                .andExpect(jsonPath("$.minScore", equalTo(updatedMinScore)))
                 .andExpect(jsonPath("$.conceptClusterPhrases", hasSize(1)))
                 .andExpect(jsonPath("$.conceptClusterPhrases[*].phrase", contains(updatedPhrase)))
                 .andExpect(jsonPath("$.conceptClusterPhrases[?(@.phrase=='" + updatedPhrase + "')].primary", contains(true)))
@@ -192,6 +197,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final SavedQuery inputSavedQuery = new SavedQuery.Builder()
                 .setTitle("title")
                 .setQueryText("*")
+                .setMinScore(0)
                 .build();
 
         final SavedQuery savedQuery = createAndParseSavedQuery(inputSavedQuery);
@@ -210,6 +216,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final SavedQuery savedQueryUpdate = new SavedQuery.Builder()
                 .setId(savedQuery.getId())
                 .setTitle("new title")
+                .setMinScore(0)
                 .build();
 
         final SavedQuery updatedSavedQuery = updateAndParseSavedQuery(savedQueryUpdate);
@@ -224,11 +231,13 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final SavedQuery savedQuery1 = new SavedQuery.Builder()
                 .setTitle("title1")
                 .setQueryText("*")
+                .setMinScore(0)
                 .build();
 
         final SavedQuery savedQuery2 = new SavedQuery.Builder()
                 .setTitle("title2")
                 .setQueryText("*")
+                .setMinScore(0)
                 .build();
 
         createSavedQuery(savedQuery1);
@@ -245,6 +254,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final SavedQuery saveRequest1 = new SavedQuery.Builder()
                 .setTitle("title1")
                 .setQueryText("*")
+                .setMinScore(0)
                 .setIndexes(indexes)
                 .build();
 
@@ -252,6 +262,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .setDateNewDocsLastFetched(DateTime.now())
                 .setTitle("title2")
                 .setQueryText("*")
+                .setMinScore(0)
                 .setIndexes(indexes)
                 .build();
 
@@ -324,6 +335,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         return new SavedQuery.Builder()
                 .setTitle(TITLE)
                 .setQueryText(QUERY_TEXT)
+                .setMinScore(MIN_SCORE)
                 .setConceptClusterPhrases(getBaseConceptClusterPhrases())
                 .build();
     }

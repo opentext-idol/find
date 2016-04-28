@@ -13,6 +13,7 @@ define(['underscore'], function(_) {
                 field_text: queryModel.get('fieldText'),
                 min_date: queryModel.getIsoDate('minDate'),
                 max_date: queryModel.getIsoDate('maxDate'),
+                min_score: queryModel.get('minScore'),
                 summary: 'context',
                 text: queryModel.get('queryText')
             };

@@ -32,6 +32,7 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S
     public static final String FIELD_TEXT_PARAM = "fieldText";
     public static final String MIN_DATE_PARAM = "minDate";
     public static final String MAX_DATE_PARAM = "maxDate";
+    public static final String MIN_SCORE_PARAM = "minScore";
     public static final String STATE_TOKEN_PARAM = "stateTokens";
 
     protected final RelatedConceptsService<Q, S, E> relatedConceptsService;
@@ -52,6 +53,7 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S
             @RequestParam(DATABASES_PARAM) final List<S> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+            @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(
@@ -60,6 +62,7 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S
                 databases,
                 minDate,
                 maxDate,
+                minScore,
                 stateTokens == null ? Collections.<String>emptyList() : stateTokens,
                 Collections.<String>emptyList()
         );

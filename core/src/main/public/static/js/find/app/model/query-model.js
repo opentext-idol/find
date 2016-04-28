@@ -35,6 +35,7 @@ define([
             fieldText: null,
             minDate: undefined,
             maxDate: undefined,
+            minScore: 0,
             sort: Sort.relevance,
             stateTokens: []
         },
@@ -54,6 +55,10 @@ define([
                 this.set(this.queryState.datesFilterModel.toQueryModelAttributes());
             });
 
+            this.listenTo(this.queryState.minScoreModel, 'change', function() {
+                this.set('minScore', this.queryState.minScoreModel.get('minScore'));
+            });
+
             this.listenTo(this.queryState.selectedIndexes, 'update reset', _.debounce(_.bind(function() {
                 this.set('indexes', collectionBuildIndexes(this.queryState.selectedIndexes));
             }, this), DEBOUNCE_WAIT_MILLISECONDS));
@@ -67,6 +72,7 @@ define([
 
             this.set(_.extend({
                 queryText: this.queryState.queryTextModel.makeQueryText(),
+                minScore: this.queryState.minScoreModel.get('minScore'),
                 indexes: collectionBuildIndexes(this.queryState.selectedIndexes),
                 fieldText: fieldTextNode ? fieldTextNode : null
             }, this.queryState.datesFilterModel.toQueryModelAttributes()));

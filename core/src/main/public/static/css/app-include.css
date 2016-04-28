@@ -1537,3 +1537,11 @@ h4.similar-dates-message {
         min-height: 100%;
     }
 }
+
+.precision-slider-block {
+    width: 100%;
+}
+
+.precision-slider-block  > div > .slider{
+    width: 100%;
+}

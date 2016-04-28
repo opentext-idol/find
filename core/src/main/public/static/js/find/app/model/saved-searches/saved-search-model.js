@@ -23,6 +23,7 @@ define([
      * @property {String[][]} relatedConcepts
      * @property {{name: String, domain: String}[]} indexes
      * @property {{field: String, value: String}[]} parametricValues
+     * @property {Integer} minScore
      * @property {Moment} minDate
      * @property {Moment} maxDate
      * @property {Moment} dateModified
@@ -108,7 +109,8 @@ define([
             minDate: null,
             maxDate: null,
             dateRange: null,
-            dateNewDocsLastFetched: null
+            dateNewDocsLastFetched: null,
+            minScore: 0
         },
 
         parse: function(response) {
@@ -155,6 +157,7 @@ define([
                     && this.equalsQueryStateDateFilters(queryState)
                     && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'), arrayEqualityPredicate)
                     && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
+                    && this.get('minScore') === queryState.minScoreModel.get('minScore')
                     && arraysEqual(this.get('parametricValues'), queryState.selectedParametricValues.map(pickFieldAndValue), _.isEqual);
         },
 
@@ -189,6 +192,10 @@ define([
             };
         },
 
+        toMinScoreModelAttributes: function() {
+            return this.pick('minScore')
+        },
+
         toSelectedParametricValues: function() {
             return this.get('parametricValues');
         },
@@ -212,7 +219,8 @@ define([
                 queryText: queryState.queryTextModel.get('inputText'),
                 relatedConcepts: queryState.queryTextModel.get('relatedConcepts'),
                 indexes: indexes,
-                parametricValues: parametricValues
+                parametricValues: parametricValues,
+                minScore: queryState.minScoreModel.get('minScore')
             }, queryState.datesFilterModel.toQueryModelAttributes(), { dateNewDocsLastFetched: moment() });
         }
     });

@@ -44,9 +44,18 @@ public class IdolParametricValuesController extends ParametricValuesController<I
             final List<String> databases,
             final DateTime minDate,
             final DateTime maxDate,
+            final Integer minScore,
             final List<String> stateTokens
     ) throws AciErrorException {
-        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate, stateTokens, Collections.<String>emptyList());
+        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilder.build(
+                queryText,
+                fieldText,
+                databases,
+                minDate,
+                maxDate,
+                minScore,
+                stateTokens,
+                Collections.<String>emptyList());
 
         final IdolParametricRequest parametricRequest = new IdolParametricRequest.Builder()
                 .setFieldNames(Collections.<String>emptyList())
@@ -67,6 +76,7 @@ public class IdolParametricValuesController extends ParametricValuesController<I
             @RequestParam(DATABASES_PARAM) final List<String> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+            @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws AciErrorException, InterruptedException {
         final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilder.build(
@@ -75,6 +85,7 @@ public class IdolParametricValuesController extends ParametricValuesController<I
                 databases,
                 minDate,
                 maxDate,
+                minScore,
                 ensureList(stateTokens),
                 Collections.<String>emptyList()
         );

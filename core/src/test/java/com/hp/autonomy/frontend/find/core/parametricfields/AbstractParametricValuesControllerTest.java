@@ -27,7 +27,7 @@ public abstract class AbstractParametricValuesControllerTest<R extends Parametri
 
     @Test
     public void getParametricValues() throws E {
-        parametricValuesController.getParametricValues("Some query text", null, Collections.<S>emptyList(), null, null, null);
+        parametricValuesController.getParametricValues("Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
         verify(parametricValuesService).getAllParametricValues(Matchers.<R>any());
     }
 }
