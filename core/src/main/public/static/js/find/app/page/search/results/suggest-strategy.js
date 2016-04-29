@@ -6,6 +6,8 @@
 define(['underscore'], function(_) {
 
     return {
+        promotions: _.constant(false),
+
         waitForIndexes: function(queryModel) {
             return _.isEmpty(queryModel.get('indexes'));
         },

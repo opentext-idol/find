@@ -7,6 +7,8 @@ define(['underscore'], function(_) {
     'use strict';
 
     return {
+        promotions: _.constant(true),
+    
         requestParams: function(queryModel) {
             return {
                 indexes: queryModel.get('indexes'),

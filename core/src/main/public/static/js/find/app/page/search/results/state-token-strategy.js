@@ -8,6 +8,8 @@ define(['underscore'], function(_) {
     return {
         waitForIndexes: _.constant(false),
 
+        promotions: _.constant(true),
+
         requestParams: function(queryModel) {
             return {
                 text: queryModel.get('queryText'),
