@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Component
-@ConditionalOnProperty(value = "mock.hod.configuration", matchIfMissing = true)
+@ConditionalOnProperty(value = "mock.configuration", matchIfMissing = true)
 public class HodFindMockConfigConfiguration {
     @Bean
     @Primary
