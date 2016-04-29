@@ -14,6 +14,12 @@ define([
             PAGE: 'page'
         },
 
+        clickTypes: {
+            FULL_PREVIEW: 'full_preview',
+            ORIGINAL: 'original',
+            PREVIEW: 'preview'
+        },
+
         log: function (event) {
             $.ajax('../api/public/stats', {
                 contentType: 'application/json',
