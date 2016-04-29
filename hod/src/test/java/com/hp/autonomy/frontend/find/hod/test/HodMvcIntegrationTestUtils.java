@@ -14,8 +14,9 @@ import com.hp.autonomy.hod.client.token.TokenProxy;
 import com.hp.autonomy.hod.sso.HodApplicationGrantedAuthority;
 import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
-import com.hp.autonomy.searchcomponents.hod.test.HodTestAuthenticationConfiguration;
+import com.hp.autonomy.searchcomponents.hod.test.HodTestConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Component
+@ConditionalOnProperty(value = "mock.configuration", matchIfMissing = true)
 public class HodMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
     private final HodAuthenticationPrincipal testPrincipal;
     private final TokenProxy<EntityType.Application, TokenType.Simple> testTokenProxy;
@@ -53,8 +55,8 @@ public class HodMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
     @Override
     protected Authentication createAuthentication(final Collection<GrantedAuthority> baseAuthorities) {
         final ResourceIdentifier application = new ResourceIdentifier(
-                environment.getProperty(HodTestAuthenticationConfiguration.DOMAIN_PROPERTY),
-                environment.getProperty(HodTestAuthenticationConfiguration.APPLICATION_PROPERTY)
+                environment.getProperty(HodTestConfiguration.DOMAIN_PROPERTY),
+                environment.getProperty(HodTestConfiguration.APPLICATION_PROPERTY)
         );
 
         final Collection<GrantedAuthority> hodAuthorities = new HashSet<>(baseAuthorities);

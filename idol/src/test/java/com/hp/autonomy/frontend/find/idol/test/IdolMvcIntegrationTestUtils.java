@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.test;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Component
+@ConditionalOnProperty(value = "mock.configuration", matchIfMissing = true)
 public class IdolMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
     @Override
     public String[] getDatabases() {
