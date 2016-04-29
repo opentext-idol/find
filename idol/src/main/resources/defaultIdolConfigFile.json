@@ -73,7 +73,7 @@
     "resultsStep": 2500,
     "locationFields": [
       {
-        "name": "DefaultLocation",
+        "displayName": "DefaultLocation",
         "latitudeField": "latitude",
         "longitudeField": "longitude"
       }
