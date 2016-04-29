@@ -7,26 +7,28 @@ define([
     'jquery'
 ], function($) {
 
+    var log = function(event) {
+        $.ajax('../api/public/stats', {
+            contentType: 'application/json',
+            data: JSON.stringify(event),
+            method: 'POST'
+        });
+    };
+
+    var types = {
+        ABANDONMENT: 'abandonment',
+        CLICK_THROUGH: 'clickthrough',
+        PAGE: 'page'
+    };
+
+    var clickTypes = {
+        FULL_PREVIEW: 'full_preview',
+        ORIGINAL: 'original',
+        PREVIEW: 'preview'
+    };
+
     return {
-        types: {
-            ABANDONMENT: 'abandonment',
-            CLICK_THROUGH: 'clickthrough',
-            PAGE: 'page'
-        },
 
-        clickTypes: {
-            FULL_PREVIEW: 'full_preview',
-            ORIGINAL: 'original',
-            PREVIEW: 'preview'
-        },
-
-        log: function (event) {
-            $.ajax('../api/public/stats', {
-                contentType: 'application/json',
-                data: JSON.stringify(event),
-                method: 'POST'
-            });
-        }
     };
 
 });
