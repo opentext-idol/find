@@ -15,8 +15,8 @@ define([
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/page/search/results/results-view-augmentation',
-    'find/app/page/search/results/results-view-container',
-    'find/app/page/search/results/results-view-selection',
+    'find/app/util/results-view-container',
+    'find/app/util/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
@@ -36,7 +36,7 @@ define([
     var template = _.template(templateString);
 
     return Backbone.View.extend({
-        className: 'full-height',
+        className: 'full-height-viewport',
 
         // Can be overridden
         headerControlsHtml: '',
