@@ -12,6 +12,7 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
@@ -48,70 +49,40 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     public void tearDown() {
         if (hasSetUp()) {
             second.activate();
-            second.closeNotifications();
-            deleteAllKeywordsFrom(second);
-            deleteAllPromotionsFrom(second);
+            second.getNavBar().closeNotifications();
+            second.keywordService().deleteAll(KeywordFilter.ALL);
+            second.promotionService().deleteAll();
         }
     }
 
     @Test
     @KnownBug("CSA-1542")
     public void testNotificationsOverTwoWindows() throws InterruptedException {
-        goToKeywordsFrom(first);
-        goToKeywordsFrom(second);
+        first.keywordService().goToKeywords();
+        second.keywordService().goToKeywords();
         notificationsCountsShouldBe(0);
 
-        addSynonymGroupFrom(first, "Animal Beast");
-        goToKeywordsFrom(first);
+        first.keywordService().addSynonymGroup("Animal Beast");
+        first.keywordService().goToKeywords();
         checkFirstNotification();
 
-        deleteSynonymFrom(second, "Animal");
+        second.keywordService().goToKeywords().deleteSynonym("Animal");
         notificationsCountsShouldBe(2);
 
-        first.switchToDashboard();
+        first.switchTo(DashboardBase.class);
         notificationsCountsShouldBe(2);
 
-        setUpPromotionFrom(second);
+        second.promotionService().setUpPromotion(new SpotlightPromotion("wheels"), "cars", 3);
+        new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationAppears());
         notificationsCountsShouldBe(3);
         assertThat(first.mostRecentNotification(), containsString("promotion"));
 
         int notificationsCount = 3;
         for(int i = 0; i < 6; i += 2) {
-            addSynonymGroupFrom(second, i + " " + (i + 1));
-            goToKeywordsFrom(second);
+            second.keywordService().addSynonymGroup(i + " " + (i + 1));
+            second.keywordService().goToKeywords();
             notificationsCountsShouldBe(Math.min(++notificationsCount, 5));
         }
-    }
-
-    private void setUpPromotionFrom(AppWindow inst) {
-        inst.activate();
-        inst.promotionService.setUpPromotion(new SpotlightPromotion("wheels"), "cars", 3);
-        new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationAppears());
-    }
-
-    private void deleteAllPromotionsFrom(AppWindow inst) {
-        inst.activate();
-        inst.promotionService.deleteAll();
-    }
-
-    private void goToKeywordsFrom(AppWindow inst) {
-        inst.activate();
-        inst.keywordService.goToKeywords();
-    }
-
-    private void addSynonymGroupFrom(AppWindow inst, String... synonyms) {
-        inst.activate();
-        inst.keywordService.addSynonymGroup(synonyms);
-    }
-
-    private void deleteSynonymFrom(AppWindow inst, String toDelete) {
-        inst.activate();
-        inst.keywordService.goToKeywords().deleteSynonym(toDelete);
-    }
-
-    private void deleteAllKeywordsFrom(AppWindow inst) {
-        inst.activate();
-        inst.keywordService.deleteAll(KeywordFilter.ALL);
     }
 
     private void notificationsCountsShouldBe(int expected) {
@@ -126,12 +97,12 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         String windowOneNotificationText = first.mostRecentNotification();
         checkNotificationsCountFrom(second, is(1));
         verifyThat(second.mostRecentNotification(), is(windowOneNotificationText));
-        second.closeNotifications();
+        second.getNavBar().closeNotifications();
     }
 
     private void checkNotificationsCountFrom(AppWindow inst, Matcher<Integer> expectation) {
         inst.activate();
-        inst.openNotifications();
+        inst.getNavBar().openNotifications();
         verifyThat(inst.countNotifications(), expectation);
     }
 
@@ -152,16 +123,19 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
             window.activate();
         }
 
-        void switchToDashboard() {
-            app.switchTo(DashboardBase.class);
+        PromotionService<?> promotionService() {
+            activate();
+            return promotionService;
         }
 
-        void openNotifications() {
-            getNavBar().openNotifications();
+        KeywordService keywordService() {
+            activate();
+            return keywordService;
         }
 
-        void closeNotifications() {
-            getNavBar().closeNotifications();
+        void switchTo(Class<? extends AppPage> pageType) {
+            activate();
+            app.switchTo(pageType);
         }
 
         int countNotifications() {
