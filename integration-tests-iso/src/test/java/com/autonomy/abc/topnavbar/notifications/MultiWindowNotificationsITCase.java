@@ -29,10 +29,12 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     private KeywordService keywordService;
     private PromotionService promotionService;
 
+    private AppWindow first;
     private Window mainWindow;
     private TopNavBar topNavBar;
     private NotificationsDropDown notifications;
 
+    private AppWindow second;
     private IsoApplication<?> secondApp;
     private Window secondWindow;
     private TopNavBar topNavBarWindowTwo;
@@ -49,11 +51,13 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
 
         mainWindow = getWindow();
         topNavBar = getElementFactory().getTopNavBar();
+        first = new AppWindow(getApplication(), mainWindow);
 
         secondApp = IsoApplication.ofType(getConfig().getType());
         secondWindow = launchInNewWindow(secondApp);
         secondWindow.activate();
         topNavBarWindowTwo = secondApp.elementFactory().getTopNavBar();
+        second = new AppWindow(secondApp, secondWindow);
     }
 
     @After
@@ -148,5 +152,15 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
 
     private void newBody() {
         topNavBar = getElementFactory().getTopNavBar();
+    }
+
+    private static class AppWindow {
+        private final IsoApplication<?> app;
+        private final Window window;
+
+        AppWindow(IsoApplication<?> app, Window window) {
+            this.app = app;
+            this.window = window;
+        }
     }
 }
