@@ -30,13 +30,11 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     private PromotionService promotionService;
 
     private AppWindow first;
-    private Window mainWindow;
     private TopNavBar topNavBar;
     private NotificationsDropDown notifications;
 
     private AppWindow second;
     private IsoApplication<?> secondApp;
-    private Window secondWindow;
     private TopNavBar topNavBarWindowTwo;
     private NotificationsDropDown notificationsDropDownWindowTwo;
 
@@ -49,21 +47,20 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         keywordService = getApplication().keywordService();
         promotionService = getApplication().promotionService();
 
-        mainWindow = getWindow();
         topNavBar = getElementFactory().getTopNavBar();
-        first = new AppWindow(getApplication(), mainWindow);
+        first = new AppWindow(getApplication(), getWindow());
 
         secondApp = IsoApplication.ofType(getConfig().getType());
-        secondWindow = launchInNewWindow(secondApp);
-        secondWindow.activate();
-        topNavBarWindowTwo = secondApp.elementFactory().getTopNavBar();
+        Window secondWindow = launchInNewWindow(secondApp);
         second = new AppWindow(secondApp, secondWindow);
+        second.activate();
+        topNavBarWindowTwo = secondApp.elementFactory().getTopNavBar();
     }
 
     @After
     public void tearDown() {
         if (hasSetUp()) {
-            secondWindow.activate();
+            second.activate();
             topNavBarWindowTwo.closeNotifications();
             keywordService.deleteAll(KeywordFilter.ALL);
             promotionService.deleteAll();
@@ -73,19 +70,19 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     @Test
     @KnownBug("CSA-1542")
     public void testNotificationsOverTwoWindows() throws InterruptedException {
-        mainWindow.activate();
+        first.activate();
         keywordService.goToKeywords();
         topNavBar.notificationsDropdown();
         notifications = topNavBar.getNotifications();
         assertThat(notifications.countNotifications(), is(0));
 
-        secondWindow.activate();
+        second.activate();
         secondApp.keywordService().goToKeywords();
         topNavBarWindowTwo.notificationsDropdown();
         notificationsDropDownWindowTwo = topNavBarWindowTwo.getNotifications();
         assertThat(notificationsDropDownWindowTwo.countNotifications(), is(0));
 
-        mainWindow.activate();
+        first.activate();
         keywordService.addSynonymGroup("Animal Beast");
         keywordService.goToKeywords();
 
@@ -94,7 +91,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         assertThat(notifications.countNotifications(), is(1));
         String windowOneNotificationText = notifications.notificationNumber(1).getText();
 
-        secondWindow.activate();
+        second.activate();
         assertThat(notificationsDropDownWindowTwo.countNotifications(), is(1));
         assertThat(notificationsDropDownWindowTwo.notificationNumber(1).getText(), is(windowOneNotificationText));
         topNavBarWindowTwo.notificationsDropdown();
@@ -104,7 +101,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         assertThat(notificationsDropDownWindowTwo.countNotifications(), is(2));
         List<String> notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
-        mainWindow.activate();
+        first.activate();
         assertThat(notifications.countNotifications(), is(2));
         assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 
@@ -115,7 +112,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         assertThat(notifications.countNotifications(), is(2));
         assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 
-        secondWindow.activate();
+        second.activate();
 
         promotionService.setUpPromotion(new SpotlightPromotion("wheels"), "cars", 3);
 
@@ -128,7 +125,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
 
         notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
-        mainWindow.activate();
+        first.activate();
 
         notifications = topNavBar.getNotifications();
         assertThat(notifications.countNotifications(), is(3));
@@ -136,7 +133,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
 
         int notificationsCount = 3;
         for(int i = 0; i < 6; i += 2) {
-            secondWindow.activate();
+            second.activate();
             keywordService.addSynonymGroup(i + " " + (i + 1));
             keywordService.goToKeywords();
 
@@ -144,7 +141,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
             verifyThat(notificationsDropDownWindowTwo.countNotifications(), is(Math.min(++notificationsCount, 5)));
             notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
-            mainWindow.activate();
+            first.activate();
             verifyThat(notifications.countNotifications(), is(Math.min(notificationsCount, 5)));
             verifyThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
         }
@@ -161,6 +158,10 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         AppWindow(IsoApplication<?> app, Window window) {
             this.app = app;
             this.window = window;
+        }
+
+        void activate() {
+            window.activate();
         }
     }
 }
