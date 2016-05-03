@@ -12,6 +12,7 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,44 +56,40 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     @KnownBug("CSA-1542")
     public void testNotificationsOverTwoWindows() throws InterruptedException {
         goToKeywordsFrom(first);
-        assertThat(first.countNotifications(), is(0));
+        checkNotificationsCountFrom(first, is(0));
 
         goToKeywordsFrom(second);
-        assertThat(second.countNotifications(), is(0));
+        checkNotificationsCountFrom(second, is(0));
 
         addSynonymGroupFrom(first, "Animal Beast");
         goToKeywordsFrom(first);
 
-        assertThat(first.countNotifications(), is(1));
+        checkNotificationsCountFrom(first, is(1));
         String windowOneNotificationText = first.mostRecentNotification();
 
-        second.activate();
-        assertThat(second.countNotifications(), is(1));
+        checkNotificationsCountFrom(second, is(1));
         assertThat(second.mostRecentNotification(), is(windowOneNotificationText));
         second.closeNotifications();
 
         deleteSynonymFrom(second, "Animal");
 
-        assertThat(second.countNotifications(), is(2));
+        checkNotificationsCountFrom(second, is(2));
         List<String> notificationMessages = second.allNotifications();
 
-        first.activate();
-        assertThat(first.countNotifications(), is(2));
+        checkNotificationsCountFrom(first, is(2));
         assertThat(first.allNotifications(), contains(notificationMessages.toArray()));
 
         first.switchToDashboard();
-        assertThat(first.countNotifications(), is(2));
+        checkNotificationsCountFrom(first, is(2));
         assertThat(first.allNotifications(), contains(notificationMessages.toArray()));
 
         setUpPromotionFrom(second);
-        assertThat(second.countNotifications(), is(3));
+        checkNotificationsCountFrom(second, is(3));
         assertThat(second.mostRecentNotification(), containsString("promotion"));
 
         notificationMessages = second.allNotifications();
 
-        first.activate();
-
-        assertThat(first.countNotifications(), is(3));
+        checkNotificationsCountFrom(first, is(3));
         assertThat(first.allNotifications(), contains(notificationMessages.toArray()));
 
         int notificationsCount = 3;
@@ -100,11 +97,10 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
             addSynonymGroupFrom(second, i + " " + (i + 1));
             goToKeywordsFrom(second);
 
-            verifyThat(second.countNotifications(), is(Math.min(++notificationsCount, 5)));
+            checkNotificationsCountFrom(second, is(Math.min(++notificationsCount, 5)));
             notificationMessages = second.allNotifications();
 
-            first.activate();
-            verifyThat(first.countNotifications(), is(Math.min(notificationsCount, 5)));
+            checkNotificationsCountFrom(first, is(Math.min(notificationsCount, 5)));
             verifyThat(first.allNotifications(), contains(notificationMessages.toArray()));
         }
     }
@@ -140,6 +136,12 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         inst.keywordService.deleteAll(KeywordFilter.ALL);
     }
 
+    private void checkNotificationsCountFrom(AppWindow inst, Matcher<Integer> expectation) {
+        inst.activate();
+        inst.openNotifications();
+        assertThat(inst.countNotifications(), expectation);
+    }
+
     private static class AppWindow {
         private final IsoApplication<?> app;
         private final Window window;
@@ -170,7 +172,6 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         }
 
         int countNotifications() {
-            openNotifications();
             return getNavBar().getNotifications().countNotifications();
         }
 
