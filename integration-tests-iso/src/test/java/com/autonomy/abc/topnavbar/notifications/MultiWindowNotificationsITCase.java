@@ -22,6 +22,7 @@ import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
 import static org.hamcrest.Matchers.*;
 
 public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
@@ -77,11 +78,11 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         List<String> notificationMessages = second.allNotifications();
 
         checkNotificationsCountFrom(first, is(2));
-        assertThat(first.allNotifications(), contains(notificationMessages.toArray()));
+        assertThat(first.allNotifications(), containsItems(notificationMessages));
 
         first.switchToDashboard();
         checkNotificationsCountFrom(first, is(2));
-        assertThat(first.allNotifications(), contains(notificationMessages.toArray()));
+        assertThat(first.allNotifications(), containsItems(notificationMessages));
 
         setUpPromotionFrom(second);
         checkNotificationsCountFrom(second, is(3));
@@ -90,7 +91,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         notificationMessages = second.allNotifications();
 
         checkNotificationsCountFrom(first, is(3));
-        assertThat(first.allNotifications(), contains(notificationMessages.toArray()));
+        assertThat(first.allNotifications(), containsItems(notificationMessages));
 
         int notificationsCount = 3;
         for(int i = 0; i < 6; i += 2) {
@@ -101,7 +102,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
             notificationMessages = second.allNotifications();
 
             checkNotificationsCountFrom(first, is(Math.min(notificationsCount, 5)));
-            verifyThat(first.allNotifications(), contains(notificationMessages.toArray()));
+            verifyThat(first.allNotifications(), containsItems(notificationMessages));
         }
     }
 
