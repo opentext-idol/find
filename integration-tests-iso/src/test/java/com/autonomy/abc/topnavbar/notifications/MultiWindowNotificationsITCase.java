@@ -5,7 +5,6 @@ import com.autonomy.abc.selenium.analytics.DashboardBase;
 import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
-import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
@@ -25,8 +24,6 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.Matchers.*;
 
 public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
-    private KeywordService keywordService;
-
     private AppWindow first;
     private AppWindow second;
 
@@ -36,7 +33,6 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
 
     @Before
     public void setUp() {
-        keywordService = getApplication().keywordService();
 
         first = new AppWindow(getApplication(), getWindow());
 
@@ -50,7 +46,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         if (hasSetUp()) {
             second.activate();
             second.closeNotifications();
-            keywordService.deleteAll(KeywordFilter.ALL);
+            deleteAllKeywordsFrom(second);
             deleteAllPromotionsFrom(second);
         }
     }
@@ -58,17 +54,14 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     @Test
     @KnownBug("CSA-1542")
     public void testNotificationsOverTwoWindows() throws InterruptedException {
-        first.activate();
-        keywordService.goToKeywords();
+        goToKeywordsFrom(first);
         assertThat(first.countNotifications(), is(0));
 
-        second.activate();
-        second.goToKeywords();
+        goToKeywordsFrom(second);
         assertThat(second.countNotifications(), is(0));
 
-        first.activate();
-        keywordService.addSynonymGroup("Animal Beast");
-        keywordService.goToKeywords();
+        addSynonymGroupFrom(first, "Animal Beast");
+        goToKeywordsFrom(first);
 
         assertThat(first.countNotifications(), is(1));
         String windowOneNotificationText = first.mostRecentNotification();
@@ -77,8 +70,9 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         assertThat(second.countNotifications(), is(1));
         assertThat(second.mostRecentNotification(), is(windowOneNotificationText));
         second.closeNotifications();
-        KeywordsPage keywordsPageWindowTwo = getElementFactory().getKeywordsPage();
-        keywordsPageWindowTwo.deleteSynonym("Animal", "Animal");
+
+        deleteSynonymFrom(second, "Animal");
+
         assertThat(second.countNotifications(), is(2));
         List<String> notificationMessages = second.allNotifications();
 
@@ -103,9 +97,8 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
 
         int notificationsCount = 3;
         for(int i = 0; i < 6; i += 2) {
-            second.activate();
-            keywordService.addSynonymGroup(i + " " + (i + 1));
-            keywordService.goToKeywords();
+            addSynonymGroupFrom(second, i + " " + (i + 1));
+            goToKeywordsFrom(second);
 
             verifyThat(second.countNotifications(), is(Math.min(++notificationsCount, 5)));
             notificationMessages = second.allNotifications();
@@ -127,6 +120,26 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         inst.promotionService.deleteAll();
     }
 
+    private void goToKeywordsFrom(AppWindow inst) {
+        inst.activate();
+        inst.keywordService.goToKeywords();
+    }
+
+    private void addSynonymGroupFrom(AppWindow inst, String... synonyms) {
+        inst.activate();
+        inst.keywordService.addSynonymGroup(synonyms);
+    }
+
+    private void deleteSynonymFrom(AppWindow inst, String toDelete) {
+        inst.activate();
+        inst.keywordService.goToKeywords().deleteSynonym(toDelete);
+    }
+
+    private void deleteAllKeywordsFrom(AppWindow inst) {
+        inst.activate();
+        inst.keywordService.deleteAll(KeywordFilter.ALL);
+    }
+
     private static class AppWindow {
         private final IsoApplication<?> app;
         private final Window window;
@@ -146,10 +159,6 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
 
         void switchToDashboard() {
             app.switchTo(DashboardBase.class);
-        }
-
-        void goToKeywords() {
-            keywordService.goToKeywords();
         }
 
         void openNotifications() {
