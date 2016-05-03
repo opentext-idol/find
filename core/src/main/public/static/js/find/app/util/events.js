@@ -27,8 +27,72 @@ define([
         PREVIEW: 'preview'
     };
 
-    return {
+    var EventsModule = function() {
+        var search = '';
+        var position = -1;
+        var abandonments = null;
 
+        var unAbandon = function(type) {
+            abandonments[type] = false;
+
+            log({
+                'click-type': type,
+                position: position,
+                search: search,
+                type: types.CLICK_THROUGH
+            })
+        };
+
+        this.reset = function(text) {
+            // pull out for unload listener
+            if (abandonments != null) {
+                _.each(abandonments, function(value, type) {
+                    if (value) {
+                        log({
+                            'click-type': type,
+                            search: search,
+                            type: types.ABANDONMENT
+                        })
+                    }
+                });
+            }
+
+            search = text;
+            position = -1;
+
+            abandonments = _.chain(clickTypes)
+                .invert()
+                .mapObject(_.constant(true))
+                .value();
+        };
+
+        this.preview = function(newPosition) {
+            position = newPosition;
+
+            unAbandon(clickTypes.PREVIEW);
+        };
+
+        this.fullPreview = function() {
+            unAbandon(clickTypes.FULL_PREVIEW);
+        };
+
+        this.original = function() {
+            unAbandon(clickTypes.ORIGINAL);
+        };
+
+        this.page = function(page) {
+            log({
+                page: page,
+                search: search,
+                type: types.PAGE
+            })
+        };
+    };
+
+    var eventsModule = new EventsModule();
+
+    return function() {
+        return eventsModule;
     };
 
 });
