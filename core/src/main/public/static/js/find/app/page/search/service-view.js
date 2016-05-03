@@ -36,7 +36,7 @@ define([
     var template = _.template(templateString);
 
     return Backbone.View.extend({
-        className: 'full-height',
+        className: 'full-height-viewport',
 
         // Can be overridden
         headerControlsHtml: '',

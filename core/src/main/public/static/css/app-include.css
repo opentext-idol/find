@@ -122,6 +122,10 @@ html, body {
     height: 100%;
 }
 
+.full-height-viewport {
+    height: 100vh;
+}
+
 dl.dl-inline > dt,
 dl.dl-inline > dd {
     display: inline-block;
