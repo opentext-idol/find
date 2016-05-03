@@ -34,7 +34,6 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     private NotificationsDropDown notifications;
 
     private AppWindow second;
-    private IsoApplication<?> secondApp;
     private TopNavBar topNavBarWindowTwo;
     private NotificationsDropDown notificationsDropDownWindowTwo;
 
@@ -50,7 +49,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         topNavBar = getElementFactory().getTopNavBar();
         first = new AppWindow(getApplication(), getWindow());
 
-        secondApp = IsoApplication.ofType(getConfig().getType());
+        IsoApplication<?> secondApp = IsoApplication.ofType(getConfig().getType());
         Window secondWindow = launchInNewWindow(secondApp);
         second = new AppWindow(secondApp, secondWindow);
         second.activate();
@@ -77,7 +76,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         assertThat(notifications.countNotifications(), is(0));
 
         second.activate();
-        secondApp.keywordService().goToKeywords();
+        second.goToKeywords();
         topNavBarWindowTwo.notificationsDropdown();
         notificationsDropDownWindowTwo = topNavBarWindowTwo.getNotifications();
         assertThat(notificationsDropDownWindowTwo.countNotifications(), is(0));
@@ -105,7 +104,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         assertThat(notifications.countNotifications(), is(2));
         assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 
-        getApplication().switchTo(DashboardBase.class);
+        first.switchToDashboard();
         newBody();
         topNavBar.notificationsDropdown();
         notifications = topNavBar.getNotifications();
@@ -137,7 +136,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
             keywordService.addSynonymGroup(i + " " + (i + 1));
             keywordService.goToKeywords();
 
-            secondApp.elementFactory().getTopNavBar().notificationsDropdown();
+            second.openNotifications();
             verifyThat(notificationsDropDownWindowTwo.countNotifications(), is(Math.min(++notificationsCount, 5)));
             notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
@@ -154,14 +153,28 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     private static class AppWindow {
         private final IsoApplication<?> app;
         private final Window window;
+        private final KeywordService keywordService;
 
         AppWindow(IsoApplication<?> app, Window window) {
             this.app = app;
             this.window = window;
+            keywordService = app.keywordService();
         }
 
         void activate() {
             window.activate();
+        }
+
+        void switchToDashboard() {
+            app.switchTo(DashboardBase.class);
+        }
+
+        void goToKeywords() {
+            keywordService.goToKeywords();
+        }
+
+        void openNotifications() {
+            app.elementFactory().getTopNavBar().openNotifications();
         }
     }
 }
