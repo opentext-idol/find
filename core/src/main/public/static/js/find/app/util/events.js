@@ -43,8 +43,7 @@ define([
             })
         };
 
-        this.reset = function(text) {
-            // pull out for unload listener
+        var logAbandonments = function() {
             if (abandonments != null) {
                 _.each(abandonments, function(value, type) {
                     if (value) {
@@ -56,6 +55,12 @@ define([
                     }
                 });
             }
+        };
+
+        $(window).on('unload', logAbandonments);
+
+        this.reset = function(text) {
+            logAbandonments();
 
             search = text;
             position = -1;
