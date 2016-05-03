@@ -23,7 +23,8 @@ import java.util.List;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 
 public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     private AppWindow first;
@@ -57,52 +58,28 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     @KnownBug("CSA-1542")
     public void testNotificationsOverTwoWindows() throws InterruptedException {
         goToKeywordsFrom(first);
-        checkNotificationsCountFrom(first, is(0));
-
         goToKeywordsFrom(second);
-        checkNotificationsCountFrom(second, is(0));
+        notificationsCountsShouldBe(0);
 
         addSynonymGroupFrom(first, "Animal Beast");
         goToKeywordsFrom(first);
-
-        checkNotificationsCountFrom(first, is(1));
-        String windowOneNotificationText = first.mostRecentNotification();
-
-        checkNotificationsCountFrom(second, is(1));
-        assertThat(second.mostRecentNotification(), is(windowOneNotificationText));
-        second.closeNotifications();
+        checkFirstNotification();
 
         deleteSynonymFrom(second, "Animal");
-
-        checkNotificationsCountFrom(second, is(2));
-        List<String> notificationMessages = second.allNotifications();
-
-        checkNotificationsCountFrom(first, is(2));
-        assertThat(first.allNotifications(), containsItems(notificationMessages));
+        notificationsCountsShouldBe(2);
 
         first.switchToDashboard();
-        checkNotificationsCountFrom(first, is(2));
-        assertThat(first.allNotifications(), containsItems(notificationMessages));
+        notificationsCountsShouldBe(2);
 
         setUpPromotionFrom(second);
-        checkNotificationsCountFrom(second, is(3));
-        assertThat(second.mostRecentNotification(), containsString("promotion"));
-
-        notificationMessages = second.allNotifications();
-
-        checkNotificationsCountFrom(first, is(3));
-        assertThat(first.allNotifications(), containsItems(notificationMessages));
+        notificationsCountsShouldBe(3);
+        assertThat(first.mostRecentNotification(), containsString("promotion"));
 
         int notificationsCount = 3;
         for(int i = 0; i < 6; i += 2) {
             addSynonymGroupFrom(second, i + " " + (i + 1));
             goToKeywordsFrom(second);
-
-            checkNotificationsCountFrom(second, is(Math.min(++notificationsCount, 5)));
-            notificationMessages = second.allNotifications();
-
-            checkNotificationsCountFrom(first, is(Math.min(notificationsCount, 5)));
-            verifyThat(first.allNotifications(), containsItems(notificationMessages));
+            notificationsCountsShouldBe(Math.min(++notificationsCount, 5));
         }
     }
 
@@ -137,10 +114,25 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         inst.keywordService.deleteAll(KeywordFilter.ALL);
     }
 
+    private void notificationsCountsShouldBe(int expected) {
+        checkNotificationsCountFrom(second, is(expected));
+        List<String> secondNotifications = second.allNotifications();
+        checkNotificationsCountFrom(first, is(expected));
+        verifyThat(first.allNotifications(), containsItems(secondNotifications));
+    }
+
+    private void checkFirstNotification() {
+        checkNotificationsCountFrom(first, is(1));
+        String windowOneNotificationText = first.mostRecentNotification();
+        checkNotificationsCountFrom(second, is(1));
+        verifyThat(second.mostRecentNotification(), is(windowOneNotificationText));
+        second.closeNotifications();
+    }
+
     private void checkNotificationsCountFrom(AppWindow inst, Matcher<Integer> expectation) {
         inst.activate();
         inst.openNotifications();
-        assertThat(inst.countNotifications(), expectation);
+        verifyThat(inst.countNotifications(), expectation);
     }
 
     private static class AppWindow {
