@@ -6,7 +6,6 @@ import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
@@ -31,11 +30,9 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
 
     private AppWindow first;
     private TopNavBar topNavBar;
-    private NotificationsDropDown notifications;
 
     private AppWindow second;
     private TopNavBar topNavBarWindowTwo;
-    private NotificationsDropDown notificationsDropDownWindowTwo;
 
     public MultiWindowNotificationsITCase(TestConfig config) {
         super(config);
@@ -72,44 +69,40 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         first.activate();
         keywordService.goToKeywords();
         topNavBar.notificationsDropdown();
-        notifications = topNavBar.getNotifications();
-        assertThat(notifications.countNotifications(), is(0));
+        assertThat(first.countNotifications(), is(0));
 
         second.activate();
         second.goToKeywords();
         topNavBarWindowTwo.notificationsDropdown();
-        notificationsDropDownWindowTwo = topNavBarWindowTwo.getNotifications();
-        assertThat(notificationsDropDownWindowTwo.countNotifications(), is(0));
+        assertThat(second.countNotifications(), is(0));
 
         first.activate();
         keywordService.addSynonymGroup("Animal Beast");
         keywordService.goToKeywords();
 
         topNavBar.notificationsDropdown();
-        notifications = topNavBar.getNotifications();
-        assertThat(notifications.countNotifications(), is(1));
-        String windowOneNotificationText = notifications.notificationNumber(1).getText();
+        assertThat(first.countNotifications(), is(1));
+        String windowOneNotificationText = first.mostRecentNotification();
 
         second.activate();
-        assertThat(notificationsDropDownWindowTwo.countNotifications(), is(1));
-        assertThat(notificationsDropDownWindowTwo.notificationNumber(1).getText(), is(windowOneNotificationText));
+        assertThat(second.countNotifications(), is(1));
+        assertThat(second.mostRecentNotification(), is(windowOneNotificationText));
         topNavBarWindowTwo.notificationsDropdown();
         KeywordsPage keywordsPageWindowTwo = getElementFactory().getKeywordsPage();
         keywordsPageWindowTwo.deleteSynonym("Animal", "Animal");
         topNavBarWindowTwo.notificationsDropdown();
-        assertThat(notificationsDropDownWindowTwo.countNotifications(), is(2));
-        List<String> notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
+        assertThat(second.countNotifications(), is(2));
+        List<String> notificationMessages = second.allNotifications();
 
         first.activate();
-        assertThat(notifications.countNotifications(), is(2));
-        assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
+        assertThat(first.countNotifications(), is(2));
+        assertThat(first.allNotifications(), contains(notificationMessages.toArray()));
 
         first.switchToDashboard();
         newBody();
         topNavBar.notificationsDropdown();
-        notifications = topNavBar.getNotifications();
-        assertThat(notifications.countNotifications(), is(2));
-        assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
+        assertThat(first.countNotifications(), is(2));
+        assertThat(first.allNotifications(), contains(notificationMessages.toArray()));
 
         second.activate();
 
@@ -117,18 +110,16 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
 
         new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationAppears());
         topNavBarWindowTwo.notificationsDropdown();
-        notificationsDropDownWindowTwo = topNavBarWindowTwo.getNotifications();
 
-        assertThat(notificationsDropDownWindowTwo.countNotifications(), is(3));
-        assertThat(notificationsDropDownWindowTwo.notificationNumber(1).getText(), containsString("promotion"));
+        assertThat(second.countNotifications(), is(3));
+        assertThat(second.mostRecentNotification(), containsString("promotion"));
 
-        notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
+        notificationMessages = second.allNotifications();
 
         first.activate();
 
-        notifications = topNavBar.getNotifications();
-        assertThat(notifications.countNotifications(), is(3));
-        assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
+        assertThat(first.countNotifications(), is(3));
+        assertThat(first.allNotifications(), contains(notificationMessages.toArray()));
 
         int notificationsCount = 3;
         for(int i = 0; i < 6; i += 2) {
@@ -137,12 +128,12 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
             keywordService.goToKeywords();
 
             second.openNotifications();
-            verifyThat(notificationsDropDownWindowTwo.countNotifications(), is(Math.min(++notificationsCount, 5)));
-            notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
+            verifyThat(second.countNotifications(), is(Math.min(++notificationsCount, 5)));
+            notificationMessages = second.allNotifications();
 
             first.activate();
-            verifyThat(notifications.countNotifications(), is(Math.min(notificationsCount, 5)));
-            verifyThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
+            verifyThat(first.countNotifications(), is(Math.min(notificationsCount, 5)));
+            verifyThat(first.allNotifications(), contains(notificationMessages.toArray()));
         }
     }
 
@@ -174,7 +165,23 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         }
 
         void openNotifications() {
-            app.elementFactory().getTopNavBar().openNotifications();
+            getNavBar().openNotifications();
+        }
+
+        int countNotifications() {
+            return getNavBar().getNotifications().countNotifications();
+        }
+
+        List<String> allNotifications() {
+            return getNavBar().getNotifications().getAllNotificationMessages();
+        }
+
+        String mostRecentNotification() {
+            return getNavBar().getNotifications().notificationNumber(1).getText();
+        }
+
+        private TopNavBar getNavBar() {
+            return app.elementFactory().getTopNavBar();
         }
     }
 }
