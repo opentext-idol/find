@@ -26,7 +26,6 @@ import static org.hamcrest.Matchers.*;
 
 public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     private KeywordService keywordService;
-    private PromotionService promotionService;
 
     private AppWindow first;
     private AppWindow second;
@@ -38,7 +37,6 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     @Before
     public void setUp() {
         keywordService = getApplication().keywordService();
-        promotionService = getApplication().promotionService();
 
         first = new AppWindow(getApplication(), getWindow());
 
@@ -53,7 +51,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
             second.activate();
             second.closeNotifications();
             keywordService.deleteAll(KeywordFilter.ALL);
-            promotionService.deleteAll();
+            deleteAllPromotionsFrom(second);
         }
     }
 
@@ -92,12 +90,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         assertThat(first.countNotifications(), is(2));
         assertThat(first.allNotifications(), contains(notificationMessages.toArray()));
 
-        second.activate();
-
-        promotionService.setUpPromotion(new SpotlightPromotion("wheels"), "cars", 3);
-
-        new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationAppears());
-
+        setUpPromotionFrom(second);
         assertThat(second.countNotifications(), is(3));
         assertThat(second.mostRecentNotification(), containsString("promotion"));
 
@@ -123,15 +116,28 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         }
     }
 
+    private void setUpPromotionFrom(AppWindow inst) {
+        inst.activate();
+        inst.promotionService.setUpPromotion(new SpotlightPromotion("wheels"), "cars", 3);
+        new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationAppears());
+    }
+
+    private void deleteAllPromotionsFrom(AppWindow inst) {
+        inst.activate();
+        inst.promotionService.deleteAll();
+    }
+
     private static class AppWindow {
         private final IsoApplication<?> app;
         private final Window window;
         private final KeywordService keywordService;
+        private final PromotionService<?> promotionService;
 
         AppWindow(IsoApplication<?> app, Window window) {
             this.app = app;
             this.window = window;
             keywordService = app.keywordService();
+            promotionService = app.promotionService();
         }
 
         void activate() {
