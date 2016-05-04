@@ -22,7 +22,6 @@ public class HsodCreateNewKeywordsPage extends CreateNewKeywordsPage {
 
         @Override
         public HsodCreateNewKeywordsPage create(WebDriver context) {
-            CreateNewKeywordsPage.waitForLoad(context);
             return new HsodCreateNewKeywordsPage(context);
         }
     }

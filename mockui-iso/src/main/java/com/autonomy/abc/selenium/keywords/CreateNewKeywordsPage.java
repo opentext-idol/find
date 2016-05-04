@@ -17,7 +17,7 @@ import java.util.List;
 public abstract class CreateNewKeywordsPage extends SOPageBase {
 
 	public CreateNewKeywordsPage(final WebDriver driver) {
-		super(containerElement(driver), driver);
+		super(waitForLoad(driver), driver);
 	}
 
 	@Override
@@ -25,8 +25,10 @@ public abstract class CreateNewKeywordsPage extends SOPageBase {
 		waitForLoad(getDriver());
 	}
 
-	protected static void waitForLoad(WebDriver driver) {
-		new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("pd-wizard")));
+	protected static WebElement waitForLoad(WebDriver driver) {
+		return new WebDriverWait(driver,30)
+				.withMessage("waiting for keywords wizard to load")
+				.until(ExpectedConditions.visibilityOf(containerElement(driver)));
 	}
 
 	public WebElement keywordsType(final KeywordType type) {
