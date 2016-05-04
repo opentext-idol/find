@@ -10,7 +10,6 @@ import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -68,6 +67,7 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
 
     public PromotionsPage delete(Promotion promotion) {
         goToPromotions();
+        waitForDeleteButtonsToBeClickable();
         promotionsPage.promotionDeleteButton(promotion.getTrigger()).click();
         final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
         deleteModal.findElement(By.cssSelector(".btn-danger")).click();
@@ -86,6 +86,7 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
 
     public PromotionsPage delete(String title) {
         goToPromotions();
+        waitForDeleteButtonsToBeClickable();
         WebElement deleteButton = deleteNoWait(promotionsPage.getPromotionLinkWithTitleContaining(title));
         new WebDriverWait(getDriver(), 20)
                 .withMessage("deleting promotion with title " + title)
@@ -95,6 +96,7 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
 
     public PromotionsPage deleteAll() {
         goToPromotions();
+        waitForDeleteButtonsToBeClickable();
         // TODO: possible stale element? refresh promotionsList, or select using int?
         // (multiple promotions may have the same title)
         List<WebElement> promotionsList = promotionsPage.promotionsList();
@@ -103,6 +105,12 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
         }
         waitForPromotionsToBeDeleted(promotionsList.size());
         return promotionsPage;
+    }
+
+    private void waitForDeleteButtonsToBeClickable() {
+        new WebDriverWait(getDriver(), 5)
+                .withMessage("waiting for notifications to clear")
+                .until(GritterNotice.notificationsDisappear());
     }
 
     private void waitForPromotionsToBeDeleted(int numberOfPromotions) {
