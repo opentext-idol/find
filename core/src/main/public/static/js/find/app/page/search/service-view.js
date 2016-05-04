@@ -135,7 +135,7 @@ define([
                 title: i18n['search.relatedConcepts']
             });
 
-            this.resultsView = new this.ResultsView(_.defaults({
+            var resultsView = new this.ResultsView(_.defaults({
                 enablePreview: true,
                 entityClickHandler: entityClickHandler,
                 fetchStrategy: this.searchTypes[searchType].fetchStrategy,
@@ -143,7 +143,7 @@ define([
             }, subViewArguments));
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({
-                resultsView: this.resultsView,
+                resultsView: resultsView,
                 queryModel: this.queryModel
             });
             
@@ -153,7 +153,12 @@ define([
                 clickHandler: entityClickHandler
             }, subViewArguments));
 
-            var resultsViews = [{
+            this.mapResultsView = new MapResultsView(_.extend({
+                resultsStep: this.mapViewResultsStep,
+                allowIncrement: this.mapViewAllowIncrement
+            }, subViewArguments));
+
+            this.resultsViews = [{
                 content: this.resultsViewAugmentation,
                 id: 'list',
                 uniqueId: _.uniqueId('results-view-item-'),
@@ -169,12 +174,20 @@ define([
                     displayNameKey: 'topic-map',
                     icon: 'hp-grid'
                 }
+            }, {
+                content: this.mapResultsView,
+                id: 'map',
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'map',
+                    icon: 'hp-map-view'
+                }
             }];
 
             if (this.displaySunburst) {
                 this.sunburstView = new SunburstView(subViewArguments);
 
-                resultsViews.push({
+                this.resultsViews.splice(2, 0, {
                     content: this.sunburstView,
                     id: 'sunburst',
                     uniqueId: _.uniqueId('results-view-item-'),
@@ -185,29 +198,18 @@ define([
                 });
             }
 
-            this.mapResultsView = new MapResultsView(_.extend({resultsStep: this.mapViewResultsStep, allowIncrement: this.mapViewAllowIncrement}, subViewArguments));
-            resultsViews.push({
-                content: this.mapResultsView,
-                id: 'map',
-                uniqueId: _.uniqueId('results-view-item-'),
-                selector: {
-                    displayNameKey: 'map',
-                    icon: 'hp-map-view'
-                }
-            });
-
             var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
-                selectedTab: resultsViews[0].id
+                selectedTab: this.resultsViews[0].id
             });
 
             this.resultsViewSelection = new ResultsViewSelection({
-                views: resultsViews,
+                views: this.resultsViews,
                 model: resultsViewSelectionModel
             });
 
             this.resultsViewContainer = new ResultsViewContainer({
-                views: resultsViews,
+                views: this.resultsViews,
                 model: resultsViewSelectionModel
             });
 
@@ -273,17 +275,17 @@ define([
             this.queryModel.stopListening();
 
             _.chain([
+                // remove all the results views
+                this.resultsViews,
+                // and then everything else
                 this.savedSearchControlView,
-                this.resultsView,
-                this.resultsViewAugmentation,
-                this.topicMapView,
                 this.resultsViewContainer,
                 this.resultsViewSelection,
                 this.relatedConceptsViewWrapper,
-                this.sunburstView,
                 this.leftSideFooterView,
                 this.middleColumnHeaderView
             ])
+                .flatten()
                 .compact()
                 .invoke('remove');
 
