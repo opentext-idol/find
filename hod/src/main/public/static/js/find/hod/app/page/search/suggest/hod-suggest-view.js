@@ -9,7 +9,12 @@ define([
 ], function(SuggestView, ResultsView) {
 
     return SuggestView.extend({
-        ResultsView: ResultsView
+        ResultsView: ResultsView,
+
+        getIndexes: function(indexesCollection, documentModel){
+            var indexModels = indexesCollection.where({name: documentModel.get('index'), domain: documentModel.get('domain')});
+            return _.pluck(indexModels, 'id');
+        }
     });
 
 });
