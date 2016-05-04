@@ -97,6 +97,7 @@ public class QueryTestHelper<T extends QueryResultsPage> {
                     result.getErrorMessage(), stringContainingAnyOf(Arrays.asList(
                             Errors.Search.INVALID,
                             Errors.Search.OPERATORS,
+                            Errors.Search.BRACKETS,
                             Errors.Search.STOPWORDS
                     ))
             );

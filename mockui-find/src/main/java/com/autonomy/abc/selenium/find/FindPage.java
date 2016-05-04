@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.indexes.tree.DatabasesTree;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
@@ -24,6 +25,7 @@ import java.util.List;
 
 public class FindPage extends AppElement implements AppPage,
         IndexFilter.Filterable,
+        DatabaseFilter.Filterable,
         DatePickerFilter.Filterable,
         StringDateFilter.Filterable,
         ParametricFilter.Filterable {
@@ -70,6 +72,10 @@ public class FindPage extends AppElement implements AppPage,
         return new IndexesTree(new FindIndexCategoryNode(findElement(By.cssSelector(".databases-list [data-category-id='all']")), getDriver()));
     }
 
+    public DatabasesTree databasesTree(){
+        return new DatabasesTree(new IndexesTree(new FindIndexCategoryNode(findElement(By.cssSelector(".databases-list [data-category-id='all']")),getDriver())));
+    }
+
     public void sortBy(SortBy sortBy) {
         sortDropdown().select(sortBy.toString());
     }
@@ -111,12 +117,26 @@ public class FindPage extends AppElement implements AppPage,
 
     @Override
     public FormInput fromDateInput() {
-        return dateInput(By.cssSelector(".results-filter-min-date input"));
+        if (minFindable()) {
+            return dateInput(By.cssSelector(".results-filter-min-date input"));
+        }
+        return dateInput(By.xpath("//div[@data-date-attribute='customMinDate']/descendant::input[@class='form-control']"));
     }
 
     @Override
     public FormInput untilDateInput() {
-        return dateInput(By.cssSelector(".results-filter-max-date input"));
+        if (maxFindable()){
+            return dateInput(By.cssSelector(".results-filter-min-date input"));
+        }
+        return dateInput(By.xpath("//div[@data-date-attribute='customMaxDate']/descendant::input[@class='form-control']"));
+    }
+
+    private Boolean minFindable(){
+        return findElements(By.cssSelector(".results-filter-min-date input")).size()>0;
+    }
+
+    private Boolean maxFindable(){
+        return findElements(By.cssSelector(".results-filter-max-date input")).size()>0;
     }
 
     @Override
@@ -138,6 +158,10 @@ public class FindPage extends AppElement implements AppPage,
     @Override
     public WebElement parametricContainer() {
         return findElement(By.className("parametric-container"));
+    }
+
+    public Boolean parametricEmptyExists(){
+        return findElements(By.className("parametric-empty")).size()!=0;
     }
 
     @Override

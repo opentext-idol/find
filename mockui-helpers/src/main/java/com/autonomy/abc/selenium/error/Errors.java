@@ -41,7 +41,8 @@ public class Errors {
         CLOSING_BOOL("Terminating boolean operator"),
         INVALID("Invalid query text"),
         ANALYSIS("An error occurred fetching the query analysis"),
-        NO_CONCEPTS("No related concepts found");
+        NO_CONCEPTS("No related concepts found"),
+        BRACKETS("Bracket Mismatch in the query");
 
         private final String value;
 
