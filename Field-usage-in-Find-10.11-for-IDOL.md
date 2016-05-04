@@ -15,6 +15,7 @@ Find looks for the following fields in IDOL documents:
 - `category`. You can configure a field in your IDOL document that describes the category that the document belongs to. Where available, Find displays the content of the IDOL `category` field in the document metadata when you view the document.
 - `date_created` or `created_date`. You can configure a field in your IDOL document that contains the date when the document was created. Where available, Find displays the content of the IDOL `date_created` or `created_date` field in the document metadata when you view the document.
 - `date_modified` or `modified_date`. You can configure a field in your IDOL document that contains the date when the document was modified. Where available, Find displays the content of the IDOL `date_modified` or `modified_date` field in the document metadata when you view the document.
+- `thumbnail_url`. The URL of a thumbnail image file (for example, http://example.com/thumbnail.png). Find needs to be able to access this URL from the browser by using an HTTP GET request.
 
 IDOL Server uses `DateType` fields to populate the `<autn:date>` and `<autn:datestring>` metadata fields for your documents. Find uses the `<autn:date>` tag in the IDOL response as the date of the document on the list of results. Use the `[FieldProcessing]`, `[DateFields]`, and `[SetDateFields]` sections of the IDOL configuration file to specify the fields in your documents that should be treated as `DateType` fields. For more information, see the *IDOL Server Administration Guide*.
 
