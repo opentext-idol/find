@@ -18,6 +18,9 @@ define([
             }
         }, SimilarAbstractTab.prototype.events),
 
+        // overridden
+        getIndexes: _.constant([]),
+
         createCollection: function() {
             return new SimilarDocumentsCollection();
         },
