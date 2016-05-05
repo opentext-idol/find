@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
+import com.google.common.collect.Iterables;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
@@ -117,7 +118,7 @@ public class FindPage extends AppElement implements AppPage,
     @Override
     public FormInput untilDateInput() {
         if (maxFindable()){
-            return dateInput(By.cssSelector(".results-filter-min-date input"));
+            return dateInput(By.cssSelector(".results-filter-max-date input"));
         }
         return dateInput(By.xpath("//div[@data-date-attribute='customMaxDate']/descendant::input[@class='form-control']"));
     }
@@ -161,12 +162,14 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     // this can be used to check whether on the landing page,
-    // as opposed to main reuslts page
+    // as opposed to main results page
     public WebElement footerLogo() {
         return findElement(By.className("hp-logo-footer"));
     }
 
-    public WebElement LoadingIndicator(){
+    public Boolean loadingIndicatorExists(){return findElements(By.className("view-server-loading-indicator")).size()>0;}
+
+    public WebElement loadingIndicator(){
         return findElement(By.className("view-server-loading-indicator"));
     }
 
@@ -174,10 +177,18 @@ public class FindPage extends AppElement implements AppPage,
         return findElement(By.className("preview-mode-contents"));
     }
 
+    public int totalResultsNum(){return Integer.parseInt(findElement(By.className("total-results-number")).getText());}
+
     //should check not already selected
     public void clickFirstIndex(){
         findElement(By.cssSelector(".child-categories li:first-child")).click();
     }
+
+    public String getIthIndex(int i){return Iterables.get(indexesTree(),i).getName();}
+
+    public void seeMoreOfCategory(WebElement element){element.findElement(By.className("toggle-more")).click();}
+
+
 
     public WebElement rightContainerToggleButton() {
         return findElement(By.cssSelector(".right-container-icon .container-toggle"));
@@ -188,6 +199,7 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     public void scrollToBottom() {
+        findElement(By.className("results-number")).click();
         DriverUtil.scrollToBottom(getDriver());
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }

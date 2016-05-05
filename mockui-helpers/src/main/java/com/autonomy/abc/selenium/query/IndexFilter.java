@@ -29,6 +29,10 @@ public class IndexFilter implements QueryFilter{
         indexes.add(index.getName());
     }
 
+    public void add(Index index){add(index.getName());
+    }
+    public void add(String index){indexes.add(index);}
+
     @Override
     public final void apply(QueryFilter.Filterable page) {
         if (page instanceof IndexFilter.Filterable) {

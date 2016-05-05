@@ -94,7 +94,7 @@ public class HodFindITCase extends FindTestBase{
         String author = "FIFA.COM";
 
         findService.search(new Query("football")
-                .withFilter(new IndexFilter("Fifa"))
+                .withFilter(new IndexFilter("fifa"))
                 .withFilter(new ParametricFilter("Author", author)));
 
         assertThat(results.resultsDiv(), not(containsText(Errors.Find.GENERAL)));
@@ -171,14 +171,16 @@ public class HodFindITCase extends FindTestBase{
 
     @Test
     public void testBetween30And60Results(){
-        findService.search(new Query("idol")
-                .withFilter(new IndexFilter("sitesearch")));
+        findService.search(new Query("idol"));
+
+        findPage.seeMoreOfCategory(findPage.indexesTree().publicIndexes().getContainer());
+        findPage.filterBy(new IndexFilter("patents"));
 
         findPage.scrollToBottom();
-        results.getResult(1).openDocumentPreview();
-        verifyDocViewerTotalDocuments(lessThanOrEqualTo(60));
 
-        Waits.loadOrFadeWait();
+        DocumentViewer docViewer = results.getResult(1).openDocumentPreview();
+        verifyThat(docViewer.getTotalDocumentsNumber(),lessThanOrEqualTo(60));
+        docViewer.close();
 
         verifyThat(results.resultsDiv(), containsText("No more results found"));
     }
