@@ -13,6 +13,7 @@ import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.Locator;
@@ -27,19 +28,20 @@ import java.util.List;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class DocumentPreviewITCase extends FindTestBase{
+public class HodFindITCase extends FindTestBase{
     private FindPage findPage;
     private FindTopNavBar navBar;
     private FindResultsPage results;
     private FindService findService;
 
-    public DocumentPreviewITCase(TestConfig config) {
+    public HodFindITCase(TestConfig config) {
         super(config);
     }
 
@@ -49,6 +51,41 @@ public class DocumentPreviewITCase extends FindTestBase{
         navBar = getElementFactory().getTopNavBar();
         results = findPage.getResultsPage();
         findService = getApplication().findService();
+    }
+
+    @Test
+    public void testPdfContentTypeValue(){
+        checkContentTypeFilter("APPLICATION/PDF", "pdf");
+    }
+
+    @Test
+    public void testHtmlContentTypeValue(){
+        checkContentTypeFilter("TEXT/HTML", "html");
+    }
+
+    private void checkContentTypeFilter(String filterType, String extension) {
+        Query query = new Query("red star")
+                .withFilter(new ParametricFilter("Content Type", filterType));
+        findService.search(query);
+        for(String type : results.getDisplayedDocumentsDocumentTypes()){
+            assertThat(type, containsString(extension));
+        }
+    }
+
+
+    @Test
+    public void testFileTypes(){
+        findService.search("love ");
+
+        for(FileType f : FileType.values()) {
+            findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
+
+            for(FindResult result : results.getResults()){
+                assertThat(result.icon().getAttribute("class"), containsString(f.getFileIconString()));
+            }
+
+            findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
+        }
     }
 
     @Test
@@ -72,34 +109,12 @@ public class DocumentPreviewITCase extends FindTestBase{
     }
 
     @Test
-    public void testFilterByIndex(){
-        findService.search("Sam");
+    @KnownBug({"CSA-1726", "CSA-1763"})
+    public void testPublicIndexesVisibleNotSelectedByDefault(){
+        findService.search("Marina and the Diamonds");
 
-        QueryResult queryResult = results.searchResult(1);
-        String titleString = queryResult.getTitleString();
-        DocumentViewer docViewer = queryResult.openDocumentPreview();
-        Index index = docViewer.getIndex();
-
-        docViewer.close();
-
-        findPage.filterBy(new IndexFilter(index));
-
-        assertThat(results.searchResult(1).getTitleString(), is(titleString));
-    }
-
-    @Test
-    public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
-        findService.search("Happy");
-
-        // TODO: what if this index has no results?
-        //This breaks if using default index
-        String indexTitle = findPage.getPrivateIndexNames().get(1);
-        findPage.filterBy(new IndexFilter(indexTitle));
-        DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
-        for(int i = 0; i < 5; i++){
-            assertThat(docViewer.getIndex().getDisplayName(), is(indexTitle));
-            docViewer.next();
-        }
+        verifyThat("public indexes are visible", findPage.indexesTree().publicIndexes(), not(emptyIterable()));
+        verifyThat(findPage.getSelectedPublicIndexes(), empty());
     }
 
     @Test
@@ -186,5 +201,47 @@ public class DocumentPreviewITCase extends FindTestBase{
         findService.search(new Query("document preview").withFilter(new IndexFilter(index)));
 
         SharedPreviewTests.testDocumentPreviews(getMainSession(), results.getResults(5), index);
+    }
+
+    @Test
+    public void testOpenDocumentFromSearch(){
+        assumeThat(getConfig().getType(),is(ApplicationType.HOSTED));
+        findService.search("Refuse to Feel");
+
+        for(int i = 1; i <= 5; i++){
+            Window original = getWindow();
+            FindResult result = results.getResult(i);
+            String reference = result.getReference();
+            result.title().click();
+            Waits.loadOrFadeWait();
+            Window newWindow = getMainSession().switchWindow(getMainSession().countWindows() - 1);
+
+            verifyThat(getDriver().getCurrentUrl(), containsString(reference));
+
+            newWindow.close();
+            original.activate();
+        }
+    }
+
+    private enum FileType {
+        HTML("TEXT/HTML","html"),
+        PDF("APPLICATION/PDF","pdf"),
+        PLAIN("TEXT/PLAIN","file");
+
+        private final String sidebarString;
+        private final String fileIconString;
+
+        FileType(String sidebarString, String fileIconString){
+            this.sidebarString = sidebarString;
+            this.fileIconString = fileIconString;
+        }
+
+        public String getFileIconString() {
+            return fileIconString;
+        }
+
+        public String getSidebarString() {
+            return sidebarString;
+        }
     }
 }

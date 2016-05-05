@@ -2,6 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentPreviewer;
+import com.autonomy.abc.shared.SharedPreviewTests;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -10,12 +11,10 @@ import com.autonomy.abc.shared.QueryTestHelper;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -59,26 +58,6 @@ public class FindITCase extends FindTestBase {
         findService.search(searchTerm);
         assertThat(navBar.getSearchBoxTerm(), is(searchTerm));
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
-    }
-
-    @Test
-    public void testPdfContentTypeValue(){
-        checkContentTypeFilter("APPLICATION/PDF", "pdf");
-    }
-
-    @Test
-    public void testHtmlContentTypeValue(){
-        checkContentTypeFilter("TEXT/HTML", "html");
-    }
-
-    private void checkContentTypeFilter(String filterType, String extension) {
-        assumeThat(getConfig().getType(),is(ApplicationType.HOSTED));
-        Query query = new Query("red star")
-                .withFilter(new ParametricFilter("Content Type", filterType));
-        findService.search(query);
-        for(String type : results.getDisplayedDocumentsDocumentTypes()){
-            assertThat(type, containsString(extension));
-        }
     }
 
     @Test
@@ -153,7 +132,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    public void testFilterByDatabase(){
+    public void testFilterByIndex(){
         findService.search("face");
         QueryResult queryResult = results.searchResult(1);
         String titleString = queryResult.getTitleString();
@@ -185,7 +164,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    public void testFilteredByDatabaseOnlyHasFilesFromDatabase(){
+    public void testFilteredByIndexOnlyHasFilesFromIndex(){
         findService.search("Sad");
 
         DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
@@ -193,10 +172,9 @@ public class FindITCase extends FindTestBase {
         docPreview.close();
 
         findPage.filterBy(new IndexFilter(chosenIndex));
-
+        //weirdly failing to open the 2nd result (subsequent okay)
         for (int i=1; i<6; i++){
-            docPreview = results.searchResult(i).openDocumentPreview();
-            assertThat(docPreview.getIndex().getDisplayName(),is(chosenIndex));
+            assertThat(results.searchResult(i).openDocumentPreview().getIndex().getDisplayName(),is(chosenIndex));
         }
     }
 
@@ -273,22 +251,6 @@ public class FindITCase extends FindTestBase {
         }
         assertThat(findPage.fromDateInput().getValue(), is(findPage.formatInputDate(start)));
         assertThat(findPage.untilDateInput().getValue(), is(findPage.formatInputDate(end)));
-    }
-
-    @Test
-    public void testFileTypes(){
-        assumeThat(getConfig().getType(),is(ApplicationType.HOSTED));
-        findService.search("love ");
-
-        for(FileType f : FileType.values()) {
-            findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
-
-            for(FindResult result : results.getResults()){
-                assertThat(result.icon().getAttribute("class"), containsString(f.getFileIconString()));
-            }
-
-            findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
-        }
     }
 
     @Test
@@ -410,16 +372,6 @@ public class FindITCase extends FindTestBase {
         }
     }
 
-    @Test
-    @KnownBug({"CSA-1726", "CSA-1763"})
-    public void testPublicIndexesVisibleNotSelectedByDefault(){
-        assumeThat(getConfig().getType(),is(ApplicationType.HOSTED));
-        findService.search("Marina and the Diamonds");
-
-        verifyThat("public indexes are visible", findPage.indexesTree().publicIndexes(), not(emptyIterable()));
-        verifyThat(findPage.getSelectedPublicIndexes(), empty());
-    }
-
     //correctly failing last part because some titles are duplicates
     @Test
     @KnownBug("CSA-2082")
@@ -464,8 +416,6 @@ public class FindITCase extends FindTestBase {
         verifyThat("Only one message showing at the bottom of search results", occurrences, is(1));
     }
 
-
-
     @Test
     @KnownBug("CCUK-3624")
     public void testRefreshEmptyQuery() throws InterruptedException {
@@ -482,44 +432,13 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    public void testOpenDocumentFromSearch(){
-        assumeThat(getConfig().getType(),is(ApplicationType.HOSTED));
-        findService.search("Refuse to Feel");
-
-        for(int i = 1; i <= 5; i++){
-            Window original = getWindow();
-            FindResult result = results.getResult(i);
-            String reference = result.getReference();
-            result.title().click();
-            Waits.loadOrFadeWait();
-            Window newWindow = getMainSession().switchWindow(getMainSession().countWindows() - 1);
-
-            verifyThat(getDriver().getCurrentUrl(), containsString(reference));
-
-            newWindow.close();
-            original.activate();
+    public void testOpenDocInNewTab() {
+        findService.search("clueless");
+        for (QueryResult queryResult : results.getResults(5)) {
+            DocumentViewer docViewer = queryResult.openDocumentPreview();
+            SharedPreviewTests.testOpenInNewTabFromViewer(getMainSession(), docViewer);
         }
     }
 
-    private enum FileType {
-        HTML("TEXT/HTML","html"),
-        PDF("APPLICATION/PDF","pdf"),
-        PLAIN("TEXT/PLAIN","file");
 
-        private final String sidebarString;
-        private final String fileIconString;
-
-        FileType(String sidebarString, String fileIconString){
-            this.sidebarString = sidebarString;
-            this.fileIconString = fileIconString;
-        }
-
-        public String getFileIconString() {
-            return fileIconString;
-        }
-
-        public String getSidebarString() {
-            return sidebarString;
-        }
-    }
 }
