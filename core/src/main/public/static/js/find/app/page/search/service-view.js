@@ -142,42 +142,41 @@ define([
                 highlightModel: this.highlightModel
             }, subViewArguments));
 
-            this.resultsViewAugmentation = new this.ResultsViewAugmentation({
-                resultsView: resultsView,
-                queryModel: this.queryModel
-            });
-            
-            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle', this.rightSideContainerHideToggle);
-
-            this.topicMapView = new TopicMapView(_.extend({
-                clickHandler: entityClickHandler
-            }, subViewArguments));
-
-            this.mapResultsView = new MapResultsView(_.extend({
-                resultsStep: this.mapViewResultsStep,
-                allowIncrement: this.mapViewAllowIncrement
-            }, subViewArguments));
-
             this.resultsViews = [{
-                content: this.resultsViewAugmentation,
+                constructor: this.ResultsViewAugmentation,
                 id: 'list',
                 uniqueId: _.uniqueId('results-view-item-'),
+                constructorArguments: {
+                    resultsView: resultsView,
+                    queryModel: this.queryModel
+                },
+                events: {
+                    // needs binding as the view container will be the eventual listener
+                    'rightSideContainerHideToggle': _.bind(this.rightSideContainerHideToggle, this)
+                },
                 selector: {
                     displayNameKey: 'list',
                     icon: 'hp-list'
                 }
             }, {
-                content: this.topicMapView,
+                constructor: TopicMapView,
                 id: 'topic-map',
                 uniqueId: _.uniqueId('results-view-item-'),
+                constructorArguments: _.extend({
+                    clickHandler: entityClickHandler
+                }, subViewArguments),
                 selector: {
                     displayNameKey: 'topic-map',
                     icon: 'hp-grid'
                 }
             }, {
-                content: this.mapResultsView,
+                constructor: MapResultsView,
                 id: 'map',
                 uniqueId: _.uniqueId('results-view-item-'),
+                constructorArguments: _.extend({
+                    resultsStep: this.mapViewResultsStep,
+                    allowIncrement: this.mapViewAllowIncrement
+                }, subViewArguments),
                 selector: {
                     displayNameKey: 'map',
                     icon: 'hp-map-view'
@@ -185,10 +184,9 @@ define([
             }];
 
             if (this.displaySunburst) {
-                this.sunburstView = new SunburstView(subViewArguments);
-
                 this.resultsViews.splice(2, 0, {
-                    content: this.sunburstView,
+                    constructor: SunburstView,
+                    constructorArguments: subViewArguments,
                     id: 'sunburst',
                     uniqueId: _.uniqueId('results-view-item-'),
                     selector: {
@@ -275,9 +273,6 @@ define([
             this.queryModel.stopListening();
 
             _.chain([
-                // remove all the results views
-                this.resultsViews,
-                // and then everything else
                 this.savedSearchControlView,
                 this.resultsViewContainer,
                 this.resultsViewSelection,
@@ -285,7 +280,6 @@ define([
                 this.leftSideFooterView,
                 this.middleColumnHeaderView
             ])
-                .flatten()
                 .compact()
                 .invoke('remove');
 
