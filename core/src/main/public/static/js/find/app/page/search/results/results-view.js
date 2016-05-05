@@ -79,7 +79,11 @@ define([
             },
             'click .similar-documents-trigger': function(event) {
                 event.stopPropagation();
-                var documentModel = this.documentsCollection.get($(event.target).closest('[data-cid]').data('cid'));
+                var cid = $(event.target).closest('[data-cid]').data('cid');
+                var documentModel = this.documentsCollection.get(cid);
+                if (!documentModel){
+                    documentModel = this.promotionsCollection.get(cid);
+                }
                 vent.navigateToSuggestRoute(documentModel);
             }
         },
