@@ -12,6 +12,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DocumentViewer extends AppElement implements AppPage {
+
+    protected DocumentViewer(WebDriver driver, WebElement element){
+        super(element,driver);
+    }
+
     private DocumentViewer(WebDriver driver) {
         super(driver.findElement(By.id("colorbox")), driver);
     }

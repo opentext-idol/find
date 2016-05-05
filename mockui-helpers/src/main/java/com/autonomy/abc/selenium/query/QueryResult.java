@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.query;
 
+import com.autonomy.abc.selenium.element.DocumentPreviewer;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.indexes.Index;
 import org.openqa.selenium.By;

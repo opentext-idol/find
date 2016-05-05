@@ -1,21 +1,17 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
-import com.autonomy.abc.selenium.element.DocumentViewer;
+import com.autonomy.abc.selenium.element.DocumentPreviewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.shared.QueryTestHelper;
-import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
-import com.hp.autonomy.frontend.selenium.util.DriverUtil;
-import com.hp.autonomy.frontend.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,10 +20,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import com.autonomy.abc.selenium.element.DocumentViewer;
+
+
 
 import java.util.*;
 
@@ -35,7 +31,6 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
@@ -139,13 +134,14 @@ public class FindITCase extends FindTestBase {
         }
     }
 
+    //more general -> 1st child of databases
     @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
-        assumeThat(getConfig().getType(),is(ApplicationType.HOSTED));
         findService.search("wolf");
-        results.parametricTypeCheckbox("Content Type", "TEXT/HTML").check();
-        Waits.loadOrFadeWait();
-        results.parametricTypeCheckbox("Content Type", "TEXT/HTML").uncheck();
+
+        findPage.clickFirstIndex();
+        findPage.clickFirstIndex();
+
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
@@ -161,116 +157,58 @@ public class FindITCase extends FindTestBase {
         findService.search("face");
         QueryResult queryResult = results.searchResult(1);
         String titleString = queryResult.getTitleString();
-        showDocumentPreview(1);
-        Index index=getPreviewIndex();
-        findPage.filterBy(new DatabaseFilter(index));
+        DocumentViewer docPreview = queryResult.openDocumentPreview();
+        Index index = docPreview.getIndex();
+        findPage.filterBy(new IndexFilter(index));
         assertThat(results.searchResult(1).getTitleString(), is(titleString));
     }
 
     @Test
     public void testShowDocumentPreview(){
         findService.search("cake");
-        showDocumentPreview(1);
-        Waits.loadOrFadeWait();
-        assertThat("Preview is not loading",!(findPage.findElement(By.cssSelector(".view-server-loading-indicator")).isDisplayed()));
-        WebElement previewContents= findPage.findElement(By.className("preview-mode-contents"));
-        assertThat("There is content in preview",previewContents.getText(),not(isEmptyOrNullString()));
-        assertThat("Index displayed",getPreviewIndex().getDisplayName(),not(nullValue()));
-        assertThat("Reference displayed",getPreviewRef(),not(nullValue()));
 
-        Frame previewFrame = new Frame(getWindow(), findPage.findElement(By.tagName("iframe")));
+        DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
+
+        assertThat("Preview not stuck loading",!findPage.LoadingIndicator().isDisplayed());
+        assertThat("There is content in preview",findPage.previewContents().getText(),not(isEmptyOrNullString()));
+        assertThat("Index displayed",docPreview.getIndex(),not(nullValue()));
+        assertThat("Reference displayed",docPreview.getReference(),not(nullValue()));
+
+        Frame previewFrame = new Frame(getWindow(), docPreview.frame());
 
         String frameText=previewFrame.getText();
+
         verifyThat("Preview document has content",frameText,not(isEmptyOrNullString()));
+        assertThat("Preview document has no error",previewFrame.getText(),not(containsString("error")));
 
-        assertThat("Preview document has an error",previewFrame.getText(),not(containsString("error")));
-
-        hideDocumentPreview();
-        assertThat("There is no content in preview",frameText,isEmptyOrNullString());
-    }
-
-    private void showDocumentPreview(int i){
-        FindResult findResult = results.searchResult(i);
-        findResult.title().click();
-    }
-    private void hideDocumentPreview(){
-        findPage.findElement(By.tagName("i")).click();
-    }
-
-    private Index getPreviewIndex() {
-        new WebDriverWait(getDriver(),15).until(ExpectedConditions.visibilityOf(findPage.findElement(By.xpath("//th[contains(text(),'Index')]/following-sibling::td[@class='break-all']"))));
-        return new Index(findPage.findElement(By.xpath("//th[contains(text(),'Index')]/following-sibling::td[@class='break-all']")).getText());
-    }
-
-    private String getPreviewRef(){
-        return findPage.findElement(By.xpath("//th[contains(text(),'Reference')]/following-sibling::td[@class='break-all']")).getText();
-    }
-
-    //move
-    @Test
-    public void testFilterByIndex(){
-        findService.search("Sam");
-
-        QueryResult queryResult = results.searchResult(1);
-        String titleString = queryResult.getTitleString();
-        DocumentViewer docViewer = queryResult.openDocumentPreview();
-        Index index = docViewer.getIndex();
-
-        docViewer.close();
-
-        findPage.filterBy(new IndexFilter(index));
-
-        assertThat(results.searchResult(1).getTitleString(), is(titleString));
-    }
-
-    //move
-    @Test
-    public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
-        findService.search("Happy");
-
-        // TODO: what if this index has no results?
-        //This breaks if using default index
-        String indexTitle = findPage.getPrivateIndexNames().get(1);
-        findPage.filterBy(new IndexFilter(indexTitle));
-        DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
-        for(int i = 0; i < 5; i++){
-            assertThat(docViewer.getIndex().getDisplayName(), is(indexTitle));
-            docViewer.next();
-        }
+        docPreview.close();
     }
 
     @Test
     public void testFilteredByDatabaseOnlyHasFilesFromDatabase(){
         findService.search("Sad");
-        showDocumentPreview(1);
-        String chosenIndex = getPreviewIndex().getDisplayName();
-        hideDocumentPreview();
-        findPage.filterBy(new DatabaseFilter(chosenIndex));
+
+        DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
+        String chosenIndex = docPreview.getIndex().getDisplayName();
+        docPreview.close();
+
+        findPage.filterBy(new IndexFilter(chosenIndex));
+
         for (int i=1; i<6; i++){
-            showDocumentPreview(i);
-            assertThat(getPreviewIndex().getDisplayName(),is(chosenIndex));
+            docPreview = results.searchResult(i).openDocumentPreview();
+            assertThat(docPreview.getIndex().getDisplayName(),is(chosenIndex));
         }
     }
 
-    //move
     @Test
-    public void testQuicklyDoubleClickingIndexDoesNotLeadToError(){
-        findService.search("index");
-        // async filters
-        new IndexFilter(Index.DEFAULT).apply(findPage);
-        IndexFilter.PRIVATE.apply(findPage);
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        assertThat(results.resultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
-    }
-
-    @Test
-    public void testQuicklyDoubleClickingDatabaseNotCauseError(){
+    public void testQuickDoubleClickOnDateFilterNotCauseError(){
         findService.search("wookie");
-        for(int i=0;i<2;i++) {
-            new DatabaseFilter("Wookiepedia").apply(findPage);
-        }
+
+        results.toggleDateSelection(FindResultsPage.DateEnum.MONTH);
+        results.toggleDateSelection(FindResultsPage.DateEnum.MONTH);
+
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        assertThat(results.resultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
+        assertThat(results.resultsDiv().getText().toLowerCase(), not(containsString("an error")));
 
     }
 
@@ -318,55 +256,6 @@ public class FindITCase extends FindTestBase {
             }
         }
         return cal.getTime();
-    }
-
-    //move
-    @Test
-    @KnownBug("CSA-1767 - footer not hidden properly")
-    public void testViewDocumentsOpenFromFind(){
-        findService.search("Review");
-
-        for(FindResult result : results.getResults(5)){
-            try {
-                DocumentViewer docViewer = result.openDocumentPreview();
-                verifyDocumentViewer(docViewer);
-                docViewer.close();
-            } catch (WebDriverException e){
-                fail("Could not click on preview button - most likely CSA-1767");
-            }
-        }
-    }
-
-    @Test
-    public void testViewDocumentsOpenWithArrows(){
-        assumeThat(getConfig().getType(),is(ApplicationType.HOSTED));
-        findService.search("Review");
-
-        DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
-        for(int i = 0; i < 5; i++) {
-            verifyDocumentViewer(docViewer);
-            docViewer.next();
-        }
-    }
-
-    private void verifyDocumentViewer(DocumentViewer docViewer) {
-        final Frame frame = new Frame(getWindow(), docViewer.frame());
-
-        verifyThat("document visible", docViewer, displayed());
-        verifyThat("next button visible", docViewer.nextButton(), displayed());
-        verifyThat("previous button visible", docViewer.prevButton(), displayed());
-
-        frame.activate();
-
-        Locator errorHeader = new Locator()
-                .withTagName("h1")
-                .containingText("500");
-        Locator errorBody = new Locator()
-                .withTagName("h2")
-                .containingCaseInsensitive("error");
-        verifyThat("no backend error", frame.content().findElements(errorHeader), empty());
-        verifyThat("no view server error", frame.content().findElements(errorBody), empty());
-        frame.deactivate();
     }
 
     //Correctly failing
@@ -539,10 +428,10 @@ public class FindITCase extends FindTestBase {
         findPage.findElement(By.className("highlight-result-entities")).click();
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
-        scrollToBottom();
+        findPage.scrollToBottom();
         verifyThat(results.getResults().size(), allOf(greaterThanOrEqualTo(30), lessThanOrEqualTo(60)));
 
-        scrollToBottom();
+        findPage.scrollToBottom();
         verifyThat(results.getResults().size(), allOf(greaterThanOrEqualTo(60), lessThanOrEqualTo(90)));
 
         List<String> titles = results.getResultTitles();
@@ -551,62 +440,16 @@ public class FindITCase extends FindTestBase {
         verifyThat("No duplicate titles", titles.size(), is(titlesSet.size()));
     }
 
-    //move
     @Test
-    public void testViewportSearchResultNumbers(){
-        findService.search("Messi");
-
-        results.getResult(1).openDocumentPreview();
-        verifyDocViewerTotalDocuments(30);
-
-        scrollToBottom();
-        results.getResult(31).openDocumentPreview();
-        verifyDocViewerTotalDocuments(60);
-
-        scrollToBottom();
-        results.getResult(61).openDocumentPreview();
-        verifyDocViewerTotalDocuments(90);
-    }
-
-
-    //move
-    @Test
-    @KnownBug("CCUK-3647")
-    public void testLessThan30ResultsDoesntAttemptToLoadMore() {
-        findService.search(new Query("roland garros")
-                .withFilter((new IndexFilter("fifa"))));
-
-        results.getResult(1).openDocumentPreview();
-        verifyDocViewerTotalDocuments(lessThanOrEqualTo(30));
-
-        scrollToBottom();
-        verifyThat(results.resultsDiv(), not(containsText("results found")));
-    }
-
-    @Test
-    public void testFewerThan30ResultsNoLoadingAttempt(){
+    public void testFewerThan30ResultsDoesNotAttemptLoadMore(){
         findService.search(new Query("oesophageal"));
 
         verifyThat(results.getResults().size(),lessThanOrEqualTo(30));
+
         findPage.findElement(By.className("highlight-result-entities")).click();
 
-        scrollToBottom();
+        findPage.scrollToBottom();
         verifyThat(results.resultsDiv(),containsText("No more results found"));
-    }
-
-    //move
-    @Test
-    public void testBetween30And60Results(){
-        findService.search(new Query("idol")
-                .withFilter(new IndexFilter("sitesearch")));
-
-        scrollToBottom();
-        results.getResult(1).openDocumentPreview();
-        verifyDocViewerTotalDocuments(lessThanOrEqualTo(60));
-
-        Waits.loadOrFadeWait();
-
-        verifyThat(results.resultsDiv(), containsText("No more results found"));
     }
 
     @Test
@@ -615,26 +458,13 @@ public class FindITCase extends FindTestBase {
 
         verifyThat(results.resultsDiv(), either(containsText("No results found")).or(containsText("No more results found")));
 
-        scrollToBottom();
+        findPage.scrollToBottom();
 
         int occurrences = StringUtils.countMatches(results.resultsDiv().getText(), "results found");
         verifyThat("Only one message showing at the bottom of search results", occurrences, is(1));
     }
 
-    private void scrollToBottom() {
-        DriverUtil.scrollToBottom(getDriver());
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-    }
 
-    private void verifyDocViewerTotalDocuments(int docs){
-        verifyDocViewerTotalDocuments(is(docs));
-    }
-
-    private void verifyDocViewerTotalDocuments(Matcher matcher){
-        DocumentViewer docViewer = DocumentViewer.make(getDriver());
-        verifyThat(docViewer.getTotalDocumentsNumber(), matcher);
-        docViewer.close();
-    }
 
     @Test
     @KnownBug("CCUK-3624")
@@ -669,18 +499,6 @@ public class FindITCase extends FindTestBase {
             newWindow.close();
             original.activate();
         }
-    }
-
-    //move
-    @Test
-    @KnownBug("CSA-1767 - footer not hidden properly")
-    @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
-    public void testDocumentPreview(){
-        assumeThat(getConfig().getType(),is(ApplicationType.HOSTED));
-        Index index = new Index("fifa");
-        findService.search(new Query("document preview").withFilter(new IndexFilter(index)));
-
-        SharedPreviewTests.testDocumentPreviews(getMainSession(), results.getResults(5), index);
     }
 
     private enum FileType {

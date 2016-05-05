@@ -1,17 +1,13 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.indexes.tree.DatabasesTree;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -25,7 +21,6 @@ import java.util.List;
 
 public class FindPage extends AppElement implements AppPage,
         IndexFilter.Filterable,
-        DatabaseFilter.Filterable,
         DatePickerFilter.Filterable,
         StringDateFilter.Filterable,
         ParametricFilter.Filterable {
@@ -33,7 +28,7 @@ public class FindPage extends AppElement implements AppPage,
 
     private final FindResultsPage results;
 
-    private FindPage(WebDriver driver){
+    protected FindPage(WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
@@ -70,10 +65,6 @@ public class FindPage extends AppElement implements AppPage,
     @Override
     public IndexesTree indexesTree() {
         return new IndexesTree(new FindIndexCategoryNode(findElement(By.cssSelector(".databases-list [data-category-id='all']")), getDriver()));
-    }
-
-    public DatabasesTree databasesTree(){
-        return new DatabasesTree(new IndexesTree(new FindIndexCategoryNode(findElement(By.cssSelector(".databases-list [data-category-id='all']")),getDriver())));
     }
 
     public void sortBy(SortBy sortBy) {
@@ -175,6 +166,19 @@ public class FindPage extends AppElement implements AppPage,
         return findElement(By.className("hp-logo-footer"));
     }
 
+    public WebElement LoadingIndicator(){
+        return findElement(By.className("view-server-loading-indicator"));
+    }
+
+    public WebElement previewContents(){
+        return findElement(By.className("preview-mode-contents"));
+    }
+
+    //should check not already selected
+    public void clickFirstIndex(){
+        findElement(By.cssSelector(".child-categories li:first-child")).click();
+    }
+
     public WebElement rightContainerToggleButton() {
         return findElement(By.cssSelector(".right-container-icon .container-toggle"));
     }
@@ -183,8 +187,9 @@ public class FindPage extends AppElement implements AppPage,
         return findElement(By.cssSelector(".left-side-container .container-toggle"));
     }
 
-    public WebElement indexElement(Index index) {
-        return ElementUtil.ancestor(getResultsPage().resultsDiv().findElement(By.xpath("//*[@class='database-name' and text()='" + index.getDisplayName() + "']")), 2);
+    public void scrollToBottom() {
+        DriverUtil.scrollToBottom(getDriver());
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {
