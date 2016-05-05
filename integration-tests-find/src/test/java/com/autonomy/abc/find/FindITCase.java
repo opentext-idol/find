@@ -113,7 +113,6 @@ public class FindITCase extends FindTestBase {
         }
     }
 
-    //more general -> 1st child of databases
     @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
         findService.search("wolf");
@@ -165,7 +164,9 @@ public class FindITCase extends FindTestBase {
 
     @Test
     public void testFilteredByIndexOnlyHasFilesFromIndex(){
-        findService.search("Sad");
+        //findService.search("Sad");
+        //want to check to see if it's that particular result  but never stops loading
+        findService.search("face");
 
         DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
         String chosenIndex = docPreview.getIndex().getDisplayName();

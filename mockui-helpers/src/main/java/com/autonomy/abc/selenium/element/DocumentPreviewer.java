@@ -32,4 +32,12 @@ public class DocumentPreviewer extends DocumentViewer {
         findElement(By.xpath("//button[text()='Open']")).click();
     }
 
+    @Override
+    public void next(){ throw new UnsupportedOperationException("Idol-Find DocPreview has no 'next'");}
+
+    @Override
+    public void previous(){throw new UnsupportedOperationException("Idol-Find DocPreview has no 'previous'");}
+
+    @Override
+    public int getTotalDocumentsNumber() {throw new UnsupportedOperationException("Idol-Find DocPreview has no 'previous'");}
 }
