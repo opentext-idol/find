@@ -308,7 +308,8 @@ define([
                 queryText: queryText || '*',
                 relatedConcepts: [],
                 title: i18n['search.newSearch'],
-                type: SavedSearchModel.Type.QUERY
+                type: SavedSearchModel.Type.QUERY,
+                minScore: config().minScore
             });
 
             this.savedQueryCollection.add(newSearch);

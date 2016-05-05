@@ -13,7 +13,8 @@ public enum MvcConstants {
     RELEASE_VERSION("version"),
     ROLES("roles"),
     SAVED_SEARCH_CONFIG("savedSearchConfig"),
-    USERNAME("username");
+    USERNAME("username"),
+    MIN_SCORE("minScore");
 
     private final String value;
 

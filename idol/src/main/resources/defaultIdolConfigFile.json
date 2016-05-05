@@ -83,6 +83,7 @@
     "enabled": false,
     "baseUrl": ""
   },
+  "minScore": 0,
   "fieldsInfo": {
     "contentType": {
       "names": [

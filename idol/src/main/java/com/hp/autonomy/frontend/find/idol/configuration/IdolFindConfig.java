@@ -45,6 +45,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final MMAP mmap;
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
+    private final Integer minScore;
 
     @Override
     public IdolFindConfig merge(final IdolFindConfig other) {
@@ -61,6 +62,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .setMmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
                 .setFieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
                 .setMap(map == null ? other.map : map.merge(other.map))
+                .setMinScore(minScore == null ? other.minScore : minScore)
                 .build();
     }
 
@@ -137,6 +139,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         private MMAP mmap;
         private FieldsInfo fieldsInfo;
         private MapConfiguration map;
+        private Integer minScore;
 
         public Builder(final IdolFindConfig config) {
             login = config.login;
@@ -147,10 +150,11 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             mmap = config.mmap;
             fieldsInfo = config.fieldsInfo;
             map = config.map;
+            minScore = config.minScore;
         }
 
         public IdolFindConfig build() {
-            return new IdolFindConfig(login, content, queryManipulation, view, savedSearchConfig, mmap, fieldsInfo, map);
+            return new IdolFindConfig(login, content, queryManipulation, view, savedSearchConfig, mmap, fieldsInfo, map, minScore);
         }
     }
 

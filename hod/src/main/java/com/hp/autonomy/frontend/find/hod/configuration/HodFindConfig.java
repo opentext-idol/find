@@ -45,6 +45,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private final RedisConfig redis;
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
+    private final Integer minScore;
 
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
@@ -59,6 +60,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         queryManipulation = builder.queryManipulation;
         map = builder.map;
         savedSearchConfig = builder.savedSearchConfig;
+        minScore = builder.minScore;
     }
 
     @SuppressWarnings("OverlyComplexMethod")
@@ -74,6 +76,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
                 .setFieldsInfo(fieldsInfo == null ? config.fieldsInfo : fieldsInfo.merge(config.fieldsInfo))
                 .setMap(map == null ? config.map : map.merge(config.map))
                 .setSavedSearchConfig(savedSearchConfig == null ? config.savedSearchConfig : savedSearchConfig.merge(config.savedSearchConfig))
+                .setMinScore(minScore == null ? config.minScore : minScore)
                 .build() : this;
     }
 
@@ -165,6 +168,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         private MapConfiguration map;
         @JsonProperty("savedSearches")
         private SavedSearchConfig savedSearchConfig;
+        private Integer minScore;
 
         public Builder(final HodFindConfig config) {
             login = config.login;
@@ -176,6 +180,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
             fieldsInfo = config.fieldsInfo;
             map = config.map;
             savedSearchConfig = config.savedSearchConfig;
+            minScore = config.minScore;
         }
 
         public HodFindConfig build() {

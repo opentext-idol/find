@@ -53,6 +53,7 @@
             }
         ]
     },
+    "minScore": 0,
     "fieldsInfo": {
         "contentType": {
             "names": [
