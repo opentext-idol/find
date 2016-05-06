@@ -21,8 +21,11 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriverException;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -51,6 +54,11 @@ public class HodFindITCase extends FindTestBase{
         navBar = getElementFactory().getTopNavBar();
         results = findPage.getResultsPage();
         findService = getApplication().findService();
+    }
+
+    @Parameterized.Parameters
+    public static Iterable<Object[]> parameters() throws IOException {
+        return parameters(Collections.singleton(ApplicationType.HOSTED));
     }
 
     @Test

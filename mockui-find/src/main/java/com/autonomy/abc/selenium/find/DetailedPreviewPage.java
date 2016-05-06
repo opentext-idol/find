@@ -46,7 +46,17 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     }
 
     public WebElement ithTick(int i){
-        return findElement(By.xpath("//div[contains(class(),'before-slider-div')]/../div[class='slider-track']/div[position()='"+i+"']"));
+        String tickPercent = String.valueOf((i-1)*10);
+        return findElement(By.xpath("//div[contains(@class,'slider-tick') and contains(@style,'left: "+tickPercent+"%')]"));
+    }
+
+    public String getSimilarDatesSummary(){
+        return findElement(By.className("similar-dates-summary")).getText();
+    }
+
+    public int numberOfHeadersWithDocTitle(){
+        String title = getTitle();
+        return findElements(By.xpath("//h1[contains(text(),'"+title+"')]")).size();
     }
 
     //metadata

@@ -10,10 +10,15 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runners.Parameterized;
+
+import java.io.IOException;
+import java.util.Collections;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
@@ -25,22 +30,25 @@ import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 
 public class IdolFindITCase extends FindTestBase {
 
+    private FindPage findPage;
+    private FindTopNavBar navBar;
+    private FindResultsPage results;
+    private FindService findService;
 
-        private FindPage findPage;
-        private FindTopNavBar navBar;
-        private FindResultsPage results;
-        private FindService findService;
+    public IdolFindITCase(TestConfig config) {
+        super(config);}
 
-        public IdolFindITCase(TestConfig config) {
-        super(config);
+    @Parameterized.Parameters
+    public static Iterable<Object[]> parameters() throws IOException {
+        return parameters(Collections.singleton(ApplicationType.ON_PREM));
     }
 
-        @Before
-        public void setUp(){
-        findPage = getElementFactory().getFindPage();
-        navBar = getElementFactory().getTopNavBar();
-        results = findPage.getResultsPage();
-        findService = getApplication().findService();
+    @Before
+    public void setUp(){
+    findPage = getElementFactory().getFindPage();
+    navBar = getElementFactory().getTopNavBar();
+    results = findPage.getResultsPage();
+    findService = getApplication().findService();
     }
 
     @Test
@@ -129,23 +137,33 @@ public class IdolFindITCase extends FindTestBase {
     }
 
     private void checkSimilarDocuments(DetailedPreviewPage detailedPreviewPage){
+        detailedPreviewPage.similarDocsTab().click();
         verifyThat("Tab loads",!(detailedPreviewPage.loadingIndicator().isDisplayed()));
-        //dunno what I should check
-        //maybe if click on 'See More' the title is the title
     }
 
     private void checkSimilarDates(DetailedPreviewPage detailedPreviewPage){
         detailedPreviewPage.similarDatesTab().click();
         verifyThat("Tab loads",!(detailedPreviewPage.loadingIndicator().isDisplayed()));
-        changeDateSlider(detailedPreviewPage);
+        changeDateSliderToYearBefore(detailedPreviewPage);
+        verifyThat("Can change to similar docs from year before",detailedPreviewPage.getSimilarDatesSummary(),containsString("Between 1 year"));
     }
 
-    private void changeDateSlider(DetailedPreviewPage detailedPreviewPage){
-        detailedPreviewPage.ithTick(4).click();
+    private void changeDateSliderToYearBefore(DetailedPreviewPage detailedPreviewPage){
+        detailedPreviewPage.ithTick(1).click();
     }
 
     @Test
+    @KnownBug("FIND-86")
     public void testOneCopyOfDocinDetailedPreview(){
+        findService.search("face");
+        results.getResult(1).openDocumentPreview();
+
+        findPage.openDetailedPreview();
+        DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+
+        verifyThat("Only 1 copy of that document in detailed preview",detailedPreviewPage.numberOfHeadersWithDocTitle(),lessThanOrEqualTo(1));
+
+        detailedPreviewPage.goBackToSearch();
 
     }
 }
