@@ -169,33 +169,6 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    public void testShowDocumentPreview(){
-        assumeThat(getConfig().getType(),is(ApplicationType.ON_PREM));
-
-        findService.search("cake");
-
-        DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
-
-        if (findPage.loadingIndicatorExists()) {
-            assertThat("Preview not stuck loading", !findPage.loadingIndicator().isDisplayed());
-        }
-        assertThat("There is content in preview",findPage.previewContents().getText(),not(isEmptyOrNullString()));
-
-        assertThat("Index displayed",docPreview.getIndex(),not(nullValue()));
-
-        assertThat("Reference displayed",docPreview.getReference(),not(nullValue()));
-
-        Frame previewFrame = new Frame(getWindow(), docPreview.frame());
-
-        String frameText=previewFrame.getText();
-
-        verifyThat("Preview document has content",frameText,not(isEmptyOrNullString()));
-        assertThat("Preview document has no error",previewFrame.getText(),not(containsString("encountered an error")));
-
-        docPreview.close();
-    }
-
-    @Test
     public void testFilteredByIndexOnlyHasFilesFromIndex(){
         findService.search("Sad");
 
@@ -464,15 +437,6 @@ public class FindITCase extends FindTestBase {
         verifyThat("taken back to landing page after refresh", findPage.footerLogo(), displayed());
     }
 
-    @Test
-    public void testOpenDocInNewTab() {
-        findService.search("clueless");
-        for (QueryResult queryResult : results.getResults(5)) {
-            DocumentViewer docViewer = queryResult.openDocumentPreview();
-            SharedPreviewTests.testOpenInNewTabFromViewer(getMainSession(), docViewer);
-            docViewer.close();
-        }
-    }
 
 
 }

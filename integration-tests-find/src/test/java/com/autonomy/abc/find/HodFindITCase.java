@@ -207,7 +207,6 @@ public class HodFindITCase extends FindTestBase{
 
     @Test
     public void testOpenDocumentFromSearch(){
-        assumeThat(getConfig().getType(),is(ApplicationType.HOSTED));
         findService.search("Refuse to Feel");
 
         for(int i = 1; i <= 5; i++){

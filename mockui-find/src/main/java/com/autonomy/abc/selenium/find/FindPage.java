@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
@@ -188,7 +187,9 @@ public class FindPage extends AppElement implements AppPage,
 
     public void seeMoreOfCategory(WebElement element){element.findElement(By.className("toggle-more")).click();}
 
-
+    public void openDetailedPreview(){
+        findElement(By.className("preview-mode-open-detail-button")).click();
+    }
 
     public WebElement rightContainerToggleButton() {
         return findElement(By.cssSelector(".right-container-icon .container-toggle"));
