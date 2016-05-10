@@ -24,12 +24,13 @@ define([
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
+    'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
             queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
             ResultsViewSelection, RelatedConceptsView, Collapsible,
-            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, i18n, templateString) {
+            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, configuration, i18n, templateString) {
 
     'use strict';
 
@@ -115,7 +116,9 @@ define([
                 selectedTabModel: this.selectedTabModel
             };
 
-            this.savedSearchControlView = new SavedSearchControlView(subViewArguments);
+            if (configuration().hasBiRole) {
+                this.savedSearchControlView = new SavedSearchControlView(subViewArguments);
+            }
 
             this.leftSideFooterView = new this.searchTypes[searchType].LeftSideFooterView(subViewArguments);
 
@@ -221,7 +224,13 @@ define([
                 headerControlsHtml: this.headerControlsHtml
             }));
 
-            this.savedSearchControlView.setElement(this.$('.search-options-container')).render();
+            if (this.savedSearchControlView) {
+                // the padding looks silly if we don't have the view so add it here
+                var $searchOptionContainer = this.$('.search-options-container').addClass('p-sm');
+
+                this.savedSearchControlView.setElement($searchOptionContainer).render();
+            }
+
             this.relatedConceptsViewWrapper.render();
 
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
