@@ -82,15 +82,26 @@ define([
 
         // Can be overridden
         getModelData: function() {
-            return {
+            var modelData = {
                 indexesCollection: {
                     Constructor: IndexesCollection
-                },
-                savedQueryCollection: {
+                }
+            };
+
+            if (configuration().hasBiRole) {
+                modelData.savedQueryCollection = {
                     Constructor: SavedQueryCollection,
                     fetchOptions: {remove: false}
                 }
-            };
+            }
+            else {
+                modelData.savedQueryCollection = {
+                    Constructor: Backbone.Collection,
+                    fetch: false
+                }
+            }
+
+            return modelData;
         }
     });
 

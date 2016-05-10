@@ -11,6 +11,10 @@ define([
             if (configString) {
                 config = JSON.parse(configString);
             }
+
+            if (!config.hasBiRole) {
+                config.hasBiRole = _.contains(config.roles, 'ROLE_BI');
+            }
         }
 
         return config;

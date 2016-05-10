@@ -21,12 +21,18 @@ define([
         Navigation: Navigation,
 
         getModelData: function() {
-            return _.extend({
-                savedSnapshotCollection: {
-                    Constructor: SavedSnapshotCollection,
-                    fetchOptions: {remove: false}
-                }
-            }, BaseApp.prototype.getModelData.call(this));
+            var modelData = BaseApp.prototype.getModelData.call(this);
+
+            if (configuration().hasBiRole) {
+                modelData = _.extend({
+                    savedSnapshotCollection: {
+                        Constructor: SavedSnapshotCollection,
+                        fetchOptions: {remove: false}
+                    }
+                }, modelData);
+            }
+
+            return modelData;
         },
 
         getPageData: function() {
@@ -34,7 +40,7 @@ define([
                 search: {
                     Constructor: FindSearch,
                     icon: 'hp-icon hp-fw hp-search',
-                    models: ['savedQueryCollection', 'savedSnapshotCollection', 'indexesCollection'],
+                    models: ['indexesCollection', 'savedQueryCollection'].concat(configuration().hasBiRole ? ['savedSnapshotCollection'] : []),
                     title: i18n['app.search'],
                     order: 0
                 },

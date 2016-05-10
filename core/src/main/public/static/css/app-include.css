@@ -402,9 +402,8 @@ fieldset.radio-fieldset > label {
 /* Search tabs */
 .search-tabs-container {
     background-color: #fff;
-    height: 65px;
-    border-bottom: 1px solid #E4E4E4;
-    padding-top: 5px;
+    /* Bootstrap cols have min-height 1 */
+    min-height: 0;
 }
 
 .tab-dropdown {
@@ -421,8 +420,13 @@ fieldset.radio-fieldset > label {
 }
 
 .search-tabs-list {
-    height: 60px;
+    height: 65px;
+    padding-top: 5px;
     overflow: hidden;
+}
+
+.search-tabs-container .nav-tabs {
+    border-bottom: none;
 }
 
 .search-tabs-container .nav-tabs > li > a {
