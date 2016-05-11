@@ -11,8 +11,9 @@ import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Window;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -145,7 +146,7 @@ public class FindITCase extends FindTestBase {
 
 
     @Test
-    @KnownBug("CCUK-3641")
+    @ActiveBug("CCUK-3641")
     public void testAuthor(){
         String author = "FIFA.COM";
 
@@ -252,7 +253,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1767 - footer not hidden properly")
+    @ResolvedBug("CSA-1767 - footer not hidden properly")
     public void testViewDocumentsOpenFromFind(){
         findService.search("Review");
 
@@ -397,13 +398,13 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug({"IOD-8454","CCUK-3634"})
+    @ActiveBug({"HOD-2170","CCUK-3634"})
     public void testSearchQuotationMarks() {
         new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
     }
 
     @Test
-    @KnownBug("CCUK-3700")
+    @ActiveBug("CCUK-3700")
     public void testWhitespaceSearch() {
         try {
             findService.search("       ");
@@ -421,7 +422,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1577")
+    @ResolvedBug("CSA-1577")
     public void testClickingCustomDateFilterDoesNotRefreshResults(){
         findService.search("O Captain! My Captain!");
         // may not happen the first time
@@ -432,7 +433,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1665")
+    @ResolvedBug("CSA-1665")
     public void testSearchTermInResults(){
         String searchTerm = "Tiger";
 
@@ -448,7 +449,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug({"CSA-1726", "CSA-1763"})
+    @ResolvedBug({"CSA-1726", "CSA-1763"})
     public void testPublicIndexesVisibleNotSelectedByDefault(){
         findService.search("Marina and the Diamonds");
 
@@ -457,7 +458,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CSA-2082")
+    @ActiveBug("CSA-2082")
     public void testAutoScroll(){
         findService.search("my very easy method just speeds up naming ");
 
@@ -492,8 +493,8 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3647")
-    public void testLessThan30ResultsDoesntAttemptToLoadMore() {
+    @ResolvedBug("CCUK-3647")
+    public void testNoMoreResultsFoundAtEnd() {
         findService.search(new Query("roland garros")
                 .withFilter((new IndexFilter("fifa"))));
 
@@ -501,7 +502,7 @@ public class FindITCase extends FindTestBase {
         verifyDocViewerTotalDocuments(lessThanOrEqualTo(30));
 
         scrollToBottom();
-        verifyThat(results.resultsDiv(), not(containsText("results found")));
+        verifyThat(results.resultsDiv(), containsText("No more results found"));
     }
 
     @Test
@@ -519,6 +520,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-93")
     public void testNoResults(){
         findService.search("thissearchwillalmostcertainlyreturnnoresults");
 
@@ -546,7 +548,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3624")
+    @ResolvedBug("CCUK-3624")
     public void testRefreshEmptyQuery() throws InterruptedException {
         findService.search("something");
         findService.search("");
@@ -580,7 +582,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1767 - footer not hidden properly")
+    @ResolvedBug("CSA-1767 - footer not hidden properly")
     @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
     public void testDocumentPreview(){
         Index index = new Index("fifa");

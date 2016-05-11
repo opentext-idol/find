@@ -13,8 +13,8 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Window;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +69,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CSA-3678")
+    @ResolvedBug("CCUK-3678")
     public void testTitle(){
         findService.search(new Query("Bill Murray").withFilter(new ParametricFilter("Source Connector","SimpsonsArchive")));
 
@@ -127,7 +127,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3676")
+    @ResolvedBug("CCUK-3676")
     public void testPublicIndexesSimilarDocs(){
         findService.search(new Query("Hammer").withFilter(IndexFilter.PUBLIC));
 

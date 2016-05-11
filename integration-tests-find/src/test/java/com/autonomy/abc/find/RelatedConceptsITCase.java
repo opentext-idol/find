@@ -7,8 +7,9 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -68,7 +69,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug({"CCUK-3498", "CSA-2066"})
+    @ResolvedBug({"CCUK-3498", "CSA-2066"})
     public void testRelatedConceptsHover(){
         findService.search("Find");
         WebElement popover = results.hoverOverRelatedConcept(0);
@@ -146,7 +147,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3566")
+    @ResolvedBug("CCUK-3566")
     public void testTermNotInRelatedConcepts() {
         final String query = "world cup";
         findService.search(query);
@@ -161,7 +162,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3566")
+    @ResolvedBug("CCUK-3566")
     public void testAdditionalConceptsNotAlsoRelated() {
         findService.search("matt");
         List<String> addedConcepts = new ArrayList<>();
@@ -173,7 +174,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3706")
+    @ActiveBug("CCUK-3706")
     public void testAddSausageToQuery() {
         findService.search("sausage");
         results.highlightRelatedConceptsButton().click();
