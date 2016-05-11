@@ -9,6 +9,7 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequest;
+import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -17,5 +18,15 @@ public class IdolFieldsController extends FieldsController<IdolFieldsRequest, Ac
     @Autowired
     public IdolFieldsController(final FieldsService<IdolFieldsRequest, AciErrorException> fieldsService) {
         super(fieldsService);
+    }
+
+    @Override
+    protected String getParametricType() {
+        return FieldTypeParam.Parametric.name();
+    }
+
+    @Override
+    protected String getNumericType() {
+        return FieldTypeParam.Numeric.name();
     }
 }

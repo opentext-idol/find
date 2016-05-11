@@ -29,4 +29,15 @@ public abstract class FieldsControllerIT extends AbstractFindIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", not(empty())));
     }
+
+    @Test
+    public void getParametricNumericFields() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = get(FieldsController.FIELDS_PATH + FieldsController.GET_NUMERIC_FIELDS_PATH).with(authentication(userAuth()));
+        addParams(requestBuilder);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", empty())); // TODO: need some parametric numeric fields configured
+    }
 }

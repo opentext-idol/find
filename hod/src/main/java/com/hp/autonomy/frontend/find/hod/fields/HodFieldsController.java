@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.fields;
 
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
+import com.hp.autonomy.hod.client.api.textindex.query.fields.FieldType;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
 import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsRequest;
@@ -19,5 +20,15 @@ public class HodFieldsController extends FieldsController<HodFieldsRequest, HodE
     @Autowired
     public HodFieldsController(final FieldsService<HodFieldsRequest, HodErrorException> fieldsService) {
         super(fieldsService);
+    }
+
+    @Override
+    protected String getParametricType() {
+        return FieldType.parametric.name();
+    }
+
+    @Override
+    protected String getNumericType() {
+        return FieldType.numeric.name();
     }
 }
