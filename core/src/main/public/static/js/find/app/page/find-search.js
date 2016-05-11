@@ -238,7 +238,7 @@ define([
             }, this);
 
             var savedSearchConfig = config().savedSearchConfig;
-            if (savedSearchConfig.pollForUpdates) {
+            if (configuration().hasBiRole && savedSearchConfig.pollForUpdates) {
                 this.savedSearchScheduleId = setInterval(_.bind(function () {
                     this.savedQueryCollection.fetch({remove:false}).done(_.bind(function () {
                         this.savedQueryCollection.forEach(function (savedQuery) {
