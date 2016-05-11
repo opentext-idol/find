@@ -12,9 +12,10 @@ define([
     'find/app/page/search/filters/precision-recall/precision-recall-slider-view',
     'find/app/util/collapsible',
     'parametric-refinement/display-collection',
+    'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(Backbone, $, DateView, ParametricView, TextInput, PrecisionRecallView, Collapsible, ParametricDisplayCollection, i18n, i18nIndexes) {
+], function(Backbone, $, DateView, ParametricView, TextInput, PrecisionRecallView, Collapsible, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
 
     var datesTitle = i18n['search.dates'];
 
@@ -56,10 +57,12 @@ define([
                 savedSearchModel: options.savedSearchModel
             });
 
-            this.precisionSlider = new PrecisionRecallView({
-                queryModel: options.queryModel,
-                queryState: options.queryState
-            });
+            if (configuration().hasBiRole) {
+                this.precisionSlider = new PrecisionRecallView({
+                    queryModel: options.queryModel,
+                    queryState: options.queryState
+                });
+            }
 
             this.parametricDisplayCollection = new ParametricDisplayCollection([], {
                 parametricCollection: options.parametricCollection,
@@ -104,7 +107,6 @@ define([
 
         render: function() {
             this.$el.empty()
-                .append(this.precisionSlider.$el)
                 .append(this.filterInput.$el)
                 .append(this.$emptyMessage)
                 .append(this.indexesViewWrapper.$el)
@@ -112,10 +114,14 @@ define([
                 .append(this.parametricView.$el);
 
             this.filterInput.render();
-            this.precisionSlider.render();
             this.indexesViewWrapper.render();
             this.parametricView.render();
             this.dateViewWrapper.render();
+
+            if (this.precisionSlider) {
+                this.$el.prepend(this.precisionSlider.$el);
+                this.precisionSlider.render();
+            }
 
             this.updateParametricVisibility();
             this.updateDatesVisibility();
