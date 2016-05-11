@@ -20,7 +20,7 @@ import java.util.List;
 public abstract class FieldsController<R extends FieldsRequest, E extends Exception> {
     static final String FIELDS_PATH = "/api/public/fields";
     static final String GET_PARAMETRIC_FIELDS_PATH = "/parametric";
-    static final String GET_NUMERIC_FIELDS_PATH = "/numeric";
+    static final String GET_PARAMETRIC_NUMERIC_FIELDS_PATH = "/parametric-numeric";
 
     private final FieldsService<R, E> fieldsService;
 
@@ -41,7 +41,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         return parametricFields;
     }
 
-    @RequestMapping(value = GET_NUMERIC_FIELDS_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = GET_PARAMETRIC_NUMERIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public List<String> getParametricNumericFields(final R request) throws E {
         final TagResponse response = fieldsService.getFields(request, ImmutableList.of(getParametricType(), getNumericType()));

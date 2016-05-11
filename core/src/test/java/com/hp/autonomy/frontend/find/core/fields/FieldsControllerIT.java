@@ -32,7 +32,7 @@ public abstract class FieldsControllerIT extends AbstractFindIT {
 
     @Test
     public void getParametricNumericFields() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(FieldsController.FIELDS_PATH + FieldsController.GET_NUMERIC_FIELDS_PATH).with(authentication(userAuth()));
+        final MockHttpServletRequestBuilder requestBuilder = get(FieldsController.FIELDS_PATH + FieldsController.GET_PARAMETRIC_NUMERIC_FIELDS_PATH).with(authentication(userAuth()));
         addParams(requestBuilder);
 
         mockMvc.perform(requestBuilder)
