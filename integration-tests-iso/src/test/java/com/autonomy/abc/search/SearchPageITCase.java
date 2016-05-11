@@ -18,8 +18,9 @@ import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Description;
@@ -322,7 +323,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CSA-1818")
+	@ActiveBug("CSA-1818")
 	public void testSearchResultsCount() {
 		searchPage.selectLanguage(Language.ENGLISH);
 		for (final String query : Arrays.asList("dog", "chips", "dinosaur", "melon", "art")) {
@@ -507,7 +508,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CSA-1708")
+	@ResolvedBug("CSA-1708")
 	public void testParametricLabelsNotUndefined(){
 		searchService.search(new Query("simpsons")
 				.withFilter(new IndexFilter(Index.DEFAULT))
@@ -624,7 +625,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CSA-2061")
+	@ResolvedBug("CSA-2061")
 	public void testHeadingCount(){
 		searchService.search(new Query("dog").withFilter(IndexFilter.ALL));
 
@@ -632,7 +633,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CSA-2060")
+	@ResolvedBug("CSA-2060")
 	public void testResultIndex(){
 		searchService.search(new Query("Jamaica"));
 
