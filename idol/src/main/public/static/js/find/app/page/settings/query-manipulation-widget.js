@@ -4,17 +4,29 @@
  */
 
 define([
-    'find/app/page/settings/aci-widget',
+    'settings/js/widgets/query-manipulation-widget',
     'find/app/page/settings/enable-view',
-    'text!find/templates/app/page/settings/query-manipulation-widget.html'
-], function(AciWidget, EnableView, queryManipulationTemplate) {
+    'text!find/templates/app/page/settings/query-manipulation-widget-extensions.html',
+    'text!find/templates/app/page/settings/widget.html',
+    'text!find/templates/app/page/settings/server-widget.html',
+    'text!find/templates/app/page/settings/aci-widget.html'
+], function(QueryManipulationWidget, EnableView, extensionsTemplate, widgetTemplate, serverTemplate, aciTemplate) {
 
-    return AciWidget.extend({
+    return QueryManipulationWidget.extend({
+        className: 'panel-group',
+        controlGroupClass: 'form-group',
+        formControlClass: 'form-control',
+        errorClass: 'has-error',
+        successClass: 'has-success',
 
-        queryManipulationTemplate: _.template(queryManipulationTemplate),
+        aciTemplate: _.template(aciTemplate),
+        serverTemplate: _.template(serverTemplate),
+        widgetTemplate: _.template(widgetTemplate),
+
+        extensionsTemplate: _.template(extensionsTemplate),
 
         initialize: function() {
-            AciWidget.prototype.initialize.apply(this, arguments);
+            QueryManipulationWidget.prototype.initialize.apply(this, arguments);
 
             this.enableView = new EnableView({
                 enableIcon: 'fa fa-file',
@@ -23,18 +35,17 @@ define([
         },
 
         render: function() {
-            AciWidget.prototype.render.apply(this, arguments);
+            QueryManipulationWidget.prototype.render.apply(this, arguments);
 
             this.enableView.render();
-            var $validateButtonParent = this.$('button[name=validate]').parent();
+            var $validateButtonParent = this.$('.typeahead-mode').parent();
             $validateButtonParent.before(this.enableView.el);
 
-            $validateButtonParent.before(this.queryManipulationTemplate({
+            $validateButtonParent.before(this.extensionsTemplate({
                 strings: this.strings
             }));
 
             this.$blacklist = this.$('.blacklist-input');
-            this.$typeahead = this.$('.typeahead-input');
             this.$expandQuery = this.$('.expand-query-input');
 
             this.listenTo(this.enableView, 'change', function() {
@@ -43,22 +54,19 @@ define([
         },
 
         getConfig: function() {
-            return {
+            return _.extend({
                 blacklist: this.$blacklist.val(),
                 expandQuery: this.$expandQuery.prop('checked'),
-                enabled: this.enableView.getConfig(),
-                server: AciWidget.prototype.getConfig.call(this),
-                typeAheadMode: this.$typeahead.val()
-            }
+                enabled: this.enableView.getConfig()
+            }, QueryManipulationWidget.prototype.getConfig.call(this))
         },
 
         updateConfig: function(config) {
-            AciWidget.prototype.updateConfig.call(this, config.server);
+            QueryManipulationWidget.prototype.updateConfig.call(this, config);
 
             this.enableView.updateConfig(config.enabled);
 
             this.$blacklist.val(config.blacklist);
-            this.$typeahead.val(config.typeAheadMode);
             this.$expandQuery.prop('checked', config.expandQuery);
         },
 
