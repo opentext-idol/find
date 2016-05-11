@@ -29,8 +29,8 @@ define([
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
             queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, Collapsible,
-            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, configuration, i18n, templateString) {
+            ResultsViewSelection, RelatedConceptsView, Collapsible, addChangeListener,  SavedSearchControlView, TopicMapView,
+            SunburstView, MapResultsView, configuration, i18n, templateString) {
 
     'use strict';
 
@@ -145,9 +145,12 @@ define([
                 highlightModel: this.highlightModel
             }, subViewArguments));
 
-            this.resultsViews = [{
+            var hasBiRole = configuration().hasBiRole;
+
+            this.resultsViews = _.where([{
                 constructor: this.ResultsViewAugmentation,
                 id: 'list',
+                shown: true,
                 uniqueId: _.uniqueId('results-view-item-'),
                 constructorArguments: {
                     resultsView: resultsView,
@@ -164,6 +167,7 @@ define([
             }, {
                 constructor: TopicMapView,
                 id: 'topic-map',
+                shown: hasBiRole,
                 uniqueId: _.uniqueId('results-view-item-'),
                 constructorArguments: _.extend({
                     clickHandler: entityClickHandler
@@ -173,8 +177,19 @@ define([
                     icon: 'hp-grid'
                 }
             }, {
+                constructor: SunburstView,
+                constructorArguments: subViewArguments,
+                id: 'sunburst',
+                shown: hasBiRole && this.displaySunburst,
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'sunburst',
+                    icon: 'hp-favorite'
+                }
+            }, {
                 constructor: MapResultsView,
                 id: 'map',
+                shown: hasBiRole,
                 uniqueId: _.uniqueId('results-view-item-'),
                 constructorArguments: _.extend({
                     resultsStep: this.mapViewResultsStep,
@@ -184,30 +199,20 @@ define([
                     displayNameKey: 'map',
                     icon: 'hp-map-view'
                 }
-            }];
-
-            if (this.displaySunburst) {
-                this.resultsViews.splice(2, 0, {
-                    constructor: SunburstView,
-                    constructorArguments: subViewArguments,
-                    id: 'sunburst',
-                    uniqueId: _.uniqueId('results-view-item-'),
-                    selector: {
-                        displayNameKey: 'sunburst',
-                        icon: 'hp-favorite'
-                    }
-                });
-            }
+            }], {shown: true});
 
             var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
                 selectedTab: this.resultsViews[0].id
             });
 
-            this.resultsViewSelection = new ResultsViewSelection({
-                views: this.resultsViews,
-                model: resultsViewSelectionModel
-            });
+            // need a selector if multiple active views
+            if (this.resultsViews.length > 1) {
+                this.resultsViewSelection = new ResultsViewSelection({
+                    views: this.resultsViews,
+                    model: resultsViewSelectionModel
+                });
+            }
 
             this.resultsViewContainer = new ResultsViewContainer({
                 views: this.resultsViews,
@@ -234,7 +239,11 @@ define([
             this.relatedConceptsViewWrapper.render();
 
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
-            this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
+
+            if (this.resultsViewSelection) {
+                this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
+            }
+
             this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
 
             this.leftSideFooterView.setElement(this.$('.left-side-footer')).render();
