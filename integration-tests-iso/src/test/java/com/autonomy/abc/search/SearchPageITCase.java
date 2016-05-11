@@ -377,6 +377,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-38")
 	public void testRelatedConceptsLinks() {
 		String queryText = "elephant";
 		search(queryText);
@@ -520,6 +521,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-40")
 	public void testDeletingDocument(){
 		searchService.search("bbc");
 
