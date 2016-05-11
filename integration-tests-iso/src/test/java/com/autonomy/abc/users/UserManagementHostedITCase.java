@@ -11,8 +11,9 @@ import com.autonomy.abc.shared.UserTestHelper;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -69,7 +70,8 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
     }
 
     @Test
-    @KnownBug({"CSA-1775", "CSA-1800"})
+    @ResolvedBug("CSA-1775")
+    @ActiveBug("CSA-1800")
     public void testCannotAddInvalidEmail(){
         HsodNewUser newUser = new HsodNewUser("jeremy","jeremy");
 
@@ -93,7 +95,8 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
     }
 
     @Test
-    @KnownBug({"CSA-1776", "CSA-1800"})
+    @ResolvedBug("CSA-1776")
+    @ActiveBug("CSA-1800")
     public void testAddingValidDuplicateAfterInvalid() {
         final String username = "bob";
         verifyAddingInvalidUser(new HsodNewUser(username, "INVALID_EMAIL"));
@@ -206,7 +209,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1766")
+    @ResolvedBug("CSA-1766")
     @RelatedTo("CSA-1663")
     public void testCreateUser(){
         usersPage.createUserButton().click();
@@ -242,7 +245,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
     }
 
     @Test
-    @KnownBug("HOD-532")
+    @ActiveBug("HOD-532")
     public void testUserConfirmedWithoutRefreshing(){
         final User user = userService.createNewUser(getConfig().generateNewUser(), Role.USER);
         getConfig().getAuthenticationStrategy().authenticate(user);

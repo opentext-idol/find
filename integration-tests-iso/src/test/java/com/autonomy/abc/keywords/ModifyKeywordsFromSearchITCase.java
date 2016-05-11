@@ -12,6 +12,8 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +32,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 
 @Ignore("Cannot modify keywords from search page - is this functionality coming back?")
+@RelatedTo("ISO-31")
 public class ModifyKeywordsFromSearchITCase extends HybridIsoTestBase {
     private KeywordService keywordService;
     private SearchService searchService;

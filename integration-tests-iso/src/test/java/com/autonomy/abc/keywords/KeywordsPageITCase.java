@@ -13,8 +13,9 @@ import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.framework.categories.SlowTest;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
@@ -222,7 +223,8 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 	//Notification should drop down on creation of new keywords
 	@Test
-	@KnownBug({"CSA-1447", "CSA-1882"})
+	@ResolvedBug("CSA-1447")
+	@ActiveBug("CSA-1822")
 	public void testNotificationForCreatedBlacklistedTermAndSynonymGroup() throws InterruptedException {
 		List<String> notificationContents = new ArrayList<>();
 
@@ -419,7 +421,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CCUK-3243")
+	@ResolvedBug("CCUK-3243")
 	public void testQuickSynonymDelete() throws InterruptedException {
 		keywordService.addSynonymGroup(Language.GERMAN, "string strong strang streng strung");
 		keywordService.goToKeywords();
@@ -440,7 +442,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CCUK-3245")
+	@ResolvedBug("CCUK-3245")
 	public void testAddingForbiddenKeywordsFromUrl() {
 		String blacklistUrl = getAppUrl() + "/keywords/create/blacklisted/English/";
 		String synonymsUrl = getAppUrl() + "/keywords/create/synonyms/English/";
@@ -580,7 +582,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CSA-1882")
+	@ActiveBug("CSA-1882")
 	public void testClickingOnNotifications() throws InterruptedException {
 		keywordService.addSynonymGroup("a b c d");
 
@@ -636,7 +638,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CSA-1440")
+	@ResolvedBug("CSA-1440")
 	public void testNavigatingAwayBeforeKeywordAdded() throws InterruptedException {
 		keywordService.addKeywords(KeywordWizardType.BLACKLIST, Language.ENGLISH, Collections.singletonList("Jeff"));
 
@@ -648,7 +650,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CSA-1686")
+	@ResolvedBug("CSA-1686")
 	public void testBlacklistTermsNotOverwritten(){
 		String blacklistOne = "uno";
 		String blacklistTwo = "duo";

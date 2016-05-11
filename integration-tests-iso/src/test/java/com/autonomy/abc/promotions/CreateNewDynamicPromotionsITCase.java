@@ -11,7 +11,7 @@ import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.shared.SharedTriggerTests;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
@@ -91,7 +91,7 @@ public class CreateNewDynamicPromotionsITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3586")
+    @ResolvedBug("CCUK-3586")
     public void testNumberOfDocumentsPromotedOnPromotionsPage() {
         searchPage = searchService.search("arctic");
         final int promotionResultsCount = getNumberOfPromotedDynamicResults();

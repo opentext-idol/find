@@ -17,8 +17,9 @@ import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.framework.categories.SlowTest;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
@@ -76,7 +77,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
 
     //Blacklisted terms can be created on the searchpage. This link has often broken
     @Test
-    @KnownBug("CSA-1521")
+    @ResolvedBug("CSA-1521")
     public void testCreateBlacklistedTermFromSearchPage() throws InterruptedException {
         search("noir", Language.FRENCH);
 
@@ -192,7 +193,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
 
 
     @Test
-    @KnownBug("CCUK-2703")
+    @ResolvedBug("CCUK-2703")
     @RelatedTo({"CSA-1724", "CSA-1893"})
     public void testNoBlacklistLinkForBlacklistedSearch() throws InterruptedException {
         Serializable blacklistMessage = Errors.Search.BLACKLIST;
@@ -262,7 +263,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1694")
+    @ResolvedBug("CSA-1694")
     public void testCancellingKeywordsWizardDoesntBreakSearch(){
         search("apu", Language.ENGLISH);
         searchPage.createSynonymsLink().click();
@@ -278,7 +279,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug({"CSA-1719", "CSA-1792", "CSA-2064"})
+    @ResolvedBug({"CSA-1719", "CSA-1792", "CSA-2064"})
     public void testBlacklistTermsBehaveAsExpected() throws InterruptedException {
         String blacklistOne = "cheese";
         String blacklistTwo = "mouse";
@@ -312,7 +313,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
 
     @Test
     @Category(SlowTest.class)
-    @KnownBug({"CCUK-3471", "CSA-1808"})
+    @ResolvedBug({"CCUK-3471", "CSA-1808"})
     public void testCreateLargeSynonymGroup() {
         List<String> synonyms = new ArrayList<>();
         for (int i=0; i<10; i++) {
@@ -325,7 +326,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
 
     @Test
     @Category(SlowTest.class)
-    @KnownBug("IOD-8445")
+    @ActiveBug("HOD-2135")
     public void testCreateLargeDuplicateSynonymGroups() {
         List<String> synonyms;
         for (int outer=0; outer<10; outer++) {
@@ -342,7 +343,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
 
     @Test
     @Category(SlowTest.class)
-    @KnownBug("IOD-8445")
+    @ActiveBug("HOD-2135")
     public void testCreateLargeDistinctSynonymGroups() {
         List<String> synonyms;
         for (int outer=0; outer<10; outer++) {

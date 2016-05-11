@@ -14,7 +14,8 @@ import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.shared.SharedTriggerTests;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
@@ -242,7 +243,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
 
     //Duplicate blacklisted terms are not allowed to be created within the same language
     @Test
-    @KnownBug("CSA-1791")
+    @ActiveBug("CSA-1791")
     public void testCreateDuplicateBlacklist() throws InterruptedException {
         final String term = "fish";
         final String other = "chips";
@@ -441,7 +442,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1712")
+    @ResolvedBug("CSA-1712")
     public void testCursorDoesNotMoveToEndOfText(){
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
         createKeywordsPage.continueWizardButton().click();
@@ -457,7 +458,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1812")
+    @ResolvedBug("CSA-1812")
     public void testExistingSynonymsShowInWizard(){
         String[] existingSynonyms = {"pentimento", "mayday", "parade"};
         String duplicate = existingSynonyms[0];
