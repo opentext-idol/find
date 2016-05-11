@@ -24,7 +24,7 @@ define([
     };
 
     var ComparisonModel = Backbone.Model.extend({
-        url: '../api/public/comparison/compare',
+        url: '../api/bi/comparison/compare',
 
         parse: function(response) {
             return {

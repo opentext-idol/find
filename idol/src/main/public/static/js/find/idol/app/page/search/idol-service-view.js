@@ -21,8 +21,6 @@ define([
         mapViewResultsStep: configuration().map.resultsStep,
         mapViewAllowIncrement: true,
 
-        headerControlsHtml: _.template('<button class="btn button-primary compare-modal-button"><%-i18n[\'compare\']%></button>')({i18n: comparisonsI18n}),
-
         events: _.extend({
             'click .compare-modal-button': function() {
                 new CompareModal({
@@ -36,6 +34,10 @@ define([
         initialize: function(options) {
             this.comparisonSuccessCallback = options.comparisonSuccessCallback;
             this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
+
+            if (configuration().hasBiRole) {
+                this.headerControlsHtml = _.template('<button class="btn button-primary compare-modal-button"><%-i18n["compare"]%></button>')({i18n: comparisonsI18n})
+            }
 
             ServiceView.prototype.initialize.call(this, options);
         },

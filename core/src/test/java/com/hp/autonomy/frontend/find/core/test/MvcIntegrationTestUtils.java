@@ -63,4 +63,11 @@ public abstract class MvcIntegrationTestUtils {
         authorities.add(new SimpleGrantedAuthority(FindRole.USER.toString()));
         return createAuthentication(authorities);
     }
+
+    public Authentication biAuth() {
+        final Collection<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority(FindRole.BI.toString()));
+        authorities.add(new SimpleGrantedAuthority(FindRole.USER.toString()));
+        return createAuthentication(authorities);
+    }
 }

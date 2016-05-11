@@ -4,7 +4,7 @@ define([
 ], function(Backbone, SavedSearchModel) {
 
     return Backbone.Collection.extend({
-        url: '../api/public/saved-query',
+        url: '../api/bi/saved-query',
 
         model: SavedSearchModel.extend({
             defaults: _.defaults({

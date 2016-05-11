@@ -15,9 +15,10 @@ define([
     'find/app/page/search/results/state-token-strategy',
     'find/idol/app/model/comparison/comparison-documents-collection',
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
-    'find/idol/app/page/search/idol-query-left-side-view'
+    'find/idol/app/page/search/idol-query-left-side-view',
+    'find/app/configuration'
 ], function(FindSearch, _, i18n, SavedSearchModel, ServiceView, SuggestView, SnapshotDataView, ComparisonView, stateTokenStrategy,
-            ComparisonDocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView) {
+            ComparisonDocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView, configuration) {
 
     'use strict';
 
@@ -27,49 +28,55 @@ define([
         QueryLeftSideView: IdolQueryLeftSideView,
 
         getSearchTypes: function() {
-            return _.extend({
-                SNAPSHOT: {
-                    autoCorrect: false,
-                    queryTextModelChange: _.constant(_.noop),
-                    collection: 'savedSnapshotCollection',
-                    icon: 'hp-camera',
-                    isMutable: false,
-                    fetchStrategy: stateTokenStrategy,
-                    DocumentsCollection: ComparisonDocumentsCollection,
-                    LeftSideFooterView: SnapshotDataView,
-                    MiddleColumnHeaderView: null,
-                    relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
-                    createSearchModelAttributes: function() {
-                        return {inputText: '', relatedConcepts: []};
-                    },
-                    searchModelChange: function(options) {
-                        return function() {
-                            var newSearch = new SavedSearchModel({
-                                queryText: options.searchModel.get('inputText'),
-                                relatedConcepts: [],
-                                title: i18n['search.newSearch'],
-                                type: SavedSearchModel.Type.QUERY
-                            });
+            var searchTypes = FindSearch.prototype.getSearchTypes.call(this);
 
-                            options.savedQueryCollection.add(newSearch);
-                            options.selectedTabModel.set('selectedSearchCid', newSearch.cid);
-                        };
-                    },
-                    entityClickHandler: function(options) {
-                        return function(text) {
-                            var newQuery = new SavedSearchModel(_.defaults({
-                                id: null,
-                                queryText: text,
-                                title: i18n['search.newSearch'],
-                                type: SavedSearchModel.Type.QUERY
-                            }, options.savedSearchModel.attributes));
+            if (configuration().hasBiRole) {
+                searchTypes = _.extend({
+                    SNAPSHOT: {
+                        autoCorrect: false,
+                        queryTextModelChange: _.constant(_.noop),
+                        collection: 'savedSnapshotCollection',
+                        icon: 'hp-camera',
+                        isMutable: false,
+                        fetchStrategy: stateTokenStrategy,
+                        DocumentsCollection: ComparisonDocumentsCollection,
+                        LeftSideFooterView: SnapshotDataView,
+                        MiddleColumnHeaderView: null,
+                        relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                        createSearchModelAttributes: function() {
+                            return {inputText: '', relatedConcepts: []};
+                        },
+                        searchModelChange: function(options) {
+                            return function() {
+                                var newSearch = new SavedSearchModel({
+                                    queryText: options.searchModel.get('inputText'),
+                                    relatedConcepts: [],
+                                    title: i18n['search.newSearch'],
+                                    type: SavedSearchModel.Type.QUERY
+                                });
 
-                            options.savedQueryCollection.add(newQuery);
-                            options.selectedTabModel.set('selectedSearchCid', newQuery.cid);
-                        };
+                                options.savedQueryCollection.add(newSearch);
+                                options.selectedTabModel.set('selectedSearchCid', newSearch.cid);
+                            };
+                        },
+                        entityClickHandler: function(options) {
+                            return function(text) {
+                                var newQuery = new SavedSearchModel(_.defaults({
+                                    id: null,
+                                    queryText: text,
+                                    title: i18n['search.newSearch'],
+                                    type: SavedSearchModel.Type.QUERY
+                                }, options.savedSearchModel.attributes));
+
+                                options.savedQueryCollection.add(newQuery);
+                                options.selectedTabModel.set('selectedSearchCid', newQuery.cid);
+                            };
+                        }
                     }
-                }
-            }, FindSearch.prototype.getSearchTypes.call(this));
+                }, searchTypes);
+            }
+
+            return searchTypes;
         },
 
         serviceViewOptions: function() {

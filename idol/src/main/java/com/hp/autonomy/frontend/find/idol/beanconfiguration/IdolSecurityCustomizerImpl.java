@@ -70,17 +70,10 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
             .setPrivileges(Collections.singleton("login"))
             .build();
 
-        final Role admin = new Role.Builder()
-            .setName(UserConfiguration.IDOL_ADMIN_ROLE)
-            .setParent(Collections.singleton(user))
-            .build();
-
-        final Roles roles = new Roles(Arrays.asList(admin, user));
-
         return new CommunityAuthenticationProvider(
             configService,
             userService,
-            roles,
+            new Roles(Collections.singletonList(user)),
             Collections.singleton("login"),
             grantedAuthoritiesMapper
         );

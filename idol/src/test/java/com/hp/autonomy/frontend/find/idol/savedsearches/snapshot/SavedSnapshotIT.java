@@ -30,14 +30,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class SavedSnapshotIT extends AbstractFindIT {
     private static final TypeReference<Set<SavedSnapshot>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedSnapshot>>() {};
+    private static final String QUERY_TEXT = "orange";
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-    @Autowired
-    private MvcIntegrationTestUtils mvcIntegrationTestUtils;
-
-    private final String QUERY_TEXT = "orange";
+    @Test
+    public void basicUserNotAuthorised() throws Exception {
+        mockMvc.perform(get(SavedSnapshotController.PATH).with(authentication(userAuth())))
+                .andExpect(status().is(403));
+    }
 
     @Test
     public void create() throws Exception {
@@ -64,7 +65,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
         final MockHttpServletRequestBuilder requestBuilder = put(SavedSnapshotController.PATH + '/' + createdEntity.getId())
                 .content(mapper.writeValueAsString(updatedSnapshot))
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(authentication(userAuth()));
+                .with(authentication(biAuth()));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -92,7 +93,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
 
         final MockHttpServletRequestBuilder requestBuilder = delete(SavedSnapshotController.PATH + '/' + createdEntity.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(authentication(userAuth()));
+                .with(authentication(biAuth()));
 
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
 
@@ -110,7 +111,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
                 post(SavedSnapshotController.PATH)
                         .content(mapper.writeValueAsString(snapshot))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(authentication(userAuth()))
+                        .with(authentication(biAuth()))
         );
     }
 
@@ -121,7 +122,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
     }
 
     private ResultActions listSnapshots() throws Exception {
-        return mockMvc.perform(get(SavedSnapshotController.PATH).with(authentication(userAuth())));
+        return mockMvc.perform(get(SavedSnapshotController.PATH).with(authentication(biAuth())));
     }
 
     private Set<SavedSnapshot> listAndParseSnapshots() throws Exception {

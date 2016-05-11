@@ -1,4 +1,4 @@
-<div class="search-options-container p-sm"></div>
+<div class="search-options-container"></div>
 <div class="query-service-view service-view-sub-container">
     <div class="left-side-container side-container">
         <i class="hp-icon hp-previous-chapter hp-lg container-toggle clickable m-b-sm"></i>
@@ -8,7 +8,9 @@
     </div>
     <div class="middle-container">
         <div class="middle-column-header"></div>
-        <div><%= headerControlsHtml %></div>
+        <% if (headerControlsHtml) { %>
+            <div><%= headerControlsHtml %></div>
+        <% } %>
         <div class="results-view-selection"></div>
         <div class="results-view-container"></div>
     </div>

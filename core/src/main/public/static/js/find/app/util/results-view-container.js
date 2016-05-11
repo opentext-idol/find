@@ -29,6 +29,12 @@ define([
                     .toggleClass('active', viewData.id === selectedTab)
                     .appendTo(this.$contentList);
 
+                viewData.content = new viewData.constructor(viewData.constructorArguments);
+
+                _.each(viewData.events, function(listener, eventName) {
+                    this.listenTo(viewData.content, eventName, listener);
+                }, this);
+
                 viewData.content.setElement($viewElement);
             }, this);
 
@@ -53,6 +59,14 @@ define([
                     viewData.content.update();
                 }
             }
+        },
+
+        remove: function() {
+            _.chain(this.views)
+                .pluck('content')
+                .invoke('remove');
+
+            Backbone.View.prototype.remove.call(this);
         }
     });
 
