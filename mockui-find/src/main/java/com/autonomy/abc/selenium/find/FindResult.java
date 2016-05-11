@@ -26,6 +26,8 @@ public class FindResult extends QueryResult {
         return findElement(By.className("document-reference")).getText();
     }
 
+    public String getDate(){return findElement(By.className("document-date")).getText();}
+
     public WebElement similarDocuments() {
         return findElement(By.className("similar-documents-trigger"));
     }

@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class SimilarDocumentsView implements AppPage {
@@ -25,11 +26,7 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     public WebElement backButton() {
-        return findElement(By.className("service-view-back-button"));
-    }
-
-    public String getTitle() {
-        return title().getText();
+        return findElement(By.xpath("//button[contains(text(),'Back')]"));
     }
 
     public WebElement seedLink() {
@@ -37,7 +34,26 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     private WebElement title() {
-        return findElement(By.cssSelector(".results-message-container h4"));
+        if (resultsMessageContainerExists()){
+            return findElement(By.cssSelector(".results-message-container h4"));
+        }
+        return findElement(By.tagName("h1"));
+    }
+
+    private Boolean resultsMessageContainerExists(){
+        return findElements(By.cssSelector(".results-message-container h4")).size()>0;
+    }
+
+    public String getTitle() {
+        return title().getText();
+    }
+
+    public WebElement loadingIndicator(){
+            return findElement(By.className("view-server-loading-indicator"));
+    }
+
+    public WebElement previewContents(){
+        return findElement(By.className("preview-mode-contents"));
     }
 
     /**
@@ -56,7 +72,7 @@ public class SimilarDocumentsView implements AppPage {
 
     public List<FindResult> getResults(){
         List<FindResult> results = new ArrayList<>();
-        for(WebElement result : findElements(By.cssSelector("[data-rel='results']"))){
+        for(WebElement result : findElements(By.className("main-results-container"))){
             results.add(new FindResult(result, getDriver()));
         }
         return results;
@@ -90,10 +106,13 @@ public class SimilarDocumentsView implements AppPage {
         return driver;
     }
 
-    public WebElement resultsContainer() {
-        return findElement(By.className("results-container"));
+    public WebElement mainResultsContent() {
+        return findElement(By.className("main-results-content"));
     }
 
+    public boolean publicIndexesExist(){
+        return findElements(By.xpath("//*[contains(text(),'Public Indexes')]")).size()>0;
+    }
     public void sortByDate() {
         sortBy(1);
     }
@@ -101,6 +120,40 @@ public class SimilarDocumentsView implements AppPage {
     public void sortByRelevance() {
         sortBy(2);
     }
+
+    //want to be able to parse the date format 'x hours/days/months/years ago' -> how date is
+    //in detailed preview and findPage and similarDocumentPage
+    public String convertDate(String badFormatDate){
+        int timeAmount= Integer.parseInt(badFormatDate.split("")[0]);
+        String timeUnit = badFormatDate.split("")[1];
+
+        Calendar date = Calendar.getInstance();
+
+        switch (timeUnit) {
+            case "hour":
+            case "hours":
+                date.add(Calendar.HOUR, -timeAmount);
+                break;
+
+            case "day":
+            case "days":
+                date.add(Calendar.DAY_OF_MONTH,-timeAmount);
+                break;
+
+            case "month":
+            case "months":
+                date.add(Calendar.MONTH,-timeAmount);
+                break;
+
+            case "year":
+            case "years":
+                date.add(Calendar.YEAR,-timeAmount);
+                break;
+        }
+        //so messy -> doing this way need to getTime () (Date date) then getString then convert back.
+        return date.toString();
+    }
+
 
     private void sortBy(int dropdownRow){
         findElement(By.className("current-search-sort")).click();

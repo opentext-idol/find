@@ -1,8 +1,6 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
-import com.autonomy.abc.selenium.element.DocumentPreviewer;
-import com.autonomy.abc.shared.SharedPreviewTests;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -10,7 +8,6 @@ import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.shared.QueryTestHelper;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.collections4.ListUtils;
@@ -149,9 +146,6 @@ public class FindITCase extends FindTestBase {
     public void testFilterByMultipleIndexes(){
         findService.search("unbelievable");
 
-        //currently the way to do both at a time is weird
-        //findPage.filterBy(new IndexFilter(Arrays.asList(findPage.getIthIndex(3),findPage.getIthIndex(4))));
-        //new add method in IndexFilter - BUT this still doesn't really replicate people because it takes em off...
         IndexFilter filter = new IndexFilter(findPage.getIthIndex(2));
         findPage.filterBy(filter);
         Waits.loadOrFadeWait();
