@@ -50,7 +50,7 @@ define([
     }
 
     return BaseCollection.extend({
-        url: '../api/public/parametric/second-parametric',
+        url: '../api/public/parametric/dependent-values',
 
         parse: function(results) {
             var totalCount = getArrayTotal(results);

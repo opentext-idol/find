@@ -29,12 +29,12 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_VALUES_PATH = "/api/public/parametric";
     static final String NUMERIC_PARAMETRIC_PATH = "/numeric";
-    private static final String SECOND_PARAMETRIC_PATH = "second-parametric";
+    public static final String DEPENDENT_VALUES_PATH = "/dependent-values";
 
-    static final String FIELD_NAMES_PARAM = "fieldNames";
-    static final String QUERY_TEXT_PARAM = "queryText";
-    static final String FIELD_TEXT_PARAM = "fieldText";
-    static final String DATABASES_PARAM = "databases";
+    public static final String FIELD_NAMES_PARAM = "fieldNames";
+    public static final String QUERY_TEXT_PARAM = "queryText";
+    public static final String FIELD_TEXT_PARAM = "fieldText";
+    public static final String DATABASES_PARAM = "databases";
     private static final String MIN_DATE_PARAM = "minDate";
     private static final String MAX_DATE_PARAM = "maxDate";
     private static final String MIN_SCORE = "minScore";
@@ -87,9 +87,9 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    @RequestMapping(method = RequestMethod.GET, value = SECOND_PARAMETRIC_PATH)
+    @RequestMapping(method = RequestMethod.GET, value = DEPENDENT_VALUES_PATH)
     @ResponseBody
-    public List<RecursiveField> getSecondParametricValues(
+    public List<RecursiveField> getDependentParametricValues(
             @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
