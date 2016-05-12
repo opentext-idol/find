@@ -7,7 +7,6 @@ package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
@@ -22,22 +21,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 @RequestMapping(SavedQueryController.PATH)
-public abstract class SavedQueryController<S extends Serializable, D extends SearchResult, E extends Exception> {
-    public static final String PATH = "/api/bi/saved-query";
+public abstract class SavedQueryController<S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception> {
+    static final String PATH = "/api/bi/saved-query";
     static final String NEW_RESULTS_PATH = "/new-results/";
 
     private final SavedSearchService<SavedQuery> service;
     private final DocumentsService<S, D, E> documentsService;
-    private final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
+    private final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder;
 
     protected SavedQueryController(final SavedSearchService<SavedQuery> service,
                                    final DocumentsService<S, D, E> documentsService,
-                                   final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
+                                   final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder) {
         this.service = service;
         this.documentsService = documentsService;
         this.queryRestrictionsBuilder = queryRestrictionsBuilder;
@@ -80,17 +78,14 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
 
         final SavedQuery savedQuery = service.get(id);
         final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
-
         if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
-            final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(savedQuery.getQueryText(),
-                    savedQuery.toFieldText(),
-                    convertEmbeddableIndexes(savedQuery.getIndexes()),
-                    dateDocsLastFetched,
-                    null,
-                    savedQuery.getMinScore(),
-                    Collections.<String>emptyList(),
-                    Collections.<String>emptyList());
-
+            final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
+                    .setQueryText(savedQuery.getQueryText())
+                    .setFieldText(savedQuery.toFieldText())
+                    .setDatabases(convertEmbeddableIndexes(savedQuery.getIndexes()))
+                    .setMinDate(dateDocsLastFetched)
+                    .setMinScore(savedQuery.getMinScore())
+                    .build();
             final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
                     .setQueryRestrictions(queryRestrictions)
                     .setMaxResults(1001)

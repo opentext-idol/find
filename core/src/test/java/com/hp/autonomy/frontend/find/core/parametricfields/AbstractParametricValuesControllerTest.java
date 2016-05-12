@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.parametricfields;
 
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -19,11 +20,11 @@ import java.util.Collections;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractParametricValuesControllerTest<R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
+public abstract class AbstractParametricValuesControllerTest<Q extends QueryRestrictions<S>, R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
     @Mock
     protected ParametricValuesService<R, S, E> parametricValuesService;
 
-    protected ParametricValuesController<R, S, E> parametricValuesController;
+    protected ParametricValuesController<Q, R, S, E> parametricValuesController;
 
     @Test
     public void getParametricValues() throws E {

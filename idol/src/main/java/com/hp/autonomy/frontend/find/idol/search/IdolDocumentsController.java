@@ -7,8 +7,9 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(DocumentsController.SEARCH_PATH)
-public class IdolDocumentsController extends DocumentsController<String, IdolSearchResult, AciErrorException> {
+public class IdolDocumentsController extends DocumentsController<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
     @Autowired
-    public IdolDocumentsController(final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService, final QueryRestrictionsBuilder<String> queryRestrictionsBuilder) {
+    public IdolDocumentsController(final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService, final QueryRestrictions.Builder<IdolQueryRestrictions, String> queryRestrictionsBuilder) {
         super(documentsService, queryRestrictionsBuilder);
     }
 

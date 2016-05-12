@@ -6,10 +6,8 @@
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -19,10 +17,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
-    @SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaAutowiredMembersInspection"})
-    @Autowired
-    protected MvcIntegrationTestUtils mvcIntegrationTestUtils;
-
     @Test
     public void getParametricValues() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_VALUES_PATH)
@@ -34,6 +28,6 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.parametricValues", CoreMatchers.not(empty())));
+                .andExpect(jsonPath("$", CoreMatchers.not(empty())));
     }
 }

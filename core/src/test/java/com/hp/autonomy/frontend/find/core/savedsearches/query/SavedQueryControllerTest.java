@@ -5,8 +5,8 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
@@ -27,23 +27,21 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class SavedQueryControllerTest<S extends Serializable, D extends SearchResult, E extends Exception> {
+public abstract class SavedQueryControllerTest<S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception> {
     @Mock
     protected SavedQueryService savedQueryService;
     @Mock
     protected DocumentsService<S, D, E> documentsService;
     @Mock
-    protected QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
-    @Mock
     private Documents<D> searchResults;
 
-    private SavedQueryController<S, D, E> savedQueryController;
+    private SavedQueryController<S, Q, D, E> savedQueryController;
 
     private final SavedQuery savedQuery = new SavedQuery.Builder()
             .setTitle("Any old saved search")
             .build();
 
-    protected abstract SavedQueryController<S, D, E> constructController();
+    protected abstract SavedQueryController<S, Q, D, E> constructController();
 
     @Before
     public void setUp() {

@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
@@ -20,11 +21,11 @@ import java.util.Collections;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
+public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySummaryElement, R extends QueryRestrictions<S>, S extends Serializable, E extends Exception> {
     @Mock
     protected RelatedConceptsService<Q, S, E> relatedConceptsService;
 
-    protected RelatedConceptsController<Q, S, E> relatedConceptsController;
+    protected RelatedConceptsController<Q, R, S, E> relatedConceptsController;
 
     @Test
     public void query() throws E {

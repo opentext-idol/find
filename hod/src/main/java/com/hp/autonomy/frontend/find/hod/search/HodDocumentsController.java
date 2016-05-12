@@ -6,12 +6,13 @@
 package com.hp.autonomy.frontend.find.hod.search;
 
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,9 @@ import java.util.List;
 
 @Controller
 @RequestMapping(DocumentsController.SEARCH_PATH)
-public class HodDocumentsController extends DocumentsController<ResourceIdentifier, HodSearchResult, HodErrorException> {
+public class HodDocumentsController extends DocumentsController<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
     @Autowired
-    public HodDocumentsController(final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService, final QueryRestrictionsBuilder<ResourceIdentifier> queryRestrictionsBuilder) {
+    public HodDocumentsController(final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService, final QueryRestrictions.Builder<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilder) {
         super(documentsService, queryRestrictionsBuilder);
     }
 
