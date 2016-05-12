@@ -59,8 +59,11 @@ define([
 
         $(window).on('unload', logAbandonments);
 
-        this.reset = function(text) {
-            logAbandonments();
+        this.reset = function(text, abandon) {
+            // allows argument to be omitted
+            if (abandon !== false) {
+                logAbandonments();
+            }
 
             search = text;
             position = -1;
