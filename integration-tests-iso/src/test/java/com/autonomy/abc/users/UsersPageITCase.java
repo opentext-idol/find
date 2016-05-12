@@ -303,13 +303,14 @@ public class UsersPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testUserCount(){
-		verifyThat(usersPage.getUserCountInTitle(), is(0));
+		int userCount = defaultNumberOfUsers;
+		checkUserCountIs(userCount);
 
 		User user1 = userService.createNewUser(aNewUser, Role.ADMIN);
-		verifyThat(usersPage.getUserCountInTitle(), is(1));
+		checkUserCountIs(++userCount);
 
 		User user2 = userService.createNewUser(newUser2, Role.ADMIN);
-		verifyThat(usersPage.getUserCountInTitle(), is(2));
+		checkUserCountIs(++userCount);
 
 		try {
 			userService.createNewUser(aNewUser, Role.ADMIN);
@@ -317,13 +318,17 @@ public class UsersPageITCase extends HybridIsoTestBase {
 			/* Expected */
 		}
 
-		verifyThat(usersPage.getUserCountInTitle(), is(2));
+		checkUserCountIs(userCount);
 
 		userService.deleteUser(user2);
-		verifyThat(usersPage.getUserCountInTitle(), is(1));
+		checkUserCountIs(--userCount);
 
 		userService.deleteUser(user1);
 		Waits.loadOrFadeWait();
-		verifyThat(usersPage.getUserCountInTitle(), is(0));
+		checkUserCountIs(--userCount);
+	}
+
+	private void checkUserCountIs(int userCount) {
+		verifyThat(userCount + " users", usersPage.getUserCountInTitle(), is(userCount));
 	}
 }
