@@ -24,7 +24,6 @@ public class HsodUserService extends UserService<IsoHsodElementFactory> {
     @Override
     public HsodUsersPage goToUsers() {
         usersPage = getApplication().switchTo(HsodUsersPage.class);
-        setUsersPage(usersPage);
         return usersPage;
     }
 
