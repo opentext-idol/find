@@ -69,7 +69,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         this.helper.signUpAndLoginAs(aNewUser, getWindow());
 
         String baseUrl = getAppUrl();
-        baseUrl = baseUrl.replace("/p/","/config");
+        baseUrl = baseUrl.replace("/p/promotions","/config");
         getDriver().get(baseUrl);
         Waits.loadOrFadeWait();
         assertThat("Users are not allowed to access the config page", getDriver().findElement(By.tagName("body")), containsText("Authentication Failed"));
