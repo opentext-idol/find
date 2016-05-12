@@ -105,7 +105,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		assertThat(usersPage, modalIsDisplayed());
 		User original = usersPage.addNewUser(aNewUser, Role.USER);
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
-		this.helper.verifyUserAdded(newUserModal, original);
+		this.helper.verifyUserAdded(original);
 
 		try {
 			usersPage.addNewUser(aNewUser, Role.USER);
@@ -136,13 +136,12 @@ public class UsersPageITCase extends HybridIsoTestBase {
 	public void testUserDetails() {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
-		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 
 		User admin = usersPage.addNewUser(aNewUser, Role.ADMIN);
-		this.helper.verifyUserAdded(newUserModal, admin);
+		this.helper.verifyUserAdded(admin);
 
 		User user = usersPage.addNewUser(newUser2, Role.USER);
-		this.helper.verifyUserAdded(newUserModal, user);
+		this.helper.verifyUserAdded(user);
 
 		usersPage.userCreationModal().close();
 		List<String> usernames = usersPage.getUsernames();

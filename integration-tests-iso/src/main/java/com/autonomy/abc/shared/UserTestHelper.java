@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.users.UsersPage;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
@@ -13,6 +14,8 @@ import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.NoSuchElementException;
 
@@ -49,7 +52,7 @@ public class UserTestHelper {
         User user = usersPage.addNewUser(toCreate, Role.USER);
         authStrategy.authenticate(user);
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
-        verifyUserAdded(newUserModal, user);
+        verifyUserAdded(user);
         newUserModal.close();
         return user;
     }
@@ -92,12 +95,11 @@ public class UserTestHelper {
         }
     }
 
-    public void verifyUserAdded(ModalView newUserModal, User user){
-        if (!app.isHosted()){
-            verifyThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
-        }
-
-        //Hosted notifications are dealt with within the sign up method and there is no real way to ensure that a user's been created at the moment
+    public void verifyUserAdded(User user){
+        WebElement mostRecentNotification = new WebDriverWait(factory.getDriver(), 20)
+                .withMessage("waiting for user creation notification")
+                .until(GritterNotice.notificationAppears());
+        verifyThat(mostRecentNotification, containsText("Created user " + user.getUsername()));
     }
 
     public void logoutAndNavigateToWebApp(Window window) {
