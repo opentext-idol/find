@@ -18,9 +18,9 @@ import java.util.List;
 
 @RequestMapping(FieldsController.FIELDS_PATH)
 public abstract class FieldsController<R extends FieldsRequest, E extends Exception> {
-    static final String FIELDS_PATH = "/api/public/fields";
-    static final String GET_PARAMETRIC_FIELDS_PATH = "/parametric";
-    static final String GET_PARAMETRIC_NUMERIC_FIELDS_PATH = "/parametric-numeric";
+    public static final String FIELDS_PATH = "/api/public/fields";
+    public static final String GET_PARAMETRIC_FIELDS_PATH = "/parametric";
+    public static final String GET_PARAMETRIC_NUMERIC_FIELDS_PATH = "/parametric-numeric";
 
     private final FieldsService<R, E> fieldsService;
 

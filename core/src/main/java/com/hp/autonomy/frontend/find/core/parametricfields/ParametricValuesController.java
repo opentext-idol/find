@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -29,9 +28,10 @@ import java.util.Set;
 public abstract class ParametricValuesController<Q extends QueryRestrictions<S>, R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_VALUES_PATH = "/api/public/parametric";
+    static final String NUMERIC_PARAMETRIC_PATH = "/numeric";
     private static final String SECOND_PARAMETRIC_PATH = "second-parametric";
 
-    private static final String FIELD_NAMES_PARAM = "fieldNames";
+    static final String FIELD_NAMES_PARAM = "fieldNames";
     static final String QUERY_TEXT_PARAM = "queryText";
     static final String FIELD_TEXT_PARAM = "fieldText";
     static final String DATABASES_PARAM = "databases";
@@ -56,6 +56,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public Set<QueryTagInfo> getParametricValues(
+            @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(DATABASES_PARAM) final List<S> databases,
@@ -64,20 +65,25 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
-                .setQueryText(queryText)
-                .setFieldText(fieldText)
-                .setDatabases(databases)
-                .setMinDate(minDate)
-                .setMaxDate(maxDate)
-                .setMinScore(minScore)
-                .setStateMatchId(ListUtils.emptyIfNull(stateTokens))
-                .build();
-        final R parametricRequest = parametricRequestBuilder
-                .setFieldNames(Collections.<String>emptyList())
-                .setQueryRestrictions(queryRestrictions)
-                .build();
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
         return parametricValuesService.getAllParametricValues(parametricRequest);
+    }
+
+    @SuppressWarnings("MethodWithTooManyParameters")
+    @RequestMapping(value = NUMERIC_PARAMETRIC_PATH, method = RequestMethod.GET)
+    @ResponseBody
+    public Set<QueryTagInfo> getNumericParametricValues(
+            @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
+            @RequestParam(QUERY_TEXT_PARAM) final String queryText,
+            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(DATABASES_PARAM) final List<S> databases,
+            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+            @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
+            @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
+    ) throws E {
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
+        return parametricValuesService.getNumericParametricValues(parametricRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -93,6 +99,12 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
+        return parametricValuesService.getDependentParametricValues(parametricRequest);
+    }
+
+    @SuppressWarnings("MethodWithTooManyParameters")
+    private R buildRequest(final List<String> fieldNames, final String queryText, final String fieldText, final List<S> databases, final DateTime minDate, final DateTime maxDate, final Integer minScore, final List<String> stateTokens) {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
                 .setQueryText(queryText)
                 .setFieldText(fieldText)
@@ -102,11 +114,9 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
                 .setMinScore(minScore)
                 .setStateMatchId(ListUtils.emptyIfNull(stateTokens))
                 .build();
-        final R parametricRequest = parametricRequestBuilder
+        return parametricRequestBuilder
                 .setFieldNames(ListUtils.emptyIfNull(fieldNames))
                 .setQueryRestrictions(queryRestrictions)
                 .build();
-
-        return parametricValuesService.getDependentParametricValues(parametricRequest);
     }
 }

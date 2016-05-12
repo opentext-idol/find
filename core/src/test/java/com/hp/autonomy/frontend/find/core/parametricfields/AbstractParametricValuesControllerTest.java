@@ -28,7 +28,13 @@ public abstract class AbstractParametricValuesControllerTest<Q extends QueryRest
 
     @Test
     public void getParametricValues() throws E {
-        parametricValuesController.getParametricValues("Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
+        parametricValuesController.getParametricValues(Collections.singletonList("SomeParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
         verify(parametricValuesService).getAllParametricValues(Matchers.<R>any());
+    }
+
+    @Test
+    public void getNumericParametricValues() throws E {
+        parametricValuesController.getNumericParametricValues(Collections.singletonList("SomeNumericParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
+        verify(parametricValuesService).getNumericParametricValues(Matchers.<R>any());
     }
 }

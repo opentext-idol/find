@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Collection;
 
@@ -44,5 +45,9 @@ public class IdolMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
         when(authentication.getAuthorities()).thenReturn(authorities);
 
         return authentication;
+    }
+
+    @Override
+    protected void addFieldRequestParams(final MockHttpServletRequestBuilder requestBuilder) {
     }
 }
