@@ -214,56 +214,29 @@ public class SimilarDocumentsITCase extends FindTestBase {
         }
     }
 
-    //hosted preview doesn't have date anymore, on prem has on result preview has/detailed
     @Test
     public void testSortByDate() throws ParseException {
 
         assumeThat(getConfig().getType(), Matchers.is(ApplicationType.ON_PREM));
+
         findService.search(new Query("Fade"));
         similarDocuments = findService.goToSimilarDocuments(1);
-
         similarDocuments.sortByDate();
         List<FindResult> searchResults = similarDocuments.getResults();
 
         Date previousDate = null;
 
         for(int i = 1; i <= 10; i++){
+            String badFormatDate = searchResults.get(i).getDate();
+            String date = similarDocuments.convertDate(badFormatDate);
+            Date currentDate = SimilarDocumentsView.DATE_FORMAT.parse(date);
 
-            String date = searchResults.get(i).getDate();
-
-            /*DocumentViewer documentViewer = searchResults.get(i).openDocumentPreview();
-            findPage.openDetailedPreview();
-            DetailedPreviewPage detailedPreviewPage=getElementFactory().getDetailedPreview();
-
-            String date = getAnyDateField(documentViewer);*/
-
-            String currentDate = similarDocuments.convertDate(date);
-
-            assertThat(currentDate,1,is(1));
-
-            //Date currentDate = SimilarDocumentsView.DATE_FORMAT.parse(date);
-
-            /*if(previousDate != null){
+            if(previousDate != null){
                 verifyThat(currentDate, lessThanOrEqualTo(previousDate));
             }
 
-            previousDate = currentDate;*/
-            //detailedPreviewPage.goBackToSearch();
-            //documentViewer.close();
+            previousDate = currentDate;
         }
-    }
-    private String getAnyDateField(DocumentViewer docViewer){
-        String date = docViewer.getField("Date");
-        if (date == null){
-            date = docViewer.getField("Date Created");
-        }
-        if (date == null){
-            date=docViewer.getField("Date Modified");
-        }
-        if(date==null){
-            return null;
-        }
-        return date;
     }
 
     @Test

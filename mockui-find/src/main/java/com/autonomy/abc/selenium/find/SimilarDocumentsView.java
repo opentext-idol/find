@@ -18,7 +18,7 @@ public class SimilarDocumentsView implements AppPage {
     private WebElement container;
 
     //TODO find somewhere more suitable for this
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEE, MMMMM dd, yyyy kk:mm a");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE MMMMM dd kk:mm:ss zzz yyyy");
 
     private SimilarDocumentsView(WebDriver driver) {
         this.driver = driver;
@@ -121,18 +121,24 @@ public class SimilarDocumentsView implements AppPage {
         sortBy(2);
     }
 
-    //want to be able to parse the date format 'x hours/days/months/years ago' -> how date is
-    //in detailed preview and findPage and similarDocumentPage
     public String convertDate(String badFormatDate){
-        int timeAmount= Integer.parseInt(badFormatDate.split("")[0]);
-        String timeUnit = badFormatDate.split("")[1];
+
+        String[] words = badFormatDate.split(" ");
+        int timeAmount= Integer.parseInt(words[0]);
+        String timeUnit = words[1];
+
 
         Calendar date = Calendar.getInstance();
 
         switch (timeUnit) {
+            case "minute":
+            case "minutes":
+                date.add(Calendar.MINUTE,-timeAmount);
+                break;
+
             case "hour":
             case "hours":
-                date.add(Calendar.HOUR, -timeAmount);
+                date.add(Calendar.HOUR_OF_DAY, -timeAmount);
                 break;
 
             case "day":
@@ -150,8 +156,8 @@ public class SimilarDocumentsView implements AppPage {
                 date.add(Calendar.YEAR,-timeAmount);
                 break;
         }
-        //so messy -> doing this way need to getTime () (Date date) then getString then convert back.
-        return date.toString();
+        date.set(Calendar.SECOND,0);
+        return date.getTime().toString();
     }
 
 
