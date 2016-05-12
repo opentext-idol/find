@@ -176,7 +176,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 	//Whitespace, Odd number of quotes or quotes with blank text, boolean operators or proximity operators should not be able to added as keywords. This test checks they can't be added to existing synonyms on the Keywords Page
 	@Test
-	public void testAddingWhitespaceQuotesBooleansProximityOperatorsOnKeywordsPage() throws InterruptedException {
+	public void testAddingWhitespaceQuotesOperatorsOnKeywordsPage() throws InterruptedException {
 		List<String> synonyms = Arrays.asList("one", "two", "three");
 
 		keywordService.addSynonymGroup(synonyms);
@@ -189,11 +189,6 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 			verifyCannotAddToGroup(badSynonym, synonyms);
 			// close input box
 			keywordsPage.searchFilterTextBox().click();
-		}
-
-		for(final String operatorSynonym : Arrays.asList("NOT", "NEAR", "DNEAR", "XNEAR", "YNEAR", "NEAR123", "SENTENCE2", "PARAGRAPH3", "AND", "BEFORE", "AFTER", "WHEN", "SENTENCE", "PARAGRAPH", "OR", "WNEAR", "EOR", "NOTWHEN")){
-			synonyms = verifyAddToGroup(operatorSynonym, synonyms);
-			synonyms = deleteSingleSynonymAndVerify(operatorSynonym, synonyms);
 		}
 	}
 
@@ -423,45 +418,56 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	@Test
 	@ResolvedBug("CCUK-3243")
 	public void testQuickSynonymDelete() throws InterruptedException {
-		keywordService.addSynonymGroup(Language.GERMAN, "string strong strang streng strung");
+		keywordService.addSynonymGroup(Language.ENGLISH, "string strong strang streng strung");
 		keywordService.goToKeywords();
 
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
-		keywordsPage.selectLanguage(Language.GERMAN);
-		Waits.loadOrFadeWait();
+		keywordsPage.selectLanguage(Language.ENGLISH);
 
 		try {
 			DriverUtil.scrollIntoViewAndClick(getDriver(), keywordsPage.getSynonymIcon("strong"));
+			Waits.loadOrFadeWait();
 			DriverUtil.scrollIntoViewAndClick(getDriver(), keywordsPage.getSynonymIcon("string"));
 		} catch (final WebDriverException w) {
 			throw new AssertionError("Unable to delete a synonym quickly", w);
 		}
 		Thread.sleep(15000);
-		assertThat("Incorrect number of synonyms", keywordsPage.countSynonymLists(), is(1));
+		assertThat("Correct number of synonyms", keywordsPage.countSynonymLists(), is(1));
 		assertThat(keywordsPage.countKeywords(), is(3));
 	}
 
 	@Test
 	@ResolvedBug("CCUK-3245")
 	public void testAddingForbiddenKeywordsFromUrl() {
-		String blacklistUrl = getAppUrl() + "/keywords/create/blacklisted/English/";
-		String synonymsUrl = getAppUrl() + "/keywords/create/synonyms/English/";
-		if (isOnPrem()) {
-			blacklistUrl = getAppUrl() + "keywords/create/blacklisted/englishUTF8/";
-			synonymsUrl = getAppUrl() + "keywords/create/synonyms/englishUTF8/";
-		}
-		//TODO check that OR has been added in lower case?
-		for (final String forbidden : Arrays.asList("(", "\"", "OR")) {
-			getDriver().get(blacklistUrl + forbidden);
-			Waits.loadOrFadeWait();
-			CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective blacklist list", createKeywordsPage.getTriggerForm().getTriggersAsStrings(),not(hasItem(forbidden)));
+		keywordService.goToKeywords();
+		String curURL = getDriver().getCurrentUrl();
+		String blacklistUrl = curURL + "/create/blacklisted/"+getURLEnd()+"/";
 
-			getDriver().get(synonymsUrl + forbidden);
-			Waits.loadOrFadeWait();
-			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective synonyms list", createKeywordsPage.getTriggerForm().getTriggersAsStrings(),not(hasItem(forbidden)));
+		for (final String forbidden : Arrays.asList("(", "...","the")) {
+			checkForbiddenKeywordNotAccepted(blacklistUrl,forbidden);
 		}
+	}
+
+	private void checkForbiddenKeywordNotAccepted(String url,String forbidden){
+		getDriver().get(url + forbidden);
+		Waits.loadOrFadeWait();
+		CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+
+		Waits.loadOrFadeWait();
+		if(!createKeywordsPage.finishWizardButton().isEnabled()){
+			assertThat(forbidden + " is a forbidden keyword and not accepted", createKeywordsPage.getTriggerForm().getTriggersAsStrings(),not(hasItem(forbidden)));
+		}
+		else{
+			createKeywordsPage.finishWizardButton().click();
+			assertThat(forbidden + " is a forbidden keyword and not accepted",getDriver().getCurrentUrl(),containsString("create"));
+
+		}
+	}
+	private String getURLEnd(){
+		if(isOnPrem()){
+			return "englishUTF8";
+		}
+		return "English";
 	}
 
 	@Test
@@ -584,7 +590,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	@Test
 	@ActiveBug("CSA-1882")
 	public void testClickingOnNotifications() throws InterruptedException {
-		keywordService.addSynonymGroup("a b c d");
+		keywordService.addSynonymGroup("squid kraken octopus monster");
 
 		getApplication().switchTo(PromotionsPage.class);
 		getElementFactory().getPromotionsPage();
