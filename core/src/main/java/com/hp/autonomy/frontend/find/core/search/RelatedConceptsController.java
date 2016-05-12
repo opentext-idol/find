@@ -11,6 +11,7 @@ import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
 import org.apache.commons.collections4.ListUtils;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,11 +37,12 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
     public static final String STATE_TOKEN_PARAM = "stateTokens";
 
     private final RelatedConceptsService<Q, S, E> relatedConceptsService;
-    protected final QueryRestrictions.Builder<R, S> queryRestrictionsBuilder;
+    private final ObjectFactory<QueryRestrictions.Builder<R, S>> queryRestrictionsBuilderFactory;
 
-    protected RelatedConceptsController(final RelatedConceptsService<Q, S, E> relatedConceptsService, final QueryRestrictions.Builder<R, S> queryRestrictionsBuilder) {
+    protected RelatedConceptsController(final RelatedConceptsService<Q, S, E> relatedConceptsService,
+                                        final ObjectFactory<QueryRestrictions.Builder<R, S>> queryRestrictionsBuilderFactory) {
         this.relatedConceptsService = relatedConceptsService;
-        this.queryRestrictionsBuilder = queryRestrictionsBuilder;
+        this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
     }
 
     protected abstract RelatedConceptsRequest<S> buildRelatedConceptsRequest(final QueryRestrictions<S> queryRestrictions);
@@ -57,7 +59,7 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
             @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .setQueryText(queryText)
                 .setFieldText(fieldText)
                 .setDatabases(databases)

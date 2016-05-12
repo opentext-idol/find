@@ -11,9 +11,12 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.types.idol.QsElement;
 import org.junit.Before;
 
+import static org.mockito.Mockito.when;
+
 public class IdolRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<QsElement, IdolQueryRestrictions, String, AciErrorException> {
     @Before
     public void setUp() {
-        relatedConceptsController = new IdolRelatedConceptsController(relatedConceptsService, new IdolQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
+        relatedConceptsController = new IdolRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory);
     }
 }

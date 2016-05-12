@@ -14,6 +14,7 @@ import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodRelatedConceptsRequest;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(RelatedConceptsController.RELATED_CONCEPTS_PATH)
 public class HodRelatedConceptsController extends RelatedConceptsController<Entity, HodQueryRestrictions, ResourceIdentifier, HodErrorException> {
     @Autowired
-    public HodRelatedConceptsController(final RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> relatedConceptsService, final QueryRestrictions.Builder<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilder) {
-        super(relatedConceptsService, queryRestrictionsBuilder);
+    public HodRelatedConceptsController(final RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> relatedConceptsService,
+                                        final ObjectFactory<QueryRestrictions.Builder<HodQueryRestrictions, ResourceIdentifier>> queryRestrictionsBuilderFactory) {
+        super(relatedConceptsService, queryRestrictionsBuilderFactory);
     }
 
     @Override

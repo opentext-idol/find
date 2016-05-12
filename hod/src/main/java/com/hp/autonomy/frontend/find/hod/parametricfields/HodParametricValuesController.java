@@ -13,6 +13,7 @@ import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesSe
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class HodParametricValuesController extends ParametricValuesController<HodQueryRestrictions, HodParametricRequest, ResourceIdentifier, HodErrorException> {
     @Autowired
     public HodParametricValuesController(final ParametricValuesService<HodParametricRequest, ResourceIdentifier, HodErrorException> parametricValuesService,
-                                         final QueryRestrictions.Builder<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilder,
-                                         final ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier> parametricRequestBuilder) {
-        super(parametricValuesService, queryRestrictionsBuilder, parametricRequestBuilder);
+                                         final ObjectFactory<QueryRestrictions.Builder<HodQueryRestrictions, ResourceIdentifier>> queryRestrictionsBuilderFactory,
+                                         final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory) {
+        super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
     }
 }

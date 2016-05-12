@@ -14,6 +14,7 @@ import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.apache.commons.collections4.CollectionUtils;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,14 +32,14 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
 
     private final SavedSearchService<SavedQuery> service;
     private final DocumentsService<S, D, E> documentsService;
-    private final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder;
+    private final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
 
     protected SavedQueryController(final SavedSearchService<SavedQuery> service,
                                    final DocumentsService<S, D, E> documentsService,
-                                   final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder) {
+                                   final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory) {
         this.service = service;
         this.documentsService = documentsService;
-        this.queryRestrictionsBuilder = queryRestrictionsBuilder;
+        this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
     }
 
     protected abstract S convertEmbeddableIndex(EmbeddableIndex embeddableIndex);
@@ -79,7 +80,7 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
         final SavedQuery savedQuery = service.get(id);
         final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
         if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
-            final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
+            final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                     .setQueryText(savedQuery.getQueryText())
                     .setFieldText(savedQuery.toFieldText())
                     .setDatabases(convertEmbeddableIndexes(savedQuery.getIndexes()))

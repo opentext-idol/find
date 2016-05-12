@@ -15,11 +15,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class HodDocumentsControllerTest extends AbstractDocumentsControllerTest<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
     @Before
     public void setUp() {
-        documentsController = new HodDocumentsController(documentsService, new HodQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new HodQueryRestrictions.Builder());
+        documentsController = new HodDocumentsController(documentsService, queryRestrictionsBuilderFactory);
         databaseType = ResourceIdentifier.class;
     }
 

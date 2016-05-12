@@ -11,9 +11,12 @@ import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryControll
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 
+import static org.mockito.Mockito.when;
+
 public class IdolSavedSearchQueryControllerTest extends SavedQueryControllerTest<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
     @Override
     protected SavedQueryController<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> constructController() {
-        return new IdolSavedQueryController(savedQueryService, documentsService, new IdolQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
+        return new IdolSavedQueryController(savedQueryService, documentsService, queryRestrictionsBuilderFactory);
     }
 }

@@ -15,6 +15,7 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,8 +24,8 @@ class IdolSavedQueryController extends SavedQueryController<String, IdolQueryRes
     @Autowired
     public IdolSavedQueryController(final SavedSearchService<SavedQuery> service,
                                     final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService,
-                                    final QueryRestrictions.Builder<IdolQueryRestrictions, String> queryRestrictionsBuilder) {
-        super(service, documentsService, queryRestrictionsBuilder);
+                                    final ObjectFactory<QueryRestrictions.Builder<IdolQueryRestrictions, String>> queryRestrictionsBuilderFactory) {
+        super(service, documentsService, queryRestrictionsBuilderFactory);
     }
 
     @Override

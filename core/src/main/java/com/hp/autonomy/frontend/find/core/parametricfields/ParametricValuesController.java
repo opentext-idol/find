@@ -12,6 +12,7 @@ import com.hp.autonomy.types.idol.RecursiveField;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
 import org.apache.commons.collections4.ListUtils;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,15 +42,15 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     private static final String STATE_TOKEN_PARAM = "stateTokens";
 
     private final ParametricValuesService<R, S, E> parametricValuesService;
-    protected final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder;
-    private final ParametricRequest.Builder<R, S> parametricRequestBuilder;
+    protected final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
+    private final ObjectFactory<ParametricRequest.Builder<R, S>> parametricRequestBuilderFactory;
 
     protected ParametricValuesController(final ParametricValuesService<R, S, E> parametricValuesService,
-                                         final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder,
-                                         final ParametricRequest.Builder<R, S> parametricRequestBuilder) {
+                                         final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory,
+                                         final ObjectFactory<ParametricRequest.Builder<R, S>> parametricRequestBuilderFactory) {
         this.parametricValuesService = parametricValuesService;
-        this.queryRestrictionsBuilder = queryRestrictionsBuilder;
-        this.parametricRequestBuilder = parametricRequestBuilder;
+        this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
+        this.parametricRequestBuilderFactory = parametricRequestBuilderFactory;
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -105,7 +106,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
 
     @SuppressWarnings("MethodWithTooManyParameters")
     private R buildRequest(final List<String> fieldNames, final String queryText, final String fieldText, final List<S> databases, final DateTime minDate, final DateTime maxDate, final Integer minScore, final List<String> stateTokens) {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .setQueryText(queryText)
                 .setFieldText(fieldText)
                 .setDatabases(databases)
@@ -114,7 +115,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
                 .setMinScore(minScore)
                 .setStateMatchId(ListUtils.emptyIfNull(stateTokens))
                 .build();
-        return parametricRequestBuilder
+        return parametricRequestBuilderFactory.getObject()
                 .setFieldNames(ListUtils.emptyIfNull(fieldNames))
                 .setQueryRestrictions(queryRestrictions)
                 .build();

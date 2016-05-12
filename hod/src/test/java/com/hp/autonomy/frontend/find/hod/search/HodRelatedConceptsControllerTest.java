@@ -14,10 +14,13 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class HodRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<Entity, HodQueryRestrictions, ResourceIdentifier, HodErrorException> {
     @Before
     public void setUp() {
-        relatedConceptsController = new HodRelatedConceptsController(relatedConceptsService, new HodQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new HodQueryRestrictions.Builder());
+        relatedConceptsController = new HodRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory);
     }
 }

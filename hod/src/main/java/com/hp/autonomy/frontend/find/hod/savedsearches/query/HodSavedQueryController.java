@@ -16,6 +16,7 @@ import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,8 +25,8 @@ class HodSavedQueryController extends SavedQueryController<ResourceIdentifier, H
     @Autowired
     public HodSavedQueryController(final SavedSearchService<SavedQuery> service,
                                    final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService,
-                                   final QueryRestrictions.Builder<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilder) {
-        super(service, documentsService, queryRestrictionsBuilder);
+                                   final ObjectFactory<QueryRestrictions.Builder<HodQueryRestrictions, ResourceIdentifier>> queryRestrictionsBuilderFactory) {
+        super(service, documentsService, queryRestrictionsBuilderFactory);
     }
 
     @Override

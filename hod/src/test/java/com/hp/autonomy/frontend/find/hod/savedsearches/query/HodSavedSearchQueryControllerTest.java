@@ -12,9 +12,12 @@ import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 
+import static org.mockito.Mockito.when;
+
 public class HodSavedSearchQueryControllerTest extends SavedQueryControllerTest<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
     @Override
     protected SavedQueryController<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> constructController() {
-        return new HodSavedQueryController(savedQueryService, documentsService, new HodQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new HodQueryRestrictions.Builder());
+        return new HodSavedQueryController(savedQueryService, documentsService, queryRestrictionsBuilderFactory);
     }
 }

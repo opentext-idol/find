@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.ObjectFactory;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -23,6 +24,10 @@ import static org.mockito.Mockito.verify;
 public abstract class AbstractParametricValuesControllerTest<Q extends QueryRestrictions<S>, R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
     @Mock
     protected ParametricValuesService<R, S, E> parametricValuesService;
+    @Mock
+    protected ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
+    @Mock
+    protected ObjectFactory<ParametricRequest.Builder<R, S>> parametricRequestBuilderFactory;
 
     protected ParametricValuesController<Q, R, S, E> parametricValuesController;
 

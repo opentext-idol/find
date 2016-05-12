@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.ObjectFactory;
 
 import java.io.Serializable;
 
@@ -34,6 +35,8 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
     protected DocumentsService<S, D, E> documentsService;
     @Mock
     private Documents<D> searchResults;
+    @Mock
+    protected ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
 
     private SavedQueryController<S, Q, D, E> savedQueryController;
 

@@ -14,10 +14,14 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class HodParametricValuesControllerTest extends AbstractParametricValuesControllerTest<HodQueryRestrictions, HodParametricRequest, ResourceIdentifier, HodErrorException> {
     @Before
     public void setUp() {
-        parametricValuesController = new HodParametricValuesController(parametricValuesService, new HodQueryRestrictions.Builder(), new HodParametricRequest.Builder());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new HodQueryRestrictions.Builder());
+        when(parametricRequestBuilderFactory.getObject()).thenReturn(new HodParametricRequest.Builder());
+        parametricValuesController = new HodParametricValuesController(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
     }
 }

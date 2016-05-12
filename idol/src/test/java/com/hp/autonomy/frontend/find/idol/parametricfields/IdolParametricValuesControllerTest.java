@@ -11,9 +11,13 @@ import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequ
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import org.junit.Before;
 
+import static org.mockito.Mockito.when;
+
 public class IdolParametricValuesControllerTest extends AbstractParametricValuesControllerTest<IdolQueryRestrictions, IdolParametricRequest, String, AciErrorException> {
     @Before
     public void setUp() {
-        parametricValuesController = new IdolParametricValuesController(parametricValuesService, new IdolQueryRestrictions.Builder(), new IdolParametricRequest.Builder());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
+        when(parametricRequestBuilderFactory.getObject()).thenReturn(new IdolParametricRequest.Builder());
+        parametricValuesController = new IdolParametricValuesController(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
     }
 }

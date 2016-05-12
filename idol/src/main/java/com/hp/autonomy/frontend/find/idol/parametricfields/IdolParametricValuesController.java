@@ -12,6 +12,7 @@ import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesSe
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class IdolParametricValuesController extends ParametricValuesController<IdolQueryRestrictions, IdolParametricRequest, String, AciErrorException> {
     @Autowired
     public IdolParametricValuesController(final ParametricValuesService<IdolParametricRequest, String, AciErrorException> parametricValuesService,
-                                          final QueryRestrictions.Builder<IdolQueryRestrictions, String> queryRestrictionsBuilder,
-                                          final ParametricRequest.Builder<IdolParametricRequest, String> parametricRequestBuilder) {
-        super(parametricValuesService, queryRestrictionsBuilder, parametricRequestBuilder);
+                                          final ObjectFactory<QueryRestrictions.Builder<IdolQueryRestrictions, String>> queryRestrictionsBuilderFactory,
+                                          final ObjectFactory<ParametricRequest.Builder<IdolParametricRequest, String>> parametricRequestBuilderFactory) {
+        super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
     }
 }

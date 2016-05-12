@@ -16,6 +16,7 @@ import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import org.apache.commons.collections4.ListUtils;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,11 +55,11 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
     public static final int MAX_SUMMARY_CHARACTERS = 250;
 
     protected final DocumentsService<S, R, E> documentsService;
-    protected final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder;
+    private final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
 
-    protected DocumentsController(final DocumentsService<S, R, E> documentsService, final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder) {
+    protected DocumentsController(final DocumentsService<S, R, E> documentsService, final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory) {
         this.documentsService = documentsService;
-        this.queryRestrictionsBuilder = queryRestrictionsBuilder;
+        this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
     }
 
     protected abstract <T> T throwException(final String message) throws E;
@@ -107,7 +108,7 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
 
     @SuppressWarnings("MethodWithTooManyParameters")
     protected SearchRequest<S> parseRequestParamsToObject(final String queryText, final int resultsStart, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight, final Integer minScore, final boolean autoCorrect) {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .setQueryText(queryText)
                 .setFieldText(fieldText)
                 .setDatabases(ListUtils.emptyIfNull(databases))
@@ -143,7 +144,7 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
             @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
             @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore
     ) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .setFieldText(fieldText)
                 .setDatabases(ListUtils.emptyIfNull(databases))
                 .setMinDate(minDate)
