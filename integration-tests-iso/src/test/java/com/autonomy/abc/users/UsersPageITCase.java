@@ -44,7 +44,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 	private final int defaultNumberOfUsers = isHosted() ? 0 : 1;
 	private final NewUser aNewUser;
 	private final NewUser newUser2;
-	private final UserTestHelper helper;
+	private UserTestHelper helper;
 
 	private UsersPage usersPage;
 	private UserService<?> userService;
@@ -53,12 +53,13 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		super(config);
 		aNewUser = config.getNewUser("james");
 		newUser2 = config.getNewUser("john");
-		helper = new UserTestHelper(getApplication(), getConfig());
 	}
 
 	@Before
 	public void setUp() {
+		helper = new UserTestHelper(getApplication(), getConfig());
 		userService = getApplication().userService();
+		Waits.loadOrFadeWait();
 		usersPage = userService.goToUsers();
 		userService.deleteOtherUsers();
 	}

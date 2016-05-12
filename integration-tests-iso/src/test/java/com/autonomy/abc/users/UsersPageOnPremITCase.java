@@ -11,6 +11,7 @@ import com.autonomy.abc.shared.UserTestHelper;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Editable;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -24,6 +25,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.UnhandledAlertException;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
@@ -39,21 +41,22 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UsersPageOnPremITCase extends IdolIsoTestBase {
     private final NewUser aNewUser;
-    private final UserTestHelper helper;
+    private UserTestHelper helper;
 
     private IdolUsersPage usersPage;
 
     public UsersPageOnPremITCase(TestConfig config) {
         super(config);
         aNewUser = config.getNewUser("james");
-        helper = new UserTestHelper(getApplication(), config);
     }
 
     @Before
     public void setUp() {
+        helper = new UserTestHelper(getApplication(), getConfig());
         IdolIsoUserService userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
+        new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationsDisappear());
     }
 
     @After

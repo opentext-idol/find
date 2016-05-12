@@ -41,7 +41,7 @@ public class UserTestHelper {
     }
 
     public User singleSignUp(NewUser toCreate) {
-        UsersPage usersPage = userService.getUsersPage();
+        UsersPage usersPage = factory.getUsersPage();
 
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
@@ -56,7 +56,7 @@ public class UserTestHelper {
 
 
     public void signUpAndLoginAs(NewUser newUser, Window window) {
-        UsersPage usersPage = userService.getUsersPage();
+        UsersPage usersPage = factory.getUsersPage();
 
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
@@ -80,7 +80,7 @@ public class UserTestHelper {
     }
 
     public void deleteAndVerify(User user) {
-        UsersPage usersPage = userService.getUsersPage();
+        UsersPage usersPage = factory.getUsersPage();
         userService.deleteUser(user);
 
         if (!app.isHosted()) {
@@ -111,7 +111,7 @@ public class UserTestHelper {
         User user = userService.createNewUser(newUser, Role.USER);
         String username = user.getUsername();
 
-        UsersPage usersPage = userService.getUsersPage();
+        UsersPage usersPage = factory.getUsersPage();
         verifyThat(usersPage.deleteButton(user), displayed());
         verifyThat(usersPage.getTable(), containsText(username));
 
