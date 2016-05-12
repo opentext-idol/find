@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.List;
@@ -33,7 +32,6 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.modalIsDisplayed;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.fail;
@@ -227,78 +225,51 @@ public class UsersPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testUserSearch(){
-		NewUser newUser3 = getConfig().getNewUser("bob");
-
-		String[] addedUsers = new String[3];
-
-		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN).getUsername();
-		addedUsers[1] = userService.createNewUser(newUser2, Role.ADMIN).getUsername();
-		addedUsers[2] = userService.createNewUser(newUser3, Role.ADMIN).getUsername();
+		// TODO: filter by email on hosted
+		final User james = createAdminFromConfig("james");
+		final User john = createAdminFromConfig("john");
+		final User bob = createAdminFromConfig("bob");
 
 		FormInput searchFilter = usersPage.userSearchFilter();
-
-		searchFilter.setValue("hodtestqa");
-
-		verifyThat(usersPage.getUsernames(), containsInAnyOrder(addedUsers));
-
-		searchFilter.setValue("newuser1");
-
-		List<String> usernames = usersPage.getUsernames();
-		verifyThat(usernames, hasItem(addedUsers[0]));
-		verifyThat(usernames, not(hasItem(addedUsers[1])));
-		verifyThat(usernames, not(hasItem(addedUsers[2])));
-
 		searchFilter.setValue("j");
-
-		usernames = usersPage.getUsernames();
-		verifyThat(usernames, hasItem(addedUsers[0]));
-		verifyThat(usernames, hasItem(addedUsers[1]));
-		verifyThat(usernames, not(hasItem(addedUsers[2])));
+		checkUserVisible(james);
+		checkUserVisible(john);
+		checkUserHidden(bob);
 
 		searchFilter.setValue("bob");
+		checkUserHidden(james);
+		checkUserHidden(john);
+		checkUserVisible(bob);
+	}
 
-		usernames = usersPage.getUsernames();
-		verifyThat(usernames, not(hasItem(addedUsers[0])));
-		verifyThat(usernames, not(hasItem(addedUsers[1])));
-		verifyThat(usernames, hasItem(addedUsers[2]));
+	private User createAdminFromConfig(String configId) {
+		return userService.createNewUser(getConfig().getNewUser(configId), Role.ADMIN);
 	}
 
 	@Test
 	public void testUserFilter(){
-		LoggerFactory.getLogger(UsersPageITCase.class).warn("CANNOT FILTER BY 'NONE' - NEEDS TO BE UNCOMMENTED WHEN WORKING");
+		final User admin = userService.createNewUser(aNewUser, Role.ADMIN);
+		final User endUser = userService.createNewUser(newUser2, Role.USER);
 
-//		NewUser newUser3 = getConfig().getNewUser("bob");
-
-		String[] addedUsers = new String[2];
-
-		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN).getUsername();
-		addedUsers[1] = userService.createNewUser(newUser2, Role.USER).getUsername();
-//		addedUsers[2] = userService.createNewUser(newUser3, Role.USER).getUsername();
+		checkUserVisible(admin);
+		checkUserVisible(endUser);
 
 		Dropdown dropdown = usersPage.userRoleFilter();
-
-		verifyThat(usersPage.getUsernames(), containsInAnyOrder(addedUsers));
-
 		dropdown.select("Admin");
-
-		List<String> usernames = usersPage.getUsernames();
-		verifyThat(usernames, hasItem(addedUsers[0]));
-		verifyThat(usernames, not(hasItem(addedUsers[1])));
-//		verifyThat(usernames, not(hasItem(addedUsers[2])));
+		checkUserVisible(admin);
+		checkUserHidden(endUser);
 
 		dropdown.select("User");
+		checkUserHidden(admin);
+		checkUserVisible(endUser);
+	}
 
-		usernames = usersPage.getUsernames();
-		verifyThat(usernames, not(hasItem(addedUsers[0])));
-		verifyThat(usernames, hasItem(addedUsers[1]));
-//		verifyThat(usernames, not(hasItem(addedUsers[2])));
+	private void checkUserVisible(User user) {
+		verifyThat(user + " is visible", usersPage.getUsernames(), hasItem(user.getUsername()));
+	}
 
-//		dropdown.select("None");
-//
-//		usernames = usersPage.getUsernames();
-//		verifyThat(usernames, not(hasItem(addedUsers[0])));
-//		verifyThat(usernames, not(hasItem(addedUsers[1])));
-//		verifyThat(usernames, hasItem(addedUsers[2]));
+	private void checkUserHidden(User user) {
+		verifyThat(user + " is hidden", usersPage.getUsernames(), not(hasItem(user.getUsername())));
 	}
 
 	@Test
