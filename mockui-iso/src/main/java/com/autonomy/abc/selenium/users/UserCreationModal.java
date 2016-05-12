@@ -8,6 +8,8 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public abstract class UserCreationModal extends ModalView {
     UserCreationModal(WebDriver driver) {
@@ -41,6 +43,8 @@ public abstract class UserCreationModal extends ModalView {
     @Override
     public void close() {
         findElement(By.cssSelector("[data-dismiss='modal']")).click();
-        Waits.loadOrFadeWait();
+        new WebDriverWait(getDriver(), 10)
+                .withMessage("closing user creation modal")
+                .until(ExpectedConditions.stalenessOf(this));
     }
 }
