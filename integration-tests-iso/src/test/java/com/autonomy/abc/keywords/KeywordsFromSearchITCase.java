@@ -155,7 +155,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
         assertEquals(2, keywordsPage.countKeywords());
     }
 
-    //There is a link to create synonym group from the search page that prepopulates the create synonyms wizard with the current multi term search. Often breaks.
+    //There is a link to create synonym group from the search page that pre-populates the create synonyms wizard with the current multi term search. Often breaks.
     @Test
     public void testCreateSynonymGroupFromMultiTermSearchOnSearchPage() throws InterruptedException {
         search("lodge dodge podge", Language.ENGLISH);
@@ -278,21 +278,24 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
         }
     }
 
+    //isn't working if there are already keywords there to delete: see the setup
     @Test
     @ResolvedBug({"CSA-1719", "CSA-1792", "CSA-2064"})
     public void testBlacklistTermsBehaveAsExpected() throws InterruptedException {
+
         String blacklistOne = "cheese";
         String blacklistTwo = "mouse";
+
+        assertThat("Keywords Load",!keywordsPage.loadingIndicator().isDisplayed());
 
         keywordsPage = keywordService.addBlacklistTerms(Language.ENGLISH, blacklistOne);
         assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistOne));
 
         search(blacklistOne, Language.ENGLISH);
         checkNoResults();
-
         getWindow().refresh();
-
         keywordsPage = keywordService.goToKeywords();
+
         assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistOne));
 
         keywordsPage = keywordService.addBlacklistTerms(blacklistTwo);
@@ -307,8 +310,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
     }
 
     private void checkNoResults() {
-        verifyThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
-        verifyThat(searchPage.getHeadingResultsCount(), is(0));
+        verifyThat(searchPage.getText(), containsString(Errors.Search.BLACKLIST));
     }
 
     @Test
