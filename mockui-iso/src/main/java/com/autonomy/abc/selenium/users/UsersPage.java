@@ -33,21 +33,21 @@ public abstract class UsersPage extends SOPageBase {
 
 	public int countNumberOfUsers() {
 		Waits.loadOrFadeWait();
-		return getTable().findElements(By.cssSelector("tbody tr")).size();
+		return getTable().rows().size();
 	}
 
 	public WebElement deleteButton(User user){
 		return getUserRow(user).findElement(By.cssSelector(".users-deleteUser"));
 	}
 
-	public WebElement getTable() {
-		return findElement(By.cssSelector("#users-current-admins"));
+	public UserTable getTable() {
+		return new UserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
 	}
 
 	public List<String> getUsernames() {
 		List<String> usernames = new ArrayList<>();
-		for (WebElement element : getTable().findElements(By.cssSelector("tbody .user-username"))) {
-			usernames.add(element.getText().trim());
+		for (UserTable.Row row : getTable()) {
+			usernames.add(row.getUsername());
 		}
 		return usernames;
 	}

@@ -7,7 +7,6 @@ import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -44,7 +43,8 @@ public class IdolIsoUserService extends UserService<IdolIsoElementFactory> {
     @Override
     public void deleteOtherUsers() {
         goToUsers();
-        for (final WebElement deleteButton : getUsersPage().getTable().findElements(By.className("hp-trash"))) {
+        for (final UserTable.Row row : getUsersPage().getTable()) {
+            WebElement deleteButton = row.deleteButton();
             if (!ElementUtil.hasClass("not-clickable", deleteButton)) {
                 deleteButton.click();
                 ModalView deleteModal = ModalView.getVisibleModalView(getDriver());

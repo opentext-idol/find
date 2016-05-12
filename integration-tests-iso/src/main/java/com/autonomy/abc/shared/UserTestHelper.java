@@ -24,6 +24,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.url;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.modalIsDisplayed;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
 import static org.openqa.selenium.lift.Matchers.displayed;
@@ -115,10 +116,10 @@ public class UserTestHelper {
 
         UsersPage usersPage = factory.getUsersPage();
         verifyThat(usersPage.deleteButton(user), displayed());
-        verifyThat(usersPage.getTable(), containsText(username));
+        verifyThat(usersPage.getUsernames(), hasItem(username));
 
         deleteAndVerify(user);
-        verifyThat(usersPage.getTable(), not(containsText(username)));
+        verifyThat(usersPage.getUsernames(), not(hasItem(username)));
     }
 
 }
