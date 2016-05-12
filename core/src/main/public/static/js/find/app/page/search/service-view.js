@@ -47,7 +47,6 @@ define([
         // Abstract
         ResultsView: null,
         ResultsViewAugmentation: null,
-        additionalInitialisation: null,
         fetchParametricFields: null,
 
         initialize: function(options) {
@@ -247,7 +246,6 @@ define([
                 model: resultsViewSelectionModel
             });
 
-            this.additionalInitialisation();
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
             this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
             this.fetchParametricFields(this.numericParametricFieldsCollection, this.numericParametricCollection);
@@ -305,10 +303,8 @@ define([
                     stateTokens: this.queryModel.get('stateMatchIds')
                 };
 
-                var fieldNames = fieldsCollection.map(function (field) {
-                    return field.get('field');
-                });
-                if (fieldNames && fieldNames.length > 0) {
+                var fieldNames = fieldsCollection.pluck('field');
+                if (fieldNames.length > 0) {
                     valuesCollection.fetch({data: _.extend({
                         fieldNames: fieldNames
                     }, data)});

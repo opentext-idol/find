@@ -41,6 +41,8 @@ define([
             }
 
             ServiceView.prototype.initialize.call(this, options);
+
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchData);
         },
 
         render: function() {
@@ -50,10 +52,6 @@ define([
 
         updateCompareModalButton: function() {
             this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
-        },
-
-        additionalInitialisation: function () {
-            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchData);
         },
 
         fetchParametricFields: function (fieldsCollection, valuesCollection) {

@@ -23,9 +23,11 @@ define([
         mapViewResultsStep: 2500,
         mapViewAllowIncrement: false,
 
-        additionalInitialisation: function () {
+        initialize: function(options) {
+            ServiceView.prototype.initialize.call(this, options);
             addChangeListener(this, this.queryModel, ['queryText', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchData);
             addChangeListener(this, this.queryModel, ['indexes'], _.bind(function () {
+                this.fetchEntities();
                 this.parametricFieldsCollection.reset();
                 this.numericParametricFieldsCollection.reset();
                 if (this.queryModel.get('indexes').length !== 0) {
