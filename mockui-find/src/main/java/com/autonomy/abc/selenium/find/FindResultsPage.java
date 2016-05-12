@@ -116,7 +116,13 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
     }
 
     private WebElement dateOption(DateEnum date) {
-        return findElement(By.cssSelector("tr[data-id='" + date.toString().toLowerCase() + "']"));
+        String formattedDate = date.toString().toLowerCase();
+        if(formattedDate.equals("custom")){
+            return findElement(By.xpath("//tr[@class='clickable' and td[contains(text(),'" + Character.toUpperCase(formattedDate.charAt(0)) + formattedDate.substring(1) + "')]]"));
+        }
+        else{
+            return findElement(By.xpath("//tr[@class='clickable' and td[contains(text(),'Last " + Character.toUpperCase(formattedDate.charAt(0)) + formattedDate.substring(1) + "')]]"));
+        }
     }
 
     public WebElement parametricContainer(String param){
@@ -124,7 +130,7 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
     }
 
     public FindParametricCheckbox parametricTypeCheckbox(String category, String field){
-        WebElement checkbox = findElement(By.cssSelector("[data-field='" + category.toLowerCase().replace(" ","_") + "'] [data-value='" + field.toUpperCase() + "']"));
+        WebElement checkbox = findElement(By.cssSelector("[data-field='" + category.replace(" ","_") + "'] [data-value='" + field.toUpperCase() + "']"));
         return new FindParametricCheckbox(checkbox, getDriver());
     }
 
@@ -134,7 +140,7 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
 
     public List<FindResult> getResults(){
         List<FindResult> results = new ArrayList<>();
-        for(WebElement result : findElements(By.cssSelector("[data-rel='results']"))){
+        for(WebElement result : findElements(By.xpath("//*[starts-with(@class,'main-results-container')]"))){
             results.add(new FindResult(result, getDriver()));
         }
         return results;

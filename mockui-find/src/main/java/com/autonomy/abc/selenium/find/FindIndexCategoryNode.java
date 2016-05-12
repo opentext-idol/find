@@ -30,7 +30,7 @@ class FindIndexCategoryNode extends IndexCategoryNode {
 
     @Override
     protected IndexNodeElement find(String name) {
-        WebElement childElement = container.findElement(By.cssSelector(".clickable[data-name='" + name.toLowerCase() + "']"));
+        WebElement childElement = container.findElement(By.cssSelector(".clickable[data-name='" + name+"']"));
         return new FindIndexLeafNode(childElement, driver);
     }
 

@@ -67,7 +67,7 @@ public abstract class IndexCategoryNode implements IndexNodeElement, Collapsible
         return getIndexNodes().iterator();
     }
 
-    protected WebElement getContainer() {
+    public WebElement getContainer() {
         return container;
     }
 

@@ -1,16 +1,13 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
+import com.google.common.collect.Iterables;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -31,7 +28,7 @@ public class FindPage extends AppElement implements AppPage,
 
     private final FindResultsPage results;
 
-    private FindPage(WebDriver driver){
+    protected FindPage(WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
@@ -111,12 +108,26 @@ public class FindPage extends AppElement implements AppPage,
 
     @Override
     public FormInput fromDateInput() {
-        return dateInput(By.cssSelector(".results-filter-min-date input"));
+        if (minFindable()) {
+            return dateInput(By.cssSelector(".results-filter-min-date input"));
+        }
+        return dateInput(By.xpath("//div[@data-date-attribute='customMinDate']/descendant::input[@class='form-control']"));
     }
 
     @Override
     public FormInput untilDateInput() {
-        return dateInput(By.cssSelector(".results-filter-max-date input"));
+        if (maxFindable()){
+            return dateInput(By.cssSelector(".results-filter-max-date input"));
+        }
+        return dateInput(By.xpath("//div[@data-date-attribute='customMaxDate']/descendant::input[@class='form-control']"));
+    }
+
+    private Boolean minFindable(){
+        return findElements(By.cssSelector(".results-filter-min-date input")).size()>0;
+    }
+
+    private Boolean maxFindable(){
+        return findElements(By.cssSelector(".results-filter-max-date input")).size()>0;
     }
 
     @Override
@@ -140,15 +151,44 @@ public class FindPage extends AppElement implements AppPage,
         return findElement(By.className("parametric-container"));
     }
 
+    public Boolean parametricEmptyExists(){
+        return findElements(By.className("parametric-empty")).size()!=0;
+    }
+
     @Override
     public void waitForParametricValuesToLoad() {
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("parametric-processing-indicator")));
     }
 
     // this can be used to check whether on the landing page,
-    // as opposed to main reuslts page
+    // as opposed to main results page
     public WebElement footerLogo() {
         return findElement(By.className("hp-logo-footer"));
+    }
+
+    public Boolean loadingIndicatorExists(){return findElements(By.className("view-server-loading-indicator")).size()>0;}
+
+    public WebElement loadingIndicator(){
+        return findElement(By.className("view-server-loading-indicator"));
+    }
+
+    public WebElement previewContents(){
+        return findElement(By.className("preview-mode-contents"));
+    }
+
+    public int totalResultsNum(){return Integer.parseInt(findElement(By.className("total-results-number")).getText());}
+
+    //should check not already selected
+    public void clickFirstIndex(){
+        findElement(By.cssSelector(".child-categories li:first-child")).click();
+    }
+
+    public String getIthIndex(int i){return Iterables.get(indexesTree(),i).getName();}
+
+    public void seeMoreOfCategory(WebElement element){element.findElement(By.className("toggle-more")).click();}
+
+    public void openDetailedPreview(){
+        findElement(By.className("preview-mode-open-detail-button")).click();
     }
 
     public WebElement rightContainerToggleButton() {
@@ -159,8 +199,10 @@ public class FindPage extends AppElement implements AppPage,
         return findElement(By.cssSelector(".left-side-container .container-toggle"));
     }
 
-    public WebElement indexElement(Index index) {
-        return ElementUtil.ancestor(getResultsPage().resultsDiv().findElement(By.xpath("//*[@class='database-name' and text()='" + index.getDisplayName() + "']")), 2);
+    public void scrollToBottom() {
+        findElement(By.className("results-number")).click();
+        DriverUtil.scrollToBottom(getDriver());
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {

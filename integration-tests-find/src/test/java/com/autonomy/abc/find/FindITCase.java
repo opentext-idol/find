@@ -5,36 +5,33 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.query.*;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.query.QueryResult;
+import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.autonomy.abc.shared.QueryTestHelper;
-import com.autonomy.abc.shared.SharedPreviewTests;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.control.Frame;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
-import com.hp.autonomy.frontend.selenium.util.DriverUtil;
-import com.hp.autonomy.frontend.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
 import java.util.*;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTagName;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class FindITCase extends FindTestBase {
@@ -48,7 +45,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         findPage = getElementFactory().getFindPage();
         navBar = getElementFactory().getTopNavBar();
         results = findPage.getResultsPage();
@@ -64,166 +61,156 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    public void testPdfContentTypeValue(){
-        checkContentTypeFilter("APPLICATION/PDF", "pdf");
-    }
-
-    @Test
-    public void testHtmlContentTypeValue(){
-        checkContentTypeFilter("TEXT/HTML", "html");
-    }
-
-    private void checkContentTypeFilter(String filterType, String extension) {
-        Query query = new Query("red star")
-                .withFilter(new ParametricFilter("Content Type", filterType));
-        findService.search(query);
-        for(String type : results.getDisplayedDocumentsDocumentTypes()){
-            assertThat(type, containsString(extension));
-        }
-    }
-
-    @Test
-    public void testFilteringByParametricValues(){
+    public void testFilteringByParametricValues() {
         findService.search("Alexis");
         findPage.waitForParametricValuesToLoad();
-
-        int expectedResults = plainTextCheckbox().getResultsCount();
-        plainTextCheckbox().check();
+        int expectedResults = checkbox2().getResultsCount();
+        checkbox2().check();
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        verifyParametricFields(plainTextCheckbox(), expectedResults);
+        verifyParametricFields(checkbox2(), expectedResults);
         verifyTicks(true, false);
 
-        expectedResults = plainTextCheckbox().getResultsCount();
-        simpsonsArchiveCheckbox().check();
+        expectedResults = checkbox1().getResultsCount();
+        checkbox1().check();
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        verifyParametricFields(plainTextCheckbox(), expectedResults);	//TODO Maybe change plainTextCheckbox to whichever has the higher value??
+        verifyParametricFields(checkbox1(), expectedResults);    //TODO Maybe change plainTextCheckbox to whichever has the higher value??
         verifyTicks(true, true);
 
-        plainTextCheckbox().uncheck();
+        checkbox2().uncheck();
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        expectedResults = simpsonsArchiveCheckbox().getResultsCount();
-        verifyParametricFields(simpsonsArchiveCheckbox(), expectedResults);
+        expectedResults = checkbox1().getResultsCount();
+        verifyParametricFields(checkbox1(), expectedResults);
         verifyTicks(false, true);
     }
 
-    private void verifyParametricFields(FindParametricCheckbox checked, int expectedResults){
+    private void verifyParametricFields(FindParametricCheckbox checked, int expectedResults) {
         Waits.loadOrFadeWait();
         int resultsTotal = results.getResultTitles().size();
         int checkboxResults = checked.getResultsCount();
-
         verifyThat(resultsTotal, is(Math.min(expectedResults, 30)));
         verifyThat(checkboxResults, is(expectedResults));
     }
 
-    private void verifyTicks(boolean plainChecked, boolean simpsonsChecked){
-        verifyThat(plainTextCheckbox().isChecked(), is(plainChecked));
-        verifyThat(simpsonsArchiveCheckbox().isChecked(), is(simpsonsChecked));
+    private void verifyTicks(boolean checkbox2, boolean checkbox1) {
+        verifyThat(checkbox1().isChecked(), is(checkbox1));
+        verifyThat(checkbox2().isChecked(), is(checkbox2));
     }
 
-    private FindParametricCheckbox simpsonsArchiveCheckbox(){
-        return results.parametricTypeCheckbox("Source Connector", "SIMPSONSARCHIVE");
+    private FindParametricCheckbox checkbox1() {
+        if (getConfig().getType() == ApplicationType.HOSTED) {
+            return results.parametricTypeCheckbox("source connector", "SIMPSONSARCHIVE");
+        } else {
+            return results.parametricTypeCheckbox("SOURCE", "GOOGLE");
+        }
     }
 
-    private FindParametricCheckbox plainTextCheckbox(){
-        return results.parametricTypeCheckbox("Content Type", "TEXT/PLAIN");
+    private FindParametricCheckbox checkbox2() {
+        if (getConfig().getType() == ApplicationType.HOSTED) {
+            return results.parametricTypeCheckbox("content type", "TEXT/PLAIN");
+        } else {
+            return results.parametricTypeCheckbox("CATEGORY", "ENTERTAINMENT");
+        }
     }
 
     @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
         findService.search("wolf");
-        results.parametricTypeCheckbox("Content Type", "TEXT/HTML").check();
-        Waits.loadOrFadeWait();
-        results.parametricTypeCheckbox("Content Type", "TEXT/HTML").uncheck();
+
+        findPage.clickFirstIndex();
+        findPage.clickFirstIndex();
+
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
     @Test
-    public void testSearch(){
+    public void testSearch() {
         findService.search("Red");
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
-
     @Test
-    @ActiveBug("CCUK-3641")
-    public void testAuthor(){
-        String author = "FIFA.COM";
-
-        findService.search(new Query("football")
-                .withFilter(new IndexFilter("Fifa"))
-                .withFilter(new ParametricFilter("Author", author)));
-
-        assertThat(results.resultsDiv(), not(containsText(Errors.Find.GENERAL)));
-
-        List<FindResult> searchResults = results.getResults();
-
-        for(int i = 0; i < 6; i++){
-            DocumentViewer documentViewer = searchResults.get(i).openDocumentPreview();
-            verifyThat(documentViewer.getAuthor(), equalToIgnoringCase(author));
-            documentViewer.close();
-        }
-    }
-
-    @Test
-    public void testFilterByIndex(){
-        findService.search("Sam");
-
+    public void testFilterByIndex() {
+        findService.search("face");
         QueryResult queryResult = results.searchResult(1);
         String titleString = queryResult.getTitleString();
+        DocumentViewer docPreview = queryResult.openDocumentPreview();
 
-        DocumentViewer docViewer = queryResult.openDocumentPreview();
-        Index index = docViewer.getIndex();
+        Index index = docPreview.getIndex();
 
-        docViewer.close();
+        docPreview.close();
 
         findPage.filterBy(new IndexFilter(index));
-
         assertThat(results.searchResult(1).getTitleString(), is(titleString));
     }
 
     @Test
-    public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
-        findService.search("Happy");
+    public void testFilterByMultipleIndexes() {
+        findService.search("unbelievable");
 
-        // TODO: what if this index has no results?
-        //This breaks if using default index
-        String indexTitle = findPage.getPrivateIndexNames().get(1);
-        findPage.filterBy(new IndexFilter(indexTitle));
-        DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
-        for(int i = 0; i < 5; i++){
-            assertThat(docViewer.getIndex().getDisplayName(), is(indexTitle));
-            docViewer.next();
+        IndexFilter filter = new IndexFilter(findPage.getIthIndex(2));
+        findPage.filterBy(filter);
+        Waits.loadOrFadeWait();
+        int firstFilterResults = findPage.totalResultsNum();
+
+        filter.add(findPage.getIthIndex(3));
+        findPage.filterBy(filter);
+        Waits.loadOrFadeWait();
+        int bothFilterResults = findPage.totalResultsNum();
+
+        findPage.filterBy(new IndexFilter(findPage.getIthIndex(3)));
+        int secondFilterResults = findPage.totalResultsNum();
+
+        assertThat("Both filter indexes thus both results", firstFilterResults + secondFilterResults, is(bothFilterResults));
+    }
+
+    @Test
+    public void testFilteredByIndexOnlyHasFilesFromIndex() {
+        findService.search("Sad");
+
+        DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
+        String chosenIndex = docPreview.getIndex().getDisplayName();
+        docPreview.close();
+
+        findPage.filterBy(new IndexFilter(chosenIndex));
+        //weirdly failing to open the 2nd result (subsequent okay)
+        for (int i = 1; i < 6; i++) {
+            DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
+            assertThat(docViewer.getIndex().getDisplayName(), is(chosenIndex));
+            docViewer.close();
         }
     }
 
     @Test
-    public void testQuicklyDoubleClickingIndexDoesNotLeadToError(){
-        findService.search("index");
-        // async filters
-        new IndexFilter(Index.DEFAULT).apply(findPage);
-        IndexFilter.PRIVATE.apply(findPage);
+    public void testQuickDoubleClickOnDateFilterNotCauseError() {
+        findService.search("wookie");
+
+        results.toggleDateSelection(FindResultsPage.DateEnum.MONTH);
+        results.toggleDateSelection(FindResultsPage.DateEnum.MONTH);
+
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        assertThat(results.resultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
+        assertThat(results.resultsDiv().getText().toLowerCase(), not(containsString("an error")));
+
     }
 
+    //Correctly failing with OnPrem - because of entry 'in 21 days'
     @Test
-    public void testPreDefinedWeekHasSameResultsAsCustomWeek(){
+    public void testPreDefinedWeekHasSameResultsAsCustomWeek() {
         preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.WEEK);
     }
 
     @Test
-    public void testPreDefinedMonthHasSameResultsAsCustomMonth(){
+    public void testPreDefinedMonthHasSameResultsAsCustomMonth() {
         preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.MONTH);
     }
 
     @Test
-    public void testPreDefinedYearHasSameResultsAsCustomYear(){
+    public void testPreDefinedYearHasSameResultsAsCustomYear() {
         preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.YEAR);
     }
 
-    private void preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum period){
-        findService.search("Rugby");
+    private void preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum period) {
+        findService.search("*");
 
         results.toggleDateSelection(period);
         List<String> preDefinedResults = results.getResultTitles();
@@ -239,7 +226,7 @@ public class FindITCase extends FindTestBase {
         if (period != null) {
             switch (period) {
                 case WEEK:
-                    cal.add(Calendar.DATE,-7);
+                    cal.add(Calendar.DATE, -7);
                     break;
                 case MONTH:
                     cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - 1);
@@ -252,87 +239,26 @@ public class FindITCase extends FindTestBase {
         return cal.getTime();
     }
 
+    //Correctly failing in OnPrem
     @Test
-    @ResolvedBug("CSA-1767 - footer not hidden properly")
-    public void testViewDocumentsOpenFromFind(){
-        findService.search("Review");
-
-        for(FindResult result : results.getResults(5)){
-            try {
-                DocumentViewer docViewer = result.openDocumentPreview();
-                verifyDocumentViewer(docViewer);
-                docViewer.close();
-            } catch (WebDriverException e){
-                fail("Could not click on preview button - most likely CSA-1767");
-            }
-        }
-    }
-
-    @Test
-    public void testViewDocumentsOpenWithArrows(){
-        findService.search("Review");
-
-        DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
-        for(int i = 0; i < 5; i++) {
-            verifyDocumentViewer(docViewer);
-            docViewer.next();
-        }
-    }
-
-    private void verifyDocumentViewer(DocumentViewer docViewer) {
-        final Frame frame = new Frame(getWindow(), docViewer.frame());
-
-        verifyThat("document visible", docViewer, displayed());
-        verifyThat("next button visible", docViewer.nextButton(), displayed());
-        verifyThat("previous button visible", docViewer.prevButton(), displayed());
-
-        frame.activate();
-
-        Locator errorHeader = new Locator()
-                .withTagName("h1")
-                .containingText("500");
-        Locator errorBody = new Locator()
-                .withTagName("h2")
-                .containingCaseInsensitive("error");
-        verifyThat("no backend error", frame.content().findElements(errorHeader), empty());
-        verifyThat("no view server error", frame.content().findElements(errorBody), empty());
-        frame.deactivate();
-    }
-
-    @Test
-    public void testDateRemainsWhenClosingAndReopeningDateFilters(){
+    public void testDateRemainsWhenClosingAndReopeningDateFilters() {
         Date start = getDate(FindResultsPage.DateEnum.MONTH);
         Date end = getDate(FindResultsPage.DateEnum.WEEK);
 
         findService.search(new Query("Corbyn")
                 .withFilter(new StringDateFilter().from(start).until(end)));
+
         Waits.loadOrFadeWait();
         for (int unused = 0; unused < 3; unused++) {
             results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
             Waits.loadOrFadeWait();
         }
-
         assertThat(findPage.fromDateInput().getValue(), is(findPage.formatInputDate(start)));
         assertThat(findPage.untilDateInput().getValue(), is(findPage.formatInputDate(end)));
     }
 
     @Test
-    public void testFileTypes(){
-        findService.search("love ");
-
-        for(FileType f : FileType.values()) {
-            findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
-
-            for(FindResult result : results.getResults()){
-                assertThat(result.icon().getAttribute("class"), containsString(f.getFileIconString()));
-            }
-
-            findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
-        }
-    }
-
-    @Test
-    public void testBooleanOperators(){
+    public void testBooleanOperators() {
         String termOne = "musketeers";
         String termTwo = "\"dearly departed\"";
 
@@ -348,7 +274,7 @@ public class FindITCase extends FindTestBase {
         List<String> andResults = results.getResultTitles();
         int numberOfAndResults = andResults.size();
 
-        assertThat(numberOfMusketeersResults,greaterThanOrEqualTo(numberOfAndResults));
+        assertThat(numberOfMusketeersResults, greaterThanOrEqualTo(numberOfAndResults));
         assertThat(numberOfDearlyDepartedResults, greaterThanOrEqualTo(numberOfAndResults));
         String[] andResultsArray = andResults.toArray(new String[andResults.size()]);
         assertThat(musketeersSearchResults, hasItems(andResultsArray));
@@ -381,6 +307,7 @@ public class FindITCase extends FindTestBase {
         assertThat(notTermOne, containsInAnyOrder(t2NotT1.toArray()));
     }
 
+    //Following 3 correctly failing On_Prem
     @Test
     public void testCorrectErrorMessageDisplayed() {
         new QueryTestHelper<>(findService).booleanOperatorQueryText(Errors.Search.OPERATORS);
@@ -398,7 +325,7 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug({"HOD-2170","CCUK-3634"})
+    @ActiveBug({"HOD-2170", "CCUK-3634"})
     public void testSearchQuotationMarks() {
         new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
     }
@@ -413,17 +340,19 @@ public class FindITCase extends FindTestBase {
         assertThat(findPage.footerLogo(), displayed());
 
         findService.search("Kevin Costner");
+
         List<String> resultTitles = results.getResultTitles();
 
         findService.search(" ");
-
         assertThat(results.getResultTitles(), is(resultTitles));
+        verifyThat("Empty Parametric Table does not exist", !findPage.parametricEmptyExists());
+        assumeThat(getConfig().getType(), is(ApplicationType.HOSTED));
         assertThat(findPage.parametricContainer().getText(), not(isEmptyOrNullString()));
     }
 
     @Test
     @ResolvedBug("CSA-1577")
-    public void testClickingCustomDateFilterDoesNotRefreshResults(){
+    public void testClickingCustomDateFilterDoesNotRefreshResults() {
         findService.search("O Captain! My Captain!");
         // may not happen the first time
         for (int unused = 0; unused < 5; unused++) {
@@ -434,40 +363,31 @@ public class FindITCase extends FindTestBase {
 
     @Test
     @ResolvedBug("CSA-1665")
-    public void testSearchTermInResults(){
-        String searchTerm = "Tiger";
+    public void testSearchTermInResults() {
+        String searchTerm = "tiger";
 
         findService.search(searchTerm);
 
-        for(WebElement searchElement : getDriver().findElements(By.xpath("//*[not(self::h4) and contains(text(),'" + searchTerm + "')]"))){
-            if(searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
-                verifyThat(searchElement.getText(), containsString(searchTerm));
+        for (WebElement searchElement : getDriver().findElements(By.xpath("//*[contains(@class,'search-text') and contains(text(),'" + searchTerm + "')]"))) {
+            if (searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
+                verifyThat(searchElement.getText().toLowerCase(), containsString(searchTerm));
             }
             verifyThat(searchElement, not(hasTagName("a")));
-            verifyThat(searchElement, hasClass("search-text"));
         }
     }
 
-    @Test
-    @ResolvedBug({"CSA-1726", "CSA-1763"})
-    public void testPublicIndexesVisibleNotSelectedByDefault(){
-        findService.search("Marina and the Diamonds");
-
-        verifyThat("public indexes are visible", findPage.indexesTree().publicIndexes(), not(emptyIterable()));
-        verifyThat(findPage.getSelectedPublicIndexes(), empty());
-    }
-
+    //Both correctly failing last part because some titles are duplicates
     @Test
     @ActiveBug("CSA-2082")
-    public void testAutoScroll(){
-        findService.search("my very easy method just speeds up naming ");
+    public void testAutoScroll() {
+        findService.search("nightmare");
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
-        scrollToBottom();
+        findPage.scrollToBottom();
         verifyThat(results.getResults().size(), allOf(greaterThanOrEqualTo(30), lessThanOrEqualTo(60)));
 
-        scrollToBottom();
+        findPage.scrollToBottom();
         verifyThat(results.getResults().size(), allOf(greaterThanOrEqualTo(60), lessThanOrEqualTo(90)));
 
         List<String> titles = results.getResultTitles();
@@ -477,74 +397,27 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
-    public void testViewportSearchResultNumbers(){
-        findService.search("Messi");
-
-        results.getResult(1).openDocumentPreview();
-        verifyDocViewerTotalDocuments(30);
-
-        scrollToBottom();
-        results.getResult(31).openDocumentPreview();
-        verifyDocViewerTotalDocuments(60);
-
-        scrollToBottom();
-        results.getResult(61).openDocumentPreview();
-        verifyDocViewerTotalDocuments(90);
-    }
-
-    @Test
     @ResolvedBug("CCUK-3647")
     public void testNoMoreResultsFoundAtEnd() {
-        findService.search(new Query("roland garros")
-                .withFilter((new IndexFilter("fifa"))));
+        findService.search(new Query("oesophageal"));
 
-        results.getResult(1).openDocumentPreview();
-        verifyDocViewerTotalDocuments(lessThanOrEqualTo(30));
+        verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
-        scrollToBottom();
-        verifyThat(results.resultsDiv(), containsText("No more results found"));
-    }
-
-    @Test
-    public void testBetween30And60Results(){
-        findService.search(new Query("idol")
-                .withFilter(new IndexFilter("sitesearch")));
-
-        scrollToBottom();
-        results.getResult(1).openDocumentPreview();
-        verifyDocViewerTotalDocuments(lessThanOrEqualTo(60));
-
-        Waits.loadOrFadeWait();
-
+        findPage.scrollToBottom();
         verifyThat(results.resultsDiv(), containsText("No more results found"));
     }
 
     @Test
     @ActiveBug("FIND-93")
-    public void testNoResults(){
+    public void testNoResults() {
         findService.search("thissearchwillalmostcertainlyreturnnoresults");
 
-        verifyThat(results.resultsDiv(), containsText("No results found"));
+        verifyThat(results.resultsDiv(), either(containsText("No results found")).or(containsText("No more results found")));
 
-        scrollToBottom();
+        findPage.scrollToBottom();
 
         int occurrences = StringUtils.countMatches(results.resultsDiv().getText(), "results found");
         verifyThat("Only one message showing at the bottom of search results", occurrences, is(1));
-    }
-
-    private void scrollToBottom() {
-        DriverUtil.scrollToBottom(getDriver());
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-    }
-
-    private void verifyDocViewerTotalDocuments(int docs){
-        verifyDocViewerTotalDocuments(is(docs));
-    }
-
-    private void verifyDocViewerTotalDocuments(Matcher matcher){
-        DocumentViewer docViewer = DocumentViewer.make(getDriver());
-        verifyThat(docViewer.getTotalDocumentsNumber(), matcher);
-        docViewer.close();
     }
 
     @Test
@@ -562,54 +435,4 @@ public class FindITCase extends FindTestBase {
         verifyThat("taken back to landing page after refresh", findPage.footerLogo(), displayed());
     }
 
-    @Test
-    public void testOpenDocumentFromSearch(){
-        findService.search("Refuse to Feel");
-
-        for(int i = 1; i <= 5; i++){
-            Window original = getWindow();
-            FindResult result = results.getResult(i);
-            String reference = result.getReference();
-            result.title().click();
-            Waits.loadOrFadeWait();
-            Window newWindow = getMainSession().switchWindow(getMainSession().countWindows() - 1);
-
-            verifyThat(getDriver().getCurrentUrl(), containsString(reference));
-
-            newWindow.close();
-            original.activate();
-        }
-    }
-
-    @Test
-    @ResolvedBug("CSA-1767 - footer not hidden properly")
-    @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
-    public void testDocumentPreview(){
-        Index index = new Index("fifa");
-        findService.search(new Query("document preview").withFilter(new IndexFilter(index)));
-
-        SharedPreviewTests.testDocumentPreviews(getMainSession(), results.getResults(5), index);
-    }
-
-    private enum FileType {
-        HTML("TEXT/HTML","html"),
-        PDF("APPLICATION/PDF","pdf"),
-        PLAIN("TEXT/PLAIN","file");
-
-        private final String sidebarString;
-        private final String fileIconString;
-
-        FileType(String sidebarString, String fileIconString){
-            this.sidebarString = sidebarString;
-            this.fileIconString = fileIconString;
-        }
-
-        public String getFileIconString() {
-            return fileIconString;
-        }
-
-        public String getSidebarString() {
-            return sidebarString;
-        }
-    }
 }

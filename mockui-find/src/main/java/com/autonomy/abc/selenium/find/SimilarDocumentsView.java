@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class SimilarDocumentsView implements AppPage {
@@ -17,7 +18,7 @@ public class SimilarDocumentsView implements AppPage {
     private WebElement container;
 
     //TODO find somewhere more suitable for this
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEE, MMMMM dd, yyyy kk:mm a");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE MMMMM dd kk:mm:ss zzz yyyy");
 
     private SimilarDocumentsView(WebDriver driver) {
         this.driver = driver;
@@ -25,11 +26,7 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     public WebElement backButton() {
-        return findElement(By.className("service-view-back-button"));
-    }
-
-    public String getTitle() {
-        return title().getText();
+        return findElement(By.xpath("//button[contains(text(),'Back')]"));
     }
 
     public WebElement seedLink() {
@@ -37,7 +34,26 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     private WebElement title() {
-        return findElement(By.cssSelector(".results-message-container h4"));
+        if (resultsMessageContainerExists()){
+            return findElement(By.cssSelector(".results-message-container h4"));
+        }
+        return findElement(By.tagName("h1"));
+    }
+
+    private Boolean resultsMessageContainerExists(){
+        return findElements(By.cssSelector(".results-message-container h4")).size()>0;
+    }
+
+    public String getTitle() {
+        return title().getText();
+    }
+
+    public WebElement loadingIndicator(){
+            return findElement(By.className("view-server-loading-indicator"));
+    }
+
+    public WebElement previewContents(){
+        return findElement(By.className("preview-mode-contents"));
     }
 
     /**
@@ -56,7 +72,7 @@ public class SimilarDocumentsView implements AppPage {
 
     public List<FindResult> getResults(){
         List<FindResult> results = new ArrayList<>();
-        for(WebElement result : findElements(By.cssSelector("[data-rel='results']"))){
+        for(WebElement result : findElements(By.className("main-results-container"))){
             results.add(new FindResult(result, getDriver()));
         }
         return results;
@@ -90,10 +106,13 @@ public class SimilarDocumentsView implements AppPage {
         return driver;
     }
 
-    public WebElement resultsContainer() {
-        return findElement(By.className("results-container"));
+    public WebElement mainResultsContent() {
+        return findElement(By.className("main-results-content"));
     }
 
+    public boolean publicIndexesExist(){
+        return findElements(By.xpath("//*[contains(text(),'Public Indexes')]")).size()>0;
+    }
     public void sortByDate() {
         sortBy(1);
     }
@@ -101,6 +120,46 @@ public class SimilarDocumentsView implements AppPage {
     public void sortByRelevance() {
         sortBy(2);
     }
+
+    public String convertDate(String badFormatDate){
+
+        String[] words = badFormatDate.split(" ");
+        int timeAmount= Integer.parseInt(words[0]);
+        String timeUnit = words[1];
+
+
+        Calendar date = Calendar.getInstance();
+
+        switch (timeUnit) {
+            case "minute":
+            case "minutes":
+                date.add(Calendar.MINUTE,-timeAmount);
+                break;
+
+            case "hour":
+            case "hours":
+                date.add(Calendar.HOUR_OF_DAY, -timeAmount);
+                break;
+
+            case "day":
+            case "days":
+                date.add(Calendar.DAY_OF_MONTH,-timeAmount);
+                break;
+
+            case "month":
+            case "months":
+                date.add(Calendar.MONTH,-timeAmount);
+                break;
+
+            case "year":
+            case "years":
+                date.add(Calendar.YEAR,-timeAmount);
+                break;
+        }
+        date.set(Calendar.SECOND,0);
+        return date.getTime().toString();
+    }
+
 
     private void sortBy(int dropdownRow){
         findElement(By.className("current-search-sort")).click();
