@@ -19,7 +19,7 @@ class IdolIsoTopNavBar extends TopNavBar {
     }
 
     private void clickCog(){
-        findElement(By.className("hp-settings")).click();
+        findElement(By.cssSelector(".navbar-top-link:not(.top-navbar-notifications)")).click();
         Waits.loadOrFadeWait();
     }
 
