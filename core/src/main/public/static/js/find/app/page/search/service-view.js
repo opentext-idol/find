@@ -13,6 +13,7 @@ define([
     'find/app/model/query-model',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/parametric-collection',
+    'find/app/model/parametric-fields-collection',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/page/search/results/results-view-augmentation',
@@ -28,11 +29,10 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
+], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, ParametricFieldsCollection,
             queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, Collapsible, addChangeListener,  SavedSearchControlView, TopicMapView,
-            SunburstView, MapResultsView, configuration, i18n, templateString) {
-
+            ResultsViewSelection, RelatedConceptsView, Collapsible,
+            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, configuration, i18n, templateString) {
     'use strict';
 
     var template = _.template(templateString);
@@ -47,6 +47,8 @@ define([
         // Abstract
         ResultsView: null,
         ResultsViewAugmentation: null,
+        additionalInitialisation: null,
+        fetchParametricFields: null,
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
@@ -106,7 +108,18 @@ define([
                 }
             });
 
-            this.parametricCollection = new ParametricCollection();
+            this.parametricFieldsCollection = new ParametricFieldsCollection([], {
+                url: '../api/public/fields/parametric'
+            });
+            this.numericParametricFieldsCollection = new ParametricFieldsCollection([], {
+                url: '../api/public/fields/parametric-numeric'
+            });
+            this.parametricCollection = new ParametricCollection([], {
+                url: '../api/public/parametric'
+            });
+            this.numericParametricCollection = new ParametricCollection([], {
+                url: '../api/public/parametric/numeric'
+            });
 
             var subViewArguments = {
                 indexesCollection: this.indexesCollection,
@@ -116,6 +129,7 @@ define([
                 documentsCollection: this.documentsCollection,
                 selectedTabModel: this.selectedTabModel,
                 parametricCollection: this.parametricCollection,
+                numericParametricCollection: this.numericParametricCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
                 highlightModel: this.highlightModel,
@@ -233,9 +247,11 @@ define([
                 model: resultsViewSelectionModel
             });
 
-            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchData);
+            this.additionalInitialisation();
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
-            this.fetchData();
+            this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
+            this.fetchParametricFields(this.numericParametricFieldsCollection, this.numericParametricCollection);
+            this.fetchEntities();
         },
 
         render: function() {
@@ -271,7 +287,13 @@ define([
         },
 
         fetchData: function() {
-            this.parametricCollection.reset();
+            this.fetchEntities();
+            this.fetchParametricValues(this.parametricFieldsCollection, this.parametricCollection);
+            this.fetchParametricValues(this.numericParametricFieldsCollection, this.numericParametricCollection);
+        },
+        
+        fetchParametricValues: function (fieldsCollection, valuesCollection) {
+            valuesCollection.reset();
 
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
@@ -283,8 +305,29 @@ define([
                     stateTokens: this.queryModel.get('stateMatchIds')
                 };
 
+                var fieldNames = fieldsCollection.map(function (field) {
+                    return field.get('field');
+                });
+                if (fieldNames && fieldNames.length > 0) {
+                    valuesCollection.fetch({data: _.extend({
+                        fieldNames: fieldNames
+                    }, data)});
+                }
+            }
+        },
+        
+        fetchEntities: function () {
+            if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+                var data = {
+                    databases: this.queryModel.get('indexes'),
+                    queryText: this.queryModel.get('queryText'),
+                    fieldText: this.queryModel.get('fieldText'),
+                    minDate: this.queryModel.getIsoDate('minDate'),
+                    maxDate: this.queryModel.getIsoDate('maxDate'),
+                    stateTokens: this.queryModel.get('stateMatchIds')
+                };
+
                 this.entityCollection.fetch({data: data});
-                this.parametricCollection.fetch({data: data});
             }
         },
 

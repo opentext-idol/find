@@ -4,13 +4,16 @@
  */
 
 define([
+    'underscore',
     'find/app/page/search/service-view',
     'find/hod/app/page/search/results/hod-results-view-augmentation',
-    'find/hod/app/page/search/results/hod-results-view'
-], function(ServiceView, ResultsViewAugmentation, ResultsView) {
+    'find/hod/app/page/search/results/hod-results-view',
+    'find/app/util/model-any-changed-attribute-listener'
+], function (_, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
 
     'use strict';
 
+    //noinspection JSUnusedGlobalSymbols
     return ServiceView.extend({
         ResultsView: ResultsView,
         ResultsViewAugmentation: ResultsViewAugmentation,
@@ -18,7 +21,29 @@ define([
         // TODO: Enable sunburst in HOD when IOD-9173 is complete
         displaySunburst: false,
         mapViewResultsStep: 2500,
-        mapViewAllowIncrement: false
-    });
+        mapViewAllowIncrement: false,
 
+        additionalInitialisation: function () {
+            addChangeListener(this, this.queryModel, ['queryText', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchData);
+            addChangeListener(this, this.queryModel, ['indexes'], _.bind(function () {
+                this.parametricFieldsCollection.reset();
+                this.numericParametricFieldsCollection.reset();
+                if (this.queryModel.get('indexes').length !== 0) {
+                    this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
+                    this.fetchParametricFields(this.numericParametricFieldsCollection, this.numericParametricCollection);
+                }
+            }, this));
+        },
+        
+        fetchParametricFields: function (fieldsCollection, valuesCollection) {
+            fieldsCollection.fetch({
+                data: {
+                    databases: this.queryModel.get('indexes')
+                },
+                success: _.bind(function() {
+                    this.fetchParametricValues(fieldsCollection, valuesCollection);
+                }, this)
+            });
+        }
+    });
 });
