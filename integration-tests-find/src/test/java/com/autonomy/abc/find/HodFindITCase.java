@@ -8,14 +8,14 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.ParametricFilter;
 import com.autonomy.abc.selenium.query.Query;
-import com.autonomy.abc.selenium.query.QueryResult;
 import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Window;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Matcher;
@@ -34,8 +34,6 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.contain
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.empty;
-import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class HodFindITCase extends FindTestBase{
@@ -97,7 +95,7 @@ public class HodFindITCase extends FindTestBase{
     }
 
     @Test
-    @KnownBug("CCUK-3641")
+    @ActiveBug("CCUK-3641")
     public void testAuthor(){
         String author = "FIFA.COM";
 
@@ -117,7 +115,7 @@ public class HodFindITCase extends FindTestBase{
     }
 
     @Test
-    @KnownBug({"CSA-1726", "CSA-1763"})
+    @ResolvedBug({"CSA-1726", "CSA-1763"})
     public void testPublicIndexesVisibleNotSelectedByDefault(){
         findService.search("Marina and the Diamonds");
 
@@ -126,7 +124,7 @@ public class HodFindITCase extends FindTestBase{
     }
 
     @Test
-    @KnownBug("CSA-1767 - footer not hidden properly")
+    @ResolvedBug("CSA-1767 - footer not hidden properly")
     public void testViewDocumentsOpenFromFind(){
         findService.search("Review");
 
@@ -204,7 +202,7 @@ public class HodFindITCase extends FindTestBase{
     }
 
     @Test
-    @KnownBug("CSA-1767 - footer not hidden properly")
+    @ResolvedBug("CSA-1767 - footer not hidden properly")
     @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
     public void testDocumentPreview(){
         Index index = new Index("fifa");
@@ -229,6 +227,17 @@ public class HodFindITCase extends FindTestBase{
 
             newWindow.close();
             original.activate();
+        }
+    }
+
+    @Test
+    public void testViewDocumentsOpenWithArrows(){
+        findService.search("Review");
+
+        DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
+        for(int i = 0; i < 5; i++) {
+            verifyDocumentViewer(docViewer);
+            docViewer.next();
         }
     }
 

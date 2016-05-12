@@ -12,6 +12,7 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -183,6 +184,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-37")
 	public void testCreateUserPermissionNoneAndTestLogin() throws InterruptedException {
 		User user = helper.singleSignUp(aNewUser);
 

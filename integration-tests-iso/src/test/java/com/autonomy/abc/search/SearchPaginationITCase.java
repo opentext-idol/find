@@ -6,7 +6,8 @@ import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class SearchPaginationITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-2661")
+    @ResolvedBug("CCUK-2661")
     public void testSearchResultsPagination() {
         searchPage = searchService.search("grass");
         Waits.loadOrFadeWait();
@@ -71,7 +72,7 @@ public class SearchPaginationITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-2565")
+    @ResolvedBug("CCUK-2565")
     public void testPaginationAndBackButton() {
         searchPage = searchService.search("safe");
         searchPage.switchResultsPage(Pagination.LAST);
@@ -90,7 +91,7 @@ public class SearchPaginationITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1819")
+    @ActiveBug("CSA-1819")
     public void testNavigateBeyondEndOfResults() {
         searchPage = searchService.search("nice");
         searchPage.switchResultsPage(Pagination.LAST);
@@ -112,7 +113,7 @@ public class SearchPaginationITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1629")
+    @ResolvedBug("CSA-1629")
     public void testPinToPositionPagination(){
         PromotionService promotionService = getApplication().promotionService();
 

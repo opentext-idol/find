@@ -13,7 +13,6 @@ import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
@@ -121,7 +120,6 @@ public class SearchPageHostedITCase extends IsoHsodTestBase {
 	}
 
 	@Test
-	@KnownBug("CSA-1767 - footer not hidden properly")
 	@RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
 	public void testDocumentPreview(){
 		Index index = new Index("fifa");

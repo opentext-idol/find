@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
@@ -40,7 +40,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
 
 
     @Test
-    @KnownBug("HOD-1116")
+    @ActiveBug("HOD-1116")
     public void testFromDateFilter() {
         final Date date = beginDateFilterTest();
         final String firstResult = searchPage.getSearchResult(1).getTitleString();
@@ -61,7 +61,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("HOD-1116")
+    @ActiveBug("HOD-1116")
     public void testWideFromDate() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
         Date june = simpleDateFormat.parse("06/12/2015 00:00");
@@ -80,7 +80,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("HOD-1116")
+    @ActiveBug("HOD-1116")
     public void testUntilDateFilter() {
         final Date date = beginDateFilterTest();
         final String firstResult = searchPage.getSearchResult(1).getTitleString();
@@ -103,7 +103,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("HOD-1116")
+    @ActiveBug("HOD-1116")
     public void testWideUntilDate() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
         Date june = simpleDateFormat.parse("06/12/2015 00:00");

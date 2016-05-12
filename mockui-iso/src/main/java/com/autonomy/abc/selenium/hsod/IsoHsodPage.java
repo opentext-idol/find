@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.hsod;
 
+import com.autonomy.abc.selenium.analytics.FakeIcmPage;
 import com.autonomy.abc.selenium.application.AppPageFactory;
 import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.keywords.HsodCreateNewKeywordsPage;
@@ -30,6 +31,8 @@ enum IsoHsodPage implements PageMapper.Page, PageMapper.SwitchStrategy<IsoElemen
             return new HSOLoginPage(context, new SOHasLoggedIn(context));
         }
     }),
+
+    ANALYTICS(NavBarTabId.ANALYTICS, new FakeIcmPage.Factory()),
 
     SEARCH(NavBarTabId.SEARCH, new HsodSearchPage.Factory()),
 

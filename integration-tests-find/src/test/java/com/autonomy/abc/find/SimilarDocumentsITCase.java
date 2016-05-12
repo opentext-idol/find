@@ -11,8 +11,8 @@ import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Window;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -76,7 +76,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CSA-3678")
+    @ResolvedBug("CCUK-3678")
     public void testTitle(){
         findService.search(new Query("Bill Murray"));
 
@@ -149,7 +149,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3676")
+    @ResolvedBug("CCUK-3676")
     public void testPublicIndexesSimilarDocs(){
         assumeThat(getConfig().getType(), Matchers.is(ApplicationType.HOSTED));
 

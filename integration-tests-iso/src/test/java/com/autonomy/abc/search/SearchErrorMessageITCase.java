@@ -8,8 +8,9 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.shared.QueryTestHelper;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,13 +35,14 @@ public class SearchErrorMessageITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3741")
+    @ResolvedBug("CCUK-3741")
     public void testSearchParentheses() {
         new QueryTestHelper<>(searchService).mismatchedBracketQueryText();
     }
 
     @Test
-    @KnownBug({"IOD-8454", "CCUK-3741"})
+    @ResolvedBug("CCUK-3741")
+    @ActiveBug("HOD-2170")
     public void testSearchQuotationMarks() {
         @RelatedTo("CCUK-3747")
         Serializable error = isHosted() ?
@@ -49,7 +51,7 @@ public class SearchErrorMessageITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3741")
+    @ResolvedBug("CCUK-3741")
     public void testQueriesWithNoTerms() {
         @RelatedTo("CCUK-3747")
         Serializable booleanError = isHosted() ?

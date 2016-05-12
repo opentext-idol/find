@@ -15,7 +15,7 @@ import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.element.Editable;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -152,7 +152,7 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
     }
 
     @Test
-    @KnownBug("CSA-2059")
+    @ResolvedBug("CSA-2059")
     public void testPromotionMetadata() {
         IsoSearchResult promoted = searchPage.getPromotedResult(1);
         verifyThat("promotion label visible", promoted.isPromoted(), is(true));

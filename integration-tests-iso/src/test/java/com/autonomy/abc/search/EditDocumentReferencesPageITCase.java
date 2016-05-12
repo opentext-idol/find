@@ -13,7 +13,7 @@ import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -136,7 +136,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1755")
+    @ResolvedBug("CSA-1755")
     public void testRefreshEditPromotionPage() throws InterruptedException {
         String originalDoc = setUpPromotion("Luke", "jedi master", 1).get(0);
         assumeThat(editReferencesPage.getBucketTitles(), not(empty()));
@@ -231,7 +231,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3710")
+    @ResolvedBug("CCUK-3710")
     public void testViewFromBucketAndFromSearchResults() throws InterruptedException {
         setUpPromotion("apple", "potato", 7);
         if (verifyThat(editReferencesPage.getBucketTitles(), not(empty()))) {
@@ -267,7 +267,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1761")
+    @ResolvedBug("CSA-1761")
     public void testCheckboxUpdatesWithBucketDelete() {
         setUpPromotion("fred", "white fluffy", 4);
         editDocumentSearch("fred");
@@ -326,7 +326,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @KnownBug({"CSA-1761", "CCUK-3710", "CCUK-3728"})
+    @ResolvedBug({"CSA-1761", "CCUK-3710", "CCUK-3728"})
     public void testAddedDocumentsNotUnknown(){
         setUpPromotion("smiles", "fun happiness", 2);
 

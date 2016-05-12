@@ -18,8 +18,9 @@ import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.Editable;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.hp.autonomy.frontend.selenium.framework.categories.SlowTest;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,7 +93,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug({"CCUK-3394", "CCUK-3649"})
+	@ResolvedBug({"CCUK-3394", "CCUK-3649"})
 	public void testCorrectDocumentsInPromotion() {
 		List<String> promotedDocTitles = setUpCarsPromotion(16);
 		List<String> promotedList = promotionsDetailPage.getPromotedTitles();
@@ -122,7 +123,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CCUK-2671")
+	@ActiveBug("CCUK-2671")
 	public void testAddRemoveTriggers() throws InterruptedException {
 		setUpCarsPromotion(1);
 
@@ -197,7 +198,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 
 	@Test
 	@Category(SlowTest.class)
-	@KnownBug("CSA-2022")
+	@ActiveBug("CSA-2022")
 	public void testAddingLotsOfDocsToAPromotion() {
 		int size = 100;
 		boolean setUp = false;
@@ -219,7 +220,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CCUK-2671")
+	@ActiveBug("CCUK-2671")
 	public void testPromotionFilter() throws InterruptedException {
 		// hosted does not have foreign content indexed
 		Query[] searches;
@@ -472,7 +473,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@KnownBug({"CCUK-3457", "CCUK-3649"})
+	@ResolvedBug({"CCUK-3457", "CCUK-3649"})
 	public void testPromotingItemsWithBrackets(){
 		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "imagine dragons");
 		Query query = new Query("\"Selenium (software)\"").withFilter(new IndexFilter("wiki_eng"));
