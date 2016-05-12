@@ -67,9 +67,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
             verifyThat(getWindow(), urlContains("suggest"));
 
-            verifyThat(similarDocuments.getTitle(), containsIgnoringCase("Similar results\"" + title + "\""));
-            verifyThat(similarDocuments.getTitle(),containsIgnoringCase("\"" + title + "\""));
-
+            verifyThat(similarDocuments.getTitle(),allOf(containsIgnoringCase("Similar results"),containsIgnoringCase("\"" + title + "\"")));
             verifyThat(similarDocuments.getTotalResults(), greaterThan(0));
             verifyThat(similarDocuments.getResults(1), not(empty()));
 
@@ -119,7 +117,6 @@ public class SimilarDocumentsITCase extends FindTestBase {
         verifyThat(getDriver().getTitle(), containsString(seedTitle));
         verifyThat("not using viewserver", getWindow(), url(not(containsString("viewDocument"))));
         //TODO check if 500
-        verifyThat("Does not contain server error message",allOf(not(containsString("500")),not(containsString("error"))));
 
         if (secondWindow != null) {
                 secondWindow.close();
@@ -127,10 +124,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
         firstWindow.activate();
     }
 
-    //don't know what I want it to check
     private void previewSeedOnPrem(WebElement seedLink,String seedTitle){
         seedLink.click();
-        verifyThat("SeedLink goes to detailed document preview",getDriver().getCurrentUrl(),containsString(seedTitle));
+        verifyThat("SeedLink goes to detailed document preview",getDriver().getCurrentUrl(),containsString("document"));
 
     }
     private Window openSeed(WebElement seedLink) {
@@ -156,10 +152,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
     @KnownBug("CCUK-3676")
     public void testPublicIndexesSimilarDocs(){
         assumeThat(getConfig().getType(), Matchers.is(ApplicationType.HOSTED));
+
         findService.search(new Query("Hammertime").withFilter(IndexFilter.PUBLIC));
-        if (similarDocuments.publicIndexesExist()){
-            findPage.filterBy(new IndexFilter("Public"));
-        }
+
         for(int i = 1; i <= 5; i++){
             verifySimilarDocsNotEmpty(i);
         }

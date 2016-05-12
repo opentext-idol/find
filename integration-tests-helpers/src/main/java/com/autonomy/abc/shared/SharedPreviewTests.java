@@ -56,8 +56,8 @@ public class SharedPreviewTests {
         Waits.loadOrFadeWait();
         Window newWindow = session.switchWindow(session.countWindows() - 1);
         newWindow.activate();
-
-        verifyThat(session.getDriver().getCurrentUrl(), is(reference));
+        
+        verifyThat(reference,containsString(session.getDriver().getCurrentUrl()));
 
         newWindow.close();
         original.activate();
