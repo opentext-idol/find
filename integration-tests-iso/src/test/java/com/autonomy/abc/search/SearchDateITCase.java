@@ -1,6 +1,7 @@
 package com.autonomy.abc.search;
 
 import com.autonomy.abc.base.HybridIsoTestBase;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.IsoSearchResult;
 import com.autonomy.abc.selenium.search.SearchPage;
@@ -10,6 +11,7 @@ import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.http.util.LangUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -64,11 +66,12 @@ public class SearchDateITCase extends HybridIsoTestBase {
     @ActiveBug("HOD-1116")
     public void testWideFromDate() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
-        Date june = simpleDateFormat.parse("06/12/2015 00:00");
+        Date june = simpleDateFormat.parse("01/01/2012 00:00");
 
-        searchService.search(new Query("Pertussis").withFilter(new IndexFilter("wiki_eng")));
+        searchService.search(new Query("ridiculous"));
         Waits.loadOrFadeWait();
         searchPage.filterBy(new DatePickerFilter().from(june));
+        assumeThat(searchPage.getSearchResults().size(), not(0));
 
         for(int i = 0; i < 2; i++) {
             for (IsoSearchResult searchResult : searchPage.getSearchResults()) {
@@ -108,12 +111,11 @@ public class SearchDateITCase extends HybridIsoTestBase {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
         Date june = simpleDateFormat.parse("06/12/2015 00:00");
 
-        searchService.search(new Query("Pertussis").withFilter(new IndexFilter("wiki_eng")));
+        searchService.search(new Query("Pertussis"));
         Waits.loadOrFadeWait();
         searchPage.filterBy(new DatePickerFilter().until(june));
 
-        //There should be results in this index
-        verifyThat(searchPage.getSearchResults().size(), not(0));
+        assumeThat(searchPage.getSearchResults().size(), not(0));
 
         for(int i = 0; i < 2; i++) {
             for (IsoSearchResult searchResult : searchPage.getSearchResults()) {
@@ -128,7 +130,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
 
     private Date beginDateFilterTest() {
         // not all indexes have times configured
-        searchPage = searchService.search(new Query("Dog").withFilter(new IndexFilter("news_eng")));
+        searchPage = searchService.search(new Query("Dog"));
         Date date = searchPage.getSearchResult(1).getDate();
         assumeThat("test requires first search result to have a date", date, notNullValue());
         LOGGER.info("First Result: " + searchPage.getSearchResult(1).getTitleString() + " " + date);
