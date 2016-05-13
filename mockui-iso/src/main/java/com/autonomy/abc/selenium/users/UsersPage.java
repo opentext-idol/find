@@ -41,9 +41,7 @@ public abstract class UsersPage extends SOPageBase {
 		return getUserRow(user).findElement(By.cssSelector(".users-deleteUser"));
 	}
 
-	public UserTable getTable() {
-		return new UserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
-	}
+	public abstract UserTable<?> getTable();
 
 	public List<String> getUsernames() {
 		List<String> usernames = new ArrayList<>();
@@ -57,14 +55,14 @@ public abstract class UsersPage extends SOPageBase {
 	public abstract void setRoleValueFor(User user, Role newRole);
 
 	public Role getRoleOf(User user) {
-		return Role.fromString(roleLinkFor(user).getText());
+		return getUserRow(user).getRole();
 	}
 
 	public void selectTableUserType(final User user, final String type) {
 		getUserRow(user).findElement(By.cssSelector(".input-admin")).findElement(By.xpath(".//*[text() = '" + type + "']")).click();
 	}
 
-	public abstract WebElement getUserRow(User user);
+	public abstract UserTableRow getUserRow(User user);
 
 	@Override
 	public void waitForLoad() {

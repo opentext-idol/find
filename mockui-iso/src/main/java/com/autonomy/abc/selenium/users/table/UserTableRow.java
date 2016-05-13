@@ -18,4 +18,8 @@ public class UserTableRow extends AppElement {
     public WebElement deleteButton() {
         return findElement(By.className("users-deleteUser"));
     }
+
+    public Role getRole() {
+        return Role.fromString(findElement(By.className("user-role")).getText());
+    }
 }

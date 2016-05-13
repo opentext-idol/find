@@ -6,7 +6,7 @@ import com.hp.autonomy.frontend.selenium.util.Locator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class IdolUserTable extends UserTable {
+public class IdolUserTable extends UserTable<IdolUserTableRow> {
     public IdolUserTable(WebElement element, WebDriver driver) {
         super(element, driver);
     }

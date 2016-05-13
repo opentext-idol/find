@@ -6,7 +6,7 @@ import com.hp.autonomy.frontend.selenium.util.Locator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class HsodDeveloperTable extends UserTable {
+public class HsodDeveloperTable extends UserTable<HsodDeveloperTableRow> {
     public HsodDeveloperTable(WebElement element, WebDriver driver) {
         super(element, driver);
     }
