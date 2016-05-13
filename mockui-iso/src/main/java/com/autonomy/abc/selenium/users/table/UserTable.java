@@ -22,9 +22,13 @@ public class UserTable extends AppElement implements Iterable<UserTableRow> {
     public List<UserTableRow> rows() {
         List<UserTableRow> rows = new ArrayList<>();
         for (WebElement rowEl : findElements(By.cssSelector("tbody tr"))) {
-            rows.add(new UserTableRow(rowEl, getDriver()));
+            rows.add(rowForElement(rowEl));
         }
         return rows;
+    }
+
+    protected UserTableRow rowForElement(WebElement element) {
+        return new UserTableRow(element, getDriver());
     }
 
 }
