@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.auth.IdolIsoNewUser;
 import com.autonomy.abc.selenium.auth.IdolIsoReplacementAuth;
 import com.autonomy.abc.selenium.users.table.IdolUserTable;
-import com.autonomy.abc.selenium.users.table.UserTable;
+import com.autonomy.abc.selenium.users.table.IdolUserTableRow;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.ReplacementAuth;
 import com.hp.autonomy.frontend.selenium.users.Role;
@@ -51,21 +51,21 @@ public class IdolUsersPage extends UsersPage {
     }
 
     public WebElement roleLinkFor(User user) {
-        return getUserRow(user).findElement(By.cssSelector(".role"));
+        return getUserRow(user).roleLink();
     }
 
     public void submitPendingEditFor(User user) {
-        getUserRow(user).findElement(By.cssSelector(".editable-submit")).click();
+        getUserRow(user).submitPendingEdit();
     }
 
     @Override
-    public UserTable getTable() {
+    public IdolUserTable getTable() {
         return new IdolUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
     }
 
     @Override
-    public WebElement getUserRow(User user) {
-        return findElement(By.xpath(".//span[contains(text(), '" + user.getUsername() + "')]/../.."));
+    public IdolUserTableRow getUserRow(User user) {
+        return getTable().rowFor(user);
     }
 
     public void setRoleValueFor(User user, Role newRole) {
