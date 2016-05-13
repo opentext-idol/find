@@ -3,9 +3,12 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.base.HybridIsoTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
@@ -54,7 +57,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
     }
 
     private List<String> setUpPromotion(final String searchTerm, final String trigger, final int numberOfDocs) {
-        final List<String> promotedDocTitles = promotionService.setUpPromotion(new SpotlightPromotion(trigger), searchTerm, numberOfDocs);
+        final List<String> promotedDocTitles = promotionService.setUpPromotion(new SpotlightPromotion(trigger), new Query(searchTerm).withFilter(new LanguageFilter(Language.ENGLISH)), numberOfDocs);
         promotionsDetailPage = promotionService.goToDetails(trigger.split(" ")[0]);
         promotionsDetailPage.addMoreButton().click();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
@@ -253,7 +256,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
             }
             editReferencesPage.switchResultsPage(Pagination.NEXT);
         }
-
+        
         editReferencesPage.emptyBucket();
         editDocumentSearch("banana");
 
