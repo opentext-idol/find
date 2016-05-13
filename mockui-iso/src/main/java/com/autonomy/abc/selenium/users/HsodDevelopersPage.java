@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.auth.HsodUserBuilder;
+import com.autonomy.abc.selenium.users.table.HsodDeveloperTable;
+import com.autonomy.abc.selenium.users.table.HsodDeveloperTableRow;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -24,8 +26,13 @@ public class HsodDevelopersPage extends HsodUserManagementBase {
     }
 
     @Override
-    public WebElement getUserRow(User user) {
-        return findElement(By.xpath("//*[contains(@class,'user-name') and contains(.,'" + user.getUsername() + "')]"));
+    public HsodDeveloperTable getTable() {
+        return new HsodDeveloperTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
+    }
+
+    @Override
+    public HsodDeveloperTableRow getUserRow(User user) {
+        return getTable().rowFor(user);
     }
 
     public User getUser(int index) {
