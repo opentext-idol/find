@@ -24,7 +24,7 @@ public class IsoIndexCategoryNode extends IndexCategoryNode {
 
     @Override
     protected IndexNodeElement find(String name) {
-        WebElement childElement = getContainer().findElement(By.cssSelector(".checkbox[data-name='" + name.toLowerCase() + "']"));
+        WebElement childElement = getContainer().findElement(By.cssSelector(".checkbox[data-name='" +name+ "']"));
         return new IndexLeafNode(childElement, getDriver());
     }
 
