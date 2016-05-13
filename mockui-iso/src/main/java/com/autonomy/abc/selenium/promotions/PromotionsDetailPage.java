@@ -105,6 +105,10 @@ public class PromotionsDetailPage extends SOPageBase {
         return findElement(By.className("add-more-promoted-documents"));
     }
 
+    public void closeFieldTextBox(){
+        findElement(By.xpath("//*[contains(text(),'Field Text')]")).click();
+    }
+
     public List<WebElement> dynamicPromotedList(){
         return new WebDriverWait(getDriver(),10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".query-search-results div:not(.hide)>h3")));
     }

@@ -15,6 +15,7 @@ import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
 import java.net.MalformedURLException;
@@ -64,7 +65,7 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 			verifyThat("error message not visible", promotionsDetailPage.getFieldTextError(), isEmptyOrNullString());
 			inputBox.setAndSubmit(badValue);
 			verifyThat("cannot add field text '" + badValue + "'", promotionsDetailPage.getFieldTextError(), containsString("SyntaxError"));
-			promotionsDetailPage.closeInputBox();
+			promotionsDetailPage.closeFieldTextBox();
 		}
 
 		String goodText = "MATCH{good}:DRECONTENT";
@@ -76,7 +77,7 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 			verifyThat("error message not visible", promotionsDetailPage.getFieldTextError(), isEmptyOrNullString());
 			inputBox.setAndSubmit(badValue);
 			verifyThat("cannot set field text to '" + badValue + "'", promotionsDetailPage.getFieldTextError(), containsString("SyntaxError"));
-			promotionsDetailPage.closeInputBox();
+			promotionsDetailPage.closeFieldTextBox();
 		}
 
 		goodText = "NOT MATCH{bad}:DRECONTENT";
@@ -89,6 +90,7 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 
 	private void verifyDisplayed(String searchTerm) {
 		search(searchTerm);
+		Waits.loadOrFadeWait();
 		verifyThat("promotion displayed for search term '" + searchTerm + "'", searchPage.promotionsSummary(), displayed());
 	}
 
@@ -145,6 +147,20 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	public void testPromotionFieldTextAndRestriction() {
+		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "highway street");
+		promotionService.setUpPromotion(promotion, "road", 1);
+		promotionsDetailPage = promotionService.goToDetails(promotion);
+
+		promotionsDetailPage.addFieldText("MATCH{highway street}:DRECONTENT");
+
+		for (String badTerm : Arrays.asList("highway", "street", "road", "ROAD", "street street", "street highway", "highwaystreet")) {
+			verifyNotDisplayed(badTerm);
+		}
+		verifyDisplayed("highway street");
+	}
+
+	@Test
 	public void testFieldTextSubmitTextOnEnter() {
 		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "highway street");
 		promotionService.setUpPromotion(promotion, "road", 1);
@@ -157,22 +173,18 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 		verifyThat("Added field text with RETURN", promotionsDetailPage.editableFieldText().getValue(), not(isEmptyOrNullString()));
 	}
 
-    // fails: CCUK-3250?
 	@Test
 	public void testCreateFieldTextField() {
-        Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "ming");
-        String fieldText = "RANGE{.,01/01/2010}:DREDATE";
-        FieldTextFilter filter = new FieldTextFilter(fieldText);
-        Query query = new Query("flash").withFilter(filter);
+        Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "best mediocre worse worser worstest");
 
-		promotionService.setUpPromotion(promotion, query, 1);
+		promotionService.setUpPromotion(promotion, "unreal", 1);
         promotionsDetailPage = promotionService.goToDetails(promotion);
 
-		promotionsDetailPage.addFieldText(fieldText);
-		verifyNotDisplayed("ming");
+		promotionsDetailPage.addFieldText("MATCH{best}:DRECONTENT");
+		verifyDisplayed("best");
+		for (String badTerm : Arrays.asList("mediocre", "worse", "worser", "worstest")) {
+			verifyNotDisplayed(badTerm);
+		}
 
-        // filter is cached on search page
-		filter.clear(searchPage);
-		verifyThat(searchPage.promotionsSummary(), displayed());
 	}
 }
