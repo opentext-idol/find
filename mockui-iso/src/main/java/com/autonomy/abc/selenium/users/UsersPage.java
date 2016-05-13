@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.application.SOPageBase;
+import com.autonomy.abc.selenium.users.table.UserTable;
+import com.autonomy.abc.selenium.users.table.UserTableRow;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.PasswordBox;
@@ -46,7 +48,7 @@ public abstract class UsersPage extends SOPageBase {
 
 	public List<String> getUsernames() {
 		List<String> usernames = new ArrayList<>();
-		for (UserTable.Row row : getTable()) {
+		for (UserTableRow row : getTable()) {
 			usernames.add(row.getUsername());
 		}
 		return usernames;

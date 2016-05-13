@@ -2,6 +2,8 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
+import com.autonomy.abc.selenium.users.table.UserTable;
+import com.autonomy.abc.selenium.users.table.UserTableRow;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -43,7 +45,7 @@ public class IdolIsoUserService extends UserService<IdolIsoElementFactory> {
     @Override
     public void deleteOtherUsers() {
         goToUsers();
-        for (final UserTable.Row row : getUsersPage().getTable()) {
+        for (final UserTableRow row : getUsersPage().getTable()) {
             WebElement deleteButton = row.deleteButton();
             if (!ElementUtil.hasClass("not-clickable", deleteButton)) {
                 deleteButton.click();
