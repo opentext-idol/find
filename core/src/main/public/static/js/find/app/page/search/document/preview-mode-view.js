@@ -7,12 +7,13 @@ define([
     'find/app/util/view-server-client',
     'find/app/model/document-model',
     'find/app/configuration',
+    'find/app/util/events',
     'text!find/templates/app/page/search/document/preview-mode-view.html',
     'text!find/templates/app/page/search/document/preview-mode-metadata.html',
     'text!find/templates/app/page/search/document/view-mode-document.html',
     'text!find/templates/app/page/search/document/view-media-player.html',
     'text!css/result-highlighting.css'
-], function(Backbone, _, $, i18n, vent, viewClient, DocumentModel, configuration, template, metaDataTemplate, documentTemplate, mediaTemplate, highlightingRule) {
+], function(Backbone, _, $, i18n, vent, viewClient, DocumentModel, configuration, events, template, metaDataTemplate, documentTemplate, mediaTemplate, highlightingRule) {
     'use strict';
 
     function scrollFollow() {
@@ -170,6 +171,8 @@ define([
         openDocumentDetail: function () {
             this.pauseMedia();
             vent.navigateToDetailRoute(this.model);
+
+            events().fullPreview()
         },
 
         toggleHighlighting: function() {
