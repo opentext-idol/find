@@ -61,7 +61,6 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	public void setUp() throws MalformedURLException {
 		searchService = getApplication().searchService();
 		promotionService = getApplication().promotionService();
-
 		promotionsPage = promotionService.deleteAll();
 	}
 
@@ -78,7 +77,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	}
 
 	private List<String> setUpCarsPromotion(int numberOfDocs) {
-		return setUpPromotion(new Query("cars"), numberOfDocs, new SpotlightPromotion("wheels"));
+		return setUpPromotion(new Query("cars").withFilter(new LanguageFilter("English")), numberOfDocs, new SpotlightPromotion("wheels"));
 	}
 
 	private Query getQuery(String searchTerm, Language language) {
@@ -167,7 +166,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	@Test
 	public void testDeletePromotions() throws InterruptedException {
 		String[] searchTerms = {"rabbit", "horse", "script"};
-		String[] triggers = {"bunny", "pony", "<script> document.body.innerHTML = '' </script>"};
+		String[] triggers = {"bunny", "pony", "<script>"};
 		for (int i=0; i<searchTerms.length; i++) {
 			setUpPromotion(new Query(searchTerms[i]), new SpotlightPromotion(triggers[i]));
 			promotionsPage = promotionService.goToPromotions();
@@ -476,10 +475,13 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	@ResolvedBug({"CCUK-3457", "CCUK-3649"})
 	public void testPromotingItemsWithBrackets(){
 		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "imagine dragons");
-		Query query = new Query("\"Selenium (software)\"").withFilter(new IndexFilter("wiki_eng"));
 
-		SearchPage searchPage = searchService.search(query);
-		assumeThat("Was expecting Selenium (Software) to be the first result", searchPage.getSearchResult(1).getTitleString(), is("Selenium (software)"));
+		SearchPage searchPage = searchService.search("pointless");
+		searchPage.filterBy(new LanguageFilter(Language.ENGLISH));
+		Query query = new Query("\"Lens (optics)\"").withFilter(new IndexFilter("WikiEnglish"));
+
+		searchPage = searchService.search(query);
+		assumeThat("Was expecting Lens (optics) to be the first result", searchPage.getSearchResult(1).getTitleString(), containsString("Lens (optics)"));
 
 		promotionService.setUpPromotion(spotlightPromotion, query, 1);
 		PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(spotlightPromotion);
@@ -487,6 +489,6 @@ public class PromotionsITCase extends HybridIsoTestBase {
 		List<String> promotedDocuments = promotionsDetailPage.getPromotedTitles();
 
 		verifyThat(promotedDocuments.size(), is(1));
-		verifyThat(promotedDocuments.get(0), is("Selenium (software)"));
+		verifyThat(promotedDocuments.get(0), containsString("Lens (optics)"));
 	}
 }

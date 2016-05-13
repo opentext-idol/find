@@ -32,7 +32,7 @@ public class SchedulePage extends SOPageBase {
 	}
 
 	public WebElement continueButton(final WizardStep dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Continue')]"));
+		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.xpath("//button[contains(text(), 'Continue')]"));
 	}
 
 	public WebElement cancelButton(final WizardStep dataStep) {
@@ -40,7 +40,7 @@ public class SchedulePage extends SOPageBase {
 	}
 
 	public WebElement finishButton(final WizardStep dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Finish')]"));
+		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.xpath("//button[contains(text(), 'Finish')]"));
 	}
 
 	public WebElement startDateTextBox() {
@@ -102,15 +102,15 @@ public class SchedulePage extends SOPageBase {
 	}
 
 	public WebElement startDateTextBoxButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-start .fa-calendar-o")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-start .hp-icon")));
 	}
 
 	public WebElement endDateTextBoxButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-end .fa-calendar-o")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-end .hp-icon")));
 	}
 
 	public WebElement finalDateTextBoxButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-end-date .fa-calendar-o")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-end-date .hp-icon")));
 	}
 
 	public WebElement doNotRepeat() {

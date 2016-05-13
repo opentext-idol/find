@@ -56,7 +56,8 @@ public class KeywordLanguageITCase extends IdolIsoTestBase {
     public void testKeywordsLanguage() {
         keywordService.addBlacklistTerms(Language.GEORGIAN, "Atlanta");
         keywordService.addBlacklistTerms(Language.ALBANIAN, "Tirana");
-        keywordService.addSynonymGroup(Language.CROATIAN, "Croatia Kroatia Hrvatska");
+        keywordService.addSynonymGroup(Language.CHINESE, "China Chine Xina");
+
         keywordsPage = keywordService.goToKeywords();
 
         keywordsPage.filterView(KeywordFilter.ALL);
@@ -68,7 +69,7 @@ public class KeywordLanguageITCase extends IdolIsoTestBase {
         assertThat(keywordsPage.getBlacklistedTerms().size(), is(1));
         assertThat(keywordsPage.countSynonymLists(), is(0));
 
-        keywordsPage.selectLanguage(Language.CROATIAN);
+        keywordsPage.selectLanguage(Language.CHINESE);
         assertThat(keywordsPage.getBlacklistedTerms().size(), is(0));
         assertThat(keywordsPage.countSynonymLists(), is(1));
         assertThat(keywordsPage.countKeywords(), is(3));
@@ -85,25 +86,19 @@ public class KeywordLanguageITCase extends IdolIsoTestBase {
         assertThat(getWindow(), urlContains("keywords/create"));
         CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
-        createKeywordsPage.getTriggerForm().addTrigger("한국");
+        createKeywordsPage.getTriggerForm().addTrigger("韩国");
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(createKeywordsPage.enabledFinishWizardButton())).click();
         searchPage = getElementFactory().getSearchPage();
-
-        search("Korea", Language.CHINESE);
-        verifyThat("synonyms appear on search page for correct language", searchPage.countSynonymLists(), is(1));
-
-        searchPage.selectLanguage(Language.FRENCH);
-        verifyThat("synonyms do not appear on search page for wrong language", searchPage.countSynonymLists(), is(0));
 
         keywordsPage = keywordService.goToKeywords();
         keywordsPage.filterView(KeywordFilter.ALL);
 
         keywordsPage.selectLanguage(Language.FRENCH);
-        verifyThat("synonym not assigned to wrong language", keywordsPage, not(containsText("한국")));
+        verifyThat("synonym not assigned to wrong language", keywordsPage, not(containsText("韩国")));
 
         keywordsPage.selectLanguage(Language.CHINESE);
         verifyThat(keywordsPage.countSynonymLists(), is(1));
-        verifyThat("synonym assigned to correct language", keywordsPage, containsText("한국"));
+        verifyThat("synonym assigned to correct language", keywordsPage, containsText("韩国"));
     }
 
     private void search(String searchTerm, Language language) {

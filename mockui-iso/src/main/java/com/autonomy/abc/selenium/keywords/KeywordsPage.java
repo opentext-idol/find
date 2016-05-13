@@ -56,6 +56,10 @@ public abstract class KeywordsPage extends KeywordsBase {
         return ElementUtil.ancestor(synonymInGroup(synonym), 2);
     }
 
+    public WebElement loadingIndicator(){
+        return findElement(By.className("loading-indicator"));
+    }
+
     public void filterView(final KeywordFilter filter) {
         WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();

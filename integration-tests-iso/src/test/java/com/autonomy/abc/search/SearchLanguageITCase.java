@@ -41,6 +41,7 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
     @Before
     public void setUp() {
         searchService = getApplication().searchService();
+        search("anything");
     }
 
     private void search(String term) {
@@ -50,13 +51,14 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
 
     @Test
     public void testChangeLanguage() {
-        String docTitle = searchPage.getSearchResult(1).getTitleString();
         search("1");
+        String docTitle = searchPage.getSearchResult(1).getTitleString();
 
         List<Language> languages = Arrays.asList(Language.ENGLISH, Language.AFRIKAANS, Language.FRENCH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE, Language.SWAHILI);
         for (final Language language : languages) {
             searchPage.selectLanguage(language);
-            assertThat(searchPage.getSelectedLanguage(), is(language));
+
+            assertThat(searchPage.getCurrentLanguage(), equalToIgnoringCase(language.toString()));
 
             searchPage.waitForSearchLoadIndicatorToDisappear();
             assertThat(searchPage.getSearchResult(1).getTitleString(), not(docTitle));
@@ -85,23 +87,22 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
 
     @Test
     public void testLanguageDisabledWhenBucketOpened() {
-        //This test currently fails because language dropdown is not disabled when the promotions bucket is open
         searchPage.selectLanguage(Language.ENGLISH);
         search("al");
         Waits.loadOrFadeWait();
-        assertThat("Languages should be enabled", !ElementUtil.isAttributePresent(searchPage.languageButton(), "disabled"));
+        assertThat("Languages enabled", !ElementUtil.isAttributePresent(searchPage.languageButton(), "disabled"));
 
         searchPage.openPromotionsBucket();
         searchPage.addDocToBucket(1);
-        assertThat("There should be one document in the bucket", searchPage.getBucketTitles(), hasSize(1));
+        assertThat("One document in the bucket", searchPage.getBucketTitles(), hasSize(1));
         searchPage.selectLanguage(Language.FRENCH);
-        assertThat("The promotions bucket should close when the language is changed", searchPage.promotionsBucket(), not(displayed()));
+        assertThat("Promotions bucket closed when the language is changed", searchPage.promotionsBucket(), not(displayed()));
 
         searchPage.openPromotionsBucket();
-        assertThat("There should be no documents in the bucket after changing language", searchPage.getBucketTitles(), hasSize(0));
+        assertThat("No documents in the bucket after changing language", searchPage.getBucketTitles(), hasSize(0));
 
         searchPage.selectLanguage(Language.ENGLISH);
-        assertThat("The promotions bucket should close when the language is changed", searchPage.promotionsBucket(), not(displayed()));
+        assertThat("Promotions bucket closed when the language is changed", searchPage.promotionsBucket(), not(displayed()));
     }
 
     @Test
@@ -113,7 +114,7 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
             for (final String script : Arrays.asList("निर्वाण", "العربية", "עברית", "сценарий", "latin", "ελληνικά", "ქართული", "བོད་ཡིག")) {
                 search(script);
                 Waits.loadOrFadeWait();
-                assertThat("Undesired error message for language: " + language + " with script: " + script, searchPage.findElement(By.cssSelector(".search-results-view")).getText(),not(containsString("error")));
+                assertThat("No error message for language: " + language + " with script: " + script, searchPage.findElement(By.cssSelector(".search-results-view")).getText(),not(containsString("error")));
             }
         }
     }
@@ -129,7 +130,7 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
         searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
         final List<String> frenchConcepts = searchPage.getRelatedConcepts();
 
-        assertThat("Concepts should be different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
+        assertThat("Concepts different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
 
         searchPage.selectLanguage(Language.ENGLISH);
         searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);

@@ -110,7 +110,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 		schedulePage.repeatWithFrequencyBelow().click();
 		schedulePage.selectFrequency(SchedulePage.Frequency.MONTHLY);
-		assertEquals(schedulePage.readFrequency(), "Monthly");
+		assertEquals(schedulePage.readFrequency(), "MONTHLY");
 
 		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
 		Waits.loadOrFadeWait();
@@ -148,6 +148,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		getElementFactory().getTopNavBar().search("magic");
 		Waits.loadOrFadeWait();
 		searchPage = getElementFactory().getSearchPage();
+		Waits.loadOrFadeWait();
 		assertThat("promotions aren't scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(false));
 
 		promotionService.goToDetails("magic");
@@ -260,7 +261,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 		schedulePage.repeatWithFrequencyBelow().click();
 		schedulePage.selectFrequency(SchedulePage.Frequency.YEARLY);
-		assertThat(schedulePage.readFrequency(), is("Yearly"));
+		assertThat(schedulePage.readFrequency(), is("YEARLY"));
 
 		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
 		Waits.loadOrFadeWait();
@@ -273,6 +274,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		getElementFactory().getTopNavBar().search("chips");
 		Waits.loadOrFadeWait();
 		searchPage = getElementFactory().getSearchPage();
+		Waits.loadOrFadeWait();
 		assertThat("promotions aren't scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(false));
 
 		promotionService.goToDetails("chips");
@@ -301,7 +303,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("Do you want to repeat this promotion schedule?"));
 
 		schedulePage.selectFrequency(SchedulePage.Frequency.YEARLY);
-		assertThat(schedulePage.readFrequency(), is("Yearly"));
+		assertThat(schedulePage.readFrequency(), is("YEARLY"));
 
 		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
 		Waits.loadOrFadeWait();
@@ -488,7 +490,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 		schedulePage.continueButton(SchedulePage.WizardStep.START_END).click();
 		Waits.loadOrFadeWait();
-		assertThat("Monthly", is(schedulePage.readFrequency()));
+		assertThat(schedulePage.readFrequency(),equalToIgnoringCase("MONTHLY"));
 		assertThat("Due to pre-population 'repeat with frequency below' should be pre-selected", ElementUtil.getFirstChild(schedulePage.repeatWithFrequencyBelow()).getAttribute("class"),containsString("progressive-disclosure-selection"));
 
 		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();

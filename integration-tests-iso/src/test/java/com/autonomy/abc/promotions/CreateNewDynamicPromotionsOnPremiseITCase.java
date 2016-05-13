@@ -11,6 +11,8 @@ import com.autonomy.abc.selenium.search.IdolIsoSearchPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
@@ -56,16 +58,19 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-44")
 	public void testAddSpotlightSponsored() {
 		addDynamicPromotion("car", Language.ENGLISH, Promotion.SpotlightType.SPONSORED, "apples");
 	}
 
 	@Test
+	@ActiveBug("ISO-44")
 	public void testAddSpotlightHotwire() {
 		addDynamicPromotion("Bastille", Language.FRENCH, Promotion.SpotlightType.HOTWIRE, "grapes");
 	}
 
 	@Test
+	@ActiveBug("ISO-44")
 	public void testAddSpotlightTopPromotions() {
 		addDynamicPromotion("Iran", Language.URDU, Promotion.SpotlightType.TOP_PROMOTIONS, "oranges");
 	}
@@ -78,7 +83,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		Waits.loadOrFadeWait();
 		assertThat(getWindow(), urlContains("promotions/create-dynamic/"));
-		assertThat("Wrong stage of wizard", dynamicPromotionsPage.spotlightType(promotionType), is(displayed()));
+		assertThat("Promotion type is displayed", dynamicPromotionsPage.spotlightType(promotionType), is(displayed()));
 		assertThat("Continue button should be disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.continueButton(), "disabled"));
 
 		dynamicPromotionsPage.spotlightType(promotionType).click();
@@ -87,7 +92,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 
         TriggerForm triggerForm = dynamicPromotionsPage.getTriggerForm();
 
-        assertThat("Wrong wizard step", triggerForm.addButton(), is(displayed()));
+        assertThat("Right wizard step", triggerForm.addButton(), is(displayed()));
         assertThat("Finish button should be disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
         assertThat("Trigger add button should be disabled", ElementUtil.isAttributePresent(triggerForm.addButton(), "disabled"));
         assertThat(triggerForm.getNumberOfTriggers(), is(0));
@@ -105,13 +110,15 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 			fail("Promotions summary has not appeared");
 		}
 
-		assertThat(searchPage.getSelectedLanguage(), is(language));
-		assertThat("Wrong search performed", searchPage.getHeadingSearchTerm(), containsString(trigger));
+		assertThat(searchPage.getCurrentLanguage(), is(language.toString()));
+		assertThat("Correct search performed", searchPage.getHeadingSearchTerm(), containsString(trigger));
 		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstDocTitle));
+		assertThat("Promotion labels exist",((IdolIsoSearchPage) searchPage).promotionsLabelsExist());
 		assertThat(((IdolIsoSearchPage) searchPage).promotionsLabel().getText(), equalToIgnoringCase(promotionType.getOption()));
 	}
 
 	@Test
+	@KnownBug("CCUK-3636")
 	public void testTwoPromotionTypesForSameTrigger() {
 		DynamicPromotion promotion1 = new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "cat");
 		DynamicPromotion promotion2 = new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "cat");
@@ -119,7 +126,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 		Query query2 = new Query("rome");
 
         searchPage = searchService.search(query1);
-        int expected = searchPage.getHeadingResultsCount();
+		int expected = searchPage.getHeadingResultsCount();
 
 		promotionService.setUpPromotion(promotion1, query1, 0);
 		searchPage = getElementFactory().getSearchPage();
@@ -134,6 +141,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-44")
 	public void testDuplicateQueryAndTriggerDifferentSpotlightType() {
         Query query = new Query("berlin");
         searchPage = searchService.search(query);
@@ -145,7 +153,8 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "Ida"), query, 1);
 
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
-		assertThat("promotions aren't labelled as Sponsored", ((IdolIsoSearchPage) searchPage).promotionsLabel().getText(), equalToIgnoringCase("Sponsored"));
+		assertThat("Promotion labels exist",((IdolIsoSearchPage) searchPage).promotionsLabelsExist());
+		assertThat("Promotions are labelled as Sponsored", ((IdolIsoSearchPage) searchPage).promotionsLabel().getText(), equalToIgnoringCase("Sponsored"));
 
         searchService.search(query);
         promotionResultsCount = promotionResultsCount + searchPage.getHeadingResultsCount();
@@ -157,8 +166,8 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		final List<String> promotionLabels = ((IdolIsoSearchPage) searchPage).getPromotionLabels();
-		assertThat("No Hotwire labels in promotions summary", promotionLabels, hasItem(Promotion.SpotlightType.HOTWIRE.getOption().toUpperCase()));
-		assertThat("No Sponsored labels in promotions summary", promotionLabels, hasItem(Promotion.SpotlightType.SPONSORED.getOption().toUpperCase()));
+		assertThat("Hotwire labels in promotions summary", promotionLabels, hasItem(Promotion.SpotlightType.HOTWIRE.getOption().toUpperCase()));
+		assertThat("Sponsored labels in promotions summary", promotionLabels, hasItem(Promotion.SpotlightType.SPONSORED.getOption().toUpperCase()));
 		assertThat(searchPage.getPromotedDocumentTitles(true), hasSize(promotionResultsCount));
 	}
 
@@ -175,7 +184,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
         }
 
 		PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails("phrase");
-		assertThat("Promotion has been created in the wrong language", promotionsDetailPage.getLanguage(), is(Language.URDU.toString()));
+		assertThat("Promotion created in the correct language", promotionsDetailPage.getLanguage(), is(Language.URDU.toString()));
 	}
 
 	@Test

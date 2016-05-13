@@ -3,6 +3,7 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.base.IdolIsoTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
@@ -144,14 +145,14 @@ public class SearchPageOnPremiseITCase extends IdolIsoTestBase {
     public void testFieldTextRestrictionOnPinToPositionPromotions(){
         PromotionService<?> promotionService = getApplication().promotionService();
         promotionService.deleteAll();
-        List<String> promotedDocs = promotionService.setUpPromotion(new SpotlightPromotion("duck"), new Query("horse").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
+        List<String> promotedDocs = promotionService.setUpPromotion(new PinToPositionPromotion(1,"duck"), new Query("desolous").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
 
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
 
         assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
         assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));
 
-        searchPage.filterBy(new FieldTextFilter("WILD{*horse*}:DRETITLE"));
+        searchPage.filterBy(new FieldTextFilter("WILD{*desolous*}:DRETITLE"));
 
         searchPage.waitForSearchLoadIndicatorToDisappear();
         Waits.loadOrFadeWait();
