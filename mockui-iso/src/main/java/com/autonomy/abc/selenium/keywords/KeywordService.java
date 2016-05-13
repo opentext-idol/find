@@ -51,7 +51,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     public SearchPage addSynonymGroup(Language language, String... synonyms) {
         return addSynonymGroup(language, Arrays.asList(synonyms));
     }
-
+    //bad because assumes redirected to search page which not be if no docs in that language
     public SearchPage addSynonymGroup(Language language, Iterable<String> synonyms) {
         addKeywords(KeywordWizardType.SYNONYMS, language, synonyms);
         SearchPage searchPage = getElementFactory().getSearchPage();

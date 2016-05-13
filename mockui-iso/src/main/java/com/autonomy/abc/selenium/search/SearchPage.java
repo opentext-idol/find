@@ -85,15 +85,17 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 		return new Dropdown(dropdownContainer, getDriver());
 	}
 
+	protected abstract LanguageDropdown languageDropdown();
+
 	public void selectLanguage(final Language language) {
 		languageDropdown().select(language);
 		waitForSearchLoadIndicatorToDisappear();
 	}
+
 	//TODO: FIX THIS ENTIRE THING - LANGUAGEDROPDOWN CLASS IS CRAZY
 	public String getCurrentLanguage(){
 		return findElement(By.className("current-language-selection")).getText();
 	}
-	protected abstract LanguageDropdown languageDropdown();
 
 	// TODO: use LanguageDropdown
 	public WebElement languageButton() {

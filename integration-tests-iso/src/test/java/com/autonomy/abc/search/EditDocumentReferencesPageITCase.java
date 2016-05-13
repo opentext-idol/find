@@ -256,7 +256,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
             }
             editReferencesPage.switchResultsPage(Pagination.NEXT);
         }
-        
+
         editReferencesPage.emptyBucket();
         editDocumentSearch("banana");
 

@@ -11,6 +11,7 @@ import com.autonomy.abc.selenium.search.IdolIsoSearchPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -57,16 +58,19 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-44")
 	public void testAddSpotlightSponsored() {
 		addDynamicPromotion("car", Language.ENGLISH, Promotion.SpotlightType.SPONSORED, "apples");
 	}
 
 	@Test
+	@ActiveBug("ISO-44")
 	public void testAddSpotlightHotwire() {
 		addDynamicPromotion("Bastille", Language.FRENCH, Promotion.SpotlightType.HOTWIRE, "grapes");
 	}
 
 	@Test
+	@ActiveBug("ISO-44")
 	public void testAddSpotlightTopPromotions() {
 		addDynamicPromotion("Iran", Language.URDU, Promotion.SpotlightType.TOP_PROMOTIONS, "oranges");
 	}
@@ -137,6 +141,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-44")
 	public void testDuplicateQueryAndTriggerDifferentSpotlightType() {
         Query query = new Query("berlin");
         searchPage = searchService.search(query);

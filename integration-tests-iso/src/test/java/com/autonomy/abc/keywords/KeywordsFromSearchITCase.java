@@ -278,7 +278,6 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
         }
     }
 
-    //isn't working if there are already keywords there to delete: see the setup
     @Test
     @ResolvedBug({"CSA-1719", "CSA-1792", "CSA-2064"})
     public void testBlacklistTermsBehaveAsExpected() throws InterruptedException {
