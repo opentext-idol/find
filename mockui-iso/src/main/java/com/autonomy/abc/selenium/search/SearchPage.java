@@ -53,7 +53,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 	// WARN: results count will not be displayed if search had an error
 	public int getHeadingResultsCount() {
 		((JavascriptExecutor) getDriver()).executeScript("scroll(0,0)");
-		final String totalWithBrackets = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
+		final String totalWithBrackets = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(@dir,'ltr')]"))).getText();
 		final String totalNoBrackets = totalWithBrackets.substring(1, totalWithBrackets.length() - 1);
 
 		if (StringUtils.containsIgnoreCase(totalNoBrackets, "more than ")) {
@@ -89,7 +89,10 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 		languageDropdown().select(language);
 		waitForSearchLoadIndicatorToDisappear();
 	}
-
+	//TODO: FIX THIS ENTIRE THING - LANGUAGEDROPDOWN CLASS IS CRAZY
+	public String getCurrentLanguage(){
+		return findElement(By.className("current-language-selection")).getText();
+	}
 	protected abstract LanguageDropdown languageDropdown();
 
 	// TODO: use LanguageDropdown
