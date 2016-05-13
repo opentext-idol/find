@@ -18,7 +18,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class UsersPage extends SOPageBase {
+public abstract class UsersPage<T extends UserTableRow> extends SOPageBase {
 
 	protected UsersPage(final WebDriver driver) {
 		super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
@@ -41,7 +41,7 @@ public abstract class UsersPage extends SOPageBase {
 		return getUserRow(user).findElement(By.cssSelector(".users-deleteUser"));
 	}
 
-	public abstract UserTable<?> getTable();
+	public abstract UserTable<T> getTable();
 
 	public List<String> getUsernames() {
 		List<String> usernames = new ArrayList<>();
@@ -62,7 +62,9 @@ public abstract class UsersPage extends SOPageBase {
 		getUserRow(user).findElement(By.cssSelector(".input-admin")).findElement(By.xpath(".//*[text() = '" + type + "']")).click();
 	}
 
-	public abstract UserTableRow getUserRow(User user);
+	public T getUserRow(User user) {
+		return getTable().rowFor(user);
+	}
 
 	@Override
 	public void waitForLoad() {

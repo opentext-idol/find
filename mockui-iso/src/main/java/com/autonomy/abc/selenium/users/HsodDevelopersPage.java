@@ -10,7 +10,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class HsodDevelopersPage extends HsodUserManagementBase {
+public class HsodDevelopersPage extends HsodUserManagementBase<HsodDeveloperTableRow> {
     private HsodDevelopersPage(WebDriver driver) {
         super(driver);
     }
@@ -28,11 +28,6 @@ public class HsodDevelopersPage extends HsodUserManagementBase {
     @Override
     public HsodDeveloperTable getTable() {
         return new HsodDeveloperTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
-    }
-
-    @Override
-    public HsodDeveloperTableRow getUserRow(User user) {
-        return getTable().rowFor(user);
     }
 
     public User getUser(int index) {

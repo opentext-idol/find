@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.users.table;
 
+import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -26,6 +27,8 @@ public abstract class UserTable<T extends UserTableRow> extends AppElement imple
         }
         return rows;
     }
+
+    public abstract T rowFor(User user);
 
     protected abstract T rowForElement(WebElement element);
 }

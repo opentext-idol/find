@@ -11,6 +11,7 @@ public class IdolUserTable extends UserTable<IdolUserTableRow> {
         super(element, driver);
     }
 
+    @Override
     public IdolUserTableRow rowFor(User user) {
         WebElement usernameEl = findElement(new Locator().containingText(user.getUsername()));
         return rowForElement(ElementUtil.ancestor(usernameEl, 2));

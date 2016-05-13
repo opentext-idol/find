@@ -12,7 +12,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class HsodUsersPage extends HsodUserManagementBase {
+public class HsodUsersPage extends HsodUserManagementBase<HsodUserTableRow> {
     private HsodUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
@@ -47,11 +47,6 @@ public class HsodUsersPage extends HsodUserManagementBase {
     @Override
     public HsodUserTable getTable() {
         return new HsodUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
-    }
-
-    @Override
-    public HsodUserTableRow getUserRow(User user){
-        return getTable().rowFor(user);
     }
 
     public void setRoleValueFor(User user, Role newRole) {

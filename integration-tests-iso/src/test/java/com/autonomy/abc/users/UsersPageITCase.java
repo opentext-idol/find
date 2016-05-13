@@ -44,7 +44,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 	private final NewUser newUser2;
 	private UserTestHelper helper;
 
-	private UsersPage usersPage;
+	private UsersPage<?> usersPage;
 	private UserService<?> userService;
 
 	public UsersPageITCase(final TestConfig config) {

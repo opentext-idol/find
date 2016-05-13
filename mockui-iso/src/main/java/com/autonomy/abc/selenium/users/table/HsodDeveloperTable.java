@@ -11,6 +11,7 @@ public class HsodDeveloperTable extends UserTable<HsodDeveloperTableRow> {
         super(element, driver);
     }
 
+    @Override
     public HsodDeveloperTableRow rowFor(User user) {
         WebElement usernameEl = findElement(new Locator().havingClass("user-username").containingText(user.getUsername()));
         return rowForElement(ElementUtil.ancestor(usernameEl, 1));

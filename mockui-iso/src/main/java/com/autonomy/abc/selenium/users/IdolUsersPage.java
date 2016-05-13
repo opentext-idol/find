@@ -13,7 +13,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class IdolUsersPage extends UsersPage {
+public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
     private IdolUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
@@ -66,11 +66,6 @@ public class IdolUsersPage extends UsersPage {
     @Override
     public IdolUserTable getTable() {
         return new IdolUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
-    }
-
-    @Override
-    public IdolUserTableRow getUserRow(User user) {
-        return getTable().rowFor(user);
     }
 
     public void setRoleValueFor(User user, Role newRole) {

@@ -114,7 +114,7 @@ public class UserTestHelper {
         User user = userService.createNewUser(newUser, Role.USER);
         String username = user.getUsername();
 
-        UsersPage usersPage = factory.getUsersPage();
+        UsersPage<?> usersPage = factory.getUsersPage();
         verifyThat(usersPage.deleteButton(user), displayed());
         verifyThat(usersPage.getUsernames(), hasItem(username));
 
