@@ -5,7 +5,6 @@ import com.autonomy.abc.selenium.users.table.UserTable;
 import com.autonomy.abc.selenium.users.table.UserTableRow;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
-import com.hp.autonomy.frontend.selenium.element.PasswordBox;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -59,10 +58,6 @@ public abstract class UsersPage extends SOPageBase {
 
 	public Role getRoleOf(User user) {
 		return Role.fromString(roleLinkFor(user).getText());
-	}
-
-	public PasswordBox passwordBoxFor(User user) {
-		return new PasswordBox(getUserRow(user).findElement(By.cssSelector("td:nth-child(2)")), getDriver());
 	}
 
 	public void selectTableUserType(final User user, final String type) {

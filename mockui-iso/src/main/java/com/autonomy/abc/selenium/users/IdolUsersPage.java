@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.auth.IdolIsoNewUser;
 import com.autonomy.abc.selenium.auth.IdolIsoReplacementAuth;
 import com.autonomy.abc.selenium.users.table.IdolUserTable;
 import com.autonomy.abc.selenium.users.table.IdolUserTableRow;
+import com.hp.autonomy.frontend.selenium.element.PasswordBox;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.ReplacementAuth;
 import com.hp.autonomy.frontend.selenium.users.Role;
@@ -52,6 +53,10 @@ public class IdolUsersPage extends UsersPage {
 
     public WebElement roleLinkFor(User user) {
         return getUserRow(user).roleLink();
+    }
+
+    public PasswordBox passwordBoxFor(User user) {
+        return getUserRow(user).passwordBox();
     }
 
     public void submitPendingEditFor(User user) {
