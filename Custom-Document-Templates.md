@@ -85,7 +85,7 @@ return [
         data: defaultData,
         predicate: function(model, isPromotion) {
             return Boolean(_.find(model.get('fields'), function(field) {
-                return field.id === 'SOME_FIELD_NAME' && _.contains(field.values, 'magic')
+                return field.id === 'SOME_FIELD_NAME' && _.contains(field.values, 'ketchup')
             }))
         }
     },
@@ -97,7 +97,7 @@ return [
 ];
 ```
 
-When the field called `SOME_FIELD_NAME` contains the value `magic`, the `customResultsTemplate` will be used instead of the default template.
+When the field called `SOME_FIELD_NAME` contains the value `ketchup`, the `customResultsTemplate` will be used instead of the default template.
 
 The templates in the array are processed in order, so it's important to always put your new templates above the default one, otherwise they will never be used.
 
