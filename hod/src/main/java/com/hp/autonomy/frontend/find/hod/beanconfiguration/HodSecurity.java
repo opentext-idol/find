@@ -72,7 +72,8 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
                 unboundTokenService,
                 userStoreUsersService,
                 HavenSearchUserMetadata.METADATA_TYPES,
-                usernameResolver()
+                usernameResolver(),
+                null
         ));
     }
 
