@@ -70,7 +70,11 @@ define([
                     this.$('.main-results-container').removeClass('selected-document');
                 } else {
                     //enable/choose another preview view
-                    this.trigger('preview', this.documentsCollection.get($target.data('cid')));
+                    if(this.documentsCollection.get($target.data('cid'))) {
+                        this.trigger('preview', this.documentsCollection.get($target.data('cid')));
+                    } else {
+                        this.trigger('preview', this.promotionsCollection.get($target.data('cid')));
+                    }
 
                     //resetting selected-document class and adding it to the target
                     this.$('.main-results-container').removeClass('selected-document');
