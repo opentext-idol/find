@@ -21,6 +21,14 @@ define(['underscore'], function(_) {
             };
         },
 
+        promotionsRequestParams: function(queryModel){
+            var params = this.requestParams(queryModel);
+            
+            delete params.indexes;
+            
+            return params;
+        },
+
         validateQuery: function(queryModel) {
             return Boolean(queryModel.get('queryText'));
         },

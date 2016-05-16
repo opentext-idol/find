@@ -48,7 +48,7 @@ public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsService
                 Collections.<String>emptyList()
         );
 
-        final String stateToken = documentsService.getStateToken(queryRestrictions, Integer.MAX_VALUE);
+        final String stateToken = documentsService.getStateToken(queryRestrictions, Integer.MAX_VALUE, false);
 
         final MockHttpServletRequestBuilder request = get(RelatedConceptsController.RELATED_CONCEPTS_PATH)
                 .param(RelatedConceptsController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
