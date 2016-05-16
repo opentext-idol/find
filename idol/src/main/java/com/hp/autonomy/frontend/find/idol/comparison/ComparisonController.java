@@ -36,6 +36,7 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
     public static final String SUMMARY_PARAM = "summary";
     public static final String SORT_PARAM = "sort";
     public static final String HIGHLIGHT_PARAM = "highlight";
+    public static final String PROMOTIONS = "promotions";
 
     private final ComparisonService<R, E> comparisonService;
     private final DocumentsService<S, R, E> documentsService;
@@ -49,8 +50,8 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
     @RequestMapping(value = COMPARE_PATH, method = RequestMethod.POST)
     public ComparisonStateTokens getCompareStateTokens(@RequestBody final ComparisonRequest<S> body) throws E {
         // If either query state token is null then try and fetch one using the query restrictions
-        final String firstStateToken = body.getFirstQueryStateToken() != null ? body.getFirstQueryStateToken() : documentsService.getStateToken(body.getFirstRestrictions(), STATE_TOKEN_MAX_RESULTS);
-        final String secondStateToken = body.getSecondQueryStateToken() != null ? body.getSecondQueryStateToken() : documentsService.getStateToken(body.getSecondRestrictions(), STATE_TOKEN_MAX_RESULTS);
+        final String firstStateToken = body.getFirstQueryStateToken() != null ? body.getFirstQueryStateToken() : documentsService.getStateToken(body.getFirstRestrictions(), STATE_TOKEN_MAX_RESULTS, false);
+        final String secondStateToken = body.getSecondQueryStateToken() != null ? body.getSecondQueryStateToken() : documentsService.getStateToken(body.getSecondRestrictions(), STATE_TOKEN_MAX_RESULTS, false);
 
         return comparisonService.getCompareStateTokens(firstStateToken, secondStateToken);
     }
@@ -64,7 +65,8 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
             @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
             @RequestParam(SUMMARY_PARAM) final String summary,
             @RequestParam(value = SORT_PARAM, required = false) final String sort,
-            @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight
+            @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight,
+            @RequestParam(value = PROMOTIONS, defaultValue = "false") final boolean promotions
     ) throws E {
         return comparisonService.getResults(
                 stateMatchIds,

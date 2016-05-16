@@ -45,8 +45,8 @@ public class ComparisonServiceIT extends AbstractFindIT {
 
     @Before
     public void createStateTokens() throws AciErrorException {
-        twoDocStateToken = documentsService.getStateToken(queryRestrictions, 2);
-        sixDocStateToken = documentsService.getStateToken(queryRestrictions, 6);
+        twoDocStateToken = documentsService.getStateToken(queryRestrictions, 2, false);
+        sixDocStateToken = documentsService.getStateToken(queryRestrictions, 6, false);
     }
 
     @Test
