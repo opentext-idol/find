@@ -350,7 +350,6 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
 
         interface Column {
             String SEARCH_ID = "search_id";
-            String STATE_TOKEN = "state_token";
         }
     }
 
