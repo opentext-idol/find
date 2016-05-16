@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.users.table;
 
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.users.Role;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -40,8 +41,9 @@ public class HsodUserTableRow extends UserTableRow {
                 .until(invisibilityOfElementLocated(By.cssSelector(".user-roles-dropdown .fa-spin")));
     }
 
-    public WebElement resetAuthenticationButton() {
-        return findElement(By.className("reset-authentication"));
+    public void openResetAuthModal() {
+        findElement(By.className("reset-authentication")).click();
+        Waits.loadOrFadeWait();
     }
 
     @Override

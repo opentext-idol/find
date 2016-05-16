@@ -49,10 +49,6 @@ public class HsodUsersPage extends HsodUserManagementBase<HsodUserTableRow> {
         return new HsodUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
     }
 
-    public WebElement resetAuthenticationButton(User user) {
-        return getUserRow(user).resetAuthenticationButton();
-    }
-
     public static class Factory extends SOPageFactory<HsodUsersPage> {
         public Factory() {
             super(HsodUsersPage.class);

@@ -43,9 +43,7 @@ public class HsodUserService extends UserService<IsoHsodElementFactory> {
     }
 
     public void resetAuthentication(User user) {
-        usersPage = goToUsers();
-        usersPage.resetAuthenticationButton(user).click();
-        Waits.loadOrFadeWait();
+        goToUsers().getUserRow(user).openResetAuthModal();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Reset authentication for " + user.getUsername()));
     }

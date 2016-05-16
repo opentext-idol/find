@@ -115,7 +115,6 @@ public class UserTestHelper {
         String username = user.getUsername();
 
         UsersPage<?> usersPage = factory.getUsersPage();
-        verifyThat(usersPage.deleteButton(user), displayed());
         verifyThat(usersPage.getUsernames(), hasItem(username));
 
         deleteAndVerify(user);

@@ -37,10 +37,6 @@ public abstract class UsersPage<T extends UserTableRow> extends SOPageBase {
 		return getTable().rows().size();
 	}
 
-	public WebElement deleteButton(User user){
-		return getUserRow(user).findElement(By.cssSelector(".users-deleteUser"));
-	}
-
 	public abstract UserTable<T> getTable();
 
 	public List<String> getUsernames() {

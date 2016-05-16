@@ -44,14 +44,11 @@ public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
 
     public User replaceAuthFor(User user, ReplacementAuth newAuth) {
         if (newAuth instanceof IdolIsoReplacementAuth) {
-            ((IdolIsoReplacementAuth) newAuth).sendTo(passwordBoxFor(user));
-            passwordBoxFor(user).waitForUpdate();
+            PasswordBox passwordBox = getUserRow(user).passwordBox();
+            ((IdolIsoReplacementAuth) newAuth).sendTo(passwordBox);
+            passwordBox.waitForUpdate();
         }
         return newAuth.replaceAuth(user);
-    }
-
-    public PasswordBox passwordBoxFor(User user) {
-        return getUserRow(user).passwordBox();
     }
 
     @Override

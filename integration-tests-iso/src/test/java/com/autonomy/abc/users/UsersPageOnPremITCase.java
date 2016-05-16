@@ -110,7 +110,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         assumeThat(getConfig().getType(), is(ApplicationType.ON_PREM));
         User user = helper.singleSignUp(aNewUser);
 
-        Editable passwordBox = usersPage.passwordBoxFor(user);
+        Editable passwordBox = usersPage.getUserRow(user).passwordBox();
         passwordBox.setValueAsync("");
         assertThat(passwordBox.getElement(), containsText("Password must not be blank"));
         assertThat(passwordBox.editButton(), not(displayed()));
@@ -152,9 +152,9 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
     }
 
     @Test
-    //TO BE MOVED BACK TO COMMON IF FUNCTIONALITY IS IMPLEMENTED
     public void testWontDeleteSelf() {
-        assertThat(usersPage.deleteButton(getApplication().loginService().getCurrentUser()), hasClass("not-clickable"));
+        User self = getApplication().loginService().getCurrentUser();
+        assertThat(usersPage.getUserRow(self).canDeleteUser(),is(false));
     }
 
     @Test
