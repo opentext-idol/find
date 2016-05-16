@@ -128,8 +128,16 @@ define([
                         .value();
                 })
                 .value();
-
-            return _.defaults(dateAttributes, { relatedConcepts: relatedConcepts }, response);
+            
+            // group token strings by type
+            var tokensByType = _.chain(response.stateTokens)
+                .groupBy('type')
+                .mapObject(function(arr) {
+                    return _.pluck(arr, 'stateToken')
+                })
+                .value();
+            
+            return _.defaults(dateAttributes, {queryStateTokens: tokensByType.QUERY}, {promotionsStateTokens: tokensByType.PROMOTIONS}, {relatedConcepts: relatedConcepts}, response);
         },
 
         toJSON: function() {

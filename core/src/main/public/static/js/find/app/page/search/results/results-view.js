@@ -317,10 +317,16 @@ define([
             });
 
             if (!infiniteScroll && this.showPromotions) {
+
                 this.promotionsFinished = false;
+                var parametricRequestData =  _.extend({
+                        start: this.start,
+                        max_results: this.maxResults,
+                        sort: this.queryModel.get('sort')
+                    }, this.fetchStrategy.promotionsRequestParams(this.queryModel, infiniteScroll));
 
                 this.promotionsCollection.fetch({
-                    data: requestData,
+                    data: parametricRequestData,
                     reset: false
                 }, this);
             }

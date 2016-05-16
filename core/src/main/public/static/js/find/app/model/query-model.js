@@ -37,7 +37,8 @@ define([
             maxDate: undefined,
             minScore: 0,
             sort: Sort.relevance,
-            stateTokens: []
+            stateMatchIds: [],
+            promotionsStateMatchIds: []
         },
 
         /**

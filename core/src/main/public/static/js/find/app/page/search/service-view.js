@@ -64,7 +64,8 @@ define([
 
             this.queryModel = new QueryModel({
                 autoCorrect: this.searchTypes[searchType].autoCorrect,
-                stateMatchIds: this.savedSearchModel.get('stateTokens')
+                stateMatchIds: this.savedSearchModel.get('queryStateTokens'),
+                promotionsStateMatchIds: this.savedSearchModel.get('promotionsStateTokens')
             }, {queryState: this.queryState});
 
             this.listenTo(this.queryModel, 'change:indexes', function() {
