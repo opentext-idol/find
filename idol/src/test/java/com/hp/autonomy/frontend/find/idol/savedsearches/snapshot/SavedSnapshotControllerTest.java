@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.Before;
@@ -36,6 +37,9 @@ public class SavedSnapshotControllerTest {
     @Mock
     private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
 
+    @Mock
+    private TypedStateToken stateToken;
+
     private SavedSnapshotController savedSnapshotController;
 
     private final SavedSnapshot savedSnapshot = new SavedSnapshot.Builder()
@@ -50,8 +54,8 @@ public class SavedSnapshotControllerTest {
 
     @Test
     public void create() throws Exception {
-        final StateTokenAndResultCount stateTokenAndResultCount = new StateTokenAndResultCount("mock-state-token", 123);
-        when(documentsService.getStateTokenAndResultCount(Matchers.<QueryRestrictions<String>>any(), any(Integer.class))).thenReturn(stateTokenAndResultCount);
+        final StateTokenAndResultCount stateTokenAndResultCount = new StateTokenAndResultCount(stateToken, 123);
+        when(documentsService.getStateTokenAndResultCount(Matchers.<QueryRestrictions<String>>any(), any(Integer.class), any(Boolean.class))).thenReturn(stateTokenAndResultCount);
 
         savedSnapshotController.create(savedSnapshot);
         verify(savedSnapshotService).create(Matchers.any(SavedSnapshot.class));

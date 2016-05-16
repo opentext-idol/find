@@ -91,7 +91,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
             @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
             @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
             @RequestParam(SUMMARY_PARAM) final String summary,
-            @RequestParam(INDEXES_PARAM) final List<S> index,
+            @RequestParam(value = INDEXES_PARAM, required = false) final List<S> index,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(value = SORT_PARAM, required = false) final String sort,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
@@ -106,7 +106,8 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
 
     @SuppressWarnings("MethodWithTooManyParameters")
     protected SearchRequest<S> parseRequestParamsToObject(final String text, final int resultsStart, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight, final Integer minScore, final boolean autoCorrect) {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, fieldText, databases, minDate, maxDate, minScore, Collections.<String>emptyList(), Collections.<String>emptyList());
+        final List<S> normalisedDatabases = databases != null ? databases : Collections.<S>emptyList();
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, fieldText, normalisedDatabases, minDate, maxDate, minScore, Collections.<String>emptyList(), Collections.<String>emptyList());
         return new SearchRequest.Builder<S>()
                 .setQueryRestrictions(queryRestrictions)
                 .setStart(resultsStart)
