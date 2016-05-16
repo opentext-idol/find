@@ -28,22 +28,7 @@ public class HsodUserService extends UserService<IsoHsodElementFactory> {
     }
 
     @Override
-    public void deleteOtherUsers(){
-        usersPage = goToUsers();
-        for (UserTableRow row : usersPage.getTable()) {
-            if (row.canDeleteUser()) {
-                deleteUserInRow(row);
-            }
-        }
-    }
-
-    @Override
-    public void deleteUser(User user){
-        usersPage = goToUsers();
-        deleteUserInRow(usersPage.getUserRow(user));
-    }
-
-    private void deleteUserInRow(UserTableRow row) {
+    protected void deleteUserInRow(UserTableRow row) {
         row.deleteButton().click();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
