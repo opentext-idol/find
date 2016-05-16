@@ -42,7 +42,7 @@ public class ComparisonControllerTest {
     @Before
     public void setUp() throws Exception {
         comparisonController = new ComparisonController<>(comparisonService, documentsService);
-        when(documentsService.getStateToken(any(QueryRestrictions.class), anyInt(), false))
+        when(documentsService.getStateToken(any(QueryRestrictions.class), anyInt(), anyBoolean()))
                 .thenReturn(MOCK_STATE_TOKEN_1);
     }
 
