@@ -13,4 +13,9 @@ public class HsodDeveloperTableRow extends UserTableRow {
     public void changeRoleTo(Role newRole) {
         throw new UnsupportedOperationException("Cannot change role for HSOD developer users");
     }
+
+    @Override
+    public boolean canDeleteUser() {
+        return false;
+    }
 }

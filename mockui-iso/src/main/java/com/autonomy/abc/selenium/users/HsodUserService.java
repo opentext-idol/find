@@ -4,12 +4,12 @@ import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.auth.HsodUser;
 import com.autonomy.abc.selenium.auth.HsodUserBuilder;
 import com.autonomy.abc.selenium.hsod.IsoHsodElementFactory;
+import com.autonomy.abc.selenium.users.table.UserTableRow;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -30,19 +30,21 @@ public class HsodUserService extends UserService<IsoHsodElementFactory> {
     @Override
     public void deleteOtherUsers(){
         usersPage = goToUsers();
-        for(WebElement trashCan : usersPage.findElements(By.className("users-deleteUser"))){
-            trashCan.click();
-            ModalView.getVisibleModalView(getDriver()).okButton().click();
-            new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
-            Waits.loadOrFadeWait();
+        for (UserTableRow row : usersPage.getTable()) {
+            if (row.canDeleteUser()) {
+                deleteUserInRow(row);
+            }
         }
     }
 
     @Override
     public void deleteUser(User user){
         usersPage = goToUsers();
-        usersPage.getUserRow(user).findElement(By.className("users-deleteUser")).click();
-        Waits.loadOrFadeWait();
+        deleteUserInRow(usersPage.getUserRow(user));
+    }
+
+    private void deleteUserInRow(UserTableRow row) {
+        row.deleteButton().click();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
     }

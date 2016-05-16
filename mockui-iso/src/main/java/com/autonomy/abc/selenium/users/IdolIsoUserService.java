@@ -2,11 +2,10 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
-import com.autonomy.abc.selenium.users.table.UserTableRow;
+import com.autonomy.abc.selenium.users.table.IdolUserTableRow;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -40,10 +39,9 @@ public class IdolIsoUserService extends UserService<IdolIsoElementFactory> {
     @Override
     public void deleteOtherUsers() {
         goToUsers();
-        for (final UserTableRow row : getUsersPage().getTable()) {
-            WebElement deleteButton = row.deleteButton();
-            if (!ElementUtil.hasClass("not-clickable", deleteButton)) {
-                deleteButton.click();
+        for (final IdolUserTableRow row : getUsersPage().getTable()) {
+            if (row.canDeleteUser()) {
+                row.deleteButton().click();
                 ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
                 deleteModal.okButton().click();
                 new WebDriverWait(getDriver(), 10).until(ExpectedConditions.stalenessOf(deleteModal));

@@ -43,4 +43,9 @@ public class HsodUserTableRow extends UserTableRow {
     public WebElement resetAuthenticationButton() {
         return findElement(By.className("reset-authentication"));
     }
+
+    @Override
+    public boolean canDeleteUser() {
+        return true;
+    }
 }

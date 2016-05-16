@@ -24,4 +24,6 @@ public abstract class UserTableRow extends AppElement {
     }
 
     public abstract void changeRoleTo(Role role);
+
+    public abstract boolean canDeleteUser();
 }
