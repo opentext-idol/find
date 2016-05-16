@@ -12,6 +12,10 @@ html, body {
     min-width: 640px;
 }
 
+.chart rect {
+    fill: rgba(1,169,130,0.1);
+}
+
 .date input {
     width: 75% !important;
     padding-right: 0 !important;

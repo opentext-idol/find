@@ -118,6 +118,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         return parametricRequestBuilderFactory.getObject()
                 .setFieldNames(ListUtils.emptyIfNull(fieldNames))
                 .setQueryRestrictions(queryRestrictions)
+                .setMaxValues(null)
                 .build();
     }
 }

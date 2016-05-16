@@ -6,7 +6,9 @@
 define([
     'backbone',
     'jquery',
+    'underscore',
     'find/app/page/search/filters/date/dates-filter-view',
+    'find/app/page/search/filters/parametric/numeric-parametric-view',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/util/text-input',
     'find/app/page/search/filters/precision-recall/precision-recall-slider-view',
@@ -15,7 +17,7 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(Backbone, $, DateView, ParametricView, TextInput, PrecisionRecallView, Collapsible, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
+], function(Backbone, $, _, DateView, NumericParametricView, ParametricView, TextInput, PrecisionRecallView, Collapsible, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
 
     var datesTitle = i18n['search.dates'];
 
@@ -40,6 +42,7 @@ define([
 
             this.indexesEmpty = false;
 
+            //noinspection JSUnresolvedFunction
             var indexesView = new this.IndexesView({
                 queryModel: options.queryModel,
                 indexesCollection: options.indexesCollection,
@@ -64,15 +67,22 @@ define([
                 });
             }
 
+            this.numericParametricCollection = options.numericParametricCollection;
+
             this.parametricDisplayCollection = new ParametricDisplayCollection([], {
                 parametricCollection: options.parametricCollection,
                 selectedParametricValues: options.queryState.selectedParametricValues,
                 filterModel: this.filterModel
             });
 
+            //noinspection JSUnresolvedFunction
             this.listenTo(this.parametricDisplayCollection, 'update reset', function() {
                 this.updateParametricVisibility();
                 this.updateEmptyMessage();
+            });
+
+            this.numericParametricView = new NumericParametricView({
+                numericParametricCollection: this.numericParametricCollection
             });
 
             this.parametricView = new ParametricView({
@@ -96,6 +106,7 @@ define([
                 title: datesTitle
             });
 
+            //noinspection JSUnresolvedFunction
             this.listenTo(this.filterModel, 'change', function() {
                 this.updateDatesVisibility();
                 this.updateParametricVisibility();
@@ -106,15 +117,18 @@ define([
         },
 
         render: function() {
+            //noinspection JSUnresolvedVariable
             this.$el.empty()
                 .append(this.filterInput.$el)
                 .append(this.$emptyMessage)
                 .append(this.indexesViewWrapper.$el)
                 .append(this.dateViewWrapper.$el)
+                .append(this.numericParametricView.$el)
                 .append(this.parametricView.$el);
 
             this.filterInput.render();
             this.indexesViewWrapper.render();
+            this.numericParametricView.render();
             this.parametricView.render();
             this.dateViewWrapper.render();
 
@@ -132,7 +146,9 @@ define([
         },
 
         remove: function() {
+            //noinspection JSUnresolvedFunction
             _.invoke([
+                this.numericParametricView,
                 this.parametricView,
                 this.indexesViewWrapper,
                 this.dateViewWrapper
@@ -148,7 +164,8 @@ define([
         },
 
         updateParametricVisibility: function() {
-            this.parametricView.$el.toggleClass('hide', this.parametricDisplayCollection.length === 0 && Boolean(this.filterModel.get('text')))
+            this.numericParametricView.$el.toggleClass('hide', this.numericParametricCollection.length === 0 && Boolean(this.filterModel.get('text')));
+            this.parametricView.$el.toggleClass('hide', this.parametricDisplayCollection.length === 0 && Boolean(this.filterModel.get('text')));
         },
 
         updateDatesVisibility: function() {

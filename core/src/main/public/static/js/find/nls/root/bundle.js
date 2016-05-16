@@ -118,6 +118,7 @@ define([
         'search.indexes.privateIndexes': 'Private Indexes',
         'search.indexes.empty': 'Waiting for Indexes...',
         'search.newSearch': 'New Search',
+        'search.numericParametricFields': 'Numeric Parametric Fields',
         'search.noResults': 'No results found',
         'search.noMoreResults': 'No more results found',
         'search.parametricFields': 'Parametric Fields',
