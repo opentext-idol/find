@@ -11,7 +11,6 @@ import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
     private IdolUsersPage(WebDriver driver) {
@@ -51,25 +50,13 @@ public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
         return newAuth.replaceAuth(user);
     }
 
-    public WebElement roleLinkFor(User user) {
-        return getUserRow(user).roleLink();
-    }
-
     public PasswordBox passwordBoxFor(User user) {
         return getUserRow(user).passwordBox();
-    }
-
-    public void submitPendingEditFor(User user) {
-        getUserRow(user).submitPendingEdit();
     }
 
     @Override
     public IdolUserTable getTable() {
         return new IdolUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
-    }
-
-    public void setRoleValueFor(User user, Role newRole) {
-        selectTableUserType(user, newRole.toString());
     }
 
     public static class Factory extends SOPageFactory<IdolUsersPage> {

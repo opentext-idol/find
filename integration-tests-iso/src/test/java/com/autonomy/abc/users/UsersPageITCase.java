@@ -159,17 +159,14 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		userService.changeRole(user, Role.ADMIN);
 		Waits.loadOrFadeWait();
 		userService.changeRole(user, Role.USER);
-		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(Role.USER));
 
 		selectSameRole(user);
 
 		userService.changeRole(user, Role.ADMIN);
-		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(Role.ADMIN));
 
 		userService.changeRole(user, Role.NONE);
-		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(Role.NONE));
 	}
 
@@ -177,7 +174,6 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		Role role = user.getRole();
 		userService.changeRole(user, role);
 
-		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(role));
 	}
 
@@ -186,11 +182,9 @@ public class UsersPageITCase extends HybridIsoTestBase {
 	public void testCreateUserPermissionNoneAndTestLogin() throws InterruptedException {
 		User user = helper.singleSignUp(aNewUser);
 
-		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(user.getRole()));
 
 		userService.changeRole(user, Role.NONE);
-		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(Role.NONE));
 
 		Waits.waitForGritterToClear();

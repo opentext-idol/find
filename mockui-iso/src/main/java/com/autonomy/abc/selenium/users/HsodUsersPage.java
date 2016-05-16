@@ -49,14 +49,6 @@ public class HsodUsersPage extends HsodUserManagementBase<HsodUserTableRow> {
         return new HsodUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
     }
 
-    public void setRoleValueFor(User user, Role newRole) {
-        getUserRow(user).setRoleValue(newRole);
-    }
-
-    public String getEmailOf(User user) {
-        return getUserRow(user).getEmail();
-    }
-
     public WebElement resetAuthenticationButton(User user) {
         return getUserRow(user).resetAuthenticationButton();
     }

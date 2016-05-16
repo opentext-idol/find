@@ -50,18 +50,7 @@ public class HsodUserService extends UserService<IsoHsodElementFactory> {
     @Override
     public HsodUser changeRole(User user, Role newRole) {
         usersPage = goToUsers();
-
-        WebElement roleLink = usersPage.roleLinkFor(user);
-
-        if (user.getRole().equals(newRole)) {
-            roleLink.click();
-            roleLink.click();
-            return (HsodUser) user;
-        }
-
-        roleLink.click();
-        usersPage.setRoleValueFor(user, newRole);
-        new WebDriverWait(getDriver(),5).until(ExpectedConditions.textToBePresentInElement(roleLink, newRole.toString()));
+        usersPage.getUserRow(user).changeRoleTo(newRole);
         return new HsodUserBuilder(user)
                 .setRole(newRole)
                 .build();

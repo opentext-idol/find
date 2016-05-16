@@ -34,10 +34,8 @@ public class IdolIsoUserService extends UserService<IdolIsoElementFactory> {
     }
 
     public User changeRole(User user, Role newRole) {
-        getUsersPage().roleLinkFor(user).click();
-        getUsersPage().setRoleValueFor(user, newRole);
-        getUsersPage().submitPendingEditFor(user);
-        Waits.loadOrFadeWait();
+        goToUsers();
+        getUsersPage().getUserRow(user).changeRoleTo(newRole);
         user.setRole(newRole);
         return user;
     }

@@ -39,11 +39,6 @@ public class HsodDevelopersPage extends HsodUserManagementBase<HsodDeveloperTabl
                 .build();
     }
 
-    @Override
-    public void setRoleValueFor(User user, Role newRole) {
-        throw new UnsupportedOperationException();
-    }
-
     public void editUsername(User dev, String devUsername) {
         editUsernameLink(dev).click();
         editUsernameInput(dev).setAndSubmit(devUsername);

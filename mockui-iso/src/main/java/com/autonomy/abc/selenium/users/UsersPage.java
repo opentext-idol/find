@@ -51,15 +51,8 @@ public abstract class UsersPage<T extends UserTableRow> extends SOPageBase {
 		return usernames;
 	}
 
-	public abstract WebElement roleLinkFor(User user);
-	public abstract void setRoleValueFor(User user, Role newRole);
-
 	public Role getRoleOf(User user) {
 		return getUserRow(user).getRole();
-	}
-
-	public void selectTableUserType(final User user, final String type) {
-		getUserRow(user).findElement(By.cssSelector(".input-admin")).findElement(By.xpath(".//*[text() = '" + type + "']")).click();
 	}
 
 	public T getUserRow(User user) {
