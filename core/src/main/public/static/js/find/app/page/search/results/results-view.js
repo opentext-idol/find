@@ -90,10 +90,10 @@ define([
 
         initialize: function(options) {
             this.fetchStrategy = options.fetchStrategy;
-            this.showPromotions = this.fetchStrategy.promotions();
             this.enablePreview = options.enablePreview || false;
 
             this.queryModel = options.queryModel;
+            this.showPromotions = this.fetchStrategy.promotions(this.queryModel) && !options.hidePromotions;
             this.documentsCollection = options.documentsCollection;
 
             this.indexesCollection = options.indexesCollection;

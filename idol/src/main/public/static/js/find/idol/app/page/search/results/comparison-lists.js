@@ -64,6 +64,9 @@ define([
             }, stateTokens));
 
             return new ResultsView({
+                // ToDo Add support for promotions with comparison view (part of FIND-30)
+                // Can then remove hidePromotions param
+                hidePromotions: true,
                 queryModel: queryModel,
                 documentsCollection: collection,
                 fetchStrategy: stateTokenStrategy
