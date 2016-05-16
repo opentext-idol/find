@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.users.table;
 
+import com.autonomy.abc.selenium.users.Status;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
@@ -21,6 +22,11 @@ public abstract class UserTableRow extends AppElement {
 
     public Role getRole() {
         return Role.fromString(findElement(By.className("user-role")).getText());
+    }
+
+    public boolean isConfirmed() {
+        String statusString = findElement(By.className("account-status")).getText();
+        return Status.fromString(statusString).equals(Status.CONFIRMED);
     }
 
     public abstract void changeRoleTo(Role role);

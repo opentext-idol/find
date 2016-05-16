@@ -205,7 +205,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
         getConfig().getAuthenticationStrategy().authenticate(user);
 
         waitForUserConfirmed(user);
-        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
+        verifyThat(usersPage.getUserRow(user).isConfirmed(), is(true));
     }
 
     @Test
@@ -253,7 +253,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
         new WebDriverWait(getDriver(), 30).pollingEvery(5,TimeUnit.SECONDS).until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver driver) {
-                return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
+                return usersPage.getUserRow(user).isConfirmed();
             }
         });
     }
@@ -274,7 +274,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
             getWindow().refresh();
             usersPage = getElementFactory().getUsersPage();
             Waits.loadOrFadeWait();
-            return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
+            return usersPage.getUserRow(user).isConfirmed();
         }
     }
 

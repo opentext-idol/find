@@ -33,6 +33,11 @@ public class IdolUserTableRow extends UserTableRow {
         findElement(By.cssSelector(".editable-submit")).click();
     }
 
+    @Override
+    public boolean isConfirmed() {
+        return true;
+    }
+
     public PasswordBox passwordBox() {
         return new PasswordBox(findElement(By.cssSelector("td:nth-child(2)")), getDriver());
     }

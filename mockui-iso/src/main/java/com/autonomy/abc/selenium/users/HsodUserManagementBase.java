@@ -12,10 +12,6 @@ abstract class HsodUserManagementBase<T extends UserTableRow> extends UsersPage<
         super(driver);
     }
 
-    public Status getStatusOf(User user) {
-        return Status.fromString(getUserRow(user).findElement(By.className("account-status")).getText());
-    }
-
     public WebElement editUsernameLink(User user) {
         return getUserRow(user).findElement(By.className("fa-pencil"));
     }
