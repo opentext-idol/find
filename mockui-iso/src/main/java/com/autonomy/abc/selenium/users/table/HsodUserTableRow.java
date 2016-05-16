@@ -18,10 +18,7 @@ public class HsodUserTableRow extends UserTableRow {
         return findElement(By.className("user-email")).getText();
     }
 
-    public void setRoleValue(Role newRole) {
-        findElement(By.partialLinkText(newRole.toString())).click();
-    }
-
+    @Override
     public void changeRoleTo(Role newRole) {
         Dropdown dropdown = roleDropdown();
         if (newRole.equals(getRole())) {
@@ -42,8 +39,6 @@ public class HsodUserTableRow extends UserTableRow {
                 .withMessage("updating role")
                 .until(invisibilityOfElementLocated(By.cssSelector(".user-roles-dropdown .fa-spin")));
     }
-
-
 
     public WebElement resetAuthenticationButton() {
         return findElement(By.className("reset-authentication"));

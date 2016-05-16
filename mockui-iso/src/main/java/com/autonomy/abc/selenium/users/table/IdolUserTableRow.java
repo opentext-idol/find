@@ -12,15 +12,16 @@ public class IdolUserTableRow extends UserTableRow {
         super(element, driver);
     }
 
-    public WebElement roleLink() {
-        return findElement(By.cssSelector(".role"));
-    }
-
+    @Override
     public void changeRoleTo(Role newRole) {
         roleLink().click();
         setRoleValue(newRole);
         submitPendingEdit();
         Waits.loadOrFadeWait();
+    }
+
+    private WebElement roleLink() {
+        return findElement(By.cssSelector(".role"));
     }
 
     private void setRoleValue(Role newRole) {

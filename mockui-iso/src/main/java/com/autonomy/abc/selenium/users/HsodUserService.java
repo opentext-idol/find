@@ -49,8 +49,7 @@ public class HsodUserService extends UserService<IsoHsodElementFactory> {
 
     @Override
     public HsodUser changeRole(User user, Role newRole) {
-        usersPage = goToUsers();
-        usersPage.getUserRow(user).changeRoleTo(newRole);
+        goToUsers().getUserRow(user).changeRoleTo(newRole);
         return new HsodUserBuilder(user)
                 .setRole(newRole)
                 .build();

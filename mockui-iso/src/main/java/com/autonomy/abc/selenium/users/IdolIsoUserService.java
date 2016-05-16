@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
-import com.autonomy.abc.selenium.users.table.UserTable;
 import com.autonomy.abc.selenium.users.table.UserTableRow;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.Role;
@@ -34,10 +33,8 @@ public class IdolIsoUserService extends UserService<IdolIsoElementFactory> {
     }
 
     public User changeRole(User user, Role newRole) {
-        goToUsers();
-        getUsersPage().getUserRow(user).changeRoleTo(newRole);
-        user.setRole(newRole);
-        return user;
+        goToUsers().getUserRow(user).changeRoleTo(newRole);
+        return new User(user.getAuthProvider(), user.getUsername(), newRole);
     }
 
     @Override
