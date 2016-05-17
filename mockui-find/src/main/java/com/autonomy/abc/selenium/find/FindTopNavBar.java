@@ -62,8 +62,16 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
         return new HPRemovable(concept, driver);
     }
 
+    public void closeFirstConcept(){
+        WebElement firstConcept = inputContainer.findElement(By.cssSelector(".additional-concepts div:first-child"));
+        firstConcept.findElement(By.className("hp-close")).click();
+    }
+
     public List<String> getAlsoSearchingForTerms() {
-        return ElementUtil.getTexts(additionalConceptElements());
+        List<String> badFormatText = ElementUtil.getTexts(additionalConceptElements());
+        List<String> goodFormatText = new ArrayList<>();
+        for(String entry: badFormatText){goodFormatText.add(entry.toLowerCase());}
+        return goodFormatText;
     }
 
     private List<WebElement> additionalConceptElements() {
