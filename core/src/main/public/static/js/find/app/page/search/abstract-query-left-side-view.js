@@ -82,6 +82,7 @@ define([
             });
 
             this.numericParametricView = new NumericParametricView({
+                queryState: options.queryState,
                 numericParametricCollection: this.numericParametricCollection
             });
 

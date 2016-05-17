@@ -15,6 +15,10 @@ html, body {
 .chart rect {
     fill: rgba(1,169,130,0.1);
 }
+.chart rect:hover {
+    cursor: pointer;
+    fill: rgba(1,169,130,0.2);
+}
 
 .date input {
     width: 75% !important;

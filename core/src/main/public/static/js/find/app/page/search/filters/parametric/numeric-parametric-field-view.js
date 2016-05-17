@@ -12,7 +12,7 @@ define([
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html'
 ], function (Backbone, _, prettifyFieldName, d3, i18n, template) {
     "use strict";
-    const DEFAULT_TARGET_NUMBER_OF_BUCKETS = 11;
+    const DEFAULT_TARGET_NUMBER_OF_BUCKETS = 10;
     const GRAPH_HEIGHT = 150;
     // the amount of relative space to add above the highest data point
     const MAX_HEIGHT_MULTIPLIER = 4 / 3;
@@ -23,42 +23,49 @@ define([
     function getData() {
         let numericFieldValuesWithCount = this.model.get('values');
         //noinspection JSUnresolvedFunction
-        let minValue = _.first(numericFieldValuesWithCount).value;
+        let minValue = +_.first(numericFieldValuesWithCount).value;
         //noinspection JSUnresolvedFunction
-        let maxValue = _.last(numericFieldValuesWithCount).value;
-        let bucketSize = Math.ceil((maxValue - minValue) / (DEFAULT_TARGET_NUMBER_OF_BUCKETS - 1));
+        let maxValue = +_.last(numericFieldValuesWithCount).value;
+        let bucketSize = Math.ceil((maxValue - minValue + 1) / DEFAULT_TARGET_NUMBER_OF_BUCKETS);
         let buckets = [];
         let valueIndex = 0;
         numericFieldValuesWithCount.forEach(function (valueAndCount) {
             let relativeValue = minValue >= 0 ? valueAndCount.value - minValue : valueAndCount.value + minValue;
             while (valueIndex < relativeValue) {
-                let currentBucketIndex = Math.floor(valueIndex++ / bucketSize);
+                let currentBucketIndex = Math.floor(valueIndex / bucketSize);
+                let value = minValue + valueIndex;
                 if (buckets[currentBucketIndex]) {
-                    buckets[currentBucketIndex].size++;
+                    buckets[currentBucketIndex].maxValue = value;
                 } else {
                     buckets[currentBucketIndex] = {
-                        size: 1,
-                        count: 0
+                        count: 0,
+                        minValue: value,
+                        maxValue: value
                     };
                 }
+
+                valueIndex++;
             }
 
-            let currentBucketIndex = Math.floor(valueIndex++ / bucketSize);
+            let currentBucketIndex = Math.floor(valueIndex / bucketSize);
+            let value = minValue + valueIndex;
             if (buckets[currentBucketIndex]) {
-                buckets[currentBucketIndex].size++;
                 buckets[currentBucketIndex].count += valueAndCount.count;
+                buckets[currentBucketIndex].maxValue = value;
             } else {
                 buckets[currentBucketIndex] = {
-                    size: 1,
-                    count: valueAndCount.count
+                    count: valueAndCount.count,
+                    minValue: value,
+                    maxValue: value
                 };
             }
+
+            valueIndex++;
         });
 
         //noinspection JSUnresolvedFunction
         var counts = _.pluck(buckets, 'count');
         return {
-            minValue: Math.min.apply(Math, counts),
             maxValue: Math.max.apply(Math, counts),
             bucketSize: bucketSize,
             buckets: buckets
@@ -68,7 +75,7 @@ define([
     return Backbone.View.extend({
         className: 'animated fadeIn',
         template: _.template(template),
-
+        
         initialize: function (options) {
             this.viewWidth = options.viewWidth;
 
@@ -96,7 +103,7 @@ define([
 
             scale.barWidth.domain([0, data.bucketSize]);
             scale.barWidth.range([0, totalWidth * MAX_WIDTH_MODIFIER / data.buckets.length - BAR_GAP_SIZE]);
-            scale.y.domain([data.minValue, data.maxValue * MAX_HEIGHT_MULTIPLIER]);
+            scale.y.domain([0, data.maxValue * MAX_HEIGHT_MULTIPLIER]);
             scale.y.range([GRAPH_HEIGHT, 0]);
 
             //noinspection JSUnresolvedFunction
@@ -122,7 +129,13 @@ define([
                         return d.count ? GRAPH_HEIGHT - scale.y(d.count) : EMPTY_BAR_HEIGHT;
                     },
                     width: function (d) {
-                        return scale.barWidth(d.size) - BAR_GAP_SIZE;
+                        return scale.barWidth(d.maxValue - d.minValue + 1) - BAR_GAP_SIZE;
+                    },
+                    'bucket-min': function (d) {
+                        return d.minValue;
+                    },
+                    'bucket-max': function (d) {
+                        return d.maxValue;
                     }
                 });
         }

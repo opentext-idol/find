@@ -11,11 +11,11 @@ define([
     'js-whatever/js/list-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-view.html'
-], function($, _, AbstractView, FieldView, ListView, i18n, template) {
+], function ($, _, AbstractView, FieldView, ListView, i18n, template) {
     "use strict";
-    
+
     var PreInitialisedListView = ListView.extend({
-        createItemView: function(model) {
+        createItemView: function (model) {
             //noinspection AssignmentResultUsedJS,JSUnresolvedFunction
             var view = this.views[model.cid] = new this.ItemView(_.extend({
                 model: model,
@@ -23,8 +23,8 @@ define([
             }, this.itemOptions));
 
             //noinspection JSUnresolvedFunction
-            _.each(this.proxyEvents, function(event) {
-                this.listenTo(view, event, function() {
+            _.each(this.proxyEvents, function (event) {
+                this.listenTo(view, event, function () {
                     this.trigger.apply(this, ['item:' + event].concat(Array.prototype.slice.call(arguments, 0)));
                 });
             }, this);
@@ -36,8 +36,30 @@ define([
 
     return AbstractView.extend({
         template: _.template(template)({i18n: i18n}),
-        
-        initialize: function(options) {
+
+        events: {
+            'click [data-field] [bucket-min]': function (e) {
+                //noinspection JSUnresolvedVariable
+                let selectedParametricValues = this.selectedParametricValues;
+
+                let $target = $(e.currentTarget);
+                let fieldName = $target.closest('[data-field]').attr('data-field');
+
+                let existingRestrictions = selectedParametricValues.where({field: fieldName});
+                existingRestrictions.forEach(function (model) {
+                    selectedParametricValues.remove(model);
+                });
+
+                selectedParametricValues.add({
+                    field: fieldName,
+                    range: [$target.attr('bucket-min'), $target.attr('bucket-max')]
+                });
+            }
+        },
+
+        initialize: function (options) {
+            this.selectedParametricValues = options.queryState.selectedParametricValues;
+
             this.monitorCollection(options.numericParametricCollection);
 
             this.fieldNamesListView = new PreInitialisedListView({
@@ -46,7 +68,7 @@ define([
             });
         },
 
-        remove: function() {
+        remove: function () {
             this.fieldNamesListView.remove();
             AbstractView.prototype.remove.call(this);
         },
