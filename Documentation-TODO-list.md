@@ -23,7 +23,7 @@ The list of things to document on the Wiki :)
 # Guides
 
 - Changing the colours
-- Internationalization
+- ~~Internationalization~~
 - Changing the default fields we use
 - Turning off parametrics or other bits of the UI
 - Changing typeahead debounce
