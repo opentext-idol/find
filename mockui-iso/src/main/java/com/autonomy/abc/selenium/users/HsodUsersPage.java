@@ -6,13 +6,11 @@ import com.autonomy.abc.selenium.users.table.HsodUserTable;
 import com.autonomy.abc.selenium.users.table.HsodUserTableRow;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
-import com.hp.autonomy.frontend.selenium.users.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
-public class HsodUsersPage extends HsodUserManagementBase<HsodUserTableRow> {
+public class HsodUsersPage extends UsersPage<HsodUserTableRow> {
     private HsodUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();

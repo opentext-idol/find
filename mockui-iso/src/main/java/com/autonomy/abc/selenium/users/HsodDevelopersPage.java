@@ -10,7 +10,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class HsodDevelopersPage extends HsodUserManagementBase<HsodDeveloperTableRow> {
+public class HsodDevelopersPage extends UsersPage<HsodDeveloperTableRow> {
     private HsodDevelopersPage(WebDriver driver) {
         super(driver);
     }
