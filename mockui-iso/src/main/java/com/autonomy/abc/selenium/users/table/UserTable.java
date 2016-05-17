@@ -20,12 +20,24 @@ public abstract class UserTable<T extends UserTableRow> extends AppElement imple
         return rows().iterator();
     }
 
+    public List<String> getUsernames() {
+        List<String> usernames = new ArrayList<>();
+        for (UserTableRow row : this) {
+            usernames.add(row.getUsername());
+        }
+        return usernames;
+    }
+
     public List<T> rows() {
         List<T> rows = new ArrayList<>();
         for (WebElement rowEl : findElements(By.cssSelector("tbody tr"))) {
             rows.add(rowForElement(rowEl));
         }
         return rows;
+    }
+
+    public T row(int index) {
+        return rows().get(index);
     }
 
     public abstract T rowFor(User user);

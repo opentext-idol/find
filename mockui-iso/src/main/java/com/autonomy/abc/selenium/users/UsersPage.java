@@ -8,14 +8,12 @@ import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class UsersPage<T extends UserTableRow> extends SOPageBase {
@@ -48,16 +46,11 @@ public abstract class UsersPage<T extends UserTableRow> extends SOPageBase {
 	public abstract UserTable<T> getTable();
 
 	public int countNumberOfUsers() {
-		Waits.loadOrFadeWait();
 		return getTable().rows().size();
 	}
 
 	public List<String> getUsernames() {
-		List<String> usernames = new ArrayList<>();
-		for (UserTableRow row : getTable()) {
-			usernames.add(row.getUsername());
-		}
-		return usernames;
+		return getTable().getUsernames();
 	}
 
 	public T getUserRow(User user) {
