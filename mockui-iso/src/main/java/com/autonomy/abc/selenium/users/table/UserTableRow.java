@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.users.table;
 
 import com.autonomy.abc.selenium.users.Status;
+import com.hp.autonomy.frontend.selenium.element.Editable;
+import com.hp.autonomy.frontend.selenium.element.InlineEdit;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
@@ -13,7 +15,19 @@ public abstract class UserTableRow extends AppElement {
     }
 
     public String getUsername() {
-        return findElement(By.className("user-username")).getText().trim();
+        return editableUsername().getValue().trim();
+    }
+
+    public void changeUsernameTo(String newUsername) {
+        editableUsername().setValueAndWait(newUsername);
+    }
+
+    public WebElement usernameEditBox() {
+        return findElement(By.className("form-group"));
+    }
+
+    private Editable editableUsername() {
+        return new InlineEdit(findElement(By.className("user-username")), getDriver());
     }
 
     public WebElement deleteButton() {

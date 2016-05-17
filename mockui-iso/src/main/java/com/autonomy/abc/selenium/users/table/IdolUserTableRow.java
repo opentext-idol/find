@@ -14,6 +14,16 @@ public class IdolUserTableRow extends UserTableRow {
     }
 
     @Override
+    public void changeUsernameTo(String newUsername) {
+        usernameEditBox();
+    }
+
+    @Override
+    public WebElement usernameEditBox() {
+        throw new UnsupportedOperationException("Cannot change user names on IDOL");
+    }
+
+    @Override
     public void changeRoleTo(Role newRole) {
         roleLink().click();
         setRoleValue(newRole);

@@ -39,11 +39,6 @@ public class HsodDevelopersPage extends HsodUserManagementBase<HsodDeveloperTabl
                 .build();
     }
 
-    public void editUsername(User dev, String devUsername) {
-        editUsernameLink(dev).click();
-        editUsernameInput(dev).setAndSubmit(devUsername);
-    }
-
     public static class Factory extends SOPageFactory<HsodDevelopersPage> {
         public Factory() {
             super(HsodDevelopersPage.class);
