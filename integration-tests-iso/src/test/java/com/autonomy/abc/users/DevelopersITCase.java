@@ -3,8 +3,8 @@ package com.autonomy.abc.users;
 import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.selenium.users.HsodDeveloperService;
 import com.autonomy.abc.selenium.users.HsodDevelopersPage;
+import com.autonomy.abc.selenium.users.table.UserTableRow;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.users.User;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,14 +27,14 @@ public class DevelopersITCase extends IsoHsodTestBase {
 
     @Test
     public void testEditDevUsername(){
-        User developer = developersPage.getUser(0);
-        String originalUsername = developer.getUsername();
+        UserTableRow row = developersPage.getTable().row(0);
+        String originalUsername = row.getUsername();
         String newUsername = "Jeremy Clarkson";
         try {
-            developerService.editUsername(developer, newUsername);
+            row.changeUsernameTo(newUsername);
             verifyThat(developersPage.getUsernames(), hasItem(newUsername));
         } finally {
-            developerService.editUsername(developer, originalUsername);
+            row.changeUsernameTo(originalUsername);
         }
     }
 }

@@ -2,15 +2,15 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.auth.HsodNewUser;
 import com.autonomy.abc.selenium.auth.HsodUser;
+import com.autonomy.abc.selenium.users.table.HsodUserTable;
+import com.autonomy.abc.selenium.users.table.HsodUserTableRow;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
-import com.hp.autonomy.frontend.selenium.users.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
-public class HsodUsersPage extends HsodUserManagementBase {
+public class HsodUsersPage extends UsersPage<HsodUserTableRow> {
     private HsodUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
@@ -42,20 +42,9 @@ public class HsodUsersPage extends HsodUserManagementBase {
         return newUser.createWithRole(role);
     }
 
-    public WebElement getUserRow(User user){
-        return findElement(By.xpath("//*[contains(@class,'user-email') and text()='" + ((HsodUser) user).getEmail() + "']/.."));
-    }
-
-    public void setRoleValueFor(User user, Role newRole) {
-        getUserRow(user).findElement(By.xpath(".//a[contains(text(),'"+newRole+"')]")).click();
-    }
-
-    public String getEmailOf(User user) {
-        return getUserRow(user).findElement(By.className("user-email")).getText();
-    }
-
-    public WebElement resetAuthenticationButton(User user) {
-        return getUserRow(user).findElement(By.className("reset-authentication"));
+    @Override
+    public HsodUserTable getTable() {
+        return new HsodUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
     }
 
     public static class Factory extends SOPageFactory<HsodUsersPage> {
