@@ -64,7 +64,7 @@ public class RelatedConceptsITCase extends FindTestBase {
         String concept = topRelatedConcept.getText();
 
         topRelatedConcept.click();
-        assertThat(navBar.getAlsoSearchingForTerms(), hasItem(concept));
+        assertThat(navBar.getAlsoSearchingForTerms(), hasItem(equalToIgnoringCase(concept)));
         assertThat(navBar.getSearchBoxTerm(), is(search));
     }
 
@@ -81,12 +81,12 @@ public class RelatedConceptsITCase extends FindTestBase {
 
     @Test
     public void testRelatedConceptsInResults(){
-        findService.search("Tiger");
+        findService.search("Preposterous");
         results.highlightRelatedConceptsButton().click();
 
         for(WebElement relatedConceptLink : results.relatedConcepts()) {
             String relatedConcept = relatedConceptLink.getText();
-            for (WebElement relatedConceptElement : results.highlightedSausages(relatedConcept)) {
+            for (WebElement relatedConceptElement : results.scrollForHighlightedSausages(relatedConcept)) {
                 if (relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                     verifyThat(relatedConceptElement, containsTextIgnoringCase(relatedConcept));
                 }
@@ -102,15 +102,15 @@ public class RelatedConceptsITCase extends FindTestBase {
         findService.search("pancakes");
         WebElement button = results.highlightRelatedConceptsButton();
 
-        verifyThat(results.highlightedSausages(""), empty());
+        verifyThat(results.scrollForHighlightedSausages(""), empty());
         verifyThat(button, not(hasClass("active")));
 
         button.click();
-        verifyThat(results.highlightedSausages(""), not(empty()));
+        verifyThat(results.scrollForHighlightedSausages(""), not(empty()));
         verifyThat(button, hasClass("active"));
 
         button.click();
-        verifyThat(results.highlightedSausages(""), empty());
+        verifyThat(results.scrollForHighlightedSausages(""), empty());
         verifyThat(button, not(hasClass("active")));
     }
 
@@ -121,7 +121,7 @@ public class RelatedConceptsITCase extends FindTestBase {
         List<String> relatedConcepts = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             String newConcept = clickFirstNewConcept(relatedConcepts);
-            verifyThat(navBar.getAlsoSearchingForTerms(), hasItem(newConcept));
+            verifyThat(navBar.getAlsoSearchingForTerms(),hasItem(equalToIgnoringCase(newConcept)));
         }
         verifyThat(navBar.getSearchBoxTerm(), is("bongo"));
         verifyThat(navBar.getAlsoSearchingForTerms(), hasSize(relatedConcepts.size()));
@@ -137,17 +137,24 @@ public class RelatedConceptsITCase extends FindTestBase {
         String secondConcept = clickFirstNewConcept(concepts);
         verifyThat(navBar.getAlsoSearchingForTerms(), hasSize(2));
 
-        navBar.additionalConcept(firstConcept).removeAndWait();
+        if(!isHosted()) {
+            navBar.closeFirstConcept();
+        }
+        else{
+            navBar.additionalConcept(secondConcept).removeAndWait();
+        }
+
         List<String> alsoSearchingFor = navBar.getAlsoSearchingForTerms();
 
         verifyThat(alsoSearchingFor, hasSize(1));
-        verifyThat(alsoSearchingFor, not(hasItem(firstConcept)));
-        verifyThat(alsoSearchingFor, hasItem(secondConcept));
+        verifyThat(alsoSearchingFor, not(hasItem(equalToIgnoringCase(secondConcept))));
+        verifyThat(alsoSearchingFor, hasItem(equalToIgnoringCase(firstConcept)));
         verifyThat(navBar.getSearchBoxTerm(), is("jungle"));
     }
 
     @Test
     @ResolvedBug("CCUK-3566")
+    @ActiveBug("FIND-109")
     public void testTermNotInRelatedConcepts() {
         final String query = "world cup";
         findService.search(query);
@@ -182,16 +189,18 @@ public class RelatedConceptsITCase extends FindTestBase {
         List<String> addedConcepts = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             WebElement firstSausage = results.highlightedSausages("").get(0);
-            LOGGER.info("clicking sausage " + firstSausage.getText());
-            addedConcepts.add(firstSausage.getText());
+            String firstSausageText=firstSausage.getText();
+            LOGGER.info("clicking sausage " + firstSausageText);
+            addedConcepts.add(firstSausageText);
             firstSausage.click();
 
-            verifyThat(navBar.getSearchBoxTerm(), is("sausage"));
+            verifyThat(navBar.getSearchBoxTerm(), equalToIgnoringCase("sausage"));
             verifyThat(navBar.getAlsoSearchingForTerms(), containsItems(addedConcepts));
         }
     }
 
     @Test
+    @ActiveBug("FIND-111")
     public void testRefreshAddedConcepts() {
         findService.search("fresh");
         List<String> concepts = new ArrayList<>();
@@ -211,8 +220,9 @@ public class RelatedConceptsITCase extends FindTestBase {
             if (!existingConcepts.contains(conceptText)) {
                 LOGGER.info("clicking concept " + conceptText);
                 concept.click();
-                existingConcepts.add(conceptText);
-                results.unhover();
+
+                existingConcepts.add(conceptText.toLowerCase());
+                
                 return conceptText;
             }
         }

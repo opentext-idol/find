@@ -196,13 +196,40 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
     }
 
     public WebElement highlightRelatedConceptsButton() {
-        return findElement(By.className("highlight-related-concepts"));
+        return findElement(By.xpath("//button[contains(text(),'Highlight')]"));
     }
 
     public List<WebElement> highlightedSausages(String highlightedTerm) {
-        return findElements(new Locator()
-                        .havingClass("entity-label")
-                        .containingCaseInsensitive(highlightedTerm)
-        );
+        List<WebElement> highlightedRelatedTerms = findElements(new Locator()
+                    .havingClass("entity-label")
+                    .containingCaseInsensitive(highlightedTerm)
+            );
+        //on_prem
+        if(!(highlightedRelatedTerms.size()>0)) {
+            highlightedRelatedTerms = findHighlightedEntityText(highlightedTerm,highlightedRelatedTerms);
+        }
+        return highlightedRelatedTerms;
     }
+
+    private List<WebElement> findHighlightedEntityText(String highlightedTerm, List<WebElement> highlightedRelatedTerms) {
+        List<WebElement> allHighlightedTerms = findElements(new Locator()
+                .havingClass("highlighted-entity-text")
+                .containingCaseInsensitive(highlightedTerm)
+        );
+
+        for (WebElement sausage : allHighlightedTerms) {
+            if (sausage.isDisplayed()) {
+                highlightedRelatedTerms.add(sausage);
+            }
+        }
+        return highlightedRelatedTerms;
+    }
+
+
+    public List<WebElement> scrollForHighlightedSausages(String highlightedTerm){
+        DriverUtil.scrollToBottom(getDriver());
+        waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        return highlightedSausages(highlightedTerm);
+    }
+
 }
