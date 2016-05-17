@@ -25,3 +25,4 @@
 
 - [[Changing the logo]]
 - [[Custom Document Templates]]
+- [[Translating Find]]
