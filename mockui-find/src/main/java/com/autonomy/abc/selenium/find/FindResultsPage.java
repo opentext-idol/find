@@ -204,21 +204,27 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
                     .havingClass("entity-label")
                     .containingCaseInsensitive(highlightedTerm)
             );
-
+        //on_prem
         if(!(highlightedRelatedTerms.size()>0)) {
-            List<WebElement> allHighlightedTerms = findElements(new Locator()
-                    .havingClass("highlighted-entity-text")
-                    .containingCaseInsensitive(highlightedTerm)
-            );
+            highlightedRelatedTerms = findHighlightedEntityText(highlightedTerm,highlightedRelatedTerms);
+        }
+        return highlightedRelatedTerms;
+    }
 
-            for (WebElement sausage : allHighlightedTerms) {
-                if (sausage.isDisplayed()) {
-                    highlightedRelatedTerms.add(sausage);
-                }
+    private List<WebElement> findHighlightedEntityText(String highlightedTerm, List<WebElement> highlightedRelatedTerms) {
+        List<WebElement> allHighlightedTerms = findElements(new Locator()
+                .havingClass("highlighted-entity-text")
+                .containingCaseInsensitive(highlightedTerm)
+        );
+
+        for (WebElement sausage : allHighlightedTerms) {
+            if (sausage.isDisplayed()) {
+                highlightedRelatedTerms.add(sausage);
             }
         }
         return highlightedRelatedTerms;
     }
+
 
     public List<WebElement> scrollForHighlightedSausages(String highlightedTerm){
         DriverUtil.scrollToBottom(getDriver());
@@ -226,7 +232,4 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         return highlightedSausages(highlightedTerm);
     }
 
-    public WebElement resultNumSpan(){
-       return findElement(By.className("results-number"));
-    }
 }

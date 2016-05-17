@@ -64,7 +64,7 @@ public class RelatedConceptsITCase extends FindTestBase {
         String concept = topRelatedConcept.getText();
 
         topRelatedConcept.click();
-        assertThat(navBar.getAlsoSearchingForTerms(), anyOf(hasItem(concept),hasItem(concept.toLowerCase())));
+        assertThat(navBar.getAlsoSearchingForTerms(), hasItem(equalToIgnoringCase(concept)));
         assertThat(navBar.getSearchBoxTerm(), is(search));
     }
 
@@ -121,7 +121,7 @@ public class RelatedConceptsITCase extends FindTestBase {
         List<String> relatedConcepts = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             String newConcept = clickFirstNewConcept(relatedConcepts);
-            verifyThat(navBar.getAlsoSearchingForTerms(), anyOf(hasItem(newConcept),hasItem(newConcept.toLowerCase())));
+            verifyThat(navBar.getAlsoSearchingForTerms(),hasItem(equalToIgnoringCase(newConcept)));
         }
         verifyThat(navBar.getSearchBoxTerm(), is("bongo"));
         verifyThat(navBar.getAlsoSearchingForTerms(), hasSize(relatedConcepts.size()));
@@ -138,7 +138,6 @@ public class RelatedConceptsITCase extends FindTestBase {
         verifyThat(navBar.getAlsoSearchingForTerms(), hasSize(2));
 
         if(!isHosted()) {
-            results.getResult(2).title().click();
             navBar.closeFirstConcept();
         }
         else{
@@ -153,9 +152,9 @@ public class RelatedConceptsITCase extends FindTestBase {
         verifyThat(navBar.getSearchBoxTerm(), is("jungle"));
     }
 
-    //shouldn't be failing
     @Test
     @ResolvedBug("CCUK-3566")
+    @ActiveBug("FIND-109")
     public void testTermNotInRelatedConcepts() {
         final String query = "world cup";
         findService.search(query);
@@ -223,8 +222,7 @@ public class RelatedConceptsITCase extends FindTestBase {
                 concept.click();
 
                 existingConcepts.add(conceptText.toLowerCase());
-
-                results.unhover();
+                
                 return conceptText;
             }
         }
