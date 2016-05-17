@@ -190,7 +190,7 @@ define([
             }, {
                 constructor: MapResultsView,
                 id: 'map',
-                shown: hasBiRole,
+                shown: hasBiRole && configuration().map.enabled,
                 uniqueId: _.uniqueId('results-view-item-'),
                 constructorArguments: _.extend({
                     resultsStep: this.mapViewResultsStep,
