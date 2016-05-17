@@ -23,8 +23,11 @@ public abstract class UsersPage<T extends UserTableRow> extends SOPageBase {
 	protected UsersPage(final WebDriver driver) {
 		super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
 	}
-	
-	public abstract User addNewUser(NewUser newUser, Role role);
+
+	public int getUserCountInTitle() {
+		String title = getDriver().findElement(By.tagName("h1")).getText();
+		return Integer.parseInt(title.replaceAll("\\D+", ""));
+	}
 
 	public WebElement createUserButton() {
 		return findElement(By.id("create-user"));
@@ -32,37 +35,7 @@ public abstract class UsersPage<T extends UserTableRow> extends SOPageBase {
 
 	public abstract UserCreationModal userCreationModal();
 
-	public int countNumberOfUsers() {
-		Waits.loadOrFadeWait();
-		return getTable().rows().size();
-	}
-
-	public abstract UserTable<T> getTable();
-
-	public List<String> getUsernames() {
-		List<String> usernames = new ArrayList<>();
-		for (UserTableRow row : getTable()) {
-			usernames.add(row.getUsername());
-		}
-		return usernames;
-	}
-
-	public Role getRoleOf(User user) {
-		return getUserRow(user).getRole();
-	}
-
-	public T getUserRow(User user) {
-		return getTable().rowFor(user);
-	}
-
-	@Override
-	public void waitForLoad() {
-		waitForLoad(getDriver());
-	}
-
-	private static void waitForLoad(WebDriver driver) {
-		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.id("create-user")));
-	}
+	public abstract User addNewUser(NewUser newUser, Role role);
 
 	public FormInput userSearchFilter() {
 		return new FormInput(findElement(By.className("users-search-filter")), getDriver());
@@ -72,8 +45,35 @@ public abstract class UsersPage<T extends UserTableRow> extends SOPageBase {
 		return new Dropdown(findElement(By.cssSelector(".users-filters-view .dropdown")), getDriver());
 	}
 
-	public int getUserCountInTitle() {
-		String title = getDriver().findElement(By.tagName("h1")).getText();
-		return Integer.parseInt(title.replaceAll("\\D+", ""));
+	public abstract UserTable<T> getTable();
+
+	public int countNumberOfUsers() {
+		Waits.loadOrFadeWait();
+		return getTable().rows().size();
+	}
+
+	public List<String> getUsernames() {
+		List<String> usernames = new ArrayList<>();
+		for (UserTableRow row : getTable()) {
+			usernames.add(row.getUsername());
+		}
+		return usernames;
+	}
+
+	public T getUserRow(User user) {
+		return getTable().rowFor(user);
+	}
+
+	public Role getRoleOf(User user) {
+		return getUserRow(user).getRole();
+	}
+
+	@Override
+	public void waitForLoad() {
+		waitForLoad(getDriver());
+	}
+
+	private static void waitForLoad(WebDriver driver) {
+		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.id("create-user")));
 	}
 }

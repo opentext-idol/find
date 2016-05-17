@@ -42,6 +42,11 @@ public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
         return newUser.createWithRole(role);
     }
 
+    @Override
+    public IdolUserTable getTable() {
+        return new IdolUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
+    }
+
     public User replaceAuthFor(User user, ReplacementAuth newAuth) {
         if (newAuth instanceof IdolIsoReplacementAuth) {
             PasswordBox passwordBox = getUserRow(user).passwordBox();
@@ -49,11 +54,6 @@ public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
             passwordBox.waitForUpdate();
         }
         return newAuth.replaceAuth(user);
-    }
-
-    @Override
-    public IdolUserTable getTable() {
-        return new IdolUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
     }
 
     public static class Factory extends SOPageFactory<IdolUsersPage> {
