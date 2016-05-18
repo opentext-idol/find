@@ -23,6 +23,67 @@ define([
     const EMPTY_BAR_HEIGHT = 1;
     const UPDATE_DEBOUNCE_WAIT_TIME = 1000;
 
+    var selectionRect = {
+        element: null,
+        previousElement: null,
+        currentX: 0,
+        originX: 0,
+        setElement: function (ele) {
+            this.previousElement = this.element;
+            this.element = ele;
+        },
+        getNewAttributes: function () {
+            let x = this.currentX < this.originX ? this.currentX : this.originX;
+            let width = Math.abs(this.currentX - this.originX);
+            return {
+                x: x,
+                width: width
+            };
+        },
+        getCurrentAttributes: function () {
+            let x = +this.element.attr("x");
+            let width = +this.element.attr("width");
+            return {
+                x1: x,
+                x2: x + width
+            };
+        },
+        init: function (chart, newX) {
+            let rectElement = chart.append("rect")
+                .attr({
+                    rx: 4,
+                    ry: 4,
+                    x: newX,
+                    y: 0,
+                    width: 0,
+                    height: GRAPH_HEIGHT
+                })
+                .classed("selection", true);
+            this.setElement(rectElement);
+            this.originX = newX;
+            this.currentX = newX;
+            this.update(newX);
+        },
+        update: function (newX) {
+            this.currentX = newX;
+            this.element.attr(this.getNewAttributes());
+        },
+        focus: function () {
+            this.element
+                .style("stroke", "#01a982")
+                .style("stroke-width", "2.5");
+        },
+        remove: function () {
+            this.element.remove();
+            this.element = null;
+        },
+        removePrevious: function () {
+            if (this.previousElement) {
+                this.previousElement.remove();
+            }
+        }
+    };
+
     function getData(numericFieldValuesWithCount) {
         //noinspection JSUnresolvedFunction
         let minValue = +_.first(numericFieldValuesWithCount).value;
@@ -75,7 +136,7 @@ define([
         };
     }
 
-    function drawGraph(data) {
+    function drawGraph(data, selectionCallback) {
         let scale = {
             barWidth: d3.scale.linear(),
             y: d3.scale.linear()
@@ -125,6 +186,41 @@ define([
             .text(function (d) {
                 return (d.maxValue === d.minValue ? "Value: " + d.minValue : "Range: " + d.minValue + "-" + d.maxValue) + "\nCount: " + d.count;
             });
+
+        let dragBehavior = d3.behavior.drag()
+            .on("drag", dragMove)
+            .on("dragstart", dragStart(chart))
+            .on("dragend", dragEnd(scale.barWidth, selectionCallback));
+        chart.call(dragBehavior);
+    }
+
+    function dragStart(chart) {
+        return function () {
+            var p = d3.mouse(this);
+            selectionRect.init(chart, p[0]);
+            selectionRect.removePrevious();
+        }
+    }
+
+    function dragMove() {
+        var p = d3.mouse(this);
+        selectionRect.update(p[0]);
+    }
+
+    function dragEnd(scale, selectionCallback) {
+        return function () {
+            var finalAttributes = selectionRect.getCurrentAttributes();
+            if (finalAttributes.x2 - finalAttributes.x1 > 1) {
+                // range selected
+                d3.event.sourceEvent.preventDefault();
+                selectionRect.focus();
+                selectionCallback(scale.invert(finalAttributes.x1), scale.invert(finalAttributes.x2));
+            } else {
+                // single point selected
+                selectionRect.remove();
+                selectionCallback();
+            }
+        }
     }
 
     function resetSelectedParametricValues(selectedParametricValues, fieldName) {
@@ -177,23 +273,6 @@ define([
                 //noinspection JSUnresolvedVariable
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
             },
-            'click [bucket-min]': function (e) {
-                let $target = $(e.currentTarget);
-                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
-                this.updateRestrictions(this.selectedParametricValues, this.fieldName, $target.attr('bucket-min'), $target.attr('bucket-max'));
-            },
-            'slide .numeric-parametric-slider': function(e) {
-                //noinspection JSUnresolvedVariable
-                this.$minInput.val(Number(e.value[0]));
-                //noinspection JSUnresolvedVariable
-                this.$maxInput.val(Number(e.value[1]));
-            },
-            'slideStop .numeric-parametric-slider': function() {
-                //noinspection JSUnresolvedVariable
-                this.$minInput.trigger('change');
-                //noinspection JSUnresolvedVariable
-                this.$maxInput.trigger('change');
-            },
             'change .numeric-parametric-min-input': function () {
                 //noinspection JSUnresolvedFunction,JSUnresolvedVariable
                 this.updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, this.$minInput.val(), this.$maxInput.val());
@@ -222,24 +301,10 @@ define([
             let numericFieldValuesWithCount = this.model.get('values');
             var data = getData(numericFieldValuesWithCount);
 
-            drawGraph.call(this, data);
-
             //noinspection JSUnresolvedFunction
             let minValue = +_.first(data.buckets).minValue;
             //noinspection JSUnresolvedFunction
             let maxValue = +_.last(data.buckets).maxValue;
-
-            //noinspection JSUnresolvedFunction
-            this.executeCallbackWithoutRestrictions(_.bind(function (result) {
-                //noinspection JSUnresolvedFunction
-                this.$('.numeric-parametric-slider')
-                    .slider({
-                        min: +_.first(result.values).value,
-                        max: +_.last(result.values).value,
-                        tooltip: 'hide',
-                        value: [minValue, maxValue]
-                    });
-            }, this));
 
             //noinspection JSUnresolvedFunction
             this.$minInput = this.$('.numeric-parametric-min-input');
@@ -250,16 +315,23 @@ define([
             this.$minInput.val(minValue);
             //noinspection JSUnresolvedFunction
             this.$maxInput.val(maxValue);
+
+            //noinspection JSUnresolvedFunction
+            drawGraph.call(this, data, _.bind(function (x1, x2) {
+                let min = x1 || this.$minInput.val();
+                let max = x2 || this.$maxInput.val();
+                this.updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, min, max);
+            }, this));
         },
-        
-        updateRestrictions: function(selectedParametricValues, fieldName, min, max) {
+
+        updateRestrictions: function (selectedParametricValues, fieldName, min, max) {
             resetSelectedParametricValues(selectedParametricValues, fieldName);
             selectedParametricValues.add({
                 field: fieldName,
                 range: [min, max]
             });
         },
-        
+
         updateRestrictionsAfterDelay: function (selectedParametricValues, fieldName, min, max) {
             //noinspection JSUnresolvedFunction
             _.debounce(this.updateRestrictions, UPDATE_DEBOUNCE_WAIT_TIME)(selectedParametricValues, fieldName, min, max);
