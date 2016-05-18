@@ -149,7 +149,7 @@ define([
             var hasBiRole = configuration().hasBiRole;
 
             this.resultsViews = _.where([{
-                constructor: this.ResultsViewAugmentation,
+                Constructor: this.ResultsViewAugmentation,
                 id: 'list',
                 shown: true,
                 uniqueId: _.uniqueId('results-view-item-'),
@@ -166,7 +166,7 @@ define([
                     icon: 'hp-list'
                 }
             }, {
-                constructor: TopicMapView,
+                Constructor: TopicMapView,
                 id: 'topic-map',
                 shown: hasBiRole,
                 uniqueId: _.uniqueId('results-view-item-'),
@@ -178,7 +178,7 @@ define([
                     icon: 'hp-grid'
                 }
             }, {
-                constructor: SunburstView,
+                Constructor: SunburstView,
                 constructorArguments: subViewArguments,
                 id: 'sunburst',
                 shown: hasBiRole && this.displaySunburst,
@@ -188,7 +188,7 @@ define([
                     icon: 'hp-favorite'
                 }
             }, {
-                constructor: MapResultsView,
+                Constructor: MapResultsView,
                 id: 'map',
                 shown: hasBiRole && configuration().map.enabled,
                 uniqueId: _.uniqueId('results-view-item-'),
