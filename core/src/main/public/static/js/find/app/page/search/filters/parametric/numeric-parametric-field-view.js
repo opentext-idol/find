@@ -21,6 +21,7 @@ define([
     const MAX_WIDTH_MODIFIER = 1;
     const BAR_GAP_SIZE = 1;
     const EMPTY_BAR_HEIGHT = 1;
+    const UPDATE_DEBOUNCE_WAIT_TIME = 1000;
 
     function getData(numericFieldValuesWithCount) {
         //noinspection JSUnresolvedFunction
@@ -129,6 +130,24 @@ define([
         });
     }
 
+    function updateMin($minInput, result) {
+        //noinspection JSUnresolvedFunction
+        let minValue = _.first(result.values).value;
+        if (minValue !== $minInput.val()) {
+            $minInput.val(minValue);
+            $minInput.trigger('change');
+        }
+    }
+
+    function updateMax($maxInput, result) {
+        //noinspection JSUnresolvedFunction
+        let maxValue = _.last(result.values).value;
+        if (maxValue !== $maxInput.val()) {
+            $maxInput.val(maxValue);
+            $maxInput.trigger('change');
+        }
+    }
+
     return Backbone.View.extend({
         className: 'animated fadeIn',
         template: _.template(template),
@@ -139,9 +158,7 @@ define([
                 let $minInput = this.$minInput;
                 //noinspection JSUnresolvedFunction
                 this.executeCallbackWithoutRestrictions(function (result) {
-                    //noinspection JSUnresolvedFunction
-                    $minInput.val(_.first(result.values).value);
-                    $minInput.trigger('change');
+                    updateMin($minInput, result);
                 });
             },
             'click .numeric-parametric-no-max': function () {
@@ -149,9 +166,7 @@ define([
                 let $maxInput = this.$maxInput;
                 //noinspection JSUnresolvedFunction
                 this.executeCallbackWithoutRestrictions(function (result) {
-                    //noinspection JSUnresolvedFunction
-                    $maxInput.val(_.last(result.values).value);
-                    $maxInput.trigger('change');
+                    updateMax($maxInput, result);
                 });
             },
             'click .numeric-parametric-reset': function () {
@@ -161,28 +176,14 @@ define([
                 let $maxInput = this.$maxInput;
                 //noinspection JSUnresolvedFunction
                 this.executeCallbackWithoutRestrictions(function (result) {
-                    //noinspection JSUnresolvedFunction
-                    $minInput.val(_.first(result.values).value);
-                    $minInput.trigger('change');
-                    //noinspection JSUnresolvedFunction
-                    $maxInput.val(_.last(result.values).value);
-                    $maxInput.trigger('change');
+                    updateMin($minInput, result);
+                    updateMax($maxInput, result);
                 });
             },
             'click [bucket-min]': function (e) {
-                //noinspection JSUnresolvedVariable
-                let selectedParametricValues = this.selectedParametricValues;
-                //noinspection JSUnresolvedVariable
-                let fieldName = this.fieldName;
-
                 let $target = $(e.currentTarget);
-
-                resetSelectedParametricValues(selectedParametricValues, fieldName);
-
-                selectedParametricValues.add({
-                    field: fieldName,
-                    range: [$target.attr('bucket-min'), $target.attr('bucket-max')]
-                });
+                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
+                this.updateRestrictions(this.selectedParametricValues, this.fieldName, $target.attr('bucket-min'), $target.attr('bucket-max'));
             },
             'slide .numeric-parametric-slider': function(e) {
                 //noinspection JSUnresolvedVariable
@@ -197,10 +198,12 @@ define([
                 this.$maxInput.trigger('change');
             },
             'change .numeric-parametric-min-input': function () {
-                console.log('min input change'); //TODO
+                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
+                this.updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, this.$minInput.val(), this.$maxInput.val());
             },
             'change .numeric-parametric-max-input': function () {
-                console.log('max input change'); //TODO
+                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
+                this.updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, this.$minInput.val(), this.$maxInput.val());
             }
         },
 
@@ -232,7 +235,7 @@ define([
             //noinspection JSUnresolvedFunction
             this.executeCallbackWithoutRestrictions(_.bind(function (result) {
                 //noinspection JSUnresolvedFunction
-                this.$minSlider = this.$('.numeric-parametric-slider')
+                this.$('.numeric-parametric-slider')
                     .slider({
                         min: +_.first(result.values).value,
                         max: +_.last(result.values).value,
@@ -250,6 +253,19 @@ define([
             this.$minInput.val(minValue);
             //noinspection JSUnresolvedFunction
             this.$maxInput.val(maxValue);
+        },
+        
+        updateRestrictions: function(selectedParametricValues, fieldName, min, max) {
+            resetSelectedParametricValues(selectedParametricValues, fieldName);
+            selectedParametricValues.add({
+                field: fieldName,
+                range: [min, max]
+            });
+        },
+        
+        updateRestrictionsAfterDelay: function (selectedParametricValues, fieldName, min, max) {
+            //noinspection JSUnresolvedFunction
+            _.debounce(this.updateRestrictions, UPDATE_DEBOUNCE_WAIT_TIME)(selectedParametricValues, fieldName, min, max);
         },
 
         executeCallbackWithoutRestrictions: function (callback) {
