@@ -15,9 +15,9 @@ define([
 ], function (Backbone, $, _, prettifyFieldName, SelectedParametricValuesCollection, d3, i18n, template) {
     "use strict";
     const DEFAULT_TARGET_NUMBER_OF_BUCKETS = 10;
-    const GRAPH_HEIGHT = 125;
+    const GRAPH_HEIGHT = 110;
     // the amount of relative space to add above the highest data point
-    const MAX_HEIGHT_MULTIPLIER = 4 / 3;
+    const MAX_HEIGHT_MULTIPLIER = 7 / 6;
     const MAX_WIDTH_MODIFIER = 1;
     const BAR_GAP_SIZE = 1;
     const EMPTY_BAR_HEIGHT = 1;
@@ -135,8 +135,8 @@ define([
 
         events: {
             'click .numeric-parametric-no-min': function () {
-                //noinspection JSUnresolvedFunction
-                let $minInput = this.$('.numeric-parametric-min-input');
+                //noinspection JSUnresolvedVariable
+                let $minInput = this.$minInput;
                 //noinspection JSUnresolvedFunction
                 this.executeCallbackWithoutRestrictions(function (result) {
                     //noinspection JSUnresolvedFunction
@@ -145,8 +145,8 @@ define([
                 });
             },
             'click .numeric-parametric-no-max': function () {
-                //noinspection JSUnresolvedFunction
-                let $maxInput = this.$('.numeric-parametric-max-input');
+                //noinspection JSUnresolvedVariable
+                let $maxInput = this.$maxInput;
                 //noinspection JSUnresolvedFunction
                 this.executeCallbackWithoutRestrictions(function (result) {
                     //noinspection JSUnresolvedFunction
@@ -155,10 +155,10 @@ define([
                 });
             },
             'click .numeric-parametric-reset': function () {
-                //noinspection JSUnresolvedFunction
-                let $minInput = this.$('.numeric-parametric-min-input');
-                //noinspection JSUnresolvedFunction
-                let $maxInput = this.$('.numeric-parametric-max-input');
+                //noinspection JSUnresolvedVariable
+                let $minInput = this.$minInput;
+                //noinspection JSUnresolvedVariable
+                let $maxInput = this.$maxInput;
                 //noinspection JSUnresolvedFunction
                 this.executeCallbackWithoutRestrictions(function (result) {
                     //noinspection JSUnresolvedFunction
@@ -184,6 +184,18 @@ define([
                     range: [$target.attr('bucket-min'), $target.attr('bucket-max')]
                 });
             },
+            'slide .numeric-parametric-slider': function(e) {
+                //noinspection JSUnresolvedVariable
+                this.$minInput.val(Number(e.value[0]));
+                //noinspection JSUnresolvedVariable
+                this.$maxInput.val(Number(e.value[1]));
+            },
+            'slideStop .numeric-parametric-slider': function() {
+                //noinspection JSUnresolvedVariable
+                this.$minInput.trigger('change');
+                //noinspection JSUnresolvedVariable
+                this.$maxInput.trigger('change');
+            },
             'change .numeric-parametric-min-input': function () {
                 console.log('min input change'); //TODO
             },
@@ -200,10 +212,11 @@ define([
         },
 
         render: function () {
-            //noinspection JSUnresolvedVariable
+            //noinspection JSUnresolvedVariable,JSUnresolvedFunction
             this.$el.empty().append(this.template({
                 i18n: i18n,
-                fieldName: prettifyFieldName(this.model.get('name'))
+                fieldName: prettifyFieldName(this.model.get('name')),
+                id: _.uniqueId('numeric-parametric-field')
             }));
 
             let numericFieldValuesWithCount = this.model.get('values');
@@ -212,9 +225,31 @@ define([
             drawGraph.call(this, data);
 
             //noinspection JSUnresolvedFunction
-            this.$('.numeric-parametric-min-input').attr('value', _.first(data.buckets).minValue);
+            let minValue = +_.first(data.buckets).minValue;
             //noinspection JSUnresolvedFunction
-            this.$('.numeric-parametric-max-input').attr('value', _.last(data.buckets).maxValue);
+            let maxValue = +_.last(data.buckets).maxValue;
+
+            //noinspection JSUnresolvedFunction
+            this.executeCallbackWithoutRestrictions(_.bind(function (result) {
+                //noinspection JSUnresolvedFunction
+                this.$minSlider = this.$('.numeric-parametric-slider')
+                    .slider({
+                        min: +_.first(result.values).value,
+                        max: +_.last(result.values).value,
+                        tooltip: 'hide',
+                        value: [minValue, maxValue]
+                    });
+            }, this));
+
+            //noinspection JSUnresolvedFunction
+            this.$minInput = this.$('.numeric-parametric-min-input');
+            //noinspection JSUnresolvedFunction
+            this.$maxInput = this.$('.numeric-parametric-max-input');
+
+            //noinspection JSUnresolvedFunction
+            this.$minInput.val(minValue);
+            //noinspection JSUnresolvedFunction
+            this.$maxInput.val(maxValue);
         },
 
         executeCallbackWithoutRestrictions: function (callback) {
