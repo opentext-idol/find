@@ -120,6 +120,10 @@ define([
                 'bucket-max': function (d) {
                     return d.maxValue;
                 }
+            })
+            .append("title")
+            .text(function (d) {
+                return "Range: " + d.minValue + "-" + d.maxValue + "\nCount: " + d.count;
             });
     }
 
@@ -171,14 +175,7 @@ define([
             },
             'click .numeric-parametric-reset': function () {
                 //noinspection JSUnresolvedVariable
-                let $minInput = this.$minInput;
-                //noinspection JSUnresolvedVariable
-                let $maxInput = this.$maxInput;
-                //noinspection JSUnresolvedFunction
-                this.executeCallbackWithoutRestrictions(function (result) {
-                    updateMin($minInput, result);
-                    updateMax($maxInput, result);
-                });
+                resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
             },
             'click [bucket-min]': function (e) {
                 let $target = $(e.currentTarget);
