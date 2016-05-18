@@ -5,15 +5,17 @@
 
 define([
     'backbone',
+    'jquery',
     'underscore',
     'parametric-refinement/prettify-field-name',
+    'parametric-refinement/selected-values-collection',
     'd3',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html'
-], function (Backbone, _, prettifyFieldName, d3, i18n, template) {
+], function (Backbone, $, _, prettifyFieldName, SelectedParametricValuesCollection, d3, i18n, template) {
     "use strict";
     const DEFAULT_TARGET_NUMBER_OF_BUCKETS = 10;
-    const GRAPH_HEIGHT = 150;
+    const GRAPH_HEIGHT = 125;
     // the amount of relative space to add above the highest data point
     const MAX_HEIGHT_MULTIPLIER = 4 / 3;
     const MAX_WIDTH_MODIFIER = 1;
@@ -67,22 +69,87 @@ define([
         var counts = _.pluck(buckets, 'count');
         return {
             maxValue: Math.max.apply(Math, counts),
+            minValue: Math.min.apply(Math, counts),
             bucketSize: bucketSize,
             buckets: buckets
         };
     }
 
+    function resetSelectedParametricValues(selectedParametricValues, fieldName) {
+        let existingRestrictions = selectedParametricValues.where({field: fieldName});
+        existingRestrictions.forEach(function (model) {
+            selectedParametricValues.remove(model);
+        });
+    }
+
     return Backbone.View.extend({
         className: 'animated fadeIn',
         template: _.template(template),
-        
-        initialize: function (options) {
-            this.viewWidth = options.viewWidth;
 
-            //noinspection JSUnresolvedVariable
-            this.$el.attr('data-field', this.model.id);
-            //noinspection JSUnresolvedVariable
-            this.$el.attr('data-field-display-name', this.model.get('displayName'));
+        events: {
+            'click .numeric-parametric-no-min': function () {
+                //noinspection JSUnresolvedFunction
+                let $minInput = this.$('.numeric-parametric-min-input');
+                //noinspection JSUnresolvedFunction
+                this.executeCallbackWithoutRestrictions(function (result) {
+                    //noinspection JSUnresolvedFunction
+                    $minInput.val(_.first(result.values).value);
+                    $minInput.trigger('change');
+                });
+            },
+            'click .numeric-parametric-no-max': function () {
+                //noinspection JSUnresolvedFunction
+                let $maxInput = this.$('.numeric-parametric-max-input');
+                //noinspection JSUnresolvedFunction
+                this.executeCallbackWithoutRestrictions(function (result) {
+                    //noinspection JSUnresolvedFunction
+                    $maxInput.val(_.last(result.values).value);
+                    $maxInput.trigger('change');
+                });
+            },
+            'click .numeric-parametric-reset': function () {
+                //noinspection JSUnresolvedFunction
+                let $minInput = this.$('.numeric-parametric-min-input');
+                //noinspection JSUnresolvedFunction
+                let $maxInput = this.$('.numeric-parametric-max-input');
+                //noinspection JSUnresolvedFunction
+                this.executeCallbackWithoutRestrictions(function (result) {
+                    //noinspection JSUnresolvedFunction
+                    $minInput.val(_.first(result.values).value);
+                    $minInput.trigger('change');
+                    //noinspection JSUnresolvedFunction
+                    $maxInput.val(_.last(result.values).value);
+                    $maxInput.trigger('change');
+                });
+            },
+            'click [bucket-min]': function (e) {
+                //noinspection JSUnresolvedVariable
+                let selectedParametricValues = this.selectedParametricValues;
+                //noinspection JSUnresolvedVariable
+                let fieldName = this.fieldName;
+
+                let $target = $(e.currentTarget);
+
+                resetSelectedParametricValues(selectedParametricValues, fieldName);
+
+                selectedParametricValues.add({
+                    field: fieldName,
+                    range: [$target.attr('bucket-min'), $target.attr('bucket-max')]
+                });
+            },
+            'change .numeric-parametric-min-input': function () {
+                console.log('min input change'); //TODO
+            },
+            'change .numeric-parametric-max-input': function () {
+                console.log('max input change'); //TODO
+            }
+        },
+
+        initialize: function (options) {
+            this.queryModel = options.queryModel;
+            this.selectedParametricValues = options.selectedParametricValues;
+            this.viewWidth = options.viewWidth;
+            this.fieldName = this.model.id;
         },
 
         render: function () {
@@ -137,6 +204,36 @@ define([
                     'bucket-max': function (d) {
                         return d.maxValue;
                     }
+                });
+
+            //noinspection JSUnresolvedFunction
+            this.$('.numeric-parametric-min-input').attr('value', _.first(data.buckets).minValue);
+            //noinspection JSUnresolvedFunction
+            this.$('.numeric-parametric-max-input').attr('value', _.last(data.buckets).maxValue);
+        },
+
+        executeCallbackWithoutRestrictions: function (callback) {
+            let fieldName = this.fieldName;
+            let otherRestrictions = this.selectedParametricValues.filter(function (model) {
+                return model.get('field') !== fieldName;
+            });
+            let clonedCollection = new SelectedParametricValuesCollection(otherRestrictions);
+            let self = this;
+            $.ajax({
+                    url: '../api/public/parametric/numeric',
+                    traditional: true,
+                    data: {
+                        fieldNames: [fieldName],
+                        databases: self.queryModel.get('indexes'),
+                        queryText: self.queryModel.get('queryText'),
+                        fieldText: clonedCollection.toFieldTextNode(),
+                        minDate: self.queryModel.getIsoDate('minDate'),
+                        maxDate: self.queryModel.getIsoDate('maxDate'),
+                        stateTokens: self.queryModel.get('stateMatchIds')
+                    }
+                })
+                .success(function (result) {
+                    callback.apply(this, result);
                 });
         }
     });

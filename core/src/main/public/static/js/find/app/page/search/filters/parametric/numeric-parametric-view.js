@@ -37,34 +37,16 @@ define([
     return AbstractView.extend({
         template: _.template(template)({i18n: i18n}),
 
-        events: {
-            'click [data-field] [bucket-min]': function (e) {
-                //noinspection JSUnresolvedVariable
-                let selectedParametricValues = this.selectedParametricValues;
-
-                let $target = $(e.currentTarget);
-                let fieldName = $target.closest('[data-field]').attr('data-field');
-
-                let existingRestrictions = selectedParametricValues.where({field: fieldName});
-                existingRestrictions.forEach(function (model) {
-                    selectedParametricValues.remove(model);
-                });
-
-                selectedParametricValues.add({
-                    field: fieldName,
-                    range: [$target.attr('bucket-min'), $target.attr('bucket-max')]
-                });
-            }
-        },
-
         initialize: function (options) {
-            this.selectedParametricValues = options.queryState.selectedParametricValues;
-
             this.monitorCollection(options.numericParametricCollection);
 
             this.fieldNamesListView = new PreInitialisedListView({
                 collection: options.numericParametricCollection,
-                ItemView: FieldView
+                ItemView: FieldView,
+                itemOptions: {
+                    queryModel: options.queryModel,
+                    selectedParametricValues: options.queryState.selectedParametricValues
+                }
             });
         },
 

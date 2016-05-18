@@ -644,6 +644,7 @@ input.find-input {
     color: #fff;
 }
 
+.numeric-parametric-field-control,
 .result-container-control {
     color: #00b388;
     font-size: 14px;
