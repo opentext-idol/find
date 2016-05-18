@@ -22,8 +22,7 @@ define([
     const BAR_GAP_SIZE = 1;
     const EMPTY_BAR_HEIGHT = 1;
 
-    function getData() {
-        let numericFieldValuesWithCount = this.model.get('values');
+    function getData(numericFieldValuesWithCount) {
         //noinspection JSUnresolvedFunction
         let minValue = +_.first(numericFieldValuesWithCount).value;
         //noinspection JSUnresolvedFunction
@@ -73,6 +72,54 @@ define([
             bucketSize: bucketSize,
             buckets: buckets
         };
+    }
+
+    function drawGraph(data) {
+        let scale = {
+            barWidth: d3.scale.linear(),
+            y: d3.scale.linear()
+        };
+
+        //noinspection JSUnresolvedVariable
+        let totalWidth = this.viewWidth;
+
+        scale.barWidth.domain([0, data.bucketSize]);
+        scale.barWidth.range([0, totalWidth * MAX_WIDTH_MODIFIER / data.buckets.length - BAR_GAP_SIZE]);
+        scale.y.domain([0, data.maxValue * MAX_HEIGHT_MULTIPLIER]);
+        scale.y.range([GRAPH_HEIGHT, 0]);
+
+        //noinspection JSUnresolvedFunction
+        let chart = d3.select(this.$('.chart')[0])
+            .attr({
+                width: totalWidth,
+                height: GRAPH_HEIGHT
+            });
+        let bars = chart
+            .selectAll('g')
+            .data(data.buckets)
+            .enter()
+            .append('g');
+        bars.append('rect')
+            .attr({
+                x: function (d, i) {
+                    return i * scale.barWidth(data.bucketSize);
+                },
+                y: function (d) {
+                    return d.count ? scale.y(d.count) : GRAPH_HEIGHT - EMPTY_BAR_HEIGHT;
+                },
+                height: function (d) {
+                    return d.count ? GRAPH_HEIGHT - scale.y(d.count) : EMPTY_BAR_HEIGHT;
+                },
+                width: function (d) {
+                    return scale.barWidth(d.maxValue - d.minValue + 1) - BAR_GAP_SIZE;
+                },
+                'bucket-min': function (d) {
+                    return d.minValue;
+                },
+                'bucket-max': function (d) {
+                    return d.maxValue;
+                }
+            });
     }
 
     function resetSelectedParametricValues(selectedParametricValues, fieldName) {
@@ -158,53 +205,11 @@ define([
                 i18n: i18n,
                 fieldName: prettifyFieldName(this.model.get('name'))
             }));
-            var data = getData.call(this);
 
-            let scale = {
-                barWidth: d3.scale.linear(),
-                y: d3.scale.linear()
-            };
+            let numericFieldValuesWithCount = this.model.get('values');
+            var data = getData(numericFieldValuesWithCount);
 
-            //noinspection JSUnresolvedVariable
-            let totalWidth = this.viewWidth;
-
-            scale.barWidth.domain([0, data.bucketSize]);
-            scale.barWidth.range([0, totalWidth * MAX_WIDTH_MODIFIER / data.buckets.length - BAR_GAP_SIZE]);
-            scale.y.domain([0, data.maxValue * MAX_HEIGHT_MULTIPLIER]);
-            scale.y.range([GRAPH_HEIGHT, 0]);
-
-            //noinspection JSUnresolvedFunction
-            let chart = d3.select(this.$('.chart')[0])
-                .attr({
-                    width: totalWidth,
-                    height: GRAPH_HEIGHT
-                });
-            let bars = chart
-                .selectAll('g')
-                .data(data.buckets)
-                .enter()
-                .append('g');
-            bars.append('rect')
-                .attr({
-                    x: function (d, i) {
-                        return i * scale.barWidth(data.bucketSize);
-                    },
-                    y: function (d) {
-                        return d.count ? scale.y(d.count) : GRAPH_HEIGHT - EMPTY_BAR_HEIGHT;
-                    },
-                    height: function (d) {
-                        return d.count ? GRAPH_HEIGHT - scale.y(d.count) : EMPTY_BAR_HEIGHT;
-                    },
-                    width: function (d) {
-                        return scale.barWidth(d.maxValue - d.minValue + 1) - BAR_GAP_SIZE;
-                    },
-                    'bucket-min': function (d) {
-                        return d.minValue;
-                    },
-                    'bucket-max': function (d) {
-                        return d.maxValue;
-                    }
-                });
+            drawGraph.call(this, data);
 
             //noinspection JSUnresolvedFunction
             this.$('.numeric-parametric-min-input').attr('value', _.first(data.buckets).minValue);
