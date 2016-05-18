@@ -29,7 +29,7 @@ define([
                     .toggleClass('active', viewData.id === selectedTab)
                     .appendTo(this.$contentList);
 
-                viewData.content = new viewData.constructor(viewData.constructorArguments);
+                viewData.content = new viewData.Constructor(viewData.constructorArguments);
 
                 _.each(viewData.events, function(listener, eventName) {
                     this.listenTo(viewData.content, eventName, listener);
