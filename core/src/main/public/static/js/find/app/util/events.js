@@ -81,11 +81,15 @@ define([
         };
 
         this.fullPreview = function() {
-            unAbandon(clickTypes.FULL_PREVIEW);
+            if (position !== -1) {
+                unAbandon(clickTypes.FULL_PREVIEW);
+            }
         };
 
         this.original = function() {
-            unAbandon(clickTypes.ORIGINAL);
+            if (position !== -1) {
+                unAbandon(clickTypes.ORIGINAL);
+            }
         };
 
         this.page = function(page) {
