@@ -123,7 +123,7 @@ define([
             })
             .append("title")
             .text(function (d) {
-                return "Range: " + d.minValue + "-" + d.maxValue + "\nCount: " + d.count;
+                return (d.maxValue === d.minValue ? "Value: " + d.minValue : "Range: " + d.minValue + "-" + d.maxValue) + "\nCount: " + d.count;
             });
     }
 
