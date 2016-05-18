@@ -2,7 +2,7 @@
 -- Description: Add last fetched date for
   tracking when a query was last run
 
--- Previous Version: 1
+-- Previous Version: 11.1.0.1
 -- Target Version: 11.1.0.2
 --------------------------------------------*/
 
