@@ -24,16 +24,16 @@ define([
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/app/util/database-name-resolver',
+    'find/app/util/saved-query-result-poller',
     'find/app/router',
     'find/app/vent',
-    'find/app/configuration',
     'i18n!find/nls/bundle',
     'jquery',
     'underscore',
     'text!find/templates/app/page/find-search.html'
 ], function (BasePage, Backbone, config, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
              InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel,
-             QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, router, vent, configuration, i18n, $, _, template) {
+             QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, router, vent, i18n, $, _, template) {
 
     'use strict';
 
@@ -61,13 +61,12 @@ define([
     function fetchDocument(options, callback) {
         var documentModel = new DocumentModel();
 
-        documentModel
-            .fetch({
-                data: {
-                    reference: options.reference,
-                    database: options.database
-                }
-            }).done(function () {
+        documentModel.fetch({
+            data: {
+                reference: options.reference,
+                database: options.database
+            }
+        }).done(function () {
             callback(documentModel);
         });
     }
@@ -161,7 +160,7 @@ define([
 
             this.inputView = new InputView({model: this.searchModel});
 
-            if (configuration().hasBiRole) {
+            if (config().hasBiRole) {
                 this.tabView = new TabbedSearchView({
                     savedSearchCollection: this.savedSearchCollection,
                     model: this.selectedTabModel,
@@ -170,6 +169,19 @@ define([
                 });
 
                 this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
+
+                var savedSearchConfig = config().savedSearchConfig;
+                if(savedSearchConfig.pollForUpdates) {
+                    this.listenToOnce(this.savedQueryCollection, 'sync', function() {
+                        this.savedQueryResultPoller = new SavedQueryResultPoller({
+                            config: savedSearchConfig,
+                            savedQueryCollection: this.savedQueryCollection,
+                            queryStates: this.queryStates,
+                            onSuccess: function(savedQueryModelId, newResults) {
+                            }
+                        });
+                    });
+                }
             }
 
             this.listenTo(router, 'route:searchSplash', function () {
@@ -236,20 +248,6 @@ define([
                     this.suggestView.render();
                 }.bind(this));
             }, this);
-
-            var savedSearchConfig = config().savedSearchConfig;
-            if (configuration().hasBiRole && savedSearchConfig.pollForUpdates) {
-                this.savedSearchScheduleId = setInterval(_.bind(function () {
-                    this.savedQueryCollection.fetch({remove:false}).done(_.bind(function () {
-                        this.savedQueryCollection.forEach(function (savedQuery) {
-                            $.ajax('../api/bi/saved-query/new-results/' + savedQuery.id)
-                                .success(function (newResults) {
-                                    // TODO: FIND-23
-                                })
-                        })
-                    }, this))
-                }, this), savedSearchConfig.pollingInterval * 60 * 1000);
-            }
         },
 
         render: function () {
@@ -490,7 +488,7 @@ define([
         },
 
         remove: function () {
-            clearInterval(this.savedSearchScheduleId);
+            this.savedQueryResultPoller.destroy();
             this.removeDocumentDetailView();
             Backbone.View.prototype.remove.call(this);
         }

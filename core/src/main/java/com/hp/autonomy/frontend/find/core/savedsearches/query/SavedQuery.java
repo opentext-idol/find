@@ -38,15 +38,21 @@ public class SavedQuery extends SavedSearch<SavedQuery> {
     @Column(name = "last_fetched_new_date")
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime dateNewDocsLastFetched;
+
+    @Column(name = "last_fetched_date")
+    @Type(type = JADIRA_TYPE_NAME)
+    private DateTime dateDocsLastFetched;
     
     private SavedQuery(final Builder builder) {
         super(builder);
         dateNewDocsLastFetched = builder.dateNewDocsLastFetched;
+        dateDocsLastFetched = builder.dateDocsLastFetched;
     }
 
     @Override
     protected void mergeInternal(final SavedQuery other) {
         dateNewDocsLastFetched = other.getDateNewDocsLastFetched() == null ? dateNewDocsLastFetched : other.getDateNewDocsLastFetched();
+        dateDocsLastFetched = other.getDateDocsLastFetched() == null ? dateDocsLastFetched : other.getDateDocsLastFetched();
     }
 
     @NoArgsConstructor
@@ -55,10 +61,12 @@ public class SavedQuery extends SavedSearch<SavedQuery> {
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder extends SavedSearch.Builder<SavedQuery> {
         private DateTime dateNewDocsLastFetched;
+        private DateTime dateDocsLastFetched;
 
         public Builder(final SavedQuery query) {
             super(query);
             dateNewDocsLastFetched = query.dateNewDocsLastFetched;
+            dateDocsLastFetched = query.dateDocsLastFetched;
         }
 
         @Override
