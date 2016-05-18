@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.shared.NotificationTestHelper;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -258,5 +259,51 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 
 	private void newBody() {
 		topNavBar = getElementFactory().getTopNavBar();
+	}
+
+	@Test
+	@ResolvedBug("ISO-27")
+	public void testNotificationsCloseOnPageSwitch(){
+		topNavBar.openSettings();
+		assertThat("Settings dropdown opened",topNavBar.settingsDropdownVisible());
+		keywordService.goToKeywords();
+		newBody();
+		assertThat("Settings dropdown closed",!topNavBar.settingsDropdownVisible());
+		promotionService.goToPromotions();
+		newBody();
+		assertThat("Settings dropdown closed",!topNavBar.settingsDropdownVisible());
+		topNavBar.openSettings();
+		assertThat("Settings dropdown opened",topNavBar.settingsDropdownVisible());
+	}
+
+	@Test
+	@ResolvedBug("ISO-28")
+	public void testNotificationsCloseOnIconClick(){
+		topNavBar.openSettings();
+		assertThat("Settings dropdown opened",topNavBar.settingsDropdownVisible());
+		topNavBar.closeSettings();
+		assertThat("Settings dropdown closed",!topNavBar.settingsDropdownVisible());
+
+		topNavBar.openNotifications();
+		assertThat("Notifications dropdown opened",topNavBar.notificationsDropdownVisible());
+		topNavBar.closeNotifications();
+		assertThat("Notifications dropdown closed",!topNavBar.notificationsDropdownVisible());
+
+	}
+
+
+	@Test
+	@ResolvedBug("ISO-28")
+	public void testNotificationsCloseOnAnywhereElseClick(){
+		topNavBar.openSettings();
+		assertThat("Settings dropdown opened",topNavBar.settingsDropdownVisible());
+
+		topNavBar.openNotifications();
+		assertThat("Settings dropdown closed",!topNavBar.settingsDropdownVisible());
+		assertThat("Notifications dropdown opened",topNavBar.notificationsDropdownVisible());
+
+		topNavBar.clickAnywhereButNotifications();
+		assertThat("Settings dropdown closed",!topNavBar.settingsDropdownVisible());
+		assertThat("Notifications dropdown closed",!topNavBar.notificationsDropdownVisible());
 	}
 }
