@@ -28,16 +28,15 @@ define([
             this.searchModels = options.searchModels;
             this.escapeCallback = options.escapeCallback;
 
-            this.resultsLists = new ResultsLists({
-                searchModels: options.searchModels,
-                escapeCallback: options.escapeCallback,
-                model: this.model
-            });
-
             var resultsViews = [{
-                content: this.resultsLists,
+                Constructor: ResultsLists,
                 id: 'list',
                 uniqueId: _.uniqueId('results-view-item-'),
+                constructorArguments: {
+                    searchModels: options.searchModels,
+                    escapeCallback: options.escapeCallback,
+                    model: this.model
+                },
                 selector: {
                     displayNameKey: 'list',
                     icon: 'hp-list'
@@ -49,10 +48,12 @@ define([
                 selectedTab: resultsViews[0].id
             });
 
-            this.resultsViewSelection = new ResultsViewSelection({
-                views: resultsViews,
-                model: resultsViewSelectionModel
-            });
+            if (resultsViews.length > 1) {
+                this.resultsViewSelection = new ResultsViewSelection({
+                    views: resultsViews,
+                    model: resultsViewSelectionModel
+                });
+            }
 
             this.resultsViewContainer = new ResultsViewContainer({
                 views: resultsViews,
@@ -63,7 +64,10 @@ define([
         render: function() {
             this.$el.html(this.template({i18n: i18n}));
 
-            this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
+            if (this.resultsViewSelection) {
+                this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
+            }
+
             this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
         }
     });

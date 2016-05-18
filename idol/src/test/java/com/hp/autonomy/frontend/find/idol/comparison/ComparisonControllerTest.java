@@ -42,7 +42,7 @@ public class ComparisonControllerTest {
     @Before
     public void setUp() throws Exception {
         comparisonController = new ComparisonController<>(comparisonService, documentsService);
-        when(documentsService.getStateToken(any(QueryRestrictions.class), anyInt()))
+        when(documentsService.getStateToken(any(QueryRestrictions.class), anyInt(), anyBoolean()))
                 .thenReturn(MOCK_STATE_TOKEN_1);
     }
 
@@ -101,7 +101,7 @@ public class ComparisonControllerTest {
         final String sort = "relevance";
         final boolean highlight = true;
 
-        comparisonController.getResults(stateMatchIds, stateDontMatchIds, text, start, maxResults, summary, sort, highlight);
+        comparisonController.getResults(stateMatchIds, stateDontMatchIds, text, start, maxResults, summary, sort, highlight, false);
         verify(comparisonService).getResults(eq(stateMatchIds), eq(stateDontMatchIds), eq(text), eq(start), eq(maxResults), eq(summary), eq(sort), eq(highlight));
     }
 }

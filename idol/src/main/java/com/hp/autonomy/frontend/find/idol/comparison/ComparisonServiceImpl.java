@@ -36,7 +36,7 @@ public class ComparisonServiceImpl<S extends Serializable, R extends SearchResul
 
     private String generateDifferenceStateToken(final String firstQueryStateToken, final String secondQueryStateToken) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build("*", "", Collections.<S>emptyList(), null, null, 0, Collections.singletonList(firstQueryStateToken), Collections.singletonList(secondQueryStateToken));
-        return documentsService.getStateToken(queryRestrictions, ComparisonController.STATE_TOKEN_MAX_RESULTS);
+        return documentsService.getStateToken(queryRestrictions, ComparisonController.STATE_TOKEN_MAX_RESULTS, false);
     }
 
     @Override

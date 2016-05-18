@@ -186,7 +186,7 @@ define([
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
                     fieldNames: second ? [first, second] : [first],
-                    stateTokens: this.queryModel.get('stateTokens')
+                    stateTokens: this.queryModel.get('stateMatchIds')
                 }
             });
         },

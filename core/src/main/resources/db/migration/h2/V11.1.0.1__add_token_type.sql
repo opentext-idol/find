@@ -1,0 +1,3 @@
+SET SCHEMA find;
+
+ALTER TABLE search_stored_state ADD type VARCHAR(255) NOT NULL DEFAULT 'QUERY';
