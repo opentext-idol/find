@@ -329,6 +329,15 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 		}
 	}
 
+	//filters
+	private WebElement getFilterSausage(String dataID){
+		return findElement(By.xpath("//div[contains(@class,'filter-display-view')]/descendant::div[contains(@data-id,'"+dataID+"')]"));
+	}
+
+	public  WebElement getDatabaseFilterSausage(){
+		return ElementUtil.getFirstChild(getFilterSausage("DATABASES"));
+	}
+
 	/* parametric values */
 	public SOCheckbox parametricTypeCheckbox(String category, String field) {
 		WebElement checkbox = findElement(By.cssSelector("[data-field='" + category.toLowerCase().replace(" ","_") + "'] [data-value='" + field.toUpperCase() + "']"));

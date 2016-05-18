@@ -43,6 +43,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.contains
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.url;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
+import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsIgnoringCase;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
@@ -623,6 +624,22 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		}
 		searchPage.switchResultsPage(Pagination.FIRST);
 	}
+
+	@Test
+	@ActiveBug("ISO-16")
+	public void selectedIndexesAppearInSausage() {
+		searchService.search(new Query("mellow").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.ALL));
+		IndexesTree indexesTree = searchPage.indexesTree();
+
+		for (Index removedIndex : indexesTree.getSelected()) {
+			indexesTree.deselect(removedIndex);
+			for (Index index : indexesTree.getSelected()) {
+				verifyThat("Database/index sausage contains selected indexes", searchPage.getDatabaseFilterSausage().getText(), containsIgnoringCase(index.getName()));
+			}
+		}
+
+	}
+
 
 	@Test
 	@ResolvedBug("CSA-2061")
