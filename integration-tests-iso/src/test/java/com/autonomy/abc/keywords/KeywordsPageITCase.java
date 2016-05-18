@@ -769,4 +769,38 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		verifySynonymGroupSize(synonyms);
 		verifyKeywordState(expectedGroups, expectedKeywords);
 	}
+	@Test
+	@ActiveBug("ISO-14")
+	public void testKeywordsAlphabeticallyListed(){
+		for (String group: getSynonyms()) {
+			keywordService.addSynonymGroup(group);
+		}
+		Waits.loadOrFadeWait();
+		keywordService.addBlacklistTerms(getBlacklisted());
+
+		KeywordsPage keywordsPage = keywordService.goToKeywords();
+		final List<String> keywords = keywordsPage.getAllFirstKeywords();
+
+		for (int i = 0; i < keywords.size() - 1; i++) {
+			verifyThat(keywords.get(i).compareTo(keywords.get(i + 1)) <= 0, is(true));
+		}
+	}
+
+	private List<String> getSynonyms(){
+		List<String> synonyms = new ArrayList<String>();
+		synonyms.add("aardvark face tumultuous");
+		synonyms.add("yellow vader nibble");
+		synonyms.add("pistachio unreal");
+		synonyms.add("animate dreadful sentient");
+		synonyms.add("boris david george");
+		synonyms.add("heathcliff moors catherine wuthering misanthropist");
+		synonyms.add("aardvark nefarious zimbabwe");
+		synonyms.add("aragorn faramir boromir legolas");
+		return synonyms;
+	}
+
+	private List<String> getBlacklisted(){
+		List<String> blacklisted = Arrays.asList("aardvark", "giggler", "ruddy", "roddy","nebulous","incoherent","balderdash");
+		return blacklisted;
+	}
 }

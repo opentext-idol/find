@@ -53,4 +53,13 @@ public class KeywordsContainer extends AppElement {
     private List<WebElement> keywordElements() {
         return findElements(By.cssSelector("[data-term]"));
     }
+
+    public List<String> getFirstKeywords(){
+        return ElementUtil.getTexts(firstKeywordElements());
+    }
+
+    private List<WebElement> firstKeywordElements(){
+        return findElements(By.xpath("//*[contains(@class,'keywords-sub-list')]/*[1]"));
+        // /following::div
+    }
 }

@@ -44,6 +44,10 @@ public abstract class KeywordsPage extends KeywordsBase {
         return keywordsContainer().getKeywords();
     }
 
+    public List<String> getAllFirstKeywords(){
+        return keywordsContainer().getFirstKeywords();
+    }
+
     public List<WebElement> removeButtons(WebElement keywordGroup) {
         return keywordGroup.findElements(By.cssSelector("li .remove-keyword"));
     }
