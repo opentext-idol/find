@@ -223,13 +223,20 @@ define([
             var indexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
             var parametricValues = queryState.selectedParametricValues.map(pickFieldAndValue);
 
-            return _.extend({
-                queryText: queryState.queryTextModel.get('inputText'),
-                relatedConcepts: queryState.queryTextModel.get('relatedConcepts'),
-                indexes: indexes,
-                parametricValues: parametricValues,
-                minScore: queryState.minScoreModel.get('minScore')
-            }, queryState.datesFilterModel.toQueryModelAttributes(), { dateNewDocsLastFetched: moment() });
+            return _.extend(
+                {
+                    queryText: queryState.queryTextModel.get('inputText'),
+                    relatedConcepts: queryState.queryTextModel.get('relatedConcepts'),
+                    indexes: indexes,
+                    parametricValues: parametricValues,
+                    minScore: queryState.minScoreModel.get('minScore')
+                },
+                queryState.datesFilterModel.toQueryModelAttributes(),
+                {
+                    dateNewDocsLastFetched: moment(),
+                    dateDocsLastFetched: moment()
+                }
+            );
         }
     });
 

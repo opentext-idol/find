@@ -79,22 +79,25 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
         boolean newResults = false;
 
         final SavedQuery savedQuery = service.get(id);
-        final DateTime dateNewDocsLastFetched = savedQuery.getDateNewDocsLastFetched();
-        if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateNewDocsLastFetched)) {
+        final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
+
+        if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
             final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(savedQuery.getQueryText(),
                     savedQuery.toFieldText(),
                     convertEmbeddableIndexes(savedQuery.getIndexes()),
-                    savedQuery.getDateNewDocsLastFetched(),
+                    dateDocsLastFetched,
                     null,
                     savedQuery.getMinScore(),
                     Collections.<String>emptyList(),
                     Collections.<String>emptyList());
+
             final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
                     .setQueryRestrictions(queryRestrictions)
                     .setMaxResults(1)
                     .setPrint(getNoResultsPrintParam())
                     .setQueryType(SearchRequest.QueryType.MODIFIED)
                     .build();
+
             final Documents<?> searchResults = documentsService.queryTextIndex(searchRequest);
             newResults = searchResults.getTotalResults() > 0;
         }

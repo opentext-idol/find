@@ -7,6 +7,7 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'moment',
     'find/app/model/dates-filter-model',
     'find/app/model/entity-collection',
     'find/app/model/query-model',
@@ -27,7 +28,7 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
+], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
             queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
             ResultsViewSelection, RelatedConceptsView, Collapsible, addChangeListener,  SavedSearchControlView, TopicMapView,
             SunburstView, MapResultsView, configuration, i18n, templateString) {
@@ -90,6 +91,14 @@ define([
 
                 if (!changeToNewDocFilter && !removeNewDocFilter) {
                     this.queryState.datesFilterModel.resetDateLastFetched();
+                }
+            });
+
+            // If the saved search is unmodified and not new, update the last fetched date
+            this.listenTo(this.documentsCollection, 'sync', function() {
+                var changed = this.queryState ? !this.savedSearchModel.equalsQueryState(this.queryState) : false;
+                if(!changed && !this.savedSearchModel.isNew()) {
+                    this.savedSearchModel.save({dateDocsLastFetched: moment()});
                 }
             });
 
