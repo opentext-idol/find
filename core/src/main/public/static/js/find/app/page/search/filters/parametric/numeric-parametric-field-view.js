@@ -85,14 +85,14 @@ define([
 
     function getData(numericFieldValuesWithCount) {
         //noinspection JSUnresolvedFunction
-        let minValue = +_.first(numericFieldValuesWithCount).value;
+        let minValue = Math.floor(+_.first(numericFieldValuesWithCount).value);
         //noinspection JSUnresolvedFunction
-        let maxValue = +_.last(numericFieldValuesWithCount).value;
+        let maxValue = Math.ceil(+_.last(numericFieldValuesWithCount).value);
         let bucketSize = Math.ceil((maxValue - minValue + 1) / DEFAULT_TARGET_NUMBER_OF_BUCKETS);
         let buckets = [];
         let valueIndex = 0;
         numericFieldValuesWithCount.forEach(function (valueAndCount) {
-            let relativeValue = minValue >= 0 ? valueAndCount.value - minValue : valueAndCount.value + minValue;
+            let relativeValue = Math.floor(minValue >= 0 ? valueAndCount.value - minValue : valueAndCount.value + minValue);
             while (valueIndex < relativeValue) {
                 let currentBucketIndex = Math.floor(valueIndex / bucketSize);
                 let value = minValue + valueIndex;
@@ -102,7 +102,8 @@ define([
                     buckets[currentBucketIndex] = {
                         count: 0,
                         minValue: value,
-                        maxValue: value
+                        maxValue: value,
+                        maxContinuousValue: value
                     };
                 }
 
@@ -114,22 +115,22 @@ define([
             if (buckets[currentBucketIndex]) {
                 buckets[currentBucketIndex].count += valueAndCount.count;
                 buckets[currentBucketIndex].maxValue = value;
+                buckets[currentBucketIndex].maxContinuousValue = valueAndCount.value;
             } else {
                 buckets[currentBucketIndex] = {
                     count: valueAndCount.count,
                     minValue: value,
-                    maxValue: value
+                    maxValue: value,
+                    maxContinuousValue: valueAndCount.value
                 };
             }
-
-            valueIndex++;
         });
 
         //noinspection JSUnresolvedFunction
         var counts = _.pluck(buckets, 'count');
         return {
-            maxValue: Math.max.apply(Math, counts),
-            minValue: Math.min.apply(Math, counts),
+            maxCount: Math.max.apply(Math, counts),
+            minCount: Math.min.apply(Math, counts),
             bucketSize: bucketSize,
             buckets: buckets
         };
@@ -146,7 +147,7 @@ define([
 
         scale.barWidth.domain([0, data.bucketSize]);
         scale.barWidth.range([0, totalWidth * MAX_WIDTH_MODIFIER / data.buckets.length - BAR_GAP_SIZE]);
-        scale.y.domain([0, data.maxValue * MAX_HEIGHT_MULTIPLIER]);
+        scale.y.domain([0, data.maxCount * MAX_HEIGHT_MULTIPLIER]);
         scale.y.range([GRAPH_HEIGHT, 0]);
 
         //noinspection JSUnresolvedFunction
@@ -183,7 +184,7 @@ define([
             })
             .append("title")
             .text(function (d) {
-                return (d.maxValue === d.minValue ? "Value: " + d.minValue : "Range: " + d.minValue + "-" + d.maxValue) + "\nCount: " + d.count;
+                return "Range: " + d.minValue + "-" + (d.maxValue + 1) + "\nCount: " + d.count;
             });
 
         let dragBehavior = d3.behavior.drag()
@@ -307,7 +308,7 @@ define([
             //noinspection JSUnresolvedFunction
             let minValue = +_.first(data.buckets).minValue;
             //noinspection JSUnresolvedFunction
-            let maxValue = +_.last(data.buckets).maxValue;
+            let maxValue = Math.ceil(+_.last(data.buckets).maxContinuousValue);
 
             //noinspection JSUnresolvedFunction
             this.$minInput = this.$('.numeric-parametric-min-input');
