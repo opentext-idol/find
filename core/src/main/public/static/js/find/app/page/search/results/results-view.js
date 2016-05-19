@@ -207,7 +207,7 @@ define([
 
                 this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
 
-                if (this.endOfResults) {
+                if (this.endOfResults && !this.documentsCollection.isEmpty()) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noMoreResults"]}));
                 } else if (this.documentsCollection.isEmpty()) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noResults"]}));
