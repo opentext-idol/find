@@ -16,9 +16,6 @@ define([
     "use strict";
     const DEFAULT_TARGET_NUMBER_OF_BUCKETS = 30;
     const GRAPH_HEIGHT = 110;
-    // the amount of relative space to add above the highest data point
-    const MAX_HEIGHT_MULTIPLIER = 7 / 6;
-    const MAX_WIDTH_MODIFIER = 1;
     const BAR_GAP_SIZE = 1;
     const EMPTY_BAR_HEIGHT = 1;
     const UPDATE_DEBOUNCE_WAIT_TIME = 1000;
@@ -136,25 +133,23 @@ define([
         };
     }
 
-    function drawGraph(data, updateCallback, selectionCallback) {
+    function drawGraph(options) {
         let scale = {
             barWidth: d3.scale.linear(),
             y: d3.scale.linear()
         };
 
-        //noinspection JSUnresolvedVariable
-        let totalWidth = this.viewWidth;
-
+        let data = options.data;
         scale.barWidth.domain([0, data.bucketSize]);
-        scale.barWidth.range([0, totalWidth * MAX_WIDTH_MODIFIER / data.buckets.length - BAR_GAP_SIZE]);
-        scale.y.domain([0, data.maxCount * MAX_HEIGHT_MULTIPLIER]);
-        scale.y.range([GRAPH_HEIGHT, 0]);
+        scale.barWidth.range([0, options.xRange / data.buckets.length - BAR_GAP_SIZE]);
+        scale.y.domain([0, data.maxCount]);
+        scale.y.range([options.yRange, 0]);
 
         //noinspection JSUnresolvedFunction
-        let chart = d3.select(this.$('.chart')[0])
+        let chart = d3.select(options.chart)
             .attr({
-                width: totalWidth,
-                height: GRAPH_HEIGHT
+                width: options.xRange,
+                height: options.yRange
             });
         let bars = chart
             .selectAll('g')
@@ -188,10 +183,15 @@ define([
             });
 
         let dragBehavior = d3.behavior.drag()
-            .on("drag", dragMove(scale.barWidth, updateCallback))
+            .on("drag", dragMove(scale.barWidth, options.updateCallback))
             .on("dragstart", dragStart(chart))
-            .on("dragend", dragEnd(scale.barWidth, selectionCallback));
+            .on("dragend", dragEnd(scale.barWidth, options.selectionCallback));
         chart.call(dragBehavior);
+
+        return {
+            chart: chart,
+            scale: scale
+        };
     }
 
     function dragStart(chart) {
@@ -234,24 +234,6 @@ define([
         });
     }
 
-    function updateMin($minInput, result) {
-        //noinspection JSUnresolvedFunction
-        let minValue = _.first(result.values).value;
-        if (minValue !== $minInput.val()) {
-            $minInput.val(minValue);
-            $minInput.trigger('change');
-        }
-    }
-
-    function updateMax($maxInput, result) {
-        //noinspection JSUnresolvedFunction
-        let maxValue = _.last(result.values).value;
-        if (maxValue !== $maxInput.val()) {
-            $maxInput.val(maxValue);
-            $maxInput.trigger('change');
-        }
-    }
-
     return Backbone.View.extend({
         className: 'animated fadeIn',
         template: _.template(template),
@@ -262,7 +244,12 @@ define([
                 let $minInput = this.$minInput;
                 //noinspection JSUnresolvedFunction
                 this.executeCallbackWithoutRestrictions(function (result) {
-                    updateMin($minInput, result);
+                    //noinspection JSUnresolvedFunction
+                    let minValue = Math.floor(_.first(result.values).value);
+                    if (minValue !== $minInput.val()) {
+                        $minInput.val(minValue);
+                        $minInput.trigger('change');
+                    }
                 });
             },
             'click .numeric-parametric-no-max': function () {
@@ -270,7 +257,12 @@ define([
                 let $maxInput = this.$maxInput;
                 //noinspection JSUnresolvedFunction
                 this.executeCallbackWithoutRestrictions(function (result) {
-                    updateMax($maxInput, result);
+                    //noinspection JSUnresolvedFunction
+                    let maxValue = Math.ceil(_.last(result.values).value);
+                    if (maxValue !== $maxInput.val()) {
+                        $maxInput.val(maxValue);
+                        $maxInput.trigger('change');
+                    }
                 });
             },
             'click .numeric-parametric-reset': function () {
@@ -302,37 +294,66 @@ define([
                 id: _.uniqueId('numeric-parametric-field')
             }));
 
-            let numericFieldValuesWithCount = this.model.get('values');
-            var data = getData(numericFieldValuesWithCount);
-
-            //noinspection JSUnresolvedFunction
-            let minValue = +_.first(data.buckets).minValue;
-            //noinspection JSUnresolvedFunction
-            let maxValue = Math.ceil(+_.last(data.buckets).maxContinuousValue);
-
             //noinspection JSUnresolvedFunction
             this.$minInput = this.$('.numeric-parametric-min-input');
             //noinspection JSUnresolvedFunction
             this.$maxInput = this.$('.numeric-parametric-max-input');
 
-            //noinspection JSUnresolvedFunction
-            this.$minInput.val(minValue);
-            //noinspection JSUnresolvedFunction
-            this.$maxInput.val(maxValue);
+            function roundInputNumber(x1) {
+                return Math.round(x1 * 10) / 10;
+            }
 
-            //noinspection JSUnresolvedFunction
-            let updateCallback = _.bind(function (x1, x2) {
-                // rounding to one decimal place
-                this.$minInput.val(Math.round( x1 * 10 ) / 10);
-                this.$maxInput.val(Math.round( x2 * 10 ) / 10);
-            }, this);
-            //noinspection JSUnresolvedFunction
-            let selectionCallback = _.bind(function (x1, x2) {
-                let min = x1 || minValue;
-                let max = x2 || maxValue;
-                this.updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, min, max);
-            }, this);
-            drawGraph.call(this, data, updateCallback, selectionCallback);
+            this.executeCallbackWithoutRestrictions(_.bind(function (result) {
+                let data = getData(result.values);
+
+                //noinspection JSUnresolvedFunction
+                let minValue = Math.floor(+_.first(result.values).value);
+                //noinspection JSUnresolvedFunction
+                let maxValue = Math.ceil(+_.last(result.values).value);
+
+                //noinspection JSUnresolvedFunction
+                this.$minInput.val(minValue);
+                //noinspection JSUnresolvedFunction
+                this.$maxInput.val(maxValue);
+
+                //noinspection JSUnresolvedFunction
+                let updateCallback = _.bind(function (x1, x2) {
+                    // rounding to one decimal place
+                    this.$minInput.val(roundInputNumber(x1));
+                    this.$maxInput.val(roundInputNumber(x2));
+                }, this);
+                //noinspection JSUnresolvedFunction
+                let selectionCallback = _.bind(function (x1, x2) {
+                    let min = x1 || minValue;
+                    let max = x2 || maxValue;
+                    this.updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, min, max);
+                }, this);
+                //noinspection JSUnresolvedFunction
+                let graph = drawGraph({
+                    chart: this.$('.chart')[0],
+                    data: data,
+                    updateCallback: updateCallback,
+                    selectionCallback: selectionCallback,
+                    xRange: this.viewWidth,
+                    yRange: GRAPH_HEIGHT
+                });
+
+                this.selectedParametricValues.where({
+                    field: this.fieldName
+                }).forEach(function (restriction) {
+                    let range = restriction.get('range');
+                    if (range) {
+                        //noinspection JSUnresolvedFunction
+                        this.$minInput.val(roundInputNumber(range[0]));
+                        //noinspection JSUnresolvedFunction
+                        this.$maxInput.val(roundInputNumber(range[1]));
+                        
+                        selectionRect.init(graph.chart, graph.scale.barWidth(range[0]));
+                        selectionRect.update(graph.scale.barWidth(range[1]));
+                        selectionRect.focus();
+                    }
+                }, this);
+            }, this));
         },
 
         updateRestrictions: function (selectedParametricValues, fieldName, min, max) {
