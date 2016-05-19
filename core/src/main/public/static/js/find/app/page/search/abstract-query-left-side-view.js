@@ -13,11 +13,13 @@ define([
     'find/app/util/text-input',
     'find/app/page/search/filters/precision-recall/precision-recall-slider-view',
     'find/app/util/collapsible',
+    'find/app/vent',
     'parametric-refinement/display-collection',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(Backbone, $, _, DateView, NumericParametricView, ParametricView, TextInput, PrecisionRecallView, Collapsible, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
+], function(Backbone, $, _, DateView, NumericParametricView, ParametricView, TextInput, PrecisionRecallView, Collapsible, vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
+    "use strict";
 
     var datesTitle = i18n['search.dates'];
 
@@ -85,6 +87,10 @@ define([
                 queryModel: options.queryModel,
                 queryState: options.queryState,
                 numericParametricCollection: this.numericParametricCollection
+            });
+            
+            this.listenTo(vent, 'vent:resize', function () {
+                this.numericParametricView.render();
             });
 
             this.parametricView = new ParametricView({
