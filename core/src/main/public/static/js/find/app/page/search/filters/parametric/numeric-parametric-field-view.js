@@ -61,7 +61,6 @@ define([
                 .classed("selection", true);
             this.setElement(rectElement);
             this.originX = newX;
-            this.currentX = newX;
             this.update(newX);
         },
         update: function (newX) {
@@ -136,7 +135,7 @@ define([
         };
     }
 
-    function drawGraph(data, selectionCallback) {
+    function drawGraph(data, updateCallback, selectionCallback) {
         let scale = {
             barWidth: d3.scale.linear(),
             y: d3.scale.linear()
@@ -188,7 +187,7 @@ define([
             });
 
         let dragBehavior = d3.behavior.drag()
-            .on("drag", dragMove)
+            .on("drag", dragMove(scale.barWidth, updateCallback))
             .on("dragstart", dragStart(chart))
             .on("dragend", dragEnd(scale.barWidth, selectionCallback));
         chart.call(dragBehavior);
@@ -202,9 +201,13 @@ define([
         }
     }
 
-    function dragMove() {
-        var p = d3.mouse(this);
-        selectionRect.update(p[0]);
+    function dragMove(scale, updateCallback) {
+        return function () {
+            var p = d3.mouse(this);
+            selectionRect.update(p[0]);
+            var currentAttributes = selectionRect.getCurrentAttributes();
+            updateCallback(scale.invert(currentAttributes.x1), scale.invert(currentAttributes.x2));
+        };
     }
 
     function dragEnd(scale, selectionCallback) {
@@ -317,11 +320,18 @@ define([
             this.$maxInput.val(maxValue);
 
             //noinspection JSUnresolvedFunction
-            drawGraph.call(this, data, _.bind(function (x1, x2) {
-                let min = x1 || this.$minInput.val();
-                let max = x2 || this.$maxInput.val();
+            let updateCallback = _.bind(function (x1, x2) {
+                // rounding to one decimal place
+                this.$minInput.val(Math.round( x1 * 10 ) / 10);
+                this.$maxInput.val(Math.round( x2 * 10 ) / 10);
+            }, this);
+            //noinspection JSUnresolvedFunction
+            let selectionCallback = _.bind(function (x1, x2) {
+                let min = x1 || minValue;
+                let max = x2 || maxValue;
                 this.updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, min, max);
-            }, this));
+            }, this);
+            drawGraph.call(this, data, updateCallback, selectionCallback);
         },
 
         updateRestrictions: function (selectedParametricValues, fieldName, min, max) {
