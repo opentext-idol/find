@@ -7,18 +7,15 @@ define([
     'backbone',
     'jquery',
     'underscore',
-    'find/app/page/search/filters/parametric/numeric-widget-selection-rect',
+    'find/app/page/search/filters/parametric/numeric-widget',
     'parametric-refinement/prettify-field-name',
     'parametric-refinement/selected-values-collection',
-    'd3',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html'
-], function (Backbone, $, _, selectionRect, prettifyFieldName, SelectedParametricValuesCollection, d3, i18n, template) {
+], function (Backbone, $, _, NumericWidget, prettifyFieldName, SelectedParametricValuesCollection, i18n, template) {
     "use strict";
     const DEFAULT_TARGET_NUMBER_OF_BUCKETS = 30;
     const GRAPH_HEIGHT = 110;
-    const BAR_GAP_SIZE = 1;
-    const EMPTY_BAR_HEIGHT = 1;
     const UPDATE_DEBOUNCE_WAIT_TIME = 1000;
 
     function getData(numericFieldValuesWithCount) {
@@ -72,100 +69,6 @@ define([
             bucketSize: bucketSize,
             buckets: buckets
         };
-    }
-
-    function drawGraph(options) {
-        let scale = {
-            barWidth: d3.scale.linear(),
-            y: d3.scale.linear()
-        };
-
-        let data = options.data;
-        scale.barWidth.domain([0, data.bucketSize]);
-        scale.barWidth.range([0, options.xRange / data.buckets.length - BAR_GAP_SIZE]);
-        scale.y.domain([0, data.maxCount]);
-        scale.y.range([options.yRange, 0]);
-
-        //noinspection JSUnresolvedFunction
-        let chart = d3.select(options.chart)
-            .attr({
-                width: options.xRange,
-                height: options.yRange
-            });
-        let bars = chart
-            .selectAll('g')
-            .data(data.buckets)
-            .enter()
-            .append('g');
-        bars.append('rect')
-            .attr({
-                x: function (d, i) {
-                    return i * scale.barWidth(data.bucketSize);
-                },
-                y: function (d) {
-                    return d.count ? scale.y(d.count) : GRAPH_HEIGHT - EMPTY_BAR_HEIGHT;
-                },
-                height: function (d) {
-                    return d.count ? GRAPH_HEIGHT - scale.y(d.count) : EMPTY_BAR_HEIGHT;
-                },
-                width: function (d) {
-                    return scale.barWidth(d.maxValue - d.minValue + 1) - BAR_GAP_SIZE;
-                },
-                'bucket-min': function (d) {
-                    return d.minValue;
-                },
-                'bucket-max': function (d) {
-                    return d.maxValue;
-                }
-            })
-            .append("title")
-            .text(function (d) {
-                return "Range: " + d.minValue + "-" + (d.maxValue + 1) + "\nCount: " + d.count;
-            });
-
-        let dragBehavior = d3.behavior.drag()
-            .on("drag", dragMove(scale.barWidth, options.updateCallback))
-            .on("dragstart", dragStart(chart, options.yRange))
-            .on("dragend", dragEnd(scale.barWidth, options.selectionCallback));
-        chart.call(dragBehavior);
-
-        return {
-            chart: chart,
-            scale: scale
-        };
-    }
-
-    function dragStart(chart, height) {
-        return function () {
-            var p = d3.mouse(this);
-            selectionRect.init(chart, height, p[0]);
-            selectionRect.removePrevious();
-        }
-    }
-
-    function dragMove(scale, updateCallback) {
-        return function () {
-            var p = d3.mouse(this);
-            selectionRect.update(p[0]);
-            var currentAttributes = selectionRect.getCurrentAttributes();
-            updateCallback(scale.invert(currentAttributes.x1), scale.invert(currentAttributes.x2));
-        };
-    }
-
-    function dragEnd(scale, selectionCallback) {
-        return function () {
-            var finalAttributes = selectionRect.getCurrentAttributes();
-            if (finalAttributes.x2 - finalAttributes.x1 > 1) {
-                // range selected
-                d3.event.sourceEvent.preventDefault();
-                selectionRect.focus();
-                selectionCallback(scale.invert(finalAttributes.x1), scale.invert(finalAttributes.x2));
-            } else {
-                // single point selected
-                selectionRect.remove();
-                selectionCallback();
-            }
-        }
     }
 
     function resetSelectedParametricValues(selectedParametricValues, fieldName) {
@@ -225,6 +128,10 @@ define([
             this.selectedParametricValues = options.selectedParametricValues;
             this.viewWidth = options.viewWidth;
             this.fieldName = this.model.id;
+            this.widget = NumericWidget({
+                targetNumberOfBuckets: DEFAULT_TARGET_NUMBER_OF_BUCKETS,
+                graphHeight: GRAPH_HEIGHT
+            });
         },
 
         render: function () {
@@ -271,7 +178,7 @@ define([
                     this.updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, min, max);
                 }, this);
                 //noinspection JSUnresolvedFunction
-                let graph = drawGraph({
+                let graph = this.widget.drawGraph({
                     chart: this.$('.chart')[0],
                     data: data,
                     updateCallback: updateCallback,
@@ -289,10 +196,10 @@ define([
                         this.$minInput.val(roundInputNumber(range[0]));
                         //noinspection JSUnresolvedFunction
                         this.$maxInput.val(roundInputNumber(range[1]));
-                        
-                        selectionRect.init(graph.chart, graph.scale.barWidth(range[0]));
-                        selectionRect.update(graph.scale.barWidth(range[1]));
-                        selectionRect.focus();
+
+                        graph.selectionRect.init(graph.chart, graph.scale.barWidth(range[0]));
+                        graph.selectionRect.update(graph.scale.barWidth(range[1]));
+                        graph.selectionRect.focus();
                     }
                 }, this);
             }, this));
