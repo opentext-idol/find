@@ -24,7 +24,6 @@
     </properties>
 
     <build>
-        <finalName>find-hsod</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -60,6 +59,7 @@
                         </goals>
                         <configuration>
                             <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>mysql-migrations</finalName>
                             <formats>
                                 <format>zip</format>
                             </formats>
@@ -71,12 +71,6 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hod</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>core</artifactId>
