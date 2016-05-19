@@ -14,7 +14,7 @@ define([
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html'
 ], function (Backbone, $, _, prettifyFieldName, SelectedParametricValuesCollection, d3, i18n, template) {
     "use strict";
-    const DEFAULT_TARGET_NUMBER_OF_BUCKETS = 10;
+    const DEFAULT_TARGET_NUMBER_OF_BUCKETS = 30;
     const GRAPH_HEIGHT = 110;
     // the amount of relative space to add above the highest data point
     const MAX_HEIGHT_MULTIPLIER = 7 / 6;
