@@ -1,0 +1,14 @@
+Source: find-ansible
+Section: unknown
+Priority: extra
+Maintainer: Matthew Gordon <matthew.gordon2@hpe.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.6
+Homepage: https://github.com/hpe-idol/find
+Vcs-Git: https://github.com/hpe-idol/find.git
+Vcs-Browser: https://github.com/hpe-idol/find
+
+Package: find-ansible
+Architecture: any
+Depends: ${misc:Depends}
+Description: Ansible role for deploying Find in Haven Search OnDemand.

@@ -1,0 +1,5 @@
+find-ansible (0.0.1) precise; urgency=low
+
+  * Initial release.
+
+ -- Matthew Gordon <matthew.gordon2@hp.com>  Fri, 20 May 2016 12:00:00 +0100
