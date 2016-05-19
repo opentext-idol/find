@@ -6,6 +6,16 @@
 define([
     'jquery'
 ], function($) {
+    'use strict';
+
+    // holds all previously generated modules
+    var cache = {};
+
+    // holds the last used module
+    var active = null;
+
+    // holds a default module to use for the case when no id is supplied and no active module is available
+    var defaultModule;
 
     var log = function(event) {
         $.ajax('../api/public/stats', {
@@ -27,7 +37,7 @@ define([
         PREVIEW: 'preview'
     };
 
-    var EventsModule = function() {
+    var EventsModule = function(id) {
         var search = '';
         var position = -1;
         var abandonments = null;
@@ -99,12 +109,42 @@ define([
                 type: types.PAGE
             })
         };
+
+        // if calling this don't retain a reference to this object
+        this.abandon = function() {
+            logAbandonments();
+
+            delete cache[id];
+
+            if (this === active) {
+                active = defaultModule;
+            }
+
+            // we've logged these abandonments, so don't log them again on unload
+            if (this !== defaultModule) {
+                $(window).off('unload', logAbandonments);
+            }
+        }
     };
 
-    var eventsModule = new EventsModule();
+    defaultModule = new EventsModule();
 
-    return function() {
-        return eventsModule;
+    return function(id) {
+        if (id) {
+            // if we've not seen this id before, create a new module
+            if (!cache[id]) {
+                cache[id] = new EventsModule(id);
+            }
+
+            active = cache[id];
+        }
+
+        // if no active module, return the default module
+        if (!active) {
+            active = defaultModule;
+        }
+
+        return active;
     };
 
 });
