@@ -7,78 +7,19 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/page/search/filters/parametric/numeric-widget-selection-rect',
     'parametric-refinement/prettify-field-name',
     'parametric-refinement/selected-values-collection',
     'd3',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html'
-], function (Backbone, $, _, prettifyFieldName, SelectedParametricValuesCollection, d3, i18n, template) {
+], function (Backbone, $, _, selectionRect, prettifyFieldName, SelectedParametricValuesCollection, d3, i18n, template) {
     "use strict";
     const DEFAULT_TARGET_NUMBER_OF_BUCKETS = 30;
     const GRAPH_HEIGHT = 110;
     const BAR_GAP_SIZE = 1;
     const EMPTY_BAR_HEIGHT = 1;
     const UPDATE_DEBOUNCE_WAIT_TIME = 1000;
-
-    var selectionRect = {
-        element: null,
-        previousElement: null,
-        currentX: 0,
-        originX: 0,
-        setElement: function (ele) {
-            this.previousElement = this.element;
-            this.element = ele;
-        },
-        getNewAttributes: function () {
-            let x = this.currentX < this.originX ? this.currentX : this.originX;
-            let width = Math.abs(this.currentX - this.originX);
-            return {
-                x: x,
-                width: width
-            };
-        },
-        getCurrentAttributes: function () {
-            let x = +this.element.attr("x");
-            let width = +this.element.attr("width");
-            return {
-                x1: x,
-                x2: x + width
-            };
-        },
-        init: function (chart, newX) {
-            let rectElement = chart.append("rect")
-                .attr({
-                    rx: 4,
-                    ry: 4,
-                    x: newX,
-                    y: 0,
-                    width: 0,
-                    height: GRAPH_HEIGHT
-                })
-                .classed("selection", true);
-            this.setElement(rectElement);
-            this.originX = newX;
-            this.update(newX);
-        },
-        update: function (newX) {
-            this.currentX = newX;
-            this.element.attr(this.getNewAttributes());
-        },
-        focus: function () {
-            this.element
-                .style("stroke", "#01a982")
-                .style("stroke-width", "2.5");
-        },
-        remove: function () {
-            this.element.remove();
-            this.element = null;
-        },
-        removePrevious: function () {
-            if (this.previousElement) {
-                this.previousElement.remove();
-            }
-        }
-    };
 
     function getData(numericFieldValuesWithCount) {
         //noinspection JSUnresolvedFunction
@@ -184,7 +125,7 @@ define([
 
         let dragBehavior = d3.behavior.drag()
             .on("drag", dragMove(scale.barWidth, options.updateCallback))
-            .on("dragstart", dragStart(chart))
+            .on("dragstart", dragStart(chart, options.yRange))
             .on("dragend", dragEnd(scale.barWidth, options.selectionCallback));
         chart.call(dragBehavior);
 
@@ -194,10 +135,10 @@ define([
         };
     }
 
-    function dragStart(chart) {
+    function dragStart(chart, height) {
         return function () {
             var p = d3.mouse(this);
-            selectionRect.init(chart, p[0]);
+            selectionRect.init(chart, height, p[0]);
             selectionRect.removePrevious();
         }
     }
@@ -303,6 +244,7 @@ define([
                 return Math.round(x1 * 10) / 10;
             }
 
+            //noinspection JSUnresolvedFunction
             this.executeCallbackWithoutRestrictions(_.bind(function (result) {
                 let data = getData(result.values);
 
