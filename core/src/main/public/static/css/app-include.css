@@ -16,7 +16,6 @@ html, body {
     fill: rgba(1,169,130,0.1);
 }
 .chart rect:hover {
-    cursor: pointer;
     fill: rgba(1,169,130,0.2);
 }
 
