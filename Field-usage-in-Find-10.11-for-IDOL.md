@@ -41,7 +41,7 @@ Available ids are detailed below.
 | latitude | NUMBER | The latitude in degrees. Used to locate a document in the document detail view. | LAT |
 | longitude | NUMBER | The longitude in degrees. Used to locate a document in the document detail view. | LON |
 | mmapUrl | STRING | If MMAP is enabled, this is appended to the configured MMAP base URL for linking to an instance of MMAP. | MMAP_PROXY_URL |
-| sourceType | STRING | The source of the media. | SOURCETYPE |
+| sourceType | STRING | The source of the media. Used to search for similar sources on the document detail view. | SOURCETYPE |
 | thumbnail | STRING | A base 64 encoded image to use as a thumbnail for the search result. | PREVIEW_THUMBNAIL_BASE64 |
 | thumbnailUrl | STRING | The URL of a thumbnail image file (for example, http://example.com/thumbnail.png). The thumbnail images will be displayed in aspect ratio of 16:9. Find needs to be able to access this URL from the browser by using an HTTP GET request. | THUMBNAIL_URL |
 | transcript | STRING | A transcript for a document extracted from an audio source. If present, this is printed out on the transcript tab of the document detail view. | TRANSCRIPTION_CONTENT |
