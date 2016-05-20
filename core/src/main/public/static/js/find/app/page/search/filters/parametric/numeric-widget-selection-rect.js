@@ -45,6 +45,7 @@ define([], function () {
             this.setElement(rectElement);
             this.originX = newX;
             this.update(newX);
+            this.removePrevious();
         },
         update: function (newX) {
             this.currentX = newX;

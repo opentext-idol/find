@@ -17,7 +17,6 @@ define([
         return function () {
             var p = d3.mouse(this);
             selectionRect.init(chart, height, p[0]);
-            selectionRect.removePrevious();
         }
     }
 
