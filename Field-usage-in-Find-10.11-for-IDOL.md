@@ -29,22 +29,22 @@ When Find reads an IDOL document, it looks for all values for all of the fields 
 
 Available ids are detailed below.
 
-| ID            | Type | Default Names            | Notes                                                 |
-| ------------- | ---- | ------------------------ | ----------------------------------------------------- |
-| contentType | STRING | AU_REPOSITORY_METADATA_TYPE_STRING | If the value of the `content_type` field is **audio** or **video**, Find treats the document as an audio or video file, and uses the information in the `url` and `offset` fields to process the document. |
-| url | STRING | AU_REPOSITORY_METADATA_URL_FILE_STRING | The URL of an audio or video file (for example, http://example.com/example_video.mp4). Find needs to be able to access this URL from the browser by using an HTTP GET request. |
-| offset | STRING | OFFSET | The time offset from the start (in seconds) at which to begin playing an audio or video file. |
-| authors | STRING | AU_DOCUMENT_METADATA_AUTHOR_STRING | The author of the document. Where available, Find displays the content of the IDOL `author` field in the document metadata when you view the document. |
-| categories | STRING | AU_REPOSITORY_METADATA_CATEGORY_STRING | You can configure a field in your IDOL document that describes the category that the document belongs to. Where available, Find displays the content of the IDOL `category` field in the document metadata when you view the document. |
-| dateCreated | DATE | AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS | You can configure a field in your IDOL document that contains the date when the document was created. Where available, Find displays the content of the IDOL `date_created` or `created_date` field in the document metadata when you view the document. |
-| dateModified | DATE | AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS | You can configure a field in your IDOL document that contains the date when the document was modified. Where available, Find displays the content of the IDOL `date_modified` or `modified_date` field in the document metadata when you view the document. |
-| latitude | NUMBER | LAT | The latitude in degrees. Used to locate a document in the document detail view. |
-| longitude | NUMBER | LON | The longitude in degrees. Used to locate a document in the document detail view. |
-| mmapUrl | STRING | MMAP_PROXY_URL | If MMAP is enabled, this is appended to the configured MMAP base URL for linking to an instance of MMAP. |
-| sourceType | STRING | SOURCETYPE | The source of the media. |
-| thumbnail | STRING | PREVIEW_THUMBNAIL_BASE64 | A base 64 encoded image to use as a thumbnail for the search result. |
-| thumbnailUrl | STRING | THUMBNAIL_URL | The URL of a thumbnail image file (for example, http://example.com/thumbnail.png). The thumbnail images will be displayed in aspect ratio of 16:9. Find needs to be able to access this URL from the browser by using an HTTP GET request. |
-| transcript | STRING | TRANSCRIPTION_CONTENT | A transcript for a document extracted from an audio source. If present, this is printed out on the transcript tab of the document detail view. |
+| ID            | Type | Notes                                                 | Default Names            |
+| ------------- | ---- | ----------------------------------------------------- | ------------------------ |
+| contentType | STRING | If the value of the `content_type` field is **audio** or **video**, Find treats the document as an audio or video file, and uses the information in the `url` and `offset` fields to process the document. | AU_REPOSITORY_METADATA_TYPE_STRING |
+| url | STRING | The URL of an audio or video file (for example, http://example.com/example_video.mp4). Find needs to be able to access this URL from the browser by using an HTTP GET request. | AU_REPOSITORY_METADATA_URL_FILE_STRING |
+| offset | STRING | The time offset from the start (in seconds) at which to begin playing an audio or video file. | OFFSET |
+| authors | STRING | The author of the document. Where available, Find displays the content of the IDOL `author` field in the document metadata when you view the document. | AU_DOCUMENT_METADATA_AUTHOR_STRING |
+| categories | STRING | You can configure a field in your IDOL document that describes the category that the document belongs to. Where available, Find displays the content of the IDOL `category` field in the document metadata when you view the document. | AU_REPOSITORY_METADATA_CATEGORY_STRING |
+| dateCreated | DATE | You can configure a field in your IDOL document that contains the date when the document was created. Where available, Find displays the content of the IDOL `date_created` or `created_date` field in the document metadata when you view the document. | AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS |
+| dateModified | DATE | You can configure a field in your IDOL document that contains the date when the document was modified. Where available, Find displays the content of the IDOL `date_modified` or `modified_date` field in the document metadata when you view the document. | AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS |
+| latitude | NUMBER | The latitude in degrees. Used to locate a document in the document detail view. | LAT |
+| longitude | NUMBER | The longitude in degrees. Used to locate a document in the document detail view. | LON |
+| mmapUrl | STRING | If MMAP is enabled, this is appended to the configured MMAP base URL for linking to an instance of MMAP. | MMAP_PROXY_URL |
+| sourceType | STRING | The source of the media. | SOURCETYPE |
+| thumbnail | STRING | A base 64 encoded image to use as a thumbnail for the search result. | PREVIEW_THUMBNAIL_BASE64 |
+| thumbnailUrl | STRING | The URL of a thumbnail image file (for example, http://example.com/thumbnail.png). The thumbnail images will be displayed in aspect ratio of 16:9. Find needs to be able to access this URL from the browser by using an HTTP GET request. | THUMBNAIL_URL |
+| transcript | STRING | A transcript for a document extracted from an audio source. If present, this is printed out on the transcript tab of the document detail view. | TRANSCRIPTION_CONTENT |
 
 IDOL Server uses `DateType` fields to populate the `<autn:date>` and `<autn:datestring>` metadata fields for your documents. Find uses the `<autn:date>` tag in the IDOL response as the date of the document on the list of results. Use the `[FieldProcessing]`, `[DateFields]`, and `[SetDateFields]` sections of the IDOL configuration file to specify the fields in your documents that should be treated as `DateType` fields. For more information, see the *IDOL Server Administration Guide*.
 
