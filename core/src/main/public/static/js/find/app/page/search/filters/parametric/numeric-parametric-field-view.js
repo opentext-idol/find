@@ -78,6 +78,25 @@ define([
         });
     }
 
+    function updateRestrictions(selectedParametricValues, fieldName, min, max) {
+        resetSelectedParametricValues(selectedParametricValues, fieldName);
+        selectedParametricValues.add({
+            field: fieldName,
+            range: [min, max]
+        });
+    }
+
+    function updateRestrictionsAfterDelay(selectedParametricValues, fieldName, min, max) {
+        //noinspection JSUnresolvedFunction
+        _.debounce(function (selectedParametricValues, fieldName, min, max) {
+            if (min && max) {
+                updateRestrictions(selectedParametricValues, fieldName, min, max)
+            } else {
+                resetSelectedParametricValues(selectedParametricValues, fieldName);
+            }
+        }, UPDATE_DEBOUNCE_WAIT_TIME)(selectedParametricValues, fieldName, min, max);
+    }
+
     return Backbone.View.extend({
         className: 'animated fadeIn',
         template: _.template(template),
@@ -114,12 +133,12 @@ define([
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
             },
             'change .numeric-parametric-min-input': function () {
-                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
-                this.updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, this.$minInput.val(), this.$maxInput.val());
+                //noinspection JSUnresolvedVariable
+                updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, this.$minInput.val(), this.$maxInput.val());
             },
             'change .numeric-parametric-max-input': function () {
-                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
-                this.updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, this.$minInput.val(), this.$maxInput.val());
+                //noinspection JSUnresolvedVariable
+                updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, this.$minInput.val(), this.$maxInput.val());
             }
         },
 
@@ -172,9 +191,7 @@ define([
                 }, this);
                 //noinspection JSUnresolvedFunction
                 let selectionCallback = _.bind(function (x1, x2) {
-                    let min = x1 || minValue;
-                    let max = x2 || maxValue;
-                    this.updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, min, max);
+                    updateRestrictionsAfterDelay(this.selectedParametricValues, this.fieldName, x1, x2);
                 }, this);
                 //noinspection JSUnresolvedFunction
                 let graph = this.widget.drawGraph({
@@ -203,19 +220,6 @@ define([
                     }
                 }, this);
             }, this));
-        },
-
-        updateRestrictions: function (selectedParametricValues, fieldName, min, max) {
-            resetSelectedParametricValues(selectedParametricValues, fieldName);
-            selectedParametricValues.add({
-                field: fieldName,
-                range: [min, max]
-            });
-        },
-
-        updateRestrictionsAfterDelay: function (selectedParametricValues, fieldName, min, max) {
-            //noinspection JSUnresolvedFunction
-            _.debounce(this.updateRestrictions, UPDATE_DEBOUNCE_WAIT_TIME)(selectedParametricValues, fieldName, min, max);
         },
 
         executeCallbackWithoutRestrictions: function (callback) {
