@@ -14,6 +14,7 @@ define([
     'use strict';
 
     var templateFunction = _.template(template);
+    var NEW_DOCS_LIMIT = 1000;
 
     return ListItemView.extend({
         className: 'search-tab',
@@ -53,10 +54,10 @@ define([
         updateTabBadge: function() {
             var newDocuments = this.model.get('newDocuments');
 
-            if(newDocuments  > 0) {
+            if(newDocuments > 0) {
                 this.$('.new-document-label')
                     .removeClass('hide')
-                    .text(newDocuments);
+                    .text(newDocuments > NEW_DOCS_LIMIT ? NEW_DOCS_LIMIT + '+' : newDocuments);
             } else {
                 this.$('.new-document-label')
                     .addClass('hide');

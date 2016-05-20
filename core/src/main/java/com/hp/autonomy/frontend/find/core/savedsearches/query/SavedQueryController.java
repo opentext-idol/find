@@ -93,7 +93,7 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
 
             final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
                     .setQueryRestrictions(queryRestrictions)
-                    .setMaxResults(Integer.MAX_VALUE)
+                    .setMaxResults(1001)
                     .setPrint(getNoResultsPrintParam())
                     .setQueryType(SearchRequest.QueryType.MODIFIED)
                     .build();
