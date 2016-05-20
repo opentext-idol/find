@@ -11,6 +11,7 @@ define([
     'find/app/util/model-any-changed-attribute-listener',
     'i18n!find/nls/bundle'
 ], function(Backbone, _, moment, DatesFilterModel, addChangeListener, i18n) {
+    "use strict";
 
     var FilterType = {
         INDEXES: 'INDEXES',
@@ -36,8 +37,19 @@ define([
     }
 
     // Get the display text for the given parametric field name and array of selected parametric values
-    function parametricFilterText(values) {
-        return values.join(', ');
+    function parametricFilterText(values, ranges) {
+        var round = function (x) {
+            return Math.round(x * 10) / 10;
+        }; 
+        
+        var rangeText = '';
+        ranges.forEach(function (range) {
+            if (rangeText) {
+                rangeText += ', ';
+            }
+            rangeText += round(range[0]) + ' - ' + round(range[1]);
+        });
+        return rangeText + values.join(', ');
     }
 
     // Get an array of filter model attributes from the selected parametric values collection
@@ -46,7 +58,7 @@ define([
             return {
                 id: parametricFilterId(field),
                 field: field,
-                text: parametricFilterText(data.values),
+                text: parametricFilterText(data.values, data.range ? [data.range] : []),
                 type: FilterType.PARAMETRIC
             };
         });
@@ -156,10 +168,24 @@ define([
             var modelsForField = this.selectedParametricValues.where({field: field});
 
             if (modelsForField.length) {
+                var values = [];
+                var ranges = [];
+                modelsForField.forEach(function (model) {
+                    var value = model.get('value');
+                    if (value) {
+                        values.push(value);
+                    }
+
+                    var range = model.get('range');
+                    if (range) {
+                        ranges.push(range);
+                    }
+                });
+
                 this.add({
                     id: id,
                     field: field,
-                    text: parametricFilterText(_.invoke(modelsForField, 'get', 'value')),
+                    text: parametricFilterText(values, ranges),
                     type: FilterType.PARAMETRIC
                 }, {
                     // Merge true to overwrite the text for any existing model for this field name
