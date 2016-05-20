@@ -1,6 +1,6 @@
 Maps of document location metadata can be displayed in the UI if enabled in the application configuration. The map configuration consists of several properties, detailed below.
 
-Any image file type supported by the browser can be used. There are many compatible tile servers available as a service over the internet, including most Open Street Map servers. However, beware of license and usage restrictions. In particular, the tile server provided by OpenStreetMap itself should not be used except for limited testing purposes.
+You must configure a tile server to use geolocation. Any image file type supported by the browser can be used. There are many compatible tile servers available as a service over the internet, including most Open Street Map servers. However, beware of license and usage restrictions. In particular, the tile server provided by OpenStreetMap itself should not be used except for limited testing purposes.
 
 Map settings are configured in the "map" section of the config.json file. An example configuration is shown below.
 
