@@ -5,7 +5,9 @@
 
 package com.hp.autonomy.frontend.find.core.test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
+import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import org.springframework.security.core.Authentication;
@@ -27,9 +29,12 @@ public abstract class MvcIntegrationTestUtils {
     private static final Pattern REFERENCE_PATTERN = Pattern.compile(".*\"reference\"\\s*:\\s*\"(?<reference>[^\"]+)\".*");
 
     public abstract String[] getDatabases();
+
     public abstract EmbeddableIndex getEmbeddableIndex();
 
     protected abstract Authentication createAuthentication(Collection<GrantedAuthority> authorities);
+
+    protected abstract void addFieldRequestParams(MockHttpServletRequestBuilder requestBuilder);
 
     public String getValidReference(final MockMvc mockMvc) throws Exception {
         final MockHttpServletRequestBuilder request = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*")
@@ -49,6 +54,16 @@ public abstract class MvcIntegrationTestUtils {
         } else {
             throw new IllegalStateException("Could not resolve valid reference for integration tests");
         }
+    }
+
+    public String[] getFields(final MockMvc mockMvc, final String subPath) throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = get(FieldsController.FIELDS_PATH + subPath)
+                .with(authentication(userAuth()));
+        addFieldRequestParams(requestBuilder);
+
+        final MvcResult mvcResult = mockMvc.perform(requestBuilder)
+                .andReturn();
+        return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), String[].class);
     }
 
     public Authentication userAuth() {

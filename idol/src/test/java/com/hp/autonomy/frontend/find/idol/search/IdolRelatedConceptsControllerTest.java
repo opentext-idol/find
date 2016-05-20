@@ -7,12 +7,16 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsControllerTest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.types.idol.QsElement;
 import org.junit.Before;
 
-public class IdolRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<QsElement, String, AciErrorException> {
+import static org.mockito.Mockito.when;
+
+public class IdolRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<QsElement, IdolQueryRestrictions, String, AciErrorException> {
     @Before
     public void setUp() {
-        relatedConceptsController = new IdolRelatedConceptsController(relatedConceptsService, new IdolQueryRestrictionsBuilder());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
+        relatedConceptsController = new IdolRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory);
     }
 }

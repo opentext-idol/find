@@ -9,11 +9,15 @@ import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryControll
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryControllerTest;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 
-public class HodSavedSearchQueryControllerTest extends SavedQueryControllerTest<ResourceIdentifier, HodSearchResult, HodErrorException> {
+import static org.mockito.Mockito.when;
+
+public class HodSavedSearchQueryControllerTest extends SavedQueryControllerTest<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
     @Override
-    protected SavedQueryController<ResourceIdentifier, HodSearchResult, HodErrorException> constructController() {
-        return new HodSavedQueryController(savedQueryService, documentsService, queryRestrictionsBuilder);
+    protected SavedQueryController<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> constructController() {
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new HodQueryRestrictions.Builder());
+        return new HodSavedQueryController(savedQueryService, documentsService, queryRestrictionsBuilderFactory);
     }
 }

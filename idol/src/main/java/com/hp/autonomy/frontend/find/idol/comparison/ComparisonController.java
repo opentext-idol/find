@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.comparison;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,27 +17,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping(ComparisonController.BASE_PATH)
-public class ComparisonController<S extends Serializable, R extends SearchResult, E extends Exception> {
-    public static final String BASE_PATH = "/api/bi/comparison";
-    public static final String COMPARE_PATH = "compare";
-    public static final String RESULTS_PATH = "results";
+class ComparisonController<S extends Serializable, R extends SearchResult, E extends Exception> {
+    static final String BASE_PATH = "/api/bi/comparison";
+    static final String COMPARE_PATH = "compare";
+    static final String RESULTS_PATH = "results";
 
-    public static final int STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
+    static final int STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
 
-    public static final String TEXT_PARAM = "text";
-    public static final String STATE_MATCH_PARAM = "state_match_ids";
-    public static final String STATE_DONT_MATCH_PARAM = "state_dont_match_ids";
-    public static final String RESULTS_START_PARAM = "start";
-    public static final String MAX_RESULTS_PARAM = "max_results";
-    public static final String SUMMARY_PARAM = "summary";
-    public static final String SORT_PARAM = "sort";
-    public static final String HIGHLIGHT_PARAM = "highlight";
-    public static final String PROMOTIONS = "promotions";
+    private static final String TEXT_PARAM = "text";
+    static final String STATE_MATCH_PARAM = "state_match_ids";
+    static final String STATE_DONT_MATCH_PARAM = "state_dont_match_ids";
+    static final String RESULTS_START_PARAM = "start";
+    static final String MAX_RESULTS_PARAM = "max_results";
+    static final String SUMMARY_PARAM = "summary";
+    static final String SORT_PARAM = "sort";
+    static final String HIGHLIGHT_PARAM = "highlight";
+    private static final String PROMOTIONS = "promotions";
 
     private final ComparisonService<R, E> comparisonService;
     private final DocumentsService<S, R, E> documentsService;
@@ -56,9 +56,10 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
         return comparisonService.getCompareStateTokens(firstStateToken, secondStateToken);
     }
 
+    @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = RESULTS_PATH, method = RequestMethod.GET)
     public Documents<R> getResults(
-            @RequestParam(value = STATE_MATCH_PARAM) final List<String> stateMatchIds,
+            @RequestParam(STATE_MATCH_PARAM) final List<String> stateMatchIds,
             @RequestParam(value = STATE_DONT_MATCH_PARAM, required = false) final List<String> stateDontMatchIds,
             @RequestParam(value = TEXT_PARAM, required = false, defaultValue = "*") final String text,
             @RequestParam(value = RESULTS_START_PARAM, required = false, defaultValue = "1") final int resultsStart,
@@ -70,7 +71,7 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
     ) throws E {
         return comparisonService.getResults(
                 stateMatchIds,
-                stateDontMatchIds == null ? Collections.<String>emptyList() : stateDontMatchIds,
+                ListUtils.emptyIfNull(stateDontMatchIds),
                 text,
                 resultsStart,
                 maxResults,

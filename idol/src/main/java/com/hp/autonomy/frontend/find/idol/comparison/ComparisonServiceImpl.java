@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
@@ -20,12 +19,12 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-public class ComparisonServiceImpl<S extends Serializable, R extends SearchResult, E extends Exception> implements ComparisonService<R, E> {
+public class ComparisonServiceImpl<S extends Serializable, Q extends QueryRestrictions<S>, R extends SearchResult, E extends Exception> implements ComparisonService<R, E> {
     private final DocumentsService<S, R, E> documentsService;
-    private final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
+    private final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder;
 
     @Autowired
-    public ComparisonServiceImpl(final DocumentsService<S, R, E> documentsService, @SuppressWarnings("SpringJavaAutowiringInspection") final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
+    public ComparisonServiceImpl(final DocumentsService<S, R, E> documentsService, @SuppressWarnings("SpringJavaAutowiringInspection") final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder) {
         this.documentsService = documentsService;
         this.queryRestrictionsBuilder = queryRestrictionsBuilder;
     }
@@ -35,7 +34,13 @@ public class ComparisonServiceImpl<S extends Serializable, R extends SearchResul
     }
 
     private String generateDifferenceStateToken(final String firstQueryStateToken, final String secondQueryStateToken) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build("*", "", Collections.<S>emptyList(), null, null, 0, Collections.singletonList(firstQueryStateToken), Collections.singletonList(secondQueryStateToken));
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
+                .setQueryText("*")
+                .setFieldText("")
+                .setMinScore(0)
+                .setStateMatchId(Collections.singletonList(firstQueryStateToken))
+                .setStateDontMatchId(Collections.singletonList(secondQueryStateToken))
+                .build();
         return documentsService.getStateToken(queryRestrictions, ComparisonController.STATE_TOKEN_MAX_RESULTS, false);
     }
 
@@ -45,7 +50,13 @@ public class ComparisonServiceImpl<S extends Serializable, R extends SearchResul
             return getEmptyResults();
         }
 
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, "", Collections.<S>emptyList(), null, null, 0, stateMatchIds, stateDontMatchIds);
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
+                .setQueryText(text)
+                .setFieldText("")
+                .setMinScore(0)
+                .setStateMatchId(stateMatchIds)
+                .setStateDontMatchId(stateDontMatchIds)
+                .build();
         final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
                 .setQueryRestrictions(queryRestrictions)
                 .setStart(resultsStart)

@@ -12,6 +12,13 @@ html, body {
     min-width: 640px;
 }
 
+.chart rect {
+    fill: rgba(1,169,130,0.1);
+}
+.chart rect:hover {
+    fill: rgba(1,169,130,0.2);
+}
+
 .date input {
     width: 75% !important;
     padding-right: 0 !important;
@@ -636,6 +643,7 @@ input.find-input {
     color: #fff;
 }
 
+.numeric-parametric-field-control,
 .result-container-control {
     color: #00b388;
     font-size: 14px;
@@ -1560,5 +1568,13 @@ h4.similar-dates-message {
 }
 
 .precision-slider-block  > div > .slider{
+    width: 100%;
+}
+
+.numeric-parametric-slider-block {
+    width: 100%;
+}
+
+.numeric-parametric-slider-block > .slider{
     width: 100%;
 }

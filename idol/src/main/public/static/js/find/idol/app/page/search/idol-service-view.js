@@ -10,8 +10,9 @@ define([
     'find/idol/app/page/search/comparison/compare-modal',
     'find/app/page/search/service-view',
     'find/idol/app/page/search/results/idol-results-view-augmentation',
-    'find/idol/app/page/search/results/idol-results-view'
-], function(_, comparisonsI18n, configuration, CompareModal, ServiceView, ResultsViewAugmentation, ResultsView) {
+    'find/idol/app/page/search/results/idol-results-view',
+    'find/app/util/model-any-changed-attribute-listener'
+], function(_, comparisonsI18n, configuration, CompareModal, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
 
     'use strict';
 
@@ -40,6 +41,8 @@ define([
             }
 
             ServiceView.prototype.initialize.call(this, options);
+
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchData);
         },
 
         render: function() {
@@ -49,6 +52,14 @@ define([
 
         updateCompareModalButton: function() {
             this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
+        },
+
+        fetchParametricFields: function (fieldsCollection, valuesCollection) {
+            fieldsCollection.fetch({
+                success: _.bind(function() {
+                    this.fetchParametricValues(fieldsCollection, valuesCollection);
+                }, this)
+            });
         }
     });
 

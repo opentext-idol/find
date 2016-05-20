@@ -25,6 +25,7 @@ import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.Warnings;
@@ -101,15 +102,16 @@ public class FindHodDocumentService extends HodDocumentsService {
                 final List<ResourceIdentifier> goodIndexes = new ArrayList<>(queryRestrictions.getDatabases());
                 goodIndexes.removeAll(badIndexes);
 
-                searchRequest.setQueryRestrictions(new HodQueryRestrictionsBuilder().build(
-                        queryRestrictions.getQueryText(),
-                        queryRestrictions.getFieldText(),
-                        goodIndexes,
-                        queryRestrictions.getMinDate(),
-                        queryRestrictions.getMaxDate(),
-                        queryRestrictions.getMinScore(),
-                        queryRestrictions.getStateMatchId(),
-                        queryRestrictions.getStateDontMatchId()
+                searchRequest.setQueryRestrictions(new HodQueryRestrictions.Builder()
+                        .setQueryText(queryRestrictions.getQueryText())
+                        .setFieldText(queryRestrictions.getFieldText())
+                        .setDatabases(goodIndexes)
+                        .setMinDate(queryRestrictions.getMinDate())
+                        .setMaxDate(queryRestrictions.getMaxDate())
+                        .setMinScore(queryRestrictions.getMinScore())
+                        .setStateMatchId(queryRestrictions.getStateMatchId())
+                        .setStateDontMatchId(queryRestrictions.getStateDontMatchId())
+                        .build(
                 ));
                 final Documents<HodSearchResult> resultDocuments = super.queryTextIndex(searchRequest, fetchPromotions);
                 final Warnings warnings = new Warnings(badIndexes);

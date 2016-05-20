@@ -9,14 +9,18 @@ import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsControll
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Entity;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
-public class HodRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<Entity, ResourceIdentifier, HodErrorException> {
+public class HodRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<Entity, HodQueryRestrictions, ResourceIdentifier, HodErrorException> {
     @Before
     public void setUp() {
-        relatedConceptsController = new HodRelatedConceptsController(relatedConceptsService, new HodQueryRestrictionsBuilder());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new HodQueryRestrictions.Builder());
+        relatedConceptsController = new HodRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory);
     }
 }

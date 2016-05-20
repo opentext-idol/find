@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsServiceI
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
@@ -33,20 +33,16 @@ public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsService
     private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
 
     @Autowired
-    private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
+    private IdolQueryRestrictions.Builder queryRestrictionsBuilder;
 
     @Test
     public void findRelatedConceptsWithStateToken() throws Exception {
-        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilder.build(
-                "*",
-                "",
-                Arrays.asList(mvcIntegrationTestUtils.getDatabases()),
-                null,
-                null,
-                0,
-                Collections.<String>emptyList(),
-                Collections.<String>emptyList()
-        );
+        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilder
+                .setQueryText("*")
+                .setFieldText("")
+                .setDatabases(Arrays.asList(mvcIntegrationTestUtils.getDatabases()))
+                .setMinScore(0)
+                .build();
 
         final String stateToken = documentsService.getStateToken(queryRestrictions, Integer.MAX_VALUE, false);
 

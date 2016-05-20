@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.ObjectFactory;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -25,11 +27,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractDocumentsControllerTest<S extends Serializable, R extends SearchResult, E extends Exception> {
+public abstract class AbstractDocumentsControllerTest<S extends Serializable, Q extends QueryRestrictions<S>, R extends SearchResult, E extends Exception> {
     @Mock
     protected DocumentsService<S, R, E> documentsService;
+    @Mock
+    protected ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
 
-    protected DocumentsController<S, R, E> documentsController;
+    protected DocumentsController<S, Q, R, E> documentsController;
     protected Class<S> databaseType;
 
     protected abstract R sampleResult();
