@@ -225,18 +225,17 @@ define([
                 return model.get('field') !== fieldName;
             });
             let clonedCollection = new SelectedParametricValuesCollection(otherRestrictions);
-            let self = this;
             $.ajax({
                     url: '../api/public/parametric/numeric',
                     traditional: true,
                     data: {
                         fieldNames: [fieldName],
-                        databases: self.queryModel.get('indexes'),
-                        queryText: self.queryModel.get('queryText'),
+                        databases: this.queryModel.get('indexes'),
+                        queryText: this.queryModel.get('queryText'),
                         fieldText: clonedCollection.toFieldTextNode(),
-                        minDate: self.queryModel.getIsoDate('minDate'),
-                        maxDate: self.queryModel.getIsoDate('maxDate'),
-                        stateTokens: self.queryModel.get('stateMatchIds')
+                        minDate: this.queryModel.getIsoDate('minDate'),
+                        maxDate: this.queryModel.getIsoDate('maxDate'),
+                        stateTokens: this.queryModel.get('stateMatchIds')
                     }
                 })
                 .success(function (result) {
