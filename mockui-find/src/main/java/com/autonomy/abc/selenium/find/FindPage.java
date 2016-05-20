@@ -199,6 +199,10 @@ public class FindPage extends AppElement implements AppPage,
         return findElement(By.cssSelector(".left-side-container .container-toggle"));
     }
 
+    public WebElement leftContainer(){
+        return findElement(By.cssSelector(".left-side-container"));
+    }
+
     public void scrollToBottom() {
         findElement(By.className("results-number")).click();
         DriverUtil.scrollToBottom(getDriver());

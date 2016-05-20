@@ -9,14 +9,17 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.element.Collapsible;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.*;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
@@ -28,7 +31,8 @@ import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 
 public class IdolFindITCase extends FindTestBase {
 
-    private FindPage findPage;
+    //private FindPage findPage;
+    private IdolFindPage findPage;
     private FindTopNavBar navBar;
     private FindResultsPage results;
     private FindService findService;
@@ -43,11 +47,13 @@ public class IdolFindITCase extends FindTestBase {
 
     @Before
     public void setUp(){
-    findPage = getElementFactory().getFindPage();
+    findPage = getElementFactory().getIdolFindPage();
     navBar = getElementFactory().getTopNavBar();
     results = findPage.getResultsPage();
     findService = getApplication().findService();
     }
+
+    //Document Preview & Detailed Preview
 
     @Test
     public void testShowDocumentPreview(){
@@ -164,4 +170,63 @@ public class IdolFindITCase extends FindTestBase {
         detailedPreviewPage.goBackToSearch();
 
     }
+
+    //Filters
+    @Test
+    @ActiveBug("FIND-122")
+    public void testSearchFilterTypes(){
+        findService.search("face");
+        checkCorrectFiltersVisible(findPage.getVisibleFilterTypes());
+    }
+
+    @Test
+    public void testSearchFilters(){
+        findService.search("face");
+
+        //search for filter that isn't present
+        //findPage.filterResults("Minion");
+        //assertThat("No filter matched", findPage.noneMatchingMessageVisible());
+        findPage.clearFilter();
+
+        //checkCorrectFiltersVisible(Arrays.asList("GENERAL","UNITED STATES OF AMERICA","CATEGORY","Last Week","Test","PDF"));
+        checkCorrectFiltersVisible(Arrays.asList("Test","PDF"));
+
+    }
+
+    private void checkCorrectFiltersVisible(List<String> filtersToSearch){
+        findPage.expandFiltersFully();
+        List<String> allFilters = findPage.getCurrentFilters();
+        for (String targetFilter:filtersToSearch){
+            findPage.clearFilter();
+            findPage.expandFilters();
+            List<String> matchingFilters = findPage.findFilterString(targetFilter,allFilters);
+            findPage.filterResults(targetFilter);
+
+            findPage.expandFilters();
+            List<String> visibleFilters =findPage.getCurrentFilters();
+
+            verifyThat("Same number of filters for target "+targetFilter+": "+visibleFilters.size(),visibleFilters.size(),is(matchingFilters.size()));
+
+            Collections.sort(visibleFilters);
+            LOGGER.info("Visible");
+            for(String el:visibleFilters){
+                LOGGER.info(el);
+            }
+            Collections.sort(matchingFilters);
+            LOGGER.info("Matching");
+            for(String el:matchingFilters){
+                LOGGER.info(el);
+            }
+            verifyThat("All filters that should be displayed are", matchingFilters.equals(visibleFilters));
+        }
+
+    }
+    //Expanding & Collapsing
+    @Test
+    public void testExpandFilters(){
+        findService.search("face");
+        findPage.expandFiltersFully();
+        findPage.collapseFiltersFully();
+    }
+
 }
