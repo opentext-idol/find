@@ -6,8 +6,9 @@
 define([
     'find/app/page/search/abstract-query-left-side-view',
     'backbone',
-    'i18n!find/nls/bundle'
-], function(AbstractQueryLeftSideView, Backbone, i18n) {
+    'i18n!find/nls/bundle',
+    'js-testing/backbone-mock-factory'
+], function(AbstractQueryLeftSideView, Backbone, i18n, backboneMockFactory) {
 
     var MATCH_NOTHING = 'y54u65u4w5uy654u5eureuy654yht754wy54euy45';
 
@@ -21,7 +22,8 @@ define([
                     }
                 })
             }))({
-                queryState: {}
+                queryState: {},
+                numericParametricCollection: new (backboneMockFactory.getCollection())()
             });
         });
 
@@ -62,6 +64,46 @@ define([
 
                 expect(this.view.indexesViewWrapper.$el).toHaveClass('hide');
             });
+        });
+
+        describe('numeric parametric values filter', function() {
+            beforeEach(function() {
+                this.view.numericParametricCollection.reset();
+            });
+
+            describe('with numeric parametric values and the filter set to the empty string', function() {
+                beforeEach(function() {
+                    this.view.filterModel.set('');
+                });
+
+                it('should display when the displayCollection is not empty', function() {
+                    this.view.numericParametricCollection.add({fakeAttribute: true});
+
+                    expect(this.view.numericParametricView.$el).not.toHaveClass('hide');
+                    expect(this.view.$emptyMessage).toHaveClass('hide');
+                });
+
+                it('should not be displayed when there are no numeric parametric values matching the filter', function() {
+                    this.view.filterModel.set('text', MATCH_NOTHING);
+
+                    expect(this.view.numericParametricView.$el).toHaveClass('hide');
+                })
+            });
+
+            describe('with no numeric parametric values', function() {
+                it('should display when the filter is empty', function() {
+                    this.view.filterModel.set('text', '');
+
+                    expect(this.view.numericParametricView.$el).not.toHaveClass('hide');
+                    expect(this.view.$emptyMessage).toHaveClass('hide');
+                });
+
+                it('should not display when the filter is non-empty', function() {
+                    this.view.filterModel.set('text', MATCH_NOTHING);
+
+                    expect(this.view.numericParametricView.$el).toHaveClass('hide');
+                });
+            })
         });
 
         describe('parametric values filter', function() {
