@@ -20,14 +20,14 @@ define([
 
     function getData(numericFieldValuesWithCount) {
         //noinspection JSUnresolvedFunction
-        let minValue = Math.floor(+_.first(numericFieldValuesWithCount).value);
+        let minValue = Math.floor(_.first(numericFieldValuesWithCount).value);
         //noinspection JSUnresolvedFunction
-        let maxValue = Math.ceil(+_.last(numericFieldValuesWithCount).value);
+        let maxValue = Math.ceil(_.last(numericFieldValuesWithCount).value);
         let bucketSize = Math.ceil((maxValue - minValue + 1) / DEFAULT_TARGET_NUMBER_OF_BUCKETS);
         let buckets = [];
         let valueIndex = 0;
         numericFieldValuesWithCount.forEach(function (valueAndCount) {
-            let relativeValue = Math.floor(minValue >= 0 ? valueAndCount.value - minValue : valueAndCount.value + minValue);
+            let relativeValue = Math.floor(valueAndCount.value - minValue);
             while (valueIndex < relativeValue) {
                 let currentBucketIndex = Math.floor(valueIndex / bucketSize);
                 let value = minValue + valueIndex;
@@ -197,7 +197,7 @@ define([
                         //noinspection JSUnresolvedFunction
                         this.$maxInput.val(roundInputNumber(range[1]));
 
-                        graph.selectionRect.init(graph.chart, graph.scale.barWidth(range[0]));
+                        graph.selectionRect.init(graph.chart, GRAPH_HEIGHT, graph.scale.barWidth(range[0]));
                         graph.selectionRect.update(graph.scale.barWidth(range[1]));
                         graph.selectionRect.focus();
                     }
