@@ -10,11 +10,14 @@ import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.stats.AbandonmentEvent;
 import com.hp.autonomy.frontend.find.core.stats.ClickThroughEvent;
 import com.hp.autonomy.frontend.find.core.stats.ClickType;
 import com.hp.autonomy.frontend.find.core.stats.Event;
 import com.hp.autonomy.frontend.find.core.stats.PageEvent;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.StatsServerConfig;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import lombok.Data;
@@ -56,13 +59,26 @@ public class IdolStatsServiceTest {
     @Mock
     private AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
 
+    @Mock
+    private ConfigService<IdolFindConfig> configService;
+
+    @Mock
+    private IdolFindConfig config;
+
+    @Mock
+    private StatsServerConfig statsServerConfig;
+
     private IdolStatsService statsService;
 
     @Before
     public void setUp() {
         final XmlMapper xmlMapper = new XmlMapper();
 
-        statsService = new IdolStatsService(aciService, processorFactory, xmlMapper);
+        when(configService.getConfig()).thenReturn(config);
+        when(config.getStatsServer()).thenReturn(statsServerConfig);
+        when(statsServerConfig.isEnabled()).thenReturn(true);
+
+        statsService = new IdolStatsService(aciService, processorFactory, xmlMapper, configService);
     }
 
     @Test
