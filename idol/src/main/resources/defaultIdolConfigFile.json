@@ -65,12 +65,25 @@
   "map": {
     "enabled": false,
     "attribution": null,
-    "tileUrlTemplate": null
+    "initialLocation": {
+      "latitude": 51.5074,
+      "longitude":  0.1278
+    },
+    "tileUrlTemplate": null,
+    "resultsStep": 2500,
+    "locationFields": [
+      {
+        "displayName": "DefaultLocation",
+        "latitudeField": "latitude",
+        "longitudeField": "longitude"
+      }
+    ]
   },
   "mmap": {
     "enabled": false,
     "baseUrl": ""
   },
+  "minScore": 0,
   "fieldsInfo": {
     "contentType": {
       "names": [

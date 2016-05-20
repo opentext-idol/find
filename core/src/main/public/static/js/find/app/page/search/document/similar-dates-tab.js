@@ -134,19 +134,29 @@ define([
                 tooltip: 'hide',
                 value: 3
             });
-            this.$afterDateSlider.on('change', _.bind(this.getSimilarDocuments, this));
-            this.$beforeDateSlider.on('change', _.bind(this.getSimilarDocuments, this));
+            this.$afterDateSlider.on('change', _.bind(this.afterSliderChanged, this));
+            this.$beforeDateSlider.on('change', _.bind(this.beforeSliderChanged, this));
 
-
-        },
-
-        getSimilarDocuments: function () {
             this.$('.similar-dates-summary').html(i18n['search.document.detail.tabs.similarDates.temporalSummaryHtml'](
                 this.ticks[this.$beforeDateSlider.val()].text,
                 this.ticks[this.$afterDateSlider.val()].text
             ));
+        },
 
-            SimilarAbstractTab.prototype.getSimilarDocuments.call(this);
+        afterSliderChanged: function(event) {
+            this.$('.similar-dates-summary').html(i18n['search.document.detail.tabs.similarDates.temporalSummaryHtml'](
+                this.ticks[this.$beforeDateSlider.val()].text,
+                this.ticks[event.value.newValue].text
+            ));
+            this.getSimilarDocuments();
+        },
+
+        beforeSliderChanged: function(event) {
+            this.$('.similar-dates-summary').html(i18n['search.document.detail.tabs.similarDates.temporalSummaryHtml'](
+                this.ticks[event.value.newValue].text,
+                this.ticks[this.$afterDateSlider.val()].text
+            ));
+            this.getSimilarDocuments();
         }
     });
 });

@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class IdolFindSpringSecurityAuditorAware extends AbstractFindSpringSecurityAuditorAware<CommunityPrincipal> {
     @Autowired
     public IdolFindSpringSecurityAuditorAware(
-            final AuthenticationInformationRetriever<CommunityPrincipal> authenticationInformationRetriever,
+            final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
             final UserEntityRepository userRepository
     ) {
         super(authenticationInformationRetriever, userRepository);

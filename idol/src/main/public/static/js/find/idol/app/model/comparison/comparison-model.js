@@ -15,7 +15,7 @@ define([
         data[prefix + 'Text'] = searchDataUtil.makeQueryText(savedSearchModel.get('queryText'), savedSearchModel.get('relatedConcepts'));
 
         if(savedSearchModel.get('type') === SavedSearchModel.Type.SNAPSHOT) {
-            data[prefix + 'QueryStateToken'] = _.first(savedSearchModel.get('stateTokens'));
+            data[prefix + 'QueryStateToken'] = _.first(savedSearchModel.get('queryStateTokens'));
         } else {
             data[prefix + 'Restrictions'] = searchDataUtil.buildQuery(savedSearchModel);
         }
@@ -24,7 +24,7 @@ define([
     };
 
     var ComparisonModel = Backbone.Model.extend({
-        url: '../api/public/comparison/compare',
+        url: '../api/bi/comparison/compare',
 
         parse: function(response) {
             return {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
+import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @DiscriminatorValue(SavedSearchType.Values.SNAPSHOT)
@@ -28,12 +29,12 @@ import java.util.List;
 @JsonDeserialize(builder = SavedSnapshot.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SavedSnapshot extends SavedSearch<SavedSnapshot> {
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = StoredStateTable.NAME, joinColumns = {
             @JoinColumn(name = StoredStateTable.Column.SEARCH_ID)
     })
-    @Column(name = StoredStateTable.Column.STATE_TOKEN)
-    private List<String> stateTokens;
+    private Set<TypedStateToken> stateTokens;
 
     @Column(name = Table.Column.TOTAL_RESULTS)
     private Long resultCount;
@@ -55,7 +56,7 @@ public class SavedSnapshot extends SavedSearch<SavedSnapshot> {
     @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder extends SavedSearch.Builder<SavedSnapshot> {
-        private List<String> stateTokens;
+        private Set<TypedStateToken> stateTokens;
         private Long resultCount;
 
         public Builder(final SavedSnapshot snapshot) {
@@ -68,4 +69,5 @@ public class SavedSnapshot extends SavedSearch<SavedSnapshot> {
         @Override
         public SavedSnapshot build() {return new SavedSnapshot(this);}
     }
+
 }

@@ -28,7 +28,7 @@ import java.util.Set;
 
 @RequestMapping(SavedQueryController.PATH)
 public abstract class SavedQueryController<S extends Serializable, D extends SearchResult, E extends Exception> {
-    public static final String PATH = "/api/public/saved-query";
+    public static final String PATH = "/api/bi/saved-query";
     static final String NEW_RESULTS_PATH = "/new-results/";
 
     private final SavedSearchService<SavedQuery> service;
@@ -79,21 +79,25 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
         int newResults = 0;
 
         final SavedQuery savedQuery = service.get(id);
-        final DateTime dateNewDocsLastFetched = savedQuery.getDateNewDocsLastFetched();
-        if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateNewDocsLastFetched)) {
+        final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
+
+        if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
             final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(savedQuery.getQueryText(),
                     savedQuery.toFieldText(),
                     convertEmbeddableIndexes(savedQuery.getIndexes()),
-                    savedQuery.getDateNewDocsLastFetched(),
+                    dateDocsLastFetched,
                     null,
+                    savedQuery.getMinScore(),
                     Collections.<String>emptyList(),
                     Collections.<String>emptyList());
+
             final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
                     .setQueryRestrictions(queryRestrictions)
-                    .setMaxResults(1)
+                    .setMaxResults(Integer.MAX_VALUE)
                     .setPrint(getNoResultsPrintParam())
                     .setQueryType(SearchRequest.QueryType.MODIFIED)
                     .build();
+
             final Documents<?> searchResults = documentsService.queryTextIndex(searchRequest);
             newResults = searchResults.getTotalResults();
         }

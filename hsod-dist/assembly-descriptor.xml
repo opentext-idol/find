@@ -7,24 +7,13 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 
-    <id>distribution</id>
+    <id>mysql-migrations</id>
     <includeBaseDirectory>false</includeBaseDirectory>
-
-    <dependencySets>
-        <dependencySet>
-            <includes>
-                <include>${project.groupId}:hod:war:*</include>
-            </includes>
-            <outputFileNameMapping>${project.parent.artifactId}-hod.${artifact.extension}</outputFileNameMapping>
-            <useProjectArtifact>false</useProjectArtifact>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-        </dependencySet>
-    </dependencySets>
 
     <!-- Include the core schema migrations which should have been unpacked by the dependency plugin -->
     <fileSets>
         <fileSet>
-            <outputDirectory>migrations</outputDirectory>
+            <outputDirectory>.</outputDirectory>
             <directory>${project.build.directory}/dependency/db/migration/mysql</directory>
         </fileSet>
     </fileSets>

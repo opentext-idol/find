@@ -23,7 +23,7 @@ import java.io.IOException;
         "server.port=0",
         "hp.find.persistentState = INMEMORY",
         "application.buildNumber=test",
-        "mock.hod.authentication=false",
+        "mock.configuration=false",
         "spring.datasource.url = jdbc:h2:mem:find-db;DB_CLOSE_ON_EXIT=FALSE"
 })
 public class HodFindApplicationTest {

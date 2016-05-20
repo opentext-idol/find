@@ -7,6 +7,7 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'moment',
     'find/app/model/dates-filter-model',
     'find/app/model/entity-collection',
     'find/app/model/query-model',
@@ -15,27 +16,29 @@ define([
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/page/search/results/results-view-augmentation',
-    'find/app/page/search/results/results-view-container',
-    'find/app/page/search/results/results-view-selection',
+    'find/app/util/results-view-container',
+    'find/app/util/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
+    'find/app/page/search/results/map-results-view',
+    'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
+], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
             queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, Collapsible,
-            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, i18n, templateString) {
+            ResultsViewSelection, RelatedConceptsView, Collapsible, addChangeListener,  SavedSearchControlView, TopicMapView,
+            SunburstView, MapResultsView, configuration, i18n, templateString) {
 
     'use strict';
 
     var template = _.template(templateString);
 
     return Backbone.View.extend({
-        className: 'full-height',
+        className: 'full-height-viewport',
 
         // Can be overridden
         headerControlsHtml: '',
@@ -62,7 +65,8 @@ define([
 
             this.queryModel = new QueryModel({
                 autoCorrect: this.searchTypes[searchType].autoCorrect,
-                stateMatchIds: this.savedSearchModel.get('stateTokens')
+                stateMatchIds: this.savedSearchModel.get('queryStateTokens'),
+                promotionsStateMatchIds: this.savedSearchModel.get('promotionsStateTokens')
             }, {queryState: this.queryState});
 
             this.listenTo(this.queryModel, 'change:indexes', function() {
@@ -94,6 +98,14 @@ define([
                 }
             });
 
+            // If the saved search is unmodified and not new, update the last fetched date
+            this.listenTo(this.documentsCollection, 'sync', function() {
+                var changed = this.queryState ? !this.savedSearchModel.equalsQueryState(this.queryState) : false;
+                if(!changed && !this.savedSearchModel.isNew()) {
+                    this.savedSearchModel.save({dateDocsLastFetched: moment()});
+                }
+            });
+
             this.parametricCollection = new ParametricCollection();
 
             var subViewArguments = {
@@ -118,7 +130,9 @@ define([
                 selectedTabModel: this.selectedTabModel
             };
 
-            this.savedSearchControlView = new SavedSearchControlView(subViewArguments);
+            if (configuration().hasBiRole) {
+                this.savedSearchControlView = new SavedSearchControlView(subViewArguments);
+            }
 
             this.leftSideFooterView = new this.searchTypes[searchType].LeftSideFooterView(subViewArguments);
 
@@ -138,68 +152,84 @@ define([
                 title: i18n['search.relatedConcepts']
             });
 
-            this.resultsView = new this.ResultsView(_.defaults({
+            var resultsView = new this.ResultsView(_.defaults({
                 enablePreview: true,
                 entityClickHandler: entityClickHandler,
                 fetchStrategy: this.searchTypes[searchType].fetchStrategy,
                 highlightModel: this.highlightModel
             }, subViewArguments));
 
-            this.resultsViewAugmentation = new this.ResultsViewAugmentation({
-                resultsView: this.resultsView,
-                queryModel: this.queryModel
-            });
-            
-            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle', this.rightSideContainerHideToggle);
+            var hasBiRole = configuration().hasBiRole;
 
-            this.topicMapView = new TopicMapView(_.extend({
-                clickHandler: entityClickHandler
-            }, subViewArguments));
-
-            var resultsViews = [{
-                content: this.resultsViewAugmentation,
+            this.resultsViews = _.where([{
+                Constructor: this.ResultsViewAugmentation,
                 id: 'list',
+                shown: true,
                 uniqueId: _.uniqueId('results-view-item-'),
+                constructorArguments: {
+                    resultsView: resultsView,
+                    queryModel: this.queryModel
+                },
+                events: {
+                    // needs binding as the view container will be the eventual listener
+                    'rightSideContainerHideToggle': _.bind(this.rightSideContainerHideToggle, this)
+                },
                 selector: {
                     displayNameKey: 'list',
                     icon: 'hp-list'
                 }
             }, {
-                content: this.topicMapView,
+                Constructor: TopicMapView,
                 id: 'topic-map',
+                shown: hasBiRole,
                 uniqueId: _.uniqueId('results-view-item-'),
+                constructorArguments: _.extend({
+                    clickHandler: entityClickHandler
+                }, subViewArguments),
                 selector: {
                     displayNameKey: 'topic-map',
                     icon: 'hp-grid'
                 }
-            }];
-
-            if (this.displaySunburst) {
-                this.sunburstView = new SunburstView(subViewArguments);
-
-                resultsViews.push({
-                    content: this.sunburstView,
-                    id: 'sunburst',
-                    uniqueId: _.uniqueId('results-view-item-'),
-                    selector: {
-                        displayNameKey: 'sunburst',
-                        icon: 'hp-favorite'
-                    }
-                });
-            }
+            }, {
+                Constructor: SunburstView,
+                constructorArguments: subViewArguments,
+                id: 'sunburst',
+                shown: hasBiRole && this.displaySunburst,
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'sunburst',
+                    icon: 'hp-favorite'
+                }
+            }, {
+                Constructor: MapResultsView,
+                id: 'map',
+                shown: hasBiRole && configuration().map.enabled,
+                uniqueId: _.uniqueId('results-view-item-'),
+                constructorArguments: _.extend({
+                    resultsStep: this.mapViewResultsStep,
+                    allowIncrement: this.mapViewAllowIncrement
+                }, subViewArguments),
+                selector: {
+                    displayNameKey: 'map',
+                    icon: 'hp-map-view'
+                }
+            }], {shown: true});
 
             var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
-                selectedTab: resultsViews[0].id
+                selectedTab: this.resultsViews[0].id
             });
 
-            this.resultsViewSelection = new ResultsViewSelection({
-                views: resultsViews,
-                model: resultsViewSelectionModel
-            });
+            // need a selector if multiple active views
+            if (this.resultsViews.length > 1) {
+                this.resultsViewSelection = new ResultsViewSelection({
+                    views: this.resultsViews,
+                    model: resultsViewSelectionModel
+                });
+            }
 
             this.resultsViewContainer = new ResultsViewContainer({
-                views: resultsViews,
+                views: this.resultsViews,
                 model: resultsViewSelectionModel
             });
 
@@ -214,11 +244,21 @@ define([
                 headerControlsHtml: this.headerControlsHtml
             }));
 
-            this.savedSearchControlView.setElement(this.$('.search-options-container')).render();
+            if (this.savedSearchControlView) {
+                // the padding looks silly if we don't have the view so add it here
+                var $searchOptionContainer = this.$('.search-options-container').addClass('p-sm');
+
+                this.savedSearchControlView.setElement($searchOptionContainer).render();
+            }
+
             this.relatedConceptsViewWrapper.render();
 
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
-            this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
+
+            if (this.resultsViewSelection) {
+                this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
+            }
+
             this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
 
             this.leftSideFooterView.setElement(this.$('.left-side-footer')).render();
@@ -267,13 +307,9 @@ define([
 
             _.chain([
                 this.savedSearchControlView,
-                this.resultsView,
-                this.resultsViewAugmentation,
-                this.topicMapView,
                 this.resultsViewContainer,
                 this.resultsViewSelection,
                 this.relatedConceptsViewWrapper,
-                this.sunburstView,
                 this.leftSideFooterView,
                 this.middleColumnHeaderView
             ])

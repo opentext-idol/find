@@ -26,7 +26,7 @@ public class IdolParametricValuesControllerTest extends AbstractParametricValues
 
     @Test
     public void getParametricValues() throws AciErrorException {
-        parametricValuesController.getParametricValues("Some query text", null, Collections.<String>emptyList(), null, null, null);
+        parametricValuesController.getParametricValues("Some query text", null, Collections.<String>emptyList(), null, null, 0, null);
         verify(parametricValuesService).getAllParametricValues(Matchers.<IdolParametricRequest>any());
     }
 }

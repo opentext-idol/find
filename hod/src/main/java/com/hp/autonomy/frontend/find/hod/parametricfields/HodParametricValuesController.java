@@ -48,6 +48,7 @@ public class HodParametricValuesController extends ParametricValuesController<Ho
             final List<ResourceIdentifier> databases,
             final DateTime minDate,
             final DateTime maxDate,
+            final Integer minScore,
             final List<String> stateTokens
     ) throws HodErrorException {
         // Fetch parametric field names from HOD
@@ -55,7 +56,7 @@ public class HodParametricValuesController extends ParametricValuesController<Ho
         final List<String> fieldNames = tagResponse.getParametricTypeFields();
 
         // Get parametric values for query
-        final QueryRestrictions<ResourceIdentifier> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate, stateTokens, Collections.<String>emptyList());
+        final QueryRestrictions<ResourceIdentifier> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, Collections.<String>emptyList());
 
         final HodParametricRequest parametricRequest = new HodParametricRequest.Builder()
                 .setFieldNames(fieldNames)

@@ -97,7 +97,7 @@ public abstract class SavedQueryControllerTest<S extends Serializable, D extends
                 .setId(id)
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
-        int numberOfResults = 1;
+        final int numberOfResults = 0;
         when(documentsService.queryTextIndex(Matchers.<SearchRequest<S>>any())).thenReturn(searchResults);
         assertEquals(numberOfResults, savedQueryController.checkForNewQueryResults(id));
     }
@@ -112,7 +112,7 @@ public abstract class SavedQueryControllerTest<S extends Serializable, D extends
                 .setMaxDate(lastFetchTime.minus(1))
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
-        int numberOfResults = 1;
+        final int numberOfResults = 0;
 
         assertEquals(numberOfResults, savedQueryController.checkForNewQueryResults(id));
         verify(documentsService, never()).queryTextIndex(Matchers.<SearchRequest<S>>any());

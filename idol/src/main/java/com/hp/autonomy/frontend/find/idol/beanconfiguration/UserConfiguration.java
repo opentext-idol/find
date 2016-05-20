@@ -18,12 +18,14 @@ import java.util.Map;
 public class UserConfiguration {
     public static final String IDOL_USER_ROLE = "FindUser";
     public static final String IDOL_ADMIN_ROLE = "FindAdmin";
+    public static final String IDOL_BI_ROLE = "FindBI";
 
     @Bean
     public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
         final Map<String, String> rolesMap = ImmutableMap.<String, String>builder()
             .put(IDOL_USER_ROLE, FindRole.USER.toString())
             .put(IDOL_ADMIN_ROLE, FindRole.ADMIN.toString())
+            .put(IDOL_BI_ROLE, FindRole.BI.toString())
             .build();
 
         return new OneToOneOrZeroSimpleAuthorityMapper(rolesMap);

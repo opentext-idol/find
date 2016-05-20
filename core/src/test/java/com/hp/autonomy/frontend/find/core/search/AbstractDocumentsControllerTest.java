@@ -36,26 +36,26 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, R 
 
     @Test
     public void query() throws E {
-        documentsController.query("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, false);
+        documentsController.query("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, 0, false);
         verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
     }
 
     @Test
     public void queryForPromotions() throws E {
-        documentsController.queryForPromotions("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, false);
+        documentsController.queryForPromotions("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, 0, false);
         verify(documentsService).queryTextIndexForPromotions(Matchers.<SearchRequest<S>>any());
     }
 
     @Test
     public void queryPaginationTest() throws E {
-        documentsController.query("Some query text", 30, 60, null, Collections.<S>emptyList(), null, null, null, null, true, false);
+        documentsController.query("Some query text", 30, 60, null, Collections.<S>emptyList(), null, null, null, null, true, 0, false);
         verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
     }
 
     @Test
     public void findSimilar() throws E {
         final String reference = "SomeReference";
-        documentsController.findSimilar(reference, 1, 30, "context", Collections.<S>emptyList(), "", "relevance", null, DateTime.now(), true);
+        documentsController.findSimilar(reference, 1, 30, "context", Collections.<S>emptyList(), "", "relevance", null, DateTime.now(), true, 0);
         verify(documentsService).findSimilar(Matchers.<SuggestRequest<S>>any());
     }
 

@@ -79,6 +79,18 @@ define(function() {
             license: 'BSD',
             edited: false
         }, {
+            name: 'Leaflet.awesome-markers',
+            url: 'https://github.com/lvoogdt/Leaflet.awesome-markers',
+            version: '2.0.2',
+            license: 'MIT',
+            edited: false
+        }, {
+            name: 'Leaflet.markercluster',
+            url: 'https://github.com/Leaflet/Leaflet.markercluster/',
+            version: 'leaflet-0.7',
+            license: 'MIT',
+            edited: false
+        }, {
             name: 'Moment.js',
             url: 'http://momentjs.com',
             version: '2.10.3',

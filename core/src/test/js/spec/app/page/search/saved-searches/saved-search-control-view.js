@@ -9,11 +9,12 @@ define([
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/dates-filter-model',
+    'find/app/model/min-score-model',
     'find/app/util/confirm-view',
     'databases-view/js/databases-collection',
     'moment',
     'i18n!find/nls/bundle'
-], function(Backbone, $, SavedSearchControlView, SavedSearchModel, DatesFilterModel, MockConfirmView, DatabasesCollection, moment, i18n) {
+], function(Backbone, $, SavedSearchControlView, SavedSearchModel, DatesFilterModel, MinScoreModel, MockConfirmView, DatabasesCollection, moment, i18n) {
 
     function checkPopoverExists(view) {
         return Boolean(view.$('.popover').length);
@@ -154,11 +155,16 @@ define([
                 customMaxDate: null
             });
 
+            var minScoreModel = new MinScoreModel({
+                minScore: 20
+            });
+
             this.queryState = {
                 datesFilterModel: datesFilterModel,
                 queryTextModel: queryTextModel,
                 selectedIndexes: selectedIndexes,
-                selectedParametricValues: selectedParametricValues
+                selectedParametricValues: selectedParametricValues,
+                minScoreModel: minScoreModel
             };
 
             this.savedSearchModel = new SavedSearchModel({
@@ -377,6 +383,7 @@ define([
                     var model = this.savedQueryCollection.at(0);
                     expect(model.get('queryText')).toBe('cat');
                     expect(model.get('indexes').length).toBe(1);
+                    expect(model.get('minScore')).toBe(20);
                 });
 
                 it('switches to the new query tab', function() {

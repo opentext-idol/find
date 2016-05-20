@@ -70,7 +70,11 @@ define([
                     this.$('.main-results-container').removeClass('selected-document');
                 } else {
                     //enable/choose another preview view
-                    this.trigger('preview', this.documentsCollection.get($target.data('cid')));
+                    if(this.documentsCollection.get($target.data('cid'))) {
+                        this.trigger('preview', this.documentsCollection.get($target.data('cid')));
+                    } else {
+                        this.trigger('preview', this.promotionsCollection.get($target.data('cid')));
+                    }
 
                     //resetting selected-document class and adding it to the target
                     this.$('.main-results-container').removeClass('selected-document');
@@ -79,7 +83,11 @@ define([
             },
             'click .similar-documents-trigger': function(event) {
                 event.stopPropagation();
-                var documentModel = this.documentsCollection.get($(event.target).closest('[data-cid]').data('cid'));
+                var cid = $(event.target).closest('[data-cid]').data('cid');
+                var documentModel = this.documentsCollection.get(cid);
+                if (!documentModel){
+                    documentModel = this.promotionsCollection.get(cid);
+                }
                 vent.navigateToSuggestRoute(documentModel);
             }
         },
@@ -89,6 +97,7 @@ define([
             this.enablePreview = options.enablePreview || false;
 
             this.queryModel = options.queryModel;
+            this.showPromotions = this.fetchStrategy.promotions(this.queryModel) && !options.hidePromotions;
             this.documentsCollection = options.documentsCollection;
 
             this.indexesCollection = options.indexesCollection;
@@ -112,7 +121,9 @@ define([
                 this.entityClickHandler = options.entityClickHandler;
             }
 
-            this.promotionsCollection = new PromotionsCollection();
+            if (this.showPromotions) {
+                this.promotionsCollection = new PromotionsCollection();
+            }
 
             this.sortView = new SortView({
                 queryModel: this.queryModel
@@ -149,7 +160,7 @@ define([
         },
 
         clearLoadingSpinner: function() {
-            if (this.resultsFinished && this.promotionsFinished) {
+            if (this.resultsFinished && this.promotionsFinished || !this.showPromotions) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
@@ -168,21 +179,23 @@ define([
             this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
-            this.listenTo(this.promotionsCollection, 'add', function(model) {
-                this.formatResult(model, true);
-            });
+            if (this.showPromotions) {
+                this.listenTo(this.promotionsCollection, 'add', function(model) {
+                    this.formatResult(model, true);
+                });
 
-            this.listenTo(this.promotionsCollection, 'sync', function() {
-                this.promotionsFinished = true;
-                this.clearLoadingSpinner();
-            });
+                this.listenTo(this.promotionsCollection, 'sync', function() {
+                    this.promotionsFinished = true;
+                    this.clearLoadingSpinner();
+                });
 
-            this.listenTo(this.promotionsCollection, 'error', function(collection, xhr) {
-                this.promotionsFinished = true;
-                this.clearLoadingSpinner();
+                this.listenTo(this.promotionsCollection, 'error', function(collection, xhr) {
+                    this.promotionsFinished = true;
+                    this.clearLoadingSpinner();
 
-                this.$('.main-results-content .promotions').append(this.handleError(i18n['app.feature.promotions'], xhr));
-            });
+                    this.$('.main-results-content .promotions').append(this.handleError(i18n['app.feature.promotions'], xhr));
+                });
+            }
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
                 this.formatResult(model, false);
@@ -194,7 +207,7 @@ define([
 
                 this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
 
-                if (this.endOfResults) {
+                if (this.endOfResults && !this.documentsCollection.isEmpty()) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noMoreResults"]}));
                 } else if (this.documentsCollection.isEmpty()) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noResults"]}));
@@ -217,10 +230,12 @@ define([
                             this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
                         }, this);
 
-                        this.promotionsCollection.each(function(document) {
-                            var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
-                            this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
-                        }, this);
+                        if (this.showPromotions) {
+                            this.promotionsCollection.each(function(document) {
+                                var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
+                                this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
+                            }, this);
+                        }
                     }
                 });
             }
@@ -301,11 +316,17 @@ define([
                 }.bind(this)
             });
 
-            if (!infiniteScroll) {
+            if (!infiniteScroll && this.showPromotions) {
+
                 this.promotionsFinished = false;
+                var parametricRequestData =  _.extend({
+                        start: this.start,
+                        max_results: this.maxResults,
+                        sort: this.queryModel.get('sort')
+                    }, this.fetchStrategy.promotionsRequestParams(this.queryModel, infiniteScroll));
 
                 this.promotionsCollection.fetch({
-                    data: requestData,
+                    data: parametricRequestData,
                     reset: false
                 }, this);
             }

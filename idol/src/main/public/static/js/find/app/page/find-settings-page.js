@@ -113,7 +113,8 @@ define([
                             enable: i18n['settings.map.enable'],
                             enabled: i18n['settings.map.enabled'],
                             loading: i18n['settings.map.loading'],
-                            url: i18n['settings.map.url']
+                            url: i18n['settings.map.url'],
+                            resultsstep: i18n['settings.map.results.step'] 
                         })
                     })
                 ]

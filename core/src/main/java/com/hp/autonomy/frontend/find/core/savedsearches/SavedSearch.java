@@ -94,6 +94,10 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     @JsonIgnore
     private Boolean active;
 
+    @Column(name = Table.Column.MIN_SCORE, nullable = false)
+    private Integer minScore = 0;
+
+
     protected SavedSearch(final Builder<?> builder) {
         id = builder.id;
         title = builder.title;
@@ -107,6 +111,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         dateModified = builder.dateModified;
         dateRange = builder.dateRange;
         active = builder.active;
+        minScore = builder.minScore;
     }
 
     /**
@@ -125,6 +130,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             queryText = other.getQueryText() == null ? queryText : other.getQueryText();
             minDate = other.getMinDate() == null ? minDate : other.getMinDate();
             maxDate = other.getMaxDate() == null ? maxDate : other.getMaxDate();
+            minScore = other.getMinScore() == null ? minScore : other.getMinScore();
             dateRange = other.getDateRange() == null ? dateRange : other.getDateRange();
 
             indexes = other.getIndexes() == null ? indexes : other.getIndexes();
@@ -219,6 +225,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         private DateTime dateModified;
         private DateRange dateRange;
         private Boolean active = true;
+        private Integer minScore;
 
         public Builder(final SavedSearch<T> search) {
             id = search.id;
@@ -233,6 +240,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             dateModified = search.dateModified;
             dateRange = search.dateRange;
             active = search.active;
+            minScore = search.minScore;
         }
 
         public abstract T build();
@@ -296,6 +304,11 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             this.active = active;
             return this;
         }
+
+        public Builder<T> setMinScore(final Integer minScore) {
+            this.minScore = minScore;
+            return this;
+        }
     }
 
     public interface Table {
@@ -312,6 +325,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             String ACTIVE = "active";
             String TOTAL_RESULTS = "total_results";
             String DATE_RANGE_TYPE = "date_range_type";
+            String MIN_SCORE = "min_score";
         }
     }
 
@@ -336,7 +350,6 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
 
         interface Column {
             String SEARCH_ID = "search_id";
-            String STATE_TOKEN = "state_token";
         }
     }
 

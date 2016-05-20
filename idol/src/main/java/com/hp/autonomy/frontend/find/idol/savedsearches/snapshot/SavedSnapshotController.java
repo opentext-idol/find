@@ -6,6 +6,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
@@ -17,14 +18,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @RestController
 @RequestMapping(SavedSnapshotController.PATH)
 public class SavedSnapshotController {
-    public static final String PATH = "/api/public/saved-snapshot";
+    public static final String PATH = "/api/bi/saved-snapshot";
 
     private static final Integer STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
 
@@ -46,12 +48,25 @@ public class SavedSnapshotController {
     public SavedSnapshot create(
             @RequestBody final SavedSnapshot snapshot
     ) throws AciErrorException {
-        final StateTokenAndResultCount stateTokenAndResultCount = getStateTokenAndResultCount(snapshot);
+        final List<StateTokenAndResultCount> stateTokensList = Arrays.asList(
+                getStateTokenAndResultCount(snapshot, false),
+                getStateTokenAndResultCount(snapshot, true)
+        );
+
+        final Set<TypedStateToken> stateTokens = new HashSet<>();
+
+        for (final StateTokenAndResultCount listToken : stateTokensList) {
+            final TypedStateToken token = listToken.getTypedStateToken();
+            stateTokens.add(token);
+        }
+
+        // use result count from the query without promotions
+        final long resultCount = stateTokensList.get(0).getResultCount();
 
         return service.create(
                 new SavedSnapshot.Builder(snapshot)
-                        .setStateTokens(Collections.singletonList(stateTokenAndResultCount.getStateToken()))
-                        .setResultCount(stateTokenAndResultCount.getResultCount())
+                        .setStateTokens(stateTokens)
+                        .setResultCount(resultCount)
                         .build()
         );
     }
@@ -77,7 +92,7 @@ public class SavedSnapshotController {
         service.deleteById(id);
     }
 
-    private StateTokenAndResultCount getStateTokenAndResultCount(final SavedSnapshot snapshot) throws AciErrorException {
+    private StateTokenAndResultCount getStateTokenAndResultCount(final SavedSnapshot snapshot, final boolean promotions) throws AciErrorException {
         final List<String> indexes;
 
         if (snapshot.getIndexes() == null) {
@@ -97,8 +112,9 @@ public class SavedSnapshotController {
                 .setFieldText(snapshot.toFieldText())
                 .setMaxDate(snapshot.getMaxDate())
                 .setMinDate(snapshot.getMinDate())
+                .setMinScore(snapshot.getMinScore())
                 .build();
 
-        return documentsService.getStateTokenAndResultCount(restrictions, STATE_TOKEN_MAX_RESULTS);
+        return documentsService.getStateTokenAndResultCount(restrictions, STATE_TOKEN_MAX_RESULTS, promotions);
     }
 }

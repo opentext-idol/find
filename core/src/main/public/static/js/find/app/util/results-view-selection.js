@@ -3,8 +3,8 @@ define([
     'underscore',
     'jquery',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/results/results-view-container.html',
-    'text!find/templates/app/page/search/results/selector.html'
+    'text!find/templates/app/util/results-view-container.html',
+    'text!find/templates/app/util/selector.html'
 ], function (Backbone, _, $, i18n, viewHtml, selectorTemplate) {
 
     return Backbone.View.extend({

@@ -31,6 +31,7 @@ public abstract class ParametricValuesController<R extends ParametricRequest<S>,
     public static final String DATABASES_PARAM = "databases";
     public static final String MIN_DATE_PARAM = "minDate";
     public static final String MAX_DATE_PARAM = "maxDate";
+    public static final String MIN_SCORE = "minScore";
     public static final String STATE_TOKEN_PARAM = "stateTokens";
 
     protected final ParametricValuesService<R, S, E> parametricValuesService;
@@ -47,6 +48,7 @@ public abstract class ParametricValuesController<R extends ParametricRequest<S>,
             List<S> databases,
             DateTime minDate,
             DateTime maxDate,
+            Integer minScore,
             List<String> stateTokens
     ) throws E;
 
@@ -59,9 +61,10 @@ public abstract class ParametricValuesController<R extends ParametricRequest<S>,
             @RequestParam(DATABASES_PARAM) final List<S> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+            @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
-        return getParametricValuesInternal(queryText, fieldText, databases, minDate, maxDate, ensureList(stateTokens));
+        return getParametricValuesInternal(queryText, fieldText, databases, minDate, maxDate, minScore, ensureList(stateTokens));
     }
 
     protected <T> List<T> ensureList(final List<T> maybeList) {

@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Configuration
+@ConditionalOnProperty(value = "mock.configuration", matchIfMissing = true)
 public class IdolFindMockConfigConfiguration {
     @Bean
     @Primary
@@ -34,7 +36,7 @@ public class IdolFindMockConfigConfiguration {
         // The rest of the fields are mocked in the haven-search-components IdolTestConfiguration class
         final IdolFindConfig config = new IdolFindConfig.Builder()
                 .setLogin(loginConfig)
-                .setMap(new MapConfiguration("", false, ""))
+                .setMap(new MapConfiguration("", false, "", null, 2, null))
                 .setMmap(mmapConfig)
                 .build();
 

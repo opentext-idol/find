@@ -122,6 +122,10 @@ html, body {
     height: 100%;
 }
 
+.full-height-viewport {
+    height: 100vh;
+}
+
 dl.dl-inline > dt,
 dl.dl-inline > dd {
     display: inline-block;
@@ -398,9 +402,8 @@ fieldset.radio-fieldset > label {
 /* Search tabs */
 .search-tabs-container {
     background-color: #fff;
-    height: 65px;
-    border-bottom: 1px solid #E4E4E4;
-    padding-top: 5px;
+    /* Bootstrap cols have min-height 1 */
+    min-height: 0;
 }
 
 .tab-dropdown {
@@ -417,8 +420,13 @@ fieldset.radio-fieldset > label {
 }
 
 .search-tabs-list {
-    height: 60px;
+    height: 65px;
+    padding-top: 5px;
     overflow: hidden;
+}
+
+.search-tabs-container .nav-tabs {
+    border-bottom: none;
 }
 
 .search-tabs-container .nav-tabs > li > a {
@@ -538,6 +546,7 @@ input.find-input {
     padding-right:26px;
     width:100%;
     line-height: initial;
+    text-indent: 3px
 }
 
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -1428,6 +1437,30 @@ input:-moz-placeholder::before {
     border: none;
 }
 
+.map-field-select {
+    width: 45%;
+}
+
+.location-results-map {
+    min-height: 600px;
+    height: 100%;
+    width: 100%;
+}
+
+.map-show-more {
+    margin-left: 4px;
+    margin-bottom: 4px;
+}
+
+.map-loading-spinner {
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.map-results-count {
+    display: inline-block;
+}
+
 .location-tab-map {
     min-height: 400px;
     max-height: 750px;
@@ -1520,4 +1553,12 @@ h4.similar-dates-message {
         display: flex;
         min-height: 100%;
     }
+}
+
+.precision-slider-block {
+    width: 100%;
+}
+
+.precision-slider-block  > div > .slider{
+    width: 100%;
 }

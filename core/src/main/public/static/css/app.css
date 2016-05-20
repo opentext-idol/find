@@ -13,6 +13,9 @@
 @import "../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css";
 @import "../bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css";
 @import "../bower_components/leaflet/dist/leaflet.css";
+@import "../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css";
+@import "../bower_components/leaflet.markercluster/dist/MarkerCluster.css";
+@import "../bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css";
 @import 'HPEElements.css';
 @import 'app-include.css';
 @import "result-highlighting.css";

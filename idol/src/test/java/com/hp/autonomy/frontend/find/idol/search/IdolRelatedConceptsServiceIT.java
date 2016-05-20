@@ -23,6 +23,7 @@ import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,17 +43,19 @@ public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsService
                 Arrays.asList(mvcIntegrationTestUtils.getDatabases()),
                 null,
                 null,
+                0,
                 Collections.<String>emptyList(),
                 Collections.<String>emptyList()
         );
 
-        final String stateToken = documentsService.getStateToken(queryRestrictions, Integer.MAX_VALUE);
+        final String stateToken = documentsService.getStateToken(queryRestrictions, Integer.MAX_VALUE, false);
 
         final MockHttpServletRequestBuilder request = get(RelatedConceptsController.RELATED_CONCEPTS_PATH)
                 .param(RelatedConceptsController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(RelatedConceptsController.QUERY_TEXT_PARAM, "*")
                 .param(RelatedConceptsController.FIELD_TEXT_PARAM, "")
-                .param(RelatedConceptsController.STATE_TOKEN_PARAM, stateToken);
+                .param(RelatedConceptsController.STATE_TOKEN_PARAM, stateToken)
+                .with(authentication(userAuth()));
 
         mockMvc
                 .perform(request)

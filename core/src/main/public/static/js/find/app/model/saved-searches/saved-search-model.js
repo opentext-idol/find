@@ -23,6 +23,7 @@ define([
      * @property {String[][]} relatedConcepts
      * @property {{name: String, domain: String}[]} indexes
      * @property {{field: String, value: String}[]} parametricValues
+     * @property {Integer} minScore
      * @property {Moment} minDate
      * @property {Moment} maxDate
      * @property {Moment} dateModified
@@ -109,7 +110,8 @@ define([
             maxDate: null,
             newDocuments: 0,
             dateRange: null,
-            dateNewDocsLastFetched: null
+            dateNewDocsLastFetched: null,
+            minScore: 0
         },
 
         parse: function(response) {
@@ -127,8 +129,16 @@ define([
                         .value();
                 })
                 .value();
-
-            return _.defaults(dateAttributes, { relatedConcepts: relatedConcepts }, response);
+            
+            // group token strings by type
+            var tokensByType = _.chain(response.stateTokens)
+                .groupBy('type')
+                .mapObject(function(arr) {
+                    return _.pluck(arr, 'stateToken')
+                })
+                .value();
+            
+            return _.defaults(dateAttributes, {queryStateTokens: tokensByType.QUERY}, {promotionsStateTokens: tokensByType.PROMOTIONS}, {relatedConcepts: relatedConcepts}, response);
         },
 
         toJSON: function() {
@@ -156,6 +166,7 @@ define([
                     && this.equalsQueryStateDateFilters(queryState)
                     && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'), arrayEqualityPredicate)
                     && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
+                    && this.get('minScore') === queryState.minScoreModel.get('minScore')
                     && arraysEqual(this.get('parametricValues'), queryState.selectedParametricValues.map(pickFieldAndValue), _.isEqual);
         },
 
@@ -190,6 +201,10 @@ define([
             };
         },
 
+        toMinScoreModelAttributes: function() {
+            return this.pick('minScore')
+        },
+
         toSelectedParametricValues: function() {
             return this.get('parametricValues');
         },
@@ -209,12 +224,20 @@ define([
             var indexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
             var parametricValues = queryState.selectedParametricValues.map(pickFieldAndValue);
 
-            return _.extend({
-                queryText: queryState.queryTextModel.get('inputText'),
-                relatedConcepts: queryState.queryTextModel.get('relatedConcepts'),
-                indexes: indexes,
-                parametricValues: parametricValues
-            }, queryState.datesFilterModel.toQueryModelAttributes(), { dateNewDocsLastFetched: moment() });
+            return _.extend(
+                {
+                    queryText: queryState.queryTextModel.get('inputText'),
+                    relatedConcepts: queryState.queryTextModel.get('relatedConcepts'),
+                    indexes: indexes,
+                    parametricValues: parametricValues,
+                    minScore: queryState.minScoreModel.get('minScore')
+                },
+                queryState.datesFilterModel.toQueryModelAttributes(),
+                {
+                    dateNewDocsLastFetched: moment(),
+                    dateDocsLastFetched: moment()
+                }
+            );
         }
     });
 

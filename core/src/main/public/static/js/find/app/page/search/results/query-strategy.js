@@ -7,15 +7,26 @@ define(['underscore'], function(_) {
     'use strict';
 
     return {
+        promotions: _.constant(true),
+    
         requestParams: function(queryModel) {
             return {
                 indexes: queryModel.get('indexes'),
                 field_text: queryModel.get('fieldText'),
                 min_date: queryModel.getIsoDate('minDate'),
                 max_date: queryModel.getIsoDate('maxDate'),
+                min_score: queryModel.get('minScore'),
                 summary: 'context',
                 text: queryModel.get('queryText')
             };
+        },
+
+        promotionsRequestParams: function(queryModel){
+            var params = this.requestParams(queryModel);
+            
+            delete params.indexes;
+            
+            return params;
         },
 
         validateQuery: function(queryModel) {

@@ -9,9 +9,11 @@ import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HsodConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.IodConfig;
+import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
 import com.hp.autonomy.searchcomponents.hod.test.HodTestConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Component
+@ConditionalOnProperty(value = "mock.configuration", matchIfMissing = true)
 public class HodFindMockConfigConfiguration {
     @Bean
     @Primary
@@ -38,9 +41,7 @@ public class HodFindMockConfigConfiguration {
                 .build();
 
         final IodConfig iodConfig = new IodConfig.Builder()
-                .setApiKey("")
-                .setApplication("")
-                .setDomain("")
+                .setApiKey(new ApiKey("mock-api-key"))
                 .setActiveIndexes(Collections.<ResourceIdentifier>emptyList())
                 .setPublicIndexesEnabled(true)
                 .build();
@@ -50,8 +51,8 @@ public class HodFindMockConfigConfiguration {
                 .setHsod(hsodConfig)
                 .setIod(iodConfig)
                 .build();
-        when(baseConfigFileService.getConfig()).thenReturn(config);
 
+        when(baseConfigFileService.getConfig()).thenReturn(config);
         return baseConfigFileService;
     }
 }

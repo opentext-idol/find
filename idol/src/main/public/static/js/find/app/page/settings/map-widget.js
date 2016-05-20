@@ -37,13 +37,15 @@ define([
 
             this.$url = this.$('.tileserver-url-input');
             this.$attribution = this.$('.attribution-input');
+            this.$resultsstep = this.$('.results-step-input');
         },
 
         getConfig: function() {
             return {
                 attribution: this.$attribution.val(),
                 enabled: this.enableView.getConfig(),
-                tileUrlTemplate: this.$url.val()
+                tileUrlTemplate: this.$url.val(),
+                resultsStep: this.$resultsstep.val()
             }
         },
 
@@ -52,6 +54,7 @@ define([
 
             this.$attribution.val(config.attribution);
             this.$url.val(config.tileUrlTemplate);
+            this.$resultsstep.val(config.resultsStep);
         }
     });
 

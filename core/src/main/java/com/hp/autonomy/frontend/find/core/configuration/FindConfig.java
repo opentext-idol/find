@@ -11,4 +11,6 @@ public interface FindConfig {
 
     SavedSearchConfig getSavedSearchConfig();
 
+    Integer getMinScore();
+
 }

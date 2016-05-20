@@ -34,6 +34,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/public/**").hasRole(FindRole.USER.name())
                 .antMatchers("/api/admin/**").hasRole(FindRole.ADMIN.name())
                 .antMatchers("/api/config/**").hasRole(FindRole.CONFIG.name())
+                .antMatchers("/api/bi/**").hasRole(FindRole.BI.name())
                 .and()
             .requestCache()
                 .requestCache(requestCache)

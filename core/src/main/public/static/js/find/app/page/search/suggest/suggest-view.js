@@ -21,6 +21,7 @@ define([
 
         // Abstract
         ResultsView: null,
+        getIndexes: $.noop,
 
         events: {
             'click .suggest-view-button': function() {
@@ -40,12 +41,12 @@ define([
                 documentsCollection: new SimilarDocumentsCollection(),
                 queryModel: new Backbone.Model({
                     reference: this.documentModel.get('reference'),
-                    indexes: options.indexesCollection.pluck('id')
+                    indexes: this.getIndexes(options.indexesCollection, this.documentModel)
                 })
             });
 
             this.listenTo(options.indexesCollection, 'update reset', function() {
-                this.queryModel.set('indexes', this.indexesCollection.pluck('id'));
+                this.resultsView.queryModel.set('indexes', this.getIndexes(options.indexesCollection, this.documentModel));
             });
         },
 

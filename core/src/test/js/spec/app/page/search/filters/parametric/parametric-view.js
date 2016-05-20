@@ -6,8 +6,9 @@
 define([
     'backbone',
     'find/app/page/search/filters/parametric/parametric-view',
+    'parametric-refinement/display-collection',
     'parametric-refinement/selected-values-collection'
-], function(Backbone, ParametricView, SelectedValuesCollection) {
+], function(Backbone, ParametricView, DisplayCollection, SelectedValuesCollection) {
 
     describe('Parametric view', function() {
         beforeEach(function() {
@@ -18,8 +19,14 @@ define([
 
             this.selectedParametricValues = new SelectedValuesCollection();
 
+            var displayCollection = new DisplayCollection([], {
+                parametricCollection: this.parametricCollection,
+                selectedParametricValues: this.selectedParametricValues
+            });
+
             this.view = new ParametricView({
                 parametricCollection: this.parametricCollection,
+                displayCollection: displayCollection,
                 queryState: {
                     selectedParametricValues: this.selectedParametricValues
                 }

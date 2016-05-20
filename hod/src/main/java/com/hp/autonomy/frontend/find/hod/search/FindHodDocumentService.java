@@ -52,7 +52,7 @@ public class FindHodDocumentService extends HodDocumentsService {
             final ConfigService<HodFindConfig> configService,
             final QueryTextIndexService<HodSearchResult> queryTextIndexService,
             final GetContentService<HodSearchResult> getContentService,
-            final AuthenticationInformationRetriever<HodAuthenticationPrincipal> authenticationRetriever,
+            final AuthenticationInformationRetriever<?, HodAuthenticationPrincipal> authenticationRetriever,
             final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService,
             final DocumentFieldsService documentFieldsService,
             final CacheManager cacheManager
@@ -107,6 +107,7 @@ public class FindHodDocumentService extends HodDocumentsService {
                         goodIndexes,
                         queryRestrictions.getMinDate(),
                         queryRestrictions.getMaxDate(),
+                        queryRestrictions.getMinScore(),
                         queryRestrictions.getStateMatchId(),
                         queryRestrictions.getStateDontMatchId()
                 ));

@@ -17,12 +17,14 @@ define([
     'find/app/util/merge-collection',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/page/search/query-middle-column-header-view',
+    'find/app/model/min-score-model',
     'find/app/model/query-text-model',
     'find/app/model/document-model',
     'find/app/page/search/document/document-detail-view',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/app/util/database-name-resolver',
+    'find/app/util/saved-query-result-poller',
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
@@ -30,8 +32,8 @@ define([
     'underscore',
     'text!find/templates/app/page/find-search.html'
 ], function (BasePage, Backbone, config, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
-             InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView,
-             QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, router, vent, i18n, $, _, template) {
+             InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel,
+             QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, router, vent, i18n, $, _, template) {
 
     'use strict';
 
@@ -59,13 +61,12 @@ define([
     function fetchDocument(options, callback) {
         var documentModel = new DocumentModel();
 
-        documentModel
-            .fetch({
-                data: {
-                    reference: options.reference,
-                    database: options.database
-                }
-            }).done(function () {
+        documentModel.fetch({
+            data: {
+                reference: options.reference,
+                database: options.database
+            }
+        }).done(function () {
             callback(documentModel);
         });
     }
@@ -132,6 +133,7 @@ define([
                 }
             });
 
+            // TODO: this does nothing - the attribute name is wrong
             this.listenTo(this.savedSearchCollection, 'add', function (model) {
                 if (this.selectedTabModel.get('selectedCid') === null) {
                     this.selectedTabModel.set('selectedCid', model.cid);
@@ -158,14 +160,32 @@ define([
 
             this.inputView = new InputView({model: this.searchModel});
 
-            this.tabView = new TabbedSearchView({
-                savedSearchCollection: this.savedSearchCollection,
-                model: this.selectedTabModel,
-                queryStates: this.queryStates,
-                searchTypes: this.searchTypes
-            });
+            if (config().hasBiRole) {
+                this.tabView = new TabbedSearchView({
+                    savedSearchCollection: this.savedSearchCollection,
+                    model: this.selectedTabModel,
+                    queryStates: this.queryStates,
+                    searchTypes: this.searchTypes
+                });
 
-            this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
+                this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
+
+                var savedSearchConfig = config().savedSearchConfig;
+                if(savedSearchConfig.pollForUpdates) {
+                    this.listenToOnce(this.savedQueryCollection, 'sync', function() {
+                        this.savedQueryResultPoller = new SavedQueryResultPoller({
+                            config: savedSearchConfig,
+                            savedQueryCollection: this.savedQueryCollection,
+                            queryStates: this.queryStates,
+                            onSuccess: _.bind(function(savedQueryModelId, newResults) {
+                                this.savedQueryCollection.get(savedQueryModelId).set({
+                                    newDocuments: newResults
+                                });
+                            }, this)
+                        });
+                    });
+                }
+            }
 
             this.listenTo(router, 'route:searchSplash', function () {
                 this.selectedTabModel.set('selectedSearchCid', null);
@@ -231,31 +251,16 @@ define([
                     this.suggestView.render();
                 }.bind(this));
             }, this);
-
-            var savedSearchConfig = config().savedSearchConfig;
-            if (savedSearchConfig.pollForUpdates) {
-                this.savedSearchScheduleId = setInterval(_.bind(function () {
-                    this.savedQueryCollection.fetch({remove:false}).done(_.bind(function () {
-                        this.savedQueryCollection.forEach(function (savedQuery) {
-                            if (!savedQuery.isNew()) {
-                                $.ajax('../api/public/saved-query/new-results/' + savedQuery.id)
-                                    .success(function (newResults) {
-                                        savedQuery.set({
-                                            newDocuments: newResults
-                                        });
-                                    }.bind(this))
-                            }
-                        }, this);
-                    }, this))
-                }, this), savedSearchConfig.pollingInterval * 60 * 1000);
-            }
         },
 
         render: function () {
             this.$el.html(html);
 
             this.inputView.setElement(this.$('.input-view-container')).render();
-            this.tabView.setElement(this.$('.search-tabs-container')).render();
+
+            if (this.tabView) {
+                this.tabView.setElement(this.$('.search-tabs-container')).render();
+            }
 
             if (this.selectedTabModel.get('selectedSearchCid') === null) {
                 this.reducedState();
@@ -311,7 +316,8 @@ define([
                 queryText: queryText || '*',
                 relatedConcepts: [],
                 title: i18n['search.newSearch'],
-                type: SavedSearchModel.Type.QUERY
+                type: SavedSearchModel.Type.QUERY,
+                minScore: config().minScore
             });
 
             this.savedQueryCollection.add(newSearch);
@@ -345,10 +351,12 @@ define([
                     viewData = this.serviceViews[cid];
                 } else {
                     var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
+                    var minScore = new MinScoreModel(savedSearchModel.toMinScoreModelAttributes());
                     var documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
 
                     var queryState = {
                         queryTextModel: queryTextModel,
+                        minScoreModel: minScore,
                         datesFilterModel: new DatesFilterModel(savedSearchModel.toDatesFilterModelAttributes()),
                         selectedParametricValues: new SelectedParametricValuesCollection(savedSearchModel.toSelectedParametricValues())
                     };
@@ -483,7 +491,7 @@ define([
         },
 
         remove: function () {
-            clearInterval(this.savedSearchScheduleId);
+            this.savedQueryResultPoller.destroy();
             this.removeDocumentDetailView();
             Backbone.View.prototype.remove.call(this);
         }

@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,6 +21,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @SuppressWarnings("UtilityClass")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -35,7 +38,8 @@ import java.io.IOException;
         "find.https.proxyPort: 8080",
         "find.iod.api = https://api.havenondemand.com",
         "find.hod.sso = https://dev.havenondemand.com/sso.html",
-        "spring.datasource.url = jdbc:h2:mem:find-db;DB_CLOSE_ON_EXIT=FALSE"
+        "spring.datasource.url = jdbc:h2:mem:find-db;DB_CLOSE_ON_EXIT=FALSE",
+        "mock.authenticationRetriever=false"
 })
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/clean-database.sql")
 public abstract class AbstractFindIT {
@@ -57,10 +61,28 @@ public abstract class AbstractFindIT {
     @Autowired
     protected WebApplicationContext wac;
 
+    @Autowired
+    protected MvcIntegrationTestUtils mvcIntegrationTestUtils;
+
     protected MockMvc mockMvc;
 
     @Before
     public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(wac)
+                .apply(springSecurity())
+                .build();
+    }
+
+    protected Authentication userAuth() {
+        return mvcIntegrationTestUtils.userAuth();
+    }
+
+    protected Authentication biAuth() {
+        return mvcIntegrationTestUtils.biAuth();
+    }
+
+    protected Authentication adminAuth() {
+        return mvcIntegrationTestUtils.adminAuth();
     }
 }

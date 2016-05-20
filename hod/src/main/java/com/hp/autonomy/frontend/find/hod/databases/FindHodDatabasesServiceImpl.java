@@ -38,7 +38,7 @@ public class FindHodDatabasesServiceImpl extends HodDatabasesService implements 
     public FindHodDatabasesServiceImpl(
             final ResourcesService resourcesService,
             final ConfigService<HodFindConfig> configService,
-            final AuthenticationInformationRetriever<HodAuthenticationPrincipal> authenticationInformationRetriever
+            final AuthenticationInformationRetriever<?, HodAuthenticationPrincipal> authenticationInformationRetriever
     ) {
         super(resourcesService, authenticationInformationRetriever);
         this.configService = configService;

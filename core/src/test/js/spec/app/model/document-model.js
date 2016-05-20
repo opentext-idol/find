@@ -1,7 +1,8 @@
 define([
     'find/app/model/document-model',
+    'find/app/configuration',
     'moment'
-], function(DocumentModel, moment) {
+], function(DocumentModel, configuration, moment) {
 
     var THUMBNAIL = 'VGhlIGJhc2UgNjQgZW5jb2RlZCB0aHVtYm5haWw=';
     var TITLE = 'My Document';
@@ -13,7 +14,8 @@ define([
         return {
             fieldMap: {
                 authors: {type: 'STRING', displayName: 'Author', values: ['Humbert', 'Gereon']},
-                longitude: {type: 'NUMBER', displayName: 'Longitude', values: ['52.5']},
+                LONGITUDE: {type: 'NUMBER', displayName: 'Longitude', values: ['52.5']},
+                LATITUDE: {type: 'NUMBER', displayName: 'Latitude', values: ['42.2']},
                 thumbnail: {type: 'STRING', values: [THUMBNAIL]},
                 datePublished: {type: 'DATE', displayName: 'Date Published', values: [DATE_PUBLISHED_SECONDS]},
                 sourceType: {type: 'STRING', values: [SOURCETYPE]},
@@ -33,6 +35,21 @@ define([
         describe('parse method', function() {
             beforeEach(function() {
                 this.parse = DocumentModel.prototype.parse;
+
+                configuration.and.returnValue({
+                    map: {
+                        enabled: true,
+                        locationFields: [{
+                            displayName: 'test',
+                            latitudeField: 'LATITUDE',
+                            longitudeField: 'LONGITUDE'
+                        }]
+                    }
+                })
+            });
+
+            afterEach(function() {
+                configuration.and.stub();
             });
 
             it('uses the title from the response if present', function() {
@@ -85,7 +102,7 @@ define([
             
             it('parses the field map into an array, converting date values to formatted strings and number values to javascript numbers', function() {
                 var fields = this.parse(fullResponse()).fields;
-                expect(fields.length).toBe(6);
+                expect(fields.length).toBe(7);
 
                 var longitudeField = _.findWhere(fields, {displayName: 'Longitude'});
                 expect(longitudeField).toBeDefined();
@@ -96,6 +113,18 @@ define([
                 expect(datePublishedField).toBeDefined();
                 expect(datePublishedField.values.length).toBe(1);
                 expect(datePublishedField.values[0]).toBe(moment(DATE_PUBLISHED_SECONDS).format('LLLL'));
+            });
+
+            it('parses the locations from the field map', function() {
+                var locations = this.parse(fullResponse()).locations;
+                expect(locations.length).toBe(1);
+
+                var location = locations[0];
+
+                expect(location).toBeDefined();
+                expect(location.displayName).toBe('test');
+                expect(location.latitude).toBe(42.2);
+                expect(location.longitude).toBe(52.5);
             });
         });
     });

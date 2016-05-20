@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,7 +37,9 @@ public abstract class AbstractTypeAheadIT extends AbstractFindIT {
 
     @Test
     public void getsSuggestions() throws Exception {
-        final RequestBuilder request = get(TypeAheadController.URL).param(TypeAheadController.TEXT_PARAMETER, inputText);
+        final RequestBuilder request = get(TypeAheadController.URL)
+                .param(TypeAheadController.TEXT_PARAMETER, inputText)
+                .with(authentication(userAuth()));
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())

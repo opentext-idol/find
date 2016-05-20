@@ -6,20 +6,20 @@
 define([
     'backbone',
     'underscore',
-    'leaflet',
     'find/app/configuration',
+    'find/app/page/search/results/map-view',
     'text!find/templates/app/page/search/document/location-tab.html',
+    'text!find/templates/app/page/search/results/map-popover.html',
     'i18n!find/nls/bundle',
     'find/app/vent'
-], function(Backbone, _, leaflet, configuration, templateString, i18n, vent) {
+], function(Backbone, _, configuration, MapView, templateString, popoverTemplate, i18n, vent) {
 
     'use strict';
-
-    var INITIAL_ZOOM = 13;
 
     return Backbone.View.extend({
         map: null,
         template: _.template(templateString),
+        popoverTemplate: _.template(popoverTemplate),
 
         initialize: function() {
             this.listenTo(vent, 'vent:resize', function() {
@@ -27,60 +27,39 @@ define([
                     this.map.invalidateSize();
                 }
             });
+            this.locationFields = configuration().map.locationFields;
+            this.mapResultsView = new MapView();
         },
 
         render: function() {
-            var latitude = this.model.get('latitude');
-            var longitude = this.model.get('longitude');
+            var locations = this.model.get('locations');
 
             this.$el.html(this.template({
-                i18n: i18n,
-                latitude: latitude,
-                longitude: longitude
+                i18n: i18n
             }));
 
-            this.removeMap();
-            var map = this.map = leaflet.map(this.$('.location-tab-map').get(0), {attributionControl: false});
+            this.mapResultsView.setElement(this.$('.location-tab-map').get(0)).render();
 
-            function setInitialView() {
-                map.setView([latitude, longitude], INITIAL_ZOOM);
-            }
+            var markers = _.map(locations, function(location) {
+                var longitude = location.longitude;
+                var latitude = location.latitude;
+                var title = this.model.get('title');
+                var popover = this.popoverTemplate({
+                    i18n: i18n,
+                    title: location.displayName,
+                    latitude: latitude,
+                    longitude: longitude
+                });
+                return this.mapResultsView.getMarker(latitude, longitude, this.getIcon(location.displayName), location.displayName, popover);;
+            }, this);
 
-            setInitialView();
-
-            leaflet
-                .tileLayer(configuration().map.tileUrlTemplate)
-                .addTo(map);
-
-            // Create the icon by hand rather than using the default because the leaflet.Icon.Default.imagePath method
-            // does not work after JS concatenation
-            var icon = leaflet.icon(_.defaults({
-                iconUrl: '../static-' + configuration().commit + '/bower_components/leaflet/dist/images/marker-icon.png'
-            }, leaflet.Icon.Default.prototype.options));
-
-            leaflet
-                .marker([latitude, longitude], {icon: icon})
-                .addTo(map)
-                .on('click', setInitialView);
-
-            var attributionText = configuration().map.attribution;
-
-            if (attributionText) {
-                leaflet.control.attribution({prefix: false})
-                    .addAttribution(attributionText)
-                    .addTo(map);
-            }
+            this.mapResultsView.addMarkers(markers, false);
+            this.mapResultsView.loaded();
         },
 
-        remove: function() {
-            this.removeMap();
-            Backbone.View.prototype.remove.call(this);
-        },
-
-        removeMap: function() {
-            if (this.map) {
-                this.map.remove();
-            }
+        getIcon: function(displayName) {
+            var locationField = _.findWhere(this.locationFields, {displayName: displayName});
+            return this.mapResultsView.getIcon(locationField.iconName, locationField.iconColor, locationField.markerColor);
         }
     });
 

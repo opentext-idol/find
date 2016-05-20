@@ -53,7 +53,7 @@ public abstract class FindController {
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    private AuthenticationInformationRetriever<? extends Principal> authenticationInformationRetriever;
+    private AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever;
 
     protected abstract Map<String, Object> getPublicConfig();
 
@@ -85,6 +85,7 @@ public abstract class FindController {
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
         config.put(MvcConstants.MAP.value(), configService.getConfig().getMap());
         config.put(MvcConstants.SAVED_SEARCH_CONFIG.value(), configService.getConfig().getSavedSearchConfig());
+        config.put(MvcConstants.MIN_SCORE.value(), configService.getConfig().getMinScore());
         config.putAll(getPublicConfig());
 
         final Map<String, Object> attributes = new HashMap<>();

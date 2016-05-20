@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class HodFindSpringSecurityAuditorAware extends AbstractFindSpringSecurityAuditorAware<HodAuthenticationPrincipal> {
     @Autowired
     public HodFindSpringSecurityAuditorAware(
-            final AuthenticationInformationRetriever<HodAuthenticationPrincipal> authenticationInformationRetriever,
+            final AuthenticationInformationRetriever<?, HodAuthenticationPrincipal> authenticationInformationRetriever,
             final UserEntityRepository userRepository
     ) {
         super(authenticationInformationRetriever, userRepository);

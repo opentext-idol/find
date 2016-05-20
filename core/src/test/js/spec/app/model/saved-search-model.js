@@ -8,13 +8,15 @@ define([
     'databases-view/js/databases-collection',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/dates-filter-model',
+    'find/app/model/min-score-model',
     'moment'
-], function(Backbone, DatabasesCollection, SavedSearchModel, DatesFilterModel, moment) {
+], function(Backbone, DatabasesCollection, SavedSearchModel, DatesFilterModel, MinScoreModel, moment) {
 
     var INPUT_TEXT = 'johnny';
     var RELATED_CONCEPTS = [['depp']];
     var MAX_DATE = 555555555;
     var MIN_DATE = 444444444;
+    var MIN_SCORE = 0;
 
     var BASE_INDEXES = [
         {domain: 'DOMAIN', name: 'DOCUMENTS'}
@@ -32,6 +34,7 @@ define([
                 queryText: INPUT_TEXT,
                 maxDate: moment(MAX_DATE),
                 minDate: moment(MIN_DATE),
+                minScore: MIN_SCORE,
                 dateRange: DatesFilterModel.DateRange.CUSTOM,
                 relatedConcepts: RELATED_CONCEPTS,
                 indexes: BASE_INDEXES,
@@ -49,6 +52,10 @@ define([
                 customMinDate: moment(MIN_DATE)
             });
 
+            this.minScoreModel = new MinScoreModel({
+                minScore: MIN_SCORE
+            });
+
             this.selectedIndexes = new DatabasesCollection(BASE_INDEXES);
 
             // The real selected parametric values collection also contains display names
@@ -62,7 +69,8 @@ define([
                 queryTextModel: this.queryTextModel,
                 datesFilterModel: this.datesFilterModel,
                 selectedIndexes: this.selectedIndexes,
-                selectedParametricValues: this.selectedParametricValues
+                selectedParametricValues: this.selectedParametricValues,
+                minScoreModel: this.minScoreModel
             };
         });
 
@@ -126,6 +134,12 @@ define([
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(true);
             });
+
+            it('returns false if the min score is different', function() {
+                this.minScoreModel.set('minScore', 45);
+
+                expect(this.model.equalsQueryState(this.queryState)).toBe(false);
+            })
         });
 
         describe('attributesFromQueryState', function() {
@@ -153,6 +167,10 @@ define([
 
             it('returns the selected parametric values', function() {
                 expect(this.attributes.parametricValues).toEqual(PARAMETRIC_VALUES);
+            });
+
+            it('returns the min score from the min score model', function() {
+                expect(this.attributes.minScore).toBe(MIN_SCORE);
             });
         });
     });

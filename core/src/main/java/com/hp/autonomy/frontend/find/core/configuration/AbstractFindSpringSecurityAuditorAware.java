@@ -22,11 +22,11 @@ import java.security.Principal;
  * Abstract so that a {@link UserEntity} can be constructed for various principals.
  */
 public abstract class AbstractFindSpringSecurityAuditorAware<P extends Principal> implements AuditorAware<UserEntity> {
-    private final AuthenticationInformationRetriever<P> authenticationInformationRetriever;
+    private final AuthenticationInformationRetriever<?, P> authenticationInformationRetriever;
     private final UserEntityRepository userRepository;
 
     protected AbstractFindSpringSecurityAuditorAware(
-            final AuthenticationInformationRetriever<P> authenticationInformationRetriever,
+            final AuthenticationInformationRetriever<?, P> authenticationInformationRetriever,
             final UserEntityRepository userRepository
     ) {
         this.authenticationInformationRetriever = authenticationInformationRetriever;

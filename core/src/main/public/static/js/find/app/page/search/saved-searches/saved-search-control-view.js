@@ -311,6 +311,7 @@ define([
             this.queryState.datesFilterModel.set(this.savedSearchModel.toDatesFilterModelAttributes());
             this.queryState.selectedIndexes.set(this.savedSearchModel.toSelectedIndexes());
             this.queryState.selectedParametricValues.set(this.savedSearchModel.toSelectedParametricValues());
+            this.queryState.minScoreModel.set(this.savedSearchModel.toMinScoreModelAttributes());
         },
 
         updateErrorMessage: function() {

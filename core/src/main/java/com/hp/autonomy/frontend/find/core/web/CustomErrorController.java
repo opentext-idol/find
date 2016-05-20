@@ -20,15 +20,12 @@ import java.net.URI;
 public abstract class CustomErrorController {
     static final String MESSAGE_CODE_AUTHENTICATION_ERROR_MAIN = "error.authenticationErrorMain";
     static final String MESSAGE_CODE_AUTHENTICATION_ERROR_SUB = "error.authenticationErrorSub";
-    static final String MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_MAIN = "error.clientAuthenticationErrorMain";
-    static final String MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_SUB = "error.clientAuthenticationErrorSub";
     static final String MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB = "error.internalServerErrorSub";
     static final String MESSAGE_CODE_INTERNAL_SERVER_ERROR_MAIN = "error.internalServerErrorMain";
     static final String MESSAGE_CODE_NOT_FOUND_MAIN = "error.notFoundMain";
     static final String MESSAGE_CODE_NOT_FOUND_SUB = "error.notFoundSub";
-    static final String STATUS_CODE_PARAM = "statusCode";
 
-    private final ControllerUtils controllerUtils;
+    protected final ControllerUtils controllerUtils;
 
     protected CustomErrorController(final ControllerUtils controllerUtils) {
         this.controllerUtils = controllerUtils;
@@ -47,20 +44,6 @@ public abstract class CustomErrorController {
                 .setStatusCode(response.getStatus())
                 .setButtonHref(getAuthenticationErrorUrl(request))
                 .setAuthError(true)
-                .build());
-    }
-
-    @RequestMapping(DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH)
-    public ModelAndView clientAuthenticationErrorPage(
-            @RequestParam(STATUS_CODE_PARAM) final int statusCode,
-            final HttpServletRequest request
-    ) {
-        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
-                .setRequest(request)
-                .setMainMessageCode(MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_MAIN)
-                .setSubMessageCode(MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_SUB)
-                .setStatusCode(statusCode)
-                .setButtonHref(getAuthenticationErrorUrl(request))
                 .build());
     }
 

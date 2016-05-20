@@ -32,6 +32,11 @@ require.config({
         },
         'find/app/page/search/results/sunburst-view': {
             'find/app/model/dependent-parametric-collection': 'mock/model/dependent-parametric-collection'
+        },
+        'find/app/page/search/abstract-query-left-side-view': {
+            'find/app/page/search/filters/date/dates-filter-view': 'mock/page/search/filters/date/dates-filter-view',
+            'find/app/page/search/filters/parametric/parametric-view': 'mock/page/search/filters/parametric/parametric-view',
+            'parametric-refinement/display-collection': 'mock/model/display-collection'
         }
     }
 });

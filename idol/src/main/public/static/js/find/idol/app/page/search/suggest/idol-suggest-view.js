@@ -9,7 +9,11 @@ define([
 ], function(SuggestView, ResultsView) {
 
     return SuggestView.extend({
-        ResultsView: ResultsView
+        ResultsView: ResultsView,
+
+        getIndexes: function(indexesCollection) {
+            return indexesCollection.pluck('id')
+        }
     });
 
 });

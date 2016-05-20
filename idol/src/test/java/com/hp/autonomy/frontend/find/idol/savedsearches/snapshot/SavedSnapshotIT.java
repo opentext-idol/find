@@ -13,6 +13,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,20 +23,22 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class SavedSnapshotIT extends AbstractFindIT {
     private static final TypeReference<Set<SavedSnapshot>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedSnapshot>>() {};
+    private static final String QUERY_TEXT = "orange";
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-    @Autowired
-    private MvcIntegrationTestUtils mvcIntegrationTestUtils;
-
-    private final String QUERY_TEXT = "orange";
+    @Test
+    public void basicUserNotAuthorised() throws Exception {
+        mockMvc.perform(get(SavedSnapshotController.PATH).with(authentication(userAuth())))
+                .andExpect(status().is(403));
+    }
 
     @Test
     public void create() throws Exception {
@@ -59,9 +62,12 @@ public class SavedSnapshotIT extends AbstractFindIT {
                 .setTitle(updatedTitle)
                 .build();
 
-        mockMvc.perform(put(SavedSnapshotController.PATH + '/' + createdEntity.getId())
+        final MockHttpServletRequestBuilder requestBuilder = put(SavedSnapshotController.PATH + '/' + createdEntity.getId())
                 .content(mapper.writeValueAsString(updatedSnapshot))
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(biAuth()));
+
+        mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", is(createdEntity.getId().intValue())))
@@ -85,9 +91,11 @@ public class SavedSnapshotIT extends AbstractFindIT {
     public void deleteById() throws Exception {
         final SavedSnapshot createdEntity = createAndParseSnapshot(getBaseSavedSnapshot());
 
-        mockMvc.perform(delete(SavedSnapshotController.PATH + '/' + createdEntity.getId())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        final MockHttpServletRequestBuilder requestBuilder = delete(SavedSnapshotController.PATH + '/' + createdEntity.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(biAuth()));
+
+        mockMvc.perform(requestBuilder).andExpect(status().isOk());
 
         final Set<SavedSnapshot> queries = listAndParseSnapshots();
         assertThat(queries, is(empty()));
@@ -99,9 +107,12 @@ public class SavedSnapshotIT extends AbstractFindIT {
     }
 
     private ResultActions createSnapshot(final SavedSnapshot snapshot) throws Exception {
-        return mockMvc.perform(post(SavedSnapshotController.PATH)
-                .content(mapper.writeValueAsString(snapshot))
-                .contentType(MediaType.APPLICATION_JSON));
+        return mockMvc.perform(
+                post(SavedSnapshotController.PATH)
+                        .content(mapper.writeValueAsString(snapshot))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(authentication(biAuth()))
+        );
     }
 
     private SavedSnapshot createAndParseSnapshot(final SavedSnapshot snapshot) throws Exception {
@@ -111,7 +122,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
     }
 
     private ResultActions listSnapshots() throws Exception {
-        return mockMvc.perform(get(SavedSnapshotController.PATH));
+        return mockMvc.perform(get(SavedSnapshotController.PATH).with(authentication(biAuth())));
     }
 
     private Set<SavedSnapshot> listAndParseSnapshots() throws Exception {
@@ -132,6 +143,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
         return new SavedSnapshot.Builder()
                 .setTitle("Any old saved search")
                 .setQueryText(QUERY_TEXT)
+                .setMinScore(0)
                 .setIndexes(embeddableIndexes)
                 .build();
     }

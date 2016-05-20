@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -28,7 +29,8 @@ public abstract class AbstractRelatedConceptsServiceIT extends AbstractFindIT {
         final MockHttpServletRequestBuilder request = get(RelatedConceptsController.RELATED_CONCEPTS_PATH)
                 .param(RelatedConceptsController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(RelatedConceptsController.QUERY_TEXT_PARAM, "*")
-                .param(RelatedConceptsController.FIELD_TEXT_PARAM, "");
+                .param(RelatedConceptsController.FIELD_TEXT_PARAM, "")
+                .with(authentication(userAuth()));
 
         mockMvc
                 .perform(request)

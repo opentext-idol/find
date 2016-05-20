@@ -3,8 +3,8 @@ define([
     'underscore',
     'jquery',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/results/results-view-container.html',
-    'text!find/templates/app/page/search/results/content-container.html'
+    'text!find/templates/app/util/results-view-container.html',
+    'text!find/templates/app/util/content-container.html'
 ], function (Backbone, _, $, i18n, viewHtml, contentContainerTemplate) {
 
     return Backbone.View.extend({
@@ -28,6 +28,12 @@ define([
                 var $viewElement = $(this.contentContainerTemplate(viewData))
                     .toggleClass('active', viewData.id === selectedTab)
                     .appendTo(this.$contentList);
+
+                viewData.content = new viewData.Constructor(viewData.constructorArguments);
+
+                _.each(viewData.events, function(listener, eventName) {
+                    this.listenTo(viewData.content, eventName, listener);
+                }, this);
 
                 viewData.content.setElement($viewElement);
             }, this);
@@ -53,6 +59,14 @@ define([
                     viewData.content.update();
                 }
             }
+        },
+
+        remove: function() {
+            _.chain(this.views)
+                .pluck('content')
+                .invoke('remove');
+
+            Backbone.View.prototype.remove.call(this);
         }
     });
 
