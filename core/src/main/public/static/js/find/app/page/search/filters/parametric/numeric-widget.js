@@ -88,12 +88,6 @@ define([
                         },
                         width: function (d) {
                             return scale.barWidth(d.maxValue - d.minValue + 1) - barGapSize;
-                        },
-                        'bucket-min': function (d) {
-                            return d.minValue;
-                        },
-                        'bucket-max': function (d) {
-                            return d.maxValue;
                         }
                     })
                     .append("title")
