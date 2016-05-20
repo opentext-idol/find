@@ -12,7 +12,7 @@ define([
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html'
-], function (Backbone, $, _, NumericWidget, prettifyFieldName, SelectedParametricValuesCollection, i18n, template) {
+], function (Backbone, $, _, numericWidget, prettifyFieldName, SelectedParametricValuesCollection, i18n, template) {
     "use strict";
     const DEFAULT_TARGET_NUMBER_OF_BUCKETS = 30;
     const GRAPH_HEIGHT = 110;
@@ -128,8 +128,7 @@ define([
             this.selectedParametricValues = options.selectedParametricValues;
             this.viewWidth = options.viewWidth;
             this.fieldName = this.model.id;
-            this.widget = NumericWidget({
-                targetNumberOfBuckets: DEFAULT_TARGET_NUMBER_OF_BUCKETS,
+            this.widget = numericWidget({
                 graphHeight: GRAPH_HEIGHT
             });
         },

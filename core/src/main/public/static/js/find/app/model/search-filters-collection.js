@@ -42,14 +42,11 @@ define([
             return Math.round(x * 10) / 10;
         }; 
         
-        var rangeText = '';
-        ranges.forEach(function (range) {
-            if (rangeText) {
-                rangeText += ', ';
-            }
-            rangeText += round(range[0]) + ' - ' + round(range[1]);
-        });
-        return rangeText + values.join(', ');
+        var rangeText = ranges.map(function(range) {
+            return round(range[0]) + ' - ' + round(range[1]);
+        }).join(', ');
+        
+        return rangeText + (rangeText && values.length > 0 ? ', ' : '') + values.join(', ');
     }
 
     // Get an array of filter model attributes from the selected parametric values collection
@@ -168,19 +165,8 @@ define([
             var modelsForField = this.selectedParametricValues.where({field: field});
 
             if (modelsForField.length) {
-                var values = [];
-                var ranges = [];
-                modelsForField.forEach(function (model) {
-                    var value = model.get('value');
-                    if (value) {
-                        values.push(value);
-                    }
-
-                    var range = model.get('range');
-                    if (range) {
-                        ranges.push(range);
-                    }
-                });
+                var values = _.chain(modelsForField).invoke('get', 'value').compact().value();
+                var ranges = _.chain(modelsForField).invoke('get', 'range').compact().value();
 
                 this.add({
                     id: id,
