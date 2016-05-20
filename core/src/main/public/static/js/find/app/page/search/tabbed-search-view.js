@@ -19,7 +19,16 @@ define([
     return Backbone.View.extend({
         events: {
             'click .search-tab': function(event) {
-                this.model.set('selectedSearchCid', $(event.currentTarget).find('[data-search-cid]').attr('data-search-cid'));
+                var $currentTarget = $(event.currentTarget);
+                var currentModelCid = $currentTarget.find('[data-search-cid]').attr('data-search-cid');
+                var currentQueryModel = this.savedSearchCollection.get(currentModelCid);
+                this.model.set('selectedSearchCid', currentModelCid);
+
+                if (currentQueryModel.get('newDocuments') !== 0) {
+                    currentQueryModel.trigger('refresh');
+                }
+
+                currentQueryModel.set({newDocuments: 0});
             },
             'click .start-new-search': function() {
                 this.trigger('startNewSearch');
@@ -63,6 +72,26 @@ define([
 
             this.listenTo(this.model, 'change:selectedSearchCid', this.updateSelectedTab);
             this.listenTo(this.savedSearchCollection, 'update', this.checkTabSize);
+
+            this.listenTo(this.savedSearchCollection, 'change:newDocuments', function() {
+                var dropdownCids = this.$('.tab-dropdown .dropdown-menu li:not(.hide)').map(function(arg, el) {
+                    return $(el).find('a').attr('data-search-cid');
+                });
+
+                var totalNewDocuments = this.savedSearchCollection
+                    .chain()
+                    .filter(function(model) {
+                        return _.contains(dropdownCids, model.cid);
+                    })
+                    .reduce(function(memo, model) {
+                        return memo + model.get('newDocuments');
+                    }, 0)
+                    .value();
+
+                this.$('.tab-drop .new-document-label')
+                    .toggleClass('hide', totalNewDocuments === 0)
+                    .text(totalNewDocuments);
+            });
         },
 
         showHideTabs: function () {

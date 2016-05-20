@@ -75,8 +75,8 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
     }
 
     @RequestMapping(value = NEW_RESULTS_PATH + "{id}", method = RequestMethod.GET)
-    public boolean checkForNewQueryResults(@SuppressWarnings("MVCPathVariableInspection") @PathVariable("id") final long id) throws E {
-        boolean newResults = false;
+    public int checkForNewQueryResults(@SuppressWarnings("MVCPathVariableInspection") @PathVariable("id") final long id) throws E {
+        int newResults = 0;
 
         final SavedQuery savedQuery = service.get(id);
         final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
@@ -93,13 +93,13 @@ public abstract class SavedQueryController<S extends Serializable, D extends Sea
 
             final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
                     .setQueryRestrictions(queryRestrictions)
-                    .setMaxResults(1)
+                    .setMaxResults(1001)
                     .setPrint(getNoResultsPrintParam())
                     .setQueryType(SearchRequest.QueryType.MODIFIED)
                     .build();
 
             final Documents<?> searchResults = documentsService.queryTextIndex(searchRequest);
-            newResults = searchResults.getTotalResults() > 0;
+            newResults = searchResults.getTotalResults();
         }
 
         return newResults;

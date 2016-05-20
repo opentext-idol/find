@@ -177,8 +177,11 @@ define([
                             config: savedSearchConfig,
                             savedQueryCollection: this.savedQueryCollection,
                             queryStates: this.queryStates,
-                            onSuccess: function(savedQueryModelId, newResults) {
-                            }
+                            onSuccess: _.bind(function(savedQueryModelId, newResults) {
+                                this.savedQueryCollection.get(savedQueryModelId).set({
+                                    newDocuments: newResults
+                                });
+                            }, this)
                         });
                     });
                 }

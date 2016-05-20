@@ -84,9 +84,10 @@ public abstract class SavedQueryControllerTest<S extends Serializable, D extends
                 .setId(id)
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
-        when(searchResults.getTotalResults()).thenReturn(1);
+        int numberOfResults = 1;
+        when(searchResults.getTotalResults()).thenReturn(numberOfResults);
         when(documentsService.queryTextIndex(Matchers.<SearchRequest<S>>any())).thenReturn(searchResults);
-        assertTrue(savedQueryController.checkForNewQueryResults(id));
+        assertEquals(numberOfResults, savedQueryController.checkForNewQueryResults(id));
     }
 
     @Test
@@ -96,8 +97,9 @@ public abstract class SavedQueryControllerTest<S extends Serializable, D extends
                 .setId(id)
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
+        final int numberOfResults = 0;
         when(documentsService.queryTextIndex(Matchers.<SearchRequest<S>>any())).thenReturn(searchResults);
-        assertFalse(savedQueryController.checkForNewQueryResults(id));
+        assertEquals(numberOfResults, savedQueryController.checkForNewQueryResults(id));
     }
 
     @Test
@@ -110,7 +112,9 @@ public abstract class SavedQueryControllerTest<S extends Serializable, D extends
                 .setMaxDate(lastFetchTime.minus(1))
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
-        assertFalse(savedQueryController.checkForNewQueryResults(id));
+        final int numberOfResults = 0;
+
+        assertEquals(numberOfResults, savedQueryController.checkForNewQueryResults(id));
         verify(documentsService, never()).queryTextIndex(Matchers.<SearchRequest<S>>any());
     }
 }
