@@ -27,7 +27,7 @@ The fields which Find looks for in an IDOL document can be configured in the "fi
 
 When Find reads an IDOL document, it looks for all values for all of the fields listed in the names section for all ids listed in the config file. The values found for a given id affect application behaviour in an id-specifc way. Some ids only support one field value per document, in which case the first value is used.
 
-Available ids are detailed below, with default field names in brackets.
+Available ids are detailed below.
 
 | ID            | Type | Default Names            | Notes                                                 |
 | ------------- | ---- | ------------------------ | ----------------------------------------------------- |
