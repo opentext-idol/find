@@ -92,7 +92,7 @@ define([
                     })
                     .append("title")
                     .text(function (d) {
-                        return "Range: " + d.minValue + "-" + (d.maxValue + 1) + "\nCount: " + d.count;
+                        return options.tooltip(d.minValue, d.maxValue + 1, d.count);
                     });
 
                 let dragBehavior = d3.behavior.drag()

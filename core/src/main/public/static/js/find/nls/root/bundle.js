@@ -119,6 +119,7 @@ define([
         'search.indexes.empty': 'Waiting for Indexes...',
         'search.newSearch': 'New Search',
         'search.numericParametricFields': 'Numeric Parametric Fields',
+        'search.numericParametricFields.tooltip': 'Range: {0} - {1}\nCount: {2}',
         'search.noResults': 'No results found',
         'search.noMoreResults': 'No more results found',
         'search.parametricFields': 'Parametric Fields',

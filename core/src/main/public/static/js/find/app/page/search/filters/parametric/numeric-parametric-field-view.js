@@ -184,7 +184,8 @@ define([
                     updateCallback: updateCallback,
                     selectionCallback: selectionCallback,
                     xRange: this.viewWidth,
-                    yRange: GRAPH_HEIGHT
+                    yRange: GRAPH_HEIGHT,
+                    tooltip: i18n['search.numericParametricFields.tooltip']
                 });
 
                 this.selectedParametricValues.where({
