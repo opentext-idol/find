@@ -25,16 +25,18 @@ The fields which Find looks for in an IDOL document can be configured in the "fi
 }
 ````
 
-When Find reads an IDOL document, it looks for all values for all of the fields listed in the names section for all ids listed in the config file. The values found for a given id affect application behaviour in an id-specifc way. Some ids only support one field value per document, in which case the first value is used.
+When Find reads an IDOL document, it looks for all values for all of the fields listed in the names section for all ids listed in the config file. The values found for a given id affect application behaviour in an id-specifc way.
 
-Available ids are detailed below.
+Some ids only support one field value per document, in which case the first value is used. Where multiple names are provided for a field, the fields are checked in the order specified in the array.
+
+Available ids are detailed below. Where multiple values for a field are supported, the type is followed by square brackets.
 
 | ID            | Type | Notes                                                 | Default Names            |
 | ------------- | ---- | ----------------------------------------------------- | ------------------------ |
 | contentType | STRING | If the value of the `content_type` field is **audio** or **video**, Find treats the document as an audio or video file, and uses the information in the `url` and `offset` fields to process the document. | AU_REPOSITORY_METADATA_TYPE_STRING |
 | url | STRING | The URL of an audio or video file (for example, http://example.com/example_video.mp4). Find needs to be able to access this URL from the browser by using an HTTP GET request. | AU_REPOSITORY_METADATA_URL_FILE_STRING |
 | offset | STRING | The time offset from the start (in seconds) at which to begin playing an audio or video file. | OFFSET |
-| authors | STRING | The author of the document. Where available, Find displays the content of the IDOL `author` field in the document metadata when you view the document. | AU_DOCUMENT_METADATA_AUTHOR_STRING |
+| authors | STRING[] | The author of the document. Where available, Find displays the content of the IDOL `author` field in the document metadata when you view the document. | AU_DOCUMENT_METADATA_AUTHOR_STRING |
 | categories | STRING | You can configure a field in your IDOL document that describes the category that the document belongs to. Where available, Find displays the content of the IDOL `category` field in the document metadata when you view the document. | AU_REPOSITORY_METADATA_CATEGORY_STRING |
 | dateCreated | DATE | You can configure a field in your IDOL document that contains the date when the document was created. Where available, Find displays the content of the IDOL `date_created` or `created_date` field in the document metadata when you view the document. | AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS |
 | dateModified | DATE | You can configure a field in your IDOL document that contains the date when the document was modified. Where available, Find displays the content of the IDOL `date_modified` or `modified_date` field in the document metadata when you view the document. | AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS |
