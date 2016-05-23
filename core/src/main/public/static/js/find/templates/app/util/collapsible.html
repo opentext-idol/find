@@ -1,5 +1,8 @@
 <% var collapseId = _.uniqueId('collapse-'); %>
 <div class="clickable collapsible-header" data-toggle="collapse" data-target="#<%= collapseId %>">
     <h4><%- data.title %> <i class="hp-icon hp-fw hp-chevron-down rotating-chevron pull-right"></i></h4>
+    <% if(data.subtitle) { %>
+        <h5 class="collapsible-subtitle"><%- data.subtitle %></h5>
+    <% } %>
 </div>
 <div class="collapse <%- data.contentState %>" id="<%= collapseId %>"></div>

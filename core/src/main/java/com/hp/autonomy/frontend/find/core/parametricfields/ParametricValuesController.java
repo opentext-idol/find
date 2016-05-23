@@ -56,7 +56,7 @@ public abstract class ParametricValuesController<R extends ParametricRequest<S>,
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ParametricValues getParametricValues(
-            @RequestParam(QUERY_TEXT_PARAM) final String queryText,
+            @RequestParam(value = QUERY_TEXT_PARAM, defaultValue = "*") final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(DATABASES_PARAM) final List<S> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,

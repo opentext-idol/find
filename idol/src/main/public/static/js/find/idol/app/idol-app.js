@@ -40,7 +40,7 @@ define([
                 search: {
                     Constructor: FindSearch,
                     icon: 'hp-icon hp-fw hp-search',
-                    models: ['indexesCollection', 'savedQueryCollection'].concat(configuration().hasBiRole ? ['savedSnapshotCollection'] : []),
+                    models: ['indexesCollection', 'parametricCollection', 'savedQueryCollection'].concat(configuration().hasBiRole ? ['savedSnapshotCollection'] : []),
                     title: i18n['app.search'],
                     order: 0
                 },

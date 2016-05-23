@@ -41,6 +41,7 @@ define([
 
         initialize: function(options) {
             this.selectedParametricValues = options.queryState.selectedParametricValues;
+            this.displayCollection = options.displayCollection;
 
             this.model = new Backbone.Model({
                 processing: Boolean(options.parametricCollection.currentRequest),
@@ -73,15 +74,14 @@ define([
                 this.model.set('empty', options.parametricCollection.isEmpty());
             });
 
-            this.displayCollection = new DisplayCollection([], {
-                parametricCollection: options.parametricCollection,
-                selectedParametricValues: this.selectedParametricValues,
-                filterModel: options.filterModel
-            });
-
             this.fieldNamesListView = new ListView({
                 collection: this.displayCollection,
-                ItemView: FieldView
+                ItemView: FieldView,
+                itemOptions: {
+                    // collection is not passed to the individual views
+                    parametricDisplayCollection: this.displayCollection,
+                    selectedParametricValues: this.selectedParametricValues
+                }
             });
         },
 

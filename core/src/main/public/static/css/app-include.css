@@ -1278,6 +1278,14 @@ input:-moz-placeholder::before {
     display: none;
 }
 
+.parametric-field-label {
+    display: list-item;
+    list-style: none;
+}
+
+.fields-list {
+    border-left: 1px solid #e5e5e5;
+}
 
 .parametric-fields-table {
     table-layout: fixed;
@@ -1330,6 +1338,11 @@ input:-moz-placeholder::before {
 .toggle-more,
 .toggle-more td {
     border-bottom: none !important;
+}
+
+.toggle-more-text {
+    color: #8E8E8E;
+    font-size: 11px;
 }
 
 .databases-list .toggle-more i {

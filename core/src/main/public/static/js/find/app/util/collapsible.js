@@ -21,12 +21,14 @@ define([
             this.view = options.view;
             this.collapsed = options.collapsed || false;
             this.title = options.title;
+            this.subtitle = options.subtitle;
         },
 
         render: function() {
             this.$el.html(this.template({
                 contentState: this.collapsed ? '' : 'in',
-                title: this.title
+                title: this.title,
+                subtitle: this.subtitle
             }));
 
             this.$header = this.$('.collapsible-header');

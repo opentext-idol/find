@@ -93,6 +93,7 @@ define([
         initialize: function (options) {
             this.savedQueryCollection = options.savedQueryCollection;
             this.indexesCollection = options.indexesCollection;
+            this.parametricCollection = options.parametricCollection;
 
             this.searchTypes = this.getSearchTypes();
 
@@ -384,6 +385,7 @@ define([
                         documentsCollection: documentsCollection,
                         view: new this.ServiceView(_.extend({
                             indexesCollection: this.indexesCollection,
+                            parametricCollection: this.parametricCollection,
                             documentsCollection: documentsCollection,
                             selectedTabModel: this.selectedTabModel,
                             savedSearchCollection: this.savedSearchCollection,

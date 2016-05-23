@@ -12,7 +12,6 @@ define([
     'find/app/model/entity-collection',
     'find/app/model/query-model',
     'find/app/model/saved-searches/saved-search-model',
-    'find/app/model/parametric-collection',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/page/search/results/results-view-augmentation',
@@ -28,7 +27,7 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
+], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel,
             queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
             ResultsViewSelection, RelatedConceptsView, Collapsible, addChangeListener,  SavedSearchControlView, TopicMapView,
             SunburstView, MapResultsView, configuration, i18n, templateString) {
@@ -57,6 +56,7 @@ define([
             this.documentsCollection = options.documentsCollection;
             this.searchTypes = options.searchTypes;
             this.searchCollections = options.searchCollections;
+            this.parametricCollection = options.parametricCollection;
 
             this.highlightModel = new Backbone.Model({highlightEntities: false});
             this.entityCollection = new EntityCollection();
@@ -101,8 +101,6 @@ define([
                     this.savedSearchModel.save({dateDocsLastFetched: moment()});
                 }
             });
-
-            this.parametricCollection = new ParametricCollection();
 
             var subViewArguments = {
                 indexesCollection: this.indexesCollection,
@@ -266,8 +264,6 @@ define([
         },
 
         fetchData: function() {
-            this.parametricCollection.reset();
-
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
                     databases: this.queryModel.get('indexes'),
@@ -279,7 +275,6 @@ define([
                 };
 
                 this.entityCollection.fetch({data: data});
-                this.parametricCollection.fetch({data: data});
             }
         },
 

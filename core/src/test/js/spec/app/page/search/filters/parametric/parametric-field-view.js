@@ -16,7 +16,10 @@ define([
                 {id: 'fred', count: 25, selected: false}
             ]);
 
-            this.fieldView = new FieldView({model: this.model});
+            this.fieldView = new FieldView({
+                model: this.model,
+                selectedParametricValues: new Backbone.Collection()
+            });
             this.fieldView.render();
         });
 
