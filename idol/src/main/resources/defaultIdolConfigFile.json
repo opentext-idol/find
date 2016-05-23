@@ -39,6 +39,19 @@
     "blacklist": "ISO_BLACKLIST",
     "enabled": false
   },
+  "statsServer": {
+    "enabled": false,
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 19870,
+      "productType": [
+        "STATS",
+        "DAH",
+        "IDOLPROXY"
+      ]
+    }
+  },
   "view": {
     "protocol": "HTTP",
     "host": "localhost",

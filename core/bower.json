@@ -53,7 +53,8 @@
   },
   "devDependencies": {
     "hp-autonomy-js-testing-utils": "1.1.1",
-    "jasmine-jquery": "2.1.0"
+    "jasmine-jquery": "2.1.0",
+    "jasmine-ajax": "3.2.0"
   },
   "resolutions": {
     "underscore": "1.8.3",
