@@ -42,7 +42,7 @@ define([
                 this.$el.addClass('clickable');
 
                 topicMapOptions.onLeafClick = _.bind(function(node) {
-                    this.clickHandler(node.name);
+                    this.clickHandler([node.name]);
                 }, this);
             }
 

@@ -153,9 +153,10 @@ define([
             this.middleColumnHeaderView = MiddleColumnHeaderView ? new MiddleColumnHeaderView(subViewArguments) : null;
 
             var entityClickHandler = this.searchTypes[searchType].entityClickHandler(clickHandlerArguments);
+            var relatedConceptsClickHandler = this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments);
 
             var relatedConceptsView = new RelatedConceptsView(_.extend({
-                clickHandler: this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments),
+                clickHandler: relatedConceptsClickHandler,
                 highlightModel: this.highlightModel
             }, subViewArguments));
 
@@ -197,7 +198,7 @@ define([
                 shown: hasBiRole,
                 uniqueId: _.uniqueId('results-view-item-'),
                 constructorArguments: _.extend({
-                    clickHandler: entityClickHandler
+                    clickHandler: relatedConceptsClickHandler
                 }, subViewArguments),
                 selector: {
                     displayNameKey: 'topic-map',
