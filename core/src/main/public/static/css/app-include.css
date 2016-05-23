@@ -1335,8 +1335,8 @@ input:-moz-placeholder::before {
     padding: 0 8px; /* Same as table padding so it lines up */
 }
 
-.toggle-more,
-.toggle-more td {
+.show-all,
+.show-all td {
     border-bottom: none !important;
 }
 
