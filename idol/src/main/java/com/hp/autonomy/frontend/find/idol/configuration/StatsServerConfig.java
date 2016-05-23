@@ -72,7 +72,13 @@ public class StatsServerConfig implements ConfigurationComponent {
         if (!statistics.containsAll(requiredStatistics)) {
             for (final Statistic statistic : statistics) {
                 if (!requiredStatistics.contains(statistic)) {
-                    log.debug("Missing statistic: {}", statistic);
+                    log.debug("Additional statistic present in StatsServer: {}", statistic);
+                }
+            }
+
+            for (final Statistic requiredStatistic : requiredStatistics) {
+                if (!statistics.contains(requiredStatistic)) {
+                    log.debug("Required statistic missing from StatsServer: {}", requiredStatistic);
                 }
             }
 
