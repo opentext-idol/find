@@ -134,13 +134,6 @@ define([
                 }
             });
 
-            // TODO: this does nothing - the attribute name is wrong
-            this.listenTo(this.savedSearchCollection, 'add', function (model) {
-                if (this.selectedTabModel.get('selectedCid') === null) {
-                    this.selectedTabModel.set('selectedCid', model.cid);
-                }
-            });
-
             this.listenTo(this.savedSearchCollection, 'remove', function (savedSearch) {
                 var cid = savedSearch.cid;
                 this.serviceViews[cid].view.remove();
