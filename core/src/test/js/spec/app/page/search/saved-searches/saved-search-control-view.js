@@ -665,8 +665,6 @@ define([
             });
 
             describe('then the query is changed', function() {
-                var MIN_DATE = 15000;
-
                 beforeEach(function() {
                     this.queryState.queryTextModel.set({inputText: 'archipelago'});
                     this.queryModel.set('queryText', 'archipelago');
@@ -750,6 +748,37 @@ define([
                         it('restores the original query state', function() {
                             expect(this.queryState.queryTextModel.get('inputText')).toBe('cat');
                             expect(this.queryState.queryTextModel.get('relatedConcepts')).toEqual([['Copenhagen']]);
+                        });
+                    });
+                });
+
+                describe('then the "Save As" button is clicked and a Snapshot is saved', function() {
+                    beforeEach(clickSaveAsButton);
+
+                    describe('and a Snapshot is saved', function() {
+                        beforeEach(function() {
+                            spyOn(this.savedSnapshotCollection, 'create');
+
+                            this.view.$('.popover-content .search-title-input-container .search-title-input').val("My New Search").trigger('input');
+                            this.view.$('.popover-content .search-title-input-container [name="saved-search-type"][value="SNAPSHOT"]').iCheck('check');
+                            this.view.$('.popover-content .search-title-input-container .save-title-confirm-button').click();
+                        });
+
+                        it('does not revert the search', function() {
+                            expect(this.queryState.queryTextModel.get('inputText')).toBe('archipelago');
+                        });
+                    });
+
+                    describe('and a Query is saved', function() {
+                        beforeEach(function() {
+                            spyOn(this.savedQueryCollection, 'create');
+
+                            this.view.$('.popover-content .search-title-input-container .search-title-input').val("My New Search").trigger('input');
+                            this.view.$('.popover-content .search-title-input-container .save-title-confirm-button').click();
+                        });
+
+                        it('reverts the search', function() {
+                            expect(this.queryState.queryTextModel.get('inputText')).toBe('cat');
                         });
                     });
                 });
