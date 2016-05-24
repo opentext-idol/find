@@ -44,6 +44,12 @@ public abstract class AbstractParametricValuesControllerTest<Q extends QueryRest
     }
 
     @Test
+    public void getDateParametricValues() throws E {
+        parametricValuesController.getDateParametricValues(Collections.singletonList("SomeDateParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
+        verify(parametricValuesService).getDateParametricValues(Matchers.<R>any());
+    }
+
+    @Test
     public void getDependentParametricValues() throws E {
         parametricValuesController.getDependentParametricValues(Collections.singletonList("SomeParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
         verify(parametricValuesService).getDependentParametricValues(Matchers.<R>any());

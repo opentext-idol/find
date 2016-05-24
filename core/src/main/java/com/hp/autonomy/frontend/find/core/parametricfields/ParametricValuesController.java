@@ -30,6 +30,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_VALUES_PATH = "/api/public/parametric";
     static final String NUMERIC_PARAMETRIC_PATH = "/numeric";
+    private static final String DATE_PARAMETRIC_PATH = "/date";
     public static final String DEPENDENT_VALUES_PATH = "/dependent-values";
 
     public static final String FIELD_NAMES_PARAM = "fieldNames";
@@ -85,6 +86,23 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     ) throws E {
         final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
         return parametricValuesService.getNumericParametricValues(parametricRequest);
+    }
+
+    @SuppressWarnings("MethodWithTooManyParameters")
+    @RequestMapping(value = DATE_PARAMETRIC_PATH, method = RequestMethod.GET)
+    @ResponseBody
+    public Set<QueryTagInfo> getDateParametricValues(
+            @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
+            @RequestParam(QUERY_TEXT_PARAM) final String queryText,
+            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(DATABASES_PARAM) final List<S> databases,
+            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+            @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
+            @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
+    ) throws E {
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
+        return parametricValuesService.getDateParametricValues(parametricRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")

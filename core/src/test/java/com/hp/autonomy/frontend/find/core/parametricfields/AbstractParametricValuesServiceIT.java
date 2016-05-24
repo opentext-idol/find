@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.parametricfields;
 
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -51,6 +52,21 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                     .andExpect(jsonPath("$", empty()));
         }
+    }
+
+    @Test
+    public void getDateParametricValues() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_VALUES_PATH + ParametricValuesController.NUMERIC_PARAMETRIC_PATH)
+                .param(ParametricValuesController.FIELD_NAMES_PARAM, new String[]{ParametricValuesService.AUTN_DATE_FIELD})
+                .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
+                .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
+                .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
+                .with(authentication(userAuth()));
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", not(empty())));
     }
 
     @Test
