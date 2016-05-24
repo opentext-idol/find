@@ -158,6 +158,7 @@ define([
         'search.resultsView.sunburst.error.noDependentParametricValues': 'There are too many parametric fields to display in sunburst view',
         'search.resultsView.map': 'Map',
         'search.resultsView.map.show.more': 'Show More',
+        'search.resultsView.table': 'Table',
         'search.resultsView.amount.shown': 'Showing <strong>{0}</strong> to <strong>{1}</strong> of <strong>{2}</strong> results',
         'search.resultsView.amount.shown.no.increment': 'Showing the top <strong>{0}</strong> results of <strong>{1}</strong>',
         'search.resultsView.amount.shown.no.results': 'There are no results with the location field selected',

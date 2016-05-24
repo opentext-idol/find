@@ -237,6 +237,15 @@ define([
                     displayNameKey: 'map',
                     icon: 'hp-map-view'
                 }
+            }, {
+                Constructor: Backbone.View,
+                id: 'table',
+                shown: hasBiRole,
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'table',
+                    icon: 'hp-table'
+                }
             }], {shown: true});
 
             var resultsViewSelectionModel = new Backbone.Model({
