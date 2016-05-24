@@ -301,6 +301,7 @@ define([
                     fieldText: this.queryModel.get('fieldText'),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
+                    minScore: this.queryModel.get('minScore'),
                     stateTokens: this.queryModel.get('stateMatchIds')
                 };
 
@@ -321,6 +322,7 @@ define([
                     fieldText: this.queryModel.get('fieldText'),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
+                    minScore: this.queryModel.get('minScore'),
                     stateTokens: this.queryModel.get('stateMatchIds')
                 };
 
