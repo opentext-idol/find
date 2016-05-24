@@ -20,7 +20,7 @@ public class IdolDatabaseTree extends IndexesTree {
     }
 
     @Override
-    protected void expandAll() {
+    public void expandAll() {
         allIndexes().expand();
     }
 }

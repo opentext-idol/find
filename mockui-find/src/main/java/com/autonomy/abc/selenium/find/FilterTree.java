@@ -1,88 +1,102 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
-import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
-import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+import com.autonomy.abc.selenium.indexes.tree.NodeElement;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Waits;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.eclipse.jetty.util.StringUtil;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+public abstract class FilterTree{
+    //} implements Iterable<FilterNode> {
 
-public class FilterTree {
-    // implements Iterable<FilterCategoryNode>{
-    private final WebElement container;
-    private final WebDriver driver;
-    public IndexesTree indexes;
+    protected final WebElement container;
+    protected final WebDriver driver;
 
-    public FilterTree(IndexesTree tree, WebElement element, WebDriver webDriver) {
-        //indexes = new IndexesTree(allNode);
-        indexes = tree;
+    FilterTree(WebElement element, WebDriver webDriver) {
         container = element;
         driver = webDriver;
     }
 
-    //THIS IS ALL TERRIBLE AND IS GOING TO BE FIXED
-    protected FilterNode getFilterType(String name) {
-        WebElement childElement = container.findElement(By.xpath("//h4[contains(text(),'" + name + "')]"));
-        return new FilterNode(childElement, driver);
-    }
-
-    public WebElement getFilterNode(String name){
-        LOGGER.info(container.findElement(By.xpath("//*[contains(text(),'"+name+"')]")).getText());
-        LOGGER.info(container.findElement(By.xpath("//*[contains(text(),'"+name+"')]")).toString());
-        LOGGER.info(container.findElement(By.xpath("//*[contains(text(),'"+name+"')]")).getTagName());
-
+    protected WebElement findFilter(String name){
         return container.findElement(By.xpath("//*[contains(text(),'"+name+"')]"));
     }
 
-    public WebElement getFilterTypeNode(String name){
-        if(name.equals("DATES")||name.equals("DATABASES")) {
-            return ElementUtil.ancestor(container.findElement
-                (By.xpath("//h4[contains(text(),'" + WordUtils.capitalize(name.toLowerCase()) + "')]")),2);}
-        else{
-            return ElementUtil.getFirstChild(container.findElement
-                    (By.xpath("//*[contains(@data-field-display-name,'" +  WordUtils.capitalize(name.toLowerCase())+ "')]")));
-        }
+    public List<WebElement> getFilterTypes(){
+        return container.findElements(By.tagName("h4"));
     }
 
-
-    protected void seeAllFilters(List<WebElement> filterTypes){
-        expandAll(filterTypes);
-        showFilters();
+    public List<String> getVisibleFilterTypes(){
+        return returnsVisibleFromList(getFilterTypes());
     }
 
-    public void showFilters(){
-        for(WebElement element:container.findElements(By.className("toggle-more-text"))){
-            if (element.getText()!="See Less") {
-                element.click();
+    protected List<String> returnsVisibleFromList(List<WebElement> potentialElements){
+        List<WebElement> visibleElements=new ArrayList<>();
+        for (WebElement el: potentialElements){
+            if(el.isDisplayed()){
+                visibleElements.add(el);
             }
         }
-    }
-    public void expandAll(List<WebElement> filterTypes){
-        for(WebElement filter:filterTypes){
-            new FilterNode(filter,driver).expand();
-        }
-    }
-    public void collapseAll(List<WebElement> filterTypes){
-        for(WebElement filter:filterTypes){
-            new FilterNode(filter,driver).collapse();
-        }
+        return ElementUtil.getTexts(visibleElements);
     }
 
-    //needs to iterate over both the index tree and the rest of the filter tree
-    //@Override
-   /* public Iterator<> iterator() {
-        return indexes.allIndexes().iterator();
+
+
+    /*public List<WebElement> getCollapsibleFilters(List<WebElement> filterTypes){
+        List<WebElement> collapsibleFilters=new ArrayList<>();
+        for(WebElement filterTitle: filterTypes){
+            collapsibleFilters.add(ElementUtil.ancestor(filterTitle,2));
+        }
+        return collapsibleFilters;
+    }
+
+    protected List<NodeElement> getFilterNodes() {
+        List<NodeElement> nodes = new ArrayList<>();
+        nodes.addAll(getDateFilterNodes());
+        nodes.addAll(getParametricFilterNodes());
+        nodes.addAll(getDatabaseNodes());
+        return nodes;
+    }
+
+    private List<DateFilterNode> getDateFilterNodes(){
+        List<DateFilterNode> nodes = new ArrayList<>();
+        for (WebElement element : container.findElements(By.cssSelector(".clickable[data-name]"))) {
+            nodes.add(new DateFilterNode(element,driver));
+        }
+        return nodes;
+    }
+
+    private List<ParametricFilterNode> getParametricFilterNodes(){
+        List<ParametricFilterNode> nodes = new ArrayList<>();
+        for (WebElement element : container.findElements(By.cssSelector(".clickable[data-name]"))) {
+            nodes.add(new ParametricFilterNode(element,driver));
+        }
+        return nodes;
+    }
+
+    private List<NodeElement> getDatabaseNodes(){
+        List<NodeElement> nodes = new ArrayList<>();
+        //nodes.add(new FilterNode(container.findElement(By.xpath("//h4[contains(text(),'Databases')]")),driver));
+        //nodes.addAll(indexes.allIndexes().getIndexNodes());
+        return nodes;
+    }*/
+
+    public ParametricFilterNode findNode(String name) {
+        WebElement element = ElementUtil.getFirstChild(container.findElement
+                (By.xpath("//*[contains(@data-field-display-name,'" + WordUtils.capitalize(name.toLowerCase()) + "')]")));
+        return new ParametricFilterNode(element,driver);
+    }
+
+
+
+    /*@Override
+    public Iterator<NodeElement> iterator() {
+        return getFilterNodes().iterator();
     }*/
 
 }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class IndexesTree implements Iterable<IndexNodeElement> {
+public class IndexesTree implements Iterable<NodeElement> {
     private final IndexCategoryNode allIndexesNode;
 
     public IndexesTree(IndexCategoryNode node) {
@@ -31,7 +31,7 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
         allIndexes().find(indexName).deselect();
     }
 
-    protected void expandAll() {
+    public void expandAll() {
         allIndexes().expand();
         publicIndexes().expand();
         privateIndexes().expand();
@@ -47,7 +47,7 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
 
     public List<Index> getSelected() {
         List<Index> selected = new ArrayList<>();
-        for (IndexNodeElement node : this) {
+        for (NodeElement node : this) {
             if (node.isSelected()) {
                 selected.add(new Index(node.getName()));
             }
@@ -68,7 +68,7 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
     }
 
     @Override
-    public Iterator<IndexNodeElement> iterator() {
+    public Iterator<NodeElement> iterator() {
         return allIndexes().iterator();
     }
 

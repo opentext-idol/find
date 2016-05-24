@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
+import com.autonomy.abc.selenium.indexes.tree.NodeElement;
 import com.autonomy.abc.selenium.query.*;
 import com.google.common.collect.Iterables;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
@@ -79,7 +79,7 @@ public class FindPage extends AppElement implements AppPage,
     public List<String> getPrivateIndexNames() {
         List<String> names = new ArrayList<>();
         indexesTree().privateIndexes().expand();
-        for (IndexNodeElement element : indexesTree().privateIndexes()) {
+        for (NodeElement element : indexesTree().privateIndexes()) {
             names.add(element.getName());
         }
         return names;

@@ -28,6 +28,8 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
+import static org.junit.Assume.assumeThat;
+import static org.junit.Assume.assumeTrue;
 
 public class IdolFindITCase extends FindTestBase {
 
@@ -176,7 +178,9 @@ public class IdolFindITCase extends FindTestBase {
     @ActiveBug("FIND-122")
     public void testSearchFilterTypes(){
         findService.search("face");
-        checkCorrectFiltersVisible(findPage.getVisibleFilterTypes());
+        findPage.expandAll();
+        List<String> allFilters = findPage.getCurrentFiltersIncType();
+        checkCorrectFiltersVisible(findPage.getVisibleFilterTypes(),allFilters);
     }
 
     @Test
@@ -184,49 +188,51 @@ public class IdolFindITCase extends FindTestBase {
         findService.search("face");
 
         //search for filter that isn't present
-        //findPage.filterResults("Minion");
-        //assertThat("No filter matched", findPage.noneMatchingMessageVisible());
+        findPage.filterResults("asfsefeff");
+        assertThat("No filter matched", findPage.noneMatchingMessageVisible());
         findPage.clearFilter();
 
-        //checkCorrectFiltersVisible(Arrays.asList("GENERAL","UNITED STATES OF AMERICA","CATEGORY","Last Week","Test","PDF"));
-        checkCorrectFiltersVisible(Arrays.asList("Test","PDF"));
+        findPage.expandAll();
+        List<String> allFilters = findPage.getCurrentFiltersIncType();
+
+        checkCorrectFiltersVisible(Arrays.asList("UNITED STATES OF AMERICA","Last Week","Test","PDF"),allFilters);
 
     }
 
-    private void checkCorrectFiltersVisible(List<String> filtersToSearch){
-        findPage.expandFiltersFully();
-        List<String> allFilters = findPage.getCurrentFilters();
+    private void checkCorrectFiltersVisible(List<String> filtersToSearch, List<String> allFilters){
         for (String targetFilter:filtersToSearch){
             findPage.clearFilter();
-            findPage.expandFilters();
+            findPage.expandAll();
+
             List<String> matchingFilters = findPage.findFilterString(targetFilter,allFilters);
+
             findPage.filterResults(targetFilter);
 
-            findPage.expandFilters();
-            List<String> visibleFilters =findPage.getCurrentFilters();
+            findPage.expandAll();
+            List<String> visibleFilters =findPage.getCurrentFiltersIncType();
 
             verifyThat("Same number of filters for target "+targetFilter+": "+visibleFilters.size(),visibleFilters.size(),is(matchingFilters.size()));
 
             Collections.sort(visibleFilters);
-            LOGGER.info("Visible");
-            for(String el:visibleFilters){
-                LOGGER.info(el);
-            }
             Collections.sort(matchingFilters);
-            LOGGER.info("Matching");
-            for(String el:matchingFilters){
-                LOGGER.info(el);
-            }
             verifyThat("All filters that should be displayed are", matchingFilters.equals(visibleFilters));
         }
 
     }
+
     //Expanding & Collapsing
     @Test
     public void testExpandFilters(){
         findService.search("face");
-        findPage.expandFiltersFully();
-        findPage.collapseFiltersFully();
+        String filter = "IRELAND";
+        assumeTrue("Filter IRELAND exists",findPage.filterExists(filter));
+
+        assertThat("Filter not visible",!findPage.filterVisible(filter));
+        findPage.expandAll();
+        assertThat("Filter visible",findPage.filterVisible(filter));
+        findPage.collapseAll();
+        assertThat("Filter not visible",!findPage.filterVisible(filter));
+
     }
 
 }
