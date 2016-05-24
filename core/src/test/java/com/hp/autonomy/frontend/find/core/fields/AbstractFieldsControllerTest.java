@@ -30,8 +30,6 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
     @Mock
     protected FieldsService<R, E> service;
 
-    private final Map<FieldTypeParam, List<String>> response = new EnumMap<>(FieldTypeParam.class);
-
     private FieldsController<R, E> controller;
 
     protected abstract FieldsController<R, E> constructController();
@@ -40,15 +38,17 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
 
     @Before
     public void setUp() throws E {
-        response.put(FieldTypeParam.Numeric, ImmutableList.of("NumericField", "ParametricNumericField"));
-        response.put(FieldTypeParam.Parametric, ImmutableList.of("ParametricField", "ParametricNumericField"));
-        when(service.getFields(Matchers.<R>any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric))).thenReturn(response);
-
         controller = constructController();
     }
 
     @Test
     public void getParametricFields() throws E {
+        final Map<FieldTypeParam, List<String>> response = new EnumMap<>(FieldTypeParam.class);
+        response.put(FieldTypeParam.Numeric, ImmutableList.of("NumericField", "ParametricNumericField"));
+        response.put(FieldTypeParam.NumericDate, ImmutableList.of("DateField", "ParametricDateField"));
+        response.put(FieldTypeParam.Parametric, ImmutableList.of("ParametricField", "ParametricNumericField", "ParametricDateField"));
+        when(service.getFields(Matchers.<R>any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
+
         final List<String> fields = controller.getParametricFields(createRequest());
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(is("ParametricField")));
@@ -56,8 +56,24 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
 
     @Test
     public void getParametricNumericFields() throws E {
+        final Map<FieldTypeParam, List<String>> response = new EnumMap<>(FieldTypeParam.class);
+        response.put(FieldTypeParam.Numeric, ImmutableList.of("NumericField", "ParametricNumericField"));
+        response.put(FieldTypeParam.Parametric, ImmutableList.of("ParametricField", "ParametricNumericField", "ParametricDateField"));
+        when(service.getFields(Matchers.<R>any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric))).thenReturn(response);
+
         final List<String> fields = controller.getParametricNumericFields(createRequest());
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(is("ParametricNumericField")));
+    }
+
+    @Test
+    public void getParametricDateFields() throws E {
+        final Map<FieldTypeParam, List<String>> response = new EnumMap<>(FieldTypeParam.class);
+        response.put(FieldTypeParam.NumericDate, ImmutableList.of("DateField", "ParametricDateField"));
+        response.put(FieldTypeParam.Parametric, ImmutableList.of("ParametricField", "ParametricNumericField", "ParametricDateField"));
+        when(service.getFields(Matchers.<R>any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
+        final List<String> fields = controller.getParametricDateFields(createRequest());
+        assertThat(fields, hasSize(1));
+        assertThat(fields, hasItem(is("ParametricDateField")));
     }
 }
