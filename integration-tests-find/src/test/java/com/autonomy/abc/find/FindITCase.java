@@ -9,11 +9,13 @@ import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.shared.QueryTestHelper;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.apache.commons.collections4.ListUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openqa.selenium.TimeoutException;
 
 import java.util.HashSet;
@@ -46,16 +48,11 @@ public class FindITCase extends FindTestBase {
     }
 
     @Test
+    @Category(CoreFeature.class)
     public void testSendKeys() throws InterruptedException {
         String searchTerm = "Fred is a chimpanzee";
         findService.search(searchTerm);
         assertThat(navBar.getSearchBoxTerm(), is(searchTerm));
-        assertThat(results.getText().toLowerCase(), not(containsString("error")));
-    }
-
-    @Test
-    public void testSearch() {
-        findService.search("Red");
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
