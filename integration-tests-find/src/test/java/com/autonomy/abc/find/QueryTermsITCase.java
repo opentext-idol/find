@@ -29,13 +29,13 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class FindITCase extends FindTestBase {
+public class QueryTermsITCase extends FindTestBase {
     private FindPage findPage;
     private FindTopNavBar navBar;
     private FindResultsPage results;
     private FindService findService;
 
-    public FindITCase(TestConfig config) {
+    public QueryTermsITCase(TestConfig config) {
         super(config);
     }
 
