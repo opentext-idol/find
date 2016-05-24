@@ -185,6 +185,7 @@ define([
                     fieldText: this.queryModel.get('fieldText') ? this.queryModel.get('fieldText').toString() : '',
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
+                    minScore: this.queryModel.get('minScore'),
                     fieldNames: second ? [first, second] : [first],
                     stateTokens: this.queryModel.get('stateMatchIds')
                 }

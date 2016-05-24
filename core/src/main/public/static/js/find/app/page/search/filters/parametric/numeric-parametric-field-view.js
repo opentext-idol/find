@@ -238,6 +238,7 @@ define([
                         fieldText: clonedCollection.toFieldTextNode(),
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),
+                        minScore: this.queryModel.get('minScore'),
                         stateTokens: this.queryModel.get('stateMatchIds')
                     }
                 })
