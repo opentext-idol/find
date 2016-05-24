@@ -106,14 +106,15 @@ public class FindITCase extends FindTestBase {
         assertThat(notTermOne, containsInAnyOrder(t2NotT1.toArray()));
     }
 
-    //Following 3 correctly failing On_Prem
     @Test
+    @ActiveBug("CORE-2925")
     public void testCorrectErrorMessageDisplayed() {
-        new QueryTestHelper<>(findService).booleanOperatorQueryText(Errors.Search.OPERATORS);
-        new QueryTestHelper<>(findService).emptyQueryText(Errors.Search.STOPWORDS);
+        new QueryTestHelper<>(findService).booleanOperatorQueryText(Errors.Search.OPERATORS, Errors.Search.OPENING_BOOL);
+        new QueryTestHelper<>(findService).emptyQueryText(Errors.Search.STOPWORDS, Errors.Search.NO_TEXT);
     }
 
     @Test
+    @ActiveBug("FIND-151")
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
         new QueryTestHelper<>(findService).hiddenQueryOperatorText();
     }
