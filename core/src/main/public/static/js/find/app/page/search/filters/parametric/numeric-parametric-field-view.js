@@ -82,7 +82,8 @@ define([
         resetSelectedParametricValues(selectedParametricValues, fieldName);
         selectedParametricValues.add({
             field: fieldName,
-            range: [min, max]
+            range: [min, max],
+            numeric: true
         });
     }
 

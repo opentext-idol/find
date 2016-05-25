@@ -5,12 +5,13 @@
 
 define([
     'backbone',
+    'underscore',
     'databases-view/js/databases-collection',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/dates-filter-model',
     'find/app/model/min-score-model',
     'moment'
-], function(Backbone, DatabasesCollection, SavedSearchModel, DatesFilterModel, MinScoreModel, moment) {
+], function(Backbone, _, DatabasesCollection, SavedSearchModel, DatesFilterModel, MinScoreModel, moment) {
 
     var INPUT_TEXT = 'johnny';
     var RELATED_CONCEPTS = [['depp']];
@@ -27,6 +28,16 @@ define([
         {field: 'CATEGORY', value: 'film'}
     ];
 
+    var PARAMETRIC_RANGES_CLIENT = [
+        {field: 'YEAR', range: [1066, 1485], numeric: true},
+        {field: 'DATE', range: [123456789000, 123456791000], numeric: false}
+    ];
+
+    var PARAMETRIC_RANGES_SERVER = [
+        {field: 'YEAR', min: 1066, max: 1485, type: 'Numeric'},
+        {field: 'DATE', min: 123456789000, max: 123456791000, type: 'Date'}
+    ];
+
     describe('SavedSearchModel', function() {
         beforeEach(function() {
             this.model = new SavedSearchModel({
@@ -38,7 +49,8 @@ define([
                 dateRange: DatesFilterModel.DateRange.CUSTOM,
                 relatedConcepts: RELATED_CONCEPTS,
                 indexes: BASE_INDEXES,
-                parametricValues: PARAMETRIC_VALUES
+                parametricValues: PARAMETRIC_VALUES,
+                parametricRanges: PARAMETRIC_RANGES_SERVER
             });
 
             this.queryTextModel = new Backbone.Model({
@@ -59,7 +71,7 @@ define([
             this.selectedIndexes = new DatabasesCollection(BASE_INDEXES);
 
             // The real selected parametric values collection also contains display names
-            this.selectedParametricValues = new Backbone.Collection(_.map(PARAMETRIC_VALUES, function(data, index) {
+            this.selectedParametricValues = new Backbone.Collection(_.map(PARAMETRIC_VALUES.concat(PARAMETRIC_RANGES_CLIENT), function(data, index) {
                 return _.extend({
                     displayName: 'MY_DISPLAY_NAME_' + index
                 }, data);
@@ -167,6 +179,10 @@ define([
 
             it('returns the selected parametric values', function() {
                 expect(this.attributes.parametricValues).toEqual(PARAMETRIC_VALUES);
+            });
+
+            it('returns the selected parametric ranges', function() {
+                expect(this.attributes.parametricRanges).toEqual(PARAMETRIC_RANGES_SERVER);
             });
 
             it('returns the min score from the min score model', function() {

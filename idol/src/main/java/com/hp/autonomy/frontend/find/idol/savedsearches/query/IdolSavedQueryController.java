@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.savedsearches.query;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
+import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
@@ -24,8 +25,9 @@ class IdolSavedQueryController extends SavedQueryController<String, IdolQueryRes
     @Autowired
     public IdolSavedQueryController(final SavedSearchService<SavedQuery> service,
                                     final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService,
+                                    final FieldTextParser fieldTextParser,
                                     final ObjectFactory<QueryRestrictions.Builder<IdolQueryRestrictions, String>> queryRestrictionsBuilderFactory) {
-        super(service, documentsService, queryRestrictionsBuilderFactory);
+        super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory);
     }
 
     @Override

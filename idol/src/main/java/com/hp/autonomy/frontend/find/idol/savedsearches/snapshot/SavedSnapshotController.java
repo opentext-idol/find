@@ -2,12 +2,13 @@ package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
+import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
+import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +26,22 @@ import java.util.Set;
 
 @RestController
 @RequestMapping(SavedSnapshotController.PATH)
-public class SavedSnapshotController {
-    public static final String PATH = "/api/bi/saved-snapshot";
+class SavedSnapshotController {
+    static final String PATH = "/api/bi/saved-snapshot";
 
     private static final Integer STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
 
     private final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
     private final SavedSearchService<SavedSnapshot> service;
+    private final FieldTextParser fieldTextParser;
 
     @Autowired
-    public SavedSnapshotController(final SavedSnapshotService service, final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService) {
-        this.service = service;
+    public SavedSnapshotController(final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService,
+                                   final SavedSearchService<SavedSnapshot> service,
+                                   final FieldTextParser fieldTextParser) {
         this.documentsService = documentsService;
+        this.service = service;
+        this.fieldTextParser = fieldTextParser;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -109,7 +114,7 @@ public class SavedSnapshotController {
                 .setAnyLanguage(true)
                 .setDatabases(indexes)
                 .setQueryText(snapshot.toQueryText())
-                .setFieldText(snapshot.toFieldText())
+                .setFieldText(fieldTextParser.toFieldText(snapshot))
                 .setMaxDate(snapshot.getMaxDate())
                 .setMinDate(snapshot.getMinDate())
                 .setMinScore(snapshot.getMinScore())

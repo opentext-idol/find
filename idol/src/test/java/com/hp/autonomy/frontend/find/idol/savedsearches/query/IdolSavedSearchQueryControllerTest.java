@@ -17,6 +17,6 @@ public class IdolSavedSearchQueryControllerTest extends SavedQueryControllerTest
     @Override
     protected SavedQueryController<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> constructController() {
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
-        return new IdolSavedQueryController(savedQueryService, documentsService, queryRestrictionsBuilderFactory);
+        return new IdolSavedQueryController(savedQueryService, documentsService, fieldTextParser, queryRestrictionsBuilderFactory);
     }
 }
