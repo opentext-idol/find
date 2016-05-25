@@ -15,6 +15,7 @@ define([
 
     var SUNBURST_NAME_ATTR = 'text';
     var SUNBURST_SIZE_ATTR = 'count';
+    var STROKE_COLOUR = '#f0f0f0';
 
     var sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
     var sunburstLabelTemplate = _.template(labelTemplate);
@@ -74,13 +75,16 @@ define([
             i18n: i18n,
             nameAttr: SUNBURST_NAME_ATTR,
             sizeAttr: SUNBURST_SIZE_ATTR,
+            strokeColour: STROKE_COLOUR,
             colorFn: function (data) {
                 if (!data.parent) {
                     // set the centre of the sunburst to always be white
                     return 'white';
                 }
 
-                if (data.hidden || data.parent.hidden) return '';
+                if (data.hidden || data.parent.hidden) {
+                    return STROKE_COLOUR;
+                }
 
                 if (!data.parent.parent) {
                     return data.color = data[SUNBURST_SIZE_ATTR] ? color(data.parent.children.indexOf(data)) : 'black';
