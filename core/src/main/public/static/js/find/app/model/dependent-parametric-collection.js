@@ -15,6 +15,7 @@ define([
     
     function parseResult(array, total) {
         var minimumSize = Math.round(total / 100 * 5); // this is the smallest area of the chart an element will be visible at.
+
         var sunburstData = _.chain(array)
             .map(function(entry) {
                 var entryHash = {
@@ -29,21 +30,27 @@ define([
             })
             .sortBy('count')
             .value();
+
         if (!_.isEmpty(sunburstData)) { //if there are items being displayed
             var childCount = getArrayTotal(sunburstData); // get total amount of displayed elements
             var remaining = total - childCount; // get the total amount of the hidden children
+            var hiddenFilterCount = array.length - sunburstData.length;
+
             if (remaining > minimumSize) {
                 var dividersNo = Math.floor(remaining / minimumSize); // work out how many minimum size padding elements we need
+
                 for (var i = 0; i < dividersNo; i++) {
-                    sunburstData.unshift({text: '', hidden: true, count: minimumSize}); // add the padding containers
+                    sunburstData.unshift({text: '', hidden: true, count: minimumSize, hiddenFilterCount: hiddenFilterCount}); // add the padding containers
                 }
+
                 var remainingPadding = remaining - minimumSize * dividersNo; // get the remaining padding, it will rarely divide evenly into minimumSize pieces
+               
                 if (remainingPadding > 0) {
-                    sunburstData.unshift({text: '', hidden: true, count: remainingPadding}); // add the remaining padding
+                    sunburstData.unshift({text: '', hidden: true, count: remainingPadding, hiddenFilterCount: hiddenFilterCount}); // add the remaining padding
                 }
             }
             else if (remaining > 0){
-                sunburstData.unshift({text: '', hidden: true, count: remaining}); // pad out the remaining area
+                sunburstData.unshift({text: '', hidden: true, count: remaining, hiddenFilterCount: hiddenFilterCount}); // pad out the remaining area
             }
         }
         return sunburstData;

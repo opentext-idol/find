@@ -28,12 +28,14 @@ define([
                     {
                         text: "",
                         hidden: true,
-                        count: 750
+                        count: 750,
+                        hiddenFilterCount: 7
                     },
                     {
                         text: "",
                         hidden: true,
-                        count: 1476
+                        count: 1476,
+                        hiddenFilterCount: 7
                     },
                     {
                         hidden: false,
@@ -144,12 +146,14 @@ define([
                     {
                         text: "",
                         hidden: true,
-                        count: 785
+                        count: 785,
+                        hiddenFilterCount: 7
                     },
                     {
                         text: "",
                         hidden: true,
-                        count: 1478
+                        count: 1478,
+                        hiddenFilterCount: 7
                     },
                     {
                         hidden: false,
@@ -159,7 +163,8 @@ define([
                             {
                                 text: "",
                                 hidden: true,
-                                count: 22
+                                count: 22,
+                                hiddenFilterCount: 1
                             },
                             {
                                 hidden: false,

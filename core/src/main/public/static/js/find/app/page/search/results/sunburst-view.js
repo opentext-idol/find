@@ -15,6 +15,8 @@ define([
 
     var SUNBURST_NAME_ATTR = 'text';
     var SUNBURST_SIZE_ATTR = 'count';
+    var SUNBURST_FILTER_NUMBER = 'hiddenFilterCount';
+    var STROKE_COLOUR = '#f0f0f0';
 
     var sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
     var sunburstLabelTemplate = _.template(labelTemplate);
@@ -74,13 +76,16 @@ define([
             i18n: i18n,
             nameAttr: SUNBURST_NAME_ATTR,
             sizeAttr: SUNBURST_SIZE_ATTR,
+            strokeColour: STROKE_COLOUR,
             colorFn: function (data) {
                 if (!data.parent) {
                     // set the centre of the sunburst to always be white
                     return 'white';
                 }
 
-                if (data.hidden || data.parent.hidden) return '';
+                if (data.hidden || data.parent.hidden) {
+                    return STROKE_COLOUR;
+                }
 
                 if (!data.parent.parent) {
                     return data.color = data[SUNBURST_SIZE_ATTR] ? color(data.parent.children.indexOf(data)) : 'black';
@@ -99,7 +104,7 @@ define([
                 };
 
                 if (data[SUNBURST_NAME_ATTR] === '') {
-                    templateArguments.name = i18n['search.sunburst.noValue'];
+                    templateArguments.name = i18n['search.sunburst.noValue'](data[SUNBURST_FILTER_NUMBER]);
                     templateArguments.italic = true;
                     templateArguments.noVal = true;
                 } else {
@@ -117,11 +122,10 @@ define([
                         var data = dataEl[0];
 
                         // TODO Assumes depth=2 is the outer ring - will need to change if this changes
-                        return data.depth === 2 && data.text === d.text;
+                        return data.text !== '' && data.depth === 2 && data.text === d.text;
                     })
                     .each(function(dataEl) {
                         var el = dataEl[1];
-
                         paper.set(el).animate({path: arc(outerRingAnimateSize)(dataEl[0])}, 100);
                     });
             }
@@ -327,7 +331,10 @@ define([
         onClick: function(data) {
             var selectedParameters = getClickedParameters(data, this.fieldsCollection.pluck('field'), []);
 
-            this.selectedParametricValues.add(selectedParameters)
+            // empty value means padding element was clicked on
+            if (!_.findWhere(selectedParameters, {value: ''})) {
+                this.selectedParametricValues.add(selectedParameters)
+            }
         }
         
     });
