@@ -21,8 +21,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
-
 public abstract class SearchPage extends SearchBase implements LanguageFilter.Filterable {
 	public final static int RESULTS_PER_PAGE = 6;
 	public final static int MAX_RESULTS = 2500;
@@ -181,7 +179,6 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 
 		if (fullList) {
 			while (ElementUtil.isEnabled(promotionPaginationButton(Pagination.NEXT))) {
-				LOGGER.info("new page of promotions");
 				switchPromotionPage(Pagination.NEXT);
 				promotionsList.addAll(getVisiblePromotedDocumentTitles());
 			}

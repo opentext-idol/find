@@ -391,7 +391,6 @@ public class PromotionsITCase extends HybridIsoTestBase {
 		assertThat("Promote documents button exists on 2nd page",secondPromotionsPage.promoteExistingButton(), displayed());
 
 		mainWindow.activate();
-		LOGGER.info("activate main window");
 		setUpPromotion(getQuery("개", Language.KOREAN), new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "friend"));
 
 		secondWindow.activate();
