@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.query.QueryResult;
 import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
@@ -25,8 +26,7 @@ import java.util.List;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 public class FilterITCase extends FindTestBase {
     private FindPage findPage;
@@ -171,7 +171,6 @@ public class FilterITCase extends FindTestBase {
 
     }
 
-    //Correctly failing with OnPrem - because of entry 'in 21 days'
     @Test
     public void testPreDefinedWeekHasSameResultsAsCustomWeek() {
         preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.WEEK);
@@ -192,7 +191,7 @@ public class FilterITCase extends FindTestBase {
 
         results.toggleDateSelection(period);
         List<String> preDefinedResults = results.getResultTitles();
-        findPage.filterBy(new StringDateFilter().from(getDate(period)));
+        findPage.filterBy(new StringDateFilter().from(getDate(period)).until(new Date()));
         List<String> customResults = results.getResultTitles();
 
         assertThat(preDefinedResults, is(customResults));
@@ -217,8 +216,8 @@ public class FilterITCase extends FindTestBase {
         return cal.getTime();
     }
 
-    //Correctly failing in OnPrem
     @Test
+    @ActiveBug("FIND-152")
     public void testDateRemainsWhenClosingAndReopeningDateFilters() {
         Date start = getDate(FindResultsPage.DateEnum.MONTH);
         Date end = getDate(FindResultsPage.DateEnum.WEEK);
