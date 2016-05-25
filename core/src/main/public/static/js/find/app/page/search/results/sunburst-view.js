@@ -121,11 +121,10 @@ define([
                         var data = dataEl[0];
 
                         // TODO Assumes depth=2 is the outer ring - will need to change if this changes
-                        return data.depth === 2 && data.text === d.text;
+                        return data.text !== '' && data.depth === 2 && data.text === d.text;
                     })
                     .each(function(dataEl) {
                         var el = dataEl[1];
-
                         paper.set(el).animate({path: arc(outerRingAnimateSize)(dataEl[0])}, 100);
                     });
             }
@@ -331,7 +330,10 @@ define([
         onClick: function(data) {
             var selectedParameters = getClickedParameters(data, this.fieldsCollection.pluck('field'), []);
 
-            this.selectedParametricValues.add(selectedParameters)
+            // empty value means padding element was clicked on
+            if (!_.findWhere(selectedParameters, {value: ''})) {
+                this.selectedParametricValues.add(selectedParameters)
+            }
         }
         
     });
