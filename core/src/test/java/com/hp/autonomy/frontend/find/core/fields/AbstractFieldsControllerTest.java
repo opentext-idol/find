@@ -73,7 +73,7 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
         response.put(FieldTypeParam.Parametric, ImmutableList.of("ParametricField", "ParametricNumericField", "ParametricDateField"));
         when(service.getFields(Matchers.<R>any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
         final List<String> fields = controller.getParametricDateFields(createRequest());
-        assertThat(fields, hasSize(1));
+        assertThat(fields, hasSize(2));
         assertThat(fields, hasItem(is("ParametricDateField")));
     }
 }

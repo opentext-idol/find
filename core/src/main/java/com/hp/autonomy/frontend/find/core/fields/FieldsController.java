@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.fields;
 
 import com.hp.autonomy.searchcomponents.core.fields.FieldsRequest;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,6 +55,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         final Map<FieldTypeParam, List<String>> response = fieldsService.getFields(request, FieldTypeParam.Parametric, FieldTypeParam.NumericDate);
         final List<String> parametricFields = new ArrayList<>(response.get(FieldTypeParam.Parametric));
         parametricFields.retainAll(response.get(FieldTypeParam.NumericDate));
+        parametricFields.add(ParametricValuesService.AUTN_DATE_FIELD);
         return parametricFields;
     }
 }
