@@ -1,0 +1,136 @@
+package com.autonomy.abc.find;
+
+import com.autonomy.abc.base.FindTestBase;
+import com.autonomy.abc.selenium.element.DocumentViewer;
+import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindResult;
+import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.ParametricFilter;
+import com.autonomy.abc.selenium.query.Query;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
+import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
+import static org.hamcrest.Matchers.*;
+
+public class HodFilterITCase extends FindTestBase{
+    private FindPage findPage;
+    private FindResultsPage results;
+    private FindService findService;
+
+    public HodFilterITCase(TestConfig config) {
+        super(config);
+    }
+
+    @Parameterized.Parameters
+    public static Iterable<Object[]> parameters() throws IOException {
+        return parameters(Collections.singleton(ApplicationType.HOSTED));
+    }
+
+    @Before
+    public void setUp(){
+        findPage = getElementFactory().getFindPage();
+        results = findPage.getResultsPage();
+        findService = getApplication().findService();
+    }
+
+    @Test
+    public void testPdfContentTypeValue(){
+        checkContentTypeFilter("APPLICATION/PDF", "pdf");
+    }
+
+    @Test
+    public void testHtmlContentTypeValue(){
+        checkContentTypeFilter("TEXT/HTML", "html");
+    }
+
+    private void checkContentTypeFilter(String filterType, String extension) {
+        Query query = new Query("red star")
+                .withFilter(new ParametricFilter("Content Type", filterType));
+        findService.search(query);
+        for(String type : results.getDisplayedDocumentsDocumentTypes()){
+            assertThat(type, containsString(extension));
+        }
+    }
+
+    @Test
+    public void testFileTypes(){
+        findService.search("love ");
+
+        for(FileType f : FileType.values()) {
+            findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
+
+            for(FindResult result : results.getResults()){
+                assertThat(result.icon().getAttribute("class"), containsString(f.getFileIconString()));
+            }
+
+            findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
+        }
+    }
+
+    @Test
+    @ActiveBug("CCUK-3641")
+    public void testAuthor(){
+        String author = "FIFA.COM";
+
+        findService.search(new Query("football")
+                .withFilter(new IndexFilter("fifa"))
+                .withFilter(new ParametricFilter("Author", author)));
+
+        assertThat(results.resultsDiv(), not(containsText(Errors.Find.GENERAL)));
+
+        List<FindResult> searchResults = results.getResults();
+
+        for(int i = 0; i < 6; i++){
+            DocumentViewer documentViewer = searchResults.get(i).openDocumentPreview();
+            verifyThat(documentViewer.getAuthor(), equalToIgnoringCase(author));
+            documentViewer.close();
+        }
+    }
+
+    @Test
+    @ResolvedBug({"CSA-1726", "CSA-1763"})
+    public void testPublicIndexesVisibleNotSelectedByDefault(){
+        findService.search("Marina and the Diamonds");
+
+        verifyThat("public indexes are visible", findPage.indexesTree().publicIndexes(), not(emptyIterable()));
+        verifyThat(findPage.getSelectedPublicIndexes(), empty());
+    }
+
+    private enum FileType {
+        HTML("TEXT/HTML","html"),
+        PDF("APPLICATION/PDF","pdf"),
+        PLAIN("TEXT/PLAIN","file");
+
+        private final String sidebarString;
+        private final String fileIconString;
+
+        FileType(String sidebarString, String fileIconString){
+            this.sidebarString = sidebarString;
+            this.fileIconString = fileIconString;
+        }
+
+        public String getFileIconString() {
+            return fileIconString;
+        }
+
+        public String getSidebarString() {
+            return sidebarString;
+        }
+    }
+}
