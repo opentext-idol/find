@@ -6,10 +6,7 @@ import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -128,6 +125,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
             removeButtons.remove(0);
         }
         for (WebElement removeButton : removeButtons) {
+            new WebDriverWait(getDriver(),20).until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-spin")));
             removeButton.click();
         }
     }
