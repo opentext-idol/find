@@ -11,6 +11,7 @@ import com.autonomy.abc.shared.UserTestHelper;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Editable;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -24,6 +25,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.UnhandledAlertException;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
@@ -39,21 +41,22 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UsersPageOnPremITCase extends IdolIsoTestBase {
     private final NewUser aNewUser;
-    private final UserTestHelper helper;
+    private UserTestHelper helper;
 
     private IdolUsersPage usersPage;
 
     public UsersPageOnPremITCase(TestConfig config) {
         super(config);
         aNewUser = config.getNewUser("james");
-        helper = new UserTestHelper(getApplication(), config);
     }
 
     @Before
     public void setUp() {
+        helper = new UserTestHelper(getApplication(), getConfig());
         IdolIsoUserService userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
+        new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationsDisappear());
     }
 
     @After
@@ -66,7 +69,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         this.helper.signUpAndLoginAs(aNewUser, getWindow());
 
         String baseUrl = getAppUrl();
-        baseUrl = baseUrl.replace("/p/","/config");
+        baseUrl = baseUrl.replace("/p/promotions","/config");
         getDriver().get(baseUrl);
         Waits.loadOrFadeWait();
         assertThat("Users are not allowed to access the config page", getDriver().findElement(By.tagName("body")), containsText("Authentication Failed"));
@@ -107,7 +110,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         assumeThat(getConfig().getType(), is(ApplicationType.ON_PREM));
         User user = helper.singleSignUp(aNewUser);
 
-        Editable passwordBox = usersPage.passwordBoxFor(user);
+        Editable passwordBox = usersPage.getUserRow(user).passwordBox();
         passwordBox.setValueAsync("");
         assertThat(passwordBox.getElement(), containsText("Password must not be blank"));
         assertThat(passwordBox.editButton(), not(displayed()));
@@ -149,9 +152,9 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
     }
 
     @Test
-    //TO BE MOVED BACK TO COMMON IF FUNCTIONALITY IS IMPLEMENTED
     public void testWontDeleteSelf() {
-        assertThat(usersPage.deleteButton(getApplication().loginService().getCurrentUser()), hasClass("not-clickable"));
+        User self = getApplication().loginService().getCurrentUser();
+        assertThat(usersPage.getUserRow(self).canDeleteUser(),is(false));
     }
 
     @Test

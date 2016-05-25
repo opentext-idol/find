@@ -6,7 +6,10 @@ import com.autonomy.abc.fixtures.UserTearDownStrategy;
 import com.autonomy.abc.selenium.auth.HsodNewUser;
 import com.autonomy.abc.selenium.auth.HsodUser;
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.users.HsodUserCreationModal;
+import com.autonomy.abc.selenium.users.HsodUserService;
+import com.autonomy.abc.selenium.users.HsodUsersPage;
+import com.autonomy.abc.selenium.users.UserNotCreatedException;
 import com.autonomy.abc.shared.UserTestHelper;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
@@ -23,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -189,14 +191,15 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
 
         userService.editUsername(user, "Dave");
 
-        verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
+        verifyThat(usersPage.getUsernames(), hasItem("Dave"));
 
         try {
             userService.editUsername(user, "");
         } catch (TimeoutException e) { /* Should fail here as you're giving it an invalid username */ }
 
-        verifyThat(usersPage.editUsernameInput(user).getElement(), displayed());
-        verifyThat(usersPage.editUsernameInput(user).getElement().findElement(By.xpath("./../..")), hasClass("has-error"));
+        WebElement formGroup = usersPage.getUserRow(user).usernameEditBox();
+        verifyThat(formGroup, displayed());
+        verifyThat(formGroup, hasClass("has-error"));
     }
 
     @Test
@@ -205,7 +208,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
         getConfig().getAuthenticationStrategy().authenticate(user);
 
         waitForUserConfirmed(user);
-        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
+        verifyThat(usersPage.getUserRow(user).isConfirmed(), is(true));
     }
 
     @Test
@@ -253,7 +256,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
         new WebDriverWait(getDriver(), 30).pollingEvery(5,TimeUnit.SECONDS).until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver driver) {
-                return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
+                return usersPage.getUserRow(user).isConfirmed();
             }
         });
     }
@@ -274,7 +277,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
             getWindow().refresh();
             usersPage = getElementFactory().getUsersPage();
             Waits.loadOrFadeWait();
-            return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
+            return usersPage.getUserRow(user).isConfirmed();
         }
     }
 

@@ -2,15 +2,17 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.auth.IdolIsoNewUser;
 import com.autonomy.abc.selenium.auth.IdolIsoReplacementAuth;
+import com.autonomy.abc.selenium.users.table.IdolUserTable;
+import com.autonomy.abc.selenium.users.table.IdolUserTableRow;
+import com.hp.autonomy.frontend.selenium.element.PasswordBox;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.ReplacementAuth;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
-public class IdolUsersPage extends UsersPage {
+public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
     private IdolUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
@@ -40,29 +42,18 @@ public class IdolUsersPage extends UsersPage {
         return newUser.createWithRole(role);
     }
 
+    @Override
+    public IdolUserTable getTable() {
+        return new IdolUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
+    }
+
     public User replaceAuthFor(User user, ReplacementAuth newAuth) {
         if (newAuth instanceof IdolIsoReplacementAuth) {
-            ((IdolIsoReplacementAuth) newAuth).sendTo(passwordBoxFor(user));
-            passwordBoxFor(user).waitForUpdate();
+            PasswordBox passwordBox = getUserRow(user).passwordBox();
+            ((IdolIsoReplacementAuth) newAuth).sendTo(passwordBox);
+            passwordBox.waitForUpdate();
         }
         return newAuth.replaceAuth(user);
-    }
-
-    public WebElement roleLinkFor(User user) {
-        return getUserRow(user).findElement(By.cssSelector(".role"));
-    }
-
-    public void submitPendingEditFor(User user) {
-        getUserRow(user).findElement(By.cssSelector(".editable-submit")).click();
-    }
-
-    @Override
-    public WebElement getUserRow(User user) {
-        return findElement(By.xpath(".//span[contains(text(), '" + user.getUsername() + "')]/../.."));
-    }
-
-    public void setRoleValueFor(User user, Role newRole) {
-        selectTableUserType(user, newRole.toString());
     }
 
     public static class Factory extends SOPageFactory<IdolUsersPage> {

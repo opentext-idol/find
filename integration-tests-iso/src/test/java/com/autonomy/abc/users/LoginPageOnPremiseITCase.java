@@ -128,10 +128,10 @@ public class LoginPageOnPremiseITCase extends IdolIsoTestBase {
 
 	@Test
 	public void testDefaultLoginDisabled() {
-		getDriver().get(getAppUrl().substring(0, getAppUrl().length() - 2) + "login?defaultLogin=admin");
+		getDriver().get(getAppUrl().replace("p/promotions", "login?defaultLogin=admin"));
 		Waits.loadOrFadeWait();
 		loginPage = getElementFactory().getLoginPage();
 		verifyThat(loginPage.usernameInput(), not(hasAttribute("readonly")));
-		assertThat(getWindow(), urlContains("defaultLogin"));
+		assertThat(getWindow(), url(not(containsString("defaultLogin"))));
 	}
 }

@@ -23,11 +23,7 @@ public class HsodDeveloperService extends ServiceBase<IsoHsodElementFactory> {
     }
 
     public User editUsername(User user, String newUsername) {
-        devsPage = goToDevs();
-        WebElement pencil = devsPage.editUsernameLink(user);
-        pencil.click();
-        devsPage.editUsernameInput(user).setAndSubmit(newUsername);
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(pencil));
+        goToDevs().getUserRow(user).changeUsernameTo(newUsername);
         Waits.loadOrFadeWait();
         return new HsodUserBuilder(user)
                 .setUsername(newUsername)

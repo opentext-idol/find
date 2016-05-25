@@ -2,7 +2,10 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.autonomy.abc.selenium.find.*;
+import com.autonomy.abc.selenium.find.DetailedPreviewPage;
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.query.QueryResult;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -10,34 +13,27 @@ import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
-import static org.junit.Assume.assumeTrue;
 
-public class IdolFindITCase extends FindTestBase {
-
-    private IdolFindPage findPage;
-    private FindTopNavBar navBar;
+public class IdolDocumentPreviewITCase extends FindTestBase {
+    private FindPage findPage;
     private FindResultsPage results;
     private FindService findService;
 
-    public IdolFindITCase(TestConfig config) {
+    public IdolDocumentPreviewITCase(TestConfig config) {
         super(config);}
 
     @Parameterized.Parameters
@@ -47,13 +43,10 @@ public class IdolFindITCase extends FindTestBase {
 
     @Before
     public void setUp(){
-    findPage = getElementFactory().getIdolFindPage();
-    navBar = getElementFactory().getTopNavBar();
-    results = findPage.getResultsPage();
-    findService = getApplication().findService();
+        findPage = getElementFactory().getFindPage();
+        results = findPage.getResultsPage();
+        findService = getApplication().findService();
     }
-
-    //Document Preview & Detailed Preview
 
     @Test
     public void testShowDocumentPreview(){
@@ -136,7 +129,7 @@ public class IdolFindITCase extends FindTestBase {
         verifyThat("Detailed Preview has reference",detailedPreviewPage.getReference(),not(nullValue()));
         verifyThat("Detailed Preview has index",detailedPreviewPage.getIndex(),not(nullValue()));
         verifyThat("Detailed Preview has title",detailedPreviewPage.getTitle(),not(nullValue()));
-        verifyThat("Detailed Preview has summary",detailedPreviewPage.getSummary(),not(nullValue()));
+        verifyThat("Detailed Preview has summary", detailedPreviewPage.getSummary(), not(nullValue()));
         verifyThat("Detailed Preview has date",detailedPreviewPage.getDate(),not(nullValue()));
     }
 
@@ -149,7 +142,7 @@ public class IdolFindITCase extends FindTestBase {
         detailedPreviewPage.similarDatesTab().click();
         verifyThat("Tab loads",!(detailedPreviewPage.loadingIndicator().isDisplayed()));
         changeDateSliderToYearBefore(detailedPreviewPage);
-        verifyThat("Can change to similar docs from year before",detailedPreviewPage.getSimilarDatesSummary(),containsString("Between 1 year"));
+        verifyThat("Can change to similar docs from year before", detailedPreviewPage.getSimilarDatesSummary(), containsString("Between 1 year"));
     }
 
     private void changeDateSliderToYearBefore(DetailedPreviewPage detailedPreviewPage){
@@ -157,8 +150,8 @@ public class IdolFindITCase extends FindTestBase {
     }
 
     @Test
-    @KnownBug("FIND-86")
-    public void testOneCopyOfDocinDetailedPreview(){
+    @ActiveBug("FIND-86")
+    public void testOneCopyOfDocInDetailedPreview(){
         findService.search("face");
         results.getResult(1).openDocumentPreview();
 
@@ -170,73 +163,5 @@ public class IdolFindITCase extends FindTestBase {
         detailedPreviewPage.goBackToSearch();
 
     }
-
-    //Filters - following are crazy long if there are 1000s of filters
-    @Test
-    @ActiveBug("FIND-122")
-    public void testSearchFilterTypes(){
-        findService.search("face");
-        findPage.expandFiltersFully();
-
-        //if there aren't several 1000 filters -> run through all the filter types: uncomment following line
-        //checkCorrectFiltersVisible(findPage.getVisibleFilterTypes(),allFilters);
-        checkCorrectFiltersVisible(Arrays.asList("DATABASES","DATES","CATEGORY"));
-    }
-
-    @Test
-    public void testSearchFilters(){
-        findService.search("face");
-
-        //search for filter that isn't present
-        findPage.filterResults("asfsefeff");
-        assertThat("No filter matched", findPage.noneMatchingMessageVisible());
-
-        findPage.clearFilter();
-
-        //if not 1000s of filters -> uncomment below
-        //checkCorrectFiltersVisible(Arrays.asList("UNITED STATES OF AMERICA","Last Week","Test","PDF"));
-        //if 1000s of filters -> test what was broken
-        checkCorrectFiltersVisible(Arrays.asList("Last Week"));
-
-    }
-
-    private void checkCorrectFiltersVisible(List<String> filtersToSearch){
-
-        for (String targetFilter:filtersToSearch){
-
-            findPage.clearFilter();
-            findPage.expandFiltersFully();
-
-            List<WebElement> allFilters = findPage.getCurrentFiltersIncType();
-            List<String> matchingFilters = findPage.findFilterString(targetFilter,allFilters);
-
-            findPage.filterResults(targetFilter);
-            findPage.showFilters();
-
-            List<String> visibleFilters = ElementUtil.getTexts(findPage.getCurrentFiltersIncType());
-
-            verifyThat("Filtering with "+targetFilter+" shows the right number filters "+visibleFilters.size(),visibleFilters.size(),is(matchingFilters.size()));
-
-            Collections.sort(visibleFilters);
-            Collections.sort(matchingFilters);
-            verifyThat("All filters that should be displayed are", matchingFilters.equals(visibleFilters));
-        }
-
-    }
-
-    //Expanding & Collapsing
-    @Test
-    public void testExpandFilters(){
-        findService.search("face");
-        String filter = "IRELAND";
-        assumeTrue("Filter IRELAND exists",findPage.filterExists(filter));
-
-        assertThat("Filter not visible",!findPage.filterVisible(filter));
-        findPage.expandFiltersFully();
-        assertThat("Filter visible",findPage.filterVisible(filter));
-        findPage.collapseAll();
-        assertThat("Filter not visible",!findPage.filterVisible(filter));
-
-    }
-
 }
+

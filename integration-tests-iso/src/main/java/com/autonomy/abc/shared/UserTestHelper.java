@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.users.UsersPage;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
@@ -13,6 +14,8 @@ import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.NoSuchElementException;
 
@@ -21,6 +24,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.url;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.modalIsDisplayed;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
 import static org.openqa.selenium.lift.Matchers.displayed;
@@ -41,7 +45,7 @@ public class UserTestHelper {
     }
 
     public User singleSignUp(NewUser toCreate) {
-        UsersPage usersPage = userService.getUsersPage();
+        UsersPage usersPage = factory.getUsersPage();
 
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
@@ -49,14 +53,14 @@ public class UserTestHelper {
         User user = usersPage.addNewUser(toCreate, Role.USER);
         authStrategy.authenticate(user);
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
-        verifyUserAdded(newUserModal, user);
+        verifyUserAdded(user);
         newUserModal.close();
         return user;
     }
 
 
     public void signUpAndLoginAs(NewUser newUser, Window window) {
-        UsersPage usersPage = userService.getUsersPage();
+        UsersPage usersPage = factory.getUsersPage();
 
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
@@ -80,7 +84,7 @@ public class UserTestHelper {
     }
 
     public void deleteAndVerify(User user) {
-        UsersPage usersPage = userService.getUsersPage();
+        UsersPage usersPage = factory.getUsersPage();
         userService.deleteUser(user);
 
         if (!app.isHosted()) {
@@ -92,12 +96,11 @@ public class UserTestHelper {
         }
     }
 
-    public void verifyUserAdded(ModalView newUserModal, User user){
-        if (!app.isHosted()){
-            verifyThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
-        }
-
-        //Hosted notifications are dealt with within the sign up method and there is no real way to ensure that a user's been created at the moment
+    public void verifyUserAdded(User user){
+        WebElement mostRecentNotification = new WebDriverWait(factory.getDriver(), 20)
+                .withMessage("waiting for user creation notification")
+                .until(GritterNotice.notificationAppears());
+        verifyThat(mostRecentNotification, containsText("Created user " + user.getUsername()));
     }
 
     public void logoutAndNavigateToWebApp(Window window) {
@@ -111,12 +114,11 @@ public class UserTestHelper {
         User user = userService.createNewUser(newUser, Role.USER);
         String username = user.getUsername();
 
-        UsersPage usersPage = userService.getUsersPage();
-        verifyThat(usersPage.deleteButton(user), displayed());
-        verifyThat(usersPage.getTable(), containsText(username));
+        UsersPage<?> usersPage = factory.getUsersPage();
+        verifyThat(usersPage.getUsernames(), hasItem(username));
 
         deleteAndVerify(user);
-        verifyThat(usersPage.getTable(), not(containsText(username)));
+        verifyThat(usersPage.getUsernames(), not(hasItem(username)));
     }
 
 }
