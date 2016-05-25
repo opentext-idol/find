@@ -10,6 +10,7 @@ import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesSe
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.types.idol.RecursiveField;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.apache.commons.collections4.ListUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.ObjectFactory;
@@ -27,6 +28,8 @@ import java.util.Set;
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
 public abstract class ParametricValuesController<Q extends QueryRestrictions<S>, R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
+    private static final int MAX_VALUES_DEFAULT = 10;
+
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_VALUES_PATH = "/api/public/parametric";
     static final String NUMERIC_PARAMETRIC_PATH = "/numeric";
@@ -67,7 +70,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
-        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, MAX_VALUES_DEFAULT, SortParam.DocumentCount);
         return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 
@@ -84,7 +87,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
-        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, null, SortParam.NumberIncreasing);
         return parametricValuesService.getNumericParametricValues(parametricRequest);
     }
 
@@ -101,7 +104,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
-        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, null, SortParam.ReverseDate);
         return parametricValuesService.getDateParametricValues(parametricRequest);
     }
 
@@ -118,12 +121,12 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
-        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, null, null);
         return parametricValuesService.getDependentParametricValues(parametricRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    private R buildRequest(final List<String> fieldNames, final String queryText, final String fieldText, final List<S> databases, final DateTime minDate, final DateTime maxDate, final Integer minScore, final List<String> stateTokens) {
+    private R buildRequest(final List<String> fieldNames, final String queryText, final String fieldText, final List<S> databases, final DateTime minDate, final DateTime maxDate, final Integer minScore, final List<String> stateTokens, final Integer maxValues, final SortParam sort) {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .setQueryText(queryText)
                 .setFieldText(fieldText)
@@ -136,7 +139,8 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         return parametricRequestBuilderFactory.getObject()
                 .setFieldNames(ListUtils.emptyIfNull(fieldNames))
                 .setQueryRestrictions(queryRestrictions)
-                .setMaxValues(null)
+                .setMaxValues(maxValues)
+                .setSort(sort)
                 .build();
     }
 }
