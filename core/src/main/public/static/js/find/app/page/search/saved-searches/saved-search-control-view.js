@@ -280,18 +280,24 @@ define([
                         var saveOptions = {
                             error: error,
                             success: _.bind(function(model) {
-                                this.selectedTabModel.set('selectedSearchCid', model.cid);
+                                // If we have just created a saved query, switch to its tab
+                                if (this.searchTypes[searchType].isMutable) {
+                                    this.selectedTabModel.set('selectedSearchCid', model.cid);
+                                }
 
                                 success();
-                            }, this)
-                            ,
+                            }, this),
                             wait: true,
                             timeout: 90000
                         };
 
                         if (titleEditState === TitleEditState.SAVE_AS && (savedState !== SavedState.NEW || !this.searchTypes[searchType].isMutable)) {
                             this.searchCollections[searchType].create(attributes, saveOptions);
-                            this.resetQueryState();
+
+                            // Saving a new query from a query tab
+                            if (this.searchTypes[this.savedSearchModel.get('type')].isMutable && this.searchTypes[searchType].isMutable) {
+                                this.resetQueryState();
+                            }
                         } else {
                             this.savedSearchModel.save(attributes, saveOptions);
                         }
