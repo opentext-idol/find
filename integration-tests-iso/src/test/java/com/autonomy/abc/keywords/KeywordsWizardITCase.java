@@ -69,7 +69,9 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
 
     @After
     public void tearDown() {
-        new KeywordTearDownStrategy().tearDown(this);
+        while(!keywordsPage.noKeywords()){
+            new KeywordTearDownStrategy().tearDown(this);
+        }
     }
 
     @Test
@@ -419,8 +421,10 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
         keywordsPage.selectLanguage(Language.ENGLISH);
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
+
         for (final String hiddenBooleansProximity : hiddenSearchOperators) {
             keywordsPage.addSynonymToGroup(hiddenBooleansProximity, keywordsPage.synonymGroupContaining("holder"));
+
 
             new WebDriverWait(getDriver(),120).until(new ExpectedCondition<Boolean>() {     //This is too long but after sending lots of requests it slows down a loto
                 @Override

@@ -293,16 +293,60 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		assertThat(fieldTextInputElement, not(displayed()));
 	}
 
+	private void lookingForTitle(Set<String> biggerList,Set<String> smallerList){
+		for(String item:smallerList){
+			if (!biggerList.contains(item)){
+				LOGGER.info("Or missing item: "+item);
+			}
+		}
+	}
+
+	//anything common to all 3
+	private void commonToSets(Set<String> s1,Set<String> s2,Set<String> s3){
+		Set<String> s1Copy = s1;
+		s1Copy.retainAll(s2);
+		s1.retainAll(s3);
+		s2.retainAll(s3);
+		LOGGER.info(s1Copy.toString());
+		LOGGER.info(s1.toString());
+		LOGGER.info(s2.toString());
+
+	}
 	@Test
 	public void testIdolSearchTypes() {
-		final int redCount = getResultCount("red");
+		/*final int redCount = getResultCount("red");
 		final int starCount = getResultCount("star");
 		final int unquotedCount = getResultCount("red star");
 		final int quotedCount = getResultCount("\"red star\"");
 		final int orCount = getResultCount("red OR star");
 		final int andCount = getResultCount("red AND star");
 		final int redNotStarCount = getResultCount("red NOT star");
-		final int starNotRedCount = getResultCount("star NOT red");
+		final int starNotRedCount = getResultCount("star NOT red");*/
+
+		//bad choice cause result count = 0 for AND ---> cobra viper
+		//night sky -> same problem
+
+		final int redCount = getResultCount("pickup");
+		final int starCount = getResultCount("truck");
+		final int unquotedCount = getResultCount("pickup truck");
+		final int quotedCount = getResultCount("\"pickup truck\"");
+		final int orCount = getResultCount("pickup OR truck");
+		Set<String> orCountTitle = new HashSet<>(searchPage.getSearchResultTitles(orCount));
+		assertThat("orCountTitle size: "+orCountTitle.size(),1,is(1));
+		final int andCount = getResultCount("pickup AND truck");
+		Set<String> andCountTitle = new HashSet<>(searchPage.getSearchResultTitles(andCount));
+		final int redNotStarCount = getResultCount("pickup NOT truck");
+		Set<String> redNotStarCountTitle = new HashSet<>(searchPage.getSearchResultTitles(redNotStarCount));
+
+		final int starNotRedCount = getResultCount("truck NOT pickup");
+		Set<String> starNotRedCountTitle = new HashSet<>(searchPage.getSearchResultTitles(starNotRedCount));
+
+		lookingForTitle(orCountTitle,andCountTitle);
+		lookingForTitle(orCountTitle,redNotStarCountTitle);
+		lookingForTitle(orCountTitle,starNotRedCountTitle);
+
+		commonToSets(andCountTitle,redNotStarCountTitle,starNotRedCountTitle);
+
 
 		verifyThat(redCount, lessThanOrEqualTo(unquotedCount));
         verifyThat(quotedCount, lessThanOrEqualTo(unquotedCount));
@@ -314,6 +358,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		verifyThat(andCount, lessThanOrEqualTo(unquotedCount));
 
 		verifyThat(orCount, lessThanOrEqualTo(redCount + starCount));
+		//verifyThat(andCount + redNotStarCount + starNotRedCount, is(orCount));
 		verifyThat(andCount + redNotStarCount + starNotRedCount, is(orCount));
 		verifyThat(orCount, is(unquotedCount));
 	}

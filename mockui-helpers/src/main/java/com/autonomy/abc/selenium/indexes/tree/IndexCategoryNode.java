@@ -8,13 +8,13 @@ import org.openqa.selenium.WebElement;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class IndexCategoryNode implements NodeElement, Collapsible, Iterable<NodeElement> {
+public abstract class IndexCategoryNode implements IndexNodeElement, Collapsible, Iterable<IndexNodeElement> {
     private final WebElement container;
     private final WebDriver driver;
     private final Collapsible collapsible;
-    private final NodeElement delegate;
+    private final IndexNodeElement delegate;
 
-    protected IndexCategoryNode(NodeElement inside, WebElement element, WebDriver webDriver) {
+    protected IndexCategoryNode(IndexNodeElement inside, WebElement element, WebDriver webDriver) {
         delegate = inside;
         container = element;
         driver = webDriver;
@@ -56,14 +56,14 @@ public abstract class IndexCategoryNode implements NodeElement, Collapsible, Ite
         return container.getText();
     }
 
-    public abstract List<NodeElement> getIndexNodes();
+    protected abstract List<IndexNodeElement> getIndexNodes();
 
-    public abstract NodeElement find(String name);
+    protected abstract IndexNodeElement find(String name);
 
-    public abstract IndexCategoryNode findCategory(String name);
+    protected abstract IndexCategoryNode findCategory(String name);
 
     @Override
-    public Iterator<NodeElement> iterator() {
+    public Iterator<IndexNodeElement> iterator() {
         return getIndexNodes().iterator();
     }
 

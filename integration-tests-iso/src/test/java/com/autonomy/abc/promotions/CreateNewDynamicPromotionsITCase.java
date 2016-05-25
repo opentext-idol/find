@@ -108,7 +108,7 @@ public class CreateNewDynamicPromotionsITCase extends HybridIsoTestBase {
     @Test
     public void testDeletedPromotionIsDeleted() {
         String trigger = "home";
-        promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, 10, trigger), "Ulster", 10);
+        promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, 10, trigger), "France", 10);
         Waits.loadOrFadeWait();
         assertThat("No promoted items displayed", searchPage.getPromotionSummarySize(), not(0));
 

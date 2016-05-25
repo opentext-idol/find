@@ -16,19 +16,13 @@ public class ParametricFilterNode extends FilterNode {
         super(element, webDriver);
     }
 
-    public ParametricFilterNode findNode(String name) {
-        if(container.findElements(By.xpath("//*[contains(@data-field-display-name,'" + WordUtils.capitalize(name.toLowerCase()) + "')]")).size()>0){
-            WebElement element = ElementUtil.getFirstChild(container.findElement
-                        (By.xpath("//*[contains(@data-field-display-name,'" + WordUtils.capitalize(name.toLowerCase()) + "')]")));
-            return new ParametricFilterNode(element,driver);}
-        else{
-                return null;
-            }
+    public List<WebElement> getChildren(){
+        return container.findElements(By.className("parametric-value-name"));
     }
 
     @Override
     public List<String> getChildNames() {
-        return ElementUtil.getTexts(container.findElements(By.xpath(".//*[contains(@class,'parametric-value-name')]")));
+        return ElementUtil.getTexts(getChildren());
     }
 
 }

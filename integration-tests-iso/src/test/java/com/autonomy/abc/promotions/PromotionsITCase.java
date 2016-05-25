@@ -388,10 +388,11 @@ public class PromotionsITCase extends HybridIsoTestBase {
 
 		secondWindow.activate();
 		final PromotionsPage secondPromotionsPage = getElementFactory().getPromotionsPage();
-		assertThat(secondPromotionsPage.promoteExistingButton(), displayed());
+		assertThat("Promote documents button exists on 2nd page",secondPromotionsPage.promoteExistingButton(), displayed());
 
 		mainWindow.activate();
-		setUpPromotion(getQuery("nein", Language.GERMAN), new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "friend"));
+		LOGGER.info("activate main window");
+		setUpPromotion(getQuery("개", Language.KOREAN), new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "friend"));
 
 		secondWindow.activate();
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(2)));

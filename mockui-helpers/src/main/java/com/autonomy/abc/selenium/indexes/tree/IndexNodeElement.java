@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.indexes.tree;
 
-public interface NodeElement {
+public interface IndexNodeElement {
     void select();
     void deselect();
     boolean isSelected();

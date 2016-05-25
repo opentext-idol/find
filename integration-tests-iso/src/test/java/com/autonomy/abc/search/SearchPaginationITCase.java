@@ -116,7 +116,7 @@ public class SearchPaginationITCase extends HybridIsoTestBase {
         PromotionService promotionService = getApplication().promotionService();
 
         try {
-            promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), "*", SearchPage.RESULTS_PER_PAGE + 2);
+            promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), "face", SearchPage.RESULTS_PER_PAGE + 2);
             searchPage = getElementFactory().getSearchPage();
             searchPage.waitForSearchLoadIndicatorToDisappear();
 

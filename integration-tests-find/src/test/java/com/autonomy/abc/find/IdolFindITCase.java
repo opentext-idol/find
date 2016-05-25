@@ -9,7 +9,6 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
-import com.hp.autonomy.frontend.selenium.element.Collapsible;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
@@ -17,6 +16,7 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
+import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 import java.util.*;
@@ -28,12 +28,10 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
-import static org.junit.Assume.assumeThat;
 import static org.junit.Assume.assumeTrue;
 
 public class IdolFindITCase extends FindTestBase {
 
-    //private FindPage findPage;
     private IdolFindPage findPage;
     private FindTopNavBar navBar;
     private FindResultsPage results;
@@ -173,14 +171,16 @@ public class IdolFindITCase extends FindTestBase {
 
     }
 
-    //Filters
+    //Filters - following are crazy long if there are 1000s of filters
     @Test
     @ActiveBug("FIND-122")
     public void testSearchFilterTypes(){
         findService.search("face");
-        findPage.expandAll();
-        List<String> allFilters = findPage.getCurrentFiltersIncType();
-        checkCorrectFiltersVisible(findPage.getVisibleFilterTypes(),allFilters);
+        findPage.expandFiltersFully();
+
+        //if there aren't several 1000 filters -> run through all the filter types: uncomment following line
+        //checkCorrectFiltersVisible(findPage.getVisibleFilterTypes(),allFilters);
+        checkCorrectFiltersVisible(Arrays.asList("DATABASES","DATES","CATEGORY"));
     }
 
     @Test
@@ -190,28 +190,32 @@ public class IdolFindITCase extends FindTestBase {
         //search for filter that isn't present
         findPage.filterResults("asfsefeff");
         assertThat("No filter matched", findPage.noneMatchingMessageVisible());
+
         findPage.clearFilter();
 
-        findPage.expandAll();
-        List<String> allFilters = findPage.getCurrentFiltersIncType();
-
-        checkCorrectFiltersVisible(Arrays.asList("UNITED STATES OF AMERICA","Last Week","Test","PDF"),allFilters);
+        //if not 1000s of filters -> uncomment below
+        //checkCorrectFiltersVisible(Arrays.asList("UNITED STATES OF AMERICA","Last Week","Test","PDF"));
+        //if 1000s of filters -> test what was broken
+        checkCorrectFiltersVisible(Arrays.asList("Last Week"));
 
     }
 
-    private void checkCorrectFiltersVisible(List<String> filtersToSearch, List<String> allFilters){
-        for (String targetFilter:filtersToSearch){
-            findPage.clearFilter();
-            findPage.expandAll();
+    private void checkCorrectFiltersVisible(List<String> filtersToSearch){
 
+        for (String targetFilter:filtersToSearch){
+
+            findPage.clearFilter();
+            findPage.expandFiltersFully();
+
+            List<WebElement> allFilters = findPage.getCurrentFiltersIncType();
             List<String> matchingFilters = findPage.findFilterString(targetFilter,allFilters);
 
             findPage.filterResults(targetFilter);
+            findPage.showFilters();
 
-            findPage.expandAll();
-            List<String> visibleFilters =findPage.getCurrentFiltersIncType();
+            List<String> visibleFilters = ElementUtil.getTexts(findPage.getCurrentFiltersIncType());
 
-            verifyThat("Same number of filters for target "+targetFilter+": "+visibleFilters.size(),visibleFilters.size(),is(matchingFilters.size()));
+            verifyThat("Filtering with "+targetFilter+" shows the right number filters "+visibleFilters.size(),visibleFilters.size(),is(matchingFilters.size()));
 
             Collections.sort(visibleFilters);
             Collections.sort(matchingFilters);
@@ -228,7 +232,7 @@ public class IdolFindITCase extends FindTestBase {
         assumeTrue("Filter IRELAND exists",findPage.filterExists(filter));
 
         assertThat("Filter not visible",!findPage.filterVisible(filter));
-        findPage.expandAll();
+        findPage.expandFiltersFully();
         assertThat("Filter visible",findPage.filterVisible(filter));
         findPage.collapseAll();
         assertThat("Filter not visible",!findPage.filterVisible(filter));

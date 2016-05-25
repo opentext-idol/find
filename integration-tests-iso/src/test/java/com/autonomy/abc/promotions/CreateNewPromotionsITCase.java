@@ -214,7 +214,7 @@ public class CreateNewPromotionsITCase extends HybridIsoTestBase {
 
         verifyThat(searchPage.getTopPromotedLinkTitle(), is(promotedDocTitle));
         if (isOnPrem()) {
-            verifyThat(searchPage.getTopPromotedSpotlightType(), is(spotlightType.getOption()));
+            verifyThat(searchPage.getTopPromotedSpotlightType(), equalToIgnoringCase(spotlightType.getOption()));
         }
 
         searchPage.modifiedResults().uncheck();

@@ -1,16 +1,10 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
-import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
-import com.autonomy.abc.selenium.indexes.tree.NodeElement;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.WebWindowNotFoundException;
-import com.gargoylesoftware.htmlunit.javascript.host.dom.Node;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xalan.xsltc.dom.Filter;
 import org.openqa.selenium.By;
@@ -36,7 +30,11 @@ public class IdolFindPage extends FindPage {
     }
     public ParametricFilterTree parametricFilterTree(){return new ParametricFilterTree(leftContainer(),getParametricFilters(),getDriver());}
     public DateFilterTree dateFilterTree(){return new DateFilterTree(ElementUtil.ancestor(getDateFilter(),2),getDriver());}
+    public DatabaseFilterTree databaseFilterTree(){return new DatabaseFilterTree(ElementUtil.ancestor(getDatabaseFilter(),2),getDriver());}
 
+    private WebElement getDatabaseFilter(){
+        return leftContainer().findElement(By.xpath(".//h4[contains(text(),'Databases')]"));
+    }
     private WebElement getDateFilter(){
         return findElement(By.xpath(".//h4[contains(text(),'Dates')]"));
     }
@@ -65,12 +63,14 @@ public class IdolFindPage extends FindPage {
     public void clearFilter(){
         FormInput input= new FormInput(findElement(By.xpath("//*[contains(@class,'form-control') and contains(@placeholder,'Search filters...')]")), getDriver());
         input.clear();
+        waitForIndexes();
     }
 
     public boolean filterExists(String filter){
         return findElements(By.xpath("//tr[contains(@data-value,'"+filter+"')]")).size()>0;
     }
 
+    //TODO: make this use the filter trees
     private WebElement findFilter(String name){
         return leftContainer().findElement(By.xpath("//*[contains(text(),'"+name+"')]"));
     }
@@ -82,82 +82,41 @@ public class IdolFindPage extends FindPage {
         return findElement(By.xpath("//p[contains(text(),'No filters matched')]")).isDisplayed();
     }
 
-    public List<String> getIndexNames(){
-        List<String> indexNames=new ArrayList<>();
-        indexNames.add("DATABASES");
-        for(NodeElement el:indexesTree().allIndexes().getIndexNodes()){
-            indexNames.add(el.getName());
-        }
-        return indexNames;
-    }
-
-    //current filters including type
-    //currently only has databases type....
-    public List<String> getCurrentFiltersIncType(){
-        List<String> currentFilters = new ArrayList<>();
-        currentFilters.addAll(parametricFilterTree().getCurrentFilters());
-        currentFilters.addAll(dateFilterTree().getCurrentFilters());
-        currentFilters.addAll(getIndexNames());
+    public List<WebElement> getCurrentFiltersIncType(){
+        List<WebElement> currentFilters = new ArrayList<>();
+        currentFilters.addAll(databaseFilterTree().getCurrentFiltersIncType());
+        currentFilters.addAll(dateFilterTree().getCurrentFiltersIncType());
+        currentFilters.addAll(parametricFilterTree().getCurrentFiltersIncType());
         return currentFilters;
     }
 
     public List<String> getVisibleFilterTypes(){
-
         List<WebElement> elements = new ArrayList<>();
 
+        elements.addAll(databaseFilterTree().getFilterTypes());
         elements.addAll(dateFilterTree().getFilterTypes());
         elements.addAll(parametricFilterTree().getFilterTypes());
 
-        if(findElement(By.xpath("//h4[text(),'Databases']")).isDisplayed()){
-            elements.add(findElement(By.xpath("//h4[text(),'Databases']")));
-        }
-
         return ElementUtil.getTexts(elements);
-
     }
 
-    private FilterNode findNodeFilterTrees(String filter){
-        if (parametricFilterTree().findNode(filter) != null){
-            return parametricFilterTree().findNode(filter);
-        }
-
-        else{
-            return dateFilterTree().findNode(filter);
-        }
-    }
-    
-
-    public List<String> findFilterString(String targetFilter, List<String> allFilters) {
+    public List<String> findFilterString(String targetFilter, List<WebElement> allFilters) {
+        waitForIndexes();
         Set<String> matchingFilters = new HashSet<>();
-        for (String filter : allFilters) {
-            if (StringUtils.containsIgnoreCase(filter,targetFilter)) {
-                matchingFilters.add(filter);
-                if (getVisibleFilterTypes().contains(filter)) {
-                    //this is all worse than before
-                    if(filter.equals("Databases")){
-                        for(NodeElement el:(indexesTree().allIndexes().getIndexNodes())){
-                            matchingFilters.add(el.getName());
-                        }
-                    }
-                    else {
-                        matchingFilters.addAll(findNodeFilterTrees(filter).getChildNames());
-                    }
+
+        for (WebElement filter : allFilters) {
+            if (StringUtils.containsIgnoreCase(filter.getText(),targetFilter)) {
+                matchingFilters.add(filter.getText());
+                if (getVisibleFilterTypes().contains(filter.getText())) {
+                    matchingFilters.addAll(new FilterNode(ElementUtil.ancestor(filter,2), getDriver()).getChildNames());
                 }
                 //is child
                 else{
-                    matchingFilters.add(findNodeFilterTrees(filter).getParentName());
+                    matchingFilters.add(new FilterNode(filter,getDriver()).getParentName());
                 }
             }
         }
         return new ArrayList<>(matchingFilters);
-    }
-
-    private List<WebElement> getCollapsibleFilters(List<WebElement> filterTypes){
-        List<WebElement> collapsibleFilters=new ArrayList<>();
-        for(WebElement filterTitle: filterTypes){
-            collapsibleFilters.add(ElementUtil.ancestor(filterTitle,2));
-        }
-        return collapsibleFilters;
     }
 
     //toggling see more
@@ -169,26 +128,22 @@ public class IdolFindPage extends FindPage {
         }
     }
 
-    protected void expandFiltersFully(){
+    public void expandFiltersFully(){
+        waitForIndexes();
         expandAll();
         showFilters();
     }
 
     public void expandAll(){
-        parametricFilterTree().expandAll();
+        databaseFilterTree().expandAll();
         dateFilterTree().expandAll();
-        indexesTree().expandAll();
-    }
-
-    //shouldn't be here -> maybe wrap IndexTree in FilterTree
-    private void collapseIndexes(){
-        ElementUtil.ancestor(findElement(By.xpath("//h4[text(),'Databases']")),1).click();
+        parametricFilterTree().expandAll();
     }
 
     public void collapseAll(){
-        parametricFilterTree().collapseAll();
+        databaseFilterTree().collapseAll();
         dateFilterTree().collapseAll();
-        collapseIndexes();
+        parametricFilterTree().collapseAll();
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {

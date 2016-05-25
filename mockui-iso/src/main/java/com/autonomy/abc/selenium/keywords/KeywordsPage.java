@@ -64,6 +64,10 @@ public abstract class KeywordsPage extends KeywordsBase {
         return findElement(By.className("loading-indicator"));
     }
 
+    public boolean noKeywords(){
+        return findElements(By.xpath("//div[contains(@class,'keyword-list-message')]/p[contains(text(),'No keywords found')]")).size()>0;
+    }
+
     public void filterView(final KeywordFilter filter) {
         WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();

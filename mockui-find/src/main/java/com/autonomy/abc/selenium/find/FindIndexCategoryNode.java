@@ -1,8 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
-import com.autonomy.abc.selenium.indexes.tree.NodeElement;
-import com.autonomy.abc.selenium.indexes.tree.NodeElement;
+import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -21,8 +20,8 @@ class FindIndexCategoryNode extends IndexCategoryNode {
     }
 
     @Override
-    public List<NodeElement> getIndexNodes() {
-        List<NodeElement> nodes = new ArrayList<>();
+    protected List<IndexNodeElement> getIndexNodes() {
+        List<IndexNodeElement> nodes = new ArrayList<>();
         for (WebElement element : container.findElements(By.cssSelector(".clickable[data-name]"))) {
             nodes.add(new FindIndexLeafNode(element, driver));
         }
@@ -30,13 +29,13 @@ class FindIndexCategoryNode extends IndexCategoryNode {
     }
 
     @Override
-    public NodeElement find(String name) {
+    protected IndexNodeElement find(String name) {
         WebElement childElement = container.findElement(By.cssSelector(".clickable[data-name='" + name+"']"));
         return new FindIndexLeafNode(childElement, driver);
     }
 
     @Override
-    public IndexCategoryNode findCategory(String name) {
+    protected IndexCategoryNode findCategory(String name) {
         WebElement childElement = container.findElement(By.cssSelector(".clickable[data-category-id='" + name.toLowerCase() + "']"));
         return new FindIndexCategoryNode(childElement, driver);
     }
