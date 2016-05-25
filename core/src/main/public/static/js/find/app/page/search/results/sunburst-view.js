@@ -15,6 +15,7 @@ define([
 
     var SUNBURST_NAME_ATTR = 'text';
     var SUNBURST_SIZE_ATTR = 'count';
+    var SUNBURST_FILTER_NUMBER = 'hiddenFilterCount';
     var STROKE_COLOUR = '#f0f0f0';
 
     var sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
@@ -103,7 +104,7 @@ define([
                 };
 
                 if (data[SUNBURST_NAME_ATTR] === '') {
-                    templateArguments.name = i18n['search.sunburst.noValue'];
+                    templateArguments.name = i18n['search.sunburst.noValue'](data[SUNBURST_FILTER_NUMBER]);
                     templateArguments.italic = true;
                     templateArguments.noVal = true;
                 } else {
