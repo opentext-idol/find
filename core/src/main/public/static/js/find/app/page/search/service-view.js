@@ -113,11 +113,17 @@ define([
             this.numericParametricFieldsCollection = new ParametricFieldsCollection([], {
                 url: '../api/public/fields/parametric-numeric'
             });
+            this.dateParametricFieldsCollection = new ParametricFieldsCollection([], {
+                url: '../api/public/fields/parametric-date'
+            });
             this.parametricCollection = new ParametricCollection([], {
                 url: '../api/public/parametric'
             });
             this.numericParametricCollection = new ParametricCollection([], {
                 url: '../api/public/parametric/numeric'
+            });
+            this.dateParametricCollection = new ParametricCollection([], {
+                url: '../api/public/parametric/date'
             });
 
             var subViewArguments = {
@@ -129,6 +135,7 @@ define([
                 selectedTabModel: this.selectedTabModel,
                 parametricCollection: this.parametricCollection,
                 numericParametricCollection: this.numericParametricCollection,
+                dateParametricCollection: this.dateParametricCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
                 highlightModel: this.highlightModel,
@@ -249,6 +256,7 @@ define([
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
             this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
             this.fetchParametricFields(this.numericParametricFieldsCollection, this.numericParametricCollection);
+            this.fetchParametricFields(this.dateParametricFieldsCollection, this.dateParametricCollection);
             this.fetchEntities();
         },
 
@@ -288,6 +296,7 @@ define([
             this.fetchEntities();
             this.fetchParametricValues(this.parametricFieldsCollection, this.parametricCollection);
             this.fetchParametricValues(this.numericParametricFieldsCollection, this.numericParametricCollection);
+            this.fetchParametricValues(this.dateParametricFieldsCollection, this.dateParametricCollection);
         },
         
         fetchParametricValues: function (fieldsCollection, valuesCollection) {
