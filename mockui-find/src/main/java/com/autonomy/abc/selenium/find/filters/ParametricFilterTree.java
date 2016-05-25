@@ -1,6 +1,5 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.filters;
 
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,13 +7,11 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
-
 public class ParametricFilterTree extends FilterTree {
 
     private List<ParametricFilterNode> containers;
 
-    ParametricFilterTree(WebElement container, List<WebElement> nodes,WebDriver webDriver){
+    public ParametricFilterTree(WebElement container, List<WebElement> nodes,WebDriver webDriver){
         super(container,webDriver);
         containers = new ArrayList<>();
         for(WebElement element:nodes){
@@ -35,20 +32,15 @@ public class ParametricFilterTree extends FilterTree {
         return filterTypes;
     }
 
-    public List<WebElement> getCurrentFiltersIncType(){
+    public List<WebElement> getAllFiltersInTree(){
         List<WebElement> filters = new ArrayList<>();
 
         for(ParametricFilterNode node:containers) {
-            for (WebElement potentialElement : node.getChildren()) {
-                if (potentialElement.isDisplayed()) {
-                    filters.add(potentialElement);
-                }
-            }
+            filters.addAll(node.getChildren());
             if (node.getParent().isDisplayed()) {
                 filters.add(node.getParent());
             }
         }
-
         return filters;
     }
 

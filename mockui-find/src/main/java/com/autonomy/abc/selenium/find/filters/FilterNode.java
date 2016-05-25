@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.filters;
 
 import com.hp.autonomy.frontend.selenium.element.ChevronContainer;
 import com.hp.autonomy.frontend.selenium.element.Collapsible;
@@ -9,15 +9,13 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
-
 public class FilterNode implements Collapsible{
 
-    protected final WebElement container;
-    protected final WebDriver driver;
-    protected final Collapsible collapsible;
+    private final WebElement container;
+    private final WebDriver driver;
+    private final Collapsible collapsible;
 
-    FilterNode(WebElement element, WebDriver webDriver) {
+    public FilterNode(WebElement element, WebDriver webDriver) {
         container=element;
         driver=webDriver;
         collapsible=new ChevronContainer(container,driver);
@@ -42,6 +40,10 @@ public class FilterNode implements Collapsible{
         children.addAll(container.findElements(By.xpath(".//tr[@data-filter-id]/td[2]")));
         children.addAll(container.findElements(By.className("database-name")));
         return ElementUtil.getTexts(children);
+    }
+
+    protected WebElement getContainer(){
+        return container;
     }
 
     public String toString(){

@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.filters;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,7 +16,7 @@ public abstract class FilterTree{
     }
 
     public abstract List<WebElement> getFilterTypes();
-    public abstract List<WebElement> getCurrentFiltersIncType();
+    public abstract List<WebElement> getAllFiltersInTree();
     public abstract void expandAll();
     public abstract void collapseAll();
 

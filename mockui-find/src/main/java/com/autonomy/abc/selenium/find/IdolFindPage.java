@@ -1,5 +1,9 @@
 package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.find.filters.DatabaseFilterTree;
+import com.autonomy.abc.selenium.find.filters.DateFilterTree;
+import com.autonomy.abc.selenium.find.filters.FilterNode;
+import com.autonomy.abc.selenium.find.filters.ParametricFilterTree;
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
@@ -15,8 +19,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 public class IdolFindPage extends FindPage {
 
@@ -38,6 +40,7 @@ public class IdolFindPage extends FindPage {
     private WebElement getDateFilter(){
         return findElement(By.xpath(".//h4[contains(text(),'Dates')]"));
     }
+
     private List<WebElement> getParametricFilters() {
         List<WebElement> ancestors = new ArrayList<>();
         for (WebElement element : findElements(By.className("parametric-fields-table"))) {
@@ -84,9 +87,9 @@ public class IdolFindPage extends FindPage {
 
     public List<WebElement> getCurrentFiltersIncType(){
         List<WebElement> currentFilters = new ArrayList<>();
-        currentFilters.addAll(databaseFilterTree().getCurrentFiltersIncType());
-        currentFilters.addAll(dateFilterTree().getCurrentFiltersIncType());
-        currentFilters.addAll(parametricFilterTree().getCurrentFiltersIncType());
+        currentFilters.addAll(databaseFilterTree().getAllFiltersInTree());
+        currentFilters.addAll(dateFilterTree().getAllFiltersInTree());
+        currentFilters.addAll(parametricFilterTree().getAllFiltersInTree());
         return currentFilters;
     }
 

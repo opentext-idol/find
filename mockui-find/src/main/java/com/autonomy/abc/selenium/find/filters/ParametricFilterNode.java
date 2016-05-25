@@ -1,10 +1,7 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.filters;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import org.apache.commons.lang3.text.WordUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -17,7 +14,7 @@ public class ParametricFilterNode extends FilterNode {
     }
 
     public List<WebElement> getChildren(){
-        return container.findElements(By.className("parametric-value-name"));
+        return getContainer().findElements(By.className("parametric-value-name"));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.filters;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,12 +10,12 @@ public class DatabaseFilterTree extends FilterTree{
 
     private DatabaseFilterNode databaseFilterNode;
 
-    DatabaseFilterTree(WebElement element, WebDriver webDriver){
+    public DatabaseFilterTree(WebElement element, WebDriver webDriver){
         super(element,webDriver);
         databaseFilterNode = new DatabaseFilterNode(element,webDriver);
     }
 
-    public List<WebElement> getCurrentFiltersIncType(){
+    public List<WebElement> getAllFiltersInTree(){
         List<WebElement> filters=new ArrayList<>();
         filters.addAll(getChildren());
         if(getParent().isDisplayed()){
@@ -26,8 +26,8 @@ public class DatabaseFilterTree extends FilterTree{
 
     public List<WebElement> getFilterTypes(){
         List<WebElement> filterTypes = new ArrayList<>();
-        if(databaseFilterNode.findFilterType().isDisplayed()) {
-            filterTypes.add(databaseFilterNode.findFilterType());
+        if(getParent().isDisplayed()) {
+            filterTypes.add(getParent());
         }
         return filterTypes;
     }

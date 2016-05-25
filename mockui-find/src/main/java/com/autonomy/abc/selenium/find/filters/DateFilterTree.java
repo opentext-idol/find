@@ -1,8 +1,5 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.filters;
 
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import oracle.jrockit.jfr.StringConstantPool;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -13,12 +10,12 @@ public class DateFilterTree extends FilterTree{
 
     private DateFilterNode dateFilterNode;
 
-    DateFilterTree(WebElement element, WebDriver webDriver){
+    public DateFilterTree(WebElement element, WebDriver webDriver){
         super(element,webDriver);
         dateFilterNode=new DateFilterNode(element,webDriver);
     }
 
-    public List<WebElement> getCurrentFiltersIncType(){
+    public List<WebElement> getAllFiltersInTree(){
         List<WebElement> filters = new ArrayList<>();
         for(WebElement potentialElement:getChildren()){
             if(potentialElement.isDisplayed()){
@@ -31,11 +28,10 @@ public class DateFilterTree extends FilterTree{
         return filters;
     }
 
-    //assumed should be visible
     public List<WebElement> getFilterTypes(){
         List<WebElement> filterTypes = new ArrayList<>();
-        if(dateFilterNode.findFilterType().isDisplayed()) {
-            filterTypes.add(dateFilterNode.findFilterType());
+        if(getParent().isDisplayed()) {
+            filterTypes.add(getParent());
         }
         return filterTypes;
     }

@@ -59,7 +59,9 @@ public class IdolFilterITCase extends FindTestBase {
         checkCorrectFiltersVisible(Arrays.asList("DATABASES","DATES","CATEGORY"));
     }
 
+
     @Test
+    @ActiveBug("FIND-122")
     public void testSearchFilters(){
         findService.search("face");
 
