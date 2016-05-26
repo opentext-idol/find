@@ -5,7 +5,7 @@ define([
     'jquery',
     'i18n!find/nls/bundle',
     'find/app/page/search/results/field-selection-view',
-    'text!find/templates/app/page/search/results/sunburst/sunburst-view.html',
+    'text!find/templates/app/page/search/results/parametric-results-view.html',
     'text!find/templates/app/page/loading-spinner.html'
 ], function (Backbone, DependentParametricCollection, _, $, i18n, FieldSelectionView, template, loadingSpinnerTemplate) {
     'use strict';
