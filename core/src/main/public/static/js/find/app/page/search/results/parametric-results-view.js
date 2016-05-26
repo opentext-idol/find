@@ -160,13 +160,13 @@ define([
                 loadingHtml: this.loadingHtml
             }));
 
-            this.$loadingSpinner = this.$('.sunburst-loading')
+            this.$loadingSpinner = this.$('.parametric-loading')
                 .addClass('hide');
 
-            this.$sunburst = this.$('.sunburst')
+            this.$content = this.$('.parametric-content')
                 .addClass('hide');
 
-            this.$message = this.$('.sunburst-view-message');
+            this.$message = this.$('.parametric-view-message');
             this.$parametricSelections = this.$('.parametric-selections');
 
             this.listenTo(this.fieldsCollection.at(0), 'change:field', this.secondSelection);
@@ -216,7 +216,7 @@ define([
             this.$parametricSelections.toggleClass('hide', parametricCollectionState !== collectionState.DATA);
 
             // Show if not loading and not failure
-            this.$sunburst.toggleClass('hide', dependentParametricCollectionState !== collectionState.DATA || parametricCollectionState !== collectionState.DATA);
+            this.$content.toggleClass('hide', dependentParametricCollectionState !== collectionState.DATA || parametricCollectionState !== collectionState.DATA);
 
             this.updateMessage(error, empty, emptyDependentParametric);
         },

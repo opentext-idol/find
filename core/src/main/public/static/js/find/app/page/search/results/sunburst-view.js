@@ -101,11 +101,13 @@ define([
         },
 
         update: function () {
-            drawSunburst.call(this, this.$sunburst, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
+            drawSunburst.call(this, this.$content, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
         },
 
         render: function () {
             ParametricResultsView.prototype.render.apply(this, arguments);
+
+            this.$content.addClass('sunburst');
 
             $(window).resize(_.bind(function() {
                 if (this.sunburst) {

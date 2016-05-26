@@ -30,7 +30,7 @@ define([
         describe('with an empty parametric collection', function() {
             it('should not display a loading spinner, sunburst view or field selections', function() {
                 expect(this.view.$loadingSpinner).toHaveClass('hide');
-                expect(this.view.$sunburst).toHaveClass('hide');
+                expect(this.view.$content).toHaveClass('hide');
                 expect(this.view.$parametricSelections).toHaveClass('hide');
             });
 
@@ -46,7 +46,7 @@ define([
 
                 it('should not display a message, sunburst view or field selections', function() {
                     expect(this.view.$message).toHaveText(i18n['search.resultsView.sunburst.error.noDependentParametricValues']);
-                    expect(this.view.$sunburst).toHaveClass('hide');
+                    expect(this.view.$content).toHaveClass('hide');
                     expect(this.view.$parametricSelections).toHaveClass('hide');
                 });
 
@@ -62,7 +62,7 @@ define([
 
                     it('should not display a loading spinner, sunburst view or field selections', function() {
                         expect(this.view.$loadingSpinner).toHaveClass('hide');
-                        expect(this.view.$sunburst).toHaveClass('hide');
+                        expect(this.view.$content).toHaveClass('hide');
                         expect(this.view.$parametricSelections).toHaveClass('hide');
                     });
 
@@ -80,7 +80,7 @@ define([
 
                     it('should not display a loading spinner, sunburst view or field selections', function () {
                         expect(this.view.$loadingSpinner).toHaveClass('hide');
-                        expect(this.view.$sunburst).toHaveClass('hide');
+                        expect(this.view.$content).toHaveClass('hide');
                         expect(this.view.$parametricSelections).toHaveClass('hide');
                     });
 
@@ -139,7 +139,7 @@ define([
 
                     it('should display the dropdowns and the sunburst view', function() {
                         expect(this.view.$parametricSelections).not.toHaveClass('hide');
-                        expect(this.view.$sunburst).not.toHaveClass('hide');
+                        expect(this.view.$content).not.toHaveClass('hide');
                     });
                 })
             });
