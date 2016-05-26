@@ -1,15 +1,11 @@
 define([
     'find/app/page/search/results/parametric-results-view',
-    'find/app/model/dependent-parametric-collection',
     'underscore',
     'jquery',
     'i18n!find/nls/bundle',
     'sunburst/js/sunburst',
-    'find/app/page/search/results/field-selection-view',
-    'text!find/templates/app/page/search/results/sunburst/sunburst-view.html',
-    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
-    'text!find/templates/app/page/loading-spinner.html'
-], function (ParametricResultsView, DependentParametricCollection, _, $, i18n, Sunburst, FieldSelectionView, template, labelTemplate, loadingSpinnerTemplate) {
+    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html'
+], function (ParametricResultsView, _, $, i18n, Sunburst, labelTemplate) {
     'use strict';
 
     var SUNBURST_NAME_ATTR = 'text';
@@ -95,8 +91,6 @@ define([
     }
 
     return ParametricResultsView.extend({
-        template: _.template(template),
-        loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
 
         initialize: function (options) {
             ParametricResultsView.prototype.initialize.call(this, _.defaults({

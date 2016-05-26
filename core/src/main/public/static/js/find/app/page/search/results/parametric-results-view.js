@@ -4,12 +4,10 @@ define([
     'underscore',
     'jquery',
     'i18n!find/nls/bundle',
-    'sunburst/js/sunburst',
     'find/app/page/search/results/field-selection-view',
     'text!find/templates/app/page/search/results/sunburst/sunburst-view.html',
-    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function (Backbone, DependentParametricCollection, _, $, i18n, Sunburst, FieldSelectionView, template, labelTemplate, loadingSpinnerTemplate) {
+], function (Backbone, DependentParametricCollection, _, $, i18n, FieldSelectionView, template, loadingSpinnerTemplate) {
     'use strict';
 
     var collectionState = {
