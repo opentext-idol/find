@@ -14,7 +14,7 @@ public class DateFilterNode extends FilterNode{
     }
 
     public List<WebElement> getChildren(){
-        return getContainer().findElements(By.xpath((".//tr[@data-filter-id]/td[2]")));
+        return getContainer().findElements(By.cssSelector("[data-filter-id] > td:nth-child(2)"));
     }
 
     @Override

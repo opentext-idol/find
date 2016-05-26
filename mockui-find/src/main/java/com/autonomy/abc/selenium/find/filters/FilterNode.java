@@ -22,8 +22,7 @@ public class FilterNode implements Collapsible{
     }
 
     public String getParentName(){
-        WebElement filterElement = container.findElement(By.xpath(".//ancestor::div[contains(@class,'collapse')]"));
-        return ElementUtil.getFirstChild(filterElement.findElement(By.xpath(".//preceding-sibling::div"))).getText();
+       return getParent().getText();
     }
 
     public WebElement getParent(){
@@ -36,8 +35,8 @@ public class FilterNode implements Collapsible{
     }
 
     public List<String> getChildNames(){
-        List<WebElement> children = container.findElements(By.xpath(".//*[contains(@class,'parametric-value-name')]"));
-        children.addAll(container.findElements(By.xpath(".//tr[@data-filter-id]/td[2]")));
+        List<WebElement> children = container.findElements(By.cssSelector(".parametric-value-name"));
+        children.addAll(container.findElements(By.cssSelector("[data-filter-id] > td:nth-child(2)")));
         children.addAll(container.findElements(By.className("database-name")));
         return ElementUtil.getTexts(children);
     }

@@ -38,7 +38,7 @@ public class IdolFindPage extends FindPage {
         return leftContainer().findElement(By.xpath(".//h4[contains(text(),'Databases')]"));
     }
     private WebElement getDateFilter(){
-        return findElement(By.xpath(".//h4[contains(text(),'Dates')]"));
+        return leftContainer().findElement(By.xpath(".//h4[contains(text(),'Dates')]"));
     }
 
     private List<WebElement> getParametricFilters() {
@@ -58,34 +58,34 @@ public class IdolFindPage extends FindPage {
     }
 
     private void filterSearch(String term) {
-        FormInput input= new FormInput(findElement(By.xpath("//*[contains(@class,'form-control') and contains(@placeholder,'Search filters...')]")), getDriver());
+        FormInput input= new FormInput(findElement(By.cssSelector("[placeholder='Search filters...']")),getDriver());
         input.clear();
         input.setAndSubmit(term);
     }
 
     public void clearFilter(){
-        FormInput input= new FormInput(findElement(By.xpath("//*[contains(@class,'form-control') and contains(@placeholder,'Search filters...')]")), getDriver());
+        FormInput input= new FormInput(findElement(By.cssSelector("[placeholder='Search filters...']")),getDriver());
         input.clear();
         waitForIndexes();
     }
 
-    public boolean filterExists(String filter){
-        return findElements(By.xpath("//tr[contains(@data-value,'"+filter+"')]")).size()>0;
+    public boolean parametricFilterExists(String filter){
+        return findElements(By.cssSelector(".parametric-value-element[data-value='"+filter+"']")).size()>0;
     }
 
     //TODO: make this use the filter trees
     private WebElement findFilter(String name){
-        return leftContainer().findElement(By.xpath("//*[contains(text(),'"+name+"')]"));
+        return leftContainer().findElement(By.xpath(".//*[contains(text(),'"+name+"')]"));
     }
     public boolean filterVisible(String filter){
         return findFilter(filter).isDisplayed();
     }
 
     public boolean noneMatchingMessageVisible(){
-        return findElement(By.xpath("//p[contains(text(),'No filters matched')]")).isDisplayed();
+        return leftContainer().findElement(By.xpath(".//p[contains(text(),'No filters matched')]")).isDisplayed();
     }
 
-    public List<WebElement> getCurrentFiltersIncType(){
+    public List<WebElement> getCurrentFilters(){
         List<WebElement> currentFilters = new ArrayList<>();
         currentFilters.addAll(databaseFilterTree().getAllFiltersInTree());
         currentFilters.addAll(dateFilterTree().getAllFiltersInTree());
@@ -110,6 +110,7 @@ public class IdolFindPage extends FindPage {
         for (WebElement filter : allFilters) {
             if (StringUtils.containsIgnoreCase(filter.getText(),targetFilter)) {
                 matchingFilters.add(filter.getText());
+
                 if (getVisibleFilterTypes().contains(filter.getText())) {
                     matchingFilters.addAll(new FilterNode(ElementUtil.ancestor(filter,2), getDriver()).getChildNames());
                 }

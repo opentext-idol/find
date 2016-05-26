@@ -19,10 +19,6 @@ public class ParametricFilterTree extends FilterTree {
         }
     }
 
-    public WebElement findFilter(String name){
-        return container.findElement(By.xpath("//*[contains(text(),'"+name+"')]"));
-    }
-
     public List<WebElement> getFilterTypes(){
         List<WebElement> filterTypes = new ArrayList<>();
         for(ParametricFilterNode node:containers){
@@ -37,6 +33,7 @@ public class ParametricFilterTree extends FilterTree {
 
         for(ParametricFilterNode node:containers) {
             filters.addAll(node.getChildren());
+
             if (node.getParent().isDisplayed()) {
                 filters.add(node.getParent());
             }
