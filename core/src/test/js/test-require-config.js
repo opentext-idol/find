@@ -31,7 +31,7 @@ require.config({
         'find/app/page/search/related-concepts/related-concepts-view': {
             'find/app/model/documents-collection': 'mock/model/documents-collection'
         },
-        'find/app/page/search/results/sunburst-view': {
+        'find/app/page/search/results/parametric-results-view': {
             'find/app/model/dependent-parametric-collection': 'mock/model/dependent-parametric-collection'
         },
         'find/app/page/search/abstract-query-left-side-view': {
