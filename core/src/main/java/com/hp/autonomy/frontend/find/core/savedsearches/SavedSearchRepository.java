@@ -15,6 +15,6 @@ public interface SavedSearchRepository<S extends SavedSearch<S>> extends CrudRep
 
     Set<S> findByActiveTrueAndUser_UserId(Long userId);
 
-    S findByIdAndUser_UserId(Long id, Long userId);
+    S findByActiveTrueAndIdAndUser_UserId(Long id, Long userId);
 
 }

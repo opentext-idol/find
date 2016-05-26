@@ -51,7 +51,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T>> imple
 
     private T getSearch(long id) throws IllegalArgumentException {
         final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
-        final T byIdAndUser_userId = crudRepository.findByIdAndUser_UserId(id, userId);
+        final T byIdAndUser_userId = crudRepository.findByActiveTrueAndIdAndUser_UserId(id, userId);
 
         if (null != byIdAndUser_userId) {
             return byIdAndUser_userId;
