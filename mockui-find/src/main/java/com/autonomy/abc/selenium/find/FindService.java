@@ -34,4 +34,5 @@ public class FindService implements QueryService<FindResultsPage> {
         resultsPage.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         return elementFactory.getSimilarDocumentsView();
     }
+
 }

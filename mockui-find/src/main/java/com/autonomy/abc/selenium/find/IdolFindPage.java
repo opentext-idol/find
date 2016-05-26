@@ -1,9 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.find.filters.DatabaseFilterTree;
-import com.autonomy.abc.selenium.find.filters.DateFilterTree;
-import com.autonomy.abc.selenium.find.filters.FilterNode;
-import com.autonomy.abc.selenium.find.filters.ParametricFilterTree;
+import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
@@ -73,6 +70,10 @@ public class IdolFindPage extends FindPage {
         return findElements(By.cssSelector(".parametric-value-element[data-value='"+filter+"']")).size()>0;
     }
 
+    public int numberOfParametricFilterChildren(String filter){
+        ParametricFilterNode node = parametricFilterTree().findParametricFilterNode(filter);
+        return node.getChildren().size();
+    }
     //TODO: make this use the filter trees
     private WebElement findFilter(String name){
         return leftContainer().findElement(By.xpath(".//*[contains(text(),'"+name+"')]"));
@@ -121,6 +122,10 @@ public class IdolFindPage extends FindPage {
             }
         }
         return new ArrayList<>(matchingFilters);
+    }
+
+    public String get1stParametricFilterTypeName(){
+       return parametricFilterTree().getIthFilterType(0).getText();
     }
 
     //toggling see more

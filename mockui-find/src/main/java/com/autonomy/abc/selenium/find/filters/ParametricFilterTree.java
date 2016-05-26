@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.filters;
 
+import org.apache.xalan.xsltc.dom.Filter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -26,6 +27,19 @@ public class ParametricFilterTree extends FilterTree {
                 filterTypes.add(node.findFilterType());
         }
         return filterTypes;
+    }
+
+    public WebElement getIthFilterType(int i){
+        return getFilterTypes().get(i);
+    }
+
+    public ParametricFilterNode findParametricFilterNode(String name){
+        for(ParametricFilterNode node:containers){
+            if(node.getParentName().equals(name)){
+                return node;
+            }
+        }
+        return null;
     }
 
     public List<WebElement> getAllFiltersInTree(){
