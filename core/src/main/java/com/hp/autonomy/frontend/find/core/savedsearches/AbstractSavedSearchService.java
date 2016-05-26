@@ -26,7 +26,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T>> imple
 
     @Override
     public T get(final long id) {
-        return crudRepository.findOne(id);
+        return getSearch(id);
     }
 
     @Override
@@ -36,20 +36,28 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T>> imple
 
     @Override
     public T update(final T search) {
-        final T existing = crudRepository.findOne(search.getId());
-
-        if (existing == null) {
-            throw new IllegalArgumentException("Saved search not found");
-        } else {
-            existing.merge(search);
-            return crudRepository.save(existing);
-        }
+        final T savedQuery = getSearch(search.getId());
+        savedQuery.merge(search);
+        return crudRepository.save(savedQuery);
     }
 
     @Override
     public void deleteById(final long id) {
-        final T savedQuery = crudRepository.findOne(id);
+        final T savedQuery = getSearch(id);
         savedQuery.setActive(false);
         crudRepository.save(savedQuery);
+
+    }
+
+    private T getSearch(long id) throws IllegalArgumentException {
+        final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
+        final T byIdAndUser_userId = crudRepository.findByIdAndUser_UserId(id, userId);
+
+        if (null != byIdAndUser_userId) {
+            return byIdAndUser_userId;
+        }
+        else {
+            throw new IllegalArgumentException("Saved search not found");
+        }
     }
 }
