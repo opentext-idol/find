@@ -14,16 +14,16 @@ define([
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html'
 ], function (Backbone, $, _, numericWidget, prettifyFieldName, SelectedParametricValuesCollection, i18n, template) {
     "use strict";
-    const DEFAULT_TARGET_NUMBER_OF_BUCKETS = 30;
+    const DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
     const GRAPH_HEIGHT = 110;
     const UPDATE_DEBOUNCE_WAIT_TIME = 1000;
 
-    function getData(numericFieldValuesWithCount) {
+    function getData(numericFieldValuesWithCount, viewWidth) {
         //noinspection JSUnresolvedFunction
         let minValue = Math.floor(_.first(numericFieldValuesWithCount).value);
         //noinspection JSUnresolvedFunction
         let maxValue = Math.ceil(_.last(numericFieldValuesWithCount).value);
-        let bucketSize = Math.ceil((maxValue - minValue + 1) / DEFAULT_TARGET_NUMBER_OF_BUCKETS);
+        let bucketSize = Math.ceil((maxValue - minValue + 1) / (viewWidth / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET));
         let buckets = [];
         let valueIndex = 0;
         numericFieldValuesWithCount.forEach(function (valueAndCount) {
@@ -172,7 +172,7 @@ define([
 
             //noinspection JSUnresolvedFunction
             this.executeCallbackWithoutRestrictions(_.bind(function (result) {
-                let data = getData(result.values);
+                let data = getData(result.values, this.viewWidth);
 
                 //noinspection JSUnresolvedFunction
                 let minValue = Math.floor(+_.first(result.values).value);
