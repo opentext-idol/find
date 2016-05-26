@@ -331,7 +331,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 
 	//filters
 	private WebElement getFilterSausage(String dataID){
-		return findElement(By.xpath("//div[contains(@class,'filter-display-view')]/descendant::div[contains(@data-id,'"+dataID+"')]"));
+		return findElement(By.cssSelector(".filter-display-view [data-id='"+dataID+"']"));
 	}
 
 	public  WebElement getDatabaseFilterSausage(){

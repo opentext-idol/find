@@ -628,7 +628,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 
 	@Test
 	@ActiveBug("ISO-16")
-	public void selectedIndexesAppearInSausage() {
+	public void testSelectedIndexesAppearInSausage() {
 		searchService.search(new Query("mellow").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.ALL));
 		IndexesTree indexesTree = searchPage.indexesTree();
 

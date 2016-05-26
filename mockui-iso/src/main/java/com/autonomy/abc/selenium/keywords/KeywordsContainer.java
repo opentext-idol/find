@@ -60,6 +60,5 @@ public class KeywordsContainer extends AppElement {
 
     private List<WebElement> firstKeywordElements(){
         return findElements(By.xpath("//*[contains(@class,'keywords-sub-list')]/*[1]"));
-        // /following::div
     }
 }
