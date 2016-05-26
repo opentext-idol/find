@@ -14,7 +14,8 @@ public enum MvcConstants {
     ROLES("roles"),
     SAVED_SEARCH_CONFIG("savedSearchConfig"),
     USERNAME("username"),
-    MIN_SCORE("minScore");
+    MIN_SCORE("minScore"),
+    FIELDS_INFO("fieldsInfo");
 
     private final String value;
 

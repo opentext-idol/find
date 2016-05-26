@@ -152,6 +152,7 @@ define([
         'search.resultsView.map': 'Map',
         'search.resultsView.amount.shown': 'Showing <strong>{0}</strong> to <strong>{1}</strong> of <strong>{2}</strong> results',
         'search.resultsView.amount.shown.no.increment': 'Showing the top <strong>{0}</strong> results of <strong>{1}</strong>',
+        'search.resultsView.amount.shown.no.results': 'There are no results with the location field selected',
         'search.savedSearchControl.save': 'Save',
         'search.savedSearchControl.openEdit.create': 'Save Search',
         'search.savedSearchControl.openEdit.edit': 'Save As',

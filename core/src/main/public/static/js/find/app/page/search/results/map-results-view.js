@@ -51,11 +51,6 @@ define([
 
             this.listenTo(this.model, 'change:loading', this.toggleLoading);
 
-            this.listenTo(this.model, 'loaded', function () {
-                this.mapResultsView.loaded();
-                this.$('.map-results-count').html(this.getResultsNoHTML());
-            });
-
             this.listenTo(this.documentsCollection, 'add', function (model) {
                 var locations = model.get('locations');
                 var location = _.findWhere(locations, {displayName: this.model.get('field')});
@@ -74,11 +69,12 @@ define([
                 }
             });
 
-            this.listenTo(this.documentsCollection, 'update', _.bind(function () {
+            this.listenTo(this.documentsCollection, 'sync', _.bind(function () {
                 if (!_.isEmpty(this.markers)) {
                     this.mapResultsView.addMarkers(this.markers, true);
+                    this.mapResultsView.loaded();
                 }
-                this.model.trigger('loaded');
+                this.$('.map-results-count').html(this.getResultsNoHTML());
                 this.model.set('loading', false);
             }, this));
 
@@ -105,8 +101,13 @@ define([
         },
 
         getResultsNoHTML: function () {
-            return this.allowIncrement ? i18n['search.resultsView.amount.shown'](1, this.documentsCollection.length, this.documentsCollection.totalResults) :
-                i18n['search.resultsView.amount.shown.no.increment'](this.resultsStep, this.documentsCollection.totalResults);
+            if (this.documentsCollection.isEmpty()) {
+                return i18n['search.resultsView.amount.shown.no.results'];
+            } else {
+                return this.allowIncrement ?
+                    i18n['search.resultsView.amount.shown'](1, this.documentsCollection.length, this.documentsCollection.totalResults) :
+                    i18n['search.resultsView.amount.shown.no.increment'](this.resultsStep, this.documentsCollection.totalResults);
+            }
         },
 
         reloadMarkers: function () {
@@ -136,7 +137,13 @@ define([
         getFetchOptions: function (selectedField) {
             var locationField = _.findWhere(this.locationFields, {displayName: selectedField});
 
-            var exists = 'EXISTS{}:' + locationField.latitudeField + ' AND EXISTS{}:' + locationField.longitudeField;
+            var latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
+            var longitudeFieldsInfo = configuration().fieldsInfo[locationField.longitudeField];
+
+            var latitudesFieldsString = latitudeFieldsInfo.names.join(':');
+            var longitudeFieldsString = longitudeFieldsInfo.names.join(':');
+
+            var exists = 'EXISTS{}:' + latitudesFieldsString + ' AND EXISTS{}:' + longitudeFieldsString;
 
             var newFieldText = this.queryModel.get('fieldText') ? this.queryModel.get('fieldText') + ' AND ' + exists : exists;
 
