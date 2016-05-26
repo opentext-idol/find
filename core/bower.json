@@ -37,7 +37,7 @@
     "hp-autonomy-fieldtext-js": "1.2.0",
     "hp-autonomy-topic-map": "1.0.0",
     "hp-autonomy-sunburst": "1.1.1",
-    "hp-autonomy-js-parametric-refinement": "0.4.2",
+    "hp-autonomy-js-parametric-refinement": "0.5.1",
     "leaflet": "0.7.7",
     "Leaflet.awesome-markers": "^2.0.2",
     "leaflet.markercluster": "leaflet-0.7",
@@ -61,6 +61,7 @@
     "jquery": "1.10.2",
     "backbone": "1.2.3",
     "jasmine": ">=2",
-    "requirejs-text": "2.0.13"
+    "requirejs-text": "2.0.13",
+    "requirejs": "2.1.15"
   }
 }
