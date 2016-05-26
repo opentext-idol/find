@@ -98,6 +98,14 @@ define([
         template: _.template(template),
         loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
 
+        initialize: function (options) {
+            ParametricResultsView.prototype.initialize.call(this, _.defaults({
+                emptyDependentMessage: i18n['search.resultsView.sunburst.error.noDependentParametricValues'],
+                emptyMessage: i18n['search.resultsView.sunburst.error.noParametricValues'],
+                errorMessage: i18n['search.resultsView.sunburst.error.query']
+            }, options));
+        },
+
         update: function () {
             drawSunburst.call(this, this.$sunburst, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
         },

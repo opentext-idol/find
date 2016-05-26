@@ -60,6 +60,10 @@ define([
             this.parametricCollection = options.parametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
+            this.emptyDependentMessage = options.emptyDependentMessage;
+            this.emptyMessage = options.emptyMessage;
+            this.errorMessage = options.errorMessage;
+
             this.dependentParametricCollection = new DependentParametricCollection();
             this.fieldsCollection = new Backbone.Collection([{text: ''}, {text: ''}]);
 
@@ -223,11 +227,11 @@ define([
             var message = '';
 
             if (error) {
-                message = i18n['search.resultsView.sunburst.error.query'];
+                message = this.errorMessage;
             } else if (empty) {
-                message = i18n['search.resultsView.sunburst.error.noParametricValues'];
+                message = this.emptyMessage;
             } else if (emptyDependentParametric) {
-                message = i18n['search.resultsView.sunburst.error.noDependentParametricValues'];
+                message = this.emptyDependentMessage;
             }
 
             this.$message.text(message);
