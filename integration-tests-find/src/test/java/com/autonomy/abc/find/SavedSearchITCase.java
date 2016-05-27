@@ -4,6 +4,7 @@ import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchTab;
+import com.autonomy.abc.selenium.find.save.SearchTabBar;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.hamcrest.Description;
@@ -19,6 +20,8 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.Matchers.*;
 
 public class SavedSearchITCase extends IdolFindTestBase {
+    private SearchTabBar searchTabBar;
+
     private FindService findService;
     private SavedSearchService saveService;
 
@@ -30,6 +33,9 @@ public class SavedSearchITCase extends IdolFindTestBase {
     public void setUp(){
         findService = getApplication().findService();
         saveService = getApplication().savedSearchService();
+
+        findService.search("*");
+        searchTabBar = getElementFactory().getSearchTabBar();
     }
 
     @After
@@ -45,7 +51,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         saveService.saveCurrentAs("save me", SearchType.QUERY);
 
-        SearchTab currentTab = getElementFactory().getSearchTabBar().currentTab();
+        SearchTab currentTab = searchTabBar.currentTab();
         assertThat(currentTab.getTitle(), is("save me"));
         assertThat(currentTab.getTitle(), not(containsString("New Search")));
         assertThat(currentTab, not(modified()));
@@ -57,12 +63,25 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         saveService.saveCurrentAs("snap", SearchType.SNAPSHOT);
 
-        List<SearchTab> tabs = getElementFactory().getSearchTabBar().tabs();
+        List<SearchTab> tabs = searchTabBar.tabs();
         assertThat(tabs, hasSize(2));
         assertThat(tabs.get(0), is(modified()));
         assertThat(tabs.get(0).getType(), is(SearchType.QUERY));
         assertThat(tabs.get(1), not(modified()));
         assertThat(tabs.get(1).getType(), is(SearchType.SNAPSHOT));
+    }
+
+    @Test
+    public void testOpenSnapshotAsQuery() {
+        findService.search("open");
+        saveService.saveCurrentAs("sesame", SearchType.SNAPSHOT);
+        searchTabBar.tab("sesame").activate();
+
+        getElementFactory().getSearchOptionsBar().openSnapshotAsQuery();
+
+        assertThat(searchTabBar.currentTab().getTitle(), is("New Search"));
+        assertThat(searchTabBar.currentTab().getType(), is(SearchType.QUERY));
+        assertThat(searchTabBar.tab("sesame").getType(), is(SearchType.SNAPSHOT));
     }
 
     private static Matcher<SearchTab> modified() {

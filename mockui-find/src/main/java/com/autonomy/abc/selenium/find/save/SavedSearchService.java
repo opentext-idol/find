@@ -27,7 +27,7 @@ public class SavedSearchService {
 
     private void deleteCurrentSearch() {
         SearchOptionsBar options = elementFactory.getSearchOptionsBar();
-        options.extraOptions().select("Delete");
+        options.openDeleteModal();
         options.confirmDelete();
     }
 }

@@ -44,7 +44,15 @@ public class SearchOptionsBar {
         return ElementUtil.ancestor(findElement(By.cssSelector("input[type='radio'][value='" + type + "']")), 2);
     }
 
-    Dropdown extraOptions() {
+    void openDeleteModal() {
+        extraOptions().select("Delete");
+    }
+
+    public void openSnapshotAsQuery() {
+        extraOptions().select("Open as Query");
+    }
+
+    private Dropdown extraOptions() {
         WebElement dropdown = findElement(By.cssSelector("[data-toggle=dropdown]"));
         return new Dropdown(ElementUtil.getParent(dropdown), driver);
     }
