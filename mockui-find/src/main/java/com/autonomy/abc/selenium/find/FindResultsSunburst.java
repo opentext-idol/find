@@ -1,8 +1,10 @@
 package com.autonomy.abc.selenium.find;
 
 
-import com.hp.autonomy.frontend.selenium.element.Dropdown;
+import com.autonomy.abc.selenium.find.filters.ParametricFilterNode;
+import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -34,12 +36,34 @@ public class FindResultsSunburst extends FindResultsPage{
         return findElement(By.cssSelector(".sunburst svg")).isDisplayed();
     }
 
+
     public List<WebElement> findSunburstSegments(){
-        return findElements(By.cssSelector("svg > path"));
+        LOGGER.info("segments size"+findElements(By.xpath("//path[not(contains(@fill,'#f0f0f0')) and not(contains(@fill,'#ffffff'))]")).size());
+        //return findElements(By.cssSelector("path:not([fill='#f0f0f0']), path:not([fill='#ffffff'])"));
+        return findElements(By.xpath("//svg/path/@fill[.!='#f0f0f0' and .!='#ffffff']"));
     }
 
+    //decrement by 1 to discount the centre of sunburst
     public int numberOfSunburstSegments(){
         return findSunburstSegments().size() - 1;
+    }
+
+    public WebElement getSunburstCentre(){return findElement(By.cssSelector("svg > path[fill='#ffffff']"));}
+
+    public String getSunburstCentreName(){
+        return findElement(By.className("sunburst-sector-name")).getText();}
+
+    public String getSunburstCentreNumber(){return findElement(By.cssSelector(".sunburst-sector-name div")).getText();}
+
+    public WebElement getIthSunburstSegment(int i){
+        List<WebElement> actualSegments = findElements(By.cssSelector("path:not([fill='#f0f0f0']):not([fill='#ffffff'])]"));
+        return actualSegments.get(i);
+    }
+
+    public String hoverOnSegmentGetCentre(int i){
+        //first SunburstSegment is centre so inc by 1
+        DriverUtil.hover(getDriver(),getIthSunburstSegment(i));
+        return getSunburstCentreName();
     }
 
     //Parametric Filtering
