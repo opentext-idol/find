@@ -39,7 +39,7 @@
     "hp-autonomy-sunburst": "1.1.2",
     "hp-autonomy-js-parametric-refinement": "0.4.1",
     "leaflet": "0.7.7",
-    "Leaflet.awesome-markers": "^2.0.2",
+    "Leaflet.awesome-markers": "2.0.2",
     "leaflet.markercluster": "leaflet-0.7",
     "requirejs": "2.1.15",
     "requirejs-text": "2.0.13",
@@ -61,6 +61,6 @@
     "hp-autonomy-js-whatever": "2.5.0",
     "jquery": "1.10.2",
     "backbone": "1.2.3",
-    "jasmine": ">=2"
+    "jasmine": "2.4.1"
   }
 }
