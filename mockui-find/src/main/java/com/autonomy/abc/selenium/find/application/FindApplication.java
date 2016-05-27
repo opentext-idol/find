@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.find.application;
 
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.HsodFind;
+import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.hp.autonomy.frontend.selenium.application.Application;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
