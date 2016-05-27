@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.find.save;
 
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -17,5 +16,9 @@ public class SearchTab {
 
     public boolean isNew() {
         return tab.findElement(By.cssSelector(".search-tab-title .hp-new")).isDisplayed();
+    }
+
+    public void activate() {
+        tab.click();
     }
 }

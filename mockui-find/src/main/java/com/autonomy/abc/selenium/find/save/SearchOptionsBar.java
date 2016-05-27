@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.save;
 
+import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
@@ -8,6 +9,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.stalenessOf;
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 public class SearchOptionsBar {
     private final WebDriver driver;
@@ -15,7 +17,7 @@ public class SearchOptionsBar {
 
     public SearchOptionsBar(WebDriver driver) {
         this.driver = driver;
-        this.bar = driver.findElement(By.className("search-options-container"));
+        this.bar = driver.findElement(By.cssSelector(".full-height-viewport:not(.hide) .search-options-container"));
     }
 
     WebElement saveAsButton() {
@@ -40,6 +42,18 @@ public class SearchOptionsBar {
 
     WebElement searchTypeButton(SearchType type) {
         return ElementUtil.ancestor(findElement(By.cssSelector("input[type='radio'][value='" + type + "']")), 2);
+    }
+
+    Dropdown extraOptions() {
+        WebElement dropdown = findElement(By.cssSelector("[data-toggle=dropdown]"));
+        return new Dropdown(ElementUtil.getParent(dropdown), driver);
+    }
+
+    void confirmDelete() {
+        WebElement deleteModal = new WebDriverWait(driver, 10)
+                .until(visibilityOfElementLocated(By.className("modal-content")));
+        deleteModal.findElement(By.className("okButton")).click();
+        new WebDriverWait(driver, 10).until(stalenessOf(deleteModal));
     }
 
     private WebElement findElement(By locator) {

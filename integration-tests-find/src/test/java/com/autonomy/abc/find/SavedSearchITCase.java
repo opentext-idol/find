@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchTab;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,6 +25,13 @@ public class SavedSearchITCase extends IdolFindTestBase {
     public void setUp(){
         findService = getApplication().findService();
         saveService = getApplication().savedSearchService();
+    }
+
+    @After
+    public void tearDown() {
+        if (hasSetUp()) {
+            saveService.deleteAll();
+        }
     }
 
     @Test

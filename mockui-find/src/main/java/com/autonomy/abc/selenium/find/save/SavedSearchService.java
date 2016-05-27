@@ -17,4 +17,17 @@ public class SavedSearchService {
         options.searchTypeButton(type).click();
         options.confirmSave();
     }
+
+    public void deleteAll() {
+        for (SearchTab tab : elementFactory.getSearchTabBar()) {
+            tab.activate();
+            deleteCurrentSearch();
+        }
+    }
+
+    private void deleteCurrentSearch() {
+        SearchOptionsBar options = elementFactory.getSearchOptionsBar();
+        options.extraOptions().select("Delete");
+        options.confirmDelete();
+    }
 }
