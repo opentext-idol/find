@@ -6,9 +6,14 @@ import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchTab;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -43,7 +48,34 @@ public class SavedSearchITCase extends IdolFindTestBase {
         SearchTab currentTab = getElementFactory().getSearchTabBar().currentTab();
         assertThat(currentTab.getTitle(), is("save me"));
         assertThat(currentTab.getTitle(), not(containsString("New Search")));
-        assertThat(currentTab.isNew(), is(false));
+        assertThat(currentTab, not(modified()));
     }
 
+    @Test
+    public void testSnapshotSavedInNewTab() {
+        findService.search("crocodile");
+
+        saveService.saveCurrentAs("snap", SearchType.SNAPSHOT);
+
+        List<SearchTab> tabs = getElementFactory().getSearchTabBar().tabs();
+        assertThat(tabs, hasSize(2));
+        assertThat(tabs.get(0), is(modified()));
+        assertThat(tabs.get(0).getType(), is(SearchType.QUERY));
+        assertThat(tabs.get(1), not(modified()));
+        assertThat(tabs.get(1).getType(), is(SearchType.SNAPSHOT));
+    }
+
+    private static Matcher<SearchTab> modified() {
+        return new TypeSafeMatcher<SearchTab>() {
+            @Override
+            protected boolean matchesSafely(SearchTab searchTab) {
+                return searchTab.isNew();
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("a modified tab");
+            }
+        };
+    }
 }

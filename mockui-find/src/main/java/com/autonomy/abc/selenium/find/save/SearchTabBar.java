@@ -20,7 +20,7 @@ public class SearchTabBar implements Iterable<SearchTab> {
         return tabs().iterator();
     }
 
-    private List<SearchTab> tabs() {
+    public List<SearchTab> tabs() {
         final List<SearchTab> tabs = new ArrayList<>();
         for (WebElement tab : bar.findElements(By.className("search-tab"))) {
             tabs.add(new SearchTab(tab));

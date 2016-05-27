@@ -21,4 +21,8 @@ public class SearchTab {
     public void activate() {
         tab.click();
     }
+
+    public SearchType getType() {
+        return SearchType.valueOf(tab.findElement(By.className("search-type")).getText());
+    }
 }
