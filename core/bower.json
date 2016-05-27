@@ -61,6 +61,8 @@
     "hp-autonomy-js-whatever": "2.5.0",
     "jquery": "1.10.2",
     "backbone": "1.2.3",
-    "jasmine": "2.4.1"
+    "jasmine": "2.4.1",
+    "requirejs": "2.1.22",
+    "requirejs-text": "2.0.15"
   }
 }
