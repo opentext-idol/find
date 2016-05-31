@@ -130,7 +130,7 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
     }
 
     public FindParametricCheckbox parametricTypeCheckbox(String category, String field){
-        WebElement checkbox = findElement(By.cssSelector("[data-field='" + category.replace(" ","_") + "'] [data-value='" + field.toUpperCase() + "']"));
+        WebElement checkbox = findElement(By.cssSelector(".full-height-viewport:not(.hide) [data-field='" + category.replace(" ","_") + "'] [data-value='" + field.toUpperCase() + "']"));
         return new FindParametricCheckbox(checkbox, getDriver());
     }
 

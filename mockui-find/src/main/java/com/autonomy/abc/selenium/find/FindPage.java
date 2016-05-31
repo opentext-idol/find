@@ -148,7 +148,8 @@ public class FindPage extends AppElement implements AppPage,
 
     @Override
     public WebElement parametricContainer() {
-        return findElement(By.className("parametric-container"));
+        WebElement firstParametric = findElement(By.cssSelector("[data-field]"));
+        return ElementUtil.ancestor(firstParametric, 2);
     }
 
     public Boolean parametricEmptyExists(){

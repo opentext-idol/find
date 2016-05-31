@@ -36,7 +36,7 @@ public class ParametricFilter implements QueryFilter {
     }
 
     private WebElement filterContainer(WebElement parametricContainer, String category){
-        return parametricContainer.findElement(By.cssSelector("[data-field='" + category.toLowerCase().replace(" ","_") + "']"));
+        return parametricContainer.findElement(By.cssSelector("[data-field='" + category.replace(" ","_") + "']"));
     }
 
     private WebElement fieldCheckbox(WebElement filterContainer, String field){

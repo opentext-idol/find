@@ -2,8 +2,13 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.application.IdolFind;
+import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.save.*;
+import com.autonomy.abc.selenium.query.ParametricFilter;
+import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -16,6 +21,7 @@ import java.util.List;
 
 import static com.autonomy.abc.matchers.ErrorMatchers.isError;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.checked;
 import static org.hamcrest.Matchers.*;
 
 public class SavedSearchITCase extends IdolFindTestBase {
@@ -97,6 +103,23 @@ public class SavedSearchITCase extends IdolFindTestBase {
         options.searchTypeButton(SearchType.SNAPSHOT).click();
         options.saveConfirmButton().click();
         assertThat(options.getSaveErrorMessage(), isError(Errors.Find.DUPLICATE_SEARCH));
+    }
+
+    @Test
+    public void testSavedSearchVisibleInNewSession() {
+        findService.search(new Query("live forever").withFilter(new ParametricFilter("OVERALL VIBE", "POSITIVE")));
+        saveService.saveCurrentAs("oasis", SearchType.QUERY);
+
+        IdolFind other = new IdolFind();
+        launchInNewSession(other);
+        other.loginService().login(getConfig().getDefaultUser());
+        other.findService().search("blur");
+
+        IdolFindElementFactory factory = other.elementFactory();
+        factory.getSearchTabBar().tab("oasis").activate();
+        factory.getResultsPage().waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.LEFT);
+        assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
+        assertThat(factory.getResultsPage().parametricTypeCheckbox("OVERALL VIBE", "POSITIVE"), checked());
     }
 
     private static Matcher<SearchTab> modified() {
