@@ -20,11 +20,11 @@ public class SearchOptionsBar {
         this.bar = driver.findElement(By.cssSelector(".full-height-viewport:not(.hide) .search-options-container"));
     }
 
-    WebElement saveAsButton() {
+    public WebElement saveAsButton() {
         return findElement(By.className("show-save-as-button"));
     }
 
-    FormInput searchTitleInput() {
+    public FormInput searchTitleInput() {
         return new FormInput(findElement(By.className("search-title-input")), driver);
     }
 
@@ -36,11 +36,15 @@ public class SearchOptionsBar {
                 .until(stalenessOf(confirmButton));
     }
 
-    private WebElement saveConfirmButton() {
+    public WebElement saveConfirmButton() {
         return findElement(By.className("save-title-confirm-button"));
     }
 
-    WebElement searchTypeButton(SearchType type) {
+    public String getSaveErrorMessage() {
+        return findElement(By.className("search-title-error-message")).getText();
+    }
+
+    public WebElement searchTypeButton(SearchType type) {
         return ElementUtil.ancestor(findElement(By.cssSelector("input[type='radio'][value='" + type + "']")), 2);
     }
 

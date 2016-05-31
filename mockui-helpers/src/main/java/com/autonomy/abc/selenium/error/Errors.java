@@ -111,7 +111,8 @@ public class Errors {
     }
 
     public enum Find implements Serializable {
-        GENERAL("An error occurred");
+        GENERAL("An error occurred"),
+        DUPLICATE_SEARCH("Search with this name already exists");
 
         private final String value;
 

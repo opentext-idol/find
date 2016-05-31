@@ -1,11 +1,9 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.save.SavedSearchService;
-import com.autonomy.abc.selenium.find.save.SearchTab;
-import com.autonomy.abc.selenium.find.save.SearchTabBar;
-import com.autonomy.abc.selenium.find.save.SearchType;
+import com.autonomy.abc.selenium.find.save.*;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -16,6 +14,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.autonomy.abc.matchers.ErrorMatchers.isError;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -82,6 +81,22 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat(searchTabBar.currentTab().getTitle(), is("New Search"));
         assertThat(searchTabBar.currentTab().getType(), is(SearchType.QUERY));
         assertThat(searchTabBar.tab("sesame").getType(), is(SearchType.SNAPSHOT));
+    }
+
+    @Test
+    public void testDuplicateNamesPrevented() {
+        saveService.saveCurrentAs("duplicate", SearchType.QUERY);
+        saveService.openNewTab();
+        SearchOptionsBar options = getElementFactory().getSearchOptionsBar();
+
+        options.saveAsButton().click();
+        options.searchTitleInput().setValue("duplicate");
+        options.saveConfirmButton().click();
+        assertThat(options.getSaveErrorMessage(), isError(Errors.Find.DUPLICATE_SEARCH));
+
+        options.searchTypeButton(SearchType.SNAPSHOT).click();
+        options.saveConfirmButton().click();
+        assertThat(options.getSaveErrorMessage(), isError(Errors.Find.DUPLICATE_SEARCH));
     }
 
     private static Matcher<SearchTab> modified() {

@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.find.save;
 
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.Locator;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -42,5 +41,9 @@ public class SearchTabBar implements Iterable<SearchTab> {
             }
         }
         throw new NoSuchElementException("could not find tab with title " + title);
+    }
+
+    WebElement newTabButton() {
+        return bar.findElement(By.className("start-new-search"));
     }
 }
