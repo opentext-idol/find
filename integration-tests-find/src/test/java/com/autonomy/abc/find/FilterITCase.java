@@ -50,18 +50,18 @@ public class FilterITCase extends FindTestBase {
         findPage.waitForParametricValuesToLoad();
         int expectedResults = checkbox2().getResultsCount();
         checkbox2().check();
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
         verifyParametricFields(checkbox2(), expectedResults);
         verifyTicks(true, false);
 
         expectedResults = checkbox1().getResultsCount();
         checkbox1().check();
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
         verifyParametricFields(checkbox1(), expectedResults);    //TODO Maybe change plainTextCheckbox to whichever has the higher value??
         verifyTicks(true, true);
 
         checkbox2().uncheck();
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
         expectedResults = checkbox1().getResultsCount();
         verifyParametricFields(checkbox1(), expectedResults);
         verifyTicks(false, true);
@@ -103,7 +103,7 @@ public class FilterITCase extends FindTestBase {
         findPage.clickFirstIndex();
         findPage.clickFirstIndex();
 
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
@@ -166,7 +166,7 @@ public class FilterITCase extends FindTestBase {
         results.toggleDateSelection(FindResultsPage.DateEnum.MONTH);
         results.toggleDateSelection(FindResultsPage.DateEnum.MONTH);
 
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
         assertThat(results.resultsDiv().getText().toLowerCase(), not(containsString("an error")));
 
     }

@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.find.save;
 
-import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 
@@ -21,7 +20,7 @@ public class SavedSearchService {
 
     public void openNewTab() {
         elementFactory.getSearchTabBar().newTabButton().click();
-        elementFactory.getResultsPage().waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        elementFactory.getResultsPage().waitForResultsToLoad();
     }
 
     public void deleteAll() {

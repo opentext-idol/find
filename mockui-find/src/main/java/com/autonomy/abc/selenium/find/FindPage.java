@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
-import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.query.*;
 import com.google.common.collect.Iterables;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
@@ -79,7 +78,7 @@ public class FindPage extends AppElement implements AppPage,
     @Override
     public void filterBy(QueryFilter filter) {
         filter.apply(this);
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
     }
 
     @Override
@@ -190,7 +189,7 @@ public class FindPage extends AppElement implements AppPage,
     public void scrollToBottom() {
         findElement(By.className("results-number")).click();
         DriverUtil.scrollToBottom(getDriver());
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {

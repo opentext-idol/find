@@ -2,7 +2,6 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
@@ -119,7 +118,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         IdolFindElementFactory factory = other.elementFactory();
         factory.getSearchTabBar().tab("oasis").activate();
-        factory.getResultsPage().waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.LEFT);
+        factory.getResultsPage().waitForParametricFieldsToLoad();
         assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
         assertThat(factory.getResultsPage().parametricTypeCheckbox("OVERALL VIBE", "POSITIVE"), checked());
     }

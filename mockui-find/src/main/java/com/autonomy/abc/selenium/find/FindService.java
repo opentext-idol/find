@@ -31,7 +31,7 @@ public class FindService implements QueryService<FindResultsPage> {
     public SimilarDocumentsView goToSimilarDocuments(final int resultNumber) {
         FindResultsPage resultsPage = findPage.getResultsPage();
         resultsPage.getResult(resultNumber).similarDocuments().click();
-        resultsPage.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        resultsPage.waitForResultsToLoad();
         return elementFactory.getSimilarDocumentsView();
     }
 }

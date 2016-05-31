@@ -20,7 +20,7 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
     }
 
     public List<WebElement> relatedConcepts() {
-        waitForSearchLoadIndicatorToDisappear(Container.RIGHT);
+        waitForRelatedConceptsToLoad();
         return findElements(By.cssSelector(".related-concepts-list a"));
     }
 
@@ -93,7 +93,7 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
 
     public void toggleDateSelection(DateEnum date) {
         dateOption(date).click();
-        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
+        waitForResultsToLoad();
     }
 
     public boolean isDateSelected(DateEnum date) {
@@ -145,7 +145,7 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         return documentTypes;
     }
 
-    public enum Container{
+    private enum Container{
         LEFT("left-side"),
         MIDDLE("middle"),
         RIGHT("right-side");
@@ -159,18 +159,30 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         private String asCssClass() {
             return "." + container + "-container";
         }
+
+        private void waitForLoad(WebDriver driver) {
+            try {
+                new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(asCssClass() + " .loading-spinner")));
+            } catch (Exception e) {
+                //Noop
+            }
+
+            new WebDriverWait(driver, 60)
+                    .withMessage("Container " + this + " failed to load")
+                    .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(asCssClass() + " .fa-spinner")));
+        }
     }
 
-    public void waitForSearchLoadIndicatorToDisappear(final Container container){
-        try {
-            new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(container.asCssClass() + " .loading-spinner")));
-        } catch (Exception e) {
-            //Noop
-        }
+    public void waitForParametricFieldsToLoad() {
+        Container.LEFT.waitForLoad(getDriver());
+    }
 
-        new WebDriverWait(getDriver(), 60)
-                .withMessage("Container " + container + " failed to load")
-                .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(container.asCssClass() + " .fa-spinner")));
+    public void waitForResultsToLoad() {
+        Container.MIDDLE.waitForLoad(getDriver());
+    }
+
+    private void waitForRelatedConceptsToLoad() {
+        Container.RIGHT.waitForLoad(getDriver());
     }
 
     public FindResult searchResult(int searchResultNumber) {
@@ -210,7 +222,7 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
 
     public List<WebElement> scrollForHighlightedSausages(String highlightedTerm){
         DriverUtil.scrollToBottom(getDriver());
-        waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        waitForResultsToLoad();
         return highlightedSausages(highlightedTerm);
     }
 
