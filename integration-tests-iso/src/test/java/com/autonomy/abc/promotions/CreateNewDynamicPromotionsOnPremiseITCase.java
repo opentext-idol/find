@@ -12,7 +12,7 @@ import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.KnownBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
@@ -118,7 +118,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 	}
 
 	@Test
-	@KnownBug("CCUK-3636")
+	@ResolvedBug("CCUK-3636")
 	public void testTwoPromotionTypesForSameTrigger() {
 		DynamicPromotion promotion1 = new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "cat");
 		DynamicPromotion promotion2 = new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "cat");

@@ -5,10 +5,10 @@ import org.openqa.selenium.WebElement;
 
 import java.util.*;
 
-public abstract class FilterTree{
+abstract class FilterTree{
 
-    protected final WebElement container;
-    protected final WebDriver driver;
+    private final WebElement container;
+    private final WebDriver driver;
 
     FilterTree(WebElement element, WebDriver webDriver) {
         container = element;

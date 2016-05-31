@@ -8,7 +8,7 @@ import java.util.List;
 
 public class DatabaseFilterTree extends FilterTree{
 
-    private DatabaseFilterNode databaseFilterNode;
+    private final DatabaseFilterNode databaseFilterNode;
 
     public DatabaseFilterTree(WebElement element, WebDriver webDriver){
         super(element,webDriver);
@@ -32,11 +32,11 @@ public class DatabaseFilterTree extends FilterTree{
         return filterTypes;
     }
 
-    public List<WebElement> getChildren(){
+    private List<WebElement> getChildren(){
         return databaseFilterNode.getChildren();
     }
 
-    public WebElement getParent(){
+    private WebElement getParent(){
         return databaseFilterNode.getParent();
     }
 

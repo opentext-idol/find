@@ -10,7 +10,6 @@ import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xalan.xsltc.dom.Filter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -30,14 +29,24 @@ public class IdolFindPage extends FindPage {
     public IndexesTree indexesTree() {
         return new IdolDatabaseTree(super.indexesTree());
     }
-    public ParametricFilterTree parametricFilterTree(){return new ParametricFilterTree(leftContainer(),getParametricFilters(),getDriver());}
-    public DateFilterTree dateFilterTree(){return new DateFilterTree(ElementUtil.ancestor(getDateFilter(),2),getDriver());}
-    public DatabaseFilterTree databaseFilterTree(){return new DatabaseFilterTree(ElementUtil.ancestor(getDatabaseFilter(),2),getDriver());}
 
-    private WebElement getDatabaseFilter(){
+    private ParametricFilterTree parametricFilterTree() {
+        return new ParametricFilterTree(leftContainer(), getParametricFilters(), getDriver());
+    }
+
+    private DateFilterTree dateFilterTree() {
+        return new DateFilterTree(ElementUtil.ancestor(getDateFilter(), 2), getDriver());
+    }
+
+    private DatabaseFilterTree databaseFilterTree() {
+        return new DatabaseFilterTree(ElementUtil.ancestor(getDatabaseFilter(), 2), getDriver());
+    }
+
+    private WebElement getDatabaseFilter() {
         return leftContainer().findElement(By.xpath(".//h4[contains(text(),'Databases')]"));
     }
-    private WebElement getDateFilter(){
+
+    private WebElement getDateFilter() {
         return leftContainer().findElement(By.xpath(".//h4[contains(text(),'Dates')]"));
     }
 
@@ -49,43 +58,40 @@ public class IdolFindPage extends FindPage {
         return ancestors;
     }
 
-    public void filterResults(String term){
+    public void filterResults(String term) {
         filterSearch(term);
     }
 
-    public void filterResults(Filter filter){
-        filterSearch(filter.toString());
-    }
-
     private void filterSearch(String term) {
-        FormInput input= new FormInput(findElement(By.cssSelector("[placeholder='Search filters...']")),getDriver());
+        FormInput input = new FormInput(findElement(By.cssSelector("[placeholder='Search filters...']")), getDriver());
         input.clear();
         input.setAndSubmit(term);
     }
 
-    public void clearFilter(){
-        FormInput input= new FormInput(findElement(By.cssSelector("[placeholder='Search filters...']")),getDriver());
+    public void clearFilter() {
+        FormInput input = new FormInput(findElement(By.cssSelector("[placeholder='Search filters...']")), getDriver());
         input.clear();
         waitForIndexes();
     }
 
-    public boolean parametricFilterExists(String filter){
-        return findElements(By.cssSelector(".parametric-value-element[data-value='"+filter+"']")).size()>0;
+    public boolean parametricFilterExists(String filter) {
+        return findElements(By.cssSelector(".parametric-value-element[data-value='" + filter + "']")).size() > 0;
     }
 
     //TODO: make this use the filter trees
-    private WebElement findFilter(String name){
-        return leftContainer().findElement(By.xpath(".//*[contains(text(),'"+name+"')]"));
+    private WebElement findFilter(String name) {
+        return leftContainer().findElement(By.xpath(".//*[contains(text(),'" + name + "')]"));
     }
-    public boolean filterVisible(String filter){
+
+    public boolean filterVisible(String filter) {
         return findFilter(filter).isDisplayed();
     }
 
-    public boolean noneMatchingMessageVisible(){
+    public boolean noneMatchingMessageVisible() {
         return leftContainer().findElement(By.xpath(".//p[contains(text(),'No filters matched')]")).isDisplayed();
     }
 
-    public List<WebElement> getCurrentFilters(){
+    public List<WebElement> getCurrentFilters() {
         List<WebElement> currentFilters = new ArrayList<>();
         currentFilters.addAll(databaseFilterTree().getAllFiltersInTree());
         currentFilters.addAll(dateFilterTree().getAllFiltersInTree());
@@ -93,7 +99,7 @@ public class IdolFindPage extends FindPage {
         return currentFilters;
     }
 
-    public List<String> getVisibleFilterTypes(){
+    private List<String> getVisibleFilterTypes() {
         List<WebElement> elements = new ArrayList<>();
 
         elements.addAll(databaseFilterTree().getFilterTypes());
@@ -108,15 +114,15 @@ public class IdolFindPage extends FindPage {
         Set<String> matchingFilters = new HashSet<>();
 
         for (WebElement filter : allFilters) {
-            if (StringUtils.containsIgnoreCase(filter.getText(),targetFilter)) {
+            if (StringUtils.containsIgnoreCase(filter.getText(), targetFilter)) {
                 matchingFilters.add(filter.getText());
 
                 if (getVisibleFilterTypes().contains(filter.getText())) {
-                    matchingFilters.addAll(new FilterNode(ElementUtil.ancestor(filter,2), getDriver()).getChildNames());
+                    matchingFilters.addAll(new FilterNode(ElementUtil.ancestor(filter, 2), getDriver()).getChildNames());
                 }
                 //is child
-                else{
-                    matchingFilters.add(new FilterNode(filter,getDriver()).getParentName());
+                else {
+                    matchingFilters.add(new FilterNode(filter, getDriver()).getParentName());
                 }
             }
         }
@@ -124,27 +130,27 @@ public class IdolFindPage extends FindPage {
     }
 
     //toggling see more
-    public void showFilters(){
-        for(WebElement element:leftContainer().findElements(By.className("toggle-more-text"))){
-            if (element.getText()!="See Less") {
+    public void showFilters() {
+        for (WebElement element : leftContainer().findElements(By.className("toggle-more-text"))) {
+            if (!element.getText().equals("See Less")) {
                 element.click();
             }
         }
     }
 
-    public void expandFiltersFully(){
+    public void expandFiltersFully() {
         waitForIndexes();
         expandAll();
         showFilters();
     }
 
-    public void expandAll(){
+    private void expandAll() {
         databaseFilterTree().expandAll();
         dateFilterTree().expandAll();
         parametricFilterTree().expandAll();
     }
 
-    public void collapseAll(){
+    public void collapseAll() {
         databaseFilterTree().collapseAll();
         dateFilterTree().collapseAll();
         parametricFilterTree().collapseAll();

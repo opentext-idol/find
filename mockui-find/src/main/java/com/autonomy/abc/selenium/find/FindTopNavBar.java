@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FindTopNavBar implements LoginService.LogoutHandler {
-    private WebDriver driver;
-    private WebElement header;
-    private WebElement inputContainer;
-    private FormInput input;
+    private final WebDriver driver;
+    private final WebElement header;
+    private final WebElement inputContainer;
+    private final FormInput input;
 
     public FindTopNavBar(WebDriver driver) {
         this.driver = driver;

@@ -14,8 +14,8 @@ import java.util.Calendar;
 import java.util.List;
 
 public class SimilarDocumentsView implements AppPage {
-    private WebDriver driver;
-    private WebElement container;
+    private final WebDriver driver;
+    private final WebElement container;
 
     //TODO find somewhere more suitable for this
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE MMMMM dd kk:mm:ss zzz yyyy");

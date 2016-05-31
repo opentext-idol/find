@@ -28,7 +28,7 @@ public class FindPage extends AppElement implements AppPage,
 
     private final FindResultsPage results;
 
-    protected FindPage(WebDriver driver){
+    FindPage(WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
@@ -74,15 +74,6 @@ public class FindPage extends AppElement implements AppPage,
     private Dropdown sortDropdown() {
         WebElement dropdownContainer = findElement(By.cssSelector(".sort-container"));
         return new Dropdown(dropdownContainer, getDriver());
-    }
-
-    public List<String> getPrivateIndexNames() {
-        List<String> names = new ArrayList<>();
-        indexesTree().privateIndexes().expand();
-        for (IndexNodeElement element : indexesTree().privateIndexes()) {
-            names.add(element.getName());
-        }
-        return names;
     }
 
     @Override
@@ -148,7 +139,8 @@ public class FindPage extends AppElement implements AppPage,
 
     @Override
     public WebElement parametricContainer() {
-        return findElement(By.className("parametric-container"));
+        WebElement firstParametric = findElement(By.cssSelector("[data-field]"));
+        return ElementUtil.ancestor(firstParametric, 2);
     }
 
     public Boolean parametricEmptyExists(){
@@ -191,15 +183,7 @@ public class FindPage extends AppElement implements AppPage,
         findElement(By.className("preview-mode-open-detail-button")).click();
     }
 
-    public WebElement rightContainerToggleButton() {
-        return findElement(By.cssSelector(".right-container-icon .container-toggle"));
-    }
-
-    public WebElement leftContainerToggleButton(){
-        return findElement(By.cssSelector(".left-side-container .container-toggle"));
-    }
-
-    public WebElement leftContainer(){
+    WebElement leftContainer(){
         return findElement(By.cssSelector(".left-side-container"));
     }
 

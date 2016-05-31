@@ -2,7 +2,10 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.autonomy.abc.selenium.find.*;
+import com.autonomy.abc.selenium.find.FindResult;
+import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.SimilarDocumentsView;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -21,7 +24,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -41,7 +43,6 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 @RelatedTo("CSA-2090")
 //TODO have this extend FindITCase but change the setUp()?
 public class SimilarDocumentsITCase extends FindTestBase {
-    private FindPage findPage;
     private FindResultsPage results;
     private FindService findService;
     private SimilarDocumentsView similarDocuments;
@@ -52,7 +53,6 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Before
     public void setUp(){
-        findPage=getElementFactory().getFindPage();
         results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
@@ -102,7 +102,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
                 previewSeedHosted(seedLink,seedTitle);
             }
             else{
-                previewSeedOnPrem(seedLink,seedTitle);
+                previewSeedOnPrem(seedLink);
             }
             similarDocuments.backButton().click();
         }
@@ -124,7 +124,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         firstWindow.activate();
     }
 
-    private void previewSeedOnPrem(WebElement seedLink,String seedTitle){
+    private void previewSeedOnPrem(WebElement seedLink){
         seedLink.click();
         verifyThat("SeedLink goes to detailed document preview",getDriver().getCurrentUrl(),containsString("document"));
 

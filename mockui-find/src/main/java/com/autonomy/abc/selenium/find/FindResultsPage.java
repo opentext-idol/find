@@ -52,7 +52,7 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         return findElement(By.cssSelector(".error.well"));
     }
 
-    public List<FindResult> promotions() {
+    private List<FindResult> promotions() {
         List<FindResult> results = new ArrayList<>();
         for(WebElement result : promotionsDiv().findElements(By.className("promoted-document"))) {
             results.add(new FindResult(result, getDriver()));
@@ -80,22 +80,8 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         return titles;
     }
 
-    public List<String> getResultTitles(int start, int end){
-        List<String> titles = new ArrayList<>();
-
-        for(int i = start; i <= end; i++){
-            titles.add(findElement(By.cssSelector("[data-rel=results]:nth-child("+i+"):not(.promoted-document) h4")).getText());
-        }
-
-        return titles;
-    }
-
     public WebElement popover() {
         return findElement(By.className("popover"));
-    }
-
-    public int getResultsCount() {
-        return getResultTitles().size();
     }
 
     public enum DateEnum {
@@ -125,12 +111,8 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         }
     }
 
-    public WebElement parametricContainer(String param){
-        return findElement(By.className("parametric-container")).findElement(By.cssSelector("[data-field='" + param + "']"));
-    }
-
     public FindParametricCheckbox parametricTypeCheckbox(String category, String field){
-        WebElement checkbox = findElement(By.cssSelector("[data-field='" + category.replace(" ","_") + "'] [data-value='" + field.toUpperCase() + "']"));
+        WebElement checkbox = findElement(By.cssSelector(".full-height-viewport:not(.hide) [data-field='" + category.replace(" ","_") + "'] [data-value='" + field.toUpperCase() + "']"));
         return new FindParametricCheckbox(checkbox, getDriver());
     }
 

@@ -1,6 +1,6 @@
 package com.autonomy.abc.find;
 
-import com.autonomy.abc.base.FindTestBase;
+import com.autonomy.abc.base.HsodFindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
@@ -10,16 +10,12 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.ParametricFilter;
 import com.autonomy.abc.selenium.query.Query;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
 
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -28,18 +24,13 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.contain
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 
-public class HodFilterITCase extends FindTestBase{
+public class HodFilterITCase extends HsodFindTestBase {
     private FindPage findPage;
     private FindResultsPage results;
     private FindService findService;
 
     public HodFilterITCase(TestConfig config) {
         super(config);
-    }
-
-    @Parameterized.Parameters
-    public static Iterable<Object[]> parameters() throws IOException {
-        return parameters(Collections.singleton(ApplicationType.HOSTED));
     }
 
     @Before

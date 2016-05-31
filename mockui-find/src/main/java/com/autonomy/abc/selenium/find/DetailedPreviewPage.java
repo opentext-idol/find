@@ -12,7 +12,7 @@ import org.openqa.selenium.WebDriver;
 
 public class DetailedPreviewPage extends AppElement implements AppPage {
 
-    protected DetailedPreviewPage(WebDriver driver){
+    private DetailedPreviewPage(WebDriver driver){
         super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
     }
 
@@ -66,7 +66,7 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     public String getSummary(){ return getField("Summary");}
     public String getDate(){ return getField("Date");}
 
-    public String getField(String name) {
+    private String getField(String name) {
         try {
             return findElement(By.xpath(".//td[contains(text(), '" + name + "')]/following::td")).getText();
         } catch (NoSuchElementException e) {

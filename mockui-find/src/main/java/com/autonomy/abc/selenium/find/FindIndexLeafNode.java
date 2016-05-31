@@ -8,8 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 class FindIndexLeafNode implements IndexNodeElement {
-    private Checkbox checkbox;
-    private WebElement container;
+    private final Checkbox checkbox;
+    private final WebElement container;
 
     FindIndexLeafNode(WebElement element, WebDriver driver) {
         container = element;
@@ -26,17 +26,9 @@ class FindIndexLeafNode implements IndexNodeElement {
         checkbox.uncheck();
     }
 
-    private WebElement selector() {
-        return container.findElement(By.cssSelector(".category-name, .database-name"));
-    }
-
     @Override
     public boolean isSelected() {
         return ElementUtil.hasClass("icon-ok", container.findElement(By.cssSelector(".database-icon")));
-    }
-
-    private boolean isPartiallySelected() {
-        return ElementUtil.hasClass("icon-minus", container.findElement(By.cssSelector(".database-icon")));
     }
 
     @Override
