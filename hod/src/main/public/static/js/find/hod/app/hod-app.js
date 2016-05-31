@@ -18,7 +18,7 @@ define([
             return {
                 search: {
                     Constructor: FindSearch,
-                    models: ['savedQueryCollection', 'indexesCollection', 'parametricCollection']
+                    models: ['savedQueryCollection', 'indexesCollection']
                 },
                 'default': {
                     Constructor: DefaultPage

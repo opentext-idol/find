@@ -9,7 +9,6 @@ define([
     'underscore',
     'find/app/util/test-browser',
     'find/app/model/indexes-collection',
-    'find/app/model/parametric-collection',
     'find/app/model/saved-searches/saved-query-collection',
     './model-registry',
     'find/app/navigation',
@@ -19,7 +18,7 @@ define([
     'find/app/vent',
     'find/app/router',
     'text!find/templates/app/app.html'
-], function($, Backbone, _, testBrowser, IndexesCollection, ParametricCollection, SavedQueryCollection, ModelRegistry, Navigation, configuration, Pages, logout, vent, router, template) {
+], function($, Backbone, _, testBrowser, IndexesCollection, SavedQueryCollection, ModelRegistry, Navigation, configuration, Pages, logout, vent, router, template) {
 
     return Backbone.View.extend({
         el: '.page',
@@ -86,10 +85,6 @@ define([
             var modelData = {
                 indexesCollection: {
                     Constructor: IndexesCollection
-                },
-                parametricCollection: {
-                    Constructor: ParametricCollection,
-                    dependencies: ['indexesCollection']
                 }
             };
 

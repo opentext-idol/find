@@ -12,6 +12,7 @@ define([
     'find/app/model/entity-collection',
     'find/app/model/query-model',
     'find/app/model/saved-searches/saved-search-model',
+    'find/app/model/parametric-collection',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/page/search/results/results-view-augmentation',
@@ -28,7 +29,7 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel,
-            queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
+            ParametricCollection, queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
             ResultsViewSelection, RelatedConceptsView, Collapsible, addChangeListener,  SavedSearchControlView, TopicMapView,
             SunburstView, MapResultsView, configuration, i18n, templateString) {
 
@@ -56,7 +57,7 @@ define([
             this.documentsCollection = options.documentsCollection;
             this.searchTypes = options.searchTypes;
             this.searchCollections = options.searchCollections;
-            this.parametricCollection = options.parametricCollection;
+            this.parametricCollection = new ParametricCollection();
 
             this.highlightModel = new Backbone.Model({highlightEntities: false});
             this.entityCollection = new EntityCollection();
@@ -227,8 +228,11 @@ define([
                 model: resultsViewSelectionModel
             });
 
-            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchData);
-            this.fetchData();
+            addChangeListener(this, this.queryModel, ['indexes', 'queryText', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchEntities);
+            this.fetchEntities();
+
+            this.listenTo(this.queryModel, 'change:indexes', this.fetchParametricCollection);
+            this.fetchParametricCollection();
         },
 
         render: function() {
@@ -263,7 +267,17 @@ define([
             this.$('.container-toggle').on('click', this.containerToggle);
         },
 
-        fetchData: function() {
+        fetchParametricCollection: function() {
+            this.parametricCollection.reset();
+
+            if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+                this.parametricCollection.fetch({data: {
+                    databases: this.queryModel.get('indexes')
+                }});
+            }
+        },
+
+        fetchEntities: function() {
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
                     databases: this.queryModel.get('indexes'),
