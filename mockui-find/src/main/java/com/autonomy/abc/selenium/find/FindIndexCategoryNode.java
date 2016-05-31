@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 class FindIndexCategoryNode extends IndexCategoryNode {
-    private WebElement container;
-    private WebDriver driver;
+    private final WebElement container;
+    private final WebDriver driver;
 
     FindIndexCategoryNode(WebElement clickable, WebDriver webDriver) {
         super(new FindIndexLeafNode(clickable, webDriver), clickable, webDriver);

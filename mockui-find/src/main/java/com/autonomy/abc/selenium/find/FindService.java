@@ -7,8 +7,8 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryService;
 
 public class FindService implements QueryService<FindResultsPage> {
-    private FindElementFactory elementFactory;
-    private FindPage findPage;
+    private final FindElementFactory elementFactory;
+    private final FindPage findPage;
 
     public FindService(FindApplication<?> find) {
         elementFactory = find.elementFactory();

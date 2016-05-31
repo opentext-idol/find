@@ -8,7 +8,7 @@ import java.util.List;
 
 public class DateFilterTree extends FilterTree{
 
-    private DateFilterNode dateFilterNode;
+    private final DateFilterNode dateFilterNode;
 
     public DateFilterTree(WebElement element, WebDriver webDriver){
         super(element,webDriver);
@@ -36,11 +36,11 @@ public class DateFilterTree extends FilterTree{
         return filterTypes;
     }
 
-    public List<WebElement> getChildren(){
+    private List<WebElement> getChildren(){
         return dateFilterNode.getChildren();
     }
 
-    public WebElement getParent(){
+    private WebElement getParent(){
         return dateFilterNode.getParent();
     }
 

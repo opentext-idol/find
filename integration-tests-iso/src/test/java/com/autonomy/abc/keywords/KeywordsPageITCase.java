@@ -800,7 +800,6 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	private List<String> getBlacklisted(){
-		List<String> blacklisted = Arrays.asList("aardvark", "giggler", "ruddy", "roddy","nebulous","incoherent","balderdash");
-		return blacklisted;
+		return Arrays.asList("aardvark", "giggler", "ruddy", "roddy","nebulous","incoherent","balderdash");
 	}
 }

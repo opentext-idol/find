@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ParametricFilterTree extends FilterTree {
 
-    private List<ParametricFilterNode> containers;
+    private final List<ParametricFilterNode> containers;
 
     public ParametricFilterTree(WebElement container, List<WebElement> nodes,WebDriver webDriver){
         super(container,webDriver);

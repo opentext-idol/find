@@ -12,13 +12,11 @@ import java.util.List;
 public class FilterNode implements Collapsible{
 
     private final WebElement container;
-    private final WebDriver driver;
     private final Collapsible collapsible;
 
     public FilterNode(WebElement element, WebDriver webDriver) {
         container=element;
-        driver=webDriver;
-        collapsible=new ChevronContainer(container,driver);
+        collapsible=new ChevronContainer(container, webDriver);
     }
 
     public String getParentName(){
@@ -41,7 +39,7 @@ public class FilterNode implements Collapsible{
         return ElementUtil.getTexts(children);
     }
 
-    protected WebElement getContainer(){
+    WebElement getContainer(){
         return container;
     }
 
@@ -57,7 +55,7 @@ public class FilterNode implements Collapsible{
     @Override
     public void collapse(){
         collapsible.collapse();
-    };
+    }
 
     @Override
     public boolean isCollapsed() {
