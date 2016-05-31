@@ -26,13 +26,13 @@ define([
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
+    'find/app/page/search/results/table/table-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, ParametricFieldsCollection,
-            queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, Collapsible,
-            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, configuration, i18n, templateString) {
+            queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, Collapsible,
+            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, TableView, configuration, i18n, templateString) {
     'use strict';
 
     var template = _.template(templateString);
@@ -238,7 +238,8 @@ define([
                     icon: 'hp-map-view'
                 }
             }, {
-                Constructor: Backbone.View,
+                Constructor: TableView,
+                constructorArguments: subViewArguments,
                 id: 'table',
                 shown: hasBiRole,
                 uniqueId: _.uniqueId('results-view-item-'),

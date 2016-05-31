@@ -40,7 +40,7 @@ define([
             this.emptyMessage = options.emptyMessage;
             this.errorMessage = options.errorMessage;
 
-            this.dependentParametricCollection = new DependentParametricCollection();
+            this.dependentParametricCollection = options.dependentParametricCollection || new DependentParametricCollection();
             this.fieldsCollection = new Backbone.Collection([{text: ''}, {text: ''}]);
 
             this.model = new Backbone.Model({
