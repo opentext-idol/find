@@ -1,13 +1,12 @@
 package com.autonomy.abc.find;
 
-import com.autonomy.abc.base.FindTestBase;
+import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.query.QueryResult;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Session;
@@ -16,10 +15,6 @@ import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
-
-import java.io.IOException;
-import java.util.Collections;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
@@ -28,18 +23,13 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 
-public class IdolDocumentPreviewITCase extends FindTestBase {
+public class IdolDocumentPreviewITCase extends IdolFindTestBase {
     private FindPage findPage;
     private FindResultsPage results;
     private FindService findService;
 
     public IdolDocumentPreviewITCase(TestConfig config) {
         super(config);}
-
-    @Parameterized.Parameters
-    public static Iterable<Object[]> parameters() throws IOException {
-        return parameters(Collections.singleton(ApplicationType.ON_PREM));
-    }
 
     @Before
     public void setUp(){

@@ -1,20 +1,15 @@
 package com.autonomy.abc.find;
 
-import com.autonomy.abc.base.FindTestBase;
-import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.IdolFindPage;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebElement;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -26,25 +21,16 @@ import static org.junit.Assume.assumeTrue;
 
 //WARNING: These tests are extremely slow when the sidebar has 1000s of filters
 
-public class IdolFilterITCase extends FindTestBase {
+public class IdolFilterITCase extends IdolFindTestBase {
     private IdolFindPage findPage;
-    private FindTopNavBar navBar;
-    private FindResultsPage results;
     private FindService findService;
 
     public IdolFilterITCase(TestConfig config) {
         super(config);}
 
-    @Parameterized.Parameters
-    public static Iterable<Object[]> parameters() throws IOException {
-        return parameters(Collections.singleton(ApplicationType.ON_PREM));
-    }
-
     @Before
     public void setUp(){
         findPage = getElementFactory().getIdolFindPage();
-        navBar = getElementFactory().getTopNavBar();
-        results = findPage.getResultsPage();
         findService = getApplication().findService();
     }
 
@@ -77,7 +63,7 @@ public class IdolFilterITCase extends FindTestBase {
         //if not 1000s of filters -> uncomment below
         //checkCorrectFiltersVisible(Arrays.asList("UNITED STATES OF AMERICA","Last Week","Test","PDF"));
         //if 1000s of filters -> test what was broken
-        checkCorrectFiltersVisible(Arrays.asList("Last Week"));
+        checkCorrectFiltersVisible(Collections.singletonList("Last Week"));
     }
 
     private void checkCorrectFiltersVisible(List<String> filtersToSearch){

@@ -36,10 +36,6 @@ public abstract class FindElementFactory extends ElementFactoryBase {
         return new SimilarDocumentsView.Factory().create(getDriver());
     }
 
-    public DetailedPreviewPage getDetailedPreview(){
-        return new DetailedPreviewPage.Factory().create(getDriver());
-    }
-
     @Override
     public <T extends AppPage> T loadPage(Class<T> type) {
         throw new UnsupportedOperationException("loadPage does not make sense for a single page application");

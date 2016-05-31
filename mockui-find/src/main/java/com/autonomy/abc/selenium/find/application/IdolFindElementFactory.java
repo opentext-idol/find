@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.application;
 
+import com.autonomy.abc.selenium.find.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.login.IdolFindLoginPage;
@@ -29,5 +30,9 @@ public class IdolFindElementFactory extends FindElementFactory {
 
     public SearchOptionsBar getSearchOptionsBar() {
         return new SearchOptionsBar(getDriver());
+    }
+
+    public DetailedPreviewPage getDetailedPreview(){
+        return new DetailedPreviewPage.Factory().create(getDriver());
     }
 }
