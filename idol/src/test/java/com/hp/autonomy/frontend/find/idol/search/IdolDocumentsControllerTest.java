@@ -7,14 +7,18 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentsControllerTest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.Before;
 import org.junit.Test;
 
-public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<String, IdolSearchResult, AciErrorException> {
+import static org.mockito.Mockito.when;
+
+public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
     @Before
     public void setUp() {
-        documentsController = new IdolDocumentsController(documentsService, new IdolQueryRestrictionsBuilder());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
+        documentsController = new IdolDocumentsController(documentsService, queryRestrictionsBuilderFactory);
         databaseType = String.class;
     }
 

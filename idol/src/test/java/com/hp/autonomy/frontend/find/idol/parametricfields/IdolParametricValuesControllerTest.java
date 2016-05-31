@@ -7,26 +7,17 @@ package com.hp.autonomy.frontend.find.idol.parametricfields;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesControllerTest;
-import com.hp.autonomy.frontend.find.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Matchers;
 
-import java.util.Collections;
+import static org.mockito.Mockito.when;
 
-import static org.mockito.Mockito.verify;
-
-
-public class IdolParametricValuesControllerTest extends AbstractParametricValuesControllerTest<IdolParametricRequest, String, AciErrorException> {
+public class IdolParametricValuesControllerTest extends AbstractParametricValuesControllerTest<IdolQueryRestrictions, IdolParametricRequest, String, AciErrorException> {
     @Before
     public void setUp() {
-        parametricValuesController = new IdolParametricValuesController(parametricValuesService, new IdolQueryRestrictionsBuilder());
-    }
-
-    @Test
-    public void getParametricValues() throws AciErrorException {
-        parametricValuesController.getParametricValues("Some query text", null, Collections.<String>emptyList(), null, null, 0, null);
-        verify(parametricValuesService).getAllParametricValues(Matchers.<IdolParametricRequest>any());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
+        when(parametricRequestBuilderFactory.getObject()).thenReturn(new IdolParametricRequest.Builder());
+        parametricValuesController = new IdolParametricValuesController(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
     }
 }

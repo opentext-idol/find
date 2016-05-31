@@ -14,6 +14,7 @@ define([
     'use strict';
 
     var templateFunction = _.template(template);
+    var NEW_DOCS_LIMIT = 1000;
 
     return ListItemView.extend({
         className: 'search-tab',
@@ -34,7 +35,7 @@ define([
             }, options));
 
             this.listenTo(this.model, 'change', this.updateSavedness);
-
+            this.listenTo(this.model, 'change:newDocuments', this.updateTabBadge);
             this.listenTo(this.queryStates, 'change:' + cid, function() {
                 this.updateQueryStateListeners();
                 this.updateSavedness();
@@ -47,12 +48,26 @@ define([
             ListItemView.prototype.render.apply(this, arguments);
 
             this.updateSavedness();
+            this.updateTabBadge();
+        },
+
+        updateTabBadge: function() {
+            var newDocuments = this.model.get('newDocuments');
+
+            if(newDocuments > 0) {
+                this.$('.new-document-label')
+                    .removeClass('hide')
+                    .text(newDocuments > NEW_DOCS_LIMIT ? NEW_DOCS_LIMIT + '+' : newDocuments);
+            } else {
+                this.$('.new-document-label')
+                    .addClass('hide');
+            }
         },
 
         updateSavedness: function() {
             var changed = this.queryState ? !this.model.equalsQueryState(this.queryState) : false;
             this.$('.search-tab-anchor').toggleClass('bold', this.model.isNew() || changed);
-            this.$('.search-tab-anchor .fa-circle').toggleClass('hide', !this.model.isNew() && !changed);
+            this.$('.search-tab-anchor .hp-new').toggleClass('hide', !this.model.isNew() && !changed);
         },
 
         updateQueryStateListeners: function() {

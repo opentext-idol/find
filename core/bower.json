@@ -36,10 +36,10 @@
     "hp-autonomy-bootstrap-2": "2.3.2",
     "hp-autonomy-fieldtext-js": "1.1.0",
     "hp-autonomy-topic-map": "1.0.0",
-    "hp-autonomy-sunburst": "1.1.1",
-    "hp-autonomy-js-parametric-refinement": "0.3.0",
+    "hp-autonomy-sunburst": "1.1.2",
+    "hp-autonomy-js-parametric-refinement": "0.4.1",
     "leaflet": "0.7.7",
-    "Leaflet.awesome-markers": "^2.0.2",
+    "Leaflet.awesome-markers": "2.0.2",
     "leaflet.markercluster": "leaflet-0.7",
     "requirejs": "2.1.15",
     "requirejs-text": "2.0.13",
@@ -53,13 +53,16 @@
   },
   "devDependencies": {
     "hp-autonomy-js-testing-utils": "1.1.1",
-    "jasmine-jquery": "2.1.0"
+    "jasmine-jquery": "2.1.0",
+    "jasmine-ajax": "3.2.0"
   },
   "resolutions": {
     "underscore": "1.8.3",
     "hp-autonomy-js-whatever": "2.5.0",
     "jquery": "1.10.2",
     "backbone": "1.2.3",
-    "jasmine": ">=2"
+    "jasmine": "2.4.1",
+    "requirejs": "2.1.22",
+    "requirejs-text": "2.0.15"
   }
 }

@@ -1,0 +1,32 @@
+---
+
+- name: Ensure that unzip is installed
+  apt: name=unzip state=present
+
+- name: Create Find group
+  group: name={{find_group}}
+
+- name: Create Find user
+  user: name={{find_user}} group={{find_group}} createhome=no shell=/usr/sbin/nologin
+
+- name: Ensure find directories exists
+  file: dest={{item}} state=directory owner={{find_user}} group={{find_group}} mode=0755
+  with_items:
+    - "{{find_root_dir}}"
+    - "{{find_log_dir}}"
+
+- name: Download Latest Find war file
+  get_url: dest=/{{find_root_dir}} url={{softwareserver_base_url}}/{{find_archive_name}} force=yes
+  notify: Restart Find
+
+- name: Set permissions on find war
+  file: dest={{find_root_dir}}/{{find_archive_name}} mode=0755
+
+- name: Deploy configuration file
+  template: src=config.json.j2 dest={{find_root_dir}}/config.json owner={{find_user}} group={{find_group}} mode=0755 
+  notify: Restart Find
+
+- name: Deploy upstart script
+  template: src=find.conf.j2 dest=/etc/init/{{find_service_name}}.conf owner=root group=root mode=0744
+  notify: Restart Find
+

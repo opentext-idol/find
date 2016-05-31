@@ -27,7 +27,7 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.17.0</haven.search.components.version>
+        <haven.search.components.version>0.18.1</haven.search.components.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <!-- Disabling integration tests by default until we figure out how to run them on the build servers (CCUK-3480) -->
         <skipITs>true</skipITs>
@@ -143,15 +143,18 @@
             </properties>
         </profile>
         <profile>
+            <id>windows</id>
             <activation>
                 <os>
                     <family>windows</family>
                 </os>
             </activation>
-            <id>windows</id>
             <properties>
                 <npm.binExtension>.cmd</npm.binExtension>
             </properties>
+        </profile>
+        <profile>
+            <id>debian</id>
         </profile>
     </profiles>
 </project>

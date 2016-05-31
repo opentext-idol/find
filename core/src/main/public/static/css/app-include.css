@@ -12,6 +12,13 @@ html, body {
     min-width: 640px;
 }
 
+.chart rect {
+    fill: rgba(1,169,130,0.1);
+}
+.chart rect:hover {
+    fill: rgba(1,169,130,0.2);
+}
+
 .date input {
     width: 75% !important;
     padding-right: 0 !important;
@@ -407,8 +414,8 @@ fieldset.radio-fieldset > label {
 }
 
 .tab-dropdown {
-    margin-top: 16px;
-    margin-right: 16px;
+    padding-top: 16px;
+    padding-right: 16px;
 }
 
 .tab-dropdown .dropdown-menu {
@@ -439,8 +446,17 @@ fieldset.radio-fieldset > label {
 }
 
 .search-tab-title i {
-    font-size: 7px;
+    font-size: 12px;
     vertical-align: super;
+}
+
+.new-document-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    background-color: #D70B50;
+    font-size: 10px;
 }
 
 .compare-modal-error-spinner .loading-spinner {
@@ -627,6 +643,7 @@ input.find-input {
     color: #fff;
 }
 
+.numeric-parametric-field-control,
 .result-container-control {
     color: #00b388;
     font-size: 14px;
@@ -813,6 +830,8 @@ input.find-input {
 
 .sunburst-sector-name {
     font-size: 14px;
+    width: 300px;
+    word-break: normal;
 }
 
 .chosen-container {
@@ -1564,5 +1583,13 @@ h4.similar-dates-message {
 }
 
 .precision-slider-block  > div > .slider{
+    width: 100%;
+}
+
+.numeric-parametric-slider-block {
+    width: 100%;
+}
+
+.numeric-parametric-slider-block > .slider{
     width: 100%;
 }

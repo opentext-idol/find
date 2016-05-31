@@ -21,6 +21,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -62,11 +63,16 @@ public class HodMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
         final Collection<GrantedAuthority> hodAuthorities = new HashSet<>(baseAuthorities);
         hodAuthorities.add(new HodApplicationGrantedAuthority(application));
 
-        final HodAuthentication<EntityType.Application> authentication = mock(HodAuthentication.class);
+        @SuppressWarnings("unchecked") final HodAuthentication<EntityType.Application> authentication = mock(HodAuthentication.class);
         when(authentication.getPrincipal()).thenReturn(testPrincipal);
         when(authentication.getTokenProxy()).thenReturn(testTokenProxy);
         when(authentication.getAuthorities()).thenReturn(hodAuthorities);
         when(authentication.isAuthenticated()).thenReturn(true);
         return authentication;
+    }
+
+    @Override
+    protected void addFieldRequestParams(final MockHttpServletRequestBuilder requestBuilder) {
+        requestBuilder.param("databases", getDatabases());
     }
 }

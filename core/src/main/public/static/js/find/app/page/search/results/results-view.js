@@ -10,6 +10,7 @@ define([
     'find/app/page/search/results/result-rendering/result-renderer',
     'find/app/page/search/results/result-rendering/result-renderer-config',
     'find/app/util/view-server-client',
+    'find/app/util/events',
     'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/search/results/results-container.html',
@@ -18,7 +19,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            ResultRenderer, resultsRendererConfig, viewClient, addLinksToSummary, template, resultsTemplate,
+            ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, template, resultsTemplate,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     function checkScroll() {
@@ -36,6 +37,8 @@ define([
             this.maxResults += SCROLL_INCREMENT;
 
             this.loadData(true);
+
+            events().page(this.maxResults / SCROLL_INCREMENT);
         }
     }
 
@@ -70,10 +73,15 @@ define([
                     this.$('.main-results-container').removeClass('selected-document');
                 } else {
                     //enable/choose another preview view
-                    if(this.documentsCollection.get($target.data('cid'))) {
-                        this.trigger('preview', this.documentsCollection.get($target.data('cid')));
+                    var cid = $target.data('cid');
+                    var model = this.documentsCollection.get(cid);
+
+                    if(model) {
+                        this.trigger('preview', model);
+
+                        events().preview(this.documentsCollection.indexOf(model) + 1);
                     } else {
-                        this.trigger('preview', this.promotionsCollection.get($target.data('cid')));
+                        this.trigger('preview', this.promotionsCollection.get(cid));
                     }
 
                     //resetting selected-document class and adding it to the target
@@ -133,7 +141,7 @@ define([
                 documentsCollection: this.documentsCollection
             });
 
-            this.listenTo(this.queryModel, 'change', this.refreshResults);
+            this.listenTo(this.queryModel, 'change refresh', this.refreshResults);
 
             this.checkScroll = checkScroll.bind(this);
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
@@ -207,7 +215,7 @@ define([
 
                 this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
 
-                if (this.endOfResults) {
+                if (this.endOfResults && !this.documentsCollection.isEmpty()) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noMoreResults"]}));
                 } else if (this.documentsCollection.isEmpty()) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noResults"]}));
@@ -319,16 +327,19 @@ define([
             if (!infiniteScroll && this.showPromotions) {
 
                 this.promotionsFinished = false;
-                var parametricRequestData =  _.extend({
+                var promotionsRequestData =  _.extend({
                         start: this.start,
                         max_results: this.maxResults,
                         sort: this.queryModel.get('sort')
                     }, this.fetchStrategy.promotionsRequestParams(this.queryModel, infiniteScroll));
 
                 this.promotionsCollection.fetch({
-                    data: parametricRequestData,
+                    data: promotionsRequestData,
                     reset: false
                 }, this);
+
+                // we're not scrolling, so should be a new search
+                events().reset(requestData.text);
             }
         },
 

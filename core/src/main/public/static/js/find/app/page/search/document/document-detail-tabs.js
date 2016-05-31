@@ -46,7 +46,7 @@ define([
 
             shown: function(documentModel) {
                 var locations = documentModel.get('locations');                
-                return configuration().map.enabled && locations;
+                return configuration().map.enabled && !_.isEmpty(locations);
             }
         },
         {

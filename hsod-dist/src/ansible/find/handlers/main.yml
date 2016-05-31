@@ -1,0 +1,6 @@
+---
+
+# Restart application service
+- name: Restart Find
+  service: name={{find_service_name}} state=restarted
+

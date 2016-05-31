@@ -53,7 +53,6 @@ define([
         initialize: function(options) {
             this.$el.attr('data-field', this.model.id);
             this.$el.attr('data-field-display-name', this.model.get('displayName'));
-            this.$el.attr('data-numeric-type', this.model.get('numeric'));
             this.parametricDisplayCollection = options.parametricDisplayCollection;
             this.selectedParametricValues = options.selectedParametricValues;
 

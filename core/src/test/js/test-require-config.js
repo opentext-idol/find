@@ -6,6 +6,7 @@
 require.config({
     baseUrl: 'src/main/public/static/js',
     paths: {
+        'jasmine-ajax': '../bower_components/jasmine-ajax/lib/mock-ajax',
         'jasmine-jquery': '../bower_components/jasmine-jquery/lib/jasmine-jquery',
         'js-testing': '../bower_components/hp-autonomy-js-testing-utils/src/js',
         'mock': '../../../../test/js/mock'
@@ -30,11 +31,12 @@ require.config({
         'find/app/page/search/related-concepts/related-concepts-view': {
             'find/app/model/documents-collection': 'mock/model/documents-collection'
         },
-        'find/app/page/search/results/sunburst-view': {
+        'find/app/page/search/results/parametric-results-view': {
             'find/app/model/dependent-parametric-collection': 'mock/model/dependent-parametric-collection'
         },
         'find/app/page/search/abstract-query-left-side-view': {
             'find/app/page/search/filters/date/dates-filter-view': 'mock/page/search/filters/date/dates-filter-view',
+            'find/app/page/search/filters/parametric/numeric-parametric-view': 'mock/page/search/filters/parametric/numeric-parametric-view',
             'find/app/page/search/filters/parametric/parametric-view': 'mock/page/search/filters/parametric/parametric-view',
             'parametric-refinement/display-collection': 'mock/model/display-collection'
         }

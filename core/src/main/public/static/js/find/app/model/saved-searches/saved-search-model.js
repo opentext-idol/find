@@ -108,6 +108,7 @@ define([
             relatedConcepts: [],
             minDate: null,
             maxDate: null,
+            newDocuments: 0,
             dateRange: null,
             dateNewDocsLastFetched: null,
             minScore: 0

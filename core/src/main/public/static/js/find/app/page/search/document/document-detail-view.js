@@ -12,10 +12,11 @@ define([
     'js-whatever/js/list-view',
     'find/app/page/search/document/document-detail-tabs',
     'find/app/configuration',
+    'find/app/util/events',
     'text!find/templates/app/page/search/document/document-detail.html',
     'text!find/templates/app/page/search/document/view-mode-document.html',
     'text!find/templates/app/page/search/document/view-media-player.html'
-], function(Backbone, _, vent, i18n, viewClient, ListView, tabs, configuration, template, documentTemplate, mediaTemplate) {
+], function(Backbone, _, vent, i18n, viewClient, ListView, tabs, configuration, events, template, documentTemplate, mediaTemplate) {
     'use strict';
 
     var isUrlRegex = /^https?:\/\//;
@@ -34,8 +35,9 @@ define([
             'click .detail-view-back-button': function() {
                 vent.navigate(this.backUrl);
             },
-            'click .detail-view-open-button': function () {
-                window.open(this.documentHref, encodeURIComponent(this.documentHref));
+            'click .document-detail-open-original-link': function () {
+                // the link itself is responsible for opening the window
+                events().original()
             },
             'shown.bs.tab a[data-toggle=tab]': function (event) {
                 var tab = this.tabs[$(event.target).parent().index()];

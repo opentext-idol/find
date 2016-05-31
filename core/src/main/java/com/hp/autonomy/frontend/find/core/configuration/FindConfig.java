@@ -5,6 +5,8 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
+import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
+
 public interface FindConfig {
 
     MapConfiguration getMap();
@@ -12,5 +14,7 @@ public interface FindConfig {
     SavedSearchConfig getSavedSearchConfig();
 
     Integer getMinScore();
+
+    FieldsInfo getFieldsInfo();
 
 }

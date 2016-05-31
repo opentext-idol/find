@@ -10,9 +10,9 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.frontend.find.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-
-import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.hasSize;
@@ -34,7 +32,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class ComparisonServiceIT extends AbstractFindIT {
     private final ObjectMapper mapper = new ObjectMapper();
-    private final QueryRestrictions<String> queryRestrictions = new IdolQueryRestrictionsBuilder().build("*", "", Collections.<String>emptyList(), null, null, 0, Collections.<String>emptyList(), Collections.<String>emptyList());
+    private final QueryRestrictions<String> queryRestrictions = new IdolQueryRestrictions.Builder()
+            .setQueryText("*")
+            .setFieldText("")
+            .setMinScore(0)
+            .build();
 
     @SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaAutowiredMembersInspection"})
     @Autowired

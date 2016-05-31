@@ -416,8 +416,6 @@ define([
                 this.savedQueryCollection.add(this.savedSearchModel);
                 this.savedSearchCollection.add(this.savedSearchModel);
 
-                spyOn(this.savedQueryCollection, 'create');
-
                 this.view = new SavedSearchControlView(this.viewOptions);
                 this.view.render();
                 $('body').append(this.view.$el);
@@ -478,17 +476,68 @@ define([
                     });
                 });
 
-                describe('then the user enters and saves a new title', function() {
+                describe('then the user enters a title, selects "Query" and clicks "Save"', function() {
                     var NEW_TITLE = 'Star Wars';
 
                     beforeEach(function() {
+                        var createdQueries = this.createdQueries = [];
+
+                        spyOn(this.savedQueryCollection, 'create').and.callFake(function(attributes) {
+                            var model = new Backbone.Model(attributes);
+                            createdQueries.push(model);
+                            return model;
+                        });
+
                         this.view.$('.popover-content .search-title-input-container .search-title-input').val(NEW_TITLE).trigger('input');
                         this.view.$('.popover-content .search-title-input-container .save-title-confirm-button').click();
                     });
 
-                    it('creates a new model in the collection with the new title', function() {
+                    it('creates a new model in the collection with the correct title', function() {
                         expect(this.savedQueryCollection.create.calls.count()).toBe(1);
                         expect(this.savedQueryCollection.create.calls.argsFor(0)[0].title).toBe(NEW_TITLE);
+                    });
+
+                    describe('then the save request succeeds', function() {
+                        beforeEach(function() {
+                            this.savedQueryCollection.create.calls.argsFor(0)[1].success(this.createdQueries[0]);
+                        });
+
+                        it('selects the new tab', function() {
+                            expect(this.selectedTabModel.get('selectedSearchCid')).toBe(this.createdQueries[0].cid);
+                        });
+                    });
+                });
+
+                describe('then the user enters a title, selects "Snapshot" and clicks "Save"', function() {
+                    var NEW_TITLE = 'Star Wars';
+
+                    beforeEach(function() {
+                        var createdSnapshots = this.createdSnapshots = [];
+
+                        spyOn(this.savedSnapshotCollection, 'create').and.callFake(function(attributes) {
+                            var model = new Backbone.Model(attributes);
+                            createdSnapshots.push(model);
+                            return model;
+                        });
+
+                        this.view.$('.popover-content .search-title-input-container .search-title-input').val(NEW_TITLE).trigger('input');
+                        this.view.$('.popover-content .search-title-input-container [name="saved-search-type"][value="SNAPSHOT"]').iCheck('check');
+                        this.view.$('.popover-content .search-title-input-container .save-title-confirm-button').click();
+                    });
+
+                    it('creates a new model in the collection with the correct title', function() {
+                        expect(this.savedSnapshotCollection.create.calls.count()).toBe(1);
+                        expect(this.savedSnapshotCollection.create.calls.argsFor(0)[0].title).toBe(NEW_TITLE);
+                    });
+
+                    describe('then the save request succeeds', function() {
+                        beforeEach(function() {
+                            this.savedSnapshotCollection.create.calls.argsFor(0)[1].success(this.createdSnapshots[0]);
+                        });
+
+                        it('does not select the new tab', function() {
+                            expect(this.selectedTabModel.get('selectedSearchCid')).toBe(this.savedSearchModel.cid);
+                        });
                     });
                 });
 
@@ -616,8 +665,6 @@ define([
             });
 
             describe('then the query is changed', function() {
-                var MIN_DATE = 15000;
-
                 beforeEach(function() {
                     this.queryState.queryTextModel.set({inputText: 'archipelago'});
                     this.queryModel.set('queryText', 'archipelago');
@@ -701,6 +748,37 @@ define([
                         it('restores the original query state', function() {
                             expect(this.queryState.queryTextModel.get('inputText')).toBe('cat');
                             expect(this.queryState.queryTextModel.get('relatedConcepts')).toEqual([['Copenhagen']]);
+                        });
+                    });
+                });
+
+                describe('then the "Save As" button is clicked and a Snapshot is saved', function() {
+                    beforeEach(clickSaveAsButton);
+
+                    describe('and a Snapshot is saved', function() {
+                        beforeEach(function() {
+                            spyOn(this.savedSnapshotCollection, 'create');
+
+                            this.view.$('.popover-content .search-title-input-container .search-title-input').val("My New Search").trigger('input');
+                            this.view.$('.popover-content .search-title-input-container [name="saved-search-type"][value="SNAPSHOT"]').iCheck('check');
+                            this.view.$('.popover-content .search-title-input-container .save-title-confirm-button').click();
+                        });
+
+                        it('does not revert the search', function() {
+                            expect(this.queryState.queryTextModel.get('inputText')).toBe('archipelago');
+                        });
+                    });
+
+                    describe('and a Query is saved', function() {
+                        beforeEach(function() {
+                            spyOn(this.savedQueryCollection, 'create');
+
+                            this.view.$('.popover-content .search-title-input-container .search-title-input').val("My New Search").trigger('input');
+                            this.view.$('.popover-content .search-title-input-container .save-title-confirm-button').click();
+                        });
+
+                        it('reverts the search', function() {
+                            expect(this.queryState.queryTextModel.get('inputText')).toBe('cat');
                         });
                     });
                 });

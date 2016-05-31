@@ -13,6 +13,7 @@ define([
     'find/app/model/query-model',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/parametric-collection',
+    'find/app/model/parametric-fields-collection',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/page/search/results/results-view-augmentation',
@@ -28,11 +29,10 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel,
-            ParametricCollection, queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, Collapsible, addChangeListener,  SavedSearchControlView, TopicMapView,
-            SunburstView, MapResultsView, configuration, i18n, templateString) {
-
+], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, ParametricFieldsCollection,
+            queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
+            ResultsViewSelection, RelatedConceptsView, Collapsible,
+            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, configuration, i18n, templateString) {
     'use strict';
 
     var template = _.template(templateString);
@@ -47,6 +47,7 @@ define([
         // Abstract
         ResultsView: null,
         ResultsViewAugmentation: null,
+        fetchParametricFields: null,
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
@@ -57,7 +58,6 @@ define([
             this.documentsCollection = options.documentsCollection;
             this.searchTypes = options.searchTypes;
             this.searchCollections = options.searchCollections;
-            this.parametricCollection = new ParametricCollection();
 
             this.highlightModel = new Backbone.Model({highlightEntities: false});
             this.entityCollection = new EntityCollection();
@@ -72,6 +72,10 @@ define([
 
             this.listenTo(this.queryModel, 'change:indexes', function() {
                 this.queryState.selectedParametricValues.reset();
+            });
+
+            this.listenTo(this.savedSearchModel, 'refresh', function() {
+                this.queryModel.trigger('refresh');
             });
 
             // There are 2 conditions where we want to reset the date we last fetched new docs on the date filter model
@@ -103,6 +107,19 @@ define([
                 }
             });
 
+            this.parametricFieldsCollection = new ParametricFieldsCollection([], {
+                url: '../api/public/fields/parametric'
+            });
+            this.numericParametricFieldsCollection = new ParametricFieldsCollection([], {
+                url: '../api/public/fields/parametric-numeric'
+            });
+            this.parametricCollection = new ParametricCollection([], {
+                url: '../api/public/parametric'
+            });
+            this.numericParametricCollection = new ParametricCollection([], {
+                url: '../api/public/parametric/numeric'
+            });
+
             var subViewArguments = {
                 indexesCollection: this.indexesCollection,
                 entityCollection: this.entityCollection,
@@ -111,6 +128,7 @@ define([
                 documentsCollection: this.documentsCollection,
                 selectedTabModel: this.selectedTabModel,
                 parametricCollection: this.parametricCollection,
+                numericParametricCollection: this.numericParametricCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
                 highlightModel: this.highlightModel,
@@ -135,9 +153,10 @@ define([
             this.middleColumnHeaderView = MiddleColumnHeaderView ? new MiddleColumnHeaderView(subViewArguments) : null;
 
             var entityClickHandler = this.searchTypes[searchType].entityClickHandler(clickHandlerArguments);
+            var relatedConceptsClickHandler = this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments);
 
             var relatedConceptsView = new RelatedConceptsView(_.extend({
-                clickHandler: this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments),
+                clickHandler: relatedConceptsClickHandler,
                 highlightModel: this.highlightModel
             }, subViewArguments));
 
@@ -179,7 +198,7 @@ define([
                 shown: hasBiRole,
                 uniqueId: _.uniqueId('results-view-item-'),
                 constructorArguments: _.extend({
-                    clickHandler: entityClickHandler
+                    clickHandler: relatedConceptsClickHandler
                 }, subViewArguments),
                 selector: {
                     displayNameKey: 'topic-map',
@@ -228,7 +247,9 @@ define([
                 model: resultsViewSelectionModel
             });
 
-            addChangeListener(this, this.queryModel, ['indexes', 'queryText', 'fieldText', 'minDate', 'maxDate', 'stateMatchIds'], this.fetchEntities);
+            this.listenTo(this.queryModel, 'refresh', this.fetchData);
+            this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
+            this.fetchParametricFields(this.numericParametricFieldsCollection, this.numericParametricCollection);
             this.fetchEntities();
 
             this.listenTo(this.queryModel, 'change:indexes', this.fetchParametricCollection);
@@ -267,17 +288,43 @@ define([
             this.$('.container-toggle').on('click', this.containerToggle);
         },
 
+        fetchData: function() {
+            this.fetchEntities();
+            this.fetchParametricValues(this.parametricFieldsCollection, this.parametricCollection);
+            this.fetchParametricValues(this.numericParametricFieldsCollection, this.numericParametricCollection);
+        },
         fetchParametricCollection: function() {
             this.parametricCollection.reset();
+        },
+        
+        fetchParametricValues: function (fieldsCollection, valuesCollection) {
+            valuesCollection.reset();
+        
 
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 this.parametricCollection.fetch({data: {
                     databases: this.queryModel.get('indexes')
                 }});
+                //var data = {
+                //    databases: this.queryModel.get('indexes'),
+                //    queryText: this.queryModel.get('queryText'),
+                //    fieldText: this.queryModel.get('fieldText'),
+                //    minDate: this.queryModel.getIsoDate('minDate'),
+                //    maxDate: this.queryModel.getIsoDate('maxDate'),
+                //    minScore: this.queryModel.get('minScore'),
+                //    stateTokens: this.queryModel.get('stateMatchIds')
+                //};
+
+                var fieldNames = fieldsCollection.pluck('field');
+                if (fieldNames.length > 0) {
+                    valuesCollection.fetch({data: _.extend({
+                        fieldNames: fieldNames
+                    }, data)});
+                }
             }
         },
-
-        fetchEntities: function() {
+        
+        fetchEntities: function () {
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
                     databases: this.queryModel.get('indexes'),
@@ -285,6 +332,7 @@ define([
                     fieldText: this.queryModel.get('fieldText'),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
+                    minScore: this.queryModel.get('minScore'),
                     stateTokens: this.queryModel.get('stateMatchIds')
                 };
 

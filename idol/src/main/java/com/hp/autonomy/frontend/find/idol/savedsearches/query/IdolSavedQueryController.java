@@ -10,20 +10,22 @@ import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-class IdolSavedQueryController extends SavedQueryController<String, IdolSearchResult, AciErrorException> {
+class IdolSavedQueryController extends SavedQueryController<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
     @Autowired
     public IdolSavedQueryController(final SavedSearchService<SavedQuery> service,
                                     final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService,
-                                    final QueryRestrictionsBuilder<String> queryRestrictionsBuilder) {
-        super(service, documentsService, queryRestrictionsBuilder);
+                                    final ObjectFactory<QueryRestrictions.Builder<IdolQueryRestrictions, String>> queryRestrictionsBuilderFactory) {
+        super(service, documentsService, queryRestrictionsBuilderFactory);
     }
 
     @Override

@@ -25,6 +25,7 @@ define([
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/app/util/database-name-resolver',
     'find/app/util/saved-query-result-poller',
+    'find/app/util/events',
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
@@ -33,7 +34,7 @@ define([
     'text!find/templates/app/page/find-search.html'
 ], function (BasePage, Backbone, config, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
              InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel,
-             QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, router, vent, i18n, $, _, template) {
+             QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, events, router, vent, i18n, $, _, template) {
 
     'use strict';
 
@@ -133,18 +134,13 @@ define([
                 }
             });
 
-            // TODO: this does nothing - the attribute name is wrong
-            this.listenTo(this.savedSearchCollection, 'add', function (model) {
-                if (this.selectedTabModel.get('selectedCid') === null) {
-                    this.selectedTabModel.set('selectedCid', model.cid);
-                }
-            });
-
             this.listenTo(this.savedSearchCollection, 'remove', function (savedSearch) {
                 var cid = savedSearch.cid;
                 this.serviceViews[cid].view.remove();
                 this.queryStates.unset(cid);
                 delete this.serviceViews[cid];
+
+                events(cid).abandon();
 
                 if (this.selectedTabModel.get('selectedSearchCid') === cid) {
                     var lastModel = this.savedQueryCollection.last();
@@ -177,8 +173,11 @@ define([
                             config: savedSearchConfig,
                             savedQueryCollection: this.savedQueryCollection,
                             queryStates: this.queryStates,
-                            onSuccess: function(savedQueryModelId, newResults) {
-                            }
+                            onSuccess: _.bind(function(savedQueryModelId, newResults) {
+                                this.savedQueryCollection.get(savedQueryModelId).set({
+                                    newDocuments: newResults
+                                });
+                            }, this)
                         });
                     });
                 }
@@ -343,6 +342,8 @@ define([
                 var viewData;
                 var savedSearchModel = this.savedSearchCollection.get(cid);
                 var searchType = savedSearchModel.get('type');
+
+                events(cid);
 
                 if (this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
