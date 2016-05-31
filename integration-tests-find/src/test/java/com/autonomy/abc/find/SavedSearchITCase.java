@@ -80,6 +80,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
     public void testOpenSnapshotAsQuery() {
         findService.search("open");
         saveService.saveCurrentAs("sesame", SearchType.SNAPSHOT);
+        findService.search("no longer open");
         searchTabBar.tab("sesame").activate();
 
         getElementFactory().getSearchOptionsBar().openSnapshotAsQuery();
@@ -87,6 +88,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat(searchTabBar.currentTab().getTitle(), is("New Search"));
         assertThat(searchTabBar.currentTab().getType(), is(SearchType.QUERY));
         assertThat(searchTabBar.tab("sesame").getType(), is(SearchType.SNAPSHOT));
+        assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is("open"));
     }
 
     @Test
