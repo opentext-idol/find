@@ -19,32 +19,24 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         super(driver.findElement(By.className("service-view-container")), driver);
     }
 
+    private RelatedConceptsPanel conceptsPanel() {
+        return new RelatedConceptsPanel(getDriver());
+    }
+
     public List<WebElement> relatedConcepts() {
-        waitForRelatedConceptsToLoad();
-        return findElements(By.cssSelector(".related-concepts-list a"));
+        return conceptsPanel().relatedConcepts();
     }
 
     public List<String> getRelatedConcepts() {
-        return ElementUtil.getTexts(relatedConcepts());
+        return conceptsPanel().getRelatedConcepts();
     }
 
     public WebElement hoverOverRelatedConcept(int i) {
-        WebElement concept = relatedConcepts().get(i);
-        DriverUtil.hover(getDriver(), concept);
-        WebElement popover = findElement(By.className("popover"));
-        waitForPopoverToLoad(popover);
-        return popover;
+        return conceptsPanel().hoverOverRelatedConcept(i);
     }
 
     public void unhover() {
-        /* click somewhere not important to remove hover -
-        * clicking the search term box seems safe... */
-        getDriver().findElement(By.cssSelector("input.find-input")).click();
-        new WebDriverWait(getDriver(),2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
-    }
-
-    private void waitForPopoverToLoad(WebElement popover) {
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
+        conceptsPanel().unhover();
     }
 
     @Override
@@ -145,44 +137,12 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         return documentTypes;
     }
 
-    private enum Container{
-        LEFT("left-side"),
-        MIDDLE("middle"),
-        RIGHT("right-side");
-
-        private final String container;
-
-        Container(String container) {
-            this.container = container;
-        }
-
-        private String asCssClass() {
-            return "." + container + "-container";
-        }
-
-        private void waitForLoad(WebDriver driver) {
-            try {
-                new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(asCssClass() + " .loading-spinner")));
-            } catch (Exception e) {
-                //Noop
-            }
-
-            new WebDriverWait(driver, 60)
-                    .withMessage("Container " + this + " failed to load")
-                    .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(asCssClass() + " .fa-spinner")));
-        }
-    }
-
     public void waitForParametricFieldsToLoad() {
         Container.LEFT.waitForLoad(getDriver());
     }
 
     public void waitForResultsToLoad() {
         Container.MIDDLE.waitForLoad(getDriver());
-    }
-
-    private void waitForRelatedConceptsToLoad() {
-        Container.RIGHT.waitForLoad(getDriver());
     }
 
     public FindResult searchResult(int searchResultNumber) {
