@@ -20,16 +20,16 @@ public abstract class FindElementFactory extends ElementFactoryBase {
         return new FindPage.Factory().create(getDriver());
     }
 
-    public IdolFindPage getIdolFindPage() {
-        return new IdolFindPage.Factory().create(getDriver());
-    }
-
     public FindTopNavBar getTopNavBar() {
         return new FindTopNavBar(getDriver());
     }
 
     public FindResultsPage getResultsPage() {
         return getFindPage().getResultsPage();
+    }
+
+    public RelatedConceptsPanel getRelatedConceptsPanel() {
+        return new RelatedConceptsPanel(getDriver());
     }
 
     public SimilarDocumentsView getSimilarDocumentsView() {

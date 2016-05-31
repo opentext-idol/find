@@ -10,11 +10,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-class RelatedConceptsPanel {
+public class RelatedConceptsPanel {
     private final WebElement panel;
     private final WebDriver driver;
 
-    RelatedConceptsPanel(WebDriver driver) {
+    public RelatedConceptsPanel(WebDriver driver) {
         this.driver = driver;
         this.panel = Container.RIGHT.findUsing(driver);
     }

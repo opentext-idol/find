@@ -8,18 +8,16 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
-import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import java.util.List;
-
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
@@ -45,7 +43,7 @@ public class FindSessionITCase extends FindTestBase {
         deleteCookies();
         try {
             findService.search("XYZ");
-        } catch (NoSuchElementException | StaleElementReferenceException e) {
+        } catch (NoSuchElementException | StaleElementReferenceException | TimeoutException e) {
             /* Probably refreshed page quicker than .search could complete */
         }
         verifyRefreshedSession();
@@ -76,18 +74,21 @@ public class FindSessionITCase extends FindTestBase {
     @Test
     public void testRelatedConcepts(){
         results = findService.search("Come and Gone");
-        List<WebElement> relatedConcepts = results.relatedConcepts();
 
         deleteCookies();
 
-        DriverUtil.hover(getDriver(), relatedConcepts.get(0));
+        getElementFactory().getRelatedConceptsPanel().hoverOverRelatedConcept(0);
 
         Waits.loadOrFadeWait();
         verifyRefreshedSession();
     }
 
     private void verifyRefreshedSession(){
-        verifyThat("Directed to splash screen", getElementFactory().getFindPage().footerLogo(), displayed());
+        if (isHosted()) {
+            verifyThat("Directed to splash screen", getElementFactory().getFindPage().footerLogo(), displayed());
+        } else {
+            verifyThat(getWindow(), urlContains("login"));
+        }
     }
 
     private void deleteCookies(){

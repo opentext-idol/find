@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class IdolFindPage extends FindPage {
 
-    public IdolFindPage(WebDriver driver) {
+    private IdolFindPage(WebDriver driver) {
         super(driver);
     }
 

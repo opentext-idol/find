@@ -20,8 +20,8 @@ public class IdolFindElementFactory extends FindElementFactory {
     }
 
     @Override
-    public FindPage getFindPage() {
-        return new IdolFindPage(getDriver());
+    public IdolFindPage getFindPage() {
+        return new IdolFindPage.Factory().create(getDriver());
     }
 
     public SearchTabBar getSearchTabBar() {
