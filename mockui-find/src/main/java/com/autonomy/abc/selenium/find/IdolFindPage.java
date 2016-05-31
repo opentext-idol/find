@@ -17,8 +17,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
-
 public class IdolFindPage extends FindPage {
 
     public IdolFindPage(WebDriver driver) {
@@ -73,6 +71,7 @@ public class IdolFindPage extends FindPage {
     }
 
     public int numberOfParametricFilterChildren(String filter){
+        waitForIndexes();
         ParametricFilterNode node = parametricFilterTree().findParametricFilterNode(filter);
         return node.getChildren().size();
     }
@@ -92,7 +91,6 @@ public class IdolFindPage extends FindPage {
         for(WebElement wholeChild:parametricChildrenBigEnoughForSunburst(filter)){
             names.add(wholeChild.findElement(By.className("parametric-value-name")).getText());
         }
-        LOGGER.info("Names at the end of nameParametricChildren: "+names);
         return names;
     }
 

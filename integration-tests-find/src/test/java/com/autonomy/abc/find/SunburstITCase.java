@@ -73,8 +73,8 @@ public class SunburstITCase extends FindTestBase {
         List<String> bigEnough = findPage.nameParametricChildrenBigEnoughForSunburst("CATEGORY");
 
         for(WebElement segment:results.findSunburstSegments()){
-            assertThat("Segment type "+segment.getTagName(),1,is(1));
-            DriverUtil.hover(getDriver(),segment);
+            //Only works if elements on RHS of circle
+            results.hoveringRight(segment);
             String name = results.getSunburstCentreName();
             verifyThat("Hovering gives message in centre of sunburst",name,not(""));
             verifyThat("Name is correct - "+name,name,isIn(bigEnough));
@@ -90,11 +90,13 @@ public class SunburstITCase extends FindTestBase {
         results.parametricSelectionDropdown(1).select("CATEGORY");
 
         String filterBy = results.hoverOnSegmentGetCentre(1);
+        String parametricSelectionName = results.nthParametricFilterName(1);
         results.getIthSunburstSegment(1).click();
 
-        verifyThat("The correct filter label has appeared",ElementUtil.getTexts(findPage.filterLabels()),contains(equalToIgnoringCase(filterBy)));
+        verifyThat("The correct filter label has appeared: "+filterBy,ElementUtil.getTexts(findPage.filterLabels()),contains(equalToIgnoringCase(filterBy)));
 
-        String parametricSelectionName = results.nthParametricFilterName(1);
+
+        assertThat("Parametric selection name "+parametricSelectionName,1,is(1));
         verifyThat("Side bar shows only "+filterBy,findPage.numberOfParametricFilterChildren(parametricSelectionName),is(1));
         verifyThat("Parametric selection name has changed to another type of filter",results.nthParametricFilterName(1),not(is(parametricSelectionName)));
 

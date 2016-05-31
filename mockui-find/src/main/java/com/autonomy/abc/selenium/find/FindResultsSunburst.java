@@ -6,14 +6,17 @@ import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 public class FindResultsSunburst extends FindResultsPage{
 
@@ -38,14 +41,12 @@ public class FindResultsSunburst extends FindResultsPage{
 
 
     public List<WebElement> findSunburstSegments(){
-        LOGGER.info("segments size"+findElements(By.xpath("//path[not(contains(@fill,'#f0f0f0')) and not(contains(@fill,'#ffffff'))]")).size());
-        //return findElements(By.cssSelector("path:not([fill='#f0f0f0']), path:not([fill='#ffffff'])"));
-        return findElements(By.xpath("//svg/path/@fill[.!='#f0f0f0' and .!='#ffffff']"));
+        return findElements(By.cssSelector("path:not([fill='#f0f0f0']):not([fill='#ffffff'])"));
     }
 
     //decrement by 1 to discount the centre of sunburst
     public int numberOfSunburstSegments(){
-        return findSunburstSegments().size() - 1;
+        return findSunburstSegments().size();
     }
 
     public WebElement getSunburstCentre(){return findElement(By.cssSelector("svg > path[fill='#ffffff']"));}
@@ -56,7 +57,7 @@ public class FindResultsSunburst extends FindResultsPage{
     public String getSunburstCentreNumber(){return findElement(By.cssSelector(".sunburst-sector-name div")).getText();}
 
     public WebElement getIthSunburstSegment(int i){
-        List<WebElement> actualSegments = findElements(By.cssSelector("path:not([fill='#f0f0f0']):not([fill='#ffffff'])]"));
+        List<WebElement> actualSegments = findSunburstSegments();
         return actualSegments.get(i);
     }
 
@@ -66,6 +67,13 @@ public class FindResultsSunburst extends FindResultsPage{
         return getSunburstCentreName();
     }
 
+    public void hoveringRight(WebElement element){
+        Actions builder = new Actions(getDriver());
+        Dimension dimensions = element.getSize();
+        builder.moveToElement(element, (dimensions.getWidth()/4)*3, dimensions.getHeight()/2);
+        Action hover = builder.build();
+        hover.perform();
+    }
     //Parametric Filtering
     public String nthParametricFilterName(int i){
         return nthParametricFilter(i).getText();
