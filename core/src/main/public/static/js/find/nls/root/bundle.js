@@ -29,6 +29,7 @@ define([
         'app.reset': 'Reset',
         'app.roles': 'Roles',
         'app.seeAll': 'See All',
+        'app.seeMore': 'See More',
         'app.selected': 'selected',
         'app.search': 'Search',
         'app.searchPlaceholder': 'What do you want to find?',
