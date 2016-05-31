@@ -1,7 +1,5 @@
 package com.autonomy.abc.selenium.find.filters;
 
-import org.apache.xalan.xsltc.dom.Filter;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 

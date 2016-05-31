@@ -115,9 +115,10 @@ public class IdolFindPage extends FindPage {
     }
 
     //TODO: make this use the filter trees
-    private WebElement findFilter(String name){
+    public WebElement findFilter(String name){
         return leftContainer().findElement(By.xpath(".//*[contains(text(),'"+name+"')]"));
     }
+
     public boolean filterVisible(String filter){
         return findFilter(filter).isDisplayed();
     }

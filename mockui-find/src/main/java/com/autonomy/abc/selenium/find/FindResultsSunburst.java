@@ -1,10 +1,8 @@
 package com.autonomy.abc.selenium.find;
 
 
-import com.autonomy.abc.selenium.find.filters.ParametricFilterNode;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
@@ -14,7 +12,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,25 +41,29 @@ public class FindResultsSunburst extends FindResultsPage{
         return findElements(By.cssSelector("path:not([fill='#f0f0f0']):not([fill='#ffffff'])"));
     }
 
-    //decrement by 1 to discount the centre of sunburst
     public int numberOfSunburstSegments(){
         return findSunburstSegments().size();
     }
 
-    public WebElement getSunburstCentre(){return findElement(By.cssSelector("svg > path[fill='#ffffff']"));}
+    public void waitForSunburst(){
+        new WebDriverWait(getDriver(),15).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
+        }
+
+    public WebElement sunburstCentre(){return findElement(By.cssSelector("svg > path[fill='#ffffff']"));}
 
     public String getSunburstCentreName(){
         return findElement(By.className("sunburst-sector-name")).getText();}
-
-    public String getSunburstCentreNumber(){return findElement(By.cssSelector(".sunburst-sector-name div")).getText();}
 
     public WebElement getIthSunburstSegment(int i){
         List<WebElement> actualSegments = findSunburstSegments();
         return actualSegments.get(i);
     }
 
+    public void hoverOverTooFewToDisplaySegment(){
+        DriverUtil.hover(getDriver(),findElement(By.cssSelector("svg > path[fill='#f0f0f0']")));
+    }
+
     public String hoverOnSegmentGetCentre(int i){
-        //first SunburstSegment is centre so inc by 1
         DriverUtil.hover(getDriver(),getIthSunburstSegment(i));
         return getSunburstCentreName();
     }

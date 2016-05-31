@@ -3,14 +3,11 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.find.*;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -79,6 +76,8 @@ public class SunburstITCase extends FindTestBase {
             verifyThat("Hovering gives message in centre of sunburst",name,not(""));
             verifyThat("Name is correct - "+name,name,isIn(bigEnough));
         }
+        results.hoverOverTooFewToDisplaySegment();
+        verifyThat("Hovering on greyed segment explains why grey",results.getSunburstCentreName(),allOf(containsString("Consider refining your search"),containsString("too few documents")));
 
 
     }
@@ -105,6 +104,35 @@ public class SunburstITCase extends FindTestBase {
         //verifyThat("When run out of parametric types to filter by ",,);
 
     }
+
+    @Test
+    public void testSideBarFiltersChangeSunburst(){
+        findService.search("lashing");
+        results.goToSunburst();
+
+        String parametricSelectionFirst= results.nthParametricFilterName(1);
+        findPage.findFilter("GENERAL").click();
+
+        results.waitForSunburst();
+        assertThat("Parametric selection changed",results.nthParametricFilterName(1),not(is(parametricSelectionFirst)));
+    }
+
+    @Test
+    public void testTwoParametricSelectorSunburst(){
+        findService.search("rushdie");
+        results.goToSunburst();
+
+        results.parametricSelectionDropdown(1).select("PERSON");
+        results.waitForSunburst();
+        int segNumberBefore = results.numberOfSunburstSegments();
+
+        results.parametricSelectionDropdown(2).select("PLACE");
+        results.waitForSunburst();
+        int segNumberAfter = results.numberOfSunburstSegments();
+
+        assertThat("More segments with second parametric selector",segNumberAfter,greaterThan(segNumberBefore));
+    }
+
 
 
 
