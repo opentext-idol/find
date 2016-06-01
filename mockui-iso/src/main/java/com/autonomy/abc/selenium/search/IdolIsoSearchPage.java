@@ -32,7 +32,7 @@ public class IdolIsoSearchPage extends SearchPage {
     }
     @Override
     public IndexesTree indexesTree() {
-        return new IdolDatabaseTree(super.indexesTree());
+        return new IdolDatabaseTree.Factory().create(allIndexes());
     }
 
     public List<String> getPromotionLabels() {

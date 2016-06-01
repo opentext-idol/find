@@ -10,7 +10,7 @@ import java.util.List;
 public class IndexesTree implements Iterable<IndexNodeElement> {
     private final IndexCategoryNode allIndexesNode;
 
-    public IndexesTree(IndexCategoryNode node) {
+    protected IndexesTree(IndexCategoryNode node) {
         allIndexesNode = node;
     }
 
