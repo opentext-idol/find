@@ -208,6 +208,10 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
     }
 
 
+    public boolean mainResultsContainerHidden(){
+        return !(findElement(By.className("main-results-content-container")).isDisplayed());
+    }
+
     public List<WebElement> scrollForHighlightedSausages(String highlightedTerm){
         DriverUtil.scrollToBottom(getDriver());
         waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);

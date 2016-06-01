@@ -81,12 +81,19 @@ public class IdolFindPage extends FindPage {
         return node.getChildren().size();
     }
 
+    public FindResultsSunburst getSunburst(){
+        return new FindResultsSunburst(getDriver());
+    }
+
+    public FindResultsTopicMap getTopicMap(){
+        return new FindResultsTopicMap(getDriver());
+    }
+
     //to be displayed as a segment on sunburst, docs in category must be >=5% of total
     private int minDocsNeededForSunburstSegment(int total){
         return (int) Math.round((total/(double)100)*5);
     }
 
-    ///THIS SHOULD BE REDUCED!!!!!!!!!!
     public int numParametricChildrenBigEnoughForSunburst(String filter){
         return parametricChildrenBigEnoughForSunburst(filter).size();
 

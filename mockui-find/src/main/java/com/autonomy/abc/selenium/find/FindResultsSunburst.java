@@ -28,14 +28,9 @@ public class FindResultsSunburst extends FindResultsPage{
     }
 
     //Display
-    public boolean mainResultsContainerHidden(){
-        return !(findElement(By.className("main-results-content-container")).isDisplayed());
-    }
-
     public boolean sunburstVisible(){
         return findElement(By.cssSelector(".sunburst svg")).isDisplayed();
     }
-
 
     public List<WebElement> findSunburstSegments(){
         return findElements(By.cssSelector("path:not([fill='#f0f0f0']):not([fill='#ffffff'])"));

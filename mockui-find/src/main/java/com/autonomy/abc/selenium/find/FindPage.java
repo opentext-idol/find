@@ -44,9 +44,7 @@ public class FindPage extends AppElement implements AppPage,
         return results;
     }
 
-    public FindResultsSunburst getSunburst(){
-        return new FindResultsSunburst(getDriver());
-    }
+
 
     /**
      * waits until the list of indexes has been retrieved
