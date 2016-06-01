@@ -39,6 +39,13 @@ public class FindPage extends AppElement implements AppPage,
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid")));
     }
 
+    public void unhover() {
+        /* click somewhere not important to remove hover -
+        * clicking the user's username seems safe... */
+        getDriver().findElement(By.className("user-username")).click();
+        new WebDriverWait(getDriver(),2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
+    }
+
     public FindResultsPage getResultsPage() {
         return results;
     }

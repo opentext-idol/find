@@ -8,15 +8,25 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Iterator;
 import java.util.List;
 
-public class RelatedConceptsPanel {
+public class RelatedConceptsPanel implements Iterable<WebElement> {
     private final WebElement panel;
     private final WebDriver driver;
 
     public RelatedConceptsPanel(WebDriver driver) {
         this.driver = driver;
         this.panel = Container.RIGHT.findUsing(driver);
+    }
+
+    @Override
+    public Iterator<WebElement> iterator() {
+        return relatedConcepts().iterator();
+    }
+
+    public WebElement concept(int i) {
+        return relatedConcepts().get(i);
     }
 
     public List<WebElement> relatedConcepts() {
@@ -36,13 +46,6 @@ public class RelatedConceptsPanel {
         return popover;
     }
 
-    public void unhover() {
-        /* click somewhere not important to remove hover -
-        * clicking the search term box seems safe... */
-        getDriver().findElement(By.cssSelector("input.find-input")).click();
-        new WebDriverWait(getDriver(),2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
-    }
-
     private void waitForPopoverToLoad(WebElement popover) {
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
     }
@@ -54,5 +57,4 @@ public class RelatedConceptsPanel {
     private WebDriver getDriver() {
         return driver;
     }
-
 }

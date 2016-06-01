@@ -8,8 +8,6 @@ import com.hp.autonomy.frontend.selenium.util.Locator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,26 +15,6 @@ import java.util.List;
 public class FindResultsPage extends AppElement implements QueryResultsPage {
     public FindResultsPage(WebDriver driver) {
         super(driver.findElement(By.className("service-view-container")), driver);
-    }
-
-    private RelatedConceptsPanel conceptsPanel() {
-        return new RelatedConceptsPanel(getDriver());
-    }
-
-    public List<WebElement> relatedConcepts() {
-        return conceptsPanel().relatedConcepts();
-    }
-
-    public List<String> getRelatedConcepts() {
-        return conceptsPanel().getRelatedConcepts();
-    }
-
-    public WebElement hoverOverRelatedConcept(int i) {
-        return conceptsPanel().hoverOverRelatedConcept(i);
-    }
-
-    public void unhover() {
-        conceptsPanel().unhover();
     }
 
     @Override
