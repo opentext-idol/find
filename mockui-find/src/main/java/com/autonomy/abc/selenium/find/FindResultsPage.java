@@ -127,10 +127,6 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         return new FindResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ")")), getDriver());
     }
 
-    public WebElement highlightRelatedConceptsButton() {
-        return findElement(By.xpath("//button[contains(text(),'Highlight')]"));
-    }
-
     public List<WebElement> highlightedSausages(String highlightedTerm) {
         List<WebElement> highlightedRelatedTerms = findElements(new Locator()
                     .havingClass("entity-label")

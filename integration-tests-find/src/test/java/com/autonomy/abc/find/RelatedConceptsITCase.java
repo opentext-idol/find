@@ -83,7 +83,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     @Test
     public void testRelatedConceptsInResults(){
         findService.search("Preposterous");
-        results.highlightRelatedConceptsButton().click();
+        conceptsPanel().toggleHighlight();
 
         for(WebElement relatedConceptLink : conceptsPanel()) {
             String relatedConcept = relatedConceptLink.getText();
@@ -101,7 +101,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     @RelatedTo("CCUK-3599")
     public void testRelatedConceptsHighlightButton() {
         findService.search("pancakes");
-        WebElement button = results.highlightRelatedConceptsButton();
+        WebElement button = conceptsPanel().highlightButton();
 
         verifyThat(results.scrollForHighlightedSausages(""), empty());
         verifyThat(button, not(hasClass("active")));
@@ -186,7 +186,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     @ActiveBug("CCUK-3706")
     public void testAddSausageToQuery() {
         findService.search("sausage");
-        results.highlightRelatedConceptsButton().click();
+        conceptsPanel().toggleHighlight();
 
         List<String> addedConcepts = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
