@@ -44,6 +44,10 @@ public class FindPage extends AppElement implements AppPage,
         return results;
     }
 
+    public FindResultsSunburst getSunburst(){
+        return new FindResultsSunburst(getDriver());
+    }
+
     /**
      * waits until the list of indexes has been retrieved
      * from HOD if necessary
@@ -186,6 +190,8 @@ public class FindPage extends AppElement implements AppPage,
     WebElement leftContainer(){
         return findElement(By.cssSelector(".left-side-container"));
     }
+
+    public List<WebElement> filterLabels(){return findElements(By.className("filter-label"));}
 
     public void scrollToBottom() {
         findElement(By.className("results-number")).click();

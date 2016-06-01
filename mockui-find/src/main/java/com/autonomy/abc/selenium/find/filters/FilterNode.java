@@ -39,7 +39,7 @@ public class FilterNode implements Collapsible{
         return ElementUtil.getTexts(children);
     }
 
-    WebElement getContainer(){
+    protected WebElement getContainer(){
         return container;
     }
 

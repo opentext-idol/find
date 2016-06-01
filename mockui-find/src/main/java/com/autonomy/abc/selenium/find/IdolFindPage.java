@@ -1,9 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.find.filters.DatabaseFilterTree;
-import com.autonomy.abc.selenium.find.filters.DateFilterTree;
-import com.autonomy.abc.selenium.find.filters.FilterNode;
-import com.autonomy.abc.selenium.find.filters.ParametricFilterTree;
+import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
@@ -78,12 +75,57 @@ public class IdolFindPage extends FindPage {
         return findElements(By.cssSelector(".parametric-value-element[data-value='" + filter + "']")).size() > 0;
     }
 
+    public int numberOfParametricFilterChildren(String filter){
+        waitForIndexes();
+        ParametricFilterNode node = parametricFilterTree().findParametricFilterNode(filter);
+        return node.getChildren().size();
+    }
+
+    //to be displayed as a segment on sunburst, docs in category must be >=5% of total
+    private int minDocsNeededForSunburstSegment(int total){
+        return (int) Math.round((total/(double)100)*5);
+    }
+
+    ///THIS SHOULD BE REDUCED!!!!!!!!!!
+    public int numParametricChildrenBigEnoughForSunburst(String filter){
+        return parametricChildrenBigEnoughForSunburst(filter).size();
+
+    }
+    public List<String> nameParametricChildrenBigEnoughForSunburst(String filter){
+        List <String> names = new ArrayList<>();
+        for(WebElement wholeChild:parametricChildrenBigEnoughForSunburst(filter)){
+            names.add(wholeChild.findElement(By.className("parametric-value-name")).getText());
+        }
+        return names;
+    }
+
+    private List<WebElement> parametricChildrenBigEnoughForSunburst(String filter){
+        ParametricFilterNode node = parametricFilterTree().findParametricFilterNode(filter);
+        int total = node.getTotalDocNumber();
+        int cutOff = minDocsNeededForSunburstSegment(total);
+
+        List<WebElement> bigEnough = new ArrayList<>();
+        for(WebElement parametricFilter:node.getFullChildrenElements()){
+            WebElement count = parametricFilter.findElement(By.className("parametric-value-count"));
+            String countString = count.getText().replaceAll("[()]","");
+            if (Integer.parseInt(countString)>cutOff){
+                bigEnough.add(parametricFilter);
+            }
+            else{
+                return bigEnough;
+            }
+        }
+        //is now returning whole child element
+        return bigEnough;
+    }
+
     //TODO: make this use the filter trees
-    private WebElement findFilter(String name) {
+
+    public WebElement findFilter(String name) {
         return leftContainer().findElement(By.xpath(".//*[contains(text(),'" + name + "')]"));
     }
 
-    public boolean filterVisible(String filter) {
+    public boolean filterVisible(String filter){
         return findFilter(filter).isDisplayed();
     }
 
@@ -127,6 +169,10 @@ public class IdolFindPage extends FindPage {
             }
         }
         return new ArrayList<>(matchingFilters);
+    }
+
+    public String get1stParametricFilterTypeName(){
+       return parametricFilterTree().getIthFilterType(0).getText();
     }
 
     //toggling see more
