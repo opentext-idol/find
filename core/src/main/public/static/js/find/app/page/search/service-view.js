@@ -247,13 +247,11 @@ define([
                 model: resultsViewSelectionModel
             });
 
-            this.listenTo(this.queryModel, 'refresh', this.fetchData);
+            this.listenTo(this.queryModel, 'refresh, change:indexes', this.fetchData);
             this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
             this.fetchParametricFields(this.numericParametricFieldsCollection, this.numericParametricCollection);
             this.fetchEntities();
-
-            this.listenTo(this.queryModel, 'change:indexes', this.fetchParametricCollection);
-            this.fetchParametricCollection();
+            this.fetchData();
         },
 
         render: function() {
@@ -293,33 +291,17 @@ define([
             this.fetchParametricValues(this.parametricFieldsCollection, this.parametricCollection);
             this.fetchParametricValues(this.numericParametricFieldsCollection, this.numericParametricCollection);
         },
-        fetchParametricCollection: function() {
-            this.parametricCollection.reset();
-        },
-        
+
         fetchParametricValues: function (fieldsCollection, valuesCollection) {
             valuesCollection.reset();
-        
 
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
-                this.parametricCollection.fetch({data: {
-                    databases: this.queryModel.get('indexes')
-                }});
-                //var data = {
-                //    databases: this.queryModel.get('indexes'),
-                //    queryText: this.queryModel.get('queryText'),
-                //    fieldText: this.queryModel.get('fieldText'),
-                //    minDate: this.queryModel.getIsoDate('minDate'),
-                //    maxDate: this.queryModel.getIsoDate('maxDate'),
-                //    minScore: this.queryModel.get('minScore'),
-                //    stateTokens: this.queryModel.get('stateMatchIds')
-                //};
-
                 var fieldNames = fieldsCollection.pluck('field');
                 if (fieldNames.length > 0) {
-                    valuesCollection.fetch({data: _.extend({
+                    valuesCollection.fetch({data: {
+                        databases: this.queryModel.get('indexes'),
                         fieldNames: fieldNames
-                    }, data)});
+                    }});
                 }
             }
         },
