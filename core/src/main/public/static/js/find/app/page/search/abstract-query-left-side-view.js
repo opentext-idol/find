@@ -69,8 +69,8 @@ define([
                 });
             }
 
-            this.numericParametricCollection = options.numericParametricCollection;
-            this.dateParametricCollection = options.dateParametricCollection;
+            this.numericParametricFieldsCollection = options.numericParametricFieldsCollection;
+            this.dateParametricFieldsCollection = options.dateParametricFieldsCollection;
 
             this.parametricDisplayCollection = new ParametricDisplayCollection([], {
                 parametricCollection: options.parametricCollection,
@@ -87,15 +87,16 @@ define([
             this.numericParametricView = new NumericParametricView({
                 queryModel: options.queryModel,
                 queryState: options.queryState,
-                numericParametricCollection: this.numericParametricCollection
+                fieldsCollection: this.numericParametricFieldsCollection
             });
 
             this.dateParametricView = new NumericParametricView({
                 queryModel: options.queryModel,
                 queryState: options.queryState,
-                numericParametricCollection: this.dateParametricCollection
+                fieldsCollection: this.dateParametricFieldsCollection
             });
             
+            //noinspection JSUnresolvedFunction
             this.listenTo(vent, 'vent:resize', function () {
                 this.numericParametricView.render();
                 this.dateParametricView.render();
@@ -151,6 +152,7 @@ define([
             this.dateViewWrapper.render();
 
             if (this.precisionSlider) {
+                //noinspection JSUnresolvedVariable
                 this.$el.prepend(this.precisionSlider.$el);
                 this.precisionSlider.render();
             }
@@ -183,8 +185,8 @@ define([
         },
 
         updateParametricVisibility: function() {
-            this.numericParametricView.$el.toggleClass('hide', this.numericParametricCollection.length === 0 && Boolean(this.filterModel.get('text')));
-            this.dateParametricView.$el.toggleClass('hide', this.dateParametricCollection.length === 0 && Boolean(this.filterModel.get('text')));
+            this.numericParametricView.$el.toggleClass('hide', this.numericParametricFieldsCollection.length === 0 && Boolean(this.filterModel.get('text')));
+            this.dateParametricView.$el.toggleClass('hide', this.dateParametricFieldsCollection.length === 0 && Boolean(this.filterModel.get('text')));
             this.parametricView.$el.toggleClass('hide', this.parametricDisplayCollection.length === 0 && Boolean(this.filterModel.get('text')));
         },
 

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.ObjectFactory;
 import java.io.Serializable;
 import java.util.Collections;
 
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -38,15 +39,9 @@ public abstract class AbstractParametricValuesControllerTest<Q extends QueryRest
     }
 
     @Test
-    public void getNumericParametricValues() throws E {
-        parametricValuesController.getNumericParametricValues(Collections.singletonList("SomeNumericParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
-        verify(parametricValuesService).getNumericParametricValues(Matchers.<R>any());
-    }
-
-    @Test
-    public void getDateParametricValues() throws E {
-        parametricValuesController.getDateParametricValues(Collections.singletonList("SomeDateParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
-        verify(parametricValuesService).getDateParametricValues(Matchers.<R>any());
+    public void getNumericParametricValuesInBuckets() throws E {
+        parametricValuesController.getNumericParametricValuesInBuckets(Collections.singletonList("SomeNumericParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null, 35);
+        verify(parametricValuesService).getNumericParametricValuesInBuckets(Matchers.<R>any(), eq(35));
     }
 
     @Test

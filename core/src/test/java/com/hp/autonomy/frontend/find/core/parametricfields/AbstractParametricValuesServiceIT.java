@@ -8,7 +8,6 @@ package com.hp.autonomy.frontend.find.core.parametricfields;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -36,31 +35,13 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
     }
 
     @Test
-    public void getNumericParametricValues() throws Exception {
-        // TODO: need some numeric parametric fields to be configured
-        final String[] fields = mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_NUMERIC_FIELDS_PATH);
-        if (ArrayUtils.isNotEmpty(fields)) {
-            final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_VALUES_PATH + ParametricValuesController.NUMERIC_PARAMETRIC_PATH)
-                    .param(ParametricValuesController.FIELD_NAMES_PARAM, fields)
-                    .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                    .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                    .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
-                    .with(authentication(userAuth()));
-
-            mockMvc.perform(requestBuilder)
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                    .andExpect(jsonPath("$", empty()));
-        }
-    }
-
-    @Test
     public void getDateParametricValues() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_VALUES_PATH + ParametricValuesController.NUMERIC_PARAMETRIC_PATH)
+        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_VALUES_PATH + ParametricValuesController.BUCKET_PARAMETRIC_PATH)
                 .param(ParametricValuesController.FIELD_NAMES_PARAM, new String[]{ParametricValuesService.AUTN_DATE_FIELD})
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
                 .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
+                .param(ParametricValuesController.TARGET_NUMBER_OF_BUCKETS_PARAM, "35")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)

@@ -6,13 +6,16 @@
 define([
     'jquery',
     'underscore',
+    'find/app/model/bucketed-parametric-collection',
     'find/app/page/search/filters/parametric/abstract-parametric-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'js-whatever/js/list-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-view.html'
-], function ($, _, AbstractView, FieldView, ListView, i18n, template) {
+], function ($, _, BucketedParametricCollection, AbstractView, FieldView, ListView, i18n, template) {
     "use strict";
+
+    const DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
 
     var PreInitialisedListView = ListView.extend({
         createItemView: function (model) {
@@ -38,15 +41,29 @@ define([
         template: _.template(template)({i18n: i18n}),
 
         initialize: function (options) {
-            this.monitorCollection(options.numericParametricCollection);
+            this.collection = new BucketedParametricCollection();
+            this.monitorCollection(this.collection);
 
             this.fieldNamesListView = new PreInitialisedListView({
-                collection: options.numericParametricCollection,
+                collection: this.collection,
                 ItemView: FieldView,
                 itemOptions: {
                     queryModel: options.queryModel,
                     selectedParametricValues: options.queryState.selectedParametricValues
                 }
+            });
+
+            //noinspection JSUnresolvedFunction
+            this.listenTo(options.fieldsCollection, 'update reset', function() {
+                //noinspection JSUnresolvedVariable
+                this.collection.fetch({
+                    data: {
+                        fieldNames: options.fieldsCollection.pluck('field'),
+                        databases: options.queryModel.get('indexes'),
+                        queryText: options.queryModel.get('queryText'),
+                        targetNumberOfBuckets: Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)
+                    }
+                });
             });
         },
 

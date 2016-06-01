@@ -29,7 +29,7 @@ define([
         };
     }
 
-    function dragEnd(scale, selectionCallback) {
+    function dragEnd(scale, selectionCallback, deselectionCallback) {
         return function () {
             var finalAttributes = selectionRect.getCurrentAttributes();
             if (finalAttributes.x2 - finalAttributes.x1 > 1) {
@@ -40,7 +40,7 @@ define([
             } else {
                 // single point selected
                 selectionRect.remove();
-                selectionCallback();
+                deselectionCallback();
             }
         }
     }
@@ -86,18 +86,18 @@ define([
                             return d.count ? graphHeight - scale.y(d.count) : emptyBarHeight;
                         },
                         width: function (d) {
-                            return scale.barWidth(d.maxValue - d.minValue + 1) - barGapSize;
+                            return scale.barWidth(d.max - d.min) - barGapSize;
                         }
                     })
                     .append("title")
                     .text(function (d) {
-                        return options.tooltip(d.minValue, d.maxValue + 1, d.count);
+                        return options.tooltip(d.min, d.max, d.count);
                     });
 
                 let dragBehavior = d3.behavior.drag()
                     .on("drag", dragMove(scale.barWidth, options.updateCallback))
                     .on("dragstart", dragStart(chart, options.yRange))
-                    .on("dragend", dragEnd(scale.barWidth, options.selectionCallback));
+                    .on("dragend", dragEnd(scale.barWidth, options.selectionCallback, options.deselectionCallback));
                 chart.call(dragBehavior);
 
                 return {
