@@ -1,10 +1,12 @@
 package com.autonomy.abc.selenium.indexes.tree;
 
+import com.autonomy.abc.selenium.indexes.Index;
 import com.hp.autonomy.frontend.selenium.element.ChevronContainer;
 import com.hp.autonomy.frontend.selenium.element.Collapsible;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,6 +56,20 @@ public abstract class IndexCategoryNode implements IndexNodeElement, Collapsible
     @Override
     public String getName() {
         return container.getText();
+    }
+
+    public List<String> getSelectedNames() {
+        List<String> selected = new ArrayList<>();
+        for (IndexNodeElement child : this) {
+            if (child.isSelected()) {
+                selected.add(child.getName());
+            }
+        }
+        return selected;
+    }
+
+    public Index getIndex(int i) {
+        return new Index(getIndexNodes().get(i).getName());
     }
 
     protected abstract List<IndexNodeElement> getIndexNodes();

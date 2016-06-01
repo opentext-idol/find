@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.find;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
-import com.google.common.collect.Iterables;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
@@ -58,7 +57,7 @@ public class FindPage extends AppElement implements AppPage,
      * from HOD if necessary
      */
     void waitForIndexes() {
-        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
+        filters().waitForIndexes();
     }
 
     @Override
@@ -164,8 +163,6 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     public int totalResultsNum(){return Integer.parseInt(findElement(By.className("total-results-number")).getText());}
-
-    public String getIthIndex(int i){return Iterables.get(indexesTree(),i).getName();}
 
     public void openDetailedPreview(){
         findElement(By.className("preview-mode-open-detail-button")).click();

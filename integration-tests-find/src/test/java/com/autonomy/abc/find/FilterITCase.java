@@ -27,7 +27,8 @@ import java.util.List;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 public class FilterITCase extends FindTestBase {
     private FindPage findPage;
@@ -101,7 +102,7 @@ public class FilterITCase extends FindTestBase {
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
         findService.search("wolf");
 
-        FilterPanel panel = getElementFactory().getFilterPanel();
+        FilterPanel panel = filters();
         panel.clickFirstIndex();
         panel.clickFirstIndex();
 
@@ -128,17 +129,17 @@ public class FilterITCase extends FindTestBase {
     public void testFilterByMultipleIndexes() {
         findService.search("unbelievable");
 
-        IndexFilter filter = new IndexFilter(findPage.getIthIndex(2));
+        IndexFilter filter = new IndexFilter(filters().getIndex(2));
         findPage.filterBy(filter);
         Waits.loadOrFadeWait();
         int firstFilterResults = findPage.totalResultsNum();
 
-        filter.add(findPage.getIthIndex(3));
+        filter.add(filters().getIndex(3));
         findPage.filterBy(filter);
         Waits.loadOrFadeWait();
         int bothFilterResults = findPage.totalResultsNum();
 
-        findPage.filterBy(new IndexFilter(findPage.getIthIndex(3)));
+        findPage.filterBy(new IndexFilter(filters().getIndex(3)));
         int secondFilterResults = findPage.totalResultsNum();
 
         assertThat("Both filter indexes thus both results", firstFilterResults + secondFilterResults, is(bothFilterResults));
@@ -245,5 +246,9 @@ public class FilterITCase extends FindTestBase {
             results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
             assertThat(results.resultsDiv().getText(), not(containsString("Loading")));
         }
+    }
+
+    private FilterPanel filters() {
+        return getElementFactory().getFilterPanel();
     }
 }
