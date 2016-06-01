@@ -114,16 +114,7 @@ define([
                     this.sunburst.resize();
                 }
             }, this));
-        },
-
-        uiUpdate: function () {
-            ParametricResultsView.prototype.uiUpdate.apply(this, arguments);
-
-            if (this.sunburst) {
-                this.sunburst.resize();
-            }
         }
-        
     });
 
 });

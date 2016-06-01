@@ -41,10 +41,6 @@ define([
                 expect(this.view.$parametricSelections).toHaveClass('hide');
             });
 
-            it('should display the no parametric values for current search message', function() {
-                expect(this.view.$message).toHaveText(EMPTY_MESSAGE);
-            });
-
             describe('then the parametric collection fetches', function() {
                 beforeEach(function() {
                     this.parametricCollection.fetching = true;
@@ -52,7 +48,7 @@ define([
                 });
 
                 it('should not display a message, content view or field selections', function() {
-                    expect(this.view.$message).toHaveText(DEPENDENT_EMPTY_MESSAGE);
+                    expect(this.view.$message).toHaveText('');
                     expect(this.view.$content).toHaveClass('hide');
                     expect(this.view.$parametricSelections).toHaveClass('hide');
                 });
@@ -82,7 +78,7 @@ define([
                     beforeEach(function () {
                         this.parametricCollection.fetching = false;
                         this.parametricCollection.error = true;
-                        this.parametricCollection.trigger('error');
+                        this.parametricCollection.trigger('error', null, {status: 1});
                     });
 
                     it('should not display a loading spinner, content view or field selections', function () {
