@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
 import com.google.common.collect.Iterables;
@@ -32,6 +33,10 @@ public class FindPage extends AppElement implements AppPage,
         results = new FindResultsPage(driver);
     }
 
+    protected FilterPanel filters() {
+        return new FilterPanel(new IndexesTree.Factory(), getDriver());
+    }
+
     @Override
     public void waitForLoad() {
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid")));
@@ -58,7 +63,7 @@ public class FindPage extends AppElement implements AppPage,
 
     @Override
     public IndexesTree indexesTree() {
-        return new IndexesTree(new FindIndexCategoryNode(findElement(By.cssSelector(".databases-list [data-category-id='all']")), getDriver()));
+        return filters().indexesTree();
     }
 
     public void sortBy(SortBy sortBy) {

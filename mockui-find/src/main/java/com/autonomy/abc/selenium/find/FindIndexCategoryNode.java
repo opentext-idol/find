@@ -9,11 +9,11 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
-class FindIndexCategoryNode extends IndexCategoryNode {
+public class FindIndexCategoryNode extends IndexCategoryNode {
     private final WebElement container;
     private final WebDriver driver;
 
-    FindIndexCategoryNode(WebElement clickable, WebDriver webDriver) {
+    public FindIndexCategoryNode(WebElement clickable, WebDriver webDriver) {
         super(new FindIndexLeafNode(clickable, webDriver), clickable, webDriver);
         container = clickable;
         driver = webDriver;

@@ -1,9 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.find.filters.DatabaseFilterTree;
-import com.autonomy.abc.selenium.find.filters.DateFilterTree;
-import com.autonomy.abc.selenium.find.filters.FilterNode;
-import com.autonomy.abc.selenium.find.filters.ParametricFilterTree;
+import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
@@ -26,8 +23,8 @@ public class IdolFindPage extends FindPage {
     }
 
     @Override
-    public IndexesTree indexesTree() {
-        return new IdolDatabaseTree(super.indexesTree());
+    protected FilterPanel filters() {
+        return new FilterPanel(new IdolDatabaseTree.Factory(), getDriver());
     }
 
     private ParametricFilterTree parametricFilterTree() {

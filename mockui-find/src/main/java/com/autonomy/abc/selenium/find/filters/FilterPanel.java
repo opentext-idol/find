@@ -1,7 +1,11 @@
 package com.autonomy.abc.selenium.find.filters;
 
 import com.autonomy.abc.selenium.find.Container;
+import com.autonomy.abc.selenium.find.FindIndexCategoryNode;
+import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
+import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,10 +16,16 @@ import java.util.List;
 public class FilterPanel {
     private final WebElement panel;
     private final WebDriver driver;
+    private final ParametrizedFactory<IndexCategoryNode, IndexesTree> indexesTreeFactory;
 
-    public FilterPanel(WebDriver driver) {
+    public FilterPanel(ParametrizedFactory<IndexCategoryNode, IndexesTree> indexesTreeFactory, WebDriver driver) {
+        this.indexesTreeFactory = indexesTreeFactory;
         this.driver = driver;
         this.panel = Container.LEFT.findUsing(driver);
+    }
+
+    public IndexesTree indexesTree() {
+        return indexesTreeFactory.create(new FindIndexCategoryNode(panel.findElement(By.cssSelector(".databases-list [data-category-id='all']")), getDriver()));
     }
 
     public List<String> getSelectedPublicIndexes() {
@@ -39,4 +49,7 @@ public class FilterPanel {
 
     public void seeMoreOfCategory(WebElement element){element.findElement(By.className("toggle-more")).click();}
 
+    private WebDriver getDriver() {
+        return driver;
+    }
 }
