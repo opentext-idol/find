@@ -145,7 +145,7 @@ public class QueryTermsITCase extends FindTestBase {
 
         findService.search(" ");
         assertThat(results.getResultTitles(), is(resultTitles));
-        verifyThat("Empty Parametric Table does not exist", !findPage.parametricEmptyExists());
+        verifyThat("Empty Parametric Table does not exist", !getElementFactory().getFilterPanel().parametricEmptyExists());
         assumeThat(getConfig().getType(), is(ApplicationType.HOSTED));
         assertThat(findPage.parametricContainer().getText(), not(isEmptyOrNullString()));
     }

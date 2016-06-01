@@ -14,9 +14,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class FindPage extends AppElement implements AppPage,
         IndexFilter.Filterable,
@@ -56,16 +54,6 @@ public class FindPage extends AppElement implements AppPage,
      */
     void waitForIndexes() {
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
-    }
-
-    public List<String> getSelectedPublicIndexes() {
-        List<String> indexes = new ArrayList<>();
-
-        for(WebElement selectedIndex : findElements(By.cssSelector("[data-category-id='public'] .icon-ok.database-icon"))){
-            indexes.add(ElementUtil.ancestor(selectedIndex, 2).findElement(By.xpath("./span[@class='database-name' or @class='category-name']")).getText());
-        }
-
-        return indexes;
     }
 
     @Override
@@ -149,10 +137,6 @@ public class FindPage extends AppElement implements AppPage,
         return ElementUtil.ancestor(firstParametric, 2);
     }
 
-    public Boolean parametricEmptyExists(){
-        return findElements(By.className("parametric-empty")).size()!=0;
-    }
-
     @Override
     public void waitForParametricValuesToLoad() {
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("parametric-processing-indicator")));
@@ -176,14 +160,7 @@ public class FindPage extends AppElement implements AppPage,
 
     public int totalResultsNum(){return Integer.parseInt(findElement(By.className("total-results-number")).getText());}
 
-    //should check not already selected
-    public void clickFirstIndex(){
-        findElement(By.cssSelector(".child-categories li:first-child")).click();
-    }
-
     public String getIthIndex(int i){return Iterables.get(indexesTree(),i).getName();}
-
-    public void seeMoreOfCategory(WebElement element){element.findElement(By.className("toggle-more")).click();}
 
     public void openDetailedPreview(){
         findElement(By.className("preview-mode-open-detail-button")).click();

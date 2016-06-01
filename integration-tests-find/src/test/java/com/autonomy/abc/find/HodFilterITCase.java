@@ -100,7 +100,7 @@ public class HodFilterITCase extends HsodFindTestBase {
         findService.search("Marina and the Diamonds");
 
         verifyThat("public indexes are visible", findPage.indexesTree().publicIndexes(), not(emptyIterable()));
-        verifyThat(findPage.getSelectedPublicIndexes(), empty());
+        verifyThat(getElementFactory().getFilterPanel().getSelectedPublicIndexes(), empty());
     }
 
     private enum FileType {

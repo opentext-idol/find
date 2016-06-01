@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindParametricCheckbox;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -100,8 +101,9 @@ public class FilterITCase extends FindTestBase {
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
         findService.search("wolf");
 
-        findPage.clickFirstIndex();
-        findPage.clickFirstIndex();
+        FilterPanel panel = getElementFactory().getFilterPanel();
+        panel.clickFirstIndex();
+        panel.clickFirstIndex();
 
         results.waitForResultsToLoad();
         assertThat(results.getText().toLowerCase(), not(containsString("error")));

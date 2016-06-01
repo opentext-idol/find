@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-enum Container {
+public enum Container {
     LEFT("left-side"),
     MIDDLE("middle"),
     RIGHT("right-side");
@@ -21,7 +21,7 @@ enum Container {
         return "." + container + "-container";
     }
 
-    void waitForLoad(WebDriver driver) {
+    public void waitForLoad(WebDriver driver) {
         try {
             new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(asCssClass() + " .loading-spinner")));
         } catch (Exception e) {
@@ -33,7 +33,7 @@ enum Container {
                 .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(asCssClass() + " .fa-spinner")));
     }
 
-    WebElement findUsing(WebDriver driver) {
+    public WebElement findUsing(WebDriver driver) {
         return driver.findElement(By.cssSelector(".full-height-viewport:not(.hide) " + asCssClass()));
     }
 }

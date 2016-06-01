@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find.application;
 
 import com.autonomy.abc.selenium.find.*;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -30,6 +31,10 @@ public abstract class FindElementFactory extends ElementFactoryBase {
 
     public RelatedConceptsPanel getRelatedConceptsPanel() {
         return new RelatedConceptsPanel(getDriver());
+    }
+
+    public FilterPanel getFilterPanel() {
+        return new FilterPanel(getDriver());
     }
 
     public SimilarDocumentsView getSimilarDocumentsView() {

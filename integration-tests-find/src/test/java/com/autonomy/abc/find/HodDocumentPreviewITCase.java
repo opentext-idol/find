@@ -101,7 +101,7 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     public void testBetween30And60Results(){
         findService.search(new Query("idol"));
 
-        findPage.seeMoreOfCategory(findPage.indexesTree().publicIndexes().getContainer());
+        getElementFactory().getFilterPanel().seeMoreOfCategory(findPage.indexesTree().publicIndexes().getContainer());
         findPage.filterBy(new IndexFilter("patents"));
 
         findPage.scrollToBottom();
