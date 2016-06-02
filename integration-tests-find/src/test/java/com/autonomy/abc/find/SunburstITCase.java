@@ -85,11 +85,17 @@ public class SunburstITCase extends IdolFindTestBase {
             verifyThat("Hovering gives message in centre of sunburst", name, not(""));
             verifyThat("Name is correct - " + name, name, isIn(bigEnough));
         }
+    }
+
+    @Test
+    public void testHoveringOnGreySegmentGivesMessage(){
+        findService.search("elephant");
+        results.goToSunburst();
+
         assumeThat("Some segments not displayable",results.greySunburstAreaExists());
         results.hoverOverTooFewToDisplaySegment();
 
         verifyThat("Hovering on greyed segment explains why grey",results.getSunburstCentreName(),allOf(containsString("Please refine your search"),containsString("too small to display")));
-
     }
 
     @Test
