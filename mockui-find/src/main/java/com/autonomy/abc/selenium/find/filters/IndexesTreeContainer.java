@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-class IndexesTreeContainer extends FilterNode{
+class IndexesTreeContainer extends FilterContainer {
 
     IndexesTreeContainer(WebElement element, WebDriver webDriver){
         super(element,webDriver);

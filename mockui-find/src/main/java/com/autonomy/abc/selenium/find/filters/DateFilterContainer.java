@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-class DateFilterContainer extends FilterNode {
+class DateFilterContainer extends FilterContainer {
 
     DateFilterContainer(WebElement element, WebDriver webDriver){
         super(element,webDriver);

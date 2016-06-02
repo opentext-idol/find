@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.find.FindIndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
+import com.hp.autonomy.frontend.selenium.element.Collapsible;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
@@ -53,28 +54,31 @@ public class FilterPanel {
         return driver;
     }
 
-    private List<FilterNode> parametricFieldContainers() {
-        List<FilterNode> containers = new ArrayList<>();
+    private List<FilterContainer> allFilterContainers() {
+        List<FilterContainer> nodes = parametricFieldContainers();
+        nodes.add(0, indexesTreeContainer());
+        nodes.add(1, dateFilterContainer());
+        return nodes;
+    }
+
+    private FilterContainer indexesTreeContainer() {
+        WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
+        WebElement container = ElementUtil.ancestor(heading, 2);
+        return new IndexesTreeContainer(container, getDriver());
+    }
+
+    private FilterContainer dateFilterContainer() {
+        WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
+        WebElement container = ElementUtil.ancestor(heading, 2);
+        return new DateFilterContainer(container, getDriver());
+    }
+
+    private List<FilterContainer> parametricFieldContainers() {
+        List<FilterContainer> containers = new ArrayList<>();
         for (WebElement container : getParametricFilters()) {
             containers.add(new ParametricFieldContainer(container, driver));
         }
         return containers;
-    }
-
-    private FilterNode dateFilterContainer() {
-        return new DateFilterContainer(ElementUtil.ancestor(getDateFilter(), 2), getDriver());
-    }
-
-    private FilterNode indexesTreeContainer() {
-        return new IndexesTreeContainer(ElementUtil.ancestor(getIndexFilter(), 2), getDriver());
-    }
-
-    private WebElement getIndexFilter() {
-        return panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
-    }
-
-    private WebElement getDateFilter() {
-        return panel.findElement(By.xpath(".//h4[contains(text(),'Dates')]"));
     }
 
     private List<WebElement> getParametricFilters() {
@@ -120,27 +124,19 @@ public class FilterPanel {
 
     public void expandFiltersFully() {
         waitForIndexes();
-        expandAll();
+        for (Collapsible collapsible : allFilterContainers()) {
+            collapsible.expand();
+        }
         showFilters();
     }
 
-    private void expandAll() {
-        indexesTreeContainer().expand();
-        dateFilterContainer().expand();
-        for (FilterNode parametricField : parametricFieldContainers()) {
-            parametricField.expand();
-        }
-    }
-
     public void collapseAll() {
-        indexesTreeContainer().collapse();
-        dateFilterContainer().collapse();
-        for (FilterNode parametricField : parametricFieldContainers()) {
-            parametricField.collapse();
+        for (Collapsible collapsible : allFilterContainers()) {
+            collapsible.collapse();
         }
     }
 
-    public FilterNode parametricField(int i) {
+    public FilterContainer parametricField(int i) {
         return parametricFieldContainers().get(i);
     }
 }

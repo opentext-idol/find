@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-class ParametricFieldContainer extends FilterNode {
+class ParametricFieldContainer extends FilterContainer {
 
     ParametricFieldContainer(WebElement element, WebDriver webDriver) {
         super(element, webDriver);
