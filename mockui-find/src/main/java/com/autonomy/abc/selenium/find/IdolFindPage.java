@@ -184,6 +184,10 @@ public class IdolFindPage extends FindPage {
        return parametricFilterTree().getIthFilterType(0).getText();
     }
 
+    public WebElement firstChildOfFirstParametricType(){
+        return parametricFilterTree().findParametricFilterNode(get1stParametricFilterTypeName()).getChildren().get(0);
+    }
+
     //toggling see more
     public void showFilters() {
         for (WebElement element : leftContainer().findElements(By.className("toggle-more-text"))) {

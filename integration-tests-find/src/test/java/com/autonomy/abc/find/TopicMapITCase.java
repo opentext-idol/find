@@ -100,11 +100,15 @@ public class TopicMapITCase extends IdolFindTestBase {
         findService.search(searchTerm);
         results.goToTopicMap();
 
-        findPage.findFilter("UK").click();
+        WebElement filter = findPage.firstChildOfFirstParametricType();
+        String filterName = filter.getText();
+        filter.click();
+
         results.waitForReload();
-        verifyThat("The correct filter label has appeared", ElementUtil.getTexts(findPage.filterLabels()), contains(equalToIgnoringCase("UK")));
+        verifyThat("The correct filter label has appeared", ElementUtil.getTexts(findPage.filterLabels()), contains(equalToIgnoringCase(filterName)));
         verifyThat("Search term still " + searchTerm, navBar.getSearchBoxTerm(), is(searchTerm));
     }
+
     @Test
     public void testClickingOnMapEntities(){
         findService.search("rubbish");

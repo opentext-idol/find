@@ -115,7 +115,7 @@ public class SunburstITCase extends IdolFindTestBase {
         results.goToSunburst();
 
         String parametricSelectionFirst= results.nthParametricFilterName(1);
-        findPage.findFilter("GENERAL").click();
+        findPage.firstChildOfFirstParametricType().click();
 
         results.waitForSunburst();
         assertThat("Parametric selection changed",results.nthParametricFilterName(1),not(is(parametricSelectionFirst)));
