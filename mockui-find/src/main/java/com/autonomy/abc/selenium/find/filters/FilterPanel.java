@@ -121,6 +121,19 @@ public class FilterPanel {
         return panel.findElement(By.cssSelector("p:not(.hide)")).getText();
     }
 
+    public boolean isFilteringBy(DateOption filter) {
+        WebElement checkIcon = findDateFilter(filter).findElement(By.tagName("i"));
+        return !ElementUtil.hasClass("hide", checkIcon);
+    }
+
+    public void toggleFilter(DateOption filter) {
+        findDateFilter(filter).click();
+    }
+
+    private WebElement findDateFilter(DateOption filter) {
+        return panel.findElement(By.cssSelector("[data-filter-id=" + filter + "]"));
+    }
+
     //toggling see more
     public void showFilters() {
         for (WebElement element : panel.findElements(By.className("toggle-more-text"))) {

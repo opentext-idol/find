@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.find.filters.DateOption;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
@@ -122,8 +123,8 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     private void showCustomDateBoxes() {
-        if (FindResultsPage.DateEnum.CUSTOM.isSelectedInside(results)) {
-            FindResultsPage.DateEnum.CUSTOM.findInside(results).click();
+        if (!filters().isFilteringBy(DateOption.CUSTOM)) {
+            filters().toggleFilter(DateOption.CUSTOM);
             results.waitForResultsToLoad();
         }
     }

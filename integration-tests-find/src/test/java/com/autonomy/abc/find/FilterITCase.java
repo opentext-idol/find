@@ -3,6 +3,7 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.filters.DateOption;
 import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
@@ -165,8 +166,8 @@ public class FilterITCase extends FindTestBase {
     public void testQuickDoubleClickOnDateFilterNotCauseError() {
         findService.search("wookie");
 
-        toggleDateSelection(FindResultsPage.DateEnum.MONTH);
-        toggleDateSelection(FindResultsPage.DateEnum.MONTH);
+        toggleDateSelection(DateOption.MONTH);
+        toggleDateSelection(DateOption.MONTH);
 
         results.waitForResultsToLoad();
         assertThat(results.resultsDiv().getText().toLowerCase(), not(containsString("an error")));
@@ -175,20 +176,20 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testPreDefinedWeekHasSameResultsAsCustomWeek() {
-        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.WEEK);
+        preDefinedDateFiltersVersusCustomDateFilters(DateOption.WEEK);
     }
 
     @Test
     public void testPreDefinedMonthHasSameResultsAsCustomMonth() {
-        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.MONTH);
+        preDefinedDateFiltersVersusCustomDateFilters(DateOption.MONTH);
     }
 
     @Test
     public void testPreDefinedYearHasSameResultsAsCustomYear() {
-        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.YEAR);
+        preDefinedDateFiltersVersusCustomDateFilters(DateOption.YEAR);
     }
 
-    private void preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum period) {
+    private void preDefinedDateFiltersVersusCustomDateFilters(DateOption period) {
         findService.search("*");
 
         toggleDateSelection(period);
@@ -199,7 +200,7 @@ public class FilterITCase extends FindTestBase {
         assertThat(preDefinedResults, is(customResults));
     }
 
-    private Date getDate(FindResultsPage.DateEnum period) {
+    private Date getDate(DateOption period) {
         Calendar cal = Calendar.getInstance();
 
         if (period != null) {
@@ -221,15 +222,15 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ActiveBug("FIND-152")
     public void testDateRemainsWhenClosingAndReopeningDateFilters() {
-        Date start = getDate(FindResultsPage.DateEnum.MONTH);
-        Date end = getDate(FindResultsPage.DateEnum.WEEK);
+        Date start = getDate(DateOption.MONTH);
+        Date end = getDate(DateOption.WEEK);
 
         findService.search(new Query("Corbyn")
                 .withFilter(new StringDateFilter().from(start).until(end)));
 
         Waits.loadOrFadeWait();
         for (int unused = 0; unused < 3; unused++) {
-            toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
+            toggleDateSelection(DateOption.CUSTOM);
             Waits.loadOrFadeWait();
         }
         assertThat(findPage.fromDateInput().getValue(), is(findPage.formatInputDate(start)));
@@ -242,7 +243,7 @@ public class FilterITCase extends FindTestBase {
         findService.search("O Captain! My Captain!");
         // may not happen the first time
         for (int unused = 0; unused < 5; unused++) {
-            toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
+            toggleDateSelection(DateOption.CUSTOM);
             assertThat(results.resultsDiv().getText(), not(containsString("Loading")));
         }
     }
@@ -251,8 +252,8 @@ public class FilterITCase extends FindTestBase {
         return getElementFactory().getFilterPanel();
     }
 
-    private void toggleDateSelection(FindResultsPage.DateEnum date) {
-        date.findInside(results).click();
+    private void toggleDateSelection(DateOption date) {
+        filters().toggleFilter(date);
         results.waitForResultsToLoad();
     }
 }

@@ -30,22 +30,6 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         return titles;
     }
 
-    public enum DateEnum {
-        WEEK,
-        MONTH,
-        YEAR,
-        CUSTOM;
-
-        public WebElement findInside(WebElement container) {
-            return container.findElement(By.cssSelector("[data-filter-id=" + this + "]"));
-        }
-
-        public boolean isSelectedInside(WebElement container) {
-            WebElement checkIcon = findInside(container).findElement(By.tagName("i"));
-            return !ElementUtil.hasClass("hide", checkIcon);
-        }
-    }
-
     public WebElement resultsDiv(){
         return getDriver().findElement(By.className("results"));
     }
