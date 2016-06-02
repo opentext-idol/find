@@ -47,10 +47,6 @@ public class FilterPanel {
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
     }
 
-    public boolean parametricEmptyExists() {
-        return !panel.findElements(By.className("parametric-empty")).isEmpty();
-    }
-
     //should check not already selected
     public void clickFirstIndex(){
         panel.findElement(By.cssSelector(".child-categories li:first-child")).click();

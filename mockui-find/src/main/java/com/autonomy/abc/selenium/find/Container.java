@@ -34,6 +34,6 @@ public enum Container {
     }
 
     public WebElement findUsing(WebDriver driver) {
-        return driver.findElement(By.cssSelector(".full-height-viewport:not(.hide) " + asCssClass()));
+        return driver.findElement(By.cssSelector(".full-height-viewport:not(.hide) " + asCssClass() + ", [data-pagename=search] " + asCssClass()));
     }
 }
