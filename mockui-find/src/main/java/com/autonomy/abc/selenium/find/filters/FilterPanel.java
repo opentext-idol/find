@@ -53,8 +53,12 @@ public class FilterPanel {
         return driver;
     }
 
-    private ParametricFilterTree parametricFilterTree() {
-        return new ParametricFilterTree(panel, getParametricFilters(), getDriver());
+    private List<FilterNode> parametricFieldContainers() {
+        List<FilterNode> containers = new ArrayList<>();
+        for (WebElement container : getParametricFilters()) {
+            containers.add(new ParametricFieldContainer(container, driver));
+        }
+        return containers;
     }
 
     private DateFilterTree dateFilterTree() {
@@ -123,16 +127,20 @@ public class FilterPanel {
     private void expandAll() {
         databaseFilterTree().expandAll();
         dateFilterTree().expandAll();
-        parametricFilterTree().expandAll();
+        for (FilterNode parametricField : parametricFieldContainers()) {
+            parametricField.expand();
+        }
     }
 
     public void collapseAll() {
         databaseFilterTree().collapseAll();
         dateFilterTree().collapseAll();
-        parametricFilterTree().collapseAll();
+        for (FilterNode parametricField : parametricFieldContainers()) {
+            parametricField.collapse();
+        }
     }
 
     public FilterNode parametricField(int i) {
-        return parametricFilterTree().getField(i);
+        return parametricFieldContainers().get(i);
     }
 }
