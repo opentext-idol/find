@@ -79,6 +79,8 @@ public class FindResultsSunburst extends FindResultsPage{
         return findElement(By.cssSelector(".parametric-selections span:nth-child("+i+")"));
     }
 
+    public boolean parametricSelectionDropdownsExist(){return findElement(By.cssSelector(".parametric-selections span")).isDisplayed();}
+
     public ChosenDrop parametricSelectionDropdown(int i){
         return new ChosenDrop(nthParametricFilter(i),getDriver());
     }

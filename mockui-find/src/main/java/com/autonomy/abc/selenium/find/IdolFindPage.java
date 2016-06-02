@@ -180,12 +180,12 @@ public class IdolFindPage extends FindPage {
         return new ArrayList<>(matchingFilters);
     }
 
-    public String get1stParametricFilterTypeName(){
-       return parametricFilterTree().getIthFilterType(0).getText();
+    public String getIthParametricFilterTypeName(int i){
+       return parametricFilterTree().getIthFilterType(i).getText();
     }
 
     public WebElement firstChildOfFirstParametricType(){
-        return parametricFilterTree().findParametricFilterNode(get1stParametricFilterTypeName()).getChildren().get(0);
+        return parametricFilterTree().findParametricFilterNode(getIthParametricFilterTypeName(0)).getChildren().get(0);
     }
 
     //toggling see more
