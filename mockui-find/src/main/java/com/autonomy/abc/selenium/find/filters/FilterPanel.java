@@ -52,8 +52,6 @@ public class FilterPanel {
         panel.findElement(By.cssSelector(".child-categories li:first-child")).click();
     }
 
-    public void seeMoreOfCategory(WebElement element){element.findElement(By.className("toggle-more")).click();}
-
     private WebDriver getDriver() {
         return driver;
     }

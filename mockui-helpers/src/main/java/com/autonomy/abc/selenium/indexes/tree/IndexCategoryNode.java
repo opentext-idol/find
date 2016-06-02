@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.indexes.tree;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.hp.autonomy.frontend.selenium.element.ChevronContainer;
 import com.hp.autonomy.frontend.selenium.element.Collapsible;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -70,6 +71,10 @@ public abstract class IndexCategoryNode implements IndexNodeElement, Collapsible
 
     public Index getIndex(int i) {
         return new Index(getIndexNodes().get(i).getName());
+    }
+
+    public void seeMore() {
+        container.findElement(By.className("toggle-more")).click();
     }
 
     protected abstract List<IndexNodeElement> getIndexNodes();

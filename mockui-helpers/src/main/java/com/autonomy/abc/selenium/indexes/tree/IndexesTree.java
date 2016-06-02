@@ -35,6 +35,7 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
     protected void expandAll() {
         allIndexes().expand();
         publicIndexes().expand();
+        publicIndexes().seeMore();
         privateIndexes().expand();
     }
 
