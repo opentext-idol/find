@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
-import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.query.*;
 import com.google.common.collect.Iterables;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
