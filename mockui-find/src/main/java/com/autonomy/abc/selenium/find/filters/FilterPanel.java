@@ -61,8 +61,8 @@ public class FilterPanel {
         return containers;
     }
 
-    private DateFilterTree dateFilterTree() {
-        return new DateFilterTree(ElementUtil.ancestor(getDateFilter(), 2), getDriver());
+    private FilterNode dateFilterContainer() {
+        return new DateFilterContainer(ElementUtil.ancestor(getDateFilter(), 2), getDriver());
     }
 
     private FilterNode indexesTreeContainer() {
@@ -126,7 +126,7 @@ public class FilterPanel {
 
     private void expandAll() {
         indexesTreeContainer().expand();
-        dateFilterTree().expandAll();
+        dateFilterContainer().expand();
         for (FilterNode parametricField : parametricFieldContainers()) {
             parametricField.expand();
         }
@@ -134,7 +134,7 @@ public class FilterPanel {
 
     public void collapseAll() {
         indexesTreeContainer().collapse();
-        dateFilterTree().collapseAll();
+        dateFilterContainer().collapse();
         for (FilterNode parametricField : parametricFieldContainers()) {
             parametricField.collapse();
         }
