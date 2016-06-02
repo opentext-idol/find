@@ -65,12 +65,12 @@ public class FilterPanel {
         return new DateFilterTree(ElementUtil.ancestor(getDateFilter(), 2), getDriver());
     }
 
-    private DatabaseFilterTree databaseFilterTree() {
-        return new DatabaseFilterTree(ElementUtil.ancestor(getDatabaseFilter(), 2), getDriver());
+    private FilterNode indexesTreeContainer() {
+        return new IndexesTreeContainer(ElementUtil.ancestor(getIndexFilter(), 2), getDriver());
     }
 
-    private WebElement getDatabaseFilter() {
-        return panel.findElement(By.xpath(".//h4[contains(text(),'Databases')]"));
+    private WebElement getIndexFilter() {
+        return panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
     }
 
     private WebElement getDateFilter() {
@@ -125,7 +125,7 @@ public class FilterPanel {
     }
 
     private void expandAll() {
-        databaseFilterTree().expandAll();
+        indexesTreeContainer().expand();
         dateFilterTree().expandAll();
         for (FilterNode parametricField : parametricFieldContainers()) {
             parametricField.expand();
@@ -133,7 +133,7 @@ public class FilterPanel {
     }
 
     public void collapseAll() {
-        databaseFilterTree().collapseAll();
+        indexesTreeContainer().collapse();
         dateFilterTree().collapseAll();
         for (FilterNode parametricField : parametricFieldContainers()) {
             parametricField.collapse();
