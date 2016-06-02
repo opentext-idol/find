@@ -49,6 +49,10 @@ public class FindResultsSunburst extends FindResultsPage{
     public String getSunburstCentreName(){
         return findElement(By.className("sunburst-sector-name")).getText();}
 
+    public boolean sunburstCentreHasText(){
+        return findElements(By.className("sunburst-sector-name")).size()>0;
+    }
+
     public WebElement getIthSunburstSegment(int i){
         List<WebElement> actualSegments = findSunburstSegments();
         return actualSegments.get(i);
@@ -58,18 +62,38 @@ public class FindResultsSunburst extends FindResultsPage{
         DriverUtil.hover(getDriver(),findElement(By.cssSelector("svg > path[fill='#f0f0f0']")));
     }
 
+    public boolean greySunburstAreaExists(){
+        return findElements(By.cssSelector("svg > path[fill='#f0f0f0']")).size()>0;
+    }
+
     public String hoverOnSegmentGetCentre(int i){
         DriverUtil.hover(getDriver(),getIthSunburstSegment(i));
         return getSunburstCentreName();
     }
 
-    public void hoveringRight(WebElement element){
+    public void segmentHover(WebElement segment){
+        DriverUtil.hover(getDriver(),segment);
+        if(!sunburstCentreHasText()|| (sunburstCentreHasText() && getSunburstCentreName().equals("Parametric Distribution"))){
+            specialHover(segment);
+        }
+    }
+
+    private void specialHover(WebElement segment){
+        Dimension dimensions = segment.getSize();
+
+        hoveringOffSide(segment,(dimensions.getWidth()/4)*3, dimensions.getHeight()/2);
+        if(!sunburstCentreHasText()|| (sunburstCentreHasText() && getSunburstCentreName().equals("Parametric Distribution"))){
+            hoveringOffSide(segment,(dimensions.getWidth()/4), dimensions.getHeight()/2);
+        }
+    }
+
+    private void hoveringOffSide(WebElement element, int xOffSet,int yOffSet){
         Actions builder = new Actions(getDriver());
-        Dimension dimensions = element.getSize();
-        builder.moveToElement(element, (dimensions.getWidth()/4)*3, dimensions.getHeight()/2);
+        builder.moveToElement(element,xOffSet,yOffSet);
         Action hover = builder.build();
         hover.perform();
     }
+
     //Parametric Filtering
     public String nthParametricFilterName(int i){
         return nthParametricFilter(i).getText();
@@ -78,6 +102,8 @@ public class FindResultsSunburst extends FindResultsPage{
     public WebElement nthParametricFilter(int i){
         return findElement(By.cssSelector(".parametric-selections span:nth-child("+i+")"));
     }
+
+    public boolean parametricSelectionDropdownsExist(){return findElement(By.cssSelector(".parametric-selections span")).isDisplayed();}
 
     public ChosenDrop parametricSelectionDropdown(int i){
         return new ChosenDrop(nthParametricFilter(i),getDriver());
