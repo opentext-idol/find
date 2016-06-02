@@ -1,20 +1,23 @@
 package com.autonomy.abc.find;
 
-import com.autonomy.abc.base.FindTestBase;
-import com.autonomy.abc.selenium.find.*;
+import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.selenium.find.FindResultsSunburst;
+import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.Matchers.*;
 
-public class SunburstITCase extends FindTestBase {
+public class SunburstITCase extends IdolFindTestBase {
     private IdolFindPage findPage;
     private FindResultsSunburst results;
     private FindService findService;
@@ -23,7 +26,7 @@ public class SunburstITCase extends FindTestBase {
 
     @Before
     public void setUp(){
-        findPage = getElementFactory().getIdolFindPage();
+        findPage = getElementFactory().getFindPage();
         results = findPage.getSunburst();
         findService = getApplication().findService();
     }

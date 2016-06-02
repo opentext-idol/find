@@ -1,6 +1,9 @@
 package com.autonomy.abc.selenium.find.application;
 
-import com.autonomy.abc.selenium.find.*;
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.FindTopNavBar;
+import com.autonomy.abc.selenium.find.SimilarDocumentsView;
 import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -18,10 +21,6 @@ public abstract class FindElementFactory extends ElementFactoryBase {
 
     public FindPage getFindPage() {
         return new FindPage.Factory().create(getDriver());
-    }
-
-    public IdolFindPage getIdolFindPage() {
-        return new IdolFindPage.Factory().create(getDriver());
     }
 
     public FindTopNavBar getTopNavBar() {

@@ -30,7 +30,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
 
     @Before
     public void setUp(){
-        findPage = getElementFactory().getIdolFindPage();
+        findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
     }
 
