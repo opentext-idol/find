@@ -9,7 +9,8 @@ require.config({
         'jasmine-ajax': '../bower_components/jasmine-ajax/lib/mock-ajax',
         'jasmine-jquery': '../bower_components/jasmine-jquery/lib/jasmine-jquery',
         'js-testing': '../bower_components/hp-autonomy-js-testing-utils/src/js',
-        'mock': '../../../../test/js/mock'
+        'mock': '../../../../test/js/mock',
+        'resources': '../../../../test/js/resources'
     },
     shim: {
         'jasmine-jquery': ['jquery']
