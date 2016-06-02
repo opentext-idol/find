@@ -3,6 +3,7 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
@@ -40,7 +41,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
     @ActiveBug("FIND-122")
     public void testSearchFilterTypes(){
         findService.search("face");
-        findPage.expandFiltersFully();
+        filters().expandFiltersFully();
 
         //if there aren't several 1000 filters -> run through all the filter types: uncomment following line
         //checkCorrectFiltersVisible(findPage.getVisibleFilterTypes(),allFilters);
@@ -55,10 +56,10 @@ public class IdolFilterITCase extends IdolFindTestBase {
         findService.search("face");
 
         //search for filter that isn't present
-        findPage.filterResults("asfsefeff");
-        assertThat("No filter matched", findPage.noneMatchingMessageVisible());
+        filters().filterResults("asfsefeff");
+        assertThat("No filter matched", filters().noneMatchingMessageVisible());
 
-        findPage.clearFilter();
+        filters().clearFilter();
 
         //if not 1000s of filters -> uncomment below
         //checkCorrectFiltersVisible(Arrays.asList("UNITED STATES OF AMERICA","Last Week","Test","PDF"));
@@ -70,17 +71,17 @@ public class IdolFilterITCase extends IdolFindTestBase {
 
         for (String targetFilter:filtersToSearch){
 
-            findPage.clearFilter();
-            findPage.expandFiltersFully();
+            filters().clearFilter();
+            filters().expandFiltersFully();
 
-            List<WebElement> allFilters = findPage.getCurrentFilters();
-            List<String> matchingFilters = findPage.findFilterString(targetFilter,allFilters);
+            List<WebElement> allFilters = filters().getCurrentFilters();
+            List<String> matchingFilters = filters().findFilterString(targetFilter,allFilters);
 
-            findPage.filterResults(targetFilter);
+            filters().filterResults(targetFilter);
 
-            findPage.showFilters();
+            filters().showFilters();
 
-            List<String> visibleFilters = ElementUtil.getTexts(findPage.getCurrentFilters());
+            List<String> visibleFilters = ElementUtil.getTexts(filters().getCurrentFilters());
 
             assertThat("Filtering with "+targetFilter+" shows the right number filters "+visibleFilters.size(),visibleFilters.size(),is(matchingFilters.size()));
 
@@ -99,14 +100,18 @@ public class IdolFilterITCase extends IdolFindTestBase {
         findService.search("face");
         String filter = "IRELAND";
 
-        assumeTrue("Filter IRELAND exists",findPage.parametricFilterExists(filter));
+        assumeTrue("Filter IRELAND exists", filters().parametricFilterExists(filter));
 
-        assertThat("Filter not visible",!findPage.filterVisible(filter));
-        findPage.expandFiltersFully();
-        assertThat("Filter visible",findPage.filterVisible(filter));
-        findPage.collapseAll();
-        assertThat("Filter not visible",!findPage.filterVisible(filter));
+        assertThat("Filter not visible",!filters().filterVisible(filter));
+        filters().expandFiltersFully();
+        assertThat("Filter visible",filters().filterVisible(filter));
+        filters().collapseAll();
+        assertThat("Filter not visible",!filters().filterVisible(filter));
 
+    }
+
+    private FilterPanel filters() {
+        return getElementFactory().getFilterPanel();
     }
 
 }

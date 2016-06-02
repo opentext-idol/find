@@ -23,7 +23,7 @@ public class FindService implements QueryService<FindResultsPage> {
     @Override
     public FindResultsPage search(final Query query) {
         elementFactory.getTopNavBar().search(query.getTerm());
-        findPage.waitForIndexes();
+        elementFactory.getFilterPanel().waitForIndexes();
         findPage.filterBy(new AggregateQueryFilter(query.getFilters()));
         return elementFactory.getResultsPage();
     }

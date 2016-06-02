@@ -52,14 +52,6 @@ public class FindPage extends AppElement implements AppPage,
         return results;
     }
 
-    /**
-     * waits until the list of indexes has been retrieved
-     * from HOD if necessary
-     */
-    void waitForIndexes() {
-        filters().waitForIndexes();
-    }
-
     @Override
     public IndexesTree indexesTree() {
         return filters().indexesTree();
@@ -166,10 +158,6 @@ public class FindPage extends AppElement implements AppPage,
 
     public void openDetailedPreview(){
         findElement(By.className("preview-mode-open-detail-button")).click();
-    }
-
-    WebElement leftContainer(){
-        return Container.LEFT.findUsing(getDriver());
     }
 
     public void scrollToBottom() {

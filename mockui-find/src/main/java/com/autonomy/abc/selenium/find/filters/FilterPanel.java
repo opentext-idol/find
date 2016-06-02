@@ -62,13 +62,8 @@ public class FilterPanel {
         return driver;
     }
 
-    private WebElement leftContainer(){
-        return panel;
-    }
-
-
     private ParametricFilterTree parametricFilterTree() {
-        return new ParametricFilterTree(leftContainer(), getParametricFilters(), getDriver());
+        return new ParametricFilterTree(panel, getParametricFilters(), getDriver());
     }
 
     private DateFilterTree dateFilterTree() {
@@ -80,11 +75,11 @@ public class FilterPanel {
     }
 
     private WebElement getDatabaseFilter() {
-        return leftContainer().findElement(By.xpath(".//h4[contains(text(),'Databases')]"));
+        return panel.findElement(By.xpath(".//h4[contains(text(),'Databases')]"));
     }
 
     private WebElement getDateFilter() {
-        return leftContainer().findElement(By.xpath(".//h4[contains(text(),'Dates')]"));
+        return panel.findElement(By.xpath(".//h4[contains(text(),'Dates')]"));
     }
 
     private List<WebElement> getParametricFilters() {
@@ -96,10 +91,6 @@ public class FilterPanel {
     }
 
     public void filterResults(String term) {
-        filterSearch(term);
-    }
-
-    private void filterSearch(String term) {
         FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Search filters...']")), getDriver());
         input.clear();
         input.setAndSubmit(term);
@@ -117,7 +108,7 @@ public class FilterPanel {
 
     //TODO: make this use the filter trees
     private WebElement findFilter(String name) {
-        return leftContainer().findElement(By.xpath(".//*[contains(text(),'" + name + "')]"));
+        return panel.findElement(By.xpath(".//*[contains(text(),'" + name + "')]"));
     }
 
     public boolean filterVisible(String filter) {
@@ -125,7 +116,7 @@ public class FilterPanel {
     }
 
     public boolean noneMatchingMessageVisible() {
-        return leftContainer().findElement(By.xpath(".//p[contains(text(),'No filters matched')]")).isDisplayed();
+        return panel.findElement(By.xpath(".//p[contains(text(),'No filters matched')]")).isDisplayed();
     }
 
     public List<WebElement> getCurrentFilters() {
@@ -168,7 +159,7 @@ public class FilterPanel {
 
     //toggling see more
     public void showFilters() {
-        for (WebElement element : leftContainer().findElements(By.className("toggle-more-text"))) {
+        for (WebElement element : panel.findElements(By.className("toggle-more-text"))) {
             if (!element.getText().equals("See Less")) {
                 element.click();
             }

@@ -19,47 +19,6 @@ public class IdolFindPage extends FindPage {
         return new FilterPanel(new IdolDatabaseTree.Factory(), getDriver());
     }
 
-    public void filterResults(String term) {
-        filters().filterResults(term);
-    }
-
-    public void clearFilter() {
-        filters().clearFilter();
-    }
-
-    public boolean parametricFilterExists(String filter) {
-        return filters().parametricFilterExists(filter);
-    }
-
-    public boolean filterVisible(String filter) {
-        return filters().filterVisible(filter);
-    }
-
-    public boolean noneMatchingMessageVisible() {
-        return filters().noneMatchingMessageVisible();
-    }
-
-    public List<WebElement> getCurrentFilters() {
-        return filters().getCurrentFilters();
-    }
-
-    public List<String> findFilterString(String targetFilter, List<WebElement> allFilters) {
-        return filters().findFilterString(targetFilter, allFilters);
-    }
-
-    //toggling see more
-    public void showFilters() {
-        filters().showFilters();
-    }
-
-    public void expandFiltersFully() {
-        filters().expandFiltersFully();
-    }
-
-    public void collapseAll() {
-        filters().collapseAll();
-    }
-
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {
         public IdolFindPage create(WebDriver context) {
             return new IdolFindPage(context);
