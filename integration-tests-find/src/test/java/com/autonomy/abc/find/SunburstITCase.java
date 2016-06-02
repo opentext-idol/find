@@ -130,14 +130,14 @@ public class SunburstITCase extends IdolFindTestBase {
     //will probably fail if your databases are different to the testing ones
     @Test
     public void testTwoParametricSelectorSunburst(){
-        findService.search("flail");
+        findService.search("cameron");
         results.goToSunburst();
 
-        results.parametricSelectionDropdown(1).select("PERSON");
+        results.parametricSelectionDropdown(1).select("SOURCE");
         results.waitForSunburst();
         int segNumberBefore = results.numberOfSunburstSegments();
 
-        results.parametricSelectionDropdown(2).select("PLACE");
+        results.parametricSelectionDropdown(2).select("CATEGORY");
         results.waitForSunburst();
         int segNumberAfter = results.numberOfSunburstSegments();
 
