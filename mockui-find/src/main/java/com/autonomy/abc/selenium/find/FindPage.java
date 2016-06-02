@@ -169,7 +169,7 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     WebElement leftContainer(){
-        return findElement(By.cssSelector(".left-side-container"));
+        return Container.LEFT.findUsing(getDriver());
     }
 
     public void scrollToBottom() {
