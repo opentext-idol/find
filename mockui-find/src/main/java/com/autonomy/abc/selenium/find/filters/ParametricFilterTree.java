@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.filters;
 
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -7,21 +8,20 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParametricFilterTree extends FilterTree {
+class ParametricFilterTree {
 
-    private final List<ParametricFilterNode> containers;
+    private final List<Node> containers;
 
     public ParametricFilterTree(WebElement container, List<WebElement> nodes,WebDriver webDriver){
-        super(container,webDriver);
         containers = new ArrayList<>();
         for(WebElement element:nodes){
-            containers.add(new ParametricFilterNode(element,webDriver));
+            containers.add(new Node(element,webDriver));
         }
     }
 
     public List<WebElement> getFilterTypes(){
         List<WebElement> filterTypes = new ArrayList<>();
-        for(ParametricFilterNode node:containers){
+        for(Node node:containers){
             if(node.findFilterType().isDisplayed())
                 filterTypes.add(node.findFilterType());
         }
@@ -31,7 +31,7 @@ public class ParametricFilterTree extends FilterTree {
     public List<WebElement> getAllFiltersInTree(){
         List<WebElement> filters = new ArrayList<>();
 
-        for(ParametricFilterNode node:containers) {
+        for(Node node:containers) {
             filters.addAll(node.getChildren());
 
             if (node.getParent().isDisplayed()) {
@@ -42,14 +42,31 @@ public class ParametricFilterTree extends FilterTree {
     }
 
     public void expandAll(){
-        for(ParametricFilterNode node:containers){
+        for(Node node:containers){
             node.expand();
         }
     }
 
     public void collapseAll(){
-        for(ParametricFilterNode node:containers){
+        for(Node node:containers){
             node.collapse();
         }
+    }
+
+    private static class Node extends FilterNode {
+
+        Node(WebElement element, WebDriver webDriver) {
+            super(element, webDriver);
+        }
+
+        public List<WebElement> getChildren(){
+            return getContainer().findElements(By.className("parametric-value-name"));
+        }
+
+        @Override
+        public List<String> getChildNames() {
+            return ElementUtil.getTexts(getChildren());
+        }
+
     }
 }

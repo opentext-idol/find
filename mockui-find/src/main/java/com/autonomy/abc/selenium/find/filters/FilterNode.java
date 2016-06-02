@@ -9,7 +9,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-public class FilterNode implements Collapsible{
+class FilterNode implements Collapsible{
 
     private final WebElement container;
     private final Collapsible collapsible;
