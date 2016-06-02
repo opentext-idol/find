@@ -7,8 +7,6 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
-
 public class ParametricFilterNode extends FilterNode {
 
     ParametricFilterNode(WebElement element, WebDriver webDriver) {
