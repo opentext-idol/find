@@ -75,41 +75,28 @@ public class FindPage extends AppElement implements AppPage,
 
     @Override
     public DatePicker fromDatePicker() {
-        return datePicker(By.className("results-filter-min-date"));
+        return datePicker(1);
     }
 
     @Override
     public DatePicker untilDatePicker() {
-        return datePicker(By.className("results-filter-max-date"));
+        return datePicker(2);
     }
 
-    private DatePicker datePicker(By locator) {
+    private DatePicker datePicker(int nthOfType) {
         showCustomDateBoxes();
-        return new DatePicker(findElement(locator), getDriver());
+        WebElement formGroup = findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ")"));
+        return new DatePicker(formGroup, getDriver());
     }
 
     @Override
     public FormInput fromDateInput() {
-        if (minFindable()) {
-            return dateInput(By.cssSelector(".results-filter-min-date input"));
-        }
-        return dateInput(By.xpath("//div[@data-date-attribute='customMinDate']/descendant::input[@class='form-control']"));
+        return dateInput(1);
     }
 
     @Override
     public FormInput untilDateInput() {
-        if (maxFindable()){
-            return dateInput(By.cssSelector(".results-filter-max-date input"));
-        }
-        return dateInput(By.xpath("//div[@data-date-attribute='customMaxDate']/descendant::input[@class='form-control']"));
-    }
-
-    private Boolean minFindable(){
-        return findElements(By.cssSelector(".results-filter-min-date input")).size()>0;
-    }
-
-    private Boolean maxFindable(){
-        return findElements(By.cssSelector(".results-filter-max-date input")).size()>0;
+        return dateInput(2);
     }
 
     @Override
@@ -117,9 +104,10 @@ public class FindPage extends AppElement implements AppPage,
         return FORMAT.format(date);
     }
 
-    private FormInput dateInput(By locator) {
+    private FormInput dateInput(int nthOfType) {
         showCustomDateBoxes();
-        return new FormInput(findElement(locator), getDriver());
+        WebElement inputBox = findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ") input"));
+        return new FormInput(inputBox, getDriver());
     }
 
     private void showCustomDateBoxes() {
