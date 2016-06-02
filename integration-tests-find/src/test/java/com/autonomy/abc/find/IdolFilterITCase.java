@@ -2,20 +2,16 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.filters.FilterNode;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebElement;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeTrue;
 
@@ -23,7 +19,6 @@ import static org.junit.Assume.assumeTrue;
 //WARNING: These tests are extremely slow when the sidebar has 1000s of filters
 
 public class IdolFilterITCase extends IdolFindTestBase {
-    private IdolFindPage findPage;
     private FindService findService;
 
     public IdolFilterITCase(TestConfig config) {
@@ -31,67 +26,54 @@ public class IdolFilterITCase extends IdolFindTestBase {
 
     @Before
     public void setUp(){
-        findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
     }
 
 
     //Filters
     @Test
-    @ActiveBug("FIND-122")
-    public void testSearchFilterTypes(){
+    @ResolvedBug("FIND-122")
+    public void testSearchForParametricFieldName(){
         findService.search("face");
-        filters().expandFiltersFully();
 
-        //if there aren't several 1000 filters -> run through all the filter types: uncomment following line
-        //checkCorrectFiltersVisible(findPage.getVisibleFilterTypes(),allFilters);
-        checkCorrectFiltersVisible(Arrays.asList("DATABASES","DATES","CATEGORY"));
+        final FilterNode goodField = filters().parametricField(2);
+        final String badFieldName = filters().parametricField(0).getParentName();
+        final String goodFieldName = goodField.getParentName();
+        final String goodFieldValue = goodField.getChildNames().get(0);
 
+        filters().filterResults(goodFieldName);
+
+        assertThat(filters().parametricField(0).getParentName(), not(badFieldName));
+        assertThat(filters().parametricField(0).getParentName(), is(goodFieldName));
+        assertThat(filters().parametricField(0).getChildNames().get(0), is(goodFieldValue));
+    }
+
+    @Test
+    public void testSearchForParametricFieldValue(){
+        findService.search("face");
+
+        final FilterNode goodField = filters().parametricField(0);
+        final String goodFieldName = goodField.getParentName();
+        final String badFieldValue = goodField.getChildNames().get(0);
+        final String goodFieldValue = goodField.getChildNames().get(1);
+
+        filters().filterResults(goodFieldValue);
+
+        assertThat(filters().parametricField(0).getParentName(), is(goodFieldName));
+        assertThat(filters().parametricField(0).getChildNames().get(0), not(badFieldValue));
+        assertThat(filters().parametricField(0).getChildNames().get(0), is(goodFieldValue));
     }
 
 
     @Test
-    @ActiveBug("FIND-122")
-    public void testSearchFilters(){
+    public void testSearchForNonExistentFilter() {
         findService.search("face");
 
-        //search for filter that isn't present
-        filters().filterResults("asfsefeff");
-        assertThat("No filter matched", filters().noneMatchingMessageVisible());
+        filters().filterResults("garbageasfsefeff");
+        assertThat(filters().getErrorMessage(), is("No filters matched"));
 
         filters().clearFilter();
-
-        //if not 1000s of filters -> uncomment below
-        //checkCorrectFiltersVisible(Arrays.asList("UNITED STATES OF AMERICA","Last Week","Test","PDF"));
-        //if 1000s of filters -> test what was broken
-        checkCorrectFiltersVisible(Collections.singletonList("Last Week"));
-    }
-
-    private void checkCorrectFiltersVisible(List<String> filtersToSearch){
-
-        for (String targetFilter:filtersToSearch){
-
-            filters().clearFilter();
-            filters().expandFiltersFully();
-
-            List<WebElement> allFilters = filters().getCurrentFilters();
-            List<String> matchingFilters = filters().findFilterString(targetFilter,allFilters);
-
-            filters().filterResults(targetFilter);
-
-            filters().showFilters();
-
-            List<String> visibleFilters = ElementUtil.getTexts(filters().getCurrentFilters());
-
-            assertThat("Filtering with "+targetFilter+" shows the right number filters "+visibleFilters.size(),visibleFilters.size(),is(matchingFilters.size()));
-
-
-            Collections.sort(visibleFilters);
-            Collections.sort(matchingFilters);
-
-            assertThat("All filters that should be displayed are", matchingFilters.equals(visibleFilters));
-        }
-
+        assertThat(filters().getErrorMessage(), isEmptyOrNullString());
     }
 
     //Expanding & Collapsing

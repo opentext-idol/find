@@ -53,6 +53,10 @@ class ParametricFilterTree {
         }
     }
 
+    public FilterNode getField(int i) {
+        return containers.get(i);
+    }
+
     private static class Node extends FilterNode {
 
         Node(WebElement element, WebDriver webDriver) {

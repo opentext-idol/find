@@ -113,6 +113,10 @@ public class FilterPanel {
         return panel.findElement(By.xpath(".//p[contains(text(),'No filters matched')]")).isDisplayed();
     }
 
+    public String getErrorMessage() {
+        return panel.findElement(By.cssSelector("p:not(.hide)")).getText();
+    }
+
     public List<WebElement> getCurrentFilters() {
         List<WebElement> currentFilters = new ArrayList<>();
         currentFilters.addAll(databaseFilterTree().getAllFiltersInTree());
@@ -178,4 +182,7 @@ public class FilterPanel {
         parametricFilterTree().collapseAll();
     }
 
+    public FilterNode parametricField(int i) {
+        return parametricFilterTree().getField(i);
+    }
 }
