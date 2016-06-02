@@ -122,8 +122,9 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     private void showCustomDateBoxes() {
-        if (!results.isDateSelected(FindResultsPage.DateEnum.CUSTOM)) {
-            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
+        if (FindResultsPage.DateEnum.CUSTOM.isSelectedInside(results)) {
+            FindResultsPage.DateEnum.CUSTOM.findInside(results).click();
+            results.waitForResultsToLoad();
         }
     }
 

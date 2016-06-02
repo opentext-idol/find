@@ -165,8 +165,8 @@ public class FilterITCase extends FindTestBase {
     public void testQuickDoubleClickOnDateFilterNotCauseError() {
         findService.search("wookie");
 
-        results.toggleDateSelection(FindResultsPage.DateEnum.MONTH);
-        results.toggleDateSelection(FindResultsPage.DateEnum.MONTH);
+        toggleDateSelection(FindResultsPage.DateEnum.MONTH);
+        toggleDateSelection(FindResultsPage.DateEnum.MONTH);
 
         results.waitForResultsToLoad();
         assertThat(results.resultsDiv().getText().toLowerCase(), not(containsString("an error")));
@@ -191,7 +191,7 @@ public class FilterITCase extends FindTestBase {
     private void preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum period) {
         findService.search("*");
 
-        results.toggleDateSelection(period);
+        toggleDateSelection(period);
         List<String> preDefinedResults = results.getResultTitles();
         findPage.filterBy(new StringDateFilter().from(getDate(period)).until(new Date()));
         List<String> customResults = results.getResultTitles();
@@ -229,7 +229,7 @@ public class FilterITCase extends FindTestBase {
 
         Waits.loadOrFadeWait();
         for (int unused = 0; unused < 3; unused++) {
-            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
+            toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
             Waits.loadOrFadeWait();
         }
         assertThat(findPage.fromDateInput().getValue(), is(findPage.formatInputDate(start)));
@@ -242,12 +242,17 @@ public class FilterITCase extends FindTestBase {
         findService.search("O Captain! My Captain!");
         // may not happen the first time
         for (int unused = 0; unused < 5; unused++) {
-            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
+            toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
             assertThat(results.resultsDiv().getText(), not(containsString("Loading")));
         }
     }
 
     private FilterPanel filters() {
         return getElementFactory().getFilterPanel();
+    }
+
+    private void toggleDateSelection(FindResultsPage.DateEnum date) {
+        date.findInside(results).click();
+        results.waitForResultsToLoad();
     }
 }

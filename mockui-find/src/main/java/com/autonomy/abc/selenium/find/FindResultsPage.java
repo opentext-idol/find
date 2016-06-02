@@ -34,26 +34,15 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         WEEK,
         MONTH,
         YEAR,
-        CUSTOM
-    }
+        CUSTOM;
 
-    public void toggleDateSelection(DateEnum date) {
-        dateOption(date).click();
-        waitForResultsToLoad();
-    }
-
-    public boolean isDateSelected(DateEnum date) {
-        WebElement checkIcon = dateOption(date).findElement(By.tagName("i"));
-        return !ElementUtil.hasClass("hide", checkIcon);
-    }
-
-    private WebElement dateOption(DateEnum date) {
-        String formattedDate = date.toString().toLowerCase();
-        if(formattedDate.equals("custom")){
-            return findElement(By.xpath("//tr[@class='clickable' and td[contains(text(),'" + Character.toUpperCase(formattedDate.charAt(0)) + formattedDate.substring(1) + "')]]"));
+        public WebElement findInside(WebElement container) {
+            return container.findElement(By.cssSelector("[data-filter-id=" + this + "]"));
         }
-        else{
-            return findElement(By.xpath("//tr[@class='clickable' and td[contains(text(),'Last " + Character.toUpperCase(formattedDate.charAt(0)) + formattedDate.substring(1) + "')]]"));
+
+        public boolean isSelectedInside(WebElement container) {
+            WebElement checkIcon = findInside(container).findElement(By.tagName("i"));
+            return !ElementUtil.hasClass("hide", checkIcon);
         }
     }
 
