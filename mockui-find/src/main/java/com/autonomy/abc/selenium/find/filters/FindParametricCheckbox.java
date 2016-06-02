@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.filters;
 
 import com.hp.autonomy.frontend.selenium.element.Checkbox;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;

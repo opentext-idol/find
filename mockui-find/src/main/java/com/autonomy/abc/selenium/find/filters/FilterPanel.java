@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.find.filters;
 
 import com.autonomy.abc.selenium.find.Container;
-import com.autonomy.abc.selenium.find.FindIndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
@@ -107,6 +106,11 @@ public class FilterPanel {
 
     public WebElement parametricValue(String dataValue) {
         return panel.findElement(By.cssSelector(".parametric-value-element[data-value='" + dataValue + "']"));
+    }
+
+    public FindParametricCheckbox checkboxForParametricValue(String fieldName, String fieldValue) {
+        WebElement checkbox = panel.findElement(By.cssSelector("[data-field='" + fieldName.replace(" ", "_") + "'] [data-value='" + fieldValue.toUpperCase() + "']"));
+        return new FindParametricCheckbox(checkbox, getDriver());
     }
 
     public String getErrorMessage() {

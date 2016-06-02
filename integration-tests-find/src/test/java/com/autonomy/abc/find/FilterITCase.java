@@ -3,7 +3,7 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.FindParametricCheckbox;
+import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
@@ -12,7 +12,6 @@ import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResult;
 import com.autonomy.abc.selenium.query.StringDateFilter;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
@@ -83,18 +82,18 @@ public class FilterITCase extends FindTestBase {
     }
 
     private FindParametricCheckbox checkbox1() {
-        if (getConfig().getType() == ApplicationType.HOSTED) {
-            return results.parametricTypeCheckbox("source connector", "SIMPSONSARCHIVE");
+        if (isHosted()) {
+            return filters().checkboxForParametricValue("source connector", "SIMPSONSARCHIVE");
         } else {
-            return results.parametricTypeCheckbox("SOURCE", "GOOGLE");
+            return filters().checkboxForParametricValue("SOURCE", "GOOGLE");
         }
     }
 
     private FindParametricCheckbox checkbox2() {
-        if (getConfig().getType() == ApplicationType.HOSTED) {
-            return results.parametricTypeCheckbox("content type", "TEXT/PLAIN");
+        if (isHosted()) {
+            return filters().checkboxForParametricValue("content type", "TEXT/PLAIN");
         } else {
-            return results.parametricTypeCheckbox("CATEGORY", "ENTERTAINMENT");
+            return filters().checkboxForParametricValue("CATEGORY", "ENTERTAINMENT");
         }
     }
 
