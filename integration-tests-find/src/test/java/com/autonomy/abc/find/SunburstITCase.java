@@ -80,7 +80,8 @@ public class SunburstITCase extends IdolFindTestBase {
             verifyThat("Name is correct - "+name,name,isIn(bigEnough));
         }
         results.hoverOverTooFewToDisplaySegment();
-        verifyThat("Hovering on greyed segment explains why grey",results.getSunburstCentreName(),allOf(containsString("Consider refining your search"),containsString("too few documents")));
+
+        verifyThat("Hovering on greyed segment explains why grey",results.getSunburstCentreName(),allOf(containsString("Please refine your search"),containsString("too small to display")));
 
 
     }

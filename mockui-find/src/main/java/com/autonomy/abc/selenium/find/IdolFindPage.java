@@ -112,11 +112,13 @@ public class IdolFindPage extends FindPage {
         int cutOff = minDocsNeededForSunburstSegment(total);
 
         List<WebElement> bigEnough = new ArrayList<>();
-        for(WebElement parametricFilter:node.getFullChildrenElements()){
+        int minShowCount = 20;
+        for(WebElement parametricFilter : node.getFullChildrenElements()){
             WebElement count = parametricFilter.findElement(By.className("parametric-value-count"));
             String countString = count.getText().replaceAll("[()]","");
-            if (Integer.parseInt(countString)>cutOff){
+            if (minShowCount > 0 || Integer.parseInt(countString) > cutOff){
                 bigEnough.add(parametricFilter);
+                minShowCount = minShowCount - 1;
             }
             else{
                 return bigEnough;
