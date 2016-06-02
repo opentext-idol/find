@@ -44,6 +44,10 @@ public class FilterPanel {
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
     }
 
+    public void waitForParametricFields() {
+        Container.LEFT.waitForLoad(driver);
+    }
+
     //should check not already selected
     public void clickFirstIndex(){
         panel.findElement(By.cssSelector(".child-categories li:first-child")).click();

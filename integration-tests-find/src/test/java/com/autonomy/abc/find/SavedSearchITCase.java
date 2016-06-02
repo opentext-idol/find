@@ -118,7 +118,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         IdolFindElementFactory factory = other.elementFactory();
         factory.getSearchTabBar().tab("oasis").activate();
-        factory.getResultsPage().waitForParametricFieldsToLoad();
+        factory.getFilterPanel().waitForParametricFields();
         assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
         assertThat(factory.getFilterPanel().checkboxForParametricValue("OVERALL VIBE", "POSITIVE"), checked());
     }

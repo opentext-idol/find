@@ -22,36 +22,12 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         return findElement(By.cssSelector(".error.well"));
     }
 
-    private List<FindResult> promotions() {
-        List<FindResult> results = new ArrayList<>();
-        for(WebElement result : promotionsDiv().findElements(By.className("promoted-document"))) {
-            results.add(new FindResult(result, getDriver()));
-        }
-        return results;
-    }
-
-    public List<String> getPromotionsTitles(){
-        List<String> titles = new ArrayList<>();
-        for(FindResult promotion : promotions()){
-            titles.add(promotion.getTitleString());
-        }
-        return titles;
-    }
-
-    private WebElement promotionsDiv(){
-        return findElement(By.className("promotions"));
-    }
-
     public List<String> getResultTitles() {
         List<String> titles = new ArrayList<>();
         for(FindResult result : getResults()){
             titles.add(result.getTitleString());
         }
         return titles;
-    }
-
-    public WebElement popover() {
-        return findElement(By.className("popover"));
     }
 
     public enum DateEnum {
@@ -108,10 +84,6 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
             documentTypes.add(result.icon().getAttribute("class"));
         }
         return documentTypes;
-    }
-
-    public void waitForParametricFieldsToLoad() {
-        Container.LEFT.waitForLoad(getDriver());
     }
 
     public void waitForResultsToLoad() {
