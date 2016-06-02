@@ -8,7 +8,6 @@ import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
-import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,9 +15,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class FilterPanel {
     private final WebElement panel;
@@ -96,63 +93,16 @@ public class FilterPanel {
         waitForIndexes();
     }
 
-    public boolean parametricFilterExists(String filter) {
-        return panel.findElements(By.cssSelector(".parametric-value-element[data-value='" + filter + "']")).size() > 0;
+    public String getFirstHiddenFieldValue() {
+        return panel.findElement(By.cssSelector(".parametric-value-element.hide")).getAttribute("data-value");
     }
 
-    //TODO: make this use the filter trees
-    private WebElement findFilter(String name) {
-        return panel.findElement(By.xpath(".//*[contains(text(),'" + name + "')]"));
-    }
-
-    public boolean filterVisible(String filter) {
-        return findFilter(filter).isDisplayed();
-    }
-
-    public boolean noneMatchingMessageVisible() {
-        return panel.findElement(By.xpath(".//p[contains(text(),'No filters matched')]")).isDisplayed();
+    public WebElement parametricValue(String dataValue) {
+        return panel.findElement(By.cssSelector(".parametric-value-element[data-value='" + dataValue + "']"));
     }
 
     public String getErrorMessage() {
         return panel.findElement(By.cssSelector("p:not(.hide)")).getText();
-    }
-
-    public List<WebElement> getCurrentFilters() {
-        List<WebElement> currentFilters = new ArrayList<>();
-        currentFilters.addAll(databaseFilterTree().getAllFiltersInTree());
-        currentFilters.addAll(dateFilterTree().getAllFiltersInTree());
-        currentFilters.addAll(parametricFilterTree().getAllFiltersInTree());
-        return currentFilters;
-    }
-
-    private List<String> getVisibleFilterTypes() {
-        List<WebElement> elements = new ArrayList<>();
-
-        elements.addAll(databaseFilterTree().getFilterTypes());
-        elements.addAll(dateFilterTree().getFilterTypes());
-        elements.addAll(parametricFilterTree().getFilterTypes());
-
-        return ElementUtil.getTexts(elements);
-    }
-
-    public List<String> findFilterString(String targetFilter, List<WebElement> allFilters) {
-        waitForIndexes();
-        Set<String> matchingFilters = new HashSet<>();
-
-        for (WebElement filter : allFilters) {
-            if (StringUtils.containsIgnoreCase(filter.getText(), targetFilter)) {
-                matchingFilters.add(filter.getText());
-
-                if (getVisibleFilterTypes().contains(filter.getText())) {
-                    matchingFilters.addAll(new FilterNode(ElementUtil.ancestor(filter, 2), getDriver()).getChildNames());
-                }
-                //is child
-                else {
-                    matchingFilters.add(new FilterNode(filter, getDriver()).getParentName());
-                }
-            }
-        }
-        return new ArrayList<>(matchingFilters);
     }
 
     //toggling see more

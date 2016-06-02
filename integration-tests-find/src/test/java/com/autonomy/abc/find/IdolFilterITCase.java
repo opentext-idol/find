@@ -13,7 +13,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assume.assumeTrue;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 
 //WARNING: These tests are extremely slow when the sidebar has 1000s of filters
@@ -80,16 +80,15 @@ public class IdolFilterITCase extends IdolFindTestBase {
     @Test
     public void testExpandFilters(){
         findService.search("face");
-        String filter = "IRELAND";
 
-        assumeTrue("Filter IRELAND exists", filters().parametricFilterExists(filter));
+        final String filter = filters().getFirstHiddenFieldValue();
+        LOGGER.info("using filter " + filter);
 
-        assertThat("Filter not visible",!filters().filterVisible(filter));
+        assertThat(filters().parametricValue(filter), not(displayed()));
         filters().expandFiltersFully();
-        assertThat("Filter visible",filters().filterVisible(filter));
+        assertThat(filters().parametricValue(filter), displayed());
         filters().collapseAll();
-        assertThat("Filter not visible",!filters().filterVisible(filter));
-
+        assertThat(filters().parametricValue(filter), not(displayed()));
     }
 
     private FilterPanel filters() {

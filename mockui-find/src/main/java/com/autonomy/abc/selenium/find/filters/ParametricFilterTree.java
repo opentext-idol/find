@@ -19,28 +19,6 @@ class ParametricFilterTree {
         }
     }
 
-    public List<WebElement> getFilterTypes(){
-        List<WebElement> filterTypes = new ArrayList<>();
-        for(Node node:containers){
-            if(node.findFilterType().isDisplayed())
-                filterTypes.add(node.findFilterType());
-        }
-        return filterTypes;
-    }
-
-    public List<WebElement> getAllFiltersInTree(){
-        List<WebElement> filters = new ArrayList<>();
-
-        for(Node node:containers) {
-            filters.addAll(node.getChildren());
-
-            if (node.getParent().isDisplayed()) {
-                filters.add(node.getParent());
-            }
-        }
-        return filters;
-    }
-
     public void expandAll(){
         for(Node node:containers){
             node.expand();
