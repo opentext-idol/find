@@ -14,6 +14,7 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.Matchers.*;
 
@@ -30,6 +31,8 @@ public class SunburstITCase extends IdolFindTestBase {
         results = findPage.getSunburst();
         findService = getApplication().findService();
     }
+
+    //TODO: test that checks the total doc number against what's in sunburst centre
 
     @Test
     public void testSunburstTabShowsSunburst(){
@@ -74,20 +77,21 @@ public class SunburstITCase extends IdolFindTestBase {
 
         findPage.showFilters();
         List<String> bigEnough = findPage.nameParametricChildrenBigEnoughForSunburst(findPage.getIthParametricFilterTypeName(0));
+        results.waitForSunburst();
 
-        for(WebElement segment:results.findSunburstSegments()){
-            //Only works if elements on RHS of circle
-            results.hoveringRight(segment);
+        for (WebElement segment : results.findSunburstSegments()) {
+            results.segmentHover(segment);
             String name = results.getSunburstCentreName();
-            verifyThat("Hovering gives message in centre of sunburst",name,not(""));
-            verifyThat("Name is correct - "+name,name,isIn(bigEnough));
+            verifyThat("Hovering gives message in centre of sunburst", name, not(""));
+            verifyThat("Name is correct - " + name, name, isIn(bigEnough));
         }
+        assumeThat("Some segments not displayable",results.greySunburstAreaExists());
         results.hoverOverTooFewToDisplaySegment();
 
         verifyThat("Hovering on greyed segment explains why grey",results.getSunburstCentreName(),allOf(containsString("Please refine your search"),containsString("too small to display")));
 
-
     }
+
     @Test
     public void testClickingSunburstSegmentFiltersTheSearch(){
         //needs to search something that only has 2 parametric filter types
