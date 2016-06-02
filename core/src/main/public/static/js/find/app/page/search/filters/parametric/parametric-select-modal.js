@@ -9,6 +9,8 @@ define([
 ], function(Backbone, Modal, $, ParametricSelectView, SelectedValuesCollection, loadingSpinnerTemplate, i18n) {
 
     return Modal.extend({
+        className: 'modal fade parametric-modal',
+
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
 
         initialize: function(options) {

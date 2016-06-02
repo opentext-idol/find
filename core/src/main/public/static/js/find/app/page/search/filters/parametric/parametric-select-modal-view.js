@@ -8,6 +8,7 @@ define([
 
     return Backbone.View.extend({
         template: _.template(template),
+        className: 'full-height',
 
         events: {
             'ifClicked .parametric-field-label': function(e) {

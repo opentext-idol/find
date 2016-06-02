@@ -1304,6 +1304,7 @@ input:-moz-placeholder::before {
 
 .fields-list {
     border-left: 1px solid #e5e5e5;
+    min-height: 100%;
 }
 
 .parametric-fields-table {
@@ -1321,6 +1322,16 @@ input:-moz-placeholder::before {
 .parametric-value-name,
 .parametric-value-count {
     white-space: nowrap;
+}
+
+.parametric-modal .modal-dialog,
+.parametric-modal .modal-content {
+    height: 80%;
+}
+
+.parametric-modal .modal-body {
+    height: calc(100% - 120px);
+    overflow-y: auto;
 }
 
 /* Rotating chevrons on collapsible panels *******************/

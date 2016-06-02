@@ -1,10 +1,10 @@
-<div class="tabs-left row">
+<div class="tabs-left full-height row">
     <div class="col-md-3">
         <ul class="nav nav-tabs minimal-tab" role="tablist">
             <% parametricDisplayCollection.each(function(field) { %>
-                <li class="category-title <%- currentFieldGroup === field.id ? 'active' : ''%>">
-                    <a href role="tab" data-toggle="tab" data-target="#<%-field.id%>" class="tab-title" >
-                        <span class="visible-md-inline visible-lg-inline"> <%-field.id%></span>
+                <li class="category-title <%- currentFieldGroup === field.id ? 'active' : ''%> full-width">
+                    <a href role="tab" data-toggle="tab" data-target="#<%-field.id%>" class="tab-title full-width" >
+                        <span class="shorten inline-block full-width"> <%-field.id%></span>
                     </a>
                 </li>
             <% }); %>
@@ -16,7 +16,7 @@
             <% parametricDisplayCollection.each(function(field) { %>
                 <div id="<%-field.id%>" class="tab-pane <%- currentFieldGroup === field.id ? 'active' : ''%>" role="tabpanel">
                     <% _.each(field.fieldValues.models, function(model) { %>
-                        <div class="i-check checkbox parametric-field-label clickable" data-field-id="<%-field.id%>">
+                        <div class="i-check checkbox parametric-field-label clickable shorten" data-field-id="<%-field.id%>">
                             <label>
                                 <input type="checkbox" <%-model.get('selected') ? 'checked' : ''%>>
                                 <span class="field-value"><%-model.id%></span>
