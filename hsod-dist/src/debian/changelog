@@ -1,3 +1,9 @@
+find-ansible (0.0.2) precise; urgency=low
+
+  * Added database settings.
+
+ -- Matthew Gordon <matthew.gordon2@hp.com>  Fri, 03 June 2016 12:00:00 +0100
+
 find-ansible (0.0.1) precise; urgency=low
 
   * Initial release.
