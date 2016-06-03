@@ -23,7 +23,7 @@ find_datasource_username: "root"
 find_datasource_password: "root"
 
 find_options:
-  - "-Dhp.find.home="{{find_root_dir}}""
+  - "-Dhp.find.home='{{find_root_dir}}'"
   - "-Dserver.port=8080"
   - "-Djava.security.egd=file:/dev/./urandom"
   - "-Dfind.iod.api=https://api.{{find_endpoint_domain}}"
