@@ -31,13 +31,18 @@ define([
 
         beforeEach(function() {
             this.indexesCollection = new IndexesCollection();
-            this.entityCollection = new EntityCollection;
             this.queryModel = new Backbone.Model();
             this.highlightModel = new Backbone.Model({highlightEntities: false});
 
             this.queryTextModel = new Backbone.Model({
                 inputText: 'orange',
                 relatedConcepts: [['blood']]
+            });
+            
+            this.entityCollection = new EntityCollection([], {
+                queryState: {
+                    queryTextModel: this.queryTextModel
+                }
             });
         });
 
@@ -72,7 +77,9 @@ define([
                 this.entityCollection.set([
                     {cluster: 0, text: 'fruit'},
                     {cluster: 0, text: 'juice'},
-                    {cluster: 1, text: 'red'}
+                    {cluster: 1, text: 'red'},
+                    {cluster: 1, text: 'blood'},
+                    {cluster: 2, text: 'orange'}
                 ], { parse: true });
 
                 createView.call(this);
@@ -166,6 +173,14 @@ define([
 
                 it('does not render items with a negative cluster', function() {
                     expect(this.view.$('.related-concepts-list')).not.toContainText('bromine');
+                });
+
+                it('does not contain selected related concept', function() {
+                    expect(this.view.$('.related-concepts-list')).not.toContainText('blood');
+                });
+
+                it('does not contain query text', function() {
+                    expect(this.view.$('.related-concepts-list')).not.toContainText('orange');
                 });
 
                 it('renders each item in a non-negative cluster with other members of the cluster, taking the first member as the heading', function() {
