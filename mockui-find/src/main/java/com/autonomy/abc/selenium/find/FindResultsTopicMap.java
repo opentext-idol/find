@@ -74,8 +74,6 @@ public class FindResultsTopicMap extends FindResultsPage{
          return findElements(By.cssSelector(".entity-topic-map >svg > text"));
     }
 
-    public List<WebElement> allMapElements(){return findElements(By.cssSelector(".entity-topic-map > svg > path,text"));}
-
     //adds text from input fraction of map and clicks each
     public List<String> clickEntitiesAndAddText(int fraction){
          List<String> addedConcepts = new ArrayList<>();

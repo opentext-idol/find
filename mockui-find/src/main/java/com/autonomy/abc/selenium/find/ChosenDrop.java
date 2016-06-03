@@ -60,6 +60,10 @@ public class ChosenDrop {
         this.getItem(text).click();
     }
 
+    public void selectIthItem(int i){
+        open();
+        getItems().get(i).click();}
+
     public String getValue() {
         return this.button.getText();
     }

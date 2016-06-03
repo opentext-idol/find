@@ -138,8 +138,16 @@ public class IdolFindPage extends FindPage {
         return leftContainer().findElement(By.xpath(".//p[contains(text(),'No filters matched')]")).isDisplayed();
     }
 
-    public String get1stParametricFilterTypeName(){
-       return parametricFilterTree().getIthFilterType(0).getText();
+    public String get1stParametricFilterTypeName() {
+        return parametricFilterTree().getIthFilterType(0).getText();
+    }
+
+    public String getIthParametricFilterTypeName(int i){
+       return parametricFilterTree().getIthFilterType(i).getText();
+    }
+
+    public WebElement firstChildOfFirstParametricType(){
+        return parametricFilterTree().findParametricFilterNode(getIthParametricFilterTypeName(0)).getChildren().get(0);
     }
 
     //toggling see more
