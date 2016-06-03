@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Date;
+import java.util.List;
 
 public class FindPage extends AppElement implements AppPage,
         IndexFilter.Filterable,
@@ -43,7 +44,15 @@ public class FindPage extends AppElement implements AppPage,
         /* click somewhere not important to remove hover -
         * clicking the user's username seems safe... */
         getDriver().findElement(By.className("user-username")).click();
-        new WebDriverWait(getDriver(),2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
+        new WebDriverWait(getDriver(), 2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
+    }
+
+    /**
+     * waits until the list of indexes has been retrieved
+     * from HOD if necessary
+     */
+    void waitForIndexes() {
+        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
     }
 
     public FindResultsPage getResultsPage() {
@@ -127,6 +136,12 @@ public class FindPage extends AppElement implements AppPage,
     public void openDetailedPreview(){
         findElement(By.className("preview-mode-open-detail-button")).click();
     }
+
+    WebElement leftContainer(){
+        return findElement(By.cssSelector(".left-side-container"));
+    }
+
+    public List<WebElement> filterLabels(){return findElements(By.className("filter-label"));}
 
     public void scrollToBottom() {
         findElement(By.className("results-number")).click();

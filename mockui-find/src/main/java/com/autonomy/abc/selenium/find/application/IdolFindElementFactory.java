@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.find.application;
 
 import com.autonomy.abc.selenium.find.DetailedPreviewPage;
-import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.login.IdolFindLoginPage;

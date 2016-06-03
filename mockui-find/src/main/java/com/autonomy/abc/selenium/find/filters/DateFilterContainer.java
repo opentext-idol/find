@@ -13,12 +13,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-class DateFilterContainer extends FilterContainer implements DatePickerFilter.Filterable, StringDateFilter.Filterable {
+public class DateFilterContainer extends FilterContainer implements DatePickerFilter.Filterable, StringDateFilter.Filterable {
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
     private final WebDriver driver;
 
-    DateFilterContainer(WebElement element, WebDriver webDriver){
+    public DateFilterContainer(WebElement element, WebDriver webDriver){
         super(element,webDriver);
         driver = webDriver;
     }

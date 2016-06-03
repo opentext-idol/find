@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-class ParametricFieldContainer extends FilterContainer {
+public class ParametricFieldContainer extends FilterContainer {
 
     ParametricFieldContainer(WebElement element, WebDriver webDriver) {
         super(element, webDriver);
@@ -21,5 +21,22 @@ class ParametricFieldContainer extends FilterContainer {
     public List<String> getChildNames() {
         return ElementUtil.getTexts(getChildren());
     }
+
+    public List<WebElement> getChildDocCount(){
+        return getContainer().findElements(By.className("parametric-value-count"));
+    }
+
+    public List<WebElement> getFullChildrenElements(){
+        return getContainer().findElements(By.className("parametric-value-element"));
+    }
+    public int getTotalDocNumber(){
+        int total=0;
+        for(WebElement element:getChildDocCount()){
+            //gets text, trims brackets and casts to int
+            total+=Integer.parseInt(element.getText().replaceAll("[()]",""));
+        }
+        return total;
+    }
+
 
 }

@@ -34,4 +34,5 @@ public class FindService implements QueryService<FindResultsPage> {
         resultsPage.waitForResultsToLoad();
         return elementFactory.getSimilarDocumentsView();
     }
+
 }
