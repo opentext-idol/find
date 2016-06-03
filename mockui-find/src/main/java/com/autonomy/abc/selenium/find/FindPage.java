@@ -143,6 +143,10 @@ public class FindPage extends AppElement implements AppPage,
 
     public List<WebElement> filterLabels(){return findElements(By.className("filter-label"));}
 
+    public List<String> getFilterLabels() {
+        return ElementUtil.getTexts(filterLabels());
+    }
+
     public void scrollToBottom() {
         findElement(By.className("results-number")).click();
         DriverUtil.scrollToBottom(getDriver());

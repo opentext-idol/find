@@ -16,6 +16,7 @@ import java.util.List;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.checked;
 import static org.hamcrest.Matchers.*;
 
 public class SunburstITCase extends IdolFindTestBase {
@@ -28,7 +29,7 @@ public class SunburstITCase extends IdolFindTestBase {
     @Before
     public void setUp(){
         findPage = getElementFactory().getFindPage();
-        results = findPage.getSunburst();
+        results = getElementFactory().getSunburst();
         findService = getApplication().findService();
     }
 
@@ -104,16 +105,15 @@ public class SunburstITCase extends IdolFindTestBase {
         findService.search("churchill");
         results.goToSunburst();
 
-        String filterBy = results.hoverOnSegmentGetCentre(1);
-        String parametricSelectionName = results.nthParametricFilterName(1);
+
+        String fieldValue = results.hoverOnSegmentGetCentre(1);
+        String fieldName = results.nthParametricFilterName(1);
+        LOGGER.info("filtering by " + fieldName + " = " + fieldValue);
         results.getIthSunburstSegment(1).click();
 
-        verifyThat("The correct filter label has appeared: "+filterBy,ElementUtil.getTexts(findPage.filterLabels()),contains(equalToIgnoringCase(filterBy)));
-
-
-        assertThat("Parametric selection name "+parametricSelectionName,1,is(1));
-        verifyThat("Side bar shows only "+filterBy,findPage.numberOfParametricFilterChildren(parametricSelectionName),is(1));
-        verifyThat("Parametric selection name has changed to another type of filter",results.nthParametricFilterName(1),not(is(parametricSelectionName)));
+        verifyThat(findPage.getFilterLabels(), hasItem(equalToIgnoringCase(fieldValue)));
+        verifyThat(getElementFactory().getFilterPanel().checkboxForParametricValue(fieldName, fieldValue), checked());
+        verifyThat("Parametric selection name has changed to another type of filter",results.nthParametricFilterName(1),not(fieldName));
 
         results.getIthSunburstSegment(1);
         //TODO: wait til desired behaviour known for when runs out of parametric filter types

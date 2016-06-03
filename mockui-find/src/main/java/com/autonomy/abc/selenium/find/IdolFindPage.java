@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.find.filters.*;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
+import com.autonomy.abc.selenium.find.filters.ParametricFilterTree;
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
@@ -32,20 +34,6 @@ public class IdolFindPage extends FindPage {
             ancestors.add(ElementUtil.ancestor(element, 3));
         }
         return ancestors;
-    }
-
-    public int numberOfParametricFilterChildren(String filter){
-        waitForIndexes();
-        ParametricFieldContainer node = parametricFilterTree().findParametricFilterNode(filter);
-        return node.getChildren().size();
-    }
-
-    public FindResultsSunburst getSunburst(){
-        return new FindResultsSunburst(getDriver());
-    }
-
-    public FindResultsTopicMap getTopicMap(){
-        return new FindResultsTopicMap(getDriver());
     }
 
     //to be displayed as a segment on sunburst, docs in category must be >=5% of total

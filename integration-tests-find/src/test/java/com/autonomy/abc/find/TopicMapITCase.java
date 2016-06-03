@@ -36,7 +36,7 @@ public class TopicMapITCase extends IdolFindTestBase {
     @Before
     public void setUp() {
         findPage = getElementFactory().getFindPage();
-        results = findPage.getTopicMap();
+        results = getElementFactory().getTopicMap();
         findService = getApplication().findService();
         navBar = getElementFactory().getTopNavBar();
     }
