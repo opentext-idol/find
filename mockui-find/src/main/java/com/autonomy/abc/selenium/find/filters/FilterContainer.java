@@ -62,6 +62,5 @@ public class FilterContainer implements Collapsible {
         return collapsible.isCollapsed();
     }
 
-
 }
 

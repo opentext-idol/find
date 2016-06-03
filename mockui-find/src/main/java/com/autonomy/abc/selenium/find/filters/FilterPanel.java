@@ -4,6 +4,8 @@ import com.autonomy.abc.selenium.find.Container;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
+import com.autonomy.abc.selenium.query.DatePickerFilter;
+import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.hp.autonomy.frontend.selenium.element.Collapsible;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
@@ -70,7 +72,7 @@ public class FilterPanel {
         return new IndexesTreeContainer(container, getDriver());
     }
 
-    private FilterContainer dateFilterContainer() {
+    private DateFilterContainer dateFilterContainer() {
         WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
         WebElement container = ElementUtil.ancestor(heading, 2);
         return new DateFilterContainer(container, getDriver());
@@ -121,17 +123,16 @@ public class FilterPanel {
         return panel.findElement(By.cssSelector("p:not(.hide)")).getText();
     }
 
-    public boolean isFilteringBy(DateOption filter) {
-        WebElement checkIcon = findDateFilter(filter).findElement(By.tagName("i"));
-        return !ElementUtil.hasClass("hide", checkIcon);
-    }
-
     public void toggleFilter(DateOption filter) {
-        findDateFilter(filter).click();
+        dateFilterContainer().toggleFilter(filter);
     }
 
-    private WebElement findDateFilter(DateOption filter) {
-        return panel.findElement(By.cssSelector("[data-filter-id=" + filter + "]"));
+    public DatePickerFilter.Filterable datePickerFilterable() {
+        return dateFilterContainer();
+    }
+
+    public StringDateFilter.Filterable stringDateFilterable() {
+        return dateFilterContainer();
     }
 
     //toggling see more

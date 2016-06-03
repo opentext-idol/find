@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.find.filters.DateOption;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
@@ -14,7 +13,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class FindPage extends AppElement implements AppPage,
@@ -22,7 +20,6 @@ public class FindPage extends AppElement implements AppPage,
         DatePickerFilter.Filterable,
         StringDateFilter.Filterable,
         ParametricFilter.Filterable {
-    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
     private final FindResultsPage results;
 
@@ -75,46 +72,27 @@ public class FindPage extends AppElement implements AppPage,
 
     @Override
     public DatePicker fromDatePicker() {
-        return datePicker(1);
+        return filters().datePickerFilterable().fromDatePicker();
     }
 
     @Override
     public DatePicker untilDatePicker() {
-        return datePicker(2);
-    }
-
-    private DatePicker datePicker(int nthOfType) {
-        showCustomDateBoxes();
-        WebElement formGroup = findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ")"));
-        return new DatePicker(formGroup, getDriver());
+        return filters().datePickerFilterable().untilDatePicker();
     }
 
     @Override
     public FormInput fromDateInput() {
-        return dateInput(1);
+        return filters().stringDateFilterable().fromDateInput();
     }
 
     @Override
     public FormInput untilDateInput() {
-        return dateInput(2);
+        return filters().stringDateFilterable().untilDateInput();
     }
 
     @Override
     public String formatInputDate(Date date) {
-        return FORMAT.format(date);
-    }
-
-    private FormInput dateInput(int nthOfType) {
-        showCustomDateBoxes();
-        WebElement inputBox = findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ") input"));
-        return new FormInput(inputBox, getDriver());
-    }
-
-    private void showCustomDateBoxes() {
-        if (!filters().isFilteringBy(DateOption.CUSTOM)) {
-            filters().toggleFilter(DateOption.CUSTOM);
-            results.waitForResultsToLoad();
-        }
+        return filters().stringDateFilterable().formatInputDate(date);
     }
 
     @Override
