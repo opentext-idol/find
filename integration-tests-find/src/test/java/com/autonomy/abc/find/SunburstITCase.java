@@ -4,8 +4,8 @@ import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindResultsSunburst;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,8 +50,8 @@ public class SunburstITCase extends IdolFindTestBase {
         findService.search("wild horses");
         results.goToSunburst();
 
-        String firstParametric = findPage.getIthParametricFilterTypeName(0);
-        verifyThat("Default parametric selection is 1st parametric type",firstParametric,equalToIgnoringCase(results.nthParametricFilterName(1)));
+        String firstParametric = filters().parametricField(0).getParentName();
+        verifyThat("Default parametric selection is 1st parametric type",firstParametric,equalToIgnoringCase(results.getSelectedFieldName(1)));
 
         results.parametricSelectionDropdown(2).open();
         verifyThat("1st selected parametric does not appear as choice in 2nd",results.getParametricDropdownItems(2),not(contains(firstParametric)));
@@ -66,8 +66,8 @@ public class SunburstITCase extends IdolFindTestBase {
         results.parametricSelectionDropdown(1).selectIthItem(1);
         Waits.loadOrFadeWait();
 
-        findPage.showFilters();
-        int correctNumberSegments = findPage.numParametricChildrenBigEnoughForSunburst(findPage.getIthParametricFilterTypeName(1));
+        filters().showFilters();
+        int correctNumberSegments = findPage.numParametricChildrenBigEnoughForSunburst(filters().parametricField(0).getParentName());
         assertThat("Correct number ("+correctNumberSegments+") of sunburst segments ",results.numberOfSunburstSegments(),is(correctNumberSegments));
     }
 
@@ -76,15 +76,15 @@ public class SunburstITCase extends IdolFindTestBase {
         findService.search("elephant");
         results.goToSunburst();
 
-        findPage.showFilters();
-        List<String> bigEnough = findPage.nameParametricChildrenBigEnoughForSunburst(findPage.getIthParametricFilterTypeName(0));
+        filters().showFilters();
+        List<String> bigEnough = findPage.nameParametricChildrenBigEnoughForSunburst(filters().parametricField(0).getParentName());
         results.waitForSunburst();
 
         for (WebElement segment : results.findSunburstSegments()) {
             results.segmentHover(segment);
             String name = results.getSunburstCentreName();
-            verifyThat("Hovering gives message in centre of sunburst", name, not(""));
-            verifyThat("Name is correct - " + name, name, isIn(bigEnough));
+            verifyThat(name, not(isEmptyOrNullString()));
+            verifyThat(name, isIn(bigEnough));
         }
     }
 
@@ -107,13 +107,13 @@ public class SunburstITCase extends IdolFindTestBase {
 
 
         String fieldValue = results.hoverOnSegmentGetCentre(1);
-        String fieldName = results.nthParametricFilterName(1);
+        String fieldName = results.getSelectedFieldName(1);
         LOGGER.info("filtering by " + fieldName + " = " + fieldValue);
         results.getIthSunburstSegment(1).click();
 
         verifyThat(findPage.getFilterLabels(), hasItem(equalToIgnoringCase(fieldValue)));
-        verifyThat(getElementFactory().getFilterPanel().checkboxForParametricValue(fieldName, fieldValue), checked());
-        verifyThat("Parametric selection name has changed to another type of filter",results.nthParametricFilterName(1),not(fieldName));
+        verifyThat(filters().checkboxForParametricValue(fieldName, fieldValue), checked());
+        verifyThat("Parametric selection name has changed to another type of filter",results.getSelectedFieldName(1),not(fieldName));
 
         results.getIthSunburstSegment(1);
         //TODO: wait til desired behaviour known for when runs out of parametric filter types
@@ -126,11 +126,11 @@ public class SunburstITCase extends IdolFindTestBase {
         findService.search("lashing");
         results.goToSunburst();
 
-        String parametricSelectionFirst= results.nthParametricFilterName(1);
-        findPage.firstChildOfFirstParametricType().click();
+        String parametricSelectionFirst= results.getSelectedFieldName(1);
+        filters().checkboxForParametricValue(0, 0).check();
 
         results.waitForSunburst();
-        assertThat("Parametric selection changed",results.nthParametricFilterName(1),not(is(parametricSelectionFirst)));
+        assertThat("Parametric selection changed",results.getSelectedFieldName(1),not(is(parametricSelectionFirst)));
     }
 
     //will probably fail if your databases are different to the testing ones
@@ -150,7 +150,7 @@ public class SunburstITCase extends IdolFindTestBase {
         assertThat("More segments with second parametric selector",segNumberAfter,greaterThan(segNumberBefore));
     }
 
-
-
-
+    private FilterPanel filters() {
+        return getElementFactory().getFilterPanel();
+    }
 }

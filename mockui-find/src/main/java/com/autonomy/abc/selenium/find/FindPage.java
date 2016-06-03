@@ -141,10 +141,8 @@ public class FindPage extends AppElement implements AppPage,
         return findElement(By.cssSelector(".left-side-container"));
     }
 
-    public List<WebElement> filterLabels(){return findElements(By.className("filter-label"));}
-
     public List<String> getFilterLabels() {
-        return ElementUtil.getTexts(filterLabels());
+        return ElementUtil.getTexts(findElements(By.className("filter-label")));
     }
 
     public void scrollToBottom() {

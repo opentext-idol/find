@@ -95,7 +95,7 @@ public class FindResultsSunburst extends FindResultsPage{
     }
 
     //Parametric Filtering
-    public String nthParametricFilterName(int i){
+    public String getSelectedFieldName(int i){
         return nthParametricFilter(i).getText();
     }
 

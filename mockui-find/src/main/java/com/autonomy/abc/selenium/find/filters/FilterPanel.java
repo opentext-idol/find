@@ -19,6 +19,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.autonomy.abc.selenium.util.SeleniumUtil.cssifyIndex;
+
 public class FilterPanel {
     private final WebElement panel;
     private final WebDriver driver;
@@ -119,6 +121,11 @@ public class FilterPanel {
         return new FindParametricCheckbox(checkbox, getDriver());
     }
 
+    public FindParametricCheckbox checkboxForParametricValue(int fieldIndex, int valueIndex) {
+        WebElement checkbox = panel.findElement(By.cssSelector("[data-field]:nth-of-type(" + cssifyIndex(fieldIndex) +") [data-value]:nth-of-type(" + cssifyIndex(valueIndex) + ")"));
+        return new FindParametricCheckbox(checkbox, driver);
+    }
+
     public String getErrorMessage() {
         return panel.findElement(By.cssSelector("p:not(.hide)")).getText();
     }
@@ -136,7 +143,7 @@ public class FilterPanel {
     }
 
     //toggling see more
-    private void showFilters() {
+    public void showFilters() {
         for (WebElement element : panel.findElements(By.className("toggle-more-text"))) {
             if (!element.getText().equals("See Less")) {
                 element.click();

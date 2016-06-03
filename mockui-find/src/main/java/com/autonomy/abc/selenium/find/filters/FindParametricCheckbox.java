@@ -15,7 +15,7 @@ public class FindParametricCheckbox extends Checkbox {
 
     @Override
     public String getName() {
-        return findElement(checkbox).getText().split("\\(")[0].trim();
+        return findElement(By.className("parametric-value-text")).getText().trim();
     }
 
     @Override

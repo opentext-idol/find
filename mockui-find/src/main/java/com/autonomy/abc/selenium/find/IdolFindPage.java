@@ -75,23 +75,6 @@ public class IdolFindPage extends FindPage {
         return bigEnough;
     }
 
-    public String getIthParametricFilterTypeName(int i){
-       return parametricFilterTree().getIthFilterType(i).getText();
-    }
-
-    public WebElement firstChildOfFirstParametricType(){
-        return parametricFilterTree().findParametricFilterNode(getIthParametricFilterTypeName(0)).getChildren().get(0);
-    }
-
-    //toggling see more
-    public void showFilters() {
-        for (WebElement element : leftContainer().findElements(By.className("toggle-more-text"))) {
-            if (!element.getText().equals("See Less")) {
-                element.click();
-            }
-        }
-    }
-
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {
         public IdolFindPage create(WebDriver context) {
             return new IdolFindPage(context);

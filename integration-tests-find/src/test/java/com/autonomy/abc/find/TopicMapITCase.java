@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.find.FindResultsTopicMap;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.junit.Before;
@@ -100,12 +101,12 @@ public class TopicMapITCase extends IdolFindTestBase {
         findService.search(searchTerm);
         results.goToTopicMap();
 
-        WebElement filter = findPage.firstChildOfFirstParametricType();
-        String filterName = filter.getText();
-        filter.click();
+        FindParametricCheckbox filter = getElementFactory().getFilterPanel().checkboxForParametricValue(0, 0);
+        String filterName = filter.getName();
+        filter.check();
 
         results.waitForReload();
-        verifyThat("The correct filter label has appeared", ElementUtil.getTexts(findPage.filterLabels()), contains(equalToIgnoringCase(filterName)));
+        verifyThat("The correct filter label has appeared", findPage.getFilterLabels(), hasItem(equalToIgnoringCase(filterName)));
         verifyThat("Search term still " + searchTerm, navBar.getSearchBoxTerm(), is(searchTerm));
     }
 
