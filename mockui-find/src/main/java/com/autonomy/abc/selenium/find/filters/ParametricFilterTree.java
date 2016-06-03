@@ -18,7 +18,7 @@ public class ParametricFilterTree extends FilterContainer {
         }
     }
 
-    public List<WebElement> getFilterTypes(){
+    private List<WebElement> getFilterTypes(){
         List<WebElement> filterTypes = new ArrayList<>();
         for(ParametricFieldContainer node:containers){
             if(node.findFilterType().isDisplayed())
@@ -40,28 +40,4 @@ public class ParametricFilterTree extends FilterContainer {
         return null;
     }
 
-    public List<WebElement> getAllFiltersInTree(){
-        List<WebElement> filters = new ArrayList<>();
-
-        for(ParametricFieldContainer node:containers) {
-            filters.addAll(node.getChildren());
-
-            if (node.getParent().isDisplayed()) {
-                filters.add(node.getParent());
-            }
-        }
-        return filters;
-    }
-
-    public void expandAll(){
-        for(ParametricFieldContainer node:containers){
-            node.expand();
-        }
-    }
-
-    public void collapseAll(){
-        for(ParametricFieldContainer node:containers){
-            node.collapse();
-        }
-    }
 }

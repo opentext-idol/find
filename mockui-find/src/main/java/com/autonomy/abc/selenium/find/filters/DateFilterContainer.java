@@ -13,12 +13,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class DateFilterContainer extends FilterContainer implements DatePickerFilter.Filterable, StringDateFilter.Filterable {
+class DateFilterContainer extends FilterContainer implements DatePickerFilter.Filterable, StringDateFilter.Filterable {
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
     private final WebDriver driver;
 
-    public DateFilterContainer(WebElement element, WebDriver webDriver){
+    DateFilterContainer(WebElement element, WebDriver webDriver){
         super(element,webDriver);
         driver = webDriver;
     }
@@ -32,16 +32,16 @@ public class DateFilterContainer extends FilterContainer implements DatePickerFi
         return ElementUtil.getTexts(getChildren());
     }
 
-    public boolean isFilteringBy(DateOption filter) {
+    private boolean isFilteringBy(DateOption filter) {
         WebElement checkIcon = findDateFilter(filter).findElement(By.tagName("i"));
         return !ElementUtil.hasClass("hide", checkIcon);
     }
 
-    public void toggleFilter(DateOption filter) {
+    void toggleFilter(DateOption filter) {
         findDateFilter(filter).click();
     }
 
-    WebElement findDateFilter(DateOption filter) {
+    private WebElement findDateFilter(DateOption filter) {
         return getContainer().findElement(By.cssSelector("[data-filter-id=" + filter + "]"));
     }
 

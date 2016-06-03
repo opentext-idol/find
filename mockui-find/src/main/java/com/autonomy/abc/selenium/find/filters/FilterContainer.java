@@ -14,7 +14,7 @@ public class FilterContainer implements Collapsible {
     private final WebElement container;
     private final Collapsible collapsible;
 
-    public FilterContainer(WebElement element, WebDriver webDriver) {
+    FilterContainer(WebElement element, WebDriver webDriver) {
         container=element;
         collapsible=new ChevronContainer(container, webDriver);
     }
@@ -23,12 +23,12 @@ public class FilterContainer implements Collapsible {
        return getParent().getText();
     }
 
-    public WebElement getParent(){
+    private WebElement getParent(){
         WebElement filterElement = container.findElement(By.xpath(".//ancestor::div[contains(@class,'collapse')]"));
         return ElementUtil.getFirstChild(filterElement.findElement(By.xpath(".//preceding-sibling::div")));
     }
 
-    public WebElement findFilterType(){
+    WebElement findFilterType(){
         return container.findElement(By.tagName("h4"));
     }
 

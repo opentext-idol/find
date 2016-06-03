@@ -22,7 +22,7 @@ public class ParametricFieldContainer extends FilterContainer {
         return ElementUtil.getTexts(getChildren());
     }
 
-    public List<WebElement> getChildDocCount(){
+    private List<WebElement> getChildDocCount(){
         return getContainer().findElements(By.className("parametric-value-count"));
     }
 

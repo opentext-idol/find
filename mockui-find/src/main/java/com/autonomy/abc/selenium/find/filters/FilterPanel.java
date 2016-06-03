@@ -136,7 +136,7 @@ public class FilterPanel {
     }
 
     //toggling see more
-    public void showFilters() {
+    private void showFilters() {
         for (WebElement element : panel.findElements(By.className("toggle-more-text"))) {
             if (!element.getText().equals("See Less")) {
                 element.click();

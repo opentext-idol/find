@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
-import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
@@ -27,48 +26,12 @@ public class IdolFindPage extends FindPage {
         return new ParametricFilterTree(leftContainer(), getParametricFilters(), getDriver());
     }
 
-    private DateFilterContainer dateFilterTree() {
-        return new DateFilterContainer(ElementUtil.ancestor(getDateFilter(), 2), getDriver());
-    }
-
-    private IndexesTreeContainer databaseFilterTree() {
-        return new IndexesTreeContainer(ElementUtil.ancestor(getDatabaseFilter(), 2), getDriver());
-    }
-
-    private WebElement getDatabaseFilter() {
-        return leftContainer().findElement(By.xpath(".//h4[contains(text(),'Databases')]"));
-    }
-
-    private WebElement getDateFilter() {
-        return leftContainer().findElement(By.xpath(".//h4[contains(text(),'Dates')]"));
-    }
-
     private List<WebElement> getParametricFilters() {
         List<WebElement> ancestors = new ArrayList<>();
         for (WebElement element : findElements(By.className("parametric-fields-table"))) {
             ancestors.add(ElementUtil.ancestor(element, 3));
         }
         return ancestors;
-    }
-
-    public void filterResults(String term) {
-        filterSearch(term);
-    }
-
-    private void filterSearch(String term) {
-        FormInput input = new FormInput(findElement(By.cssSelector("[placeholder='Search filters...']")), getDriver());
-        input.clear();
-        input.setAndSubmit(term);
-    }
-
-    public void clearFilter() {
-        FormInput input = new FormInput(findElement(By.cssSelector("[placeholder='Search filters...']")), getDriver());
-        input.clear();
-        waitForIndexes();
-    }
-
-    public boolean parametricFilterExists(String filter) {
-        return findElements(By.cssSelector(".parametric-value-element[data-value='" + filter + "']")).size() > 0;
     }
 
     public int numberOfParametricFilterChildren(String filter){
@@ -124,24 +87,6 @@ public class IdolFindPage extends FindPage {
         return bigEnough;
     }
 
-    //TODO: make this use the filter trees
-
-    public WebElement findFilter(String name) {
-        return leftContainer().findElement(By.xpath(".//*[contains(text(),'" + name + "')]"));
-    }
-
-    public boolean filterVisible(String filter){
-        return findFilter(filter).isDisplayed();
-    }
-
-    public boolean noneMatchingMessageVisible() {
-        return leftContainer().findElement(By.xpath(".//p[contains(text(),'No filters matched')]")).isDisplayed();
-    }
-
-    public String get1stParametricFilterTypeName() {
-        return parametricFilterTree().getIthFilterType(0).getText();
-    }
-
     public String getIthParametricFilterTypeName(int i){
        return parametricFilterTree().getIthFilterType(i).getText();
     }
@@ -157,24 +102,6 @@ public class IdolFindPage extends FindPage {
                 element.click();
             }
         }
-    }
-
-    public void expandFiltersFully() {
-        waitForIndexes();
-        expandAll();
-        showFilters();
-    }
-
-    private void expandAll() {
-        databaseFilterTree().expand();
-        dateFilterTree().expand();
-        parametricFilterTree().expandAll();
-    }
-
-    public void collapseAll() {
-        databaseFilterTree().expand();
-        dateFilterTree().expand();
-        parametricFilterTree().collapseAll();
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {
