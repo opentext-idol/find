@@ -49,19 +49,26 @@ define([
                 ItemView: FieldView,
                 itemOptions: {
                     queryModel: options.queryModel,
-                    selectedParametricValues: options.queryState.selectedParametricValues
+                    selectedParametricValues: options.queryState.selectedParametricValues,
+                    pixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET
                 }
             });
 
             //noinspection JSUnresolvedFunction
             this.listenTo(options.fieldsCollection, 'update reset', function() {
-                //noinspection JSUnresolvedVariable
+                //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+                const targetNumberOfBuckets = _.times(options.fieldsCollection.length, _.constant(Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)));
+                //noinspection JSUnresolvedFunction
+                const nulls = _.times(options.fieldsCollection.length, _.constant(null));
+                
                 this.collection.fetch({
                     data: {
                         fieldNames: options.fieldsCollection.pluck('id'),
                         databases: options.queryModel.get('indexes'),
                         queryText: options.queryModel.get('queryText'),
-                        targetNumberOfBuckets: Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)
+                        targetNumberOfBuckets: targetNumberOfBuckets,
+                        bucketMin: nulls,
+                        bucketMax: nulls
                     }
                 });
             });

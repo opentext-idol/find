@@ -30,6 +30,31 @@ define([
             numeric: true
         });
     }
+    
+    function updateModel(model, queryModel, targetNumberOfBuckets, newMin, newMax) {
+        $.ajax({
+                url: '../api/public/parametric/buckets',
+                traditional: true,
+                data: {
+                    fieldNames: [model.get('id')],
+                    databases: queryModel.get('indexes'),
+                    queryText: queryModel.get('queryText'),
+                    targetNumberOfBuckets: [targetNumberOfBuckets],
+                    bucketMin: [newMin],
+                    bucketMax: [newMax]
+                }
+            })
+            .success(function (results) {
+                const result = results[0];
+                model.set({
+                    count: result.count,
+                    min: result.min,
+                    max: result.max,
+                    bucketSize: result.bucketSize,
+                    values: result.values
+                });
+            });
+    }
 
     function roundInputNumber(x1) {
         return Math.round(x1 * 10) / 10;
@@ -43,51 +68,53 @@ define([
             'click .numeric-parametric-no-min': function () {
                 //noinspection JSUnresolvedVariable
                 const $minInput = this.$minInput;
-                //noinspection JSUnresolvedFunction
-                this.executeCallbackWithoutRestrictions(function (result) {
-                    //noinspection JSUnresolvedFunction
-                    const minValue = roundInputNumber(_.first(result.values).value);
-                    if (minValue !== $minInput.val()) {
-                        $minInput.val(minValue);
-                        $minInput.trigger('change');
-                    }
-                });
+                //noinspection JSUnresolvedVariable
+                const absoluteMinValue = this.absoluteMinValue;
+                if (absoluteMinValue !== $minInput.val()) {
+                    $minInput.val(absoluteMinValue);
+                    $minInput.trigger('change');
+                }
             },
             'click .numeric-parametric-no-max': function () {
                 //noinspection JSUnresolvedVariable
                 const $maxInput = this.$maxInput;
-                //noinspection JSUnresolvedFunction
-                this.executeCallbackWithoutRestrictions(function (result) {
-                    //noinspection JSUnresolvedFunction
-                    const maxValue = roundInputNumber(_.last(result.values).value);
-                    if (maxValue !== $maxInput.val()) {
-                        $maxInput.val(maxValue);
-                        $maxInput.trigger('change');
-                    }
-                });
+                //noinspection JSUnresolvedVariable
+                const absoluteMaxValue = this.absoluteMaxValue;
+                if (absoluteMaxValue !== $maxInput.val()) {
+                    $maxInput.val(absoluteMaxValue);
+                    $maxInput.trigger('change');
+                }
             },
             'click .numeric-parametric-reset': function () {
                 //noinspection JSUnresolvedVariable
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
+                //noinspection JSUnresolvedVariable
+                updateModel(this.model, this.queryModel, Math.floor(this.$el.width() / this.pixelsPerBucket), this.absoluteMinValue, this.absoluteMaxValue);
             },
             'change .numeric-parametric-min-input': function () {
                 //noinspection JSUnresolvedVariable
                 updateRestrictions(this.selectedParametricValues, this.fieldName, this.$minInput.val(), this.$maxInput.val());
+                //noinspection JSUnresolvedFunction
+                this.drawSelection();
             },
             'change .numeric-parametric-max-input': function () {
                 //noinspection JSUnresolvedVariable
                 updateRestrictions(this.selectedParametricValues, this.fieldName, this.$minInput.val(), this.$maxInput.val());
+                //noinspection JSUnresolvedFunction
+                this.drawSelection();
             }
         },
 
         initialize: function (options) {
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.selectedParametricValues;
+            this.pixelsPerBucket = options.pixelsPerBucket;
             this.viewWidth = options.viewWidth;
             this.fieldName = this.model.id;
-            this.widget = numericWidget({
-                graphHeight: GRAPH_HEIGHT
-            });
+            this.widget = numericWidget({});
+
+            this.absoluteMinValue = this.model.get('min');
+            this.absoluteMaxValue = this.model.get('max');
         },
 
         render: function () {
@@ -103,52 +130,58 @@ define([
             //noinspection JSUnresolvedFunction
             this.$maxInput = this.$('.numeric-parametric-max-input');
 
-            const minValue = this.model.get('min');
-            const maxValue = this.model.get('max');
-            this.$minInput.val(minValue);
-            this.$maxInput.val(maxValue);
+            this.$minInput.val(this.absoluteMinValue);
+            this.$maxInput.val(this.absoluteMaxValue);
 
-            //noinspection JSUnresolvedFunction
-            const updateCallback = _.bind(function (x1, x2) {
+            const updateCallback = function (x1, x2) {
                 // rounding to one decimal place
                 this.$minInput.val(roundInputNumber(x1));
                 this.$maxInput.val(roundInputNumber(x2));
-            }, this);
-            //noinspection JSUnresolvedFunction
-            const selectionCallback = _.bind(function (x1, x2) {
+            }.bind(this);
+            const selectionCallback = function (x1, x2) {
                 updateRestrictions(this.selectedParametricValues, this.fieldName, x1, x2);
-            }, this);
-            //noinspection JSUnresolvedFunction
-            const deselectionCallback = _.bind(function () {
-                this.$minInput.val(minValue);
-                this.$maxInput.val(maxValue);
+            }.bind(this);
+            const deselectionCallback = function () {
+                this.$minInput.val(this.absoluteMinValue);
+                this.$maxInput.val(this.absoluteMaxValue);
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
-            }, this);
+            }.bind(this);
+            const zoomCallback = function (newMin, newMax) {
+                //noinspection JSUnresolvedVariable
+                updateModel(this.model, this.queryModel, Math.floor(this.$el.width() / this.pixelsPerBucket), newMin, newMax);
+            }.bind(this);
             const buckets = this.model.get('values');
             //noinspection JSUnresolvedFunction
-            const graph = this.widget.drawGraph({
+            this.graph = this.widget.drawGraph({
                 chart: this.$('.chart')[0],
                 data: {
                     buckets: buckets,
                     bucketSize: this.model.get('bucketSize'),
-                    maxCount: _.max(_.pluck(buckets, 'count'))
+                    maxCount: _.max(_.pluck(buckets, 'count')),
+                    minValue: this.model.get('min'),
+                    maxValue: this.model.get('max')
                 },
                 updateCallback: updateCallback,
                 selectionCallback: selectionCallback,
                 deselectionCallback: deselectionCallback,
+                zoomCallback: zoomCallback,
                 xRange: this.viewWidth,
                 yRange: GRAPH_HEIGHT,
                 tooltip: i18n['search.numericParametricFields.tooltip']
             });
 
+            this.drawSelection();
+        },
+        
+        drawSelection: function () {
+            const graph = this.graph;
+            
             this.selectedParametricValues.where({
                 field: this.fieldName
             }).forEach(function (restriction) {
                 const range = restriction.get('range');
                 if (range) {
-                    //noinspection JSUnresolvedFunction
                     this.$minInput.val(roundInputNumber(range[0]));
-                    //noinspection JSUnresolvedFunction
                     this.$maxInput.val(roundInputNumber(range[1]));
 
                     graph.selectionRect.init(graph.chart, GRAPH_HEIGHT, graph.scale.barWidth(range[0]));
