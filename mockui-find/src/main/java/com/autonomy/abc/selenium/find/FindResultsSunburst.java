@@ -18,7 +18,7 @@ import java.util.List;
 
 
 public class FindResultsSunburst extends FindResultsPage{
-    static final int VISIBLE_SEGMENTS = 20;
+    private static final int VISIBLE_SEGMENTS = 20;
 
     public FindResultsSunburst(WebDriver driver) {
         super(driver);
@@ -117,8 +117,14 @@ public class FindResultsSunburst extends FindResultsPage{
         return ElementUtil.getTexts(dropdown.getItems());
     }
 
-    static List<FindParametricCheckbox> expectedParametricValues(List<FindParametricCheckbox> checkboxes) {
-        final List<FindParametricCheckbox> expected = new ArrayList<>();
+    /**
+     * Determines which values for a parametric field are significant
+     * enough to be displayed in sunburst
+     * @param checkboxes some iterable of parametric values
+     * @return the significant values
+     */
+    public static List<String> expectedParametricValues(Iterable<FindParametricCheckbox> checkboxes) {
+        final List<String> expected = new ArrayList<>();
 
         int totalResults = 0;
         for (FindParametricCheckbox checkbox : checkboxes) {
@@ -128,12 +134,12 @@ public class FindResultsSunburst extends FindResultsPage{
         for (FindParametricCheckbox checkbox : checkboxes) {
             int thisCount = checkbox.getResultsCount();
             if (expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) {
-                expected.add(checkbox);
+                expected.add(checkbox.getName());
             } else {
                 break;
             }
         }
-        return checkboxes;
+        return expected;
     }
 
     private static boolean isBigEnough(int thisCount, int totalResults) {
