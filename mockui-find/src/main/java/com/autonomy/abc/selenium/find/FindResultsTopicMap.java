@@ -12,10 +12,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FindResultsTopicMap extends FindResultsPage{
+public class FindResultsTopicMap {
+    private final WebDriver driver;
+    private final WebElement container;
 
     public FindResultsTopicMap(WebDriver driver) {
-         super(driver);
+        this.driver = driver;
+        this.container = driver.findElement(By.className("service-view-container"));
     }
     public void goToTopicMap(){
          findElement(By.cssSelector("[data-tab-id='topic-map']")).click();
@@ -93,5 +96,17 @@ public class FindResultsTopicMap extends FindResultsPage{
     public void waitForReload(){
          new WebDriverWait(getDriver(),50).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
      }
+
+    private WebDriver getDriver() {
+        return driver;
+    }
+
+    private WebElement findElement(By locator) {
+        return container.findElement(locator);
+    }
+
+    private List<WebElement> findElements(By locator) {
+        return container.findElements(locator);
+    }
  }
 

@@ -45,7 +45,7 @@ public class TopicMapITCase extends IdolFindTestBase {
     public void testTopicMapTabShowsTopicMap() {
         findService.search("shambolic");
         results.goToTopicMap();
-        verifyThat("Main results list hidden", results.mainResultsContainerHidden());
+        verifyThat("Main results list hidden", getElementFactory().getResultsPage().mainResultsContainerHidden());
         verifyThat("Topic map element displayed", results.topicMapVisible());
     }
 
