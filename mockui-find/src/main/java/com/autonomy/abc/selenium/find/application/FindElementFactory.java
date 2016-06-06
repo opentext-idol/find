@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find.application;
 
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.find.FindPage;
@@ -44,6 +45,10 @@ public abstract class FindElementFactory extends ElementFactoryBase {
 
     public SimilarDocumentsView getSimilarDocumentsView() {
         return new SimilarDocumentsView.Factory().create(getDriver());
+    }
+
+    public DetailedPreviewPage getDetailedPreview(){
+        return new DetailedPreviewPage.Factory().create(getDriver());
     }
 
     @Override

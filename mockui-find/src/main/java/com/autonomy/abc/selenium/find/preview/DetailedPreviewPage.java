@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.find.preview;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -22,7 +23,10 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     }
 
     //navigation
-    public void openOriginalDoc(){findElement(By.className("document-detail-open-original-link")).click();}
+    public void openOriginalDoc(){
+        findElement(By.className("document-detail-open-original-link")).click();
+        Waits.loadOrFadeWait();
+    }
 
     public void goBackToSearch(){findElement(By.className("detail-view-back-button")).click();}
 
