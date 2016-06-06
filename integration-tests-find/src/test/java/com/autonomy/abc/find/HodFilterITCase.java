@@ -38,7 +38,7 @@ public class HodFilterITCase extends HsodFindTestBase {
     @Before
     public void setUp(){
         findPage = getElementFactory().getFindPage();
-        results = findPage.getResultsPage();
+        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 

@@ -29,7 +29,7 @@ public class FindService implements QueryService<FindResultsPage> {
     }
 
     public SimilarDocumentsView goToSimilarDocuments(final int resultNumber) {
-        FindResultsPage resultsPage = findPage.getResultsPage();
+        FindResultsPage resultsPage = elementFactory.getResultsPage();
         resultsPage.getResult(resultNumber).similarDocuments().click();
         resultsPage.waitForResultsToLoad();
         return elementFactory.getSimilarDocumentsView();

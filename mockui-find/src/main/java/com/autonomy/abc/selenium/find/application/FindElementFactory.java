@@ -31,7 +31,7 @@ public abstract class FindElementFactory extends ElementFactoryBase {
     }
 
     public FindResultsPage getResultsPage() {
-        return getFindPage().getResultsPage();
+        return new FindResultsPage(getDriver());
     }
 
     public RelatedConceptsPanel getRelatedConceptsPanel() {

@@ -41,7 +41,7 @@ public class QueryTermsITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         navBar = getElementFactory().getTopNavBar();
-        results = findPage.getResultsPage();
+        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 

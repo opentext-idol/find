@@ -47,18 +47,6 @@ public class FindPage extends AppElement implements AppPage,
         new WebDriverWait(getDriver(), 2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
     }
 
-    /**
-     * waits until the list of indexes has been retrieved
-     * from HOD if necessary
-     */
-    void waitForIndexes() {
-        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
-    }
-
-    public FindResultsPage getResultsPage() {
-        return results;
-    }
-
     @Override
     public IndexesTree indexesTree() {
         return filters().indexesTree();
@@ -112,7 +100,7 @@ public class FindPage extends AppElement implements AppPage,
 
     @Override
     public void waitForParametricValuesToLoad() {
-        new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("parametric-processing-indicator")));
+        filters().waitForParametricFields();
     }
 
     // this can be used to check whether on the landing page,
@@ -135,10 +123,6 @@ public class FindPage extends AppElement implements AppPage,
 
     public void openDetailedPreview(){
         findElement(By.className("preview-mode-open-detail-button")).click();
-    }
-
-    WebElement leftContainer(){
-        return findElement(By.cssSelector(".left-side-container"));
     }
 
     public List<String> getFilterLabels() {
