@@ -47,12 +47,10 @@ public class FindResultsSunburst extends FindResultsPage{
         new WebDriverWait(getDriver(),15).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
         }
 
-    public WebElement sunburstCentre(){return findElement(By.cssSelector("svg > path[fill='#ffffff']"));}
-
     public String getSunburstCentreName(){
         return findElement(By.className("sunburst-sector-name")).getText();}
 
-    public boolean sunburstCentreHasText(){
+    private boolean sunburstCentreHasText(){
         return findElements(By.className("sunburst-sector-name")).size()>0;
     }
 
@@ -102,7 +100,7 @@ public class FindResultsSunburst extends FindResultsPage{
         return nthParametricFilter(i).getText();
     }
 
-    public WebElement nthParametricFilter(int i){
+    private WebElement nthParametricFilter(int i){
         return findElement(By.cssSelector(".parametric-selections span:nth-child("+i+")"));
     }
 

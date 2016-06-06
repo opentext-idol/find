@@ -28,7 +28,7 @@ public class FilterContainer implements Collapsible {
         return ElementUtil.getFirstChild(filterElement.findElement(By.xpath(".//preceding-sibling::div")));
     }
 
-    WebElement findFilterType(){
+    private WebElement findFilterType(){
         return container.findElement(By.tagName("h4"));
     }
 

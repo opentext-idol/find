@@ -26,21 +26,8 @@ public class ParametricFieldContainer extends FilterContainer implements Iterabl
         return ElementUtil.getTexts(getChildren());
     }
 
-    private List<WebElement> getChildDocCount(){
-        return getContainer().findElements(By.className("parametric-value-count"));
-    }
-
-    public List<WebElement> getFullChildrenElements(){
+    private List<WebElement> getFullChildrenElements(){
         return getContainer().findElements(By.className("parametric-value-element"));
-    }
-
-    public int getTotalDocNumber(){
-        int total=0;
-        for(WebElement element:getChildDocCount()){
-            //gets text, trims brackets and casts to int
-            total+=Integer.parseInt(element.getText().replaceAll("[()]",""));
-        }
-        return total;
     }
 
     @Override

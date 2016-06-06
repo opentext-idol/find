@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.query.SortBy;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
@@ -110,9 +111,6 @@ public class SimilarDocumentsView implements AppPage {
         return findElement(By.className("main-results-content"));
     }
 
-    public boolean publicIndexesExist(){
-        return findElements(By.xpath("//*[contains(text(),'Public Indexes')]")).size()>0;
-    }
     public void sortByDate() {
         sortBy(1);
     }
