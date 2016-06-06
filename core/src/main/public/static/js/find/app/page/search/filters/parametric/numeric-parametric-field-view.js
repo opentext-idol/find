@@ -7,12 +7,13 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/model/find-base-collection',
     'find/app/page/search/filters/parametric/numeric-widget',
     'parametric-refinement/prettify-field-name',
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html'
-], function (Backbone, $, _, numericWidget, prettifyFieldName, SelectedParametricValuesCollection, i18n, template) {
+], function (Backbone, $, _, FindBaseCollection, numericWidget, prettifyFieldName, SelectedParametricValuesCollection, i18n, template) {
     "use strict";
     const GRAPH_HEIGHT = 110;
 
@@ -29,31 +30,6 @@ define([
             range: [min, max],
             numeric: true
         });
-    }
-    
-    function updateModel(model, queryModel, targetNumberOfBuckets, newMin, newMax) {
-        $.ajax({
-                url: '../api/public/parametric/buckets',
-                traditional: true,
-                data: {
-                    fieldNames: [model.get('id')],
-                    databases: queryModel.get('indexes'),
-                    queryText: queryModel.get('queryText'),
-                    targetNumberOfBuckets: [targetNumberOfBuckets],
-                    bucketMin: [newMin],
-                    bucketMax: [newMax]
-                }
-            })
-            .success(function (results) {
-                const result = results[0];
-                model.set({
-                    count: result.count,
-                    min: result.min,
-                    max: result.max,
-                    bucketSize: result.bucketSize,
-                    values: result.values
-                });
-            });
     }
 
     function roundInputNumber(x1) {
@@ -88,8 +64,8 @@ define([
             'click .numeric-parametric-reset': function () {
                 //noinspection JSUnresolvedVariable
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
-                //noinspection JSUnresolvedVariable
-                updateModel(this.model, this.queryModel, Math.floor(this.$el.width() / this.pixelsPerBucket), this.absoluteMinValue, this.absoluteMaxValue);
+                //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+                this.updateModel(this.absoluteMinValue, this.absoluteMaxValue);
             },
             'change .numeric-parametric-min-input': function () {
                 //noinspection JSUnresolvedVariable
@@ -112,6 +88,9 @@ define([
             this.viewWidth = options.viewWidth;
             this.fieldName = this.model.id;
             this.widget = numericWidget({});
+            this.localBucketingCollection = new (FindBaseCollection.extend({
+                url: '../api/public/parametric/buckets'
+            }))();
 
             this.absoluteMinValue = this.model.get('min');
             this.absoluteMaxValue = this.model.get('max');
@@ -147,10 +126,12 @@ define([
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
             }.bind(this);
             const zoomCallback = function (newMin, newMax) {
-                //noinspection JSUnresolvedVariable
-                updateModel(this.model, this.queryModel, Math.floor(this.$el.width() / this.pixelsPerBucket), newMin, newMax);
+                this.updateModel(newMin, newMax);
             }.bind(this);
-            const buckets = this.model.get('values');
+            //noinspection JSUnresolvedFunction
+            const buckets = _.filter(this.model.get('values'), function (value) {
+                return value.min >= this.model.get('min') && value.max <= this.model.get('max');
+            }.bind(this));
             //noinspection JSUnresolvedFunction
             this.graph = this.widget.drawGraph({
                 chart: this.$('.chart')[0],
@@ -189,6 +170,39 @@ define([
                     graph.selectionRect.focus();
                 }
             }, this);
+        },
+
+        updateModel: function (newMin, newMax) {
+            // immediate update, just rescaling the existing buckets
+            this.model.set({
+                min: newMin,
+                max: newMax
+            });
+    
+            // proper update, regenerating the buckets from the given bounds
+            //noinspection JSUnresolvedVariable
+            this.localBucketingCollection.fetch({
+                data: {
+                    fieldNames: [this.model.get('id')],
+                    databases: this.queryModel.get('indexes'),
+                    queryText: this.queryModel.get('queryText'),
+                    targetNumberOfBuckets: [Math.floor(this.$el.width() / this.pixelsPerBucket)],
+                    bucketMin: [newMin],
+                    bucketMax: [newMax]
+                },
+                reset: true,
+                remove: true,
+                success: function() {
+                    const result = this.localBucketingCollection.models[0];
+                    this.model.set({
+                        count: result.get('count'),
+                        min: result.get('min'),
+                        max: result.get('max'),
+                        bucketSize: result.get('bucketSize'),
+                        values: result.get('values')
+                    });
+                }.bind(this)
+            });
         }
     });
 });
