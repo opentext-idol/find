@@ -40,7 +40,7 @@ public class SunburstITCase extends IdolFindTestBase {
         findService.search("shambolic");
         results.goToSunburst();
 
-        verifyThat("Main results list hidden",results.mainResultsContainerHidden());
+        verifyThat("Main results list hidden",getElementFactory().getResultsPage().mainResultsContainerHidden());
         verifyThat("Sunburst element displayed",results.sunburstVisible());
         verifyThat("Parametric selectors appear",results.parametricSelectionDropdownsExist());
     }

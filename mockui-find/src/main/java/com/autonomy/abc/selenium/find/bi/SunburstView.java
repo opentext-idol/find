@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.find.bi;
 
 
 import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
@@ -18,11 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SunburstView extends FindResultsPage {
+public class SunburstView {
     private static final int VISIBLE_SEGMENTS = 20;
 
+    private final WebDriver driver;
+    private final WebElement container;
+
     public SunburstView(WebDriver driver) {
-        super(driver);
+        this.driver = driver;
+        this.container = driver.findElement(By.className("service-view-container"));
     }
 
     //Navigation
@@ -145,5 +148,15 @@ public class SunburstView extends FindResultsPage {
         return ((double) thisCount)/totalResults >= 0.05;
     }
 
+    private WebDriver getDriver() {
+        return driver;
+    }
 
+    private WebElement findElement(By locator) {
+        return container.findElement(locator);
+    }
+
+    private List<WebElement> findElements(By locator) {
+        return container.findElements(locator);
+    }
 }
