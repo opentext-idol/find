@@ -22,7 +22,6 @@ import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
-import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsAnyOf;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
@@ -178,7 +177,11 @@ public class RelatedConceptsITCase extends FindTestBase {
 
         for (int i = 0; i < 5; i++) {
             clickFirstNewConcept(addedConcepts);
-            verifyThat(conceptsPanel().getRelatedConcepts(), not(containsAnyOf(addedConcepts)));
+            List<String> relatedConcepts = conceptsPanel().getRelatedConcepts();
+
+            for (String addedConcept : addedConcepts) {
+                verifyThat(relatedConcepts, not(hasItem(equalToIgnoringCase(addedConcept))));
+            }
         }
     }
 
