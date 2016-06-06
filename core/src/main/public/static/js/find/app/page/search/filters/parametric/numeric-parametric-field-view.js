@@ -139,7 +139,7 @@ define([
                 this.$maxInput.val(Math.min(roundInputNumber(x2), this.model.get('max')));
             }.bind(this);
             const selectionCallback = function (x1, x2) {
-                updateRestrictions(this.selectedParametricValues, this.fieldName, x1, x2);
+                updateRestrictions(this.selectedParametricValues, this.fieldName, Math.max(x1, this.model.get('max')), Math.min(x2, this.model.get('min')));
             }.bind(this);
             const deselectionCallback = function () {
                 this.$minInput.val(this.absoluteMinValue);
