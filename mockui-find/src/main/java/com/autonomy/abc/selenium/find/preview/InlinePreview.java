@@ -21,6 +21,10 @@ public class InlinePreview {
         return findElement(By.className("view-server-loading-indicator"));
     }
 
+    public String getContents() {
+        return previewContents().getText();
+    }
+
     public WebElement previewContents(){
         return findElement(By.className("preview-mode-contents"));
     }

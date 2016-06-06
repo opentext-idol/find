@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
+import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.QueryResult;
@@ -23,6 +24,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.contains
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class DocumentPreviewITCase extends FindTestBase {
     private FindPage findPage;
@@ -44,12 +46,13 @@ public class DocumentPreviewITCase extends FindTestBase {
         findService.search("cake");
 
         DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
+        InlinePreview inlinePreview = getElementFactory().getInlinePreview();
 
-        if (findPage.loadingIndicatorExists()) {
-            assertThat("Preview not stuck loading", !findPage.loadingIndicator().isDisplayed());
+        if (inlinePreview.loadingIndicatorExists()) {
+            assertThat("Preview not stuck loading", inlinePreview.loadingIndicator(), not(displayed()));
         }
-        assertThat("There is content in preview",findPage.previewContents().getText(),not(isEmptyOrNullString()));
-        assertThat("Index displayed",docPreview.getIndex(),not(nullValue()));
+        assertThat("There is content in preview", inlinePreview.getContents(), not(isEmptyOrNullString()));
+        assertThat("Index displayed", docPreview.getIndex(),not(nullValue()));
         assertThat("Reference displayed",docPreview.getReference(),not(nullValue()));
 
         Frame previewFrame = new Frame(getWindow(), docPreview.frame());
@@ -75,7 +78,7 @@ public class DocumentPreviewITCase extends FindTestBase {
             DocumentViewer docViewer = queryResult.openDocumentPreview();
             String reference = docViewer.getReference();
 
-            findPage.openDetailedPreview();
+            getElementFactory().getInlinePreview().openDetailedPreview();
             DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
 
             Window original = session.getActiveWindow();
@@ -100,8 +103,8 @@ public class DocumentPreviewITCase extends FindTestBase {
     public void testDetailedPreview() {
         findService.search("tragic");
         results.getResult(1).openDocumentPreview();
+        getElementFactory().getInlinePreview().openDetailedPreview();
 
-        findPage.openDetailedPreview();
         DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
 
         //loading
@@ -151,7 +154,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         findService.search("face");
         results.getResult(1).openDocumentPreview();
 
-        findPage.openDetailedPreview();
+        getElementFactory().getInlinePreview().openDetailedPreview();
         DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
 
         verifyThat("Only 1 copy of that document in detailed preview",detailedPreviewPage.numberOfHeadersWithDocTitle(),lessThanOrEqualTo(1));
