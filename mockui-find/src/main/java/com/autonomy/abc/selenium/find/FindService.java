@@ -23,15 +23,15 @@ public class FindService implements QueryService<FindResultsPage> {
     @Override
     public FindResultsPage search(final Query query) {
         elementFactory.getTopNavBar().search(query.getTerm());
-        findPage.waitForIndexes();
+        elementFactory.getFilterPanel().waitForIndexes();
         findPage.filterBy(new AggregateQueryFilter(query.getFilters()));
         return elementFactory.getResultsPage();
     }
 
     public SimilarDocumentsView goToSimilarDocuments(final int resultNumber) {
-        FindResultsPage resultsPage = findPage.getResultsPage();
+        FindResultsPage resultsPage = elementFactory.getResultsPage();
         resultsPage.getResult(resultNumber).similarDocuments().click();
-        resultsPage.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        resultsPage.waitForResultsToLoad();
         return elementFactory.getSimilarDocumentsView();
     }
 

@@ -15,13 +15,13 @@ public class ChosenDrop {
     private WebElement button;
     private WebElement menu;
 
-    public ChosenDrop(AppElement element){
+    private ChosenDrop(AppElement element){
         this.element = element;
         this.button = element.findElement(By.className("chosen-container-single"));
         this.menu = element.findElement(By.className("chosen-results"));
     }
 
-    public ChosenDrop(WebElement element, WebDriver driver) {
+    ChosenDrop(WebElement element, WebDriver driver) {
         this(new AppElement(element, driver));
     }
 

@@ -7,6 +7,8 @@ import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResult;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.ParametricFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -36,7 +38,7 @@ public class HodFilterITCase extends HsodFindTestBase {
     @Before
     public void setUp(){
         findPage = getElementFactory().getFindPage();
-        results = findPage.getResultsPage();
+        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 
@@ -70,7 +72,7 @@ public class HodFilterITCase extends HsodFindTestBase {
                 assertThat(result.icon().getAttribute("class"), containsString(f.getFileIconString()));
             }
 
-            findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
+            findPage.filterBy(new ParametricFilter("Content Type", f.getSidebarString()));
         }
     }
 
@@ -98,9 +100,14 @@ public class HodFilterITCase extends HsodFindTestBase {
     @ResolvedBug({"CSA-1726", "CSA-1763"})
     public void testPublicIndexesVisibleNotSelectedByDefault(){
         findService.search("Marina and the Diamonds");
+        final IndexCategoryNode publicIndexes = filters().indexesTree().publicIndexes();
 
-        verifyThat("public indexes are visible", findPage.indexesTree().publicIndexes(), not(emptyIterable()));
-        verifyThat(findPage.getSelectedPublicIndexes(), empty());
+        verifyThat("public indexes are visible", publicIndexes, not(emptyIterable()));
+        verifyThat(publicIndexes.getSelectedNames(), empty());
+    }
+
+    private FilterPanel filters() {
+        return getElementFactory().getFilterPanel();
     }
 
     private enum FileType {

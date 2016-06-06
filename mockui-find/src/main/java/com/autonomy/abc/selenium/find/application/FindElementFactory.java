@@ -1,5 +1,8 @@
 package com.autonomy.abc.selenium.find.application;
 
+import com.autonomy.abc.selenium.find.*;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
@@ -28,7 +31,15 @@ public abstract class FindElementFactory extends ElementFactoryBase {
     }
 
     public FindResultsPage getResultsPage() {
-        return getFindPage().getResultsPage();
+        return new FindResultsPage(getDriver());
+    }
+
+    public RelatedConceptsPanel getRelatedConceptsPanel() {
+        return new RelatedConceptsPanel(getDriver());
+    }
+
+    public FilterPanel getFilterPanel() {
+        return new FilterPanel(new IndexesTree.Factory(), getDriver());
     }
 
     public SimilarDocumentsView getSimilarDocumentsView() {

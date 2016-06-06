@@ -1,8 +1,8 @@
 package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
-import com.google.common.collect.Iterables;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
@@ -13,8 +13,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +21,6 @@ public class FindPage extends AppElement implements AppPage,
         DatePickerFilter.Filterable,
         StringDateFilter.Filterable,
         ParametricFilter.Filterable {
-    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
     private final FindResultsPage results;
 
@@ -34,38 +31,25 @@ public class FindPage extends AppElement implements AppPage,
         results = new FindResultsPage(driver);
     }
 
+    protected FilterPanel filters() {
+        return new FilterPanel(new IndexesTree.Factory(), getDriver());
+    }
+
     @Override
     public void waitForLoad() {
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid")));
     }
 
-    public FindResultsPage getResultsPage() {
-        return results;
-    }
-
-
-
-    /**
-     * waits until the list of indexes has been retrieved
-     * from HOD if necessary
-     */
-    void waitForIndexes() {
-        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
-    }
-
-    public List<String> getSelectedPublicIndexes() {
-        List<String> indexes = new ArrayList<>();
-
-        for(WebElement selectedIndex : findElements(By.cssSelector("[data-category-id='public'] .icon-ok.database-icon"))){
-            indexes.add(ElementUtil.ancestor(selectedIndex, 2).findElement(By.xpath("./span[@class='database-name' or @class='category-name']")).getText());
-        }
-
-        return indexes;
+    public void unhover() {
+        /* click somewhere not important to remove hover -
+        * clicking the user's username seems safe... */
+        getDriver().findElement(By.className("user-username")).click();
+        new WebDriverWait(getDriver(), 2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
     }
 
     @Override
     public IndexesTree indexesTree() {
-        return new IndexesTree(new FindIndexCategoryNode(findElement(By.cssSelector(".databases-list [data-category-id='all']")), getDriver()));
+        return filters().indexesTree();
     }
 
     public void sortBy(SortBy sortBy) {
@@ -80,62 +64,32 @@ public class FindPage extends AppElement implements AppPage,
     @Override
     public void filterBy(QueryFilter filter) {
         filter.apply(this);
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
     }
 
     @Override
     public DatePicker fromDatePicker() {
-        return datePicker(By.className("results-filter-min-date"));
+        return filters().datePickerFilterable().fromDatePicker();
     }
 
     @Override
     public DatePicker untilDatePicker() {
-        return datePicker(By.className("results-filter-max-date"));
-    }
-
-    private DatePicker datePicker(By locator) {
-        showCustomDateBoxes();
-        return new DatePicker(findElement(locator), getDriver());
+        return filters().datePickerFilterable().untilDatePicker();
     }
 
     @Override
     public FormInput fromDateInput() {
-        if (minFindable()) {
-            return dateInput(By.cssSelector(".results-filter-min-date input"));
-        }
-        return dateInput(By.xpath("//div[@data-date-attribute='customMinDate']/descendant::input[@class='form-control']"));
+        return filters().stringDateFilterable().fromDateInput();
     }
 
     @Override
     public FormInput untilDateInput() {
-        if (maxFindable()){
-            return dateInput(By.cssSelector(".results-filter-max-date input"));
-        }
-        return dateInput(By.xpath("//div[@data-date-attribute='customMaxDate']/descendant::input[@class='form-control']"));
-    }
-
-    private Boolean minFindable(){
-        return findElements(By.cssSelector(".results-filter-min-date input")).size()>0;
-    }
-
-    private Boolean maxFindable(){
-        return findElements(By.cssSelector(".results-filter-max-date input")).size()>0;
+        return filters().stringDateFilterable().untilDateInput();
     }
 
     @Override
     public String formatInputDate(Date date) {
-        return FORMAT.format(date);
-    }
-
-    private FormInput dateInput(By locator) {
-        showCustomDateBoxes();
-        return new FormInput(findElement(locator), getDriver());
-    }
-
-    private void showCustomDateBoxes() {
-        if (!results.isDateSelected(FindResultsPage.DateEnum.CUSTOM)) {
-            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
-        }
+        return filters().stringDateFilterable().formatInputDate(date);
     }
 
     @Override
@@ -144,13 +98,9 @@ public class FindPage extends AppElement implements AppPage,
         return ElementUtil.ancestor(firstParametric, 2);
     }
 
-    public Boolean parametricEmptyExists(){
-        return findElements(By.className("parametric-empty")).size()!=0;
-    }
-
     @Override
     public void waitForParametricValuesToLoad() {
-        new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("parametric-processing-indicator")));
+        filters().waitForParametricFields();
     }
 
     // this can be used to check whether on the landing page,
@@ -171,29 +121,18 @@ public class FindPage extends AppElement implements AppPage,
 
     public int totalResultsNum(){return Integer.parseInt(findElement(By.className("total-results-number")).getText());}
 
-    //should check not already selected
-    public void clickFirstIndex(){
-        findElement(By.cssSelector(".child-categories li:first-child")).click();
-    }
-
-    public String getIthIndex(int i){return Iterables.get(indexesTree(),i).getName();}
-
-    public void seeMoreOfCategory(WebElement element){element.findElement(By.className("toggle-more")).click();}
-
     public void openDetailedPreview(){
         findElement(By.className("preview-mode-open-detail-button")).click();
     }
 
-    WebElement leftContainer(){
-        return findElement(By.cssSelector(".left-side-container"));
+    public List<String> getFilterLabels() {
+        return ElementUtil.getTexts(findElements(By.className("filter-label")));
     }
-
-    public List<WebElement> filterLabels(){return findElements(By.className("filter-label"));}
 
     public void scrollToBottom() {
         findElement(By.className("results-number")).click();
         DriverUtil.scrollToBottom(getDriver());
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {

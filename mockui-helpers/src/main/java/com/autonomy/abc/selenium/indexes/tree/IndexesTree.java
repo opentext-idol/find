@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.indexes.tree;
 
 import com.autonomy.abc.selenium.indexes.Index;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,7 +10,7 @@ import java.util.List;
 public class IndexesTree implements Iterable<IndexNodeElement> {
     private final IndexCategoryNode allIndexesNode;
 
-    public IndexesTree(IndexCategoryNode node) {
+    protected IndexesTree(IndexCategoryNode node) {
         allIndexesNode = node;
     }
 
@@ -34,6 +35,7 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
     protected void expandAll() {
         allIndexes().expand();
         publicIndexes().expand();
+        publicIndexes().seeMore();
         privateIndexes().expand();
     }
 
@@ -72,4 +74,10 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
         return allIndexes().iterator();
     }
 
+    public static class Factory implements ParametrizedFactory<IndexCategoryNode, IndexesTree> {
+        @Override
+        public IndexesTree create(IndexCategoryNode context) {
+            return new IndexesTree(context);
+        }
+    }
 }

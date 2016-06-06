@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
 
+import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
@@ -12,10 +13,12 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class FindResultsSunburst extends FindResultsPage{
+    private static final int VISIBLE_SEGMENTS = 20;
 
     public FindResultsSunburst(WebDriver driver) {
         super(driver);
@@ -44,12 +47,10 @@ public class FindResultsSunburst extends FindResultsPage{
         new WebDriverWait(getDriver(),15).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
         }
 
-    public WebElement sunburstCentre(){return findElement(By.cssSelector("svg > path[fill='#ffffff']"));}
-
     public String getSunburstCentreName(){
         return findElement(By.className("sunburst-sector-name")).getText();}
 
-    public boolean sunburstCentreHasText(){
+    private boolean sunburstCentreHasText(){
         return findElements(By.className("sunburst-sector-name")).size()>0;
     }
 
@@ -95,11 +96,11 @@ public class FindResultsSunburst extends FindResultsPage{
     }
 
     //Parametric Filtering
-    public String nthParametricFilterName(int i){
+    public String getSelectedFieldName(int i){
         return nthParametricFilter(i).getText();
     }
 
-    public WebElement nthParametricFilter(int i){
+    private WebElement nthParametricFilter(int i){
         return findElement(By.cssSelector(".parametric-selections span:nth-child("+i+")"));
     }
 
@@ -114,7 +115,34 @@ public class FindResultsSunburst extends FindResultsPage{
         return ElementUtil.getTexts(dropdown.getItems());
     }
 
+    /**
+     * Determines which values for a parametric field are significant
+     * enough to be displayed in sunburst
+     * @param checkboxes some iterable of parametric values
+     * @return the significant values
+     */
+    public static List<String> expectedParametricValues(Iterable<FindParametricCheckbox> checkboxes) {
+        final List<String> expected = new ArrayList<>();
 
+        int totalResults = 0;
+        for (FindParametricCheckbox checkbox : checkboxes) {
+            totalResults += checkbox.getResultsCount();
+        }
+
+        for (FindParametricCheckbox checkbox : checkboxes) {
+            int thisCount = checkbox.getResultsCount();
+            if (expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) {
+                expected.add(checkbox.getName());
+            } else {
+                break;
+            }
+        }
+        return expected;
+    }
+
+    private static boolean isBigEnough(int thisCount, int totalResults) {
+        return ((double) thisCount)/totalResults >= 0.05;
+    }
 
 
 }

@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResult;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -41,7 +42,7 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     @Before
     public void setUp(){
         findPage = getElementFactory().getFindPage();
-        results = findPage.getResultsPage();
+        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 
@@ -99,10 +100,8 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
 
     @Test
     public void testBetween30And60Results(){
-        findService.search(new Query("idol"));
-
-        findPage.seeMoreOfCategory(findPage.indexesTree().publicIndexes().getContainer());
-        findPage.filterBy(new IndexFilter("patents"));
+        findService.search(new Query("connectors"));
+        findPage.filterBy(new IndexFilter("sitesearch"));
 
         findPage.scrollToBottom();
 

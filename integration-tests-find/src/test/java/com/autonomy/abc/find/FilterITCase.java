@@ -3,15 +3,16 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.FindParametricCheckbox;
+import com.autonomy.abc.selenium.find.filters.DateOption;
+import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResult;
 import com.autonomy.abc.selenium.query.StringDateFilter;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
@@ -26,7 +27,8 @@ import java.util.List;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 public class FilterITCase extends FindTestBase {
     private FindPage findPage;
@@ -40,7 +42,7 @@ public class FilterITCase extends FindTestBase {
     @Before
     public void setUp() {
         findPage = getElementFactory().getFindPage();
-        results = findPage.getResultsPage();
+        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 
@@ -50,18 +52,18 @@ public class FilterITCase extends FindTestBase {
         findPage.waitForParametricValuesToLoad();
         int expectedResults = checkbox2().getResultsCount();
         checkbox2().check();
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
         verifyParametricFields(checkbox2(), expectedResults);
         verifyTicks(true, false);
 
         expectedResults = checkbox1().getResultsCount();
         checkbox1().check();
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
         verifyParametricFields(checkbox1(), expectedResults);    //TODO Maybe change plainTextCheckbox to whichever has the higher value??
         verifyTicks(true, true);
 
         checkbox2().uncheck();
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
         expectedResults = checkbox1().getResultsCount();
         verifyParametricFields(checkbox1(), expectedResults);
         verifyTicks(false, true);
@@ -81,18 +83,18 @@ public class FilterITCase extends FindTestBase {
     }
 
     private FindParametricCheckbox checkbox1() {
-        if (getConfig().getType() == ApplicationType.HOSTED) {
-            return results.parametricTypeCheckbox("source connector", "SIMPSONSARCHIVE");
+        if (isHosted()) {
+            return filters().checkboxForParametricValue("source connector", "SIMPSONSARCHIVE");
         } else {
-            return results.parametricTypeCheckbox("SOURCE", "GOOGLE");
+            return filters().checkboxForParametricValue("SOURCE", "GOOGLE");
         }
     }
 
     private FindParametricCheckbox checkbox2() {
-        if (getConfig().getType() == ApplicationType.HOSTED) {
-            return results.parametricTypeCheckbox("content type", "TEXT/PLAIN");
+        if (isHosted()) {
+            return filters().checkboxForParametricValue("content type", "TEXT/PLAIN");
         } else {
-            return results.parametricTypeCheckbox("CATEGORY", "ENTERTAINMENT");
+            return filters().checkboxForParametricValue("CATEGORY", "ENTERTAINMENT");
         }
     }
 
@@ -100,10 +102,11 @@ public class FilterITCase extends FindTestBase {
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
         findService.search("wolf");
 
-        findPage.clickFirstIndex();
-        findPage.clickFirstIndex();
+        FilterPanel panel = filters();
+        panel.clickFirstIndex();
+        panel.clickFirstIndex();
 
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
@@ -126,17 +129,17 @@ public class FilterITCase extends FindTestBase {
     public void testFilterByMultipleIndexes() {
         findService.search("unbelievable");
 
-        IndexFilter filter = new IndexFilter(findPage.getIthIndex(2));
+        IndexFilter filter = new IndexFilter(filters().getIndex(2));
         findPage.filterBy(filter);
         Waits.loadOrFadeWait();
         int firstFilterResults = findPage.totalResultsNum();
 
-        filter.add(findPage.getIthIndex(3));
+        filter.add(filters().getIndex(3));
         findPage.filterBy(filter);
         Waits.loadOrFadeWait();
         int bothFilterResults = findPage.totalResultsNum();
 
-        findPage.filterBy(new IndexFilter(findPage.getIthIndex(3)));
+        findPage.filterBy(new IndexFilter(filters().getIndex(3)));
         int secondFilterResults = findPage.totalResultsNum();
 
         assertThat("Both filter indexes thus both results", firstFilterResults + secondFilterResults, is(bothFilterResults));
@@ -163,33 +166,33 @@ public class FilterITCase extends FindTestBase {
     public void testQuickDoubleClickOnDateFilterNotCauseError() {
         findService.search("wookie");
 
-        results.toggleDateSelection(FindResultsPage.DateEnum.MONTH);
-        results.toggleDateSelection(FindResultsPage.DateEnum.MONTH);
+        toggleDateSelection(DateOption.MONTH);
+        toggleDateSelection(DateOption.MONTH);
 
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.waitForResultsToLoad();
         assertThat(results.resultsDiv().getText().toLowerCase(), not(containsString("an error")));
 
     }
 
     @Test
     public void testPreDefinedWeekHasSameResultsAsCustomWeek() {
-        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.WEEK);
+        preDefinedDateFiltersVersusCustomDateFilters(DateOption.WEEK);
     }
 
     @Test
     public void testPreDefinedMonthHasSameResultsAsCustomMonth() {
-        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.MONTH);
+        preDefinedDateFiltersVersusCustomDateFilters(DateOption.MONTH);
     }
 
     @Test
     public void testPreDefinedYearHasSameResultsAsCustomYear() {
-        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.YEAR);
+        preDefinedDateFiltersVersusCustomDateFilters(DateOption.YEAR);
     }
 
-    private void preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum period) {
+    private void preDefinedDateFiltersVersusCustomDateFilters(DateOption period) {
         findService.search("*");
 
-        results.toggleDateSelection(period);
+        toggleDateSelection(period);
         List<String> preDefinedResults = results.getResultTitles();
         findPage.filterBy(new StringDateFilter().from(getDate(period)).until(new Date()));
         List<String> customResults = results.getResultTitles();
@@ -197,7 +200,7 @@ public class FilterITCase extends FindTestBase {
         assertThat(preDefinedResults, is(customResults));
     }
 
-    private Date getDate(FindResultsPage.DateEnum period) {
+    private Date getDate(DateOption period) {
         Calendar cal = Calendar.getInstance();
 
         if (period != null) {
@@ -219,15 +222,15 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ActiveBug("FIND-152")
     public void testDateRemainsWhenClosingAndReopeningDateFilters() {
-        Date start = getDate(FindResultsPage.DateEnum.MONTH);
-        Date end = getDate(FindResultsPage.DateEnum.WEEK);
+        Date start = getDate(DateOption.MONTH);
+        Date end = getDate(DateOption.WEEK);
 
         findService.search(new Query("Corbyn")
                 .withFilter(new StringDateFilter().from(start).until(end)));
 
         Waits.loadOrFadeWait();
         for (int unused = 0; unused < 3; unused++) {
-            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
+            toggleDateSelection(DateOption.CUSTOM);
             Waits.loadOrFadeWait();
         }
         assertThat(findPage.fromDateInput().getValue(), is(findPage.formatInputDate(start)));
@@ -240,8 +243,17 @@ public class FilterITCase extends FindTestBase {
         findService.search("O Captain! My Captain!");
         // may not happen the first time
         for (int unused = 0; unused < 5; unused++) {
-            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
+            toggleDateSelection(DateOption.CUSTOM);
             assertThat(results.resultsDiv().getText(), not(containsString("Loading")));
         }
+    }
+
+    private FilterPanel filters() {
+        return getElementFactory().getFilterPanel();
+    }
+
+    private void toggleDateSelection(DateOption date) {
+        filters().toggleFilter(date);
+        results.waitForResultsToLoad();
     }
 }

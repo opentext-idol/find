@@ -205,7 +205,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
             assertThat("Have opened preview container",documentViewer.previewPresent());
             documentViewer.close();
             verifyThat(similarDocuments.getVisibleResultsCount(),is(i+30));
-            results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+            results.waitForResultsToLoad();
         }
     }
 

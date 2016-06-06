@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.element.SOCheckbox;
+import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.indexes.tree.IsoIndexCategoryNode;
 import com.autonomy.abc.selenium.query.*;
@@ -175,7 +176,11 @@ public abstract class SearchBase extends SOPageBase implements
 
 	/* indexes/databases */
 	public IndexesTree indexesTree() {
-		return new IndexesTree(new IsoIndexCategoryNode(findElement(By.cssSelector(".databases-list")), getDriver()));
+		return new IndexesTree.Factory().create(allIndexes());
+	}
+
+	protected IndexCategoryNode allIndexes() {
+		return new IsoIndexCategoryNode(findElement(By.cssSelector(".databases-list")), getDriver());
 	}
 
 	/* date filter */

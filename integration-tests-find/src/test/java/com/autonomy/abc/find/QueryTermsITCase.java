@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.shared.QueryTestHelper;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
@@ -16,7 +15,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriverException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +25,6 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class QueryTermsITCase extends FindTestBase {
@@ -43,7 +41,7 @@ public class QueryTermsITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         navBar = getElementFactory().getTopNavBar();
-        results = findPage.getResultsPage();
+        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 
@@ -135,7 +133,7 @@ public class QueryTermsITCase extends FindTestBase {
     public void testWhitespaceSearch() {
         try {
             findService.search("       ");
-        } catch (TimeoutException e) { /* Expected behaviour */ }
+        } catch (WebDriverException e) { /* Expected behaviour */ }
 
         assertThat(findPage.footerLogo(), displayed());
 
@@ -145,9 +143,8 @@ public class QueryTermsITCase extends FindTestBase {
 
         findService.search(" ");
         assertThat(results.getResultTitles(), is(resultTitles));
-        verifyThat("Empty Parametric Table does not exist", !findPage.parametricEmptyExists());
-        assumeThat(getConfig().getType(), is(ApplicationType.HOSTED));
         assertThat(findPage.parametricContainer().getText(), not(isEmptyOrNullString()));
+        assertThat(findPage.parametricContainer().getText(), not(containsString("No parametric fields found")));
     }
 
     @Test

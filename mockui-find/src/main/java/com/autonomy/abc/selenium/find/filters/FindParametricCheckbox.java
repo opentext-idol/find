@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.filters;
 
 import com.hp.autonomy.frontend.selenium.element.Checkbox;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
@@ -15,7 +15,7 @@ public class FindParametricCheckbox extends Checkbox {
 
     @Override
     public String getName() {
-        return findElement(checkbox).getText().split("\\(")[0].trim();
+        return findElement(By.className("parametric-value-text")).getText().trim();
     }
 
     @Override
