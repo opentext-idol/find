@@ -135,8 +135,8 @@ define([
 
             const updateCallback = function (x1, x2) {
                 // rounding to one decimal place
-                this.$minInput.val(roundInputNumber(x1));
-                this.$maxInput.val(roundInputNumber(x2));
+                this.$minInput.val(Math.max(roundInputNumber(x1), this.model.get('min')));
+                this.$maxInput.val(Math.min(roundInputNumber(x2), this.model.get('max')));
             }.bind(this);
             const selectionCallback = function (x1, x2) {
                 updateRestrictions(this.selectedParametricValues, this.fieldName, x1, x2);
