@@ -1,5 +1,6 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.results;
 
+import com.autonomy.abc.selenium.find.Container;
 import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;

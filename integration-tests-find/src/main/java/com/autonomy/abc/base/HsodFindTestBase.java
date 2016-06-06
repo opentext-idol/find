@@ -1,7 +1,7 @@
 package com.autonomy.abc.base;
 
-import com.autonomy.abc.selenium.find.HsodFind;
-import com.autonomy.abc.selenium.find.HsodFindElementFactory;
+import com.autonomy.abc.selenium.find.application.HsodFind;
+import com.autonomy.abc.selenium.find.application.HsodFindElementFactory;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.junit.runner.RunWith;

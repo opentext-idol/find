@@ -2,6 +2,8 @@ package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.find.application.FindApplication;
 import com.autonomy.abc.selenium.find.application.FindElementFactory;
+import com.autonomy.abc.selenium.find.results.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.query.AggregateQueryFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryService;

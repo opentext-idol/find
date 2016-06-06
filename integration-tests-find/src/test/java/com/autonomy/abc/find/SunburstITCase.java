@@ -1,7 +1,7 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.IdolFindTestBase;
-import com.autonomy.abc.selenium.find.FindResultsSunburst;
+import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.*;
 
 public class SunburstITCase extends IdolFindTestBase {
     private IdolFindPage findPage;
-    private FindResultsSunburst results;
+    private SunburstView results;
     private FindService findService;
 
     public SunburstITCase(TestConfig config){super(config);}
@@ -67,7 +67,7 @@ public class SunburstITCase extends IdolFindTestBase {
         Waits.loadOrFadeWait();
 
         filters().showFilters();
-        int correctNumberSegments = FindResultsSunburst.expectedParametricValues(filters().parametricField(1)).size();
+        int correctNumberSegments = SunburstView.expectedParametricValues(filters().parametricField(1)).size();
         assertThat("Correct number ("+correctNumberSegments+") of sunburst segments ",results.numberOfSunburstSegments(),is(correctNumberSegments));
     }
 
@@ -77,7 +77,7 @@ public class SunburstITCase extends IdolFindTestBase {
         results.goToSunburst();
 
         filters().showFilters();
-        List<String> bigEnough = FindResultsSunburst.expectedParametricValues(filters().parametricField(0));
+        List<String> bigEnough = SunburstView.expectedParametricValues(filters().parametricField(0));
         results.waitForSunburst();
 
         for (WebElement segment : results.findSunburstSegments()) {

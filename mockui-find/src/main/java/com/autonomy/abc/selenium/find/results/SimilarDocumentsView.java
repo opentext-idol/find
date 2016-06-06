@@ -1,6 +1,5 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.results;
 
-import com.autonomy.abc.selenium.query.SortBy;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;

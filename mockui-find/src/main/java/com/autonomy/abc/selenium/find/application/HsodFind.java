@@ -1,6 +1,5 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.application;
 
-import com.autonomy.abc.selenium.find.application.FindApplication;
 import com.hp.autonomy.frontend.selenium.control.Window;
 
 public class HsodFind extends FindApplication<HsodFindElementFactory> {

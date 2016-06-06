@@ -1,6 +1,5 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.application;
 
-import com.autonomy.abc.selenium.find.application.FindElementFactory;
 import com.autonomy.abc.selenium.find.login.FindHasLoggedIn;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;

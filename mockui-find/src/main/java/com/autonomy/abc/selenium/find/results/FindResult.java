@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.results;
 
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.DocumentPreviewer;

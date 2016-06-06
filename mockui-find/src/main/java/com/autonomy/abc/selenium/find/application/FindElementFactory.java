@@ -1,12 +1,12 @@
 package com.autonomy.abc.selenium.find.application;
 
-import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
-import com.autonomy.abc.selenium.find.SimilarDocumentsView;
+import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
