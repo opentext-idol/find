@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
 
+import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
@@ -12,10 +13,12 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class FindResultsSunburst extends FindResultsPage{
+    static final int VISIBLE_SEGMENTS = 20;
 
     public FindResultsSunburst(WebDriver driver) {
         super(driver);
@@ -114,7 +117,28 @@ public class FindResultsSunburst extends FindResultsPage{
         return ElementUtil.getTexts(dropdown.getItems());
     }
 
+    static List<FindParametricCheckbox> expectedParametricValues(List<FindParametricCheckbox> checkboxes) {
+        final List<FindParametricCheckbox> expected = new ArrayList<>();
 
+        int totalResults = 0;
+        for (FindParametricCheckbox checkbox : checkboxes) {
+            totalResults += checkbox.getResultsCount();
+        }
+
+        for (FindParametricCheckbox checkbox : checkboxes) {
+            int thisCount = checkbox.getResultsCount();
+            if (expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) {
+                expected.add(checkbox);
+            } else {
+                break;
+            }
+        }
+        return checkboxes;
+    }
+
+    private static boolean isBigEnough(int thisCount, int totalResults) {
+        return ((double) thisCount)/totalResults >= 0.05;
+    }
 
 
 }

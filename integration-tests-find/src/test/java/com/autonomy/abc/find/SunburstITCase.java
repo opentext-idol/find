@@ -67,7 +67,7 @@ public class SunburstITCase extends IdolFindTestBase {
         Waits.loadOrFadeWait();
 
         filters().showFilters();
-        int correctNumberSegments = findPage.numParametricChildrenBigEnoughForSunburst(filters().parametricField(0).getParentName());
+        int correctNumberSegments = findPage.getSunburstableValuesFor(filters().parametricField(0)).size();
         assertThat("Correct number ("+correctNumberSegments+") of sunburst segments ",results.numberOfSunburstSegments(),is(correctNumberSegments));
     }
 
@@ -77,7 +77,7 @@ public class SunburstITCase extends IdolFindTestBase {
         results.goToSunburst();
 
         filters().showFilters();
-        List<String> bigEnough = findPage.nameParametricChildrenBigEnoughForSunburst(filters().parametricField(0).getParentName());
+        List<String> bigEnough = findPage.getSunburstableValuesFor(filters().parametricField(0));
         results.waitForSunburst();
 
         for (WebElement segment : results.findSunburstSegments()) {

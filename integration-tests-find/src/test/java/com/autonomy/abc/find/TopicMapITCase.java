@@ -1,7 +1,6 @@
 package com.autonomy.abc.find;
 
 
-import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindResultsTopicMap;
 import com.autonomy.abc.selenium.find.FindService;
@@ -9,7 +8,7 @@ import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
@@ -116,10 +115,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         results.goToTopicMap();
 
         results.waitForMapLoaded();
-
-        try{
-            Thread.sleep(1000);
-        } catch(InterruptedException e){}
+        Waits.loadOrFadeWait();
 
         List<String> addedConcepts = results.clickEntitiesAndAddText(3);
         verifyThat("All "+addedConcepts.size()+" added concept terms added to search",relatedConceptsWithoutSpaces(),containsItems(addedConcepts));

@@ -62,7 +62,7 @@ public class FilterPanel {
     }
 
     private List<FilterContainer> allFilterContainers() {
-        List<FilterContainer> nodes = parametricFieldContainers();
+        List<FilterContainer> nodes = new ArrayList<FilterContainer>(parametricFieldContainers());
         nodes.add(0, indexesTreeContainer());
         nodes.add(1, dateFilterContainer());
         return nodes;
@@ -80,8 +80,8 @@ public class FilterPanel {
         return new DateFilterContainer(container, getDriver());
     }
 
-    private List<FilterContainer> parametricFieldContainers() {
-        List<FilterContainer> containers = new ArrayList<>();
+    private List<ParametricFieldContainer> parametricFieldContainers() {
+        List<ParametricFieldContainer> containers = new ArrayList<>();
         for (WebElement container : getParametricFilters()) {
             containers.add(new ParametricFieldContainer(container, driver));
         }
@@ -165,7 +165,7 @@ public class FilterPanel {
         }
     }
 
-    public FilterContainer parametricField(int i) {
+    public ParametricFieldContainer parametricField(int i) {
         return parametricFieldContainers().get(i);
     }
 }

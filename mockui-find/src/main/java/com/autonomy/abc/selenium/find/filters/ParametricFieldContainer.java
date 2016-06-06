@@ -5,12 +5,16 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class ParametricFieldContainer extends FilterContainer {
+public class ParametricFieldContainer extends FilterContainer implements Iterable<FindParametricCheckbox> {
+    private final WebDriver driver;
 
     ParametricFieldContainer(WebElement element, WebDriver webDriver) {
         super(element, webDriver);
+        driver = webDriver;
     }
 
     public List<WebElement> getChildren(){
@@ -29,6 +33,7 @@ public class ParametricFieldContainer extends FilterContainer {
     public List<WebElement> getFullChildrenElements(){
         return getContainer().findElements(By.className("parametric-value-element"));
     }
+
     public int getTotalDocNumber(){
         int total=0;
         for(WebElement element:getChildDocCount()){
@@ -38,5 +43,17 @@ public class ParametricFieldContainer extends FilterContainer {
         return total;
     }
 
+    @Override
+    public Iterator<FindParametricCheckbox> iterator() {
+        return values().iterator();
+    }
+
+    public List<FindParametricCheckbox> values() {
+        List<FindParametricCheckbox> boxes = new ArrayList<>();
+        for (WebElement el : getFullChildrenElements()) {
+            boxes.add(new FindParametricCheckbox(el, driver));
+        }
+        return boxes;
+    }
 
 }
