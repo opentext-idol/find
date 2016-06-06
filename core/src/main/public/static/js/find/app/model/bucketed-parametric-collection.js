@@ -13,7 +13,6 @@ define([
         url: '../api/public/parametric/buckets',
         
         model: Backbone.Model.extend({
-            idAttribute: 'name',
             defaults: {
                 values: []
             }

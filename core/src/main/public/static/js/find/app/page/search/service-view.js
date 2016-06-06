@@ -304,7 +304,7 @@ define([
                     stateTokens: this.queryModel.get('stateMatchIds')
                 };
 
-                var fieldNames = fieldsCollection.pluck('field');
+                var fieldNames = fieldsCollection.pluck('id');
                 if (fieldNames.length > 0) {
                     valuesCollection.fetch({data: _.extend({
                         fieldNames: fieldNames

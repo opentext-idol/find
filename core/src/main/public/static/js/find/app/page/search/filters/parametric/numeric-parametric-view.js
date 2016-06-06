@@ -58,7 +58,7 @@ define([
                 //noinspection JSUnresolvedVariable
                 this.collection.fetch({
                     data: {
-                        fieldNames: options.fieldsCollection.pluck('field'),
+                        fieldNames: options.fieldsCollection.pluck('id'),
                         databases: options.queryModel.get('indexes'),
                         queryText: options.queryModel.get('queryText'),
                         targetNumberOfBuckets: Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)

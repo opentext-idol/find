@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.core.fields;
 import com.google.common.collect.ImmutableList;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsRequest;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
+import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,37 +44,37 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
 
     @Test
     public void getParametricFields() throws E {
-        final Map<FieldTypeParam, List<String>> response = new EnumMap<>(FieldTypeParam.class);
-        response.put(FieldTypeParam.Numeric, ImmutableList.of("NumericField", "ParametricNumericField"));
-        response.put(FieldTypeParam.NumericDate, ImmutableList.of("DateField", "ParametricDateField"));
-        response.put(FieldTypeParam.Parametric, ImmutableList.of("ParametricField", "ParametricNumericField", "ParametricDateField"));
+        final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
+        response.put(FieldTypeParam.Numeric, ImmutableList.of(new TagName("NumericField"), new TagName("ParametricNumericField")));
+        response.put(FieldTypeParam.NumericDate, ImmutableList.of(new TagName("DateField"), new TagName("ParametricDateField")));
+        response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("ParametricField"), new TagName("ParametricNumericField"), new TagName("ParametricDateField")));
         when(service.getFields(Matchers.<R>any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
 
-        final List<String> fields = controller.getParametricFields(createRequest());
+        final List<TagName> fields = controller.getParametricFields(createRequest());
         assertThat(fields, hasSize(1));
-        assertThat(fields, hasItem(is("ParametricField")));
+        assertThat(fields, hasItem(is(new TagName("ParametricField"))));
     }
 
     @Test
     public void getParametricNumericFields() throws E {
-        final Map<FieldTypeParam, List<String>> response = new EnumMap<>(FieldTypeParam.class);
-        response.put(FieldTypeParam.Numeric, ImmutableList.of("NumericField", "ParametricNumericField"));
-        response.put(FieldTypeParam.Parametric, ImmutableList.of("ParametricField", "ParametricNumericField", "ParametricDateField"));
+        final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
+        response.put(FieldTypeParam.Numeric, ImmutableList.of(new TagName("NumericField"), new TagName("ParametricNumericField")));
+        response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("ParametricField"), new TagName("ParametricNumericField"), new TagName("ParametricDateField")));
         when(service.getFields(Matchers.<R>any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric))).thenReturn(response);
 
-        final List<String> fields = controller.getParametricNumericFields(createRequest());
+        final List<TagName> fields = controller.getParametricNumericFields(createRequest());
         assertThat(fields, hasSize(1));
-        assertThat(fields, hasItem(is("ParametricNumericField")));
+        assertThat(fields, hasItem(is(new TagName("ParametricNumericField"))));
     }
 
     @Test
     public void getParametricDateFields() throws E {
-        final Map<FieldTypeParam, List<String>> response = new EnumMap<>(FieldTypeParam.class);
-        response.put(FieldTypeParam.NumericDate, ImmutableList.of("DateField", "ParametricDateField"));
-        response.put(FieldTypeParam.Parametric, ImmutableList.of("ParametricField", "ParametricNumericField", "ParametricDateField"));
+        final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
+        response.put(FieldTypeParam.NumericDate, ImmutableList.of(new TagName("DateField"), new TagName("ParametricDateField")));
+        response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("ParametricField"), new TagName("ParametricNumericField"), new TagName("ParametricDateField")));
         when(service.getFields(Matchers.<R>any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
-        final List<String> fields = controller.getParametricDateFields(createRequest());
+        final List<TagName> fields = controller.getParametricDateFields(createRequest());
         assertThat(fields, hasSize(2));
-        assertThat(fields, hasItem(is("ParametricDateField")));
+        assertThat(fields, hasItem(is(new TagName("ParametricDateField"))));
     }
 }

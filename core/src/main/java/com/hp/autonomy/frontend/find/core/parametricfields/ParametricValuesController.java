@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
+import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
@@ -23,7 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -45,6 +49,8 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     private static final String MIN_SCORE = "minScore";
     private static final String STATE_TOKEN_PARAM = "stateTokens";
     static final String TARGET_NUMBER_OF_BUCKETS_PARAM = "targetNumberOfBuckets";
+    static final String BUCKET_MIN_PARAM = "bucketMin";
+    static final String BUCKET_MAX_PARAM = "bucketMax";
 
     private final ParametricValuesService<R, S, E> parametricValuesService;
     protected final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
@@ -75,7 +81,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 
-    @SuppressWarnings("MethodWithTooManyParameters")
+    @SuppressWarnings({"MethodWithTooManyParameters", "TypeMayBeWeakened"})
     @RequestMapping(value = BUCKET_PARAMETRIC_PATH, method = RequestMethod.GET)
     @ResponseBody
     public List<RangeInfo> getNumericParametricValuesInBuckets(
@@ -87,10 +93,27 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens,
-            @RequestParam(TARGET_NUMBER_OF_BUCKETS_PARAM) final int targetNumberOfBuckets
+            @RequestParam(TARGET_NUMBER_OF_BUCKETS_PARAM) final List<Integer> targetNumberOfBuckets,
+            @RequestParam(value = BUCKET_MIN_PARAM, required = false) final List<Double> bucketMin,
+            @RequestParam(value = BUCKET_MAX_PARAM, required = false) final List<Double> bucketMax
     ) throws E {
+        final int numberOfFields = fieldNames.size();
+        if (numberOfFields != targetNumberOfBuckets.size() || numberOfFields != bucketMin.size() || numberOfFields != bucketMax.size()) {
+            throw new IllegalArgumentException("Invalid bucketing parameters. Parameters must be supplied for every field.");
+        }
+
         final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, null, SortParam.NumberIncreasing);
-        return parametricValuesService.getNumericParametricValuesInBuckets(parametricRequest, targetNumberOfBuckets);
+
+        final Map<String, BucketingParams> bucketingParamsPerField = new LinkedHashMap<>(numberOfFields);
+        final Iterator<String> fieldNameIterator = fieldNames.iterator();
+        final Iterator<Integer> targetNumberOfBucketsIterator = targetNumberOfBuckets.iterator();
+        final Iterator<Double> bucketMinIterator = bucketMin.iterator();
+        final Iterator<Double> bucketMaxIterator = bucketMax.iterator();
+        while (fieldNameIterator.hasNext()) {
+            final String fieldName = fieldNameIterator.next();
+            bucketingParamsPerField.put(fieldName, new BucketingParams(targetNumberOfBucketsIterator.next(), bucketMinIterator.next(), bucketMaxIterator.next()));
+        }
+        return parametricValuesService.getNumericParametricValuesInBuckets(parametricRequest, bucketingParamsPerField);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")

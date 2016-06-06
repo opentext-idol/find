@@ -6,7 +6,6 @@ define([
 
     return FindBaseCollection.extend({
         model: Backbone.Model.extend({
-            idAttribute: 'name',
             defaults: {
                 values: []
             }
