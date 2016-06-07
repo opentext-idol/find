@@ -81,6 +81,9 @@ define([
             this.selectedParametricValues = options.selectedParametricValues;
             this.pixelsPerBucket = options.pixelsPerBucket;
             this.viewWidth = options.viewWidth;
+            this.selectionEnabled = options.selectionEnabled;
+            this.zoomEnabled = options.zoomEnabled;
+            this.buttonsEnabled = options.selectionEnabled && options.buttonsEnabled;
             this.fieldName = this.model.id;
             //noinspection JSUnresolvedVariable
             this.formatValue = options.stringFormatting && options.stringFormatting.format || _.identity;
@@ -104,19 +107,23 @@ define([
             this.$el.empty().append(this.template({
                 i18n: i18n,
                 fieldName: prettifyFieldName(this.model.get('name')),
-                id: _.uniqueId('numeric-parametric-field')
+                id: _.uniqueId('numeric-parametric-field'),
+                selectionEnabled: this.selectionEnabled,
+                buttonsEnabled: this.buttonsEnabled
             }));
 
-            //noinspection JSUnresolvedVariable
-            this.renderCustomFormatting(this.$el);
+            if (this.selectionEnabled) {
+                //noinspection JSUnresolvedVariable
+                this.renderCustomFormatting(this.$el);
 
-            //noinspection JSUnresolvedFunction
-            this.$minInput = this.$('.numeric-parametric-min-input');
-            //noinspection JSUnresolvedFunction
-            this.$maxInput = this.$('.numeric-parametric-max-input');
+                //noinspection JSUnresolvedFunction
+                this.$minInput = this.$('.numeric-parametric-min-input');
+                //noinspection JSUnresolvedFunction
+                this.$maxInput = this.$('.numeric-parametric-max-input');
 
-            this.updateMinInput(this.absoluteMinValue);
-            this.updateMaxInput(this.absoluteMaxValue);
+                this.updateMinInput(this.absoluteMinValue);
+                this.updateMaxInput(this.absoluteMaxValue);
+            }
 
             const updateCallback = function (x1, x2) {
                 // rounding to one decimal place
@@ -154,7 +161,9 @@ define([
                 zoomCallback: zoomCallback,
                 xRange: this.viewWidth,
                 yRange: GRAPH_HEIGHT,
-                tooltip: i18n['search.numericParametricFields.tooltip']
+                tooltip: i18n['search.numericParametricFields.tooltip'],
+                dragEnabled: this.selectionEnabled,
+                zoomEnabled: this.zoomEnabled
             });
 
             this.drawSelection();

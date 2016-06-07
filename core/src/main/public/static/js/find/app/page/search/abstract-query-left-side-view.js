@@ -94,7 +94,10 @@ define([
                 queryModel: options.queryModel,
                 queryState: options.queryState,
                 fieldsCollection: this.numericParametricFieldsCollection,
-                fieldTemplate: numericParametricFieldTemplate
+                fieldTemplate: numericParametricFieldTemplate,
+                selectionEnabled: true,
+                zoomEnabled: true,
+                buttonsEnabled: true
             });
 
             this.dateParametricView = new NumericParametricView({

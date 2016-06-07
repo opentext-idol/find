@@ -3,34 +3,38 @@
     <form>
         <svg class="chart">
         </svg>
-        <div class="row">
-            <div class="col-sm-5">
-                <div class="input-group date results-filter-date" data-date-attribute="min-date">
-                    <input type="text" class="numeric-parametric-min-input form-control" title="min-value" size="20" value=""/>
-                    <span class="input-group-addon date-select">
-                        <i class="hp-icon hp-fw hp-calendar"></i>
-                    </span>
+        <% if (selectionEnabled) { %>
+            <div class="row numeric-parametric-inputs">
+                <div class="col-sm-5">
+                    <div class="input-group date results-filter-date" data-date-attribute="min-date">
+                        <input type="text" class="numeric-parametric-min-input form-control" title="min-value" size="20" value=""/>
+                        <span class="input-group-addon date-select">
+                            <i class="hp-icon hp-fw hp-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-5 col-sm-offset-2">
+                    <div class="input-group date results-filter-date" data-date-attribute="max-date">
+                        <input type="text" class="numeric-parametric-max-input form-control" title="max-value" size="20" value=""/>
+                        <span class="input-group-addon date-select">
+                            <i class="hp-icon hp-fw hp-calendar"></i>
+                        </span>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-5 col-sm-offset-2">
-                <div class="input-group date results-filter-date" data-date-attribute="max-date">
-                    <input type="text" class="numeric-parametric-max-input form-control" title="max-value" size="20" value=""/>
-                    <span class="input-group-addon date-select">
-                        <i class="hp-icon hp-fw hp-calendar"></i>
-                    </span>
+        <% } %>
+        <% if (buttonsEnabled) { %>
+            <div class="row numeric-parametric-buttons">
+                <div class="col-sm-5">
+                    <a class="numeric-parametric-no-min numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.noMin']%></a>
+                </div>
+                <div class="col-sm-4">
+                    <a class="numeric-parametric-reset numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.reset']%></a>
+                </div>
+                <div class="col-sm-3">
+                    <a class="pull-right numeric-parametric-no-max numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.noMax']%></a>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-5">
-                <a class="numeric-parametric-no-min numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.noMin']%></a>
-            </div>
-            <div class="col-sm-4">
-                <a class="numeric-parametric-reset numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.reset']%></a>
-            </div>
-            <div class="col-sm-3">
-                <a class="pull-right numeric-parametric-no-max numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.noMax']%></a>
-            </div>
-        </div>
+        <% } %>
     </form>
 </div>

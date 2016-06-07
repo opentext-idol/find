@@ -116,21 +116,25 @@ define([
                         return options.tooltip(formattingFn(d.min), formattingFn(d.max), d.count);
                     });
 
-                const dragBehaviour = d3.behavior.drag()
-                    .on("drag", dragMove(scale.barWidth, data.minValue, options.updateCallback))
-                    .on("dragstart", dragStart(chart, options.yRange))
-                    .on("dragend", dragEnd(scale.barWidth, data.minValue, options.selectionCallback, options.deselectionCallback));
-                chart.call(dragBehaviour);
+                if (options.dragEnabled) {
+                    const dragBehaviour = d3.behavior.drag()
+                        .on("drag", dragMove(scale.barWidth, data.minValue, options.updateCallback))
+                        .on("dragstart", dragStart(chart, options.yRange))
+                        .on("dragend", dragEnd(scale.barWidth, data.minValue, options.selectionCallback, options.deselectionCallback));
+                    chart.call(dragBehaviour);
+                }
 
-                const zoomBehaviour = d3.behavior.zoom()
-                    .on("zoom", zoom(scale.barWidth, data.minValue, data.maxValue, options.zoomCallback))
-                    .scaleExtent(zoomExtent);
-                chart
-                    .call(zoomBehaviour)
-                    .on("mousedown.zoom", null)
-                    .on("touchstart.zoom", null)
-                    .on("touchmove.zoom", null)
-                    .on("touchend.zoom", null);
+                if (options.zoomEnabled) {
+                    const zoomBehaviour = d3.behavior.zoom()
+                        .on("zoom", zoom(scale.barWidth, data.minValue, data.maxValue, options.zoomCallback))
+                        .scaleExtent(zoomExtent);
+                    chart
+                        .call(zoomBehaviour)
+                        .on("mousedown.zoom", null)
+                        .on("touchstart.zoom", null)
+                        .on("touchmove.zoom", null)
+                        .on("touchend.zoom", null);
+                }
 
                 return {
                     chart: chart,

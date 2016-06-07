@@ -55,14 +55,15 @@ define([
                     queryModel: options.queryModel,
                     selectedParametricValues: options.queryState.selectedParametricValues,
                     pixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
-                    stringFormatting: options.stringFormatting
+                    stringFormatting: options.stringFormatting,
+                    selectionEnabled: options.selectionEnabled,
+                    zoomEnabled: options.zoomEnabled,
+                    buttonsEnabled: options.buttonsEnabled
                 }
             });
 
             //noinspection JSUnresolvedFunction
-            this.listenTo(options.fieldsCollection, 'update reset', function () {
-                this.refreshFields();
-            });
+            this.listenTo(options.fieldsCollection, 'update reset',  this.refreshFields);
         },
 
         refreshFields: function () {
