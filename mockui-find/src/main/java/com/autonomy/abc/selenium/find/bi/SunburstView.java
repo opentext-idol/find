@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.find.bi;
 
 
 import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
+import com.hp.autonomy.frontend.selenium.element.ChosenDrop;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;

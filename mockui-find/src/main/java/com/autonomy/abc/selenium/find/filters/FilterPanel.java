@@ -19,7 +19,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.autonomy.abc.selenium.util.SeleniumUtil.cssifyIndex;
+import static com.hp.autonomy.frontend.selenium.util.CssUtil.cssifyIndex;
 
 public class FilterPanel {
     private final WebElement panel;

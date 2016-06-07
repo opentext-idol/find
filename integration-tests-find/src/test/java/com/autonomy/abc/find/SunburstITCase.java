@@ -63,7 +63,7 @@ public class SunburstITCase extends IdolFindTestBase {
         results.goToSunburst();
 
         //only works if you have at least 2 parametric types
-        results.parametricSelectionDropdown(1).selectIthItem(1);
+        results.parametricSelectionDropdown(1).selectItem(1);
         Waits.loadOrFadeWait();
 
         filters().showFilters();
