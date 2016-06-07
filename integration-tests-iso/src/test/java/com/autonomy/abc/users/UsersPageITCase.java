@@ -237,6 +237,8 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		checkUserHidden(james);
 		checkUserHidden(john);
 		checkUserVisible(bob);
+
+		searchFilter.clear();
 	}
 
 	private User createAdminFromConfig(String configId) {
@@ -259,6 +261,8 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		dropdown.select("User");
 		checkUserHidden(admin);
 		checkUserVisible(endUser);
+
+		dropdown.select("All");
 	}
 
 	private void checkUserVisible(User user) {
