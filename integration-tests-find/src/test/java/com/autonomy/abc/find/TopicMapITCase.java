@@ -2,6 +2,7 @@ package com.autonomy.abc.find;
 
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.selenium.find.bi.Slider;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
@@ -57,21 +58,21 @@ public class TopicMapITCase extends IdolFindTestBase {
         slidingIncreasesNumber(results.numberTopicsSlider());
         slidingIncreasesNumber(results.relevanceVsClusteringSlider());
 
-        results.hoverOnSlider(results.numberTopicsSlider());
-        verifyThat("Number of topics tooltip number correct", results.numberinMap(results.numberTopicsSlider()), is(results.numberOfMapEntities()));
+        results.numberTopicsSlider().hover();
+        verifyThat("Number of topics tooltip number correct", results.numberTopicsSlider().getValue(), is(results.numberOfMapEntities()));
     }
 
-    private void slidingIncreasesNumber(WebElement slider) {
-        results.hoverOnSlider(slider);
-        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(results.sliderToolTip(slider)));
-        verifyThat("Tooltip appears on hover", results.sliderToolTip(slider).isDisplayed());
-        int firstNumber = results.numberinMap(slider);
+    private void slidingIncreasesNumber(Slider slider) {
+        slider.hover();
+        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(slider.tooltip()));
+        verifyThat("Tooltip appears on hover", slider.tooltip().isDisplayed());
+        int firstNumber = slider.getValue();
 
-        results.dragSlider(slider);
-        results.hoverOnSlider(slider);
-        assertThat("Tooltip reappears after dragging", results.sliderToolTip(slider).isDisplayed());
+        slider.dragBy(100);
+        slider.hover();
+        assertThat("Tooltip reappears after dragging", slider.tooltip().isDisplayed());
 
-        verifyThat("New tooltip value bigger than old", results.numberinMap(slider), greaterThanOrEqualTo(firstNumber));
+        verifyThat("New tooltip value bigger than old", slider.getValue(), greaterThanOrEqualTo(firstNumber));
     }
 
     @Test
@@ -79,11 +80,11 @@ public class TopicMapITCase extends IdolFindTestBase {
         findService.search("trouble");
         results.goToTopicMap();
 
-        results.dragSlider(results.numberTopicsSlider());
+        results.numberTopicsSlider().dragBy(100);
 
         results.waitForMapLoaded();
-        results.hoverOnSlider(results.numberTopicsSlider());
-        int numberEntities = results.numberinMap(results.numberTopicsSlider());
+        results.numberTopicsSlider().hover();
+        int numberEntities = results.numberTopicsSlider().getValue();
 
         List<WebElement> textElements = results.mapEntityTextElements();
         verifyThat("Same number of text elements as map pieces", textElements.size(), is(numberEntities));

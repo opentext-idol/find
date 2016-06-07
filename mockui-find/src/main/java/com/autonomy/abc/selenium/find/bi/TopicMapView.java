@@ -1,11 +1,8 @@
 package com.autonomy.abc.selenium.find.bi;
 
-import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -31,34 +28,12 @@ public class TopicMapView {
 
     private WebElement sliderBlock(){return findElement(By.cssSelector(".slider-block div:nth-child(2)"));}
 
-    public WebElement relevanceVsClusteringSlider(){return sliderBlock().findElement(By.cssSelector("[id*='relevance-slider']"));}
-
-    public WebElement numberTopicsSlider(){return sliderBlock().findElement(By.cssSelector("[id*='count-slider']"));}
-
-    private Slider asSlider(WebElement slider) {
-        return new Slider(slider, driver);
+    public Slider relevanceVsClusteringSlider(){
+        return new Slider(sliderBlock().findElement(By.cssSelector("[id*='relevance-slider']")), driver);
     }
 
-    //sliders
-    public void hoverOnSlider(WebElement slider){
-        asSlider(slider).hover();
-    }
-
-    public int numberinMap(WebElement slider){
-        return asSlider(slider).getValue();
-    }
-
-    public WebElement sliderToolTip(WebElement slider){
-         return asSlider(slider).tooltip();
-    }
-
-    //probably shouldn't be in here -> should be somewhere like DriverUtil
-    public void dragSliderByI(WebElement slider,int i){
-         asSlider(slider).dragBy(i);
-    }
-
-    public void dragSlider(WebElement slider){
-         dragSliderByI(slider,100);
+    public Slider numberTopicsSlider(){
+        return new Slider(sliderBlock().findElement(By.cssSelector("[id*='count-slider']")), driver);
     }
 
     //map
