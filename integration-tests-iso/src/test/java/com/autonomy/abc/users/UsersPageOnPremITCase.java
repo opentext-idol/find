@@ -193,6 +193,6 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
     @Test
     public void testAddStupidlyLongUsername() {
         final String longUsername = StringUtils.repeat("a", 100);
-        this.helper.verifyCreateDeleteInTable(new IdolIsoNewUser(longUsername, "b"));
+        this.helper.verifyCreateDeleteInTable(new IdolIsoNewUser(longUsername, "bbb"));
     }
 }
