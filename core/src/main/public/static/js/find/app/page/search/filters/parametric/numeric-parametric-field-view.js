@@ -87,7 +87,9 @@ define([
             this.pixelsPerBucket = options.pixelsPerBucket;
             this.viewWidth = options.viewWidth;
             this.fieldName = this.model.id;
-            this.widget = numericWidget({});
+            this.widget = numericWidget({
+                formattingFn: options.formattingFn
+            });
             this.localBucketingCollection = new (FindBaseCollection.extend({
                 url: '../api/public/parametric/buckets'
             }))();

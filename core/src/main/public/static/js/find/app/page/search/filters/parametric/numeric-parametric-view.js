@@ -50,7 +50,8 @@ define([
                 itemOptions: {
                     queryModel: options.queryModel,
                     selectedParametricValues: options.queryState.selectedParametricValues,
-                    pixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET
+                    pixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
+                    formattingFn: options.formattingFn
                 }
             });
 

@@ -56,16 +56,21 @@ define([
                 const totalXDiff = (max - min) / zoomScale - (max - min);
                 const minValueDiff = totalXDiff * (mouseValue - min) / (max - min);
                 const maxValueDiff = totalXDiff * (max - mouseValue) / (max - min);
-                
+
                 zoomCallback(min - minValueDiff, max + maxValueDiff);
             }
         }
     }
 
     return function (options) {
+        //noinspection JSUnresolvedVariable
         const barGapSize = options.barGapSize || BAR_GAP_SIZE;
+        //noinspection JSUnresolvedVariable
         const emptyBarHeight = options.emptyBarHeight || EMPTY_BAR_HEIGHT;
+        //noinspection JSUnresolvedVariable
         const zoomExtent = options.zoomExtent || ZOOM_EXTENT;
+        //noinspection JSUnresolvedVariable
+        const formattingFn = options.formattingFn || _.identity;
 
         return {
             drawGraph: function (options) {
@@ -108,7 +113,7 @@ define([
                     })
                     .append("title")
                     .text(function (d) {
-                        return options.tooltip(d.min, d.max, d.count);
+                        return options.tooltip(formattingFn(d.min), formattingFn(d.max), d.count);
                     });
 
                 const dragBehaviour = d3.behavior.drag()

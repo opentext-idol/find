@@ -17,8 +17,9 @@ define([
     'parametric-refinement/display-collection',
     'find/app/configuration',
     'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes'
-], function(Backbone, $, _, DateView, NumericParametricView, ParametricView, TextInput, PrecisionRecallView, Collapsible, vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
+    'i18n!find/nls/indexes',
+    'moment'
+], function(Backbone, $, _, DateView, NumericParametricView, ParametricView, TextInput, PrecisionRecallView, Collapsible, vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes, moment) {
     "use strict";
 
     var datesTitle = i18n['search.dates'];
@@ -93,7 +94,10 @@ define([
             this.dateParametricView = new NumericParametricView({
                 queryModel: options.queryModel,
                 queryState: options.queryState,
-                fieldsCollection: this.dateParametricFieldsCollection
+                fieldsCollection: this.dateParametricFieldsCollection,
+                formattingFn: function format(unformattedString) {
+                    return moment(unformattedString * 1000).format("YYYY-MM-DD HH:mm");
+                }
             });
             
             //noinspection JSUnresolvedFunction
