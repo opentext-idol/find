@@ -12,22 +12,6 @@
     </div>
 
     <div class="col-md-9 fields-list">
-        <div class="tab-content">
-            <% parametricDisplayCollection.each(function(field) { %>
-                <div id="<%-field.id%>" class="tab-pane <%- currentFieldGroup === field.id ? 'active' : ''%>" role="tabpanel">
-                    <% _.each(field.fieldValues.models, function(model) { %>
-                        <div class="i-check checkbox parametric-field-label clickable shorten" data-field-id="<%-field.id%>">
-                            <label>
-                                <input type="checkbox" <%-model.get('selected') ? 'checked' : ''%>>
-                                <span class="field-value"><%-model.id%></span>
-                                <% if(model.get('count')) { %>
-                                    (<%-model.get('count')%>)
-                                <% } %>
-                            </label>
-                        </div>
-                    <% }); %>
-                </div>
-            <% }); %>
-        </div>
+        <div class="tab-content"></div>
     </div>
 </div>
