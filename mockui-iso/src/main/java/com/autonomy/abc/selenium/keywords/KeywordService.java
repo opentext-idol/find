@@ -121,12 +121,14 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
 
     private void removeKeywordGroupAsync(WebElement group) {
         List<WebElement> removeButtons = keywordsPage.removeButtons(group);
-        if (removeButtons.size() > 1) {
-            removeButtons.remove(0);
-        }
-        for (WebElement removeButton : removeButtons) {
-            new WebDriverWait(getDriver(),20).until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-spin")));
-            removeButton.click();
+
+        while(keywordsPage.removeButtons(group).size()>0) {
+            for (WebElement removeButton : removeButtons) {
+                try {
+                    removeButton.click();
+                } catch (ElementNotVisibleException | NoSuchElementException e) {//deleting v slow}
+                }
+            }
         }
     }
 

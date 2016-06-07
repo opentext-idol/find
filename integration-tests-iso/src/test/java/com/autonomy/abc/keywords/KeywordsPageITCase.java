@@ -770,7 +770,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		verifyKeywordState(expectedGroups, expectedKeywords);
 	}
 	@Test
-	@ActiveBug("ISO-14")
+	@ResolvedBug("ISO-14")
 	public void testKeywordsAlphabeticallyListed(){
 		for (String group: getSynonyms()) {
 			keywordService.addSynonymGroup(group);
@@ -781,8 +781,10 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		KeywordsPage keywordsPage = keywordService.goToKeywords();
 		final List<String> keywords = keywordsPage.getAllFirstKeywords();
 
-		for (int i = 0; i < keywords.size() - 1; i++) {
-			verifyThat(keywords.get(i).compareTo(keywords.get(i + 1)) <= 0, is(true));
+		for (int i = 0; i < keywords.size() - 2; i++) {
+			String word1 = keywords.get(i);
+			String word2 = keywords.get(i+1);
+			verifyThat(word1+" vs. "+word2,word1.compareTo(word2) <= 0, is(true));
 		}
 	}
 
