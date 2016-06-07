@@ -35,29 +35,26 @@ public class TopicMapView {
 
     public WebElement numberTopicsSlider(){return sliderBlock().findElement(By.cssSelector("[id*='count-slider']"));}
 
+    private Slider asSlider(WebElement slider) {
+        return new Slider(slider, driver);
+    }
+
     //sliders
     public void hoverOnSlider(WebElement slider){
-         DriverUtil.hover(getDriver(),sliderHandle(slider));
+        asSlider(slider).hover();
     }
 
     public int numberinMap(WebElement slider){
-         return Integer.parseInt(slider.findElement(By.className("tooltip-inner")).getText());
+        return asSlider(slider).getValue();
     }
 
     public WebElement sliderToolTip(WebElement slider){
-         return slider.findElement(By.className("tooltip-main"));
-    }
-
-    public WebElement sliderHandle(WebElement slider){
-         return slider.findElement(By.className("min-slider-handle"));
+         return asSlider(slider).tooltip();
     }
 
     //probably shouldn't be in here -> should be somewhere like DriverUtil
     public void dragSliderByI(WebElement slider,int i){
-         int width = slider.getSize().getWidth();
-         Actions builder = new Actions(getDriver());
-         Action dragSlider = builder.clickAndHold(sliderHandle(slider)).moveByOffset((width/100)*i,0).release().build();
-         dragSlider.perform();
+         asSlider(slider).dragBy(i);
     }
 
     public void dragSlider(WebElement slider){
