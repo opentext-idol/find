@@ -182,6 +182,13 @@ public class PromotionsDetailPage extends SOPageBase {
                 .until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-spin")));
     }
 
+    public void waitForSpotLightType(){
+        Waits.loadOrFadeWait();
+        new WebDriverWait(getDriver(), 30)
+                .withMessage("Spotlight type didn't load")
+                .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".promotion-view-name-dropdown.not-clickable")));
+    }
+
     public WebElement promotedDocument(final String title) {
         return ElementUtil.ancestor(findElement(new Locator().withTagName("a").containingText(title)), 2);
     }

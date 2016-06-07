@@ -370,30 +370,31 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.startDateTextBoxButton().click();
 		datePicker = new DatePicker(schedulePage.$el(),getDriver());
 		datePicker.calendarDateSelect(schedulePage.getTodayDate());
+		Date today = schedulePage.getTodayDate();
 		schedulePage.startDateTextBoxButton().click();
 		schedulePage.startDateTextBox().sendKeys("Hello!!");
 		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
 		schedulePage.startDateTextBox().sendKeys(Keys.BACK_SPACE);
 		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
 		setStartDate("30/02/2019 11:20");
 		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
         setStartDate("10/13/2019 11:20");
 		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
 		setStartDate("02/02/2019 24:20");
 		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
         setStartDate("02/02/2019 22:61");
 		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 	}
 
 	private void setStartDate(String timestamp) {
