@@ -129,6 +129,8 @@ define([
             this.listenTo(vent, 'vent:resize', function () {
                 this.numericParametricView.render();
                 this.dateParametricView.render();
+                this.numericParametricView.refreshFields();
+                this.dateParametricView.refreshFields();
             });
 
             this.parametricView = new ParametricView({
