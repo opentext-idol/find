@@ -53,7 +53,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         IdolIsoUserService userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
-        new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationsDisappear());
+        new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationsDisappear());
     }
 
     @After
@@ -160,27 +160,18 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         this.helper.signUpAndLoginAs(aNewUser, getWindow());
 
         final JavascriptExecutor executor = (JavascriptExecutor) getDriver();
-        executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function(xhr) {$('body').attr('data-status', xhr.status);});");
+        executor.executeScript("$.get('/api/admin/config/users').error(function(xhr) {$('body').attr('data-status-user', xhr.status);});");
         Waits.loadOrFadeWait();
-        Assert.assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
+        assertThat(getDriver().findElement(By.cssSelector("body")), hasAttribute("data-status-user", containsString("403")));
 
         this.helper.logoutAndNavigateToWebApp(getWindow());
         getApplication().loginService().login(getConfig().getDefaultUser());
         Waits.loadOrFadeWait();
         assertThat(getWindow(), url(not(containsString("login"))));
 
-        executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function() {alert(\"error\");});");
+        executor.executeScript("$.get('/api/admin/config/users').error(function() {$('body').attr('data-status-admin', xhr.status);});");
         Waits.loadOrFadeWait();
-        assertThat(isAlertPresent(), is(false));
-    }
-
-    private boolean isAlertPresent() {
-        try {
-            getDriver().switchTo().alert();
-            return true;
-        } catch (final NoAlertPresentException ex) {
-            return false;
-        }
+        assertThat(getDriver().findElement(By.cssSelector("body")), not(hasAttribute("data-status-admin")));
     }
 
     @Test
