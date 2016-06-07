@@ -21,10 +21,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.UnhandledAlertException;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -127,7 +124,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         verifyThat(newUserModal, hasTextThat(startsWith("Create New Users")));
 
         newUserModal.createButton().click();
-        verifyThat(newUserModal, containsText("Error! Username must not be blank"));
+        verifyThat(newUserModal, containsText("must not be blank"));
 
         newUserModal.usernameInput().setValue("Andrew");
         newUserModal.passwordInput().clear();
@@ -145,7 +142,8 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         newUserModal.passwordConfirmInput().setValue("qwerty");
         newUserModal.selectRole(Role.ADMIN);
         newUserModal.createUser();
-        verifyThat(newUserModal, containsText("Done! User Andrew successfully created"));
+        WebElement notification = new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationAppears());
+        verifyThat(notification, hasTextThat(containsString("Created user Andrew")));
 
         newUserModal.close();
         verifyThat(usersPage, not(containsText("Create New Users")));
