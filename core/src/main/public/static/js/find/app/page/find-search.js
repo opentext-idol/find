@@ -197,6 +197,7 @@ define([
             // Bind routing to search model
             this.listenTo(router, 'route:search', function (text) {
                 this.removeDocumentDetailView();
+                this.removeSuggestView();
 
                 this.searchModel.set({
                     inputText: text || ''
@@ -209,6 +210,7 @@ define([
             }, this);
 
             this.listenTo(router, 'route:documentDetail', function () {
+                var backURL = this.suggestView ? this.generateSuggestURL(this.suggestView.documentModel) : this.generateURL();
                 this.expandedState();
                 this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
@@ -219,7 +221,7 @@ define([
 
                 fetchDocument(options, function (documentModel) {
                     this.documentDetailView = new DocumentDetailView({
-                        backUrl: this.generateURL(),
+                        backUrl: backURL,
                         model: documentModel,
                         indexesCollection: this.indexesCollection
                     });
@@ -427,6 +429,10 @@ define([
             } else {
                 return 'find/search/query/' + encodeURIComponent(inputText);
             }
+        },
+
+        generateSuggestURL: function (model) {
+            return 'find/search/suggest/' + vent.addSuffixForDocument(model);
         },
 
         // Run fancy animation from large central search bar to main search page
