@@ -11,9 +11,8 @@ define([
     'find/app/page/search/filters/parametric/numeric-widget',
     'parametric-refinement/prettify-field-name',
     'parametric-refinement/selected-values-collection',
-    'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html'
-], function (Backbone, $, _, FindBaseCollection, numericWidget, prettifyFieldName, SelectedParametricValuesCollection, i18n, template) {
+    'i18n!find/nls/bundle'
+], function (Backbone, $, _, FindBaseCollection, numericWidget, prettifyFieldName, SelectedParametricValuesCollection, i18n) {
     "use strict";
     const GRAPH_HEIGHT = 110;
 
@@ -38,28 +37,15 @@ define([
 
     return Backbone.View.extend({
         className: 'animated fadeIn',
-        template: _.template(template),
 
         events: {
             'click .numeric-parametric-no-min': function () {
-                //noinspection JSUnresolvedVariable
-                const $minInput = this.$minInput;
-                //noinspection JSUnresolvedVariable
-                const absoluteMinValue = this.absoluteMinValue;
-                if (absoluteMinValue !== $minInput.val()) {
-                    $minInput.val(absoluteMinValue);
-                    $minInput.trigger('change');
-                }
+                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
+                this.updateMinInput(this.absoluteMinValue, true);
             },
             'click .numeric-parametric-no-max': function () {
-                //noinspection JSUnresolvedVariable
-                const $maxInput = this.$maxInput;
-                //noinspection JSUnresolvedVariable
-                const absoluteMaxValue = this.absoluteMaxValue;
-                if (absoluteMaxValue !== $maxInput.val()) {
-                    $maxInput.val(absoluteMaxValue);
-                    $maxInput.trigger('change');
-                }
+                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
+                this.updateMaxInput(this.absoluteMaxValue, true);
             },
             'click .numeric-parametric-reset': function () {
                 //noinspection JSUnresolvedVariable
@@ -68,27 +54,42 @@ define([
                 this.updateModel(this.absoluteMinValue, this.absoluteMaxValue);
             },
             'change .numeric-parametric-min-input': function () {
-                //noinspection JSUnresolvedVariable
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.$minInput.val(), this.$maxInput.val());
+                //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+                updateRestrictions(this.selectedParametricValues, this.fieldName, this.readMinInput(), this.readMaxInput())();
                 //noinspection JSUnresolvedFunction
                 this.drawSelection();
             },
             'change .numeric-parametric-max-input': function () {
-                //noinspection JSUnresolvedVariable
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.$minInput.val(), this.$maxInput.val());
+                //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+                updateRestrictions(this.selectedParametricValues, this.fieldName, this.readMinInput(), this.readMaxInput());
                 //noinspection JSUnresolvedFunction
                 this.drawSelection();
+            },
+            'dp.change .results-filter-date[data-date-attribute="min-date"]': function (event) {
+                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
+                this.updateMinInput(event.date.unix(), true);
+            },
+            'dp.change .results-filter-date[data-date-attribute="max-date"]': function (event) {
+                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
+                this.updateMaxInput(event.date.unix(), true);
             }
         },
 
         initialize: function (options) {
+            this.template = _.template(options.template);
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.selectedParametricValues;
             this.pixelsPerBucket = options.pixelsPerBucket;
             this.viewWidth = options.viewWidth;
             this.fieldName = this.model.id;
+            //noinspection JSUnresolvedVariable
+            this.formatValue = options.stringFormatting && options.stringFormatting.format || _.identity;
+            //noinspection JSUnresolvedVariable
+            this.parseValue = options.stringFormatting && options.stringFormatting.parse || _.identity;
+            //noinspection JSUnresolvedVariable
+            this.renderCustomFormatting = options.stringFormatting && options.stringFormatting.render || _.noop;
             this.widget = numericWidget({
-                formattingFn: options.formattingFn
+                formattingFn: this.formatValue
             });
             this.localBucketingCollection = new (FindBaseCollection.extend({
                 url: '../api/public/parametric/buckets'
@@ -106,25 +107,28 @@ define([
                 id: _.uniqueId('numeric-parametric-field')
             }));
 
+            //noinspection JSUnresolvedVariable
+            this.renderCustomFormatting(this.$el);
+
             //noinspection JSUnresolvedFunction
             this.$minInput = this.$('.numeric-parametric-min-input');
             //noinspection JSUnresolvedFunction
             this.$maxInput = this.$('.numeric-parametric-max-input');
 
-            this.$minInput.val(this.absoluteMinValue);
-            this.$maxInput.val(this.absoluteMaxValue);
+            this.updateMinInput(this.absoluteMinValue);
+            this.updateMaxInput(this.absoluteMaxValue);
 
             const updateCallback = function (x1, x2) {
                 // rounding to one decimal place
-                this.$minInput.val(Math.max(roundInputNumber(x1), this.model.get('min')));
-                this.$maxInput.val(Math.min(roundInputNumber(x2), this.model.get('max')));
+                this.updateMinInput(Math.max(roundInputNumber(x1), this.model.get('min')));
+                this.updateMaxInput(Math.min(roundInputNumber(x2), this.model.get('max')));
             }.bind(this);
             const selectionCallback = function (x1, x2) {
                 updateRestrictions(this.selectedParametricValues, this.fieldName, Math.max(x1, this.model.get('max')), Math.min(x2, this.model.get('min')));
             }.bind(this);
             const deselectionCallback = function () {
-                this.$minInput.val(this.absoluteMinValue);
-                this.$maxInput.val(this.absoluteMaxValue);
+                this.updateMinInput(this.absoluteMinValue);
+                this.updateMaxInput(this.absoluteMaxValue);
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
             }.bind(this);
             const zoomCallback = function (newMin, newMax) {
@@ -164,8 +168,8 @@ define([
             }).forEach(function (restriction) {
                 const range = restriction.get('range');
                 if (range) {
-                    this.$minInput.val(roundInputNumber(range[0]));
-                    this.$maxInput.val(roundInputNumber(range[1]));
+                    this.updateMinInput(roundInputNumber(range[0]));
+                    this.updateMaxInput(roundInputNumber(range[1]));
 
                     graph.selectionRect.init(graph.chart, GRAPH_HEIGHT, graph.scale.barWidth(range[0]));
                     graph.selectionRect.update(graph.scale.barWidth(range[1]));
@@ -205,6 +209,38 @@ define([
                     });
                 }.bind(this)
             });
+        },
+
+        readMinInput: function () {
+            return this.parseValue(this.$minInput.val());
+        },
+
+        readMaxInput: function () {
+            return this.parseValue(this.$maxInput.val());
+        },
+
+        updateMinInput: function (newValue, triggerChange) {
+            if (triggerChange) {
+                const $minInput = this.$minInput;
+                if (newValue !== this.readMinInput()) {
+                    this.$minInput.val(this.formatValue(newValue));
+                    $minInput.trigger('change');
+                }
+            } else {
+                this.$minInput.val(this.formatValue(newValue));
+            }
+        },
+
+        updateMaxInput: function (newValue, triggerChange) {
+            if (triggerChange) {
+                const $maxInput = this.$maxInput;
+                if (newValue !== this.readMaxInput()) {
+                    this.$maxInput.val(this.formatValue(newValue));
+                    $maxInput.trigger('change');
+                }
+            } else {
+                this.$maxInput.val(this.formatValue(newValue));
+            }
         }
     });
 });

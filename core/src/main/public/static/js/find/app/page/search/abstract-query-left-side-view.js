@@ -18,9 +18,14 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
-    'moment'
-], function(Backbone, $, _, DateView, NumericParametricView, ParametricView, TextInput, PrecisionRecallView, Collapsible, vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes, moment) {
+    'moment',
+    'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
+    'text!find/templates/app/page/search/filters/parametric/numeric-date-parametric-field-view.html'
+], function(Backbone, $, _, DateView, NumericParametricView, ParametricView, TextInput, PrecisionRecallView, Collapsible,
+            vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes, moment, numericParametricFieldTemplate, numericParametricDateFieldTemplate) {
     "use strict";
+
+    const DATE_WIDGET_FORMAT = "YYYY-MM-DD HH:mm";
 
     var datesTitle = i18n['search.dates'];
 
@@ -88,15 +93,35 @@ define([
             this.numericParametricView = new NumericParametricView({
                 queryModel: options.queryModel,
                 queryState: options.queryState,
-                fieldsCollection: this.numericParametricFieldsCollection
+                fieldsCollection: this.numericParametricFieldsCollection,
+                fieldTemplate: numericParametricFieldTemplate
             });
 
             this.dateParametricView = new NumericParametricView({
                 queryModel: options.queryModel,
                 queryState: options.queryState,
                 fieldsCollection: this.dateParametricFieldsCollection,
-                formattingFn: function format(unformattedString) {
-                    return moment(unformattedString * 1000).format("YYYY-MM-DD HH:mm");
+                fieldTemplate: numericParametricDateFieldTemplate,
+                stringFormatting: {
+                    format: function (unformattedString) {
+                        return moment(unformattedString * 1000).format(DATE_WIDGET_FORMAT);
+                    },
+                    parse: function (formattedString) {
+                        return moment(formattedString, DATE_WIDGET_FORMAT).unix();
+                    },
+                    render: function ($el) {
+                        $el.find('.results-filter-date').datetimepicker({
+                            format: DATE_WIDGET_FORMAT,
+                            icons: {
+                                time: 'hp-icon hp-fw hp-clock',
+                                date: 'hp-icon hp-fw hp-calendar',
+                                up: 'hp-icon hp-fw hp-chevron-up',
+                                down: 'hp-icon hp-fw hp-chevron-down',
+                                next: 'hp-icon hp-fw hp-chevron-right',
+                                previous: 'hp-icon hp-fw hp-chevron-left'
+                            }
+                        });
+                    }
                 }
             });
             

@@ -48,10 +48,11 @@ define([
                 collection: this.collection,
                 ItemView: FieldView,
                 itemOptions: {
+                    template: options.fieldTemplate,
                     queryModel: options.queryModel,
                     selectedParametricValues: options.queryState.selectedParametricValues,
                     pixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
-                    formattingFn: options.formattingFn
+                    stringFormatting: options.stringFormatting
                 }
             });
 
