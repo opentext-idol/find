@@ -2,16 +2,17 @@ find-ansible (0.0.3) precise; urgency=low
 
   * Fixed typo in defaults yaml file.
 
- -- Matthew Gordon <matthew.gordon2@hpe.com>  Fri, 03 Jun 2016 12:40 +0100
+ -- Matthew Gordon <matthew.gordon2@hpe.com>  Tue, 07 Jun 2016 16:37:13 +0100
 
 find-ansible (0.0.2) precise; urgency=low
 
   * Added database settings.
 
- -- Matthew Gordon <matthew.gordon2@hp.com>  Fri, 03 Jun 2016 12:00:00 +0100
+ -- Matthew Gordon <matthew.gordon2@hpe.com>  Tue, 07 Jun 2016 16:21:10 +0100
 
 find-ansible (0.0.1) precise; urgency=low
 
   * Initial release.
 
  -- Matthew Gordon <matthew.gordon2@hp.com>  Fri, 20 May 2016 12:00:00 +0100
+
