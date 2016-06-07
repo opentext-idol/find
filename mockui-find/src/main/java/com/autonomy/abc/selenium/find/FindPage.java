@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
@@ -109,21 +110,7 @@ public class FindPage extends AppElement implements AppPage,
         return findElement(By.className("hp-logo-footer"));
     }
 
-    public Boolean loadingIndicatorExists(){return findElements(By.className("view-server-loading-indicator")).size()>0;}
-
-    public WebElement loadingIndicator(){
-        return findElement(By.className("view-server-loading-indicator"));
-    }
-
-    public WebElement previewContents(){
-        return findElement(By.className("preview-mode-contents"));
-    }
-
     public int totalResultsNum(){return Integer.parseInt(findElement(By.className("total-results-number")).getText());}
-
-    public void openDetailedPreview(){
-        findElement(By.className("preview-mode-open-detail-button")).click();
-    }
 
     public List<String> getFilterLabels() {
         return ElementUtil.getTexts(findElements(By.className("filter-label")));

@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.filters.DateOption;
 import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
-import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.Index;

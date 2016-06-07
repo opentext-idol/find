@@ -2,7 +2,7 @@ package com.autonomy.abc.find;
 
 
 import com.autonomy.abc.base.IdolFindTestBase;
-import com.autonomy.abc.selenium.find.FindResultsTopicMap;
+import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.IdolFindPage;
@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.*;
 
 public class TopicMapITCase extends IdolFindTestBase {
     private IdolFindPage findPage;
-    private FindResultsTopicMap results;
+    private TopicMapView results;
     private FindService findService;
     private FindTopNavBar navBar;
 
@@ -45,7 +45,7 @@ public class TopicMapITCase extends IdolFindTestBase {
     public void testTopicMapTabShowsTopicMap() {
         findService.search("shambolic");
         results.goToTopicMap();
-        verifyThat("Main results list hidden", results.mainResultsContainerHidden());
+        verifyThat("Main results list hidden", getElementFactory().getResultsPage().mainResultsContainerHidden());
         verifyThat("Topic map element displayed", results.topicMapVisible());
     }
 

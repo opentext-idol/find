@@ -2,10 +2,10 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.autonomy.abc.selenium.find.FindResult;
-import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.FindResult;
+import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.SimilarDocumentsView;
+import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;

@@ -1,9 +1,8 @@
 package com.autonomy.abc.selenium.find.application;
 
-import com.autonomy.abc.selenium.find.DetailedPreviewPage;
-import com.autonomy.abc.selenium.find.FindResultsSunburst;
-import com.autonomy.abc.selenium.find.FindResultsTopicMap;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.bi.SunburstView;
+import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.login.IdolFindLoginPage;
 import com.autonomy.abc.selenium.find.save.SearchOptionsBar;
@@ -40,15 +39,11 @@ public class IdolFindElementFactory extends FindElementFactory {
         return new SearchOptionsBar(getDriver());
     }
 
-    public DetailedPreviewPage getDetailedPreview(){
-        return new DetailedPreviewPage.Factory().create(getDriver());
+    public SunburstView getSunburst() {
+        return new SunburstView(getDriver());
     }
 
-    public FindResultsSunburst getSunburst() {
-        return new FindResultsSunburst(getDriver());
-    }
-
-    public FindResultsTopicMap getTopicMap() {
-        return new FindResultsTopicMap(getDriver());
+    public TopicMapView getTopicMap() {
+        return new TopicMapView(getDriver());
     }
 }

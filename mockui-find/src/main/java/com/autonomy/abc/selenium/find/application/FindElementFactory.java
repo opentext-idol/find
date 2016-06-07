@@ -1,12 +1,14 @@
 package com.autonomy.abc.selenium.find.application;
 
-import com.autonomy.abc.selenium.find.*;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
+import com.autonomy.abc.selenium.find.preview.InlinePreview;
+import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
-import com.autonomy.abc.selenium.find.SimilarDocumentsView;
+import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -44,6 +46,14 @@ public abstract class FindElementFactory extends ElementFactoryBase {
 
     public SimilarDocumentsView getSimilarDocumentsView() {
         return new SimilarDocumentsView.Factory().create(getDriver());
+    }
+
+    public InlinePreview getInlinePreview() {
+        return InlinePreview.make(getDriver());
+    }
+
+    public DetailedPreviewPage getDetailedPreview(){
+        return new DetailedPreviewPage.Factory().create(getDriver());
     }
 
     @Override

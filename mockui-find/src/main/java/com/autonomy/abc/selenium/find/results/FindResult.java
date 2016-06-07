@@ -1,7 +1,7 @@
-package com.autonomy.abc.selenium.find;
+package com.autonomy.abc.selenium.find.results;
 
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.autonomy.abc.selenium.element.DocumentPreviewer;
+import com.autonomy.abc.selenium.find.preview.DocumentPreviewer;
 import com.autonomy.abc.selenium.query.QueryResult;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
