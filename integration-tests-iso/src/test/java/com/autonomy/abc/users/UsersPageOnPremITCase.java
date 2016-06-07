@@ -18,10 +18,9 @@ import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -59,32 +58,6 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
     @After
     public void userTearDown() {
         new UserTearDownStrategy(getInitialUser()).tearDown(this);
-    }
-
-    @Test
-    public void testAnyUserCanNotAccessConfigPage() {
-        this.helper.signUpAndLoginAs(aNewUser, getWindow());
-
-        String baseUrl = getAppUrl();
-        baseUrl = baseUrl.replace("/p/promotions","/config");
-        getDriver().get(baseUrl);
-        Waits.loadOrFadeWait();
-        assertThat("Users are not allowed to access the config page", getDriver().findElement(By.tagName("body")), containsText("Authentication Failed"));
-    }
-
-    @Test
-    public void testUserCannotAccessUsersPageOrSettingsPage() {
-        this.helper.signUpAndLoginAs(aNewUser, getWindow());
-
-        getDriver().get(getAppUrl() + "settings");
-        Waits.loadOrFadeWait();
-        assertThat(getWindow(), url(not(containsString("settings"))));
-        assertThat(getWindow(), urlContains("overview"));
-
-        getDriver().get(getAppUrl() + "users");
-        Waits.loadOrFadeWait();
-        assertThat(getWindow(), url(not(containsString("users"))));
-        assertThat(getWindow(), urlContains("overview"));
     }
 
     @Test
@@ -153,25 +126,6 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
     public void testWontDeleteSelf() {
         User self = getApplication().loginService().getCurrentUser();
         assertThat(usersPage.getUserRow(self).canDeleteUser(),is(false));
-    }
-
-    @Test
-    public void testXmlHttpRequestToUserConfigBlockedForInadequatePermissions() throws UnhandledAlertException {
-        this.helper.signUpAndLoginAs(aNewUser, getWindow());
-
-        final JavascriptExecutor executor = (JavascriptExecutor) getDriver();
-        executor.executeScript("$.get('/api/admin/config/users').error(function(xhr) {$('body').attr('data-status-user', xhr.status);});");
-        Waits.loadOrFadeWait();
-        assertThat(getDriver().findElement(By.cssSelector("body")), hasAttribute("data-status-user", containsString("403")));
-
-        this.helper.logoutAndNavigateToWebApp(getWindow());
-        getApplication().loginService().login(getConfig().getDefaultUser());
-        Waits.loadOrFadeWait();
-        assertThat(getWindow(), url(not(containsString("login"))));
-
-        executor.executeScript("$.get('/api/admin/config/users').error(function() {$('body').attr('data-status-admin', xhr.status);});");
-        Waits.loadOrFadeWait();
-        assertThat(getDriver().findElement(By.cssSelector("body")), not(hasAttribute("data-status-admin")));
     }
 
     @Test
