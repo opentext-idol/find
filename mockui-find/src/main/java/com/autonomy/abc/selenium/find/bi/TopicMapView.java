@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.bi;
 
+import com.hp.autonomy.frontend.selenium.element.Slider;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

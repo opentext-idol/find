@@ -2,7 +2,7 @@ package com.autonomy.abc.find;
 
 
 import com.autonomy.abc.base.IdolFindTestBase;
-import com.autonomy.abc.selenium.find.bi.Slider;
+import com.hp.autonomy.frontend.selenium.element.Slider;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
