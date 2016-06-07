@@ -60,7 +60,9 @@ define([
             this.searchCollections = options.searchCollections;
 
             this.highlightModel = new Backbone.Model({highlightEntities: false});
-            this.entityCollection = new EntityCollection();
+            this.entityCollection = new EntityCollection([], {
+                queryState: this.queryState
+            });
 
             var searchType = this.savedSearchModel.get('type');
 

@@ -16,15 +16,26 @@ find_log_file: "{{find_service_name}}.log"
 
 find_endpoint_domain: havenondemand.com
 
+find_flyway_enabled: false
+find_datasource_url: "jdbc:mariadb://localhost:3306/find"
+find_datasource_platform: "mysql"
+find_datasource_username: "root"
+find_datasource_password: "root"
+
 find_options:
-  - '-Dhp.find.home="{{find_root_dir}}"'
-  - '-Dserver.port=8080'
-  - '-Djava.security.egd=file:/dev/./urandom'
-  - '-Dfind.iod.api=https://api.{{find_endpoint_domain}}'
-  - '-Dfind.hod.sso=https://www.{{find_endpoint_domain}}/sso.html'
-  - '-Dhp.find.persistentState=REDIS'
+  - "-Dhp.find.home='{{find_root_dir}}'"
+  - "-Dserver.port=8080"
+  - "-Djava.security.egd=file:/dev/./urandom"
+  - "-Dfind.iod.api=https://api.{{find_endpoint_domain}}"
+  - "-Dfind.hod.sso=https://www.{{find_endpoint_domain}}/sso.html"
+  - "-Dhp.find.persistentState=REDIS"
   - "-Dendpoints.health.enabled=true"
   - "-Dmanagement.port=8085"
+  - "-Dflyway.enabled={{find_flyway_enabled}}"
+  - "-Dspring.datasource.platform={{find_datasource_platform}}"
+  - "-Dspring.datasource.url={{find_datasource_url}}"
+  - "-Dspring.datasource.username={{find_datasource_username}}"
+  - "-Dspring.datasource.password={{find_datasource_password}}"
 
 find_enable_public_indexes: false
 

@@ -22,6 +22,13 @@ define([
 
         this.sunburst = new Sunburst($el, {
             animate: false,
+            i18n: i18n,
+            nameAttr: SUNBURST_NAME_ATTR,
+            sizeAttr: SUNBURST_SIZE_ATTR,
+            strokeColour: STROKE_COLOUR,
+            comparator: null,
+            onClick: onClick,
+            outerRingAnimateSize: 15,
             data: {
                 text: i18n['search.sunburst.title'],
                 children: data,
@@ -29,10 +36,6 @@ define([
                     return a + b;
                 })
             },
-            i18n: i18n,
-            nameAttr: SUNBURST_NAME_ATTR,
-            sizeAttr: SUNBURST_SIZE_ATTR,
-            strokeColour: STROKE_COLOUR,
             colorFn: function (data) {
                 if (!data.parent) {
                     // set the centre of the sunburst to always be white
@@ -70,8 +73,6 @@ define([
 
                 return sunburstLabelTemplate(templateArguments);
             },
-            onClick: onClick,
-            outerRingAnimateSize: 15,
             hoverAnimation: function (d, arc, outerRingAnimateSize, arcEls, arcData, paper) {
                 _.chain(_.zip(arcData, arcEls))
                     .filter(function(dataEl) {
@@ -114,16 +115,7 @@ define([
                     this.sunburst.resize();
                 }
             }, this));
-        },
-
-        uiUpdate: function () {
-            ParametricResultsView.prototype.uiUpdate.apply(this, arguments);
-
-            if (this.sunburst) {
-                this.sunburst.resize();
-            }
         }
-        
     });
 
 });

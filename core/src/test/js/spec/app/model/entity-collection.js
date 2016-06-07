@@ -9,11 +9,23 @@ define([
 
     describe('Entity collection', function() {
         beforeEach(function() {
+            this.queryTextModel = new Backbone.Model({
+                inputText: 'watering can',
+                relatedConcepts: [['slugs']]
+            });
+
             this.collection = new EntityCollection([
                 {cluster: 1, text: 'gnome'},
                 {cluster: 1, text: 'garden'},
-                {cluster: 2, text: 'plant'}
-            ]);
+                {cluster: 1, text: 'watering can'},
+                {cluster: 2, text: 'plant'},
+                {cluster: 2, text: 'slugs'}
+            ], {
+                queryState: {
+                    queryTextModel: this.queryTextModel
+                },
+                parse: true
+            });
         });
 
         describe('getClusterEntities function', function() {
@@ -23,6 +35,14 @@ define([
                 expect(clusterEntities).toContain('garden');
                 expect(clusterEntities).toContain('gnome');
             });
+
+            it('does not contain any duplicates of query text or selected related concepts', function() {
+                var clusterEntities = this.collection.getClusterEntities(1);
+                expect(clusterEntities).not.toContain('watering can');
+                
+                var clusterEntities2 = this.collection.getClusterEntities(2);
+                expect(clusterEntities2).not.toContain('slugs');
+            })
         });
     });
 

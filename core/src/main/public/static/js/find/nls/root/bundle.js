@@ -183,7 +183,7 @@ define([
         'search.sunburst.title': 'Parametric Distribution',
         'search.sunburst.fieldPlaceholder.first': 'Select a field',
         'search.sunburst.fieldPlaceholder.second': 'Select a second field',
-        'search.sunburst.noValue': 'There are an additional {0} fields with too few documents to display. Consider refining your search.',
+        'search.sunburst.noValue': 'There are an additional {0} values with document counts too small to display. Please refine your search.',
         'search.savedSearches': 'Searches',
         'search.savedSearches.confirm.deleteMessage': 'Are you sure you want to remove {0} saved search?',
         'search.savedSearches.confirm.deleteMessage.title': 'Delete saved search',
