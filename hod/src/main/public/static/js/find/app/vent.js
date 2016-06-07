@@ -32,6 +32,10 @@ define([
 
         navigateToSuggestRoute: function(model) {
             this.navigate('find/search/suggest/' + suffixForDocument(model));
+        },
+
+        addSuffixForDocument: function(model) {
+            return suffixForDocument(model);
         }
     });
 

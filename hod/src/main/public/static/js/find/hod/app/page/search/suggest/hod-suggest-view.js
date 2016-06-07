@@ -5,11 +5,13 @@
 
 define([
     'find/app/page/search/suggest/suggest-view',
-    'find/hod/app/page/search/results/hod-results-view'
-], function(SuggestView, ResultsView) {
+    'find/hod/app/page/search/results/hod-results-view',
+    'find/hod/app/page/search/results/hod-results-view-augmentation'
+], function(SuggestView, ResultsView, ResultsViewAugmentation) {
 
     return SuggestView.extend({
         ResultsView: ResultsView,
+        ResultsViewAugmentation: ResultsViewAugmentation,
 
         getIndexes: function(indexesCollection, documentModel){
             var indexModels = indexesCollection.where({name: documentModel.get('index'), domain: documentModel.get('domain')});
