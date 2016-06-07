@@ -47,7 +47,7 @@ define([
                 allowEmpty: true
             });
             
-            this.mapResultsView = new MapView();
+            this.mapResultsView = new MapView({addControl: false});
 
             this.listenTo(this.model, 'change:loading', this.toggleLoading);
 
@@ -83,7 +83,9 @@ define([
         },
 
         render: function () {
-            this.$el.html(this.template());
+            this.$el.html(this.template({
+                showMore: i18n['search.resultsView.map.show.more']
+            }));
             this.mapResultsView.setElement(this.$('.location-results-map')).render();
             this.$el.prepend(this.fieldSelectionView.$el);
             this.$loadingSpinner = $(this.loadingTemplate);

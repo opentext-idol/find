@@ -3,6 +3,7 @@ define([
     'find/idol/app/model/comparison/comparison-documents-collection',
     'find/idol/app/page/search/results/idol-results-view',
     'find/idol/app/page/search/results/comparison-lists',
+    'find/idol/app/page/search/results/comparison-map',
     'find/app/page/search/results/state-token-strategy',
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
@@ -11,7 +12,7 @@ define([
     'find/app/util/search-data-util',
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/comparisons'
-], function(Backbone, ComparisonDocumentsCollection, ResultsView, ResultsLists,  stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
+], function(Backbone, ComparisonDocumentsCollection, ResultsView, ResultsLists, ComparisonMap,  stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
             template, comparisonListContainer, searchDataUtil, i18n, comparisonsI18n) {
 
     return Backbone.View.extend({
@@ -28,20 +29,36 @@ define([
             this.searchModels = options.searchModels;
             this.escapeCallback = options.escapeCallback;
 
-            var resultsViews = [{
-                Constructor: ResultsLists,
-                id: 'list',
-                uniqueId: _.uniqueId('results-view-item-'),
-                constructorArguments: {
-                    searchModels: options.searchModels,
-                    escapeCallback: options.escapeCallback,
-                    model: this.model
+            var resultsViews = [
+                {
+                    Constructor: ResultsLists,
+                    id: 'list',
+                    uniqueId: _.uniqueId('results-view-item-'),
+                    constructorArguments: {
+                        searchModels: options.searchModels,
+                        escapeCallback: options.escapeCallback,
+                        model: this.model
+                    },
+                    selector: {
+                        displayNameKey: 'list',
+                        icon: 'hp-list'
+                    }
                 },
-                selector: {
-                    displayNameKey: 'list',
-                    icon: 'hp-list'
+                {
+                    Constructor: ComparisonMap,
+                    id: 'map',
+                    uniqueId: _.uniqueId('results-view-item-'),
+                    constructorArguments: {
+                        searchModels: options.searchModels,
+                        escapeCallback: options.escapeCallback,
+                        model: this.model
+                    },
+                    selector: {
+                        displayNameKey: 'map',
+                        icon: 'hp-map-view'
+                    }
                 }
-            }];
+            ];
 
             var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab

@@ -1451,6 +1451,45 @@ input:-moz-placeholder::before {
     width: 45%;
 }
 
+.location-comparison-map {
+    min-height: 600px;
+    height: 100%;
+    width: 100%;
+}
+
+.location-comparison-label {
+    padding-left: 3px;
+}
+
+.both-location-cluster {
+    background-color: rgba(161, 51, 54, 0.6);
+}
+.both-location-cluster div {
+    background-color: rgb(161, 51, 54);
+    color: white;
+}
+
+.first-location-cluster {
+    background-color: rgba(91, 57, 107, 0.6);
+}
+.first-location-cluster div {
+    background-color: rgb(91, 57, 107);
+    color: white;
+}
+
+.second-location-cluster {
+    background-color: rgba(67, 105, 119, 0.6);
+}
+.second-location-cluster div {
+    background-color: rgb(67, 105, 119);
+    color: white;
+}
+
+.location-comparison-show-more {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
 .location-results-map {
     min-height: 600px;
     height: 100%;
