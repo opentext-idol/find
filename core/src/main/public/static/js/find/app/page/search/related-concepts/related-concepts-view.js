@@ -86,7 +86,7 @@ define([
 
     return Backbone.View.extend({
         className: 'p-l-sm suggestions-content',
-        viewStateSelector: _.noop,
+        selectViewState: _.noop,
 
         events: {
             'click [data-entity-text]': function (e) {
