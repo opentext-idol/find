@@ -9,7 +9,7 @@ import org.junit.runners.Parameterized;
 
 @Ignore
 @RunWith(Parameterized.class)
-public abstract class HybridIsoTestBase extends HybridAppTestBase<IsoApplication<?>, IsoElementFactory> {
+public abstract class HybridIsoTestBase extends HybridAppTestBase<IsoApplication<? extends IsoElementFactory>, IsoElementFactory> {
 
 	public HybridIsoTestBase(final TestConfig config) {
 		super(config, IsoApplication.ofType(config.getType()));
