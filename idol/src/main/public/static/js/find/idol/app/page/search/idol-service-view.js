@@ -42,7 +42,8 @@ define([
 
             ServiceView.prototype.initialize.call(this, options);
 
-            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchData);
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchData);
+            addChangeListener(this, this.queryModel, ['fieldText'], this.fetchEntities);
         },
 
         render: function() {
