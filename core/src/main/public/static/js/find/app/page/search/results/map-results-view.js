@@ -44,7 +44,7 @@ define([
                 model: this.model,
                 name: 'FieldSelectionView',
                 fields: _.pluck(this.locationFields, 'displayName'),
-                allowEmpty: true
+                allowEmpty: false
             });
             
             this.mapResultsView = new MapView({addControl: false});
