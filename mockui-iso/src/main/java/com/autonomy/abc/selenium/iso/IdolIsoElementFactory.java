@@ -87,7 +87,7 @@ public class IdolIsoElementFactory extends IsoElementFactory {
 
         @Override
         public void switchUsing(IsoElementFactory context) {
-            new WebDriverWait(context.getDriver(), 5)
+            new WebDriverWait(context.getDriver(), 10)
                     .withMessage("waiting for notifications to clear")
                     .until(GritterNotice.notificationsDisappear());
             ((IdolIsoTopNavBar) context.getTopNavBar()).switchPage(tab);
