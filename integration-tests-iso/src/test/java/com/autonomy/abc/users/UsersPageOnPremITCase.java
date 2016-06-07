@@ -18,13 +18,9 @@ import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.UnhandledAlertException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -56,38 +52,12 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         IdolIsoUserService userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
-        new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationsDisappear());
+        new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationsDisappear());
     }
 
     @After
     public void userTearDown() {
         new UserTearDownStrategy(getInitialUser()).tearDown(this);
-    }
-
-    @Test
-    public void testAnyUserCanNotAccessConfigPage() {
-        this.helper.signUpAndLoginAs(aNewUser, getWindow());
-
-        String baseUrl = getAppUrl();
-        baseUrl = baseUrl.replace("/p/promotions","/config");
-        getDriver().get(baseUrl);
-        Waits.loadOrFadeWait();
-        assertThat("Users are not allowed to access the config page", getDriver().findElement(By.tagName("body")), containsText("Authentication Failed"));
-    }
-
-    @Test
-    public void testUserCannotAccessUsersPageOrSettingsPage() {
-        this.helper.signUpAndLoginAs(aNewUser, getWindow());
-
-        getDriver().get(getAppUrl() + "settings");
-        Waits.loadOrFadeWait();
-        assertThat(getWindow(), url(not(containsString("settings"))));
-        assertThat(getWindow(), urlContains("overview"));
-
-        getDriver().get(getAppUrl() + "users");
-        Waits.loadOrFadeWait();
-        assertThat(getWindow(), url(not(containsString("users"))));
-        assertThat(getWindow(), urlContains("overview"));
     }
 
     @Test
@@ -127,7 +97,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         verifyThat(newUserModal, hasTextThat(startsWith("Create New Users")));
 
         newUserModal.createButton().click();
-        verifyThat(newUserModal, containsText("Error! Username must not be blank"));
+        verifyThat(newUserModal, containsText("must not be blank"));
 
         newUserModal.usernameInput().setValue("Andrew");
         newUserModal.passwordInput().clear();
@@ -145,7 +115,8 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         newUserModal.passwordConfirmInput().setValue("qwerty");
         newUserModal.selectRole(Role.ADMIN);
         newUserModal.createUser();
-        verifyThat(newUserModal, containsText("Done! User Andrew successfully created"));
+        WebElement notification = new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationAppears());
+        verifyThat(notification, hasTextThat(containsString("Created user Andrew")));
 
         newUserModal.close();
         verifyThat(usersPage, not(containsText("Create New Users")));
@@ -158,34 +129,6 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
     }
 
     @Test
-    public void testXmlHttpRequestToUserConfigBlockedForInadequatePermissions() throws UnhandledAlertException {
-        this.helper.signUpAndLoginAs(aNewUser, getWindow());
-
-        final JavascriptExecutor executor = (JavascriptExecutor) getDriver();
-        executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function(xhr) {$('body').attr('data-status', xhr.status);});");
-        Waits.loadOrFadeWait();
-        Assert.assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
-
-        this.helper.logoutAndNavigateToWebApp(getWindow());
-        getApplication().loginService().login(getConfig().getDefaultUser());
-        Waits.loadOrFadeWait();
-        assertThat(getWindow(), url(not(containsString("login"))));
-
-        executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function() {alert(\"error\");});");
-        Waits.loadOrFadeWait();
-        assertThat(isAlertPresent(), is(false));
-    }
-
-    private boolean isAlertPresent() {
-        try {
-            getDriver().switchTo().alert();
-            return true;
-        } catch (final NoAlertPresentException ex) {
-            return false;
-        }
-    }
-
-    @Test
     public void testLogOutAndLogInWithNewUser() {
         this.helper.signUpAndLoginAs(aNewUser, getWindow());
     }
@@ -193,6 +136,6 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
     @Test
     public void testAddStupidlyLongUsername() {
         final String longUsername = StringUtils.repeat("a", 100);
-        this.helper.verifyCreateDeleteInTable(new IdolIsoNewUser(longUsername, "b"));
+        this.helper.verifyCreateDeleteInTable(new IdolIsoNewUser(longUsername, "bbb"));
     }
 }

@@ -11,6 +11,7 @@ import com.autonomy.abc.shared.UserTestHelper;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
@@ -23,6 +24,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.Serializable;
 import java.util.List;
@@ -35,7 +37,6 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.fail;
-import static org.openqa.selenium.lift.Matchers.displayed;
 
 
 public class UsersPageITCase extends HybridIsoTestBase {
@@ -139,6 +140,9 @@ public class UsersPageITCase extends HybridIsoTestBase {
 
 		User admin = usersPage.addNewUser(aNewUser, Role.ADMIN);
 		this.helper.verifyUserAdded(admin);
+		new WebDriverWait(getDriver(), 10)
+				.withMessage("waiting for notifications to clear")
+				.until(GritterNotice.notificationsDisappear());
 
 		User user = usersPage.addNewUser(newUser2, Role.USER);
 		this.helper.verifyUserAdded(user);
@@ -233,6 +237,8 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		checkUserHidden(james);
 		checkUserHidden(john);
 		checkUserVisible(bob);
+
+		searchFilter.clear();
 	}
 
 	private User createAdminFromConfig(String configId) {
@@ -255,6 +261,8 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		dropdown.select("User");
 		checkUserHidden(admin);
 		checkUserVisible(endUser);
+
+		dropdown.select("All");
 	}
 
 	private void checkUserVisible(User user) {

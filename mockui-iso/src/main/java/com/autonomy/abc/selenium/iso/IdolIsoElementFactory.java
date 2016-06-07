@@ -14,7 +14,9 @@ import com.autonomy.abc.selenium.users.IdolIsoLoginPage;
 import com.autonomy.abc.selenium.users.IdolUsersPage;
 import com.autonomy.abc.selenium.users.UsersPage;
 import com.hp.autonomy.frontend.selenium.application.PageMapper;
+import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class IdolIsoElementFactory extends IsoElementFactory {
     public IdolIsoElementFactory(final WebDriver driver) {
@@ -85,6 +87,9 @@ public class IdolIsoElementFactory extends IsoElementFactory {
 
         @Override
         public void switchUsing(IsoElementFactory context) {
+            new WebDriverWait(context.getDriver(), 10)
+                    .withMessage("waiting for notifications to clear")
+                    .until(GritterNotice.notificationsDisappear());
             ((IdolIsoTopNavBar) context.getTopNavBar()).switchPage(tab);
         }
     }

@@ -14,6 +14,11 @@ public class IdolUserTableRow extends UserTableRow {
     }
 
     @Override
+    public String getUsername() {
+        return findElement(By.className("user-username")).getText();
+    }
+
+    @Override
     public void changeUsernameTo(String newUsername) {
         usernameEditBox();
     }
