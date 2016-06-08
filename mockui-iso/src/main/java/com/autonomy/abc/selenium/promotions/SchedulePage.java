@@ -31,16 +31,23 @@ public class SchedulePage extends SOPageBase {
 		return ElementUtil.getParent(findElement(By.xpath(".//h4[contains(text(), 'Schedule')]")));
 	}
 
-	public WebElement continueButton(final WizardStep dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.xpath("//button[contains(text(), 'Continue')]"));
+	public WebElement continueButton() {
+		return findElement(By.xpath("//button[contains(text(), 'Continue')]"));
 	}
 
-	public WebElement cancelButton(final WizardStep dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Cancel')]"));
+	public WebElement cancelButton() {
+		return findElement(By.xpath(".//button[contains(text(), 'Cancel')]"));
 	}
 
-	public WebElement finishButton(final WizardStep dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.xpath("//button[contains(text(), 'Finish')]"));
+	public WebElement finishButton() {
+		return findElement(By.xpath("//button[contains(text(), 'Finish')]"));
+	}
+
+	public boolean buttonDisabled(WebElement button){
+		if (ElementUtil.isDisabled(button)){
+			return true;
+		}
+		return false;
 	}
 
 	public WebElement startDateTextBox() {
@@ -139,7 +146,7 @@ public class SchedulePage extends SOPageBase {
 	public void schedulePromotion(final Date startDate, final Date endDate, final Frequency frequency, final Date finalDate) {
 		Waits.loadOrFadeWait();
 		schedule().click();
-		continueButton(WizardStep.ENABLE_SCHEDULE).click();
+		continueButton().click();
 		Waits.loadOrFadeWait();
 		startDateTextBoxButton().click();
 		final DatePicker datePicker = new DatePicker(this, getDriver());
@@ -148,17 +155,23 @@ public class SchedulePage extends SOPageBase {
 		endDateTextBoxButton().click();
 		datePicker.calendarDateSelect(endDate);
 		endDateTextBoxButton().click();
-		continueButton(WizardStep.START_END).click();
+		continueButton().click();
 		Waits.loadOrFadeWait();
 		repeatWithFrequencyBelow().click();
 		selectFrequency(frequency);
-		continueButton(WizardStep.FREQUENCY).click();
+		continueButton().click();
 		Waits.loadOrFadeWait();
 		finalDateTextBoxButton().click();
 		datePicker.calendarDateSelect(finalDate);
 		finalDateTextBoxButton().click();
-		finishButton(WizardStep.FINAL).click();
+		finishButton().click();
 		Waits.loadOrFadeWait();
+	}
+
+	public void scheduleDurationSelector(WebElement calendarButton, Date date){
+		calendarButton.click();
+		DatePicker datePicker = new DatePicker(this,getDriver());
+		datePicker.calendarDateSelect(date);
 	}
 
 	public List<String> getAvailableFrequencies() {
@@ -173,13 +186,13 @@ public class SchedulePage extends SOPageBase {
 	public void navigateWizardAndSetEndDate(final Date endDate) {
 		Waits.loadOrFadeWait();
 		schedule().click();
-		continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		continueButton().click();
 		Waits.loadOrFadeWait();
 		endDateTextBoxButton().click();
 		final DatePicker datePicker = new DatePicker(this, getDriver());
 		datePicker.calendarDateSelect(endDate);
 		endDateTextBoxButton().click();
-		continueButton(SchedulePage.WizardStep.START_END).click();
+		continueButton().click();
 		Waits.loadOrFadeWait();
 		repeatWithFrequencyBelow().click();
 	}

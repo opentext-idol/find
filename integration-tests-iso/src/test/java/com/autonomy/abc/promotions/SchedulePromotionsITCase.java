@@ -39,6 +39,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 	private SearchPage searchPage;
 	private SchedulePage schedulePage;
+	private IdolPromotionsDetailPage promotionsDetailPage;
 	private DatePicker datePicker;
 	private final Pattern pattern = Pattern.compile("\\s+");
     private PromotionService promotionService;
@@ -49,34 +50,34 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		promotionService.deleteAll();
 	}
 
+	private void setUpPromotion(Promotion promotion, Query search, int numberOfDocs){
+		promotionService.setUpPromotion(promotion,search,numberOfDocs);
+		promotionService.goToDetails(promotion);
+
+		IdolPromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+		promotionsDetailPage.schedulePromotion();
+		schedulePage = getElementFactory().getSchedulePage();
+	}
+
 	@Test
 	public void testSchedulePromotionForTomorrow() throws ParseException {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "wand magic spells");
-        promotionService.setUpPromotion(spotlight, "wizard", 4);
-		promotionService.goToDetails(spotlight);
-		IdolPromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-		promotionsDetailPage.schedulePromotion();
-
-		try {
-			schedulePage = getElementFactory().getSchedulePage();
-		} catch (final NoSuchElementException e) {
-			fail("Schedule Page has not loaded");
-		}
+        setUpPromotion(spotlight, new Query("wizard"), 4);
 
 		assertThat(getWindow(), urlContains("schedule"));
 		assertThat("Wrong wizard text", schedulePage.getText().contains("Schedule your promotion"));
-		assertThat(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), displayed());
+		assertThat(schedulePage.finishButton(), displayed());
 		assertThat("Always active isn't selected", schedulePage.alwaysActive().getAttribute("class"), containsString("progressive-disclosure-selection"));
 		assertThat("Schedule shouldn't be selected", schedulePage.schedule().getAttribute("class"), not(containsString("progressive-disclosure-selection")));
-		assertThat("Finish button should be enabled", ElementUtil.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"), is(false));
+		assertThat("Finish button should be enabled", schedulePage.buttonDisabled(schedulePage.finishButton()), is(false));
 
 		schedulePage.alwaysActive().click();
-		assertThat("Finish button should be enabled", ElementUtil.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"), is(false));
+		assertThat("Finish button should be enabled", schedulePage.buttonDisabled(schedulePage.finishButton()), is(false));
 
 		schedulePage.schedule().click();
-		assertThat(schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), displayed());
+		assertThat(schedulePage.continueButton(), displayed());
 
-		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("How long should this promotion run?"));
 
@@ -104,7 +105,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.endDateTextBoxButton().click();
 		Waits.loadOrFadeWait();
 
-		schedulePage.continueButton(SchedulePage.WizardStep.START_END).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("Do you want to repeat this promotion schedule?"));
 
@@ -112,7 +113,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.selectFrequency(SchedulePage.Frequency.MONTHLY);
 		assertEquals(schedulePage.readFrequency(), "MONTHLY");
 
-		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("When should this promotion schedule finish?"));
 
@@ -140,7 +141,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.finalDateTextBoxButton().click();
 		Waits.loadOrFadeWait();
 
-		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		schedulePage.finishButton().click();
 		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 		assertThat("Correct Scheduling text not visible", promotionsDetailPage.getText(), containsString("The promotion is scheduled to run starting on " + startDate + " for the duration of 4 days, ending on " + endDate));
 		assertThat("Correct Scheduling text not visible", promotionsDetailPage.getText(), containsString("This promotion schedule will run monthly until " + finalDate));
@@ -157,7 +158,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		Waits.loadOrFadeWait();
 		schedulePage = getElementFactory().getSchedulePage();
 		schedulePage.alwaysActive().click();
-		schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.finishButton().click();
 		Waits.loadOrFadeWait();
 		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 		assert(promotionsDetailPage.getText().contains("The promotion is always active"));
@@ -182,26 +183,26 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		}
 		assertThat(getWindow(), urlContains("schedule"));
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("Schedule your promotion"));
-		assertThat(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), displayed());
-		assertThat("Finish button should be enabled", ElementUtil.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"), is(false));
+		assertThat(schedulePage.finishButton(), displayed());
+		assertThat("Finish button should be enabled", schedulePage.buttonDisabled(schedulePage.finishButton()), is(false));
 
 		schedulePage.alwaysActive().click();
 		Waits.loadOrFadeWait();
-		assertThat("Finish button should be enabled", ElementUtil.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"), is(false));
+		assertThat("Finish button should be enabled", schedulePage.buttonDisabled(schedulePage.finishButton()), is(false));
 
 		schedulePage.schedule().click();
 		Waits.loadOrFadeWait();
-		assertThat(schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), displayed());
+		assertThat(schedulePage.continueButton(), displayed());
 
 		schedulePage.alwaysActive().click();
 		Waits.loadOrFadeWait();
-		assertThat("Finish button should be enabled", ElementUtil.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"), is(false));
+		assertThat("Finish button should be enabled", schedulePage.buttonDisabled(schedulePage.finishButton()), is(false));
 
 		schedulePage.schedule().click();
 		Waits.loadOrFadeWait();
-		assertThat(schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), displayed());
+		assertThat(schedulePage.continueButton(), displayed());
 
-		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("How long should this promotion run?"));
 
@@ -224,7 +225,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.endDateTextBoxButton().click();
 
 		assert(getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be disabled", ElementUtil.isAttributePresent(schedulePage.continueButton(SchedulePage.WizardStep.START_END), "disabled"), is(true));
+		assertThat("Continue button should be disabled",schedulePage.buttonDisabled(schedulePage.continueButton()));
 
 		schedulePage.endDateTextBoxButton().click();
 		datePicker = new DatePicker(schedulePage.$el(),getDriver());
@@ -234,7 +235,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.endDateTextBoxButton().click();
 
 		assert(!getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be enabled", ElementUtil.isAttributePresent(schedulePage.continueButton(SchedulePage.WizardStep.START_END), "disabled"), is(false));
+		assertThat("Continue button should be enabled", !schedulePage.buttonDisabled(schedulePage.continueButton()));
 
 		schedulePage.startDateTextBoxButton().click();
 		datePicker = new DatePicker(schedulePage.$el(),getDriver());
@@ -243,7 +244,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.startDateTextBoxButton().click();
 
 		assert(getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be disabled", ElementUtil.isAttributePresent(schedulePage.continueButton(SchedulePage.WizardStep.START_END), "disabled"), is(true));
+		assertThat("Continue button should be disabled", schedulePage.buttonDisabled(schedulePage.continueButton()));
 
 		schedulePage.startDateTextBoxButton().click();
 		datePicker = new DatePicker(schedulePage.$el(),getDriver());
@@ -252,10 +253,10 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.startDateTextBoxButton().click();
 
 		assert(!getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be enabled", ElementUtil.isAttributePresent(schedulePage.continueButton(SchedulePage.WizardStep.START_END), "disabled"), is(false));
+		assertThat("Continue button should be enabled", !schedulePage.buttonDisabled(schedulePage.continueButton()));
 
 		String startDate = schedulePage.startDateTextBox().getAttribute("value");
-		schedulePage.continueButton(SchedulePage.WizardStep.START_END).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("Do you want to repeat this promotion schedule?"));
 
@@ -263,10 +264,10 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.selectFrequency(SchedulePage.Frequency.YEARLY);
 		assertThat(schedulePage.readFrequency(), is("YEARLY"));
 
-		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		schedulePage.never().click();
-		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		schedulePage.finishButton().click();
 		PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 		assertThat("Correct promotion summary text not present", promotionsDetailPage.getText(), containsString("The promotion is scheduled to run starting on " + SchedulePage.parseDateForPromotionsPage(startDate) + " for the duration of 2 days, ending on " + SchedulePage.parseDateForPromotionsPage(endDate)));
 		assertThat("Correct promotion summary text not present", promotionsDetailPage.getText(), containsString("This promotion schedule will run yearly forever."));
@@ -284,7 +285,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		assertThat("Schedule should be selected due to prepopulated schedule", schedulePage.schedule().getAttribute("class"), containsString("progressive-disclosure-selection"));
 
 		schedulePage.schedule().click();
-		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 
 		assertThat(startDate, is(schedulePage.startDateTextBox().getAttribute("value")));
@@ -298,14 +299,14 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		startDate = schedulePage.startDateTextBox().getAttribute("value");
 		endDate = schedulePage.endDateTextBox().getAttribute("value");
 
-		schedulePage.continueButton(SchedulePage.WizardStep.START_END).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("Do you want to repeat this promotion schedule?"));
 
 		schedulePage.selectFrequency(SchedulePage.Frequency.YEARLY);
 		assertThat(schedulePage.readFrequency(), is("YEARLY"));
 
-		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
 		schedulePage.finalDateTextBoxButton().click();
@@ -314,7 +315,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.finalDateTextBoxButton().click();
 		final String finalDate = schedulePage.finalDateTextBox().getAttribute("value");
 
-		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		schedulePage.finishButton().click();
 		Waits.loadOrFadeWait();
 		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 		assertThat("Correct schedule summary text not visible", promotionsDetailPage.getText(), containsString("The promotion is scheduled to run starting on " + SchedulePage.parseDateForPromotionsPage(startDate) + " for the duration of 4 days, ending on " + SchedulePage.parseDateForPromotionsPage(endDate)));
@@ -328,18 +329,8 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 	@Test
 	public void testResetTimeAndDate() {
-		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Korea".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
-		promotionService.setUpPromotion(spotlight, new Query("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
-		promotionService.goToDetails(spotlight);
-		getElementFactory().getPromotionsDetailPage().schedulePromotion();
-		try {
-			schedulePage = getElementFactory().getSchedulePage();
-		} catch (final NoSuchElementException e) {
-			fail("Schedule Page has not loaded");
-		}
-		schedulePage.schedule().click();
-		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
-		Waits.loadOrFadeWait();
+		setUpKoreaSpotlight();
+
 		schedulePage.startDateTextBoxButton().click();
 		datePicker = new DatePicker(schedulePage.$el(),getDriver());
 		datePicker.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 9));
@@ -351,50 +342,29 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 	@Test
 	public void testTextInputToCalendar() {
-		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Korea".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
-		promotionService.setUpPromotion(spotlight, new Query("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
-		promotionService.goToDetails(spotlight);
-		getElementFactory().getPromotionsDetailPage().schedulePromotion();
-		try {
-			schedulePage = getElementFactory().getSchedulePage();
-		} catch (final NoSuchElementException e) {
-			fail("Schedule Page has not loaded");
-		}
-		schedulePage.schedule().click();
-		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
-		Waits.loadOrFadeWait();
-		schedulePage.startDateTextBox().clear();
-		getElementFactory().getSideNavBar().toggle();
-		assertThat("continue button should be disabled", ElementUtil.isAttributePresent(schedulePage.continueButton(SchedulePage.WizardStep.START_END), "disabled"), is(true));
+		setUpKoreaSpotlight();
 
-		schedulePage.startDateTextBoxButton().click();
-		datePicker = new DatePicker(schedulePage.$el(),getDriver());
-		datePicker.calendarDateSelect(schedulePage.getTodayDate());
-		Date today = schedulePage.getTodayDate();
-		schedulePage.startDateTextBoxButton().click();
-		schedulePage.startDateTextBox().sendKeys("Hello!!");
+		schedulePage.startDateTextBox().clear();
+		assertThat("Continue button disabled", schedulePage.buttonDisabled(schedulePage.continueButton()));
+
+		schedulePage.scheduleDurationSelector(schedulePage.startDateTextBoxButton(),schedulePage.getTodayDate());
+		String today = schedulePage.dateAsString(schedulePage.getTodayDate());
+
+		setStartDate(schedulePage.getTodayDate()+"Hello!!");
 		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		assertThat(today, is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
 		schedulePage.startDateTextBox().sendKeys(Keys.BACK_SPACE);
 		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		assertThat(today, is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
-		setStartDate("30/02/2019 11:20");
-		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		List<String> startDates = Arrays.asList("30/02/2019 11:20","10/13/2019 11:20","02/02/2019 24:20","02/02/2019 22:61");
 
-        setStartDate("10/13/2019 11:20");
-		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
-
-		setStartDate("02/02/2019 24:20");
-		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
-
-        setStartDate("02/02/2019 22:61");
-		getElementFactory().getSideNavBar().toggle();
-		assertThat(schedulePage.dateAsString(today), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		for(String date:startDates) {
+			setStartDate(date);
+			getElementFactory().getSideNavBar().toggle();
+			assertThat(today, is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		}
 	}
 
 	private void setStartDate(String timestamp) {
@@ -402,6 +372,14 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
             schedulePage.startDateTextBox().sendKeys(Keys.BACK_SPACE);
 		}
 		schedulePage.startDateTextBox().sendKeys(timestamp);
+	}
+
+	private void setUpKoreaSpotlight(){
+		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Korea".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
+		setUpPromotion(spotlight, new Query("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
+		schedulePage.schedule().click();
+		schedulePage.continueButton().click();
+		Waits.loadOrFadeWait();
 	}
 
 	@Test
@@ -417,7 +395,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		}
 		Waits.loadOrFadeWait();
 		schedulePage.schedule().click();
-		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		schedulePage.endDateTextBoxButton().click();
 		datePicker = new DatePicker(schedulePage.$el(),getDriver());
@@ -484,22 +462,22 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage = getElementFactory().getSchedulePage();
 		assertThat("Due to pre-population 'schedule' should be pre-selected", schedulePage.schedule().getAttribute("class"),containsString("progressive-disclosure-selection"));
 
-		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		assertThat(schedulePage.dateAsString(startDate), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 		assertThat(schedulePage.dateAsString(endDate), is(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0]));
 
-		schedulePage.continueButton(SchedulePage.WizardStep.START_END).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		assertThat(schedulePage.readFrequency(),equalToIgnoringCase("MONTHLY"));
 		assertThat("Due to pre-population 'repeat with frequency below' should be pre-selected", ElementUtil.getFirstChild(schedulePage.repeatWithFrequencyBelow()).getAttribute("class"),containsString("progressive-disclosure-selection"));
 
-		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		assertThat("Due to pre-population 'run this promotion schedule until the date below' should be pre-selected", ElementUtil.getFirstChild(schedulePage.runThisPromotionScheduleUntilTheDateBelow()).getAttribute("class"),containsString("progressive-disclosure-selection"));
 		assertThat(schedulePage.dateAsString(finalDate), is(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]));
 
-		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		schedulePage.finishButton().click();
 		Waits.loadOrFadeWait();
 	}
 
@@ -519,12 +497,12 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		List<String> availableFrequencies = schedulePage.getAvailableFrequencies();
 		assertThat("All frequencies should be available", availableFrequencies.containsAll(Arrays.asList("Yearly", "Daily", "Monthly", "Weekly")));
 
-		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
 		assertEquals(pattern.split(schedulePage.dateAndTimeAsString(schedulePage.getTodayDate()))[0], pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
 
-		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		schedulePage.finishButton().click();
 		Waits.loadOrFadeWait();
 		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 		schedulePage = getElementFactory().getSchedulePage();
@@ -536,12 +514,12 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		assertThat("Weekly should be an option for this schedule", availableFrequencies.contains("Weekly"));
 		assertThat("Monthly should be an option for this schedule", availableFrequencies.contains("Monthly"));
 
-		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
 		assertEquals(pattern.split(schedulePage.dateAndTimeAsString(DateUtils.addDays(schedulePage.getTodayDate(), 4)))[0], pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
 
-		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		schedulePage.finishButton().click();
 		Waits.loadOrFadeWait();
 		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 		schedulePage = getElementFactory().getSchedulePage();
@@ -553,12 +531,12 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		assertThat("Weekly should not be an option for this schedule", !availableFrequencies.contains("Weekly"));
 		assertThat("Monthly should be an option for this schedule", availableFrequencies.contains("Monthly"));
 
-		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
 		assertEquals(pattern.split(schedulePage.dateAndTimeAsString(DateUtils.addWeeks(schedulePage.getTodayDate(), 2)))[0], pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
 
-		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		schedulePage.finishButton().click();
 		Waits.loadOrFadeWait();
 		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 		schedulePage = getElementFactory().getSchedulePage();
@@ -570,24 +548,24 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		assertThat("Weekly should not be an option for this schedule", !availableFrequencies.contains("Weekly"));
 		assertThat("Monthly should not be an option for this schedule", !availableFrequencies.contains("Monthly"));
 
-		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
 		assertEquals(pattern.split(schedulePage.dateAndTimeAsString(DateUtils.addMonths(schedulePage.getTodayDate(), 1)))[0], pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
 
-		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		schedulePage.finishButton().click();
 		Waits.loadOrFadeWait();
 		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 		schedulePage = getElementFactory().getSchedulePage();
 		Waits.loadOrFadeWait();
 		schedulePage.schedule().click();
-		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		schedulePage.endDateTextBoxButton().click();
 		final DatePicker datePicker = new DatePicker(schedulePage.$el(), getDriver());
 		datePicker.calendarDateSelect(DateUtils.addYears(schedulePage.getTodayDate(), 3));
 		schedulePage.endDateTextBoxButton().click();
-		assertThat(schedulePage.finishButton(SchedulePage.WizardStep.START_END), displayed());
-		schedulePage.finishButton(SchedulePage.WizardStep.START_END).click();
+		assertThat(schedulePage.finishButton(), displayed());
+		schedulePage.finishButton().click();
 	}
 }
