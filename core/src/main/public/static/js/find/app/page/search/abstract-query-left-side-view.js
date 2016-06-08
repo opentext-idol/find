@@ -95,6 +95,7 @@ define([
                 queryState: options.queryState,
                 fieldsCollection: this.numericParametricFieldsCollection,
                 fieldTemplate: numericParametricFieldTemplate,
+                numericRestriction: true,
                 selectionEnabled: true,
                 zoomEnabled: true,
                 buttonsEnabled: true

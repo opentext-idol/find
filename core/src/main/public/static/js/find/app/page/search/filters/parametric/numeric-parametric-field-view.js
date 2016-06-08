@@ -23,11 +23,11 @@ define([
         });
     }
 
-    function updateRestrictions(selectedParametricValues, fieldName, min, max) {
+    function updateRestrictions(selectedParametricValues, fieldName, numericRestriction, min, max) {
         selectedParametricValues.add({
             field: fieldName,
             range: [min, max],
-            numeric: true
+            numeric: numericRestriction
         });
     }
 
@@ -88,13 +88,13 @@ define([
             },
             'change .numeric-parametric-min-input': function () {
                 //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.readMinInput(), this.readMaxInput())();
+                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput())();
                 //noinspection JSUnresolvedFunction
                 this.drawSelection();
             },
             'change .numeric-parametric-max-input': function () {
                 //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.readMinInput(), this.readMaxInput());
+                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput());
                 //noinspection JSUnresolvedFunction
                 this.drawSelection();
             },
@@ -118,6 +118,7 @@ define([
             this.zoomEnabled = options.zoomEnabled;
             this.buttonsEnabled = options.selectionEnabled && options.buttonsEnabled;
             this.fieldName = this.model.id;
+            this.numericRestriction = options.numericRestriction;
             //noinspection JSUnresolvedVariable
             this.formatValue = options.stringFormatting && options.stringFormatting.format || _.identity;
             //noinspection JSUnresolvedVariable
@@ -164,7 +165,7 @@ define([
                 this.updateMaxInput(Math.min(roundInputNumber(x2), this.model.get('max')));
             }.bind(this);
             const selectionCallback = function (x1, x2) {
-                updateRestrictions(this.selectedParametricValues, this.fieldName, Math.max(x1, this.model.get('max')), Math.min(x2, this.model.get('min')));
+                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, Math.max(x1, this.model.get('min')), Math.min(x2, this.model.get('max')));
             }.bind(this);
             const deselectionCallback = function () {
                 this.updateMinInput(this.absoluteMinValue);
