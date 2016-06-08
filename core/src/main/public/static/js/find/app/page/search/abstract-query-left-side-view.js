@@ -17,9 +17,15 @@ define([
     'parametric-refinement/display-collection',
     'find/app/configuration',
     'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes'
-], function(Backbone, $, _, DateView, NumericParametricView, ParametricView, TextInput, PrecisionRecallView, Collapsible, vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
+    'i18n!find/nls/indexes',
+    'moment',
+    'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
+    'text!find/templates/app/page/search/filters/parametric/numeric-date-parametric-field-view.html'
+], function(Backbone, $, _, DateView, NumericParametricView, ParametricView, TextInput, PrecisionRecallView, Collapsible,
+            vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes, moment, numericParametricFieldTemplate, numericParametricDateFieldTemplate) {
     "use strict";
+
+    var DATE_WIDGET_FORMAT = "YYYY-MM-DD HH:mm";
 
     var datesTitle = i18n['search.dates'];
 
@@ -69,7 +75,8 @@ define([
                 });
             }
 
-            this.numericParametricCollection = options.numericParametricCollection;
+            this.numericParametricFieldsCollection = options.numericParametricFieldsCollection;
+            this.dateParametricFieldsCollection = options.dateParametricFieldsCollection;
 
             this.parametricDisplayCollection = new ParametricDisplayCollection([], {
                 parametricCollection: options.parametricCollection,
@@ -86,11 +93,48 @@ define([
             this.numericParametricView = new NumericParametricView({
                 queryModel: options.queryModel,
                 queryState: options.queryState,
-                numericParametricCollection: this.numericParametricCollection
+                fieldsCollection: this.numericParametricFieldsCollection,
+                fieldTemplate: numericParametricFieldTemplate,
+                numericRestriction: true,
+                selectionEnabled: true,
+                zoomEnabled: true,
+                buttonsEnabled: true
+            });
+
+            this.dateParametricView = new NumericParametricView({
+                queryModel: options.queryModel,
+                queryState: options.queryState,
+                fieldsCollection: this.dateParametricFieldsCollection,
+                fieldTemplate: numericParametricDateFieldTemplate,
+                stringFormatting: {
+                    format: function (unformattedString) {
+                        return moment(unformattedString * 1000).format(DATE_WIDGET_FORMAT);
+                    },
+                    parse: function (formattedString) {
+                        return moment(formattedString, DATE_WIDGET_FORMAT).unix();
+                    },
+                    render: function ($el) {
+                        $el.find('.results-filter-date').datetimepicker({
+                            format: DATE_WIDGET_FORMAT,
+                            icons: {
+                                time: 'hp-icon hp-fw hp-clock',
+                                date: 'hp-icon hp-fw hp-calendar',
+                                up: 'hp-icon hp-fw hp-chevron-up',
+                                down: 'hp-icon hp-fw hp-chevron-down',
+                                next: 'hp-icon hp-fw hp-chevron-right',
+                                previous: 'hp-icon hp-fw hp-chevron-left'
+                            }
+                        });
+                    }
+                }
             });
             
+            //noinspection JSUnresolvedFunction
             this.listenTo(vent, 'vent:resize', function () {
                 this.numericParametricView.render();
+                this.dateParametricView.render();
+                this.numericParametricView.refreshFields();
+                this.dateParametricView.refreshFields();
             });
 
             this.parametricView = new ParametricView({
@@ -132,15 +176,18 @@ define([
                 .append(this.indexesViewWrapper.$el)
                 .append(this.dateViewWrapper.$el)
                 .append(this.numericParametricView.$el)
+                .append(this.dateParametricView.$el)
                 .append(this.parametricView.$el);
 
             this.filterInput.render();
             this.indexesViewWrapper.render();
             this.numericParametricView.render();
+            this.dateParametricView.render();
             this.parametricView.render();
             this.dateViewWrapper.render();
 
             if (this.precisionSlider) {
+                //noinspection JSUnresolvedVariable
                 this.$el.prepend(this.precisionSlider.$el);
                 this.precisionSlider.render();
             }
@@ -157,6 +204,7 @@ define([
             //noinspection JSUnresolvedFunction
             _.invoke([
                 this.numericParametricView,
+                this.dateParametricView,
                 this.parametricView,
                 this.indexesViewWrapper,
                 this.dateViewWrapper
@@ -172,7 +220,8 @@ define([
         },
 
         updateParametricVisibility: function() {
-            this.numericParametricView.$el.toggleClass('hide', this.numericParametricCollection.length === 0 && Boolean(this.filterModel.get('text')));
+            this.numericParametricView.$el.toggleClass('hide', this.numericParametricFieldsCollection.length === 0 && Boolean(this.filterModel.get('text')));
+            this.dateParametricView.$el.toggleClass('hide', this.dateParametricFieldsCollection.length === 0 && Boolean(this.filterModel.get('text')));
             this.parametricView.$el.toggleClass('hide', this.parametricDisplayCollection.length === 0 && Boolean(this.filterModel.get('text')));
         },
 

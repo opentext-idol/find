@@ -5,11 +5,21 @@
         </svg>
         <% if (selectionEnabled) { %>
             <div class="row numeric-parametric-inputs">
-                <div class="col-sm-9">
-                    <input class="numeric-parametric-min-input" type="text" title="min-value" size="5"/>
+                <div class="col-sm-5">
+                    <div class="input-group date results-filter-date" data-date-attribute="min-date">
+                        <input type="text" class="numeric-parametric-min-input form-control" title="min-value" size="20" value=""/>
+                        <span class="input-group-addon date-select">
+                            <i class="hp-icon hp-fw hp-calendar"></i>
+                        </span>
+                    </div>
                 </div>
-                <div class="col-sm-3">
-                    <input class="pull-right numeric-parametric-max-input" type="text" title="max-value" size="5"/>
+                <div class="col-sm-5 col-sm-offset-2">
+                    <div class="input-group date results-filter-date" data-date-attribute="max-date">
+                        <input type="text" class="numeric-parametric-max-input form-control" title="max-value" size="20" value=""/>
+                        <span class="input-group-addon date-select">
+                            <i class="hp-icon hp-fw hp-calendar"></i>
+                        </span>
+                    </div>
                 </div>
             </div>
         <% } %>

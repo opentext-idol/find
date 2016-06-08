@@ -5,6 +5,7 @@ define([
     'find/app/util/array-equality',
     'find/app/model/dates-filter-model'
 ], function(Backbone, moment, _, arraysEqual, DatesFilterModel) {
+    "use strict";
 
     /**
      * Models representing the state of a search.
@@ -23,6 +24,7 @@ define([
      * @property {String[][]} relatedConcepts
      * @property {{name: String, domain: String}[]} indexes
      * @property {{field: String, value: String}[]} parametricValues
+     * @property {{field: String, min: Number, max: Number, type: String}[]} parametricRanges
      * @property {Integer} minScore
      * @property {Moment} minDate
      * @property {Moment} maxDate
@@ -48,8 +50,30 @@ define([
         SNAPSHOT: 'SNAPSHOT'
     };
 
-    function pickFieldAndValue(model) {
-        return model.pick('field', 'value');
+    function parseParametricRestrictions(models) {
+        var parametricValues = [];
+        var parametricRanges = [];
+
+        models.forEach(function (model) {
+            if (model.has('value')) {
+                parametricValues.push({
+                    field: model.get('field'),
+                    value: model.get('value')
+                });
+            } else if (model.has('range')) {
+                parametricRanges.push({
+                    field: model.get('field'),
+                    min: model.get('range')[0],
+                    max: model.get('range')[1],
+                    type: model.get('numeric') ? 'Numeric' : 'Date'
+                })
+            }
+        });
+
+        return {
+            parametricValues: parametricValues,
+            parametricRanges: parametricRanges
+        };
     }
 
     function nullOrUndefined(input) {
@@ -105,6 +129,7 @@ define([
             title: null,
             indexes: [],
             parametricValues: [],
+            parametricRanges: [],
             relatedConcepts: [],
             minDate: null,
             maxDate: null,
@@ -162,12 +187,14 @@ define([
         equalsQueryState: function(queryState) {
             var selectedIndexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
 
+            var parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
             return this.get('queryText') === queryState.queryTextModel.get('inputText')
                     && this.equalsQueryStateDateFilters(queryState)
                     && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'), arrayEqualityPredicate)
                     && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                     && this.get('minScore') === queryState.minScoreModel.get('minScore')
-                    && arraysEqual(this.get('parametricValues'), queryState.selectedParametricValues.map(pickFieldAndValue), _.isEqual);
+                    && arraysEqual(this.get('parametricValues'), parametricRestrictions.parametricValues, _.isEqual)
+                    && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, _.isEqual);
         },
 
         equalsQueryStateDateFilters: function(queryState) {
@@ -206,7 +233,13 @@ define([
         },
 
         toSelectedParametricValues: function() {
-            return this.get('parametricValues');
+            return this.get('parametricValues').concat(this.get('parametricRanges').map(function (range) {
+                return {
+                    field: range.field,
+                    range: [range.min, range.max],
+                    numeric: range.type === 'Numeric'
+                }
+            }));
         },
 
         toSelectedIndexes: function() {
@@ -222,14 +255,15 @@ define([
          */
         attributesFromQueryState: function(queryState) {
             var indexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
-            var parametricValues = queryState.selectedParametricValues.map(pickFieldAndValue);
+            var parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
 
             return _.extend(
                 {
                     queryText: queryState.queryTextModel.get('inputText'),
                     relatedConcepts: queryState.queryTextModel.get('relatedConcepts'),
                     indexes: indexes,
-                    parametricValues: parametricValues,
+                    parametricValues: parametricRestrictions.parametricValues,
+                    parametricRanges: parametricRestrictions.parametricRanges,
                     minScore: queryState.minScoreModel.get('minScore')
                 },
                 queryState.datesFilterModel.toQueryModelAttributes(),

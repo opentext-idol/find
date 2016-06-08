@@ -101,12 +101,12 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final SavedQuery createdEntity = createAndParseSavedQuery(getBaseSavedQuery());
 
         final String updatedPhrase = "jersey";
-        final Integer updatedMinScore = 99;
         final Set<ConceptClusterPhrase> conceptClusterPhrases = new HashSet<>();
         conceptClusterPhrases.add(new ConceptClusterPhrase(updatedPhrase, true, 1));
 
         final String updatedQueryText = "banana";
 
+        final Integer updatedMinScore = 99;
         final SavedQuery updatedQuery = new SavedQuery.Builder()
                 .setQueryText(updatedQueryText)
                 .setMinScore(updatedMinScore)
@@ -167,6 +167,11 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andExpect(jsonPath("$[0].parametricValues", hasSize(1)))
                 .andExpect(jsonPath("$[0].parametricValues[0].field", is("CATEGORY")))
                 .andExpect(jsonPath("$[0].parametricValues[0].value", is("COMPUTING")))
+                .andExpect(jsonPath("$[0].parametricRanges", hasSize(1)))
+                .andExpect(jsonPath("$[0].parametricRanges[0].field", is("SOME_DATE")))
+                .andExpect(jsonPath("$[0].parametricRanges[0].min", is(123456789000L)))
+                .andExpect(jsonPath("$[0].parametricRanges[0].max", is(123456791000L)))
+                .andExpect(jsonPath("$[0].parametricRanges[0].type", is("Date")))
                 .andExpect(jsonPath("$[0].indexes", hasSize(2)))
                 .andExpect(jsonPath("$[0].indexes[*].name", containsInAnyOrder("English Wikipedia", "\u65e5\u672c\u8a9e Wikipedia")))
                 .andExpect(jsonPath("$[0].indexes[?(@.name=='English Wikipedia')].domain", contains("MY_DOMAIN")))

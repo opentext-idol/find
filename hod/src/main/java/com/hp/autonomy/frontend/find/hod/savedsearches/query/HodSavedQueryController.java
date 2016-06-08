@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
+import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
@@ -25,8 +26,9 @@ class HodSavedQueryController extends SavedQueryController<ResourceIdentifier, H
     @Autowired
     public HodSavedQueryController(final SavedSearchService<SavedQuery> service,
                                    final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService,
+                                   final FieldTextParser fieldTextParser,
                                    final ObjectFactory<QueryRestrictions.Builder<HodQueryRestrictions, ResourceIdentifier>> queryRestrictionsBuilderFactory) {
-        super(service, documentsService, queryRestrictionsBuilderFactory);
+        super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory);
     }
 
     @Override

@@ -6,13 +6,16 @@
 define([
     'jquery',
     'underscore',
+    'find/app/model/bucketed-parametric-collection',
     'find/app/page/search/filters/parametric/abstract-parametric-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'js-whatever/js/list-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-view.html'
-], function ($, _, AbstractView, FieldView, ListView, i18n, template) {
+], function ($, _, BucketedParametricCollection, AbstractView, FieldView, ListView, i18n, template) {
     "use strict";
+
+    const DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
 
     var PreInitialisedListView = ListView.extend({
         createItemView: function (model) {
@@ -38,14 +41,46 @@ define([
         template: _.template(template)({i18n: i18n}),
 
         initialize: function (options) {
-            this.monitorCollection(options.numericParametricCollection);
+            this.fieldsCollection = options.fieldsCollection;
+            this.queryModel = options.queryModel;
+            
+            this.collection = new BucketedParametricCollection();
+            this.monitorCollection(this.collection);
 
             this.fieldNamesListView = new PreInitialisedListView({
-                collection: options.numericParametricCollection,
+                collection: this.collection,
                 ItemView: FieldView,
                 itemOptions: {
+                    template: options.fieldTemplate,
                     queryModel: options.queryModel,
-                    selectedParametricValues: options.queryState.selectedParametricValues
+                    selectedParametricValues: options.queryState.selectedParametricValues,
+                    pixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
+                    numericRestriction: options.numericRestriction,
+                    stringFormatting: options.stringFormatting,
+                    selectionEnabled: options.selectionEnabled,
+                    zoomEnabled: options.zoomEnabled,
+                    buttonsEnabled: options.buttonsEnabled
+                }
+            });
+
+            //noinspection JSUnresolvedFunction
+            this.listenTo(options.fieldsCollection, 'update reset',  this.refreshFields);
+        },
+
+        refreshFields: function () {
+            //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+            const targetNumberOfBuckets = _.times(this.fieldsCollection.length, _.constant(Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)));
+            //noinspection JSUnresolvedFunction
+            const nulls = _.times(this.fieldsCollection.length, _.constant(null));
+
+            this.collection.fetch({
+                data: {
+                    fieldNames: this.fieldsCollection.pluck('id'),
+                    databases: this.queryModel.get('indexes'),
+                    queryText: this.queryModel.get('queryText'),
+                    targetNumberOfBuckets: targetNumberOfBuckets,
+                    bucketMin: nulls,
+                    bucketMax: nulls
                 }
             });
         },

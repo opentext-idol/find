@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
@@ -33,6 +34,8 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
     protected SavedQueryService savedQueryService;
     @Mock
     protected DocumentsService<S, D, E> documentsService;
+    @Mock
+    protected FieldTextParser fieldTextParser;
     @Mock
     private Documents<D> searchResults;
     @Mock

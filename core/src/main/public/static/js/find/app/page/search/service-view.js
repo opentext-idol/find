@@ -115,11 +115,11 @@ define([
             this.numericParametricFieldsCollection = new ParametricFieldsCollection([], {
                 url: '../api/public/fields/parametric-numeric'
             });
+            this.dateParametricFieldsCollection = new ParametricFieldsCollection([], {
+                url: '../api/public/fields/parametric-date'
+            });
             this.parametricCollection = new ParametricCollection([], {
                 url: '../api/public/parametric'
-            });
-            this.numericParametricCollection = new ParametricCollection([], {
-                url: '../api/public/parametric/numeric'
             });
 
             var subViewArguments = {
@@ -130,7 +130,8 @@ define([
                 documentsCollection: this.documentsCollection,
                 selectedTabModel: this.selectedTabModel,
                 parametricCollection: this.parametricCollection,
-                numericParametricCollection: this.numericParametricCollection,
+                numericParametricFieldsCollection: this.numericParametricFieldsCollection,
+                dateParametricFieldsCollection: this.dateParametricFieldsCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
                 highlightModel: this.highlightModel,
@@ -251,7 +252,8 @@ define([
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
             this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
-            this.fetchParametricFields(this.numericParametricFieldsCollection, this.numericParametricCollection);
+            this.fetchParametricFields(this.numericParametricFieldsCollection);
+            this.fetchParametricFields(this.dateParametricFieldsCollection);
             this.fetchEntities();
         },
 
@@ -290,7 +292,6 @@ define([
         fetchData: function() {
             this.fetchEntities();
             this.fetchParametricValues(this.parametricFieldsCollection, this.parametricCollection);
-            this.fetchParametricValues(this.numericParametricFieldsCollection, this.numericParametricCollection);
         },
         
         fetchParametricValues: function (fieldsCollection, valuesCollection) {
@@ -307,7 +308,7 @@ define([
                     stateTokens: this.queryModel.get('stateMatchIds')
                 };
 
-                var fieldNames = fieldsCollection.pluck('field');
+                var fieldNames = fieldsCollection.pluck('id');
                 if (fieldNames.length > 0) {
                     valuesCollection.fetch({data: _.extend({
                         fieldNames: fieldNames

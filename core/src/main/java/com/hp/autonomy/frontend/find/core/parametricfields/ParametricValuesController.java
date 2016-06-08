@@ -5,11 +5,14 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
+import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.types.idol.RecursiveField;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.RangeInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.apache.commons.collections4.ListUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.ObjectFactory;
@@ -21,15 +24,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
 public abstract class ParametricValuesController<Q extends QueryRestrictions<S>, R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
+    private static final int MAX_VALUES_DEFAULT = 10;
+
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_VALUES_PATH = "/api/public/parametric";
-    static final String NUMERIC_PARAMETRIC_PATH = "/numeric";
+    static final String BUCKET_PARAMETRIC_PATH = "/buckets";
     public static final String DEPENDENT_VALUES_PATH = "/dependent-values";
 
     public static final String FIELD_NAMES_PARAM = "fieldNames";
@@ -40,6 +48,9 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     private static final String MAX_DATE_PARAM = "maxDate";
     private static final String MIN_SCORE = "minScore";
     private static final String STATE_TOKEN_PARAM = "stateTokens";
+    static final String TARGET_NUMBER_OF_BUCKETS_PARAM = "targetNumberOfBuckets";
+    static final String BUCKET_MIN_PARAM = "bucketMin";
+    static final String BUCKET_MAX_PARAM = "bucketMax";
 
     private final ParametricValuesService<R, S, E> parametricValuesService;
     protected final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
@@ -66,14 +77,14 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
-        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, MAX_VALUES_DEFAULT, SortParam.DocumentCount);
         return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 
-    @SuppressWarnings("MethodWithTooManyParameters")
-    @RequestMapping(value = NUMERIC_PARAMETRIC_PATH, method = RequestMethod.GET)
+    @SuppressWarnings({"MethodWithTooManyParameters", "TypeMayBeWeakened"})
+    @RequestMapping(value = BUCKET_PARAMETRIC_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public Set<QueryTagInfo> getNumericParametricValues(
+    public List<RangeInfo> getNumericParametricValuesInBuckets(
             @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
@@ -81,10 +92,28 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
-            @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
+            @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens,
+            @RequestParam(TARGET_NUMBER_OF_BUCKETS_PARAM) final List<Integer> targetNumberOfBuckets,
+            @RequestParam(value = BUCKET_MIN_PARAM, required = false) final List<Double> bucketMin,
+            @RequestParam(value = BUCKET_MAX_PARAM, required = false) final List<Double> bucketMax
     ) throws E {
-        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
-        return parametricValuesService.getNumericParametricValues(parametricRequest);
+        final int numberOfFields = fieldNames.size();
+        if (numberOfFields != targetNumberOfBuckets.size() || numberOfFields != bucketMin.size() || numberOfFields != bucketMax.size()) {
+            throw new IllegalArgumentException("Invalid bucketing parameters. Parameters must be supplied for every field.");
+        }
+
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, null, SortParam.NumberIncreasing);
+
+        final Map<String, BucketingParams> bucketingParamsPerField = new LinkedHashMap<>(numberOfFields);
+        final Iterator<String> fieldNameIterator = fieldNames.iterator();
+        final Iterator<Integer> targetNumberOfBucketsIterator = targetNumberOfBuckets.iterator();
+        final Iterator<Double> bucketMinIterator = bucketMin.iterator();
+        final Iterator<Double> bucketMaxIterator = bucketMax.iterator();
+        while (fieldNameIterator.hasNext()) {
+            final String fieldName = fieldNameIterator.next();
+            bucketingParamsPerField.put(fieldName, new BucketingParams(targetNumberOfBucketsIterator.next(), bucketMinIterator.next(), bucketMaxIterator.next()));
+        }
+        return parametricValuesService.getNumericParametricValuesInBuckets(parametricRequest, bucketingParamsPerField);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -100,12 +129,12 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
-        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens);
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, null, null);
         return parametricValuesService.getDependentParametricValues(parametricRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    private R buildRequest(final List<String> fieldNames, final String queryText, final String fieldText, final List<S> databases, final DateTime minDate, final DateTime maxDate, final Integer minScore, final List<String> stateTokens) {
+    private R buildRequest(final List<String> fieldNames, final String queryText, final String fieldText, final List<S> databases, final DateTime minDate, final DateTime maxDate, final Integer minScore, final List<String> stateTokens, final Integer maxValues, final SortParam sort) {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .setQueryText(queryText)
                 .setFieldText(fieldText)
@@ -118,7 +147,8 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         return parametricRequestBuilderFactory.getObject()
                 .setFieldNames(ListUtils.emptyIfNull(fieldNames))
                 .setQueryRestrictions(queryRestrictions)
-                .setMaxValues(null)
+                .setMaxValues(maxValues)
+                .setSort(sort)
                 .build();
     }
 }

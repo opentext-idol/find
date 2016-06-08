@@ -9,14 +9,6 @@ define([
 ], function(Backbone, FindBaseCollection) {
 
     return FindBaseCollection.extend({
-        model: Backbone.Model.extend({
-            idAttribute: 'field',
-
-            parse: function (field) {
-                return {field: field}
-            }
-        }),
-
         initialize: function (models, options) {
             this.url = options.url;
         }

@@ -30,9 +30,11 @@ define([
                 this.fetchEntities();
                 this.parametricFieldsCollection.reset();
                 this.numericParametricFieldsCollection.reset();
+                this.dateParametricFieldsCollection.reset();
                 if (this.queryModel.get('indexes').length !== 0) {
                     this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
-                    this.fetchParametricFields(this.numericParametricFieldsCollection, this.numericParametricCollection);
+                    this.fetchParametricFields(this.numericParametricFieldsCollection);
+                    this.fetchParametricFields(this.dateParametricFieldsCollection);
                 }
             }, this));
         },
@@ -43,7 +45,9 @@ define([
                     databases: this.queryModel.get('indexes')
                 },
                 success: _.bind(function() {
-                    this.fetchParametricValues(fieldsCollection, valuesCollection);
+                    if (valuesCollection) {
+                        this.fetchParametricValues(fieldsCollection, valuesCollection);
+                    }
                 }, this)
             });
         }

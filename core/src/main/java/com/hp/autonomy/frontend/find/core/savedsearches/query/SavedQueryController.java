@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
+import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
@@ -32,13 +33,15 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
 
     private final SavedSearchService<SavedQuery> service;
     private final DocumentsService<S, D, E> documentsService;
+    private final FieldTextParser fieldTextParser;
     private final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
 
     protected SavedQueryController(final SavedSearchService<SavedQuery> service,
                                    final DocumentsService<S, D, E> documentsService,
-                                   final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory) {
+                                   final FieldTextParser fieldTextParser, final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory) {
         this.service = service;
         this.documentsService = documentsService;
+        this.fieldTextParser = fieldTextParser;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
     }
 
@@ -82,7 +85,7 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
         if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
             final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                     .setQueryText(savedQuery.getQueryText())
-                    .setFieldText(savedQuery.toFieldText())
+                    .setFieldText(fieldTextParser.toFieldText(savedQuery))
                     .setDatabases(convertEmbeddableIndexes(savedQuery.getIndexes()))
                     .setMinDate(dateDocsLastFetched)
                     .setMinScore(savedQuery.getMinScore())
