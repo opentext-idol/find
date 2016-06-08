@@ -5,11 +5,14 @@
 
 define([
     'find/app/page/search/suggest/suggest-view',
-    'find/idol/app/page/search/results/idol-results-view'
-], function(SuggestView, ResultsView) {
+    'find/idol/app/page/search/results/idol-results-view',
+    'find/idol/app/page/search/results/idol-results-view-augmentation'
+
+], function(SuggestView, ResultsView, ResultsViewAugmentation) {
 
     return SuggestView.extend({
         ResultsView: ResultsView,
+        ResultsViewAugmentation: ResultsViewAugmentation,
 
         getIndexes: function(indexesCollection) {
             return indexesCollection.pluck('id')
