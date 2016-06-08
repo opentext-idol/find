@@ -31,7 +31,7 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
     @Mock
     protected FieldsService<R, E> service;
 
-    private FieldsController<R, E> controller;
+    protected FieldsController<R, E> controller;
 
     protected abstract FieldsController<R, E> constructController();
 

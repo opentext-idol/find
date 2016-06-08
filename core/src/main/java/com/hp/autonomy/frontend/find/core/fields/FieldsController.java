@@ -25,7 +25,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     static final String GET_PARAMETRIC_NUMERIC_FIELDS_PATH = "/parametric-numeric";
     static final String GET_PARAMETRIC_DATE_FIELDS_PATH = "/parametric-date";
 
-    private final FieldsService<R, E> fieldsService;
+    protected final FieldsService<R, E> fieldsService;
 
     protected FieldsController(final FieldsService<R, E> fieldsService) {
         this.fieldsService = fieldsService;
