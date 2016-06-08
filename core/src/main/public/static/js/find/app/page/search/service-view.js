@@ -155,7 +155,6 @@ define([
             var MiddleColumnHeaderView = this.searchTypes[searchType].MiddleColumnHeaderView;
             this.middleColumnHeaderView = MiddleColumnHeaderView ? new MiddleColumnHeaderView(subViewArguments) : null;
 
-            var entityClickHandler = this.searchTypes[searchType].entityClickHandler(clickHandlerArguments);
             var relatedConceptsClickHandler = this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments);
 
             var relatedConceptsView = new RelatedConceptsView(_.extend({
@@ -171,7 +170,7 @@ define([
 
             var resultsView = new this.ResultsView(_.defaults({
                 enablePreview: true,
-                entityClickHandler: entityClickHandler,
+                relatedConceptsClickHandler: relatedConceptsClickHandler,
                 fetchStrategy: this.searchTypes[searchType].fetchStrategy,
                 highlightModel: this.highlightModel
             }, subViewArguments));
