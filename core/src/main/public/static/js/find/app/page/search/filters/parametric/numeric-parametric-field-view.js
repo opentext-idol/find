@@ -88,7 +88,7 @@ define([
             },
             'change .numeric-parametric-min-input': function () {
                 //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput())();
+                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput());
                 //noinspection JSUnresolvedFunction
                 this.drawSelection();
             },
