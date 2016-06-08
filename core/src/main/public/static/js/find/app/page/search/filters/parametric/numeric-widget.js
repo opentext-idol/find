@@ -108,7 +108,7 @@ define([
                             return d.count ? options.yRange - scale.y(d.count) : emptyBarHeight;
                         },
                         width: function (d) {
-                            return scale.barWidth(d.max - d.min) - barGapSize;
+                            return Math.max(scale.barWidth(d.max - d.min), barGapSize) - barGapSize;
                         }
                     })
                     .append("title")

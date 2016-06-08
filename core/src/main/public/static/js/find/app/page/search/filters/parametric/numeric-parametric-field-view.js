@@ -35,6 +35,39 @@ define([
         return Math.round(x1 * 10) / 10;
     }
 
+    function calibrateBuckets(buckets, min, max, bucketSize) {
+        let calibratedBuckets = buckets;
+        if (buckets.length > 0) {
+            // Remove buckets not in range when zooming in
+            //noinspection JSUnresolvedFunction
+            calibratedBuckets = _.filter(buckets, function (value) {
+                return value.min >= min && value.max <= max;
+            });
+
+            // Add empty buckets to the beginning if zooming out
+            while (calibratedBuckets[0].min > min) {
+                calibratedBuckets.unshift({
+                    min: Math.max(calibratedBuckets[0].min - bucketSize, min),
+                    max: calibratedBuckets[0].min,
+                    count: 0
+                });
+            }
+
+            // Add empty buckets to the end if zooming out
+            //noinspection JSUnresolvedFunction
+            while (_.last(calibratedBuckets).max < max) {
+                //noinspection JSUnresolvedFunction
+                calibratedBuckets.push({
+                    min: _.last(calibratedBuckets).max,
+                    max: Math.min(_.last(calibratedBuckets).max + bucketSize, max),
+                    count: 0
+                });
+            }
+        }
+        
+        return calibratedBuckets;
+    }
+
     return Backbone.View.extend({
         className: 'animated fadeIn',
 
@@ -142,9 +175,7 @@ define([
                 this.updateModel(newMin, newMax);
             }.bind(this);
             //noinspection JSUnresolvedFunction
-            const buckets = _.filter(this.model.get('values'), function (value) {
-                return value.min >= this.model.get('min') && value.max <= this.model.get('max');
-            }.bind(this));
+            const buckets = calibrateBuckets(this.model.get('values'), this.model.get('min'), this.model.get('max'), this.model.get('bucketSize'));
             //noinspection JSUnresolvedFunction
             this.graph = this.widget.drawGraph({
                 chart: this.$('.chart')[0],
