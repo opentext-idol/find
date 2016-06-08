@@ -25,7 +25,7 @@ define([
             vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes, moment, numericParametricFieldTemplate, numericParametricDateFieldTemplate) {
     "use strict";
 
-    const DATE_WIDGET_FORMAT = "YYYY-MM-DD HH:mm";
+    var DATE_WIDGET_FORMAT = "YYYY-MM-DD HH:mm";
 
     var datesTitle = i18n['search.dates'];
 

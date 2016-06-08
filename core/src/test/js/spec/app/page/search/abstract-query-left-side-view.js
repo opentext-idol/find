@@ -26,8 +26,8 @@ define([
                 })
             }))({
                 queryState: {},
-                numericParametricCollection: new (backboneMockFactory.getCollection())(),
-                dateParametricCollection: new (backboneMockFactory.getCollection())()
+                numericParametricFieldsCollection: new (backboneMockFactory.getCollection())(),
+                dateParametricFieldsCollection: new (backboneMockFactory.getCollection())()
             });
 
             this.parametricInfo = {
@@ -38,12 +38,12 @@ define([
                 },
                 'numeric parametric': {
                     description: 'numeric parametric',
-                    collection: this.view.numericParametricCollection,
+                    collection: this.view.numericParametricFieldsCollection,
                     view: this.view.parametricView
                 },
                 'date parametric': {
                     description: 'date parametric',
-                    collection: this.view.dateParametricCollection,
+                    collection: this.view.dateParametricFieldsCollection,
                     view: this.view.dateParametricView
                 }
             };
