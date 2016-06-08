@@ -68,21 +68,24 @@ define([
         },
 
         refreshFields: function () {
-            //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-            const targetNumberOfBuckets = _.times(this.fieldsCollection.length, _.constant(Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)));
-            //noinspection JSUnresolvedFunction
-            const nulls = _.times(this.fieldsCollection.length, _.constant(null));
+            const fieldNames = this.fieldsCollection.pluck('id');
+            if (fieldNames.length > 0) {
+                //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+                const targetNumberOfBuckets = _.times(this.fieldsCollection.length, _.constant(Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)));
+                //noinspection JSUnresolvedFunction
+                const nulls = _.times(this.fieldsCollection.length, _.constant(null));
 
-            this.collection.fetch({
-                data: {
-                    fieldNames: this.fieldsCollection.pluck('id'),
-                    databases: this.queryModel.get('indexes'),
-                    queryText: this.queryModel.get('queryText'),
-                    targetNumberOfBuckets: targetNumberOfBuckets,
-                    bucketMin: nulls,
-                    bucketMax: nulls
-                }
-            });
+                this.collection.fetch({
+                    data: {
+                        fieldNames: fieldNames,
+                        databases: this.queryModel.get('indexes'),
+                        queryText: this.queryModel.get('queryText'),
+                        targetNumberOfBuckets: targetNumberOfBuckets,
+                        bucketMin: nulls,
+                        bucketMax: nulls
+                    }
+                });
+            }
         },
 
         remove: function () {

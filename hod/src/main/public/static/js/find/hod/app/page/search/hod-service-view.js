@@ -40,16 +40,18 @@ define([
         },
         
         fetchParametricFields: function (fieldsCollection, valuesCollection) {
-            fieldsCollection.fetch({
-                data: {
-                    databases: this.queryModel.get('indexes')
-                },
-                success: _.bind(function() {
-                    if (valuesCollection) {
-                        this.fetchParametricValues(fieldsCollection, valuesCollection);
-                    }
-                }, this)
-            });
+            if (this.queryModel.get('indexes').length > 0) {
+                fieldsCollection.fetch({
+                    data: {
+                        databases: this.queryModel.get('indexes')
+                    },
+                    success: _.bind(function () {
+                        if (valuesCollection) {
+                            this.fetchParametricValues(fieldsCollection, valuesCollection);
+                        }
+                    }, this)
+                });
+            }
         }
     });
 });
