@@ -10,10 +10,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class FindResultsPage extends AppElement implements QueryResultsPage {
-    public FindResultsPage(WebDriver driver) {
+    public FindResultsPage(final WebDriver driver) {
         super(driver.findElement(By.className("service-view-container")), driver);
     }
 
@@ -23,37 +24,37 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
     }
 
     public List<String> getResultTitles() {
-        List<String> titles = new ArrayList<>();
-        for(FindResult result : getResults()){
+        final List<String> titles = new ArrayList<>();
+        for (final FindResult result : getResults()) {
             titles.add(result.getTitleString());
         }
         return titles;
     }
 
-    public WebElement resultsDiv(){
+    public WebElement resultsDiv() {
         return getDriver().findElement(By.className("results"));
     }
 
-    public List<FindResult> getResults(){
-        List<FindResult> results = new ArrayList<>();
-        for(WebElement result : findElements(By.xpath("//*[starts-with(@class,'main-results-container')]"))){
+    public List<FindResult> getResults() {
+        final List<FindResult> results = new ArrayList<>();
+        for (final WebElement result : findElements(By.xpath("//*[starts-with(@class,'main-results-container')]"))) {
             results.add(new FindResult(result, getDriver()));
         }
         return results;
     }
 
-    public List<FindResult> getResults(int maxResults) {
-        List<FindResult> results = getResults();
+    public List<FindResult> getResults(final int maxResults) {
+        final List<FindResult> results = getResults();
         return results.subList(0, Math.min(maxResults, results.size()));
     }
 
-    public FindResult getResult(int i) {
-        return new FindResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ")")), getDriver());
+    public FindResult getResult(final int i) {
+        return new FindResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ')')), getDriver());
     }
 
-    public List<String> getDisplayedDocumentsDocumentTypes(){
-        List<String> documentTypes = new ArrayList<>();
-        for(FindResult result : getResults()){
+    public List<String> getDisplayedDocumentsDocumentTypes() {
+        final List<String> documentTypes = new ArrayList<>();
+        for (final FindResult result : getResults()) {
             documentTypes.add(result.icon().getAttribute("class"));
         }
         return documentTypes;
@@ -63,45 +64,30 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         Container.MIDDLE.waitForLoad(getDriver());
     }
 
-    public FindResult searchResult(int searchResultNumber) {
-        return new FindResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ")")), getDriver());
+    public FindResult searchResult(final int searchResultNumber) {
+        return new FindResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ')')), getDriver());
     }
 
-    public List<WebElement> highlightedSausages(String highlightedTerm) {
-        List<WebElement> highlightedRelatedTerms = findElements(new Locator()
-                    .havingClass("entity-label")
-                    .containingCaseInsensitive(highlightedTerm)
-            );
-        //on_prem
-        if(!(highlightedRelatedTerms.size()>0)) {
-            highlightedRelatedTerms = findHighlightedEntityText(highlightedTerm,highlightedRelatedTerms);
-        }
-        return highlightedRelatedTerms;
+    public boolean mainResultsContainerHidden() {
+        return !findElement(By.className("main-results-content-container")).isDisplayed();
     }
 
-    private List<WebElement> findHighlightedEntityText(String highlightedTerm, List<WebElement> highlightedRelatedTerms) {
-        List<WebElement> allHighlightedTerms = findElements(new Locator()
-                .havingClass("highlighted-entity-text")
-                .containingCaseInsensitive(highlightedTerm)
-        );
-
-        for (WebElement sausage : allHighlightedTerms) {
-            if (sausage.isDisplayed()) {
-                highlightedRelatedTerms.add(sausage);
-            }
-        }
-        return highlightedRelatedTerms;
-    }
-
-
-    public boolean mainResultsContainerHidden(){
-        return !(findElement(By.className("main-results-content-container")).isDisplayed());
-    }
-
-    public List<WebElement> scrollForHighlightedSausages(String highlightedTerm){
+    public List<WebElement> scrollForHighlightedSausages() {
         DriverUtil.scrollToBottom(getDriver());
         waitForResultsToLoad();
-        return highlightedSausages(highlightedTerm);
-    }
 
+        final Locator sausageLocator = new Locator()
+                .havingClass("highlighted-entity-text");
+
+        final List<WebElement> visibleRelatedTerms = new LinkedList<>();
+        final List<WebElement> allHighlightedTerms = findElements(sausageLocator);
+
+        for (final WebElement sausage : allHighlightedTerms) {
+            if (sausage.isDisplayed()) {
+                visibleRelatedTerms.add(sausage);
+            }
+        }
+
+        return visibleRelatedTerms;
+    }
 }

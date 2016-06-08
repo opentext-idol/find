@@ -2,9 +2,9 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
+import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
@@ -18,6 +18,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -35,7 +36,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     private FindTopNavBar navBar;
 
 
-    public RelatedConceptsITCase(TestConfig config) {
+    public RelatedConceptsITCase(final TestConfig config) {
         super(config);
     }
 
@@ -47,9 +48,9 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    public void testRelatedConceptsHasResults(){
+    public void testRelatedConceptsHasResults() {
         findService.search("Danye West");
-        for (WebElement concept : conceptsPanel()) {
+        for (final WebElement concept : conceptsPanel()) {
             assertThat(concept, hasTextThat(not(isEmptyOrNullString())));
             assertThat(concept, not(containsTextIgnoringCase("loading")));
         }
@@ -57,11 +58,11 @@ public class RelatedConceptsITCase extends FindTestBase {
 
     @Test
     @RelatedTo("CCUK-3598")
-    public void testRelatedConceptsNavigateOnClick(){
-        String search = "Red";
+    public void testRelatedConceptsNavigateOnClick() {
+        final String search = "Red";
         findService.search(search);
-        WebElement topRelatedConcept = conceptsPanel().concept(0);
-        String concept = topRelatedConcept.getText();
+        final WebElement topRelatedConcept = conceptsPanel().concept(0);
+        final String concept = topRelatedConcept.getText();
 
         topRelatedConcept.click();
         assertThat(navBar.getAlsoSearchingForTerms(), hasItem(equalToIgnoringCase(concept)));
@@ -70,9 +71,9 @@ public class RelatedConceptsITCase extends FindTestBase {
 
     @Test
     @ResolvedBug({"CCUK-3498", "CSA-2066"})
-    public void testRelatedConceptsHover(){
+    public void testRelatedConceptsHover() {
         findService.search("Find");
-        WebElement popover = conceptsPanel().hoverOverRelatedConcept(0);
+        final WebElement popover = conceptsPanel().hoverOverRelatedConcept(0);
         verifyThat(popover, hasTextThat(not(isEmptyOrNullString())));
         verifyThat(popover.getText(), not(containsString("QueryText-Placeholder")));
         verifyThat(popover.getText(), not(containsString(Errors.Search.RELATED_CONCEPTS)));
@@ -80,13 +81,13 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    public void testRelatedConceptsInResults(){
+    public void testRelatedConceptsInResults() {
         findService.search("Preposterous");
         conceptsPanel().toggleHighlight();
 
-        for(WebElement relatedConceptLink : conceptsPanel()) {
-            String relatedConcept = relatedConceptLink.getText();
-            for (WebElement relatedConceptElement : results.scrollForHighlightedSausages(relatedConcept)) {
+        for (final WebElement relatedConceptLink : conceptsPanel()) {
+            final String relatedConcept = relatedConceptLink.getText();
+            for (final WebElement relatedConceptElement : results.scrollForHighlightedSausages()) {
                 if (relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                     verifyThat(relatedConceptElement, containsTextIgnoringCase(relatedConcept));
                 }
@@ -100,17 +101,17 @@ public class RelatedConceptsITCase extends FindTestBase {
     @RelatedTo("CCUK-3599")
     public void testRelatedConceptsHighlightButton() {
         findService.search("pancakes");
-        WebElement button = conceptsPanel().highlightButton();
+        final WebElement button = conceptsPanel().highlightButton();
 
-        verifyThat(results.scrollForHighlightedSausages(""), empty());
+        verifyThat(results.scrollForHighlightedSausages(), empty());
         verifyThat(button, not(hasClass("active")));
 
         button.click();
-        verifyThat(results.scrollForHighlightedSausages(""), not(empty()));
+        verifyThat(results.scrollForHighlightedSausages(), not(empty()));
         verifyThat(button, hasClass("active"));
 
         button.click();
-        verifyThat(results.scrollForHighlightedSausages(""), empty());
+        verifyThat(results.scrollForHighlightedSausages(), empty());
         verifyThat(button, not(hasClass("active")));
     }
 
@@ -118,10 +119,10 @@ public class RelatedConceptsITCase extends FindTestBase {
     public void testMultipleAdditionalConcepts() {
         findService.search("bongo");
 
-        List<String> relatedConcepts = new ArrayList<>();
+        final Collection<String> relatedConcepts = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            String newConcept = clickFirstNewConcept(relatedConcepts);
-            verifyThat(navBar.getAlsoSearchingForTerms(),hasItem(equalToIgnoringCase(newConcept)));
+            final String newConcept = clickFirstNewConcept(relatedConcepts);
+            verifyThat(navBar.getAlsoSearchingForTerms(), hasItem(equalToIgnoringCase(newConcept)));
         }
         verifyThat(navBar.getSearchBoxTerm(), is("bongo"));
         verifyThat(navBar.getAlsoSearchingForTerms(), hasSize(relatedConcepts.size()));
@@ -132,19 +133,18 @@ public class RelatedConceptsITCase extends FindTestBase {
     @Category(CoreFeature.class)
     public void testAddRemoveConcepts() {
         findService.search("jungle");
-        List<String> concepts = new ArrayList<>();
-        String firstConcept = clickFirstNewConcept(concepts);
-        String secondConcept = clickFirstNewConcept(concepts);
+        final Collection<String> concepts = new ArrayList<>();
+        final String firstConcept = clickFirstNewConcept(concepts);
+        final String secondConcept = clickFirstNewConcept(concepts);
         verifyThat(navBar.getAlsoSearchingForTerms(), hasSize(2));
 
-        if(!isHosted()) {
+        if (isHosted()) {
+            navBar.additionalConcept(secondConcept).removeAndWait();
+        } else {
             navBar.closeFirstConcept();
         }
-        else{
-            navBar.additionalConcept(secondConcept).removeAndWait();
-        }
 
-        List<String> alsoSearchingFor = navBar.getAlsoSearchingForTerms();
+        final List<String> alsoSearchingFor = navBar.getAlsoSearchingForTerms();
 
         verifyThat(alsoSearchingFor, hasSize(1));
         verifyThat(alsoSearchingFor, not(hasItem(equalToIgnoringCase(secondConcept))));
@@ -158,8 +158,8 @@ public class RelatedConceptsITCase extends FindTestBase {
     public void testTermNotInRelatedConcepts() {
         final String query = "world cup";
         findService.search(query);
-        List<String> addedConcepts = new ArrayList<>();
-        RelatedConceptsPanel panel = conceptsPanel();
+        final Collection<String> addedConcepts = new ArrayList<>();
+        final RelatedConceptsPanel panel = conceptsPanel();
 
         verifyThat(panel.getRelatedConcepts(), not(hasItem(equalToIgnoringCase(query))));
 
@@ -173,33 +173,41 @@ public class RelatedConceptsITCase extends FindTestBase {
     @ResolvedBug("CCUK-3566")
     public void testAdditionalConceptsNotAlsoRelated() {
         findService.search("matt");
-        List<String> addedConcepts = new ArrayList<>();
+        final Collection<String> addedConcepts = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
             clickFirstNewConcept(addedConcepts);
-            List<String> relatedConcepts = conceptsPanel().getRelatedConcepts();
+            final List<String> relatedConcepts = conceptsPanel().getRelatedConcepts();
 
-            for (String addedConcept : addedConcepts) {
+            for (final String addedConcept : addedConcepts) {
                 verifyThat(relatedConcepts, not(hasItem(equalToIgnoringCase(addedConcept))));
             }
         }
     }
 
     @Test
-    @ActiveBug("CCUK-3706")
+    @ActiveBug("FIND-164")
     public void testAddSausageToQuery() {
         findService.search("sausage");
         conceptsPanel().toggleHighlight();
 
-        List<String> addedConcepts = new ArrayList<>();
+        final Collection<String> addedConcepts = new ArrayList<>();
+
         for (int i = 0; i < 5; i++) {
-            WebElement firstSausage = results.highlightedSausages("").get(0);
-            String firstSausageText=firstSausage.getText();
-            LOGGER.info("clicking sausage " + firstSausageText);
+            final WebElement firstSausage = results.scrollForHighlightedSausages().get(0);
+
+            // Lower case since concepts are upper-cased for display in the UI, but appear in their original case in the nav bar
+            final String firstSausageText = firstSausage.getText().toLowerCase();
+
+            LOGGER.info("clicking sausage {}", firstSausageText);
+
             addedConcepts.add(firstSausageText);
             firstSausage.click();
 
+            // Query text has not changed
             verifyThat(navBar.getSearchBoxTerm(), equalToIgnoringCase("sausage"));
+
+            // But we have a new related concept
             verifyThat(navBar.getAlsoSearchingForTerms(), containsItems(addedConcepts));
         }
     }
@@ -208,7 +216,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     @ActiveBug("FIND-111")
     public void testRefreshAddedConcepts() {
         findService.search("fresh");
-        List<String> concepts = new ArrayList<>();
+        final Collection<String> concepts = new ArrayList<>();
         clickFirstNewConcept(concepts);
         clickFirstNewConcept(concepts);
 
@@ -219,15 +227,15 @@ public class RelatedConceptsITCase extends FindTestBase {
         verifyThat(navBar.getAlsoSearchingForTerms(), containsItems(concepts));
     }
 
-    private String clickFirstNewConcept(List<String> existingConcepts) {
-        for (WebElement concept : conceptsPanel()) {
-            String conceptText = concept.getText();
+    private String clickFirstNewConcept(final Collection<String> existingConcepts) {
+        for (final WebElement concept : conceptsPanel()) {
+            final String conceptText = concept.getText();
             if (!existingConcepts.contains(conceptText)) {
                 LOGGER.info("clicking concept " + conceptText);
                 concept.click();
 
                 existingConcepts.add(conceptText.toLowerCase());
-                
+
                 return conceptText;
             }
         }
