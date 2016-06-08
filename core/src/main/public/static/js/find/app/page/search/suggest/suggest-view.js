@@ -21,6 +21,7 @@ define([
 
         // Abstract
         ResultsView: null,
+        ResultsViewAugmentation: null,
         getIndexes: $.noop,
 
         events: {
@@ -35,13 +36,17 @@ define([
         initialize: function(options) {
             this.backUrl = options.backUrl;
             this.documentModel = options.documentModel;
-
-            this.resultsView = new this.ResultsView({
-                fetchStrategy: suggestStrategy,
-                documentsCollection: new SimilarDocumentsCollection(),
-                queryModel: new Backbone.Model({
+            this.queryModel = new Backbone.Model({
                     reference: this.documentModel.get('reference'),
                     indexes: this.getIndexes(options.indexesCollection, this.documentModel)
+                });
+            this.resultsView = new this.ResultsViewAugmentation({
+                queryModel: this.queryModel,
+                resultsView: new this.ResultsView({
+                    fetchStrategy: suggestStrategy,
+                    documentsCollection: new SimilarDocumentsCollection(),
+                    queryModel: this.queryModel,
+                    enablePreview: true
                 })
             });
 

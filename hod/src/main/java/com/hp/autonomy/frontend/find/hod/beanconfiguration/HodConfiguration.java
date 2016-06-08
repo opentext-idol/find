@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
@@ -26,6 +27,7 @@ import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -54,10 +56,14 @@ public class HodConfiguration {
     @Bean
     @Primary
     @Autowired
-    public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder) {
-        return builder.createXmlMapper(false)
-                .mixIn(Authentication.class, HodAuthenticationMixins.class)
-                .build();
+    public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder, final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever) {
+        final ObjectMapper mapper = builder.createXmlMapper(false)
+            .mixIn(Authentication.class, HodAuthenticationMixins.class)
+            .build();
+
+        mapper.setInjectableValues(new InjectableValues.Std().addValue(AuthenticationInformationRetriever.class, authenticationInformationRetriever));
+
+        return mapper;
     }
 
     @Bean

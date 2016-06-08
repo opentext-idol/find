@@ -4,12 +4,16 @@
  */
 
 define([
-    'find/app/page/search/results/sunburst-view',
+    'find/app/page/search/results/parametric-results-view',
     'backbone',
-    'i18n!find/nls/bundle'
-], function (SunburstView, Backbone, i18n) {
+    'jasmine-ajax'
+], function (ParametricResultsView, Backbone) {
 
-    describe('Sunburst View', function() {
+    var DEPENDENT_EMPTY_MESSAGE = 'No dependent fields';
+    var EMPTY_MESSAGE = 'No fields';
+    var ERROR_MESSAGE = 'Error';
+
+    describe('Parametric Results View', function() {
         beforeEach(function() {
             this.parametricCollection = new Backbone.Collection();
             this.selectedParametricValues = new Backbone.Collection();
@@ -17,25 +21,24 @@ define([
             this.queryModel.getIsoDate = jasmine.createSpy('getIsoDate');
             this.queryState = {selectedParametricValues: this.selectedParametricValues};
 
-            var sunburstViewConstructorArguments = {
+            var viewConstructorArguments = {
+                emptyDependentMessage: DEPENDENT_EMPTY_MESSAGE,
+                emptyMessage: EMPTY_MESSAGE,
+                errorMessage: ERROR_MESSAGE,
                 parametricCollection: this.parametricCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState
             };
 
-            this.view = new SunburstView(sunburstViewConstructorArguments);
+            this.view = new ParametricResultsView(viewConstructorArguments);
             this.view.render();
         });
 
         describe('with an empty parametric collection', function() {
-            it('should not display a loading spinner, sunburst view or field selections', function() {
+            it('should not display a loading spinner, content or field selections', function() {
                 expect(this.view.$loadingSpinner).toHaveClass('hide');
-                expect(this.view.$sunburst).toHaveClass('hide');
+                expect(this.view.$content).toHaveClass('hide');
                 expect(this.view.$parametricSelections).toHaveClass('hide');
-            });
-
-            it('should display the no parametric values for current search message', function() {
-                expect(this.view.$message).toHaveText(i18n['search.resultsView.sunburst.error.noParametricValues']);
             });
 
             describe('then the parametric collection fetches', function() {
@@ -44,9 +47,9 @@ define([
                     this.parametricCollection.trigger('request');
                 });
 
-                it('should not display a message, sunburst view or field selections', function() {
-                    expect(this.view.$message).toHaveText(i18n['search.resultsView.sunburst.error.noDependentParametricValues']);
-                    expect(this.view.$sunburst).toHaveClass('hide');
+                it('should not display a message, content view or field selections', function() {
+                    expect(this.view.$message).toHaveText('');
+                    expect(this.view.$content).toHaveClass('hide');
                     expect(this.view.$parametricSelections).toHaveClass('hide');
                 });
 
@@ -60,14 +63,14 @@ define([
                         this.parametricCollection.trigger('sync');
                     });
 
-                    it('should not display a loading spinner, sunburst view or field selections', function() {
+                    it('should not display a loading spinner, content view or field selections', function() {
                         expect(this.view.$loadingSpinner).toHaveClass('hide');
-                        expect(this.view.$sunburst).toHaveClass('hide');
+                        expect(this.view.$content).toHaveClass('hide');
                         expect(this.view.$parametricSelections).toHaveClass('hide');
                     });
 
                     it('should display the no parametric values for current search message', function() {
-                        expect(this.view.$message).toHaveText(i18n['search.resultsView.sunburst.error.noParametricValues']);
+                        expect(this.view.$message).toHaveText(EMPTY_MESSAGE);
                     });
                 });
 
@@ -75,17 +78,17 @@ define([
                     beforeEach(function () {
                         this.parametricCollection.fetching = false;
                         this.parametricCollection.error = true;
-                        this.parametricCollection.trigger('error');
+                        this.parametricCollection.trigger('error', null, {status: 1});
                     });
 
-                    it('should not display a loading spinner, sunburst view or field selections', function () {
+                    it('should not display a loading spinner, content view or field selections', function () {
                         expect(this.view.$loadingSpinner).toHaveClass('hide');
-                        expect(this.view.$sunburst).toHaveClass('hide');
+                        expect(this.view.$content).toHaveClass('hide');
                         expect(this.view.$parametricSelections).toHaveClass('hide');
                     });
 
                     it('should display the no parametric values for current search message', function () {
-                        expect(this.view.$message).toHaveText(i18n['search.resultsView.sunburst.error.query']);
+                        expect(this.view.$message).toHaveText(ERROR_MESSAGE);
                     });
                 });
 
@@ -137,9 +140,9 @@ define([
                         expect(this.view.$message).toHaveText('');
                     });
 
-                    it('should display the dropdowns and the sunburst view', function() {
+                    it('should display the dropdowns and the content view', function() {
                         expect(this.view.$parametricSelections).not.toHaveClass('hide');
-                        expect(this.view.$sunburst).not.toHaveClass('hide');
+                        expect(this.view.$content).not.toHaveClass('hide');
                     });
                 })
             });

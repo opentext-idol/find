@@ -829,6 +829,8 @@ input.find-input {
 
 .sunburst-sector-name {
     font-size: 14px;
+    width: 300px;
+    word-break: normal;
 }
 
 .chosen-container {

@@ -49,7 +49,10 @@ define([
             this.queryState = options.queryState;
 
             this.listenTo(this.queryState.queryTextModel, 'change', function() {
-                this.set('queryText', this.queryState.queryTextModel.makeQueryText());
+                var queryText = this.queryState.queryTextModel.makeQueryText();
+                if (queryText) {
+                    this.set('queryText', queryText);
+                }
             });
 
             this.listenTo(this.queryState.datesFilterModel, 'change', function() {

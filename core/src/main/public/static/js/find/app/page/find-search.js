@@ -25,6 +25,7 @@ define([
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/app/util/database-name-resolver',
     'find/app/util/saved-query-result-poller',
+    'find/app/util/events',
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
@@ -33,7 +34,7 @@ define([
     'text!find/templates/app/page/find-search.html'
 ], function (BasePage, Backbone, config, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
              InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel,
-             QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, router, vent, i18n, $, _, template) {
+             QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, events, router, vent, i18n, $, _, template) {
 
     'use strict';
 
@@ -133,18 +134,13 @@ define([
                 }
             });
 
-            // TODO: this does nothing - the attribute name is wrong
-            this.listenTo(this.savedSearchCollection, 'add', function (model) {
-                if (this.selectedTabModel.get('selectedCid') === null) {
-                    this.selectedTabModel.set('selectedCid', model.cid);
-                }
-            });
-
             this.listenTo(this.savedSearchCollection, 'remove', function (savedSearch) {
                 var cid = savedSearch.cid;
                 this.serviceViews[cid].view.remove();
                 this.queryStates.unset(cid);
                 delete this.serviceViews[cid];
+
+                events(cid).abandon();
 
                 if (this.selectedTabModel.get('selectedSearchCid') === cid) {
                     var lastModel = this.savedQueryCollection.last();
@@ -201,6 +197,7 @@ define([
             // Bind routing to search model
             this.listenTo(router, 'route:search', function (text) {
                 this.removeDocumentDetailView();
+                this.removeSuggestView();
 
                 this.searchModel.set({
                     inputText: text || ''
@@ -213,6 +210,7 @@ define([
             }, this);
 
             this.listenTo(router, 'route:documentDetail', function () {
+                var backURL = this.suggestView ? this.generateSuggestURL(this.suggestView.documentModel) : this.generateURL();
                 this.expandedState();
                 this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
@@ -223,7 +221,7 @@ define([
 
                 fetchDocument(options, function (documentModel) {
                     this.documentDetailView = new DocumentDetailView({
-                        backUrl: this.generateURL(),
+                        backUrl: backURL,
                         model: documentModel,
                         indexesCollection: this.indexesCollection
                     });
@@ -347,6 +345,8 @@ define([
                 var savedSearchModel = this.savedSearchCollection.get(cid);
                 var searchType = savedSearchModel.get('type');
 
+                events(cid);
+
                 if (this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
                 } else {
@@ -429,6 +429,10 @@ define([
             } else {
                 return 'find/search/query/' + encodeURIComponent(inputText);
             }
+        },
+
+        generateSuggestURL: function (model) {
+            return 'find/search/suggest/' + vent.addSuffixForDocument(model);
         },
 
         // Run fancy animation from large central search bar to main search page

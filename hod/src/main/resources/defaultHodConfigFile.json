@@ -93,6 +93,18 @@
                 "modified_date"
             ],
             "type": "Date"
+        },
+        "latitude": {
+            "names": [
+                "lat"
+            ],
+            "type": "NUMBER"
+        },
+        "longitude": {
+            "names": [
+                "lon"
+            ],
+            "type": "NUMBER"
         }
     }
 }

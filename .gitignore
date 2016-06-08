@@ -9,6 +9,7 @@
 *.ipr
 *.iml
 *.iws
+*.ids
 
 # Maven
 log/

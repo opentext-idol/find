@@ -60,7 +60,9 @@ define([
             this.searchCollections = options.searchCollections;
 
             this.highlightModel = new Backbone.Model({highlightEntities: false});
-            this.entityCollection = new EntityCollection();
+            this.entityCollection = new EntityCollection([], {
+                queryState: this.queryState
+            });
 
             var searchType = this.savedSearchModel.get('type');
 
@@ -154,9 +156,10 @@ define([
             this.middleColumnHeaderView = MiddleColumnHeaderView ? new MiddleColumnHeaderView(subViewArguments) : null;
 
             var entityClickHandler = this.searchTypes[searchType].entityClickHandler(clickHandlerArguments);
+            var relatedConceptsClickHandler = this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments);
 
             var relatedConceptsView = new RelatedConceptsView(_.extend({
-                clickHandler: this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments),
+                clickHandler: relatedConceptsClickHandler,
                 highlightModel: this.highlightModel
             }, subViewArguments));
 
@@ -198,7 +201,7 @@ define([
                 shown: hasBiRole,
                 uniqueId: _.uniqueId('results-view-item-'),
                 constructorArguments: _.extend({
-                    clickHandler: entityClickHandler
+                    clickHandler: relatedConceptsClickHandler
                 }, subViewArguments),
                 selector: {
                     displayNameKey: 'topic-map',
@@ -301,6 +304,7 @@ define([
                     fieldText: this.queryModel.get('fieldText'),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
+                    minScore: this.queryModel.get('minScore'),
                     stateTokens: this.queryModel.get('stateMatchIds')
                 };
 
@@ -321,6 +325,7 @@ define([
                     fieldText: this.queryModel.get('fieldText'),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
+                    minScore: this.queryModel.get('minScore'),
                     stateTokens: this.queryModel.get('stateMatchIds')
                 };
 
