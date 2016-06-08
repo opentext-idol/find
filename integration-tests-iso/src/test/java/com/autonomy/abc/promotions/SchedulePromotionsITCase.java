@@ -69,10 +69,10 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		assertThat(schedulePage.finishButton(), displayed());
 		assertThat("Always active isn't selected", schedulePage.alwaysActive().getAttribute("class"), containsString("progressive-disclosure-selection"));
 		assertThat("Schedule shouldn't be selected", schedulePage.schedule().getAttribute("class"), not(containsString("progressive-disclosure-selection")));
-		assertThat("Finish button should be enabled", schedulePage.buttonDisabled(schedulePage.finishButton()), is(false));
+		assertThat("Finish button should be enabled", !schedulePage.buttonDisabled(schedulePage.finishButton()));
 
 		schedulePage.alwaysActive().click();
-		assertThat("Finish button should be enabled", schedulePage.buttonDisabled(schedulePage.finishButton()), is(false));
+		assertThat("Finish button should be enabled", !schedulePage.buttonDisabled(schedulePage.finishButton()));
 
 		schedulePage.schedule().click();
 		assertThat(schedulePage.continueButton(), displayed());
@@ -81,10 +81,10 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		Waits.loadOrFadeWait();
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("How long should this promotion run?"));
 
-		assertThat(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(schedulePage.getTodayDate())));
-		assertThat(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1))));
-		assertThat(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[1], is("00:00"));
-		assertThat(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[1], is("00:00"));
+		assertThat(schedulePage.date(schedulePage.startDateTextBox()), is(schedulePage.todayDateString()));
+		assertThat(schedulePage.date(schedulePage.endDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1))));
+		assertThat(schedulePage.time(schedulePage.startDateTextBox()), is("00:00"));
+		assertThat(schedulePage.time(schedulePage.endDateTextBox()), is("00:00"));
 
 		schedulePage.startDateTextBoxButton().click();
 		datePicker = new DatePicker(schedulePage.$el(),getDriver());
@@ -92,16 +92,16 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		assertThat(datePicker.getSelectedMonth(), is(schedulePage.getMonth(0)));
 
 		datePicker.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 1));
-		assertThat(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1))));
-		final String startDate = SchedulePage.parseDateForPromotionsPage(schedulePage.startDateTextBox().getAttribute("value"));
+		assertThat(schedulePage.date(schedulePage.startDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1))));
+		final String startDate = SchedulePage.parseDateForPromotionsPage(schedulePage.dateText(schedulePage.startDateTextBox()));
 		schedulePage.startDateTextBoxButton().click();
 		Waits.loadOrFadeWait();
 
-		schedulePage.endDateTextBoxButton().click();
-		datePicker = new DatePicker(schedulePage.$el(),getDriver());
-		datePicker.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 5));
-		assertThat(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 5))));
-		final String endDate = SchedulePage.parseDateForPromotionsPage(schedulePage.endDateTextBox().getAttribute("value"));
+		Date newDate = DateUtils.addDays(schedulePage.getTodayDate(), 5);
+		schedulePage.scheduleDurationSelector(schedulePage.endDateTextBoxButton(),newDate);
+		assertThat(schedulePage.date(schedulePage.endDateTextBox()), is(schedulePage.dateAsString(newDate)));
+
+		final String endDate = SchedulePage.parseDateForPromotionsPage(schedulePage.dateText(schedulePage.endDateTextBox()));
 		schedulePage.endDateTextBoxButton().click();
 		Waits.loadOrFadeWait();
 
@@ -118,7 +118,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("When should this promotion schedule finish?"));
 
 		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
-		assertThat(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 5))));
+		assertThat(schedulePage.date(schedulePage.finalDateTextBox()), is(schedulePage.dateAsString(newDate)));
 
 		schedulePage.finalDateTextBoxButton().click();
 		datePicker = new DatePicker(schedulePage.$el(),getDriver());
@@ -169,26 +169,21 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		assertThat("promotions are scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(true));
 	}
 
-	@Test
-	public void testScheduleStartBeforeEnd() throws ParseException {
-		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "\"ice cream\" chips");
-		promotionService.setUpPromotion(spotlight, "wizard", 4);
-		promotionService.goToDetails(spotlight);
-		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 
-		try {
-			schedulePage = getElementFactory().getSchedulePage();
-		} catch (final NoSuchElementException e) {
-			fail("Schedule Page has not loaded");
-		}
+	//NAVIVATION CRAP -> its own test
+	@Test
+	public void testNavigateScheduleWizard(){
+		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "\"ice cream\" chips");
+		setUpPromotion(spotlight, new Query("wizard"), 4);
+
 		assertThat(getWindow(), urlContains("schedule"));
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("Schedule your promotion"));
 		assertThat(schedulePage.finishButton(), displayed());
-		assertThat("Finish button should be enabled", schedulePage.buttonDisabled(schedulePage.finishButton()), is(false));
+		assertThat("Finish button should be enabled", !schedulePage.buttonDisabled(schedulePage.finishButton()));
 
 		schedulePage.alwaysActive().click();
 		Waits.loadOrFadeWait();
-		assertThat("Finish button should be enabled", schedulePage.buttonDisabled(schedulePage.finishButton()), is(false));
+		assertThat("Finish button should be enabled", !schedulePage.buttonDisabled(schedulePage.finishButton()));
 
 		schedulePage.schedule().click();
 		Waits.loadOrFadeWait();
@@ -196,7 +191,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 		schedulePage.alwaysActive().click();
 		Waits.loadOrFadeWait();
-		assertThat("Finish button should be enabled", schedulePage.buttonDisabled(schedulePage.finishButton()), is(false));
+		assertThat("Finish button should be enabled", !schedulePage.buttonDisabled(schedulePage.finishButton()));
 
 		schedulePage.schedule().click();
 		Waits.loadOrFadeWait();
@@ -206,54 +201,56 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		Waits.loadOrFadeWait();
 		assertThat("Wrong wizard text", schedulePage.getText(), containsString("How long should this promotion run?"));
 
-		assertThat(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(schedulePage.getTodayDate())));
-		assertThat(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1))));
+		assertThat(schedulePage.date(schedulePage.startDateTextBox()), is(schedulePage.dateAsString(schedulePage.getTodayDate())));
+		assertThat(schedulePage.date(schedulePage.endDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1))));
 
 		schedulePage.startDateTextBoxButton().click();
 		datePicker = new DatePicker(schedulePage.$el(),getDriver());
 		assertThat(datePicker.getSelectedDayOfMonth(), is(schedulePage.getDay(0)));
 		assertThat(datePicker.getSelectedMonth(), is(schedulePage.getMonth(0)));
+	}
 
+	@Test
+	public void testScheduleStartBeforeEnd() throws ParseException {
+		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "\"ice cream\" chips");
+		setUpPromotion(spotlight, new Query("wizard"), 4);
+
+		//NEED TO NAVIGATE TO THE SCHEDULE PAGE WITHOUT ALL THE TESTING CRAP
+		//ALSO NEED TO DEFINE datePicker
+
+		//#1 set start
 		datePicker.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 3));
-		assertThat(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 3))));
+		assertThat(schedulePage.date(schedulePage.startDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 3))));
 		schedulePage.startDateTextBoxButton().click();
-
+		//#1 set end
+		schedulePage.scheduleDurationSelector(schedulePage.endDateTextBoxButton(),DateUtils.addDays(schedulePage.getTodayDate(), 2));
+		assertThat(schedulePage.date(schedulePage.endDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2))));
 		schedulePage.endDateTextBoxButton().click();
-		datePicker = new DatePicker(schedulePage.$el(),getDriver());
-		datePicker.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 2));
-		assertThat(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2))));
-		schedulePage.endDateTextBoxButton().click();
+		//check buttons
+		checkDatesNotOkay();
 
-		assert(getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be disabled",schedulePage.buttonDisabled(schedulePage.continueButton()));
+		//#2 set end
+		schedulePage.scheduleDurationSelector(schedulePage.endDateTextBoxButton(),DateUtils.addDays(schedulePage.getTodayDate(), 4));
+		assertThat(schedulePage.date(schedulePage.endDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 4))));
+		//gets end date box text
+		String endDate = schedulePage.dateText(schedulePage.endDateTextBox());
+		//check buttons
+		checkDatesOkay();
 
-		schedulePage.endDateTextBoxButton().click();
-		datePicker = new DatePicker(schedulePage.$el(),getDriver());
-		datePicker.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 4));
-		assertThat(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 4))));
-		String endDate = schedulePage.endDateTextBox().getAttribute("value");
-		schedulePage.endDateTextBoxButton().click();
-
-		assert(!getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be enabled", !schedulePage.buttonDisabled(schedulePage.continueButton()));
-
-		schedulePage.startDateTextBoxButton().click();
-		datePicker = new DatePicker(schedulePage.$el(),getDriver());
-		datePicker.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 9));
-		assertThat(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 9))));
+		//#2 set start
+		schedulePage.scheduleDurationSelector(schedulePage.startDateTextBoxButton(),DateUtils.addDays(schedulePage.getTodayDate(), 9));
+		assertThat(schedulePage.date(schedulePage.startDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 9))));
 		schedulePage.startDateTextBoxButton().click();
 
-		assert(getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be disabled", schedulePage.buttonDisabled(schedulePage.continueButton()));
+		//#check
+		checkDatesNotOkay();
 
-		schedulePage.startDateTextBoxButton().click();
-		datePicker = new DatePicker(schedulePage.$el(),getDriver());
-		datePicker.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 2));
-		assertThat(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2))));
+		//#3 set start
+		schedulePage.scheduleDurationSelector(schedulePage.startDateTextBoxButton(),DateUtils.addDays(schedulePage.getTodayDate(), 2));
+		assertThat(schedulePage.date(schedulePage.startDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2))));
 		schedulePage.startDateTextBoxButton().click();
 
-		assert(!getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be enabled", !schedulePage.buttonDisabled(schedulePage.continueButton()));
+		checkDatesOkay();
 
 		String startDate = schedulePage.startDateTextBox().getAttribute("value");
 		schedulePage.continueButton().click();
@@ -290,11 +287,11 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 		assertThat(startDate, is(schedulePage.startDateTextBox().getAttribute("value")));
 		assertThat(endDate, is(schedulePage.endDateTextBox().getAttribute("value")));
+
+		schedulePage.scheduleDurationSelector(schedulePage.startDateTextBoxButton(),schedulePage.getTodayDate());
+
 		schedulePage.startDateTextBoxButton().click();
-		datePicker = new DatePicker(schedulePage.$el(),getDriver());
-		datePicker.calendarDateSelect(schedulePage.getTodayDate());
-		schedulePage.startDateTextBoxButton().click();
-		assertThat(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], is(schedulePage.dateAsString(schedulePage.getTodayDate())));
+		assertThat(schedulePage.date(schedulePage.startDateTextBox()), is(schedulePage.dateAsString(schedulePage.getTodayDate())));
 
 		startDate = schedulePage.startDateTextBox().getAttribute("value");
 		endDate = schedulePage.endDateTextBox().getAttribute("value");
@@ -325,6 +322,15 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		Waits.loadOrFadeWait();
 		searchPage = getElementFactory().getSearchPage();
 		assertThat("promotions are scheduled to be shown now but are not visible", searchPage.isPromotionsBoxVisible(), is(true));
+	}
+
+	private void checkDatesOkay(){
+		assertThat("No error message",schedulePage.helpMessages(), not(hasItem("End date cannot be before the start date")));
+		assertThat("Continue button should be enabled", !schedulePage.buttonDisabled(schedulePage.continueButton()));
+	}
+	private void checkDatesNotOkay(){
+		assertThat(schedulePage.helpMessages(), hasItem("End date cannot be before the start date"));
+		assertThat("Continue button should be disabled",schedulePage.buttonDisabled(schedulePage.continueButton()));
 	}
 
 	@Test

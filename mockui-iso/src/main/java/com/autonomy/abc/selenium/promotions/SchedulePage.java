@@ -54,6 +54,18 @@ public class SchedulePage extends SOPageBase {
 		return findElement(By.cssSelector(".promotion-schedule-start [type='text']"));
 	}
 
+	public String dateText(WebElement dateTextBox){
+		return dateTextBox.getAttribute("value");
+	}
+
+	public String date(WebElement dateTextBox){
+		return dateText(dateTextBox).split(" ")[0];
+	}
+
+	public String time(WebElement dateTextBox){
+		return dateText(dateTextBox).split(" ")[1];
+	}
+
 	public WebElement endDateTextBox() {
 		return findElement(By.cssSelector(".promotion-schedule-end [type='text']"));
 	}
@@ -91,6 +103,8 @@ public class SchedulePage extends SOPageBase {
 	public Date getTodayDate() {
 		return new Date();
 	}
+
+	public String todayDateString(){return dateAsString(getTodayDate());}
 
 	public String dateAndTimeAsString(final Date date) {
 		return (new SimpleDateFormat("dd/MM/yyyy HH:mm")).format(date);
@@ -174,6 +188,21 @@ public class SchedulePage extends SOPageBase {
 		datePicker.calendarDateSelect(date);
 	}
 
+	public void setStartDate(int daysFromNow){
+		startDateTextBox().click();
+		DatePicker datePicker = new DatePicker(this,getDriver());
+		datePicker.calendarDateSelect(DateUtils.addDays(getTodayDate(), daysFromNow));
+		//what is the point?!
+		startDateTextBoxButton().click();
+	}
+	public void setEndDate(int daysFromNow){
+		endDateTextBox().click();
+		DatePicker datePicker = new DatePicker(this,getDriver());
+		datePicker.calendarDateSelect(DateUtils.addDays(getTodayDate(), daysFromNow));
+		//what is the point?!
+		endDateTextBoxButton().click();
+	}
+
 	public List<String> getAvailableFrequencies() {
 		findElement(By.cssSelector(".promotion-schedule-frequency .dropdown-toggle")).click();
 		final List<String> frequencies = new ArrayList<>();
@@ -222,6 +251,10 @@ public class SchedulePage extends SOPageBase {
     public static void waitForLoad(final WebDriver driver) {
         new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".pd-wizard .current-step-pill")));
     }
+
+	public List<String> helpMessages(){
+		return ElementUtil.getTexts(findElements(By.cssSelector(".help-block")));
+	}
 
 	public static class Factory extends SOPageFactory<SchedulePage> {
 		public Factory() {
