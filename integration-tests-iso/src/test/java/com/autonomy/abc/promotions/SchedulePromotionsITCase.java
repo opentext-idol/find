@@ -13,7 +13,6 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -146,6 +145,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		assertThat("Correct Scheduling text not visible", promotionsDetailPage.getText(), containsString("The promotion is scheduled to run starting on " + startDate + " for the duration of 4 days, ending on " + endDate));
 		assertThat("Correct Scheduling text not visible", promotionsDetailPage.getText(), containsString("This promotion schedule will run monthly until " + finalDate));
 
+		//TODO make a better wait -> sometimes works, sometimes doesn't
 		getElementFactory().getTopNavBar().search("magic");
 		Waits.loadOrFadeWait();
 		searchPage = getElementFactory().getSearchPage();
@@ -214,48 +214,27 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 	public void testScheduleStartBeforeEnd() throws ParseException {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "\"ice cream\" chips");
 		setUpPromotion(spotlight, new Query("wizard"), 4);
+		schedulePage.navigateToScheduleDuration();
 
-		//NEED TO NAVIGATE TO THE SCHEDULE PAGE WITHOUT ALL THE TESTING CRAP
-		//ALSO NEED TO DEFINE datePicker
-
-		//#1 set start
-		datePicker.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 3));
-		assertThat(schedulePage.date(schedulePage.startDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 3))));
-		schedulePage.startDateTextBoxButton().click();
-		//#1 set end
-		schedulePage.scheduleDurationSelector(schedulePage.endDateTextBoxButton(),DateUtils.addDays(schedulePage.getTodayDate(), 2));
-		assertThat(schedulePage.date(schedulePage.endDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2))));
-		schedulePage.endDateTextBoxButton().click();
-		//check buttons
+		schedulePage.setStartDate(3);
+		schedulePage.setEndDate(2);
 		checkDatesNotOkay();
 
-		//#2 set end
-		schedulePage.scheduleDurationSelector(schedulePage.endDateTextBoxButton(),DateUtils.addDays(schedulePage.getTodayDate(), 4));
-		assertThat(schedulePage.date(schedulePage.endDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 4))));
-		//gets end date box text
+		schedulePage.setEndDate(4);
 		String endDate = schedulePage.dateText(schedulePage.endDateTextBox());
-		//check buttons
 		checkDatesOkay();
 
-		//#2 set start
-		schedulePage.scheduleDurationSelector(schedulePage.startDateTextBoxButton(),DateUtils.addDays(schedulePage.getTodayDate(), 9));
-		assertThat(schedulePage.date(schedulePage.startDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 9))));
-		schedulePage.startDateTextBoxButton().click();
-
-		//#check
+		schedulePage.setStartDate(9);
 		checkDatesNotOkay();
 
-		//#3 set start
-		schedulePage.scheduleDurationSelector(schedulePage.startDateTextBoxButton(),DateUtils.addDays(schedulePage.getTodayDate(), 2));
-		assertThat(schedulePage.date(schedulePage.startDateTextBox()), is(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2))));
-		schedulePage.startDateTextBoxButton().click();
-
+		schedulePage.setStartDate(2);
 		checkDatesOkay();
 
-		String startDate = schedulePage.startDateTextBox().getAttribute("value");
+		//WHAT IS HAPPENING IN THE TEST FROM HERE?!
+		String startDate = schedulePage.dateText(schedulePage.startDateTextBox());
 		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
-		assertThat("Wrong wizard text", schedulePage.getText(), containsString("Do you want to repeat this promotion schedule?"));
+		assertThat("Correct wizard text", schedulePage.getText(), containsString("Do you want to repeat this promotion schedule?"));
 
 		schedulePage.repeatWithFrequencyBelow().click();
 		schedulePage.selectFrequency(SchedulePage.Frequency.YEARLY);

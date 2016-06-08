@@ -157,6 +157,14 @@ public class SchedulePage extends SOPageBase {
 		return monthWord.format(numberDate.parse(date)).replaceFirst("^0", "");
 	}
 
+	//STUFF LIKE THIS SHOULD BE IN A SCHEDULE PROMOTION WIZARD OR SERIVCE
+
+	public void navigateToScheduleDuration(){
+		schedule().click();
+		continueButton().click();
+		Waits.loadOrFadeWait();
+	}
+
 	public void schedulePromotion(final Date startDate, final Date endDate, final Frequency frequency, final Date finalDate) {
 		Waits.loadOrFadeWait();
 		schedule().click();
@@ -184,22 +192,17 @@ public class SchedulePage extends SOPageBase {
 
 	public void scheduleDurationSelector(WebElement calendarButton, Date date){
 		calendarButton.click();
-		DatePicker datePicker = new DatePicker(this,getDriver());
+		DatePicker datePicker = new DatePicker(this.$el(),getDriver());
 		datePicker.calendarDateSelect(date);
 	}
 
 	public void setStartDate(int daysFromNow){
-		startDateTextBox().click();
-		DatePicker datePicker = new DatePicker(this,getDriver());
-		datePicker.calendarDateSelect(DateUtils.addDays(getTodayDate(), daysFromNow));
+		scheduleDurationSelector(startDateTextBoxButton(),DateUtils.addDays(getTodayDate(), daysFromNow));
 		//what is the point?!
 		startDateTextBoxButton().click();
 	}
 	public void setEndDate(int daysFromNow){
-		endDateTextBox().click();
-		DatePicker datePicker = new DatePicker(this,getDriver());
-		datePicker.calendarDateSelect(DateUtils.addDays(getTodayDate(), daysFromNow));
-		//what is the point?!
+		scheduleDurationSelector(endDateTextBoxButton(),DateUtils.addDays(getTodayDate(),daysFromNow));
 		endDateTextBoxButton().click();
 	}
 
@@ -218,7 +221,7 @@ public class SchedulePage extends SOPageBase {
 		continueButton().click();
 		Waits.loadOrFadeWait();
 		endDateTextBoxButton().click();
-		final DatePicker datePicker = new DatePicker(this, getDriver());
+		final DatePicker datePicker = new DatePicker(this.$el(), getDriver());
 		datePicker.calendarDateSelect(endDate);
 		endDateTextBoxButton().click();
 		continueButton().click();
