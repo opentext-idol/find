@@ -23,7 +23,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     public static final String FIELDS_PATH = "/api/public/fields";
     public static final String GET_PARAMETRIC_FIELDS_PATH = "/parametric";
     static final String GET_PARAMETRIC_NUMERIC_FIELDS_PATH = "/parametric-numeric";
-    static final String GET_PARAMETRIC_DATE_FIELDS_PATH = "/parametric-date";
+    public static final String GET_PARAMETRIC_DATE_FIELDS_PATH = "/parametric-date";
 
     protected final FieldsService<R, E> fieldsService;
 
