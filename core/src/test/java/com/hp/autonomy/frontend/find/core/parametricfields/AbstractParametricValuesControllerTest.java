@@ -19,6 +19,7 @@ import org.springframework.beans.factory.ObjectFactory;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -45,19 +46,7 @@ public abstract class AbstractParametricValuesControllerTest<Q extends QueryRest
 
     @Test
     public void getNumericParametricValuesInBuckets() throws E {
-        parametricValuesController.getNumericParametricValuesInBuckets(
-                Collections.singletonList(PARAMETRIC_FIELD),
-                "Some query text",
-                null,
-                Collections.<S>emptyList(),
-                null,
-                null,
-                0,
-                null,
-                Collections.singletonList(TARGET_NUMBER_OF_BUCKETS),
-                Collections.<Double>singletonList(null),
-                Collections.<Double>singletonList(null)
-        );
+        callGetNumericParametricValuesInBuckets(null, null);
 
         final HashMap<String, BucketingParams> expectedBucketingParamsPerField = new HashMap<>();
         expectedBucketingParamsPerField.put(PARAMETRIC_FIELD, new BucketingParams(TARGET_NUMBER_OF_BUCKETS, null, null));
@@ -67,19 +56,7 @@ public abstract class AbstractParametricValuesControllerTest<Q extends QueryRest
 
     @Test
     public void getNumericParametricValuesInBucketsWithoutMin() throws E {
-        parametricValuesController.getNumericParametricValuesInBuckets(
-                Collections.singletonList(PARAMETRIC_FIELD),
-                "Some query text",
-                null,
-                Collections.<S>emptyList(),
-                null,
-                null,
-                0,
-                null,
-                Collections.singletonList(TARGET_NUMBER_OF_BUCKETS),
-                Collections.<Double>emptyList(),
-                Collections.singletonList(2.5)
-        );
+        callGetNumericParametricValuesInBuckets(null, Collections.singletonList(2.5));
 
         final HashMap<String, BucketingParams> expectedBucketingParamsPerField = new HashMap<>();
         expectedBucketingParamsPerField.put(PARAMETRIC_FIELD, new BucketingParams(TARGET_NUMBER_OF_BUCKETS, null, 2.5));
@@ -89,19 +66,7 @@ public abstract class AbstractParametricValuesControllerTest<Q extends QueryRest
 
     @Test
     public void getNumericParametricValuesInBucketsWithoutMax() throws E {
-        parametricValuesController.getNumericParametricValuesInBuckets(
-                Collections.singletonList("SomeNumericParametricField"),
-                "Some query text",
-                null,
-                Collections.<S>emptyList(),
-                null,
-                null,
-                0,
-                null,
-                Collections.singletonList(35),
-                Collections.singletonList(1.5),
-                Collections.<Double>emptyList()
-        );
+        callGetNumericParametricValuesInBuckets(Collections.singletonList(1.5), null);
 
         final HashMap<String, BucketingParams> expectedBucketingParamsPerField = new HashMap<>();
         expectedBucketingParamsPerField.put(PARAMETRIC_FIELD, new BucketingParams(TARGET_NUMBER_OF_BUCKETS, 1.5, null));
@@ -113,5 +78,21 @@ public abstract class AbstractParametricValuesControllerTest<Q extends QueryRest
     public void getDependentParametricValues() throws E {
         parametricValuesController.getDependentParametricValues(Collections.singletonList("SomeParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
         verify(parametricValuesService).getDependentParametricValues(Matchers.<R>any());
+    }
+
+    private void callGetNumericParametricValuesInBuckets(final List<Double> bucketMin, final List<Double> bucketMax) throws E {
+        parametricValuesController.getNumericParametricValuesInBuckets(
+                Collections.singletonList("SomeNumericParametricField"),
+                "Some query text",
+                null,
+                Collections.<S>emptyList(),
+                null,
+                null,
+                0,
+                null,
+                Collections.singletonList(35),
+                bucketMin,
+                bucketMax
+        );
     }
 }

@@ -99,12 +99,9 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     ) throws E {
         final int numberOfFields = fieldNames.size();
 
-        // If we try and send bucketMin = [null] from the client, it comes through as the empty list
-        if (numberOfFields != targetNumberOfBuckets.size() ||
-                !bucketMin.isEmpty() && numberOfFields != bucketMin.size() ||
-                !bucketMax.isEmpty() && numberOfFields != bucketMax.size()
-        ) {
-            throw new IllegalArgumentException("Invalid bucketing parameters. Parameters must be supplied for every field.");
+        // A null value for a boundary list parameter means that no fields have that boundary
+        if (numberOfFields != targetNumberOfBuckets.size() || bucketMin != null && numberOfFields != bucketMin.size() || bucketMax != null && numberOfFields != bucketMax.size()) {
+            throw new IllegalArgumentException("Invalid bucketing parameters. Bucket boundaries must be supplied for every field or no fields.");
         }
 
         final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, null, SortParam.NumberIncreasing);
@@ -112,13 +109,14 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         final Map<String, BucketingParams> bucketingParamsPerField = new LinkedHashMap<>(numberOfFields);
         final Iterator<String> fieldNameIterator = fieldNames.iterator();
         final Iterator<Integer> targetNumberOfBucketsIterator = targetNumberOfBuckets.iterator();
-        final Iterator<Double> bucketMinIterator = bucketMin.iterator();
-        final Iterator<Double> bucketMaxIterator = bucketMax.iterator();
+
+        final Iterator<Double> bucketMinIterator = bucketMin == null ? null : bucketMin.iterator();
+        final Iterator<Double> bucketMaxIterator = bucketMax == null ? null : bucketMax.iterator();
 
         while (fieldNameIterator.hasNext()) {
             final String fieldName = fieldNameIterator.next();
-            final Double min = bucketMin.isEmpty() ? null : bucketMinIterator.next();
-            final Double max = bucketMax.isEmpty() ? null : bucketMaxIterator.next();
+            final Double min = bucketMinIterator == null ? null : bucketMinIterator.next();
+            final Double max = bucketMaxIterator == null ? null : bucketMaxIterator.next();
             bucketingParamsPerField.put(fieldName, new BucketingParams(targetNumberOfBucketsIterator.next(), min, max));
         }
 
