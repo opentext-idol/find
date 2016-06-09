@@ -6,7 +6,7 @@
 -- Target Version: 11.1.0.3
 --------------------------------------------*/
 
-SET SCHEMA find;
+USE find;
 
 CREATE TABLE search_parametric_ranges
 (
