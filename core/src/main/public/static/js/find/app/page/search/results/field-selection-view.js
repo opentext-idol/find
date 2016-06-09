@@ -20,6 +20,7 @@ define([
             this.fields = options.fields;
             this.name = options.name;
             this.allowEmpty = options.allowEmpty;
+            this.width  = options.width || '20%';
 
             this.selectionsStart = this.allowEmpty ? [emptyOptionHtml] : [];
         },
@@ -40,7 +41,7 @@ define([
 
             this.$select.append(options)
                 .chosen({
-                    width: '20%',
+                    width: this.width,
                     allow_single_deselect: this.allowEmpty
                 })
                 .trigger('chosen:updated');
@@ -48,6 +49,10 @@ define([
             this.$select.change(_.bind(function() {
                 this.model.set('field', this.$select.val());
             }, this));
+
+            if (!this.allowEmpty) {
+                this.model.set('field', this.$select.val())
+            }
 
             return this;
         }

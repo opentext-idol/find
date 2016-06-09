@@ -8,6 +8,9 @@
     "parametricValues": [
         {"field": "CATEGORY", "value": "COMPUTING"}
     ],
+    "parametricRanges": [
+        {"field": "SOME_DATE", "min": 123456789000, "max": 123456791000, "type": "Date"}
+    ],
     "conceptClusterPhrases": [
         {"phrase": "characters", "primary": true, "clusterId": 1},
         {"phrase": "faces", "primary": false, "clusterId": 1},

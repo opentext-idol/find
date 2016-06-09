@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
+import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.ObjectFactory;
 import java.io.Serializable;
 import java.util.Collections;
 
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -38,9 +40,9 @@ public abstract class AbstractParametricValuesControllerTest<Q extends QueryRest
     }
 
     @Test
-    public void getNumericParametricValues() throws E {
-        parametricValuesController.getNumericParametricValues(Collections.singletonList("SomeNumericParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
-        verify(parametricValuesService).getNumericParametricValues(Matchers.<R>any());
+    public void getNumericParametricValuesInBuckets() throws E {
+        parametricValuesController.getNumericParametricValuesInBuckets(Collections.singletonList("SomeNumericParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null, Collections.singletonList(35), Collections.<Double>singletonList(null), Collections.<Double>singletonList(null));
+        verify(parametricValuesService).getNumericParametricValuesInBuckets(Matchers.<R>any(), anyMapOf(String.class, BucketingParams.class));
     }
 
     @Test

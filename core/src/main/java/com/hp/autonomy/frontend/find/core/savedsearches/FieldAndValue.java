@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
 
+@SuppressWarnings("WeakerAccess")
 @Embeddable
 @Data
 @NoArgsConstructor

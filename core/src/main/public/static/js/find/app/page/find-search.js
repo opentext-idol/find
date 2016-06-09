@@ -299,11 +299,6 @@ define([
                         return function () {
                             options.queryTextModel.set(options.searchModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
                         };
-                    },
-                    entityClickHandler: function (options) {
-                        return function (text) {
-                            options.queryTextModel.set('inputText', text);
-                        };
                     }
                 }
             };

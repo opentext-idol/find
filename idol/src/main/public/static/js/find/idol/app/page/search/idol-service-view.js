@@ -57,7 +57,9 @@ define([
         fetchParametricFields: function (fieldsCollection, valuesCollection) {
             fieldsCollection.fetch({
                 success: _.bind(function() {
-                    this.fetchParametricValues(fieldsCollection, valuesCollection);
+                    if (valuesCollection) {
+                        this.fetchParametricValues(fieldsCollection, valuesCollection);
+                    }
                 }, this)
             });
         }

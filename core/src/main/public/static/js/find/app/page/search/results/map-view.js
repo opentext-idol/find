@@ -18,7 +18,8 @@ define([
         markerLayerGroup: leaflet.featureGroup(),
         markers: [],
 
-        initialize: function () {
+        initialize: function (options) {
+            this.addControl = options.addControl || false;
             this.listenTo(vent, 'vent:resize', function () {
                 if (this.map) {
                     this.map.invalidateSize();
@@ -38,6 +39,10 @@ define([
                 .addTo(map);
 
             var attributionText = configuration().map.attribution;
+
+            if (this.addControl) {
+                this.control = leaflet.control.layers().addTo(map);
+            }
 
             if (attributionText) {
                 leaflet.control.attribution({prefix: false})
@@ -62,9 +67,21 @@ define([
                 this.map.addLayer(this.markerLayerGroup);
             }
         },
+
+        createLayer: function(options) {
+            // This can be changed in the future to create a cluster or normal group if needed.
+            return new leaflet.markerClusterGroup(options);
+        },
         
-        loaded: function() {
-            this.map.fitBounds(new leaflet.featureGroup(this.markers))
+        addLayer: function(layer, name) {
+            this.map.addLayer(layer);
+            if (this.control) {
+                this.control.addOverlay(layer, name);
+            }
+        },        
+        
+        loaded: function(markers) {
+            this.map.fitBounds(new leaflet.featureGroup(_.isEmpty(markers) ? this.markers : markers))
         },
         
         getMarker: function(latitude, longitude, icon, title, popover) {
@@ -80,6 +97,16 @@ define([
                 prefix: 'hp',
                 extraClasses: 'hp-icon'
             });
+        },
+
+        getDivIconCreateFunction: function(className) {
+            return function (cluster) {
+                return new leaflet.DivIcon({
+                    html: '<div><span>' + cluster.getChildCount() + '</span></div>',
+                    className: 'marker-cluster ' + className,
+                    iconSize: new leaflet.Point(40, 40)
+                });
+            }
         },
 
         clearMarkers: function (cluster) {

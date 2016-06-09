@@ -28,7 +28,7 @@ define([
                 }
             });
             this.locationFields = configuration().map.locationFields;
-            this.mapResultsView = new MapView();
+            this.mapResultsView = new MapView({addControl: false});
         },
 
         render: function() {

@@ -13,6 +13,8 @@ define([
 ], function(Backbone, _, moment, DatesFilterModel, addChangeListener, i18n) {
     "use strict";
 
+    var DATE_FORMAT = "YYYY-MM-DD HH:mm";
+    
     var FilterType = {
         INDEXES: 'INDEXES',
         MAX_DATE: 'MAX_DATE',
@@ -35,15 +37,19 @@ define([
     function parametricFilterId(fieldName) {
         return fieldName;
     }
+    
+    function formatDate(autnDate) {
+        return moment(autnDate * 1000).format(DATE_FORMAT);
+    }
 
     // Get the display text for the given parametric field name and array of selected parametric values
-    function parametricFilterText(values, ranges) {
+    function parametricFilterText(values, ranges, numeric) {
         var round = function (x) {
             return Math.round(x * 10) / 10;
         }; 
         
         var rangeText = ranges.map(function(range) {
-            return round(range[0]) + ' - ' + round(range[1]);
+            return numeric ? round(range[0]) + ' - ' + round(range[1]) : formatDate(range[0]) + ' - ' + formatDate(range[1]);
         }).join(', ');
         
         return rangeText + (rangeText && values.length > 0 ? ', ' : '') + values.join(', ');
@@ -55,7 +61,7 @@ define([
             return {
                 id: parametricFilterId(field),
                 field: field,
-                text: parametricFilterText(data.values, data.range ? [data.range] : []),
+                text: parametricFilterText(data.values, data.range ? [data.range] : [], data.numeric),
                 type: FilterType.PARAMETRIC
             };
         });
@@ -171,7 +177,7 @@ define([
                 this.add({
                     id: id,
                     field: field,
-                    text: parametricFilterText(values, ranges),
+                    text: parametricFilterText(values, ranges, selectionModel.get('numeric')),
                     type: FilterType.PARAMETRIC
                 }, {
                     // Merge true to overwrite the text for any existing model for this field name

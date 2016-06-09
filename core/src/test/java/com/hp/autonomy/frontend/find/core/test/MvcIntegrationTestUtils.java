@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
+import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,8 +18,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,7 +66,13 @@ public abstract class MvcIntegrationTestUtils {
 
         final MvcResult mvcResult = mockMvc.perform(requestBuilder)
                 .andReturn();
-        return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), String[].class);
+        final TagName[] tagNames = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), TagName[].class);
+        final List<String> fieldNames = new ArrayList<>(tagNames.length);
+        for (final TagName tagName : tagNames) {
+            fieldNames.add(tagName.getId());
+        }
+
+        return fieldNames.toArray(new String[fieldNames.size()]);
     }
 
     public Authentication userAuth() {
@@ -72,14 +81,14 @@ public abstract class MvcIntegrationTestUtils {
         return createAuthentication(authorities);
     }
 
-    public Authentication adminAuth() {
+    Authentication adminAuth() {
         final Collection<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(FindRole.ADMIN.toString()));
         authorities.add(new SimpleGrantedAuthority(FindRole.USER.toString()));
         return createAuthentication(authorities);
     }
 
-    public Authentication biAuth() {
+    Authentication biAuth() {
         final Collection<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(FindRole.BI.toString()));
         authorities.add(new SimpleGrantedAuthority(FindRole.USER.toString()));

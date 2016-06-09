@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
+import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
@@ -38,6 +39,9 @@ public class SavedSnapshotControllerTest {
     private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
 
     @Mock
+    private FieldTextParser fieldTextParser;
+
+    @Mock
     private TypedStateToken stateToken;
 
     private SavedSnapshotController savedSnapshotController;
@@ -49,7 +53,7 @@ public class SavedSnapshotControllerTest {
 
     @Before
     public void setUp() {
-        savedSnapshotController = new SavedSnapshotController(savedSnapshotService, documentsService);
+        savedSnapshotController = new SavedSnapshotController(documentsService, savedSnapshotService, fieldTextParser);
     }
 
     @Test
@@ -58,7 +62,7 @@ public class SavedSnapshotControllerTest {
         when(documentsService.getStateTokenAndResultCount(Matchers.<QueryRestrictions<String>>any(), any(Integer.class), any(Boolean.class))).thenReturn(stateTokenAndResultCount);
 
         savedSnapshotController.create(savedSnapshot);
-        verify(savedSnapshotService).create(Matchers.any(SavedSnapshot.class));
+        verify(savedSnapshotService).create(any(SavedSnapshot.class));
     }
 
     @Test
@@ -67,7 +71,7 @@ public class SavedSnapshotControllerTest {
 
         final SavedSnapshot updatedQuery = savedSnapshotController.update(42, savedSnapshot);
         verify(savedSnapshotService).update(Matchers.isA(SavedSnapshot.class));
-        assertEquals(updatedQuery.getId(), new Long(42L));
+        assertEquals(new Long(42L), updatedQuery.getId());
     }
 
     @Test

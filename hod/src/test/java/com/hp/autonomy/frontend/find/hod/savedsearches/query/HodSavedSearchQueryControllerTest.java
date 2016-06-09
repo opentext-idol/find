@@ -18,6 +18,6 @@ public class HodSavedSearchQueryControllerTest extends SavedQueryControllerTest<
     @Override
     protected SavedQueryController<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> constructController() {
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new HodQueryRestrictions.Builder());
-        return new HodSavedQueryController(savedQueryService, documentsService, queryRestrictionsBuilderFactory);
+        return new HodSavedQueryController(savedQueryService, documentsService, fieldTextParser, queryRestrictionsBuilderFactory);
     }
 }

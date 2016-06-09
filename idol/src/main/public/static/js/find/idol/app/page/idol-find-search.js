@@ -58,19 +58,6 @@ define([
                                 options.savedQueryCollection.add(newSearch);
                                 options.selectedTabModel.set('selectedSearchCid', newSearch.cid);
                             };
-                        },
-                        entityClickHandler: function(options) {
-                            return function(text) {
-                                var newQuery = new SavedSearchModel(_.defaults({
-                                    id: null,
-                                    queryText: text,
-                                    title: i18n['search.newSearch'],
-                                    type: SavedSearchModel.Type.QUERY
-                                }, options.savedSearchModel.attributes));
-
-                                options.savedQueryCollection.add(newQuery);
-                                options.selectedTabModel.set('selectedSearchCid', newQuery.cid);
-                            };
                         }
                     }
                 }, searchTypes);
