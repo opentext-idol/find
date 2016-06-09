@@ -50,6 +50,10 @@ public class SchedulePage extends SOPageBase {
 		return false;
 	}
 
+	public boolean optionSelected(WebElement option){
+		return ElementUtil.hasClass("progressive-disclosure-selection",option);
+	}
+
 	public WebElement startDateTextBox() {
 		return findElement(By.cssSelector(".promotion-schedule-start [type='text']"));
 	}
@@ -78,6 +82,8 @@ public class SchedulePage extends SOPageBase {
 		findElement(By.cssSelector(".promotion-schedule-frequency .dropdown-toggle")).click();
 		findElement(By.xpath(".//a[text()='" + frequency.getTitle() + "']")).click();
 	}
+
+	//TODO toggle for frequency dropdown
 
 	public enum Frequency {
 		DAILY("Daily"),
@@ -122,11 +128,11 @@ public class SchedulePage extends SOPageBase {
 		return (new SimpleDateFormat("dd/MM/yyyy")).format(date);
 	}
 
-	public WebElement startDateTextBoxButton() {
+	public WebElement startDateCalendar() {
 		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-start .hp-icon")));
 	}
 
-	public WebElement endDateTextBoxButton() {
+	public WebElement endDateCalendar() {
 		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-end .hp-icon")));
 	}
 
@@ -166,53 +172,77 @@ public class SchedulePage extends SOPageBase {
 	}
 
 	public void schedulePromotion(final Date startDate, final Date endDate, final Frequency frequency, final Date finalDate) {
+		navigateToScheduleRecurrence(startDate,endDate,frequency);
+
+
+		finalDateTextBoxButton().click();
+		Waits.loadOrFadeWait();
+		new DatePicker(this,getDriver()).calendarDateSelect(finalDate);
+		//finalDateTextBoxButton().click();
+		finishButton().click();
+		Waits.loadOrFadeWait();
+	}
+	private void navigateToScheduleRecurrence(final Date startDate, final Date endDate, final Frequency frequency){
 		Waits.loadOrFadeWait();
 		schedule().click();
 		continueButton().click();
 		Waits.loadOrFadeWait();
-		startDateTextBoxButton().click();
+		startDateCalendar().click();
+		Waits.loadOrFadeWait();
 		final DatePicker datePicker = new DatePicker(this, getDriver());
 		datePicker.calendarDateSelect(startDate);
-		startDateTextBoxButton().click();
-		endDateTextBoxButton().click();
+		startDateCalendar().click();
+		endDateCalendar().click();
 		datePicker.calendarDateSelect(endDate);
-		endDateTextBoxButton().click();
+		endDateCalendar().click();
 		continueButton().click();
 		Waits.loadOrFadeWait();
 		repeatWithFrequencyBelow().click();
 		selectFrequency(frequency);
 		continueButton().click();
 		Waits.loadOrFadeWait();
-		finalDateTextBoxButton().click();
-		datePicker.calendarDateSelect(finalDate);
-		finalDateTextBoxButton().click();
+
+	}
+
+	public void schedulePromotion(final Date startDate, final Date endDate, final Frequency frequency) {
+		navigateToScheduleRecurrence(startDate,endDate,frequency);
+		never().click();
 		finishButton().click();
 		Waits.loadOrFadeWait();
 	}
 
+	//should return date picker
 	public void scheduleDurationSelector(WebElement calendarButton, Date date){
-		calendarButton.click();
-		DatePicker datePicker = new DatePicker(this.$el(),getDriver());
+		DatePicker datePicker = openDatePicker(calendarButton);
 		datePicker.calendarDateSelect(date);
 	}
 
-	public void setStartDate(int daysFromNow){
-		scheduleDurationSelector(startDateTextBoxButton(),DateUtils.addDays(getTodayDate(), daysFromNow));
-		//what is the point?!
-		startDateTextBoxButton().click();
-	}
-	public void setEndDate(int daysFromNow){
-		scheduleDurationSelector(endDateTextBoxButton(),DateUtils.addDays(getTodayDate(),daysFromNow));
-		endDateTextBoxButton().click();
+	public DatePicker openDatePicker(WebElement calendarButton){
+		calendarButton.click();
+		return new DatePicker(this.$el(),getDriver());
 	}
 
-	public List<String> getAvailableFrequencies() {
+	public void resetDateToToday(WebElement calendarButton){
+		//should check if already open
+		DatePicker datePicker = new DatePicker(this.$el(),getDriver());
+		datePicker.resetDateToToday();
+	}
+
+
+	public void setStartDate(int daysFromNow){
+		scheduleDurationSelector(startDateCalendar(),DateUtils.addDays(getTodayDate(), daysFromNow));
+		//what is the point?!
+		startDateCalendar().click();
+	}
+	public void setEndDate(int daysFromNow){
+		scheduleDurationSelector(endDateCalendar(),DateUtils.addDays(getTodayDate(),daysFromNow));
+		endDateCalendar().click();
+	}
+
+	public List<String> getAvailableFrequencies(){
+		//TODO replace this
 		findElement(By.cssSelector(".promotion-schedule-frequency .dropdown-toggle")).click();
-		final List<String> frequencies = new ArrayList<>();
-		for (final WebElement frequency : findElements(By.cssSelector(".promotion-schedule-frequency-item"))) {
-			frequencies.add(frequency.getText());
-		}
-		return frequencies;
+		return ElementUtil.getTexts(findElements(By.cssSelector(".promotion-schedule-frequency-item[style='display: inline;']")));
 	}
 
 	public void navigateWizardAndSetEndDate(final Date endDate) {
@@ -220,10 +250,10 @@ public class SchedulePage extends SOPageBase {
 		schedule().click();
 		continueButton().click();
 		Waits.loadOrFadeWait();
-		endDateTextBoxButton().click();
+		endDateCalendar().click();
 		final DatePicker datePicker = new DatePicker(this.$el(), getDriver());
 		datePicker.calendarDateSelect(endDate);
-		endDateTextBoxButton().click();
+		endDateCalendar().click();
 		continueButton().click();
 		Waits.loadOrFadeWait();
 		repeatWithFrequencyBelow().click();
