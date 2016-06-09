@@ -98,7 +98,12 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = BUCKET_MAX_PARAM, required = false) final List<Double> bucketMax
     ) throws E {
         final int numberOfFields = fieldNames.size();
-        if (numberOfFields != targetNumberOfBuckets.size() || numberOfFields != bucketMin.size() || numberOfFields != bucketMax.size()) {
+
+        // If we try and send bucketMin = [null] from the client, it comes through as the empty list
+        if (numberOfFields != targetNumberOfBuckets.size() ||
+                !bucketMin.isEmpty() && numberOfFields != bucketMin.size() ||
+                !bucketMax.isEmpty() && numberOfFields != bucketMax.size()
+        ) {
             throw new IllegalArgumentException("Invalid bucketing parameters. Parameters must be supplied for every field.");
         }
 
@@ -109,10 +114,14 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         final Iterator<Integer> targetNumberOfBucketsIterator = targetNumberOfBuckets.iterator();
         final Iterator<Double> bucketMinIterator = bucketMin.iterator();
         final Iterator<Double> bucketMaxIterator = bucketMax.iterator();
+
         while (fieldNameIterator.hasNext()) {
             final String fieldName = fieldNameIterator.next();
-            bucketingParamsPerField.put(fieldName, new BucketingParams(targetNumberOfBucketsIterator.next(), bucketMinIterator.next(), bucketMaxIterator.next()));
+            final Double min = bucketMin.isEmpty() ? null : bucketMinIterator.next();
+            final Double max = bucketMax.isEmpty() ? null : bucketMaxIterator.next();
+            bucketingParamsPerField.put(fieldName, new BucketingParams(targetNumberOfBucketsIterator.next(), min, max));
         }
+
         return parametricValuesService.getNumericParametricValuesInBuckets(parametricRequest, bucketingParamsPerField);
     }
 
