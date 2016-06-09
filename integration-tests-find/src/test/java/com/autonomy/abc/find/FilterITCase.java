@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.filters.DateOption;
 import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
+import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
@@ -19,6 +20,7 @@ import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.StaleElementReferenceException;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -27,8 +29,8 @@ import java.util.List;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.fail;
 
 public class FilterITCase extends FindTestBase {
     private FindPage findPage;
@@ -44,6 +46,25 @@ public class FilterITCase extends FindTestBase {
         findPage = getElementFactory().getFindPage();
         results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
+    }
+
+    @Test
+    public void testParametricFiltersResults() {
+        findService.search("cats");
+        findPage.waitForParametricValuesToLoad();
+
+        int originalNumberOfResults = findPage.totalResultsNum();
+        ParametricFieldContainer parametricFieldContainer = filters().parametricField(1);
+
+        checkbox2().check();
+
+        try{parametricFieldContainer.getParentName();}
+        catch (StaleElementReferenceException e){fail("parametric fields reloaded");}
+        results.waitForResultsToLoad();
+
+        int newNumberOfResults = findPage.totalResultsNum();
+
+        verifyThat("original results number changed", newNumberOfResults, lessThanOrEqualTo(originalNumberOfResults));
     }
 
     @Test
@@ -67,6 +88,23 @@ public class FilterITCase extends FindTestBase {
         expectedResults = checkbox1().getResultsCount();
         verifyParametricFields(checkbox1(), expectedResults);
         verifyTicks(false, true);
+    }
+
+     @Test
+     public void testParametricFiltersModal() {
+         findService.search("cats");
+         findPage.waitForParametricValuesToLoad();
+
+         checkbox2().check();
+
+         //click on 'see all' button (under any category)
+         //test if modal is open
+         //test if the current parametric field is the active tab in the modal
+         //test if the currently selected values are ticked in the modal as well
+
+         //tick another value inside the modal
+         //click apply in the modal
+         //check if the value is ticked inside a parametric field container on the filters panel
     }
 
     private void verifyParametricFields(FindParametricCheckbox checked, int expectedResults) {
