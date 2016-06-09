@@ -295,7 +295,8 @@ define([
             var requestData = _.extend({
                 start: this.start,
                 max_results: this.maxResults,
-                sort: this.queryModel.get('sort')
+                sort: this.queryModel.get('sort'),
+                auto_correct: this.queryModel.get('autoCorrect')
             }, this.fetchStrategy.requestParams(this.queryModel, infiniteScroll));
 
             this.documentsCollection.fetch({
