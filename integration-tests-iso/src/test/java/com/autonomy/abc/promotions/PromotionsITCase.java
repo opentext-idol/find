@@ -151,15 +151,15 @@ public class PromotionsITCase extends HybridIsoTestBase {
 
 		Dropdown dropdown = promotionsDetailPage.spotlightTypeDropdown();
 		dropdown.select("Hotwire");
-		Waits.loadOrFadeWait();
+		promotionsDetailPage.waitForSpotLightType();
 		verifyThat(dropdown.getValue(), is("Hotwire"));
 
 		dropdown.select("Top Promotions");
-		Waits.loadOrFadeWait();
+		promotionsDetailPage.waitForSpotLightType();
 		verifyThat(dropdown.getValue(), is("Top Promotions"));
 
 		dropdown.select("Sponsored");
-		Waits.loadOrFadeWait();
+		promotionsDetailPage.waitForSpotLightType();
 		verifyThat(dropdown.getValue(), is("Sponsored"));
 	}
 

@@ -1,9 +1,8 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.application.SOPageBase;
-import com.hp.autonomy.frontend.selenium.element.DatePicker;
+import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.time.DateUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -13,7 +12,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,41 +21,119 @@ public class SchedulePage extends SOPageBase {
         super(driver.findElement(By.cssSelector(".pd-wizard")), driver);
     }
 
-	public WebElement alwaysActive() {
-		return ElementUtil.getParent(findElement(By.xpath(".//h4[contains(text(), 'Always active')]")));
+	//GENERAL
+	private WebElement dataOption(String optionName){
+		return findElement(By.cssSelector("[data-option='"+optionName+"']"));
 	}
 
-	public WebElement schedule() {
-		return ElementUtil.getParent(findElement(By.xpath(".//h4[contains(text(), 'Schedule')]")));
+	public boolean optionSelected(WebElement option){
+		return ElementUtil.hasClass("progressive-disclosure-selection",option);
 	}
 
-	public WebElement continueButton(final WizardStep dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.xpath("//button[contains(text(), 'Continue')]"));
+	public String dateText(WebElement dateTextBox){
+		return dateTextBox.getAttribute("value");
 	}
 
-	public WebElement cancelButton(final WizardStep dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Cancel')]"));
+	public String date(WebElement dateTextBox){
+		return dateText(dateTextBox).split(" ")[0];
 	}
 
-	public WebElement finishButton(final WizardStep dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.xpath("//button[contains(text(), 'Finish')]"));
+	public String time(WebElement dateTextBox){
+		return dateText(dateTextBox).split(" ")[1];
 	}
+
+	public WebElement continueButton() {
+		return findElement(By.cssSelector(".next-step"));
+	}
+
+	public WebElement cancelButton() {
+		return findElement(By.cssSelector(".cancel-wizard"));
+	}
+
+	public WebElement finishButton() {
+		return findElement(By.cssSelector(".finish-step"));
+	}
+
+	public boolean buttonDisabled(WebElement button){
+		if (ElementUtil.isDisabled(button)){
+			return true;
+		}
+		return false;
+	}
+
+	public Date getTodayDate() {
+		return new Date();
+	}
+
+	public String todayDateString(){return dateAsString(getTodayDate());}
+
+	public String dateAndTimeAsString(final Date date) {
+		return (new SimpleDateFormat("dd/MM/yyyy HH:mm")).format(date);
+	}
+
+	public int getDay(final int plusDays) {
+		return Integer.parseInt((new SimpleDateFormat("dd")).format(todayIncrementedByDays(plusDays)));
+	}
+
+	public Date todayIncrementedByDays(int plusDays){
+		return DateUtils.addDays(getTodayDate(),plusDays);
+	}
+
+	public String getMonth(final int plusDays) {
+		return (new SimpleDateFormat("MMMMMMMMM")).format(DateUtils.addDays(getTodayDate(), plusDays));
+	}
+
+	public String dateAsString(final Date date) {
+		return (new SimpleDateFormat("dd/MM/yyyy")).format(date);
+	}
+
+	public String parseDateObjectToPromotions(final String date) {
+		final SimpleDateFormat wrongDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+		final SimpleDateFormat rightDate = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
+
+		try {
+			return rightDate.format(wrongDate.parse(date));
+		} catch (ParseException e) {//}
+			return "Date didn't parse correctly!";
+		}
+	}
+
+	//#1 Enable schedule
+	public WebElement alwaysActive(){
+		return dataOption("ALWAYSACTIVE");
+	}
+
+	public WebElement schedule(){
+		return dataOption("SCHEDULE");
+	}
+
+	//#2 Schedule duration
+	public String startDate(){return date(startDateTextBox());}
+
+	public String endDate(){return date(endDateTextBox());}
 
 	public WebElement startDateTextBox() {
 		return findElement(By.cssSelector(".promotion-schedule-start [type='text']"));
 	}
-
 	public WebElement endDateTextBox() {
 		return findElement(By.cssSelector(".promotion-schedule-end [type='text']"));
 	}
 
-	public WebElement finalDateTextBox() {
-		return findElement(By.cssSelector(".promotion-end-date [type='text']"));
+	public WebElement startDateCalendar() {
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-start .hp-icon")));
 	}
 
-	public void selectFrequency(final Frequency frequency) {
-		findElement(By.cssSelector(".promotion-schedule-frequency .dropdown-toggle")).click();
-		findElement(By.xpath(".//a[text()='" + frequency.getTitle() + "']")).click();
+	public WebElement endDateCalendar() {
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-end .hp-icon")));
+	}
+
+	//#3 Schedule frequency
+	public WebElement doNotRepeat() {
+		return dataOption("ONEOFF");
+	}
+
+	public WebElement repeatWithFrequencyBelow() {
+		return dataOption("FREQUENCY");
 	}
 
 	public enum Frequency {
@@ -77,128 +153,38 @@ public class SchedulePage extends SOPageBase {
 		}
 	}
 
+	private Dropdown dropdown(){return new Dropdown(findElement(By.cssSelector(".promotion-schedule-frequency")),getDriver());}
+
+	public void selectFrequency(final Frequency frequency) {
+		dropdown().select(frequency.getTitle());
+	}
+
 	public String readFrequency() {
-		return findElement(By.cssSelector(".current-frequency")).getText();
+		return dropdown().getValue();
 	}
 
-	public Date getTodayDate() {
-		return new Date();
+	public List<String> getAvailableFrequencies(){
+		dropdown().open();
+		return ElementUtil.getTexts(findElements(By.cssSelector(".promotion-schedule-frequency-item[style='display: inline;']")));
 	}
 
-	public String dateAndTimeAsString(final Date date) {
-		return (new SimpleDateFormat("dd/MM/yyyy HH:mm")).format(date);
-	}
-
-	public int getDay(final int plusDays) {
-		return Integer.parseInt((new SimpleDateFormat("dd")).format(DateUtils.addDays(getTodayDate(), plusDays)));
-	}
-
-	public String getMonth(final int plusDays) {
-		return (new SimpleDateFormat("MMMMMMMMM")).format(DateUtils.addDays(getTodayDate(), plusDays));
-	}
-
-	public String dateAsString(final Date date) {
-		return (new SimpleDateFormat("dd/MM/yyyy")).format(date);
-	}
-
-	public WebElement startDateTextBoxButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-start .hp-icon")));
-	}
-
-	public WebElement endDateTextBoxButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-end .hp-icon")));
-	}
-
-	public WebElement finalDateTextBoxButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-end-date .hp-icon")));
-	}
-
-	public WebElement doNotRepeat() {
-		return findElement(By.xpath(".//h4[contains(text(), 'Do not repeat')]/../.."));
-	}
-
-	public WebElement repeatWithFrequencyBelow() {
-		return findElement(By.xpath(".//h4[contains(text(), 'Repeat with frequency below')]/../.."));
-	}
-
+	//#4 Schedule recurrence
 	public WebElement never() {
-		return findElement(By.xpath(".//h4[contains(text(), 'Never')]/../.."));
+		return dataOption("NEVER");
 	}
 
 	public WebElement runThisPromotionScheduleUntilTheDateBelow() {
-		return findElement(By.xpath(".//h4[contains(text(), 'Run this promotion schedule until the date below')]/../.."));
+		return dataOption("UNTIL");
 	}
 
-	public static String parseDateForPromotionsPage(final String date) throws ParseException {
-		final SimpleDateFormat numberDate = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		final SimpleDateFormat monthWord = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
-
-		return monthWord.format(numberDate.parse(date)).replaceFirst("^0", "");
+	public WebElement finalDateTextBox() {
+		return findElement(By.cssSelector(".promotion-end-date [type='text']"));
 	}
 
-	public void schedulePromotion(final Date startDate, final Date endDate, final Frequency frequency, final Date finalDate) {
-		Waits.loadOrFadeWait();
-		schedule().click();
-		continueButton(WizardStep.ENABLE_SCHEDULE).click();
-		Waits.loadOrFadeWait();
-		startDateTextBoxButton().click();
-		final DatePicker datePicker = new DatePicker(this, getDriver());
-		datePicker.calendarDateSelect(startDate);
-		startDateTextBoxButton().click();
-		endDateTextBoxButton().click();
-		datePicker.calendarDateSelect(endDate);
-		endDateTextBoxButton().click();
-		continueButton(WizardStep.START_END).click();
-		Waits.loadOrFadeWait();
-		repeatWithFrequencyBelow().click();
-		selectFrequency(frequency);
-		continueButton(WizardStep.FREQUENCY).click();
-		Waits.loadOrFadeWait();
-		finalDateTextBoxButton().click();
-		datePicker.calendarDateSelect(finalDate);
-		finalDateTextBoxButton().click();
-		finishButton(WizardStep.FINAL).click();
-		Waits.loadOrFadeWait();
-	}
+	public String finalDate(){return date(finalDateTextBox());}
 
-	public List<String> getAvailableFrequencies() {
-		findElement(By.cssSelector(".promotion-schedule-frequency .dropdown-toggle")).click();
-		final List<String> frequencies = new ArrayList<>();
-		for (final WebElement frequency : findElements(By.cssSelector(".promotion-schedule-frequency-item"))) {
-			frequencies.add(frequency.getText());
-		}
-		return frequencies;
-	}
-
-	public void navigateWizardAndSetEndDate(final Date endDate) {
-		Waits.loadOrFadeWait();
-		schedule().click();
-		continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
-		Waits.loadOrFadeWait();
-		endDateTextBoxButton().click();
-		final DatePicker datePicker = new DatePicker(this, getDriver());
-		datePicker.calendarDateSelect(endDate);
-		endDateTextBoxButton().click();
-		continueButton(SchedulePage.WizardStep.START_END).click();
-		Waits.loadOrFadeWait();
-		repeatWithFrequencyBelow().click();
-	}
-
-	public enum WizardStep {
-		ENABLE_SCHEDULE("enableSchedule"),
-		START_END("scheduleStartEnd"),
-		FREQUENCY("scheduleFrequency"),
-		FINAL("scheduleEndRecurrence");
-
-		private final String title;
-
-		WizardStep(final String title) {
-			this.title = title;
-		}
-
-		public String getTitle() {
-			return title;
-		}
+	public WebElement finalDateCalendar() {
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-end-date .hp-icon")));
 	}
 
     @Override
@@ -209,6 +195,10 @@ public class SchedulePage extends SOPageBase {
     public static void waitForLoad(final WebDriver driver) {
         new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".pd-wizard .current-step-pill")));
     }
+
+	public List<String> helpMessages(){
+		return ElementUtil.getTexts(findElements(By.cssSelector(".help-block")));
+	}
 
 	public static class Factory extends SOPageFactory<SchedulePage> {
 		public Factory() {

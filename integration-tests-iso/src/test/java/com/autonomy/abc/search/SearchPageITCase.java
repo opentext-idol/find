@@ -521,13 +521,13 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@ActiveBug("ISO-40")
+	@ResolvedBug("ISO-40")
 	public void testDeletingDocument(){
-		searchService.search("bbc");
+		searchPage.selectLanguage(Language.ENGLISH);
+		searchService.search("face");
 
 		//Hopefully less important documents will be on the last page
 		searchPage.switchResultsPage(Pagination.LAST);
-
 		int results = searchPage.getHeadingResultsCount();
 		String deletedDoc = searchPage.getSearchResult(1).getTitleString();
 
