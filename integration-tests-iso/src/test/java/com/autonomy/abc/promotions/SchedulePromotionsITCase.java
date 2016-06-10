@@ -35,9 +35,11 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 	private SchedulePage schedulePage;
 	private IdolPromotionsDetailPage promotionsDetailPage;
     private PromotionService promotionService;
+	private SchedulePromotionService schedulePromotionService;
 
 	@Before
 	public void setUp() throws MalformedURLException, InterruptedException {
+		schedulePromotionService = getApplication().schedulePromotionService();
         promotionService = getApplication().promotionService();
 		promotionService.deleteAll();
 	}
@@ -45,10 +47,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 	private void setUpPromotion(Promotion promotion, Query search, int numberOfDocs){
 		promotionService.setUpPromotion(promotion,search,numberOfDocs);
 		promotionService.goToDetails(promotion);
-
-		IdolPromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-		promotionsDetailPage.schedulePromotion();
-		schedulePage = getElementFactory().getSchedulePage();
+		schedulePage = schedulePromotionService.goToSchedule();
 	}
 
 	private void setUpKoreaSpotlight(){
@@ -64,8 +63,8 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "\"ice cream\" chips");
 		setUpPromotion(spotlight, new Query("wizard"), 4);
 
-		Date start = DateUtils.addDays(schedulePage.getTodayDate(), 4);
-		Date end = DateUtils.addDays(schedulePage.getTodayDate(), 10);
+		Date start = schedulePage.todayIncrementedByDays(4);
+		Date end = schedulePage.todayIncrementedByDays(10);
 
 		promoteAndCheckSummary(start, end, 6);
 		verifyThat("Promotions aren't scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(false));
@@ -80,7 +79,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 	}
 
 	private void promoteAndCheckSummary(Date start, Date end,int duration){
-		schedulePage.schedulePromotion(start,end, SchedulePage.Frequency.YEARLY);
+		schedulePromotionService.schedulePromotion(start,end, SchedulePage.Frequency.YEARLY);
 		PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 		String startDate =  schedulePage.parseDateObjectToPromotions(start.toString());
 		String endDate =  schedulePage.parseDateObjectToPromotions(end.toString());
@@ -119,12 +118,12 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		verifyThat("Correct wizard text", schedulePage.getText(), containsString("How long should this promotion run?"));
 
 		verifyThat(schedulePage.startDate(), is(schedulePage.todayDateString()));
-		Date correctEndDate = DateUtils.addDays(schedulePage.getTodayDate(), 1);
+		Date correctEndDate = schedulePage.todayIncrementedByDays(1);
 		verifyThat(schedulePage.endDate(), is(schedulePage.dateAsString(correctEndDate)));
 		verifyThat(schedulePage.time(schedulePage.startDateTextBox()), is("00:00"));
 		verifyThat(schedulePage.time(schedulePage.endDateTextBox()), is("00:00"));
 
-		DatePicker datePicker = schedulePage.openDatePicker(schedulePage.startDateCalendar());
+		DatePicker datePicker = schedulePromotionService.openDatePicker(schedulePage.startDateCalendar());
 		verifyThat(datePicker.getSelectedDayOfMonth(), is(schedulePage.getDay(0)));
 		verifyThat(datePicker.getSelectedMonth(), is(schedulePage.getMonth(0)));
 		schedulePage.startDateCalendar().click();
@@ -144,11 +143,11 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
 		verifyThat(schedulePage.finalDate(), is(schedulePage.dateAsString(correctEndDate)));
 
-		datePicker = schedulePage.openDatePicker(schedulePage.finalDateCalendar());
+		datePicker = schedulePromotionService.openDatePicker(schedulePage.finalDateCalendar());
 		verifyThat(datePicker.getSelectedDayOfMonth(), is(schedulePage.getDay(1)));
 		verifyThat(datePicker.getSelectedMonth(), is(schedulePage.getMonth(1)));
 
-		Date newFinalDate = DateUtils.addDays(schedulePage.getTodayDate(), 502);
+		Date newFinalDate = schedulePage.todayIncrementedByDays(502);
 		datePicker.calendarDateSelect(newFinalDate);
 		verifyThat(schedulePage.date(schedulePage.finalDateTextBox()), is(schedulePage.dateAsString(newFinalDate)));
 
@@ -170,19 +169,19 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 	public void testScheduleStartBeforeEnd() {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "\"ice cream\" chips");
 		setUpPromotion(spotlight, new Query("wizard"), 4);
-		schedulePage.navigateToScheduleDuration();
+		schedulePromotionService.navigateToScheduleDuration();
 
-		schedulePage.setStartDate(3);
-		schedulePage.setEndDate(2);
+		schedulePromotionService.setStartDate(3);
+		schedulePromotionService.setEndDate(2);
 		checkDatesNotOkay();
 
-		schedulePage.setEndDate(4);
+		schedulePromotionService.setEndDate(4);
 		checkDatesOkay();
 
-		schedulePage.setStartDate(9);
+		schedulePromotionService.setStartDate(9);
 		checkDatesNotOkay();
 
-		schedulePage.setStartDate(2);
+		schedulePromotionService.setStartDate(2);
 		checkDatesOkay();
 	}
 
@@ -199,11 +198,11 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 	public void testResetTimeAndDate() {
 		setUpKoreaSpotlight();
 
-		Date startDate = DateUtils.addDays(schedulePage.getTodayDate(), 9);
-		schedulePage.scheduleDurationSelector(schedulePage.startDateCalendar(),startDate);
+		Date startDate = schedulePage.todayIncrementedByDays(9);
+		schedulePromotionService.scheduleDurationSelector(schedulePage.startDateCalendar(),startDate);
 		verifyThat(schedulePage.dateAsString(startDate), is(schedulePage.startDate()));
 
-		schedulePage.resetDateToToday(schedulePage.startDateCalendar());
+		schedulePromotionService.resetDateToToday(schedulePage.startDateCalendar());
 		verifyThat(schedulePage.dateAndTimeAsString(schedulePage.getTodayDate()), is(schedulePage.dateText(schedulePage.startDateTextBox())));
 	}
 
@@ -214,7 +213,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.startDateTextBox().clear();
 		verifyThat("Continue button disabled", schedulePage.buttonDisabled(schedulePage.continueButton()));
 
-		schedulePage.scheduleDurationSelector(schedulePage.startDateCalendar(),schedulePage.getTodayDate());
+		schedulePromotionService.scheduleDurationSelector(schedulePage.startDateCalendar(),schedulePage.getTodayDate());
 		String today = schedulePage.dateAsString(schedulePage.getTodayDate());
 
 		setStartDate(schedulePage.getTodayDate()+"Hello!!");
@@ -243,12 +242,10 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 	@Test
 	public void testIncrementDecrementTimeOnCalendar() {
-		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "kaz");  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
-		setUpPromotion(spotlight, new Query("Қазақстан").withFilter(new LanguageFilter(Language.KAZAKH)), 5);
-		schedulePage.navigateToScheduleDuration();
+		setUpKoreaSpotlight();
 		Waits.loadOrFadeWait();
 
-		DatePicker datePicker = schedulePage.openDatePicker(schedulePage.endDateCalendar());
+		DatePicker datePicker = schedulePromotionService.openDatePicker(schedulePage.endDateCalendar());
 		datePicker.togglePicker();
 		Waits.loadOrFadeWait();
 
@@ -298,10 +295,10 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Korea".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
 		setUpPromotion(spotlight, new Query("한국").withFilter(new LanguageFilter(Language.KOREAN)), 4);
 
-		final Date startDate = DateUtils.addDays(schedulePage.getTodayDate(), 4);
-		final Date endDate = DateUtils.addDays(schedulePage.getTodayDate(), 8);
+		final Date startDate = schedulePage.todayIncrementedByDays(4);
+		final Date endDate = schedulePage.todayIncrementedByDays(8);
 		final Date finalDate = DateUtils.addMonths(schedulePage.getTodayDate(), 6);
-		schedulePage.schedulePromotion(startDate, endDate, SchedulePage.Frequency.MONTHLY, finalDate);
+		schedulePromotionService.schedulePromotion(startDate, endDate, SchedulePage.Frequency.MONTHLY, finalDate);
 
 		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 		Waits.loadOrFadeWait();
@@ -335,7 +332,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		setEndDateCheckFrequencies(schedulePage.getTodayDate(),Arrays.asList("Yearly","Daily", "Monthly", "Weekly"));
 		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 
-		setEndDateCheckFrequencies(DateUtils.addDays(schedulePage.getTodayDate(), 4),Arrays.asList("Yearly","Monthly", "Weekly"));
+		setEndDateCheckFrequencies(schedulePage.todayIncrementedByDays(4),Arrays.asList("Yearly","Monthly", "Weekly"));
 		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 
 		setEndDateCheckFrequencies(DateUtils.addWeeks(schedulePage.getTodayDate(), 2),Arrays.asList("Yearly","Monthly"));
@@ -346,7 +343,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 	private void setEndDateCheckFrequencies(Date endDate,List<String> correctFrequencyOptions){
 		schedulePage = getElementFactory().getSchedulePage();
-		schedulePage.navigateWizardAndSetEndDate(endDate);
+		schedulePromotionService.navigateWizardAndSetEndDate(endDate);
 
 		List<String> availableFrequencies = schedulePage.getAvailableFrequencies();
 		verifyThat("Correct number frequency options available",availableFrequencies,hasSize(correctFrequencyOptions.size()));
