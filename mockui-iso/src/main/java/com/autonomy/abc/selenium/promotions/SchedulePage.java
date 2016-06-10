@@ -13,7 +13,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -57,6 +56,12 @@ public class SchedulePage extends SOPageBase {
 	public WebElement startDateTextBox() {
 		return findElement(By.cssSelector(".promotion-schedule-start [type='text']"));
 	}
+
+	public String startDate(){return date(startDateTextBox());}
+
+	public String endDate(){return date(endDateTextBox());}
+
+	public String finalDate(){return date(finalDateTextBox());}
 
 	public String dateText(WebElement dateTextBox){
 		return dateTextBox.getAttribute("value");
@@ -136,7 +141,7 @@ public class SchedulePage extends SOPageBase {
 		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-end .hp-icon")));
 	}
 
-	public WebElement finalDateTextBoxButton() {
+	public WebElement finalDateCalendar() {
 		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-end-date .hp-icon")));
 	}
 
@@ -157,12 +162,23 @@ public class SchedulePage extends SOPageBase {
 	}
 
 	public static String parseDateForPromotionsPage(final String date) throws ParseException {
+		//in date
 		final SimpleDateFormat numberDate = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		//out date
 		final SimpleDateFormat monthWord = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
 
 		return monthWord.format(numberDate.parse(date)).replaceFirst("^0", "");
 	}
 
+	public String parseDateObjectToPromotions(final String date){
+		final SimpleDateFormat wrongDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+		final SimpleDateFormat rightDate = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
+
+		try{return rightDate.format(wrongDate.parse(date));}
+		catch (ParseException e) {//}
+			return "Date didn't parse correctly!";
+		}
+	}
 	//STUFF LIKE THIS SHOULD BE IN A SCHEDULE PROMOTION WIZARD OR SERIVCE
 
 	public void navigateToScheduleDuration(){
@@ -175,10 +191,10 @@ public class SchedulePage extends SOPageBase {
 		navigateToScheduleRecurrence(startDate,endDate,frequency);
 
 
-		finalDateTextBoxButton().click();
+		finalDateCalendar().click();
 		Waits.loadOrFadeWait();
 		new DatePicker(this,getDriver()).calendarDateSelect(finalDate);
-		//finalDateTextBoxButton().click();
+		//finalDateCalendar().click();
 		finishButton().click();
 		Waits.loadOrFadeWait();
 	}
@@ -193,6 +209,7 @@ public class SchedulePage extends SOPageBase {
 		datePicker.calendarDateSelect(startDate);
 		startDateCalendar().click();
 		endDateCalendar().click();
+		loadOrFadeWait();
 		datePicker.calendarDateSelect(endDate);
 		endDateCalendar().click();
 		continueButton().click();
