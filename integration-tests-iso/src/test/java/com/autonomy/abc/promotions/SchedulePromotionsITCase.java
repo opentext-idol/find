@@ -8,7 +8,6 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
@@ -19,9 +18,7 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static java.util.Collections.sort;
@@ -37,8 +34,6 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 	private SearchPage searchPage;
 	private SchedulePage schedulePage;
 	private IdolPromotionsDetailPage promotionsDetailPage;
-	private DatePicker datePicker;
-	private final Pattern pattern = Pattern.compile("\\s+");
     private PromotionService promotionService;
 
 	@Before
@@ -72,9 +67,8 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		Date start = DateUtils.addDays(schedulePage.getTodayDate(), 4);
 		Date end = DateUtils.addDays(schedulePage.getTodayDate(), 10);
 
-		//should not be promoted now
 		promoteAndCheckSummary(start, end, 6);
-		assertThat("Promotions aren't scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(false));
+		verifyThat("Promotions aren't scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(false));
 
 		promotionService.goToDetails("chips");
 		getElementFactory().getPromotionsDetailPage().schedulePromotion();
@@ -82,7 +76,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		Date today = schedulePage.getTodayDate();
 
 		promoteAndCheckSummary(today, end, 10);
-		assertThat("Promotions scheduled to be shown now and visible", searchPage.isPromotionsBoxVisible(), is(true));
+		verifyThat("Promotions scheduled to be shown now and visible", searchPage.isPromotionsBoxVisible(), is(true));
 	}
 
 	private void promoteAndCheckSummary(Date start, Date end,int duration){
@@ -91,8 +85,8 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		String startDate =  schedulePage.parseDateObjectToPromotions(start.toString());
 		String endDate =  schedulePage.parseDateObjectToPromotions(end.toString());
 
-		assertThat("Summary text present: duration", promotionsDetailPage.getText(), containsString("The promotion is scheduled to run starting on " +startDate+ " for the duration of "+duration+" days, ending on " +endDate+"."));
-		assertThat("Summary text present: recurrence", promotionsDetailPage.getText(), containsString("This promotion schedule will run yearly forever."));
+		verifyThat("Summary text present: duration", promotionsDetailPage.getText(), containsString("The promotion is scheduled to run starting on " +startDate+ " for the duration of "+duration+" days, ending on " +endDate+"."));
+		verifyThat("Summary text present: recurrence", promotionsDetailPage.getText(), containsString("This promotion schedule will run yearly forever."));
 
 		getElementFactory().getTopNavBar().search("chips");
 		Waits.loadOrFadeWait();
@@ -106,70 +100,70 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "\"ice cream\" chips");
 		setUpPromotion(spotlight, new Query("wizard"), 4);
 
-		assertThat(getWindow(), urlContains("schedule"));
-		assertThat("Correct wizard text", schedulePage.getText(), containsString("Schedule your promotion"));
-		assertThat("Always active is selected", schedulePage.optionSelected(schedulePage.alwaysActive()));
-		assertThat("Schedule isn't selected", !schedulePage.optionSelected(schedulePage.schedule()));
-		assertThat("Finish button enabled", !schedulePage.buttonDisabled(schedulePage.finishButton()));
+		verifyThat(getWindow(), urlContains("schedule"));
+		verifyThat("Correct wizard text", schedulePage.getText(), containsString("Schedule your promotion"));
+		verifyThat("Always active is selected", schedulePage.optionSelected(schedulePage.alwaysActive()));
+		verifyThat("Schedule isn't selected", !schedulePage.optionSelected(schedulePage.schedule()));
+		verifyThat("Finish button enabled", !schedulePage.buttonDisabled(schedulePage.finishButton()));
 
 		scheduleClickAndCheck();
 
 		schedulePage.alwaysActive().click();
 		Waits.loadOrFadeWait();
-		assertThat("Finish button should be enabled", !schedulePage.buttonDisabled(schedulePage.finishButton()));
+		verifyThat("Finish button should be enabled", !schedulePage.buttonDisabled(schedulePage.finishButton()));
 
 		scheduleClickAndCheck();
 
 		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
-		assertThat("Correct wizard text", schedulePage.getText(), containsString("How long should this promotion run?"));
+		verifyThat("Correct wizard text", schedulePage.getText(), containsString("How long should this promotion run?"));
 
-		assertThat(schedulePage.startDate(), is(schedulePage.todayDateString()));
+		verifyThat(schedulePage.startDate(), is(schedulePage.todayDateString()));
 		Date correctEndDate = DateUtils.addDays(schedulePage.getTodayDate(), 1);
-		assertThat(schedulePage.endDate(), is(schedulePage.dateAsString(correctEndDate)));
-		assertThat(schedulePage.time(schedulePage.startDateTextBox()), is("00:00"));
-		assertThat(schedulePage.time(schedulePage.endDateTextBox()), is("00:00"));
+		verifyThat(schedulePage.endDate(), is(schedulePage.dateAsString(correctEndDate)));
+		verifyThat(schedulePage.time(schedulePage.startDateTextBox()), is("00:00"));
+		verifyThat(schedulePage.time(schedulePage.endDateTextBox()), is("00:00"));
 
 		DatePicker datePicker = schedulePage.openDatePicker(schedulePage.startDateCalendar());
-		assertThat(datePicker.getSelectedDayOfMonth(), is(schedulePage.getDay(0)));
-		assertThat(datePicker.getSelectedMonth(), is(schedulePage.getMonth(0)));
+		verifyThat(datePicker.getSelectedDayOfMonth(), is(schedulePage.getDay(0)));
+		verifyThat(datePicker.getSelectedMonth(), is(schedulePage.getMonth(0)));
 		schedulePage.startDateCalendar().click();
 
 		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
-		assertThat("Correct wizard text", schedulePage.getText(), containsString("Do you want to repeat this promotion schedule?"));
+		verifyThat("Correct wizard text", schedulePage.getText(), containsString("Do you want to repeat this promotion schedule?"));
 
 		schedulePage.repeatWithFrequencyBelow().click();
 		schedulePage.selectFrequency(SchedulePage.Frequency.YEARLY);
-		assertThat(schedulePage.readFrequency(), is("YEARLY"));
+		verifyThat(schedulePage.readFrequency(), is("YEARLY"));
 
 		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
-		assertThat("Correct wizard text", schedulePage.getText(), containsString("When should this promotion schedule finish?"));
+		verifyThat("Correct wizard text", schedulePage.getText(), containsString("When should this promotion schedule finish?"));
 
 		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
-		assertThat(schedulePage.finalDate(), is(schedulePage.dateAsString(correctEndDate)));
+		verifyThat(schedulePage.finalDate(), is(schedulePage.dateAsString(correctEndDate)));
 
 		datePicker = schedulePage.openDatePicker(schedulePage.finalDateCalendar());
-		assertThat(datePicker.getSelectedDayOfMonth(), is(schedulePage.getDay(1)));
-		assertThat(datePicker.getSelectedMonth(), is(schedulePage.getMonth(1)));
+		verifyThat(datePicker.getSelectedDayOfMonth(), is(schedulePage.getDay(1)));
+		verifyThat(datePicker.getSelectedMonth(), is(schedulePage.getMonth(1)));
 
 		Date newFinalDate = DateUtils.addDays(schedulePage.getTodayDate(), 502);
 		datePicker.calendarDateSelect(newFinalDate);
-		assertThat(schedulePage.date(schedulePage.finalDateTextBox()), is(schedulePage.dateAsString(newFinalDate)));
+		verifyThat(schedulePage.date(schedulePage.finalDateTextBox()), is(schedulePage.dateAsString(newFinalDate)));
 
 		schedulePage.finalDateCalendar().click();
 		Waits.loadOrFadeWait();
 		schedulePage.finishButton().click();
 
 		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-		assertThat("Returned to promotions detail page",promotionsDetailPage.promotionTitle().getValue(),is("Spotlight for: chips, ice cream"));
+		verifyThat("Returned to promotions detail page",promotionsDetailPage.promotionTitle().getValue(),is("Spotlight for: chips, ice cream"));
 	}
 
 	private void scheduleClickAndCheck(){
 		schedulePage.schedule().click();
 		Waits.loadOrFadeWait();
-		assertThat(schedulePage.continueButton(), displayed());
+		verifyThat(schedulePage.continueButton(), displayed());
 	}
 
 	@Test
@@ -193,12 +187,12 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 	}
 
 	private void checkDatesOkay(){
-		assertThat("No error message",schedulePage.helpMessages(), not(hasItem("End date cannot be before the start date")));
-		assertThat("Continue button should be enabled", !schedulePage.buttonDisabled(schedulePage.continueButton()));
+		verifyThat("No error message",schedulePage.helpMessages(), not(hasItem("End date cannot be before the start date")));
+		verifyThat("Continue button should be enabled", !schedulePage.buttonDisabled(schedulePage.continueButton()));
 	}
 	private void checkDatesNotOkay(){
-		assertThat(schedulePage.helpMessages(), hasItem("End date cannot be before the start date"));
-		assertThat("Continue button should be disabled",schedulePage.buttonDisabled(schedulePage.continueButton()));
+		verifyThat(schedulePage.helpMessages(), hasItem("End date cannot be before the start date"));
+		verifyThat("Continue button should be disabled",schedulePage.buttonDisabled(schedulePage.continueButton()));
 	}
 
 	@Test
@@ -207,10 +201,10 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 		Date startDate = DateUtils.addDays(schedulePage.getTodayDate(), 9);
 		schedulePage.scheduleDurationSelector(schedulePage.startDateCalendar(),startDate);
-		assertThat(schedulePage.dateAsString(startDate), is(schedulePage.startDate()));
+		verifyThat(schedulePage.dateAsString(startDate), is(schedulePage.startDate()));
 
 		schedulePage.resetDateToToday(schedulePage.startDateCalendar());
-		assertThat(schedulePage.dateAndTimeAsString(schedulePage.getTodayDate()), is(schedulePage.dateText(schedulePage.startDateTextBox())));
+		verifyThat(schedulePage.dateAndTimeAsString(schedulePage.getTodayDate()), is(schedulePage.dateText(schedulePage.startDateTextBox())));
 	}
 
 	@Test
@@ -218,25 +212,25 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		setUpKoreaSpotlight();
 
 		schedulePage.startDateTextBox().clear();
-		assertThat("Continue button disabled", schedulePage.buttonDisabled(schedulePage.continueButton()));
+		verifyThat("Continue button disabled", schedulePage.buttonDisabled(schedulePage.continueButton()));
 
 		schedulePage.scheduleDurationSelector(schedulePage.startDateCalendar(),schedulePage.getTodayDate());
 		String today = schedulePage.dateAsString(schedulePage.getTodayDate());
 
 		setStartDate(schedulePage.getTodayDate()+"Hello!!");
 		getElementFactory().getSideNavBar().toggle();
-		assertThat(today, is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		verifyThat(today, is(schedulePage.startDate()));
 
 		schedulePage.startDateTextBox().sendKeys(Keys.BACK_SPACE);
 		getElementFactory().getSideNavBar().toggle();
-		assertThat(today, is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+		verifyThat(today, is(schedulePage.startDate()));
 
 		List<String> startDates = Arrays.asList("30/02/2019 11:20","10/13/2019 11:20","02/02/2019 24:20","02/02/2019 22:61");
 
 		for(String date:startDates) {
 			setStartDate(date);
 			getElementFactory().getSideNavBar().toggle();
-			assertThat(today, is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
+			verifyThat(today, is(schedulePage.startDate()));
 		}
 	}
 
@@ -249,61 +243,54 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 	@Test
 	public void testIncrementDecrementTimeOnCalendar() {
-		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "Kaz".toLowerCase());  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
+		SpotlightPromotion spotlight = new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "kaz");  //ON PREM ONLY ALLOWS LOWER CASE SEARCH TRIGGERS
 		setUpPromotion(spotlight, new Query("Қазақстан").withFilter(new LanguageFilter(Language.KAZAKH)), 5);
 		schedulePage.navigateToScheduleDuration();
 		Waits.loadOrFadeWait();
 
-		//opening calendar
 		DatePicker datePicker = schedulePage.openDatePicker(schedulePage.endDateCalendar());
-
-		//open correct area
 		datePicker.togglePicker();
-		//goes to time from date
-
-		//pick hour
 		Waits.loadOrFadeWait();
-		//clicks on the hour
 
 		//hours
 		datePicker.timePickerHour().click();
 		datePicker.selectTimePickerHour(5);
 		Waits.loadOrFadeWait();
-		assertThat("05", is(datePicker.timePickerHour().getText()));
+		verifyThat("05", is(datePicker.timePickerHour().getText()));
 
 		datePicker.incrementHours();
 		datePicker.incrementHours();
-		assertThat("07", is(datePicker.timePickerHour().getText()));
+		verifyThat("07", is(datePicker.timePickerHour().getText()));
 
 		for (int i = 1; i <= 10; i++) {
 			datePicker.decrementHours();
 		}
-		assertThat("21", is(datePicker.timePickerHour().getText()));
+		verifyThat("21", is(datePicker.timePickerHour().getText()));
 
 		for (int i = 1; i <= 4; i++) {
 			datePicker.incrementHours();
 		}
-		assertThat("01", is(datePicker.timePickerHour().getText()));
+		verifyThat("01", is(datePicker.timePickerHour().getText()));
 
 		//minutes
 		datePicker.timePickerMinute().click();
 		datePicker.selectTimePickerMinute(50);
 		Waits.loadOrFadeWait();
-		assertThat("50", is(datePicker.timePickerMinute().getText()));
+		verifyThat("50", is(datePicker.timePickerMinute().getText()));
 
 		datePicker.incrementMinutes();
 		datePicker.incrementMinutes();
-		assertThat("52", is(datePicker.timePickerMinute().getText()));
+		verifyThat("52", is(datePicker.timePickerMinute().getText()));
 
 		for (int i = 1; i <= 10; i++) {
 			datePicker.incrementMinutes();
 		}
-		assertThat("02", is(datePicker.timePickerMinute().getText()));
+		verifyThat("02", is(datePicker.timePickerMinute().getText()));
 
 		for (int i = 1; i <= 5; i++) {
 			datePicker.decrementMinutes();
 		}
-		assertThat("57", is(datePicker.timePickerMinute().getText()));
+		verifyThat("57", is(datePicker.timePickerMinute().getText()));
 	}
 
 	@Test
@@ -323,18 +310,18 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
-		assertThat(schedulePage.dateAsString(startDate), is(schedulePage.startDate()));
-		assertThat(schedulePage.dateAsString(endDate), is(schedulePage.endDate()));
+		verifyThat(schedulePage.dateAsString(startDate), is(schedulePage.startDate()));
+		verifyThat(schedulePage.dateAsString(endDate), is(schedulePage.endDate()));
 
 		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
-		assertThat(schedulePage.readFrequency(),equalToIgnoringCase("MONTHLY"));
-		assertThat("Due to pre-population 'repeat with frequency below' should be pre-selected", schedulePage.optionSelected(ElementUtil.getFirstChild(schedulePage.repeatWithFrequencyBelow())));
+		verifyThat(schedulePage.readFrequency(),equalToIgnoringCase("MONTHLY"));
+		verifyThat("Due to pre-population 'repeat with frequency below' should be pre-selected", schedulePage.optionSelected(schedulePage.repeatWithFrequencyBelow()));
 
 		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
-		assertThat("Due to pre-population 'run this promotion schedule until the date below' should be pre-selected", schedulePage.optionSelected(ElementUtil.getFirstChild(schedulePage.runThisPromotionScheduleUntilTheDateBelow())));
-		assertThat(schedulePage.dateAsString(finalDate), is(schedulePage.finalDate()));
+		verifyThat("Due to pre-population 'run this promotion schedule until the date below' should be pre-selected", schedulePage.optionSelected(schedulePage.runThisPromotionScheduleUntilTheDateBelow()));
+		verifyThat(schedulePage.dateAsString(finalDate), is(schedulePage.finalDate()));
 
 		schedulePage.finishButton().click();
 		Waits.loadOrFadeWait();
@@ -371,7 +358,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePage.continueButton().click();
 		Waits.loadOrFadeWait();
 		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
-		assertThat(schedulePage.dateAndTimeAsString(endDate), is(schedulePage.dateText(schedulePage.finalDateTextBox())));
+		verifyThat(schedulePage.dateAndTimeAsString(endDate), is(schedulePage.dateText(schedulePage.finalDateTextBox())));
 
 		schedulePage.finishButton().click();
 		Waits.loadOrFadeWait();

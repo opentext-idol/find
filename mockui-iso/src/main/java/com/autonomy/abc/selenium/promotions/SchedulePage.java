@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.application.SOPageBase;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
+import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.time.DateUtils;
@@ -22,46 +23,14 @@ public class SchedulePage extends SOPageBase {
         super(driver.findElement(By.cssSelector(".pd-wizard")), driver);
     }
 
-	public WebElement alwaysActive() {
-		return ElementUtil.getParent(findElement(By.xpath(".//h4[contains(text(), 'Always active')]")));
-	}
-
-	public WebElement schedule() {
-		return ElementUtil.getParent(findElement(By.xpath(".//h4[contains(text(), 'Schedule')]")));
-	}
-
-	public WebElement continueButton() {
-		return findElement(By.xpath("//button[contains(text(), 'Continue')]"));
-	}
-
-	public WebElement cancelButton() {
-		return findElement(By.xpath(".//button[contains(text(), 'Cancel')]"));
-	}
-
-	public WebElement finishButton() {
-		return findElement(By.xpath("//button[contains(text(), 'Finish')]"));
-	}
-
-	public boolean buttonDisabled(WebElement button){
-		if (ElementUtil.isDisabled(button)){
-			return true;
-		}
-		return false;
+	//general
+	private WebElement dataOption(String optionName){
+		return findElement(By.cssSelector("[data-option='"+optionName+"']"));
 	}
 
 	public boolean optionSelected(WebElement option){
 		return ElementUtil.hasClass("progressive-disclosure-selection",option);
 	}
-
-	public WebElement startDateTextBox() {
-		return findElement(By.cssSelector(".promotion-schedule-start [type='text']"));
-	}
-
-	public String startDate(){return date(startDateTextBox());}
-
-	public String endDate(){return date(endDateTextBox());}
-
-	public String finalDate(){return date(finalDateTextBox());}
 
 	public String dateText(WebElement dateTextBox){
 		return dateTextBox.getAttribute("value");
@@ -75,20 +44,62 @@ public class SchedulePage extends SOPageBase {
 		return dateText(dateTextBox).split(" ")[1];
 	}
 
+	public WebElement continueButton() {
+		return findElement(By.cssSelector(".next-step"));
+	}
+
+	public WebElement cancelButton() {
+		return findElement(By.cssSelector(".cancel-wizard"));
+	}
+
+	public WebElement finishButton() {
+		return findElement(By.cssSelector(".finish-step"));
+	}
+
+	public boolean buttonDisabled(WebElement button){
+		if (ElementUtil.isDisabled(button)){
+			return true;
+		}
+		return false;
+	}
+
+	//#1 Enable schedule
+	public WebElement alwaysActive(){
+		return dataOption("ALWAYSACTIVE");
+	}
+
+	public WebElement schedule(){
+		return dataOption("SCHEDULE");
+	}
+
+	//#2 Schedule duration
+	public String startDate(){return date(startDateTextBox());}
+
+	public String endDate(){return date(endDateTextBox());}
+
+	public WebElement startDateTextBox() {
+		return findElement(By.cssSelector(".promotion-schedule-start [type='text']"));
+	}
 	public WebElement endDateTextBox() {
 		return findElement(By.cssSelector(".promotion-schedule-end [type='text']"));
 	}
 
-	public WebElement finalDateTextBox() {
-		return findElement(By.cssSelector(".promotion-end-date [type='text']"));
+	public WebElement startDateCalendar() {
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-start .hp-icon")));
 	}
 
-	public void selectFrequency(final Frequency frequency) {
-		findElement(By.cssSelector(".promotion-schedule-frequency .dropdown-toggle")).click();
-		findElement(By.xpath(".//a[text()='" + frequency.getTitle() + "']")).click();
+	public WebElement endDateCalendar() {
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-end .hp-icon")));
 	}
 
-	//TODO toggle for frequency dropdown
+	//#3 Schedule frequency
+	public WebElement doNotRepeat() {
+		return dataOption("ONEOFF");
+	}
+
+	public WebElement repeatWithFrequencyBelow() {
+		return dataOption("FREQUENCY");
+	}
 
 	public enum Frequency {
 		DAILY("Daily"),
@@ -107,10 +118,41 @@ public class SchedulePage extends SOPageBase {
 		}
 	}
 
-	public String readFrequency() {
-		return findElement(By.cssSelector(".current-frequency")).getText();
+	private Dropdown dropdown(){return new Dropdown(findElement(By.cssSelector(".promotion-schedule-frequency")),getDriver());}
+
+	public void selectFrequency(final Frequency frequency) {
+		dropdown().select(frequency.getTitle());
 	}
 
+	public String readFrequency() {
+		return dropdown().getValue();
+	}
+
+	public List<String> getAvailableFrequencies(){
+		dropdown().open();
+		return ElementUtil.getTexts(findElements(By.cssSelector(".promotion-schedule-frequency-item[style='display: inline;']")));
+	}
+
+	//#4 Schedule recurrence
+	public WebElement never() {
+		return dataOption("NEVER");
+	}
+
+	public WebElement runThisPromotionScheduleUntilTheDateBelow() {
+		return dataOption("UNTIL");
+	}
+
+	public WebElement finalDateTextBox() {
+		return findElement(By.cssSelector(".promotion-end-date [type='text']"));
+	}
+
+	public String finalDate(){return date(finalDateTextBox());}
+
+	public WebElement finalDateCalendar() {
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-end-date .hp-icon")));
+	}
+
+	//GENERAL DATE CRAP
 	public Date getTodayDate() {
 		return new Date();
 	}
@@ -133,54 +175,18 @@ public class SchedulePage extends SOPageBase {
 		return (new SimpleDateFormat("dd/MM/yyyy")).format(date);
 	}
 
-	public WebElement startDateCalendar() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-start .hp-icon")));
-	}
-
-	public WebElement endDateCalendar() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-end .hp-icon")));
-	}
-
-	public WebElement finalDateCalendar() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-end-date .hp-icon")));
-	}
-
-	public WebElement doNotRepeat() {
-		return findElement(By.xpath(".//h4[contains(text(), 'Do not repeat')]/../.."));
-	}
-
-	public WebElement repeatWithFrequencyBelow() {
-		return findElement(By.xpath(".//h4[contains(text(), 'Repeat with frequency below')]/../.."));
-	}
-
-	public WebElement never() {
-		return findElement(By.xpath(".//h4[contains(text(), 'Never')]/../.."));
-	}
-
-	public WebElement runThisPromotionScheduleUntilTheDateBelow() {
-		return findElement(By.xpath(".//h4[contains(text(), 'Run this promotion schedule until the date below')]/../.."));
-	}
-
-	public static String parseDateForPromotionsPage(final String date) throws ParseException {
-		//in date
-		final SimpleDateFormat numberDate = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		//out date
-		final SimpleDateFormat monthWord = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
-
-		return monthWord.format(numberDate.parse(date)).replaceFirst("^0", "");
-	}
-
-	public String parseDateObjectToPromotions(final String date){
+	public String parseDateObjectToPromotions(final String date) {
 		final SimpleDateFormat wrongDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
 		final SimpleDateFormat rightDate = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
 
-		try{return rightDate.format(wrongDate.parse(date));}
-		catch (ParseException e) {//}
+		try {
+			return rightDate.format(wrongDate.parse(date));
+		} catch (ParseException e) {//}
 			return "Date didn't parse correctly!";
 		}
+
 	}
 	//STUFF LIKE THIS SHOULD BE IN A SCHEDULE PROMOTION WIZARD OR SERIVCE
-
 	public void navigateToScheduleDuration(){
 		schedule().click();
 		continueButton().click();
@@ -189,7 +195,6 @@ public class SchedulePage extends SOPageBase {
 
 	public void schedulePromotion(final Date startDate, final Date endDate, final Frequency frequency, final Date finalDate) {
 		navigateToScheduleRecurrence(startDate,endDate,frequency);
-
 
 		finalDateCalendar().click();
 		Waits.loadOrFadeWait();
@@ -256,11 +261,7 @@ public class SchedulePage extends SOPageBase {
 		endDateCalendar().click();
 	}
 
-	public List<String> getAvailableFrequencies(){
-		//TODO replace this
-		findElement(By.cssSelector(".promotion-schedule-frequency .dropdown-toggle")).click();
-		return ElementUtil.getTexts(findElements(By.cssSelector(".promotion-schedule-frequency-item[style='display: inline;']")));
-	}
+
 
 	public void navigateWizardAndSetEndDate(final Date endDate) {
 		Waits.loadOrFadeWait();
