@@ -38,8 +38,6 @@ define([
     var template = _.template(templateString);
 
     return Backbone.View.extend({
-        className: 'full-height-viewport',
-
         // Can be overridden
         headerControlsHtml: '',
         displayDependentParametricViews: true,
@@ -281,6 +279,10 @@ define([
                 i18n: i18n,
                 headerControlsHtml: this.headerControlsHtml
             }));
+            
+            if (configuration().hasBiRole) {
+                this.$('.query-service-view').addClass('bi-query-service-view');
+            }
 
             if (this.savedSearchControlView) {
                 // the padding looks silly if we don't have the view so add it here

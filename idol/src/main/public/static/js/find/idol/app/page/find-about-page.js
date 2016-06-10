@@ -11,7 +11,7 @@ define([
 ], function(AboutPage, libList, configuration, i18n) {
 
     return AboutPage.extend({
-        className: 'col-md-12',
+        className: 'container-fluid',
 
         initialize: function() {
             var config = configuration();

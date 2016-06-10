@@ -11,7 +11,7 @@ define([
             comparisonListContainer, searchDataUtil, i18n, comparisonsI18n) {
 
     return Backbone.View.extend({
-        className: 'service-view-container',
+        className: 'service-view-container container-fluid',
         comparisonListContainer: _.template(comparisonListContainer, {variable: 'data'}),
 
 

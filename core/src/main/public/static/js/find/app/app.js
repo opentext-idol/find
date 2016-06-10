@@ -74,9 +74,7 @@ define([
                 username: configuration().username
             }));
 
-            this.pages.render();
-
-            this.$('.content').append(this.pages.el);
+            this.pages.setElement('.find-pages-container').render();
 
             this.navigation.render();
 
@@ -95,13 +93,13 @@ define([
                 modelData.savedQueryCollection = {
                     Constructor: SavedQueryCollection,
                     fetchOptions: {remove: false}
-                }
+                };
             }
             else {
                 modelData.savedQueryCollection = {
                     Constructor: Backbone.Collection,
                     fetch: false
-                }
+                };
             }
 
             return modelData;
