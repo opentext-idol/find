@@ -49,7 +49,7 @@
     "eonasdan-bootstrap-datetimepicker": "4.14.30",
     "hp-autonomy-hod-sso-js": "0.5.0",
     "hp-autonomy-js-databases-view": "0.7.0",
-    "hp-autonomy-about-page": "0.2.0"
+    "hp-autonomy-about-page": "0.3.0"
   },
   "devDependencies": {
     "hp-autonomy-js-testing-utils": "2.2.0",
