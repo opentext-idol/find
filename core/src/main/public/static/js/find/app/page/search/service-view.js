@@ -42,7 +42,7 @@ define([
 
         // Can be overridden
         headerControlsHtml: '',
-        displaySunburst: true,
+        displayDependentParametricViews: true,
 
         // Abstract
         ResultsView: null,
@@ -218,7 +218,7 @@ define([
                 Constructor: SunburstView,
                 constructorArguments: subViewArguments,
                 id: 'sunburst',
-                shown: hasBiRole && this.displaySunburst,
+                shown: hasBiRole && this.displayDependentParametricViews,
                 uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
                     displayNameKey: 'sunburst',
@@ -241,7 +241,7 @@ define([
                 Constructor: TableView,
                 constructorArguments: subViewArguments,
                 id: 'table',
-                shown: hasBiRole,
+                shown: hasBiRole && this.displayDependentParametricViews,
                 uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
                     displayNameKey: 'table',
