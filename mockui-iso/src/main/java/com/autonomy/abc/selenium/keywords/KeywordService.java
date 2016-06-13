@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class KeywordService extends ServiceBase<IsoElementFactory> {
@@ -114,21 +116,17 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
             /* language dropdown disabled */
         }
         List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
-        for (WebElement group : keywordGroups) {
+        for(WebElement group : keywordGroups){
             removeKeywordGroupAsync(group);
         }
     }
 
     private void removeKeywordGroupAsync(WebElement group) {
         List<WebElement> removeButtons = keywordsPage.removeButtons(group);
-
-        while(keywordsPage.removeButtons(group).size()>0) {
-            for (WebElement removeButton : removeButtons) {
-                try {
-                    removeButton.click();
-                } catch (ElementNotVisibleException | NoSuchElementException e) {//deleting v slow}
-                }
-            }
+        if(removeButtons.size() > 1){removeButtons.remove(0);}
+        for(WebElement removeButton:removeButtons){
+            new WebDriverWait(getDriver(),20).until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-spin")));
+            removeButton.click();
         }
     }
 

@@ -100,30 +100,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
             WebElement seedLink  = similarDocuments.seedLink();
             String seedTitle = seedLink.getText();
 
-            if (isHosted()){
-                previewSeedHosted(seedLink,seedTitle);
-            }
-            else{
-                previewSeedOnPrem(seedLink);
-            }
+            previewSeedOnPrem(seedLink);
             similarDocuments.backButton().click();
         }
-    }
-
-    //this is bad but the behaviour is so different...
-    private void previewSeedHosted(WebElement seedLink, String seedTitle){
-        Window firstWindow = getWindow();
-        Window secondWindow = openSeed(seedLink);
-
-        verifyThat("opened in new tab", secondWindow, not(firstWindow));
-        verifyThat(getDriver().getTitle(), containsString(seedTitle));
-        verifyThat("not using viewserver", getWindow(), url(not(containsString("viewDocument"))));
-        //TODO check if 500
-
-        if (secondWindow != null) {
-                secondWindow.close();
-            }
-        firstWindow.activate();
     }
 
     private void previewSeedOnPrem(WebElement seedLink){
@@ -131,24 +110,6 @@ public class SimilarDocumentsITCase extends FindTestBase {
         verifyThat("SeedLink goes to detailed document preview",getDriver().getCurrentUrl(),containsString("document"));
         getElementFactory().getDetailedPreview().goBackToSearch();
 
-    }
-    private Window openSeed(WebElement seedLink) {
-        final int windowCount = getMainSession().countWindows();
-        final Window currentWindow = getWindow();
-
-        seedLink.click();
-        new WebDriverWait(getDriver(), 5)
-                .withMessage("opening seed document")
-                .until(getMainSession().windowCountIs(windowCount + 1));
-
-        Window secondWindow = null;
-        for (Window openWindow : getMainSession()) {
-            if (!openWindow.equals(currentWindow)) {
-                openWindow.activate();
-                secondWindow = openWindow;
-            }
-        }
-        return secondWindow;
     }
 
     @Test
@@ -214,11 +175,11 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testSortByDate() throws ParseException {
-
         assumeThat(getConfig().getType(), Matchers.is(ApplicationType.ON_PREM));
 
         findService.search(new Query("Fade"));
         similarDocuments = findService.goToSimilarDocuments(1);
+        Waits.loadOrFadeWait();
         similarDocuments.sortByDate();
         List<FindResult> searchResults = similarDocuments.getResults();
 
@@ -239,19 +200,12 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testDocumentPreview(){
-        if (isHosted()){
-            findService.search(new Query("stars").withFilter(new IndexFilter(Index.DEFAULT)));
-            similarDocuments = findService.goToSimilarDocuments(1);
-            SharedPreviewTests.testDocumentPreviews(getMainSession(), similarDocuments.getResults(5), Index.DEFAULT);
-        }
-        else{
-            findService.search(new Query("stars"));
-            similarDocuments = findService.goToSimilarDocuments(1);
-            testIdolDocPreview(similarDocuments.getResults(5));
-        }
-
+        findService.search(new Query("stars"));
+        similarDocuments = findService.goToSimilarDocuments(1);
+        testDocPreview(similarDocuments.getResults(5));
     }
-    private void testIdolDocPreview(List<FindResult> results) {
+
+    private void testDocPreview(List<FindResult> results) {
         for (FindResult result : results) {
             DocumentViewer docPreview = result.openDocumentPreview();
 
