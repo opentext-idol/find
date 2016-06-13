@@ -54,45 +54,52 @@ define([
                 this.$table.empty();
             }
 
-            // columnNames will be empty if only one field is selected
-            if (_.isEmpty(this.dependentParametricCollection.columnNames)) {
-                this.$table.dataTable({
-                    autoWidth: false,
-                    data: this.dependentParametricCollection.toJSON(),
-                    columns: [{
-                        data: 'text',
-                        title: this.fieldsCollection.at(0).get('field')
-                    }, {
-                        data: 'count',
-                        title: i18n['search.resultsView.table.count']
-                    }],
-                    language: strings
-                });
-            }
-            else {
-                var columns = _.map(this.dependentParametricCollection.columnNames, function(name) {
-                    return {
-                        data: name,
-                        defaultContent: 0,
-                        title: name === TableCollection.noneColumn ? i18n['search.resultsView.table.noneHeader'] : name
-                    }
-                });
+            // if field is null then nothing has loaded and datatables will fail
+            if (this.fieldsCollection.at(0).get('field')) {
+                // columnNames will be empty if only one field is selected
+                if (_.isEmpty(this.dependentParametricCollection.columnNames)) {
+                    this.$table.dataTable({
+                        autoWidth: false,
+                        data: this.dependentParametricCollection.toJSON(),
+                        columns: [
+                            {
+                                data: 'text',
+                                title: this.fieldsCollection.at(0).get('field')
+                            }, {
+                                data: 'count',
+                                title: i18n['search.resultsView.table.count']
+                            }
+                        ],
+                        language: strings
+                    });
+                }
+                else {
+                    var columns = _.map(this.dependentParametricCollection.columnNames, function(name) {
+                        return {
+                            data: name,
+                            defaultContent: 0,
+                            title: name === TableCollection.noneColumn ? i18n['search.resultsView.table.noneHeader'] : name
+                        }
+                    });
 
-                this.$table.dataTable({
-                    autoWidth: false,
-                    data: this.dependentParametricCollection.toJSON(),
-                    deferRender: true,
-                    fixedColumns: true,
-                    scrollX: true,
-                    columns: [{
-                        data: 'text',
-                        title: this.fieldsCollection.at(0).get('field')
-                    }].concat(columns),
-                    language: strings
-                });
-            }
+                    this.$table.dataTable({
+                        autoWidth: false,
+                        data: this.dependentParametricCollection.toJSON(),
+                        deferRender: true,
+                        fixedColumns: true,
+                        scrollX: true,
+                        columns: [
+                            {
+                                data: 'text',
+                                title: this.fieldsCollection.at(0).get('field')
+                            }
+                        ].concat(columns),
+                        language: strings
+                    });
+                }
 
-            this.dataTable = this.$table.DataTable();
+                this.dataTable = this.$table.DataTable();
+            }
         },
 
         remove: function() {
