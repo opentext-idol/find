@@ -114,21 +114,18 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
             /* language dropdown disabled */
         }
         List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
-        for (WebElement group : keywordGroups) {
+        for(WebElement group : keywordGroups){
             removeKeywordGroupAsync(group);
         }
     }
 
+    //Problem with deletion not solved - sometimes fails
     private void removeKeywordGroupAsync(WebElement group) {
         List<WebElement> removeButtons = keywordsPage.removeButtons(group);
-
-        while(keywordsPage.removeButtons(group).size()>0) {
-            for (WebElement removeButton : removeButtons) {
-                try {
-                    removeButton.click();
-                } catch (ElementNotVisibleException | NoSuchElementException e) {//deleting v slow}
-                }
-            }
+        if(removeButtons.size() > 1){removeButtons.remove(0);}
+        for(WebElement removeButton:removeButtons){
+            new WebDriverWait(getDriver(),20).until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-spin")));
+            removeButton.click();
         }
     }
 

@@ -119,11 +119,17 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     public String convertDate(String badFormatDate){
-
         String[] words = badFormatDate.split(" ");
-        int timeAmount= Integer.parseInt(words[0]);
-        String timeUnit = words[1];
-
+        int timeAmount;
+        String timeUnit;
+        if(words[0].equals("a")||words[0].equals("an")){
+            timeAmount=1;
+            timeUnit = words[1];
+        }
+        else{
+            timeAmount= Integer.parseInt(words[0]);
+            timeUnit = words[1];
+        }
 
         Calendar date = Calendar.getInstance();
 

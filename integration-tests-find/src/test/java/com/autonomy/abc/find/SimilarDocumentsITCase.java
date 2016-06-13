@@ -2,18 +2,16 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
+import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
-import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
-import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
-import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -21,7 +19,6 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -29,7 +26,6 @@ import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
-import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.url;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsIgnoringCase;
@@ -94,58 +90,21 @@ public class SimilarDocumentsITCase extends FindTestBase {
         findService.search(new Query("bart"));
 
         for (int i = 1; i <= 5; i++) {
+            Waits.loadOrFadeWait();
             similarDocuments = findService.goToSimilarDocuments(i);
             WebElement seedLink  = similarDocuments.seedLink();
             String seedTitle = seedLink.getText();
 
-            if (isHosted()){
-                previewSeedHosted(seedLink,seedTitle);
-            }
-            else{
-                previewSeedOnPrem(seedLink);
-            }
+            previewSeed(seedLink);
             similarDocuments.backButton().click();
         }
     }
 
-    //this is bad but the behaviour is so different...
-    private void previewSeedHosted(WebElement seedLink, String seedTitle){
-        Window firstWindow = getWindow();
-        Window secondWindow = openSeed(seedLink);
-
-        verifyThat("opened in new tab", secondWindow, not(firstWindow));
-        verifyThat(getDriver().getTitle(), containsString(seedTitle));
-        verifyThat("not using viewserver", getWindow(), url(not(containsString("viewDocument"))));
-        //TODO check if 500
-
-        if (secondWindow != null) {
-                secondWindow.close();
-            }
-        firstWindow.activate();
-    }
-
-    private void previewSeedOnPrem(WebElement seedLink){
+    private void previewSeed(WebElement seedLink){
         seedLink.click();
         verifyThat("SeedLink goes to detailed document preview",getDriver().getCurrentUrl(),containsString("document"));
+        getElementFactory().getDetailedPreview().goBackToSearch();
 
-    }
-    private Window openSeed(WebElement seedLink) {
-        final int windowCount = getMainSession().countWindows();
-        final Window currentWindow = getWindow();
-
-        seedLink.click();
-        new WebDriverWait(getDriver(), 5)
-                .withMessage("opening seed document")
-                .until(getMainSession().windowCountIs(windowCount + 1));
-
-        Window secondWindow = null;
-        for (Window openWindow : getMainSession()) {
-            if (!openWindow.equals(currentWindow)) {
-                openWindow.activate();
-                secondWindow = openWindow;
-            }
-        }
-        return secondWindow;
     }
 
     @Test
@@ -211,17 +170,17 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testSortByDate() throws ParseException {
-
         assumeThat(getConfig().getType(), Matchers.is(ApplicationType.ON_PREM));
 
         findService.search(new Query("Fade"));
         similarDocuments = findService.goToSimilarDocuments(1);
+        Waits.loadOrFadeWait();
         similarDocuments.sortByDate();
         List<FindResult> searchResults = similarDocuments.getResults();
 
         Date previousDate = null;
 
-        for(int i = 1; i <= 10; i++){
+        for(int i = 0; i <= 10; i++){
             String badFormatDate = searchResults.get(i).getDate();
             String date = similarDocuments.convertDate(badFormatDate);
             Date currentDate = SimilarDocumentsView.DATE_FORMAT.parse(date);
@@ -236,19 +195,12 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testDocumentPreview(){
-        if (isHosted()){
-            findService.search(new Query("stars").withFilter(new IndexFilter(Index.DEFAULT)));
-            similarDocuments = findService.goToSimilarDocuments(1);
-            SharedPreviewTests.testDocumentPreviews(getMainSession(), similarDocuments.getResults(5), Index.DEFAULT);
-        }
-        else{
-            findService.search(new Query("stars"));
-            similarDocuments = findService.goToSimilarDocuments(1);
-            testIdolDocPreview(similarDocuments.getResults(5));
-        }
-
+        findService.search(new Query("stars"));
+        similarDocuments = findService.goToSimilarDocuments(1);
+        testDocPreview(similarDocuments.getResults(5));
     }
-    private void testIdolDocPreview(List<FindResult> results) {
+
+    private void testDocPreview(List<FindResult> results) {
         for (FindResult result : results) {
             DocumentViewer docPreview = result.openDocumentPreview();
 
@@ -266,5 +218,26 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
             docPreview.close();
         }
+    }
+
+    @Test
+    public void testDetailedDocumentPreviewFromSimilar(){
+        findService.search(new Query("stars"));
+        similarDocuments = findService.goToSimilarDocuments(1);
+
+        FindResult firstSimilar =similarDocuments.getResult(1);
+        String title = firstSimilar.getTitleString();
+
+        firstSimilar.openDocumentPreview();
+        getElementFactory().getInlinePreview().openDetailedPreview();
+        DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+
+        verifyThat("Have opened right detailed preview", detailedPreviewPage.getTitle(),equalToIgnoringCase(title));
+        detailedPreviewPage.goBackToSearch();
+
+        verifyThat("'Similar documents' results' url",getDriver().getCurrentUrl(),containsString("suggest"));
+        similarDocuments = getElementFactory().getSimilarDocumentsView();
+        verifyThat("Back button still exists because on similar documents",similarDocuments.backButton().isDisplayed());
+
     }
 }
