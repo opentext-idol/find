@@ -1,6 +1,6 @@
 package com.autonomy.abc.users;
 
-import com.autonomy.abc.base.HybridIsoTestBase;
+import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.fixtures.EmailTearDownStrategy;
 import com.autonomy.abc.fixtures.UserTearDownStrategy;
 import com.autonomy.abc.selenium.application.IsoApplication;
@@ -44,8 +44,12 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
+/**
+ * These tests could in theory be made to work on-prem, but the
+ * behaviour on-prem is not "correct" - and probably not needed
+ */
 @RelatedTo("HOD-532")
-public class UserPermissionsITCase extends HybridIsoTestBase {
+public class UserPermissionsITCase extends IsoHsodTestBase {
     private UserService userService;
 
     private User user;
@@ -65,13 +69,12 @@ public class UserPermissionsITCase extends HybridIsoTestBase {
         userService = getApplication().userService();
         authStrategy = getConfig().getAuthenticationStrategy();
 
-        user = userService.createNewUser(getConfig().getNewUser("newhppassport"), Role.ADMIN);
+        user = userService.createNewUser(getConfig().getNewUser("james"), Role.ADMIN);
+        authStrategy.authenticate(user);
 
-        userApp = new IsoHsodApplication();
+        userApp = IsoApplication.ofType(getConfig().getType());
         userSession = launchInNewSession(userApp);
         userElementFactory = userApp.elementFactory();
-
-        authStrategy.authenticate(user);
 
         try {
             userApp.loginService().login(user);
