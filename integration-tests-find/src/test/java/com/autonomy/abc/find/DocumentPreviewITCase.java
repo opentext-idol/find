@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.QueryResult;
+import com.hp.autonomy.frontend.selenium.config.Browser;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Session;
@@ -149,7 +150,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-86")
+    @ActiveBug(value = "FIND-86", browsers = Browser.FIREFOX)
     public void testOneCopyOfDocInDetailedPreview(){
         findService.search("face");
         results.getResult(1).openDocumentPreview();

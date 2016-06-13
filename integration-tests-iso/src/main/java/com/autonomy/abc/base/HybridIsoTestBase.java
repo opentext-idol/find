@@ -1,5 +1,6 @@
 package com.autonomy.abc.base;
 
+import com.autonomy.abc.fixtures.IsoPostLoginHook;
 import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -13,5 +14,6 @@ public abstract class HybridIsoTestBase extends HybridAppTestBase<IsoApplication
 
 	public HybridIsoTestBase(final TestConfig config) {
 		super(config, IsoApplication.ofType(config.getType()));
+		setPostLoginHook(new IsoPostLoginHook(getApplication()));
 	}
 }
