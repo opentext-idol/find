@@ -1,6 +1,7 @@
 {
   "app": {
     "type": "Hosted",
+    "deployment": "develop",
     "search": "http://search.int.havenapps.io/searchoptimizer/p",
     "find": "http://find.int.havenapps.io",
     "devconsole": "http://www.havenondemand.com",

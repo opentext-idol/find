@@ -1,6 +1,7 @@
 {
   "app": {
     "type": "Hosted",
+    "deployment": "staging",
     "search": "http://search.staging.havenapps.io/searchoptimizer/p",
     "find": "http://find.staging.havenapps.io",
     "devconsole": "http://www.havenondemand.com",
