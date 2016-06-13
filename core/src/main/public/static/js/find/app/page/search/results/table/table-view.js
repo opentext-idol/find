@@ -13,8 +13,20 @@ define([
 ], function(BaseCollection, ParametricResultsView, i18n, tableTemplate) {
     'use strict';
 
-    // As this is mixed
+    // As this is mixed case, it can't match an IDOL field or a HOD field
     var NONE_COLUMN = 'defaultColumn';
+
+    var strings = {
+        info: i18n['search.resultsView.table.info'],
+        infoFiltered: i18n['search.resultsView.table.infoFiltered'],
+        lengthMenu: i18n['search.resultsView.table.lengthMenu'],
+        search: i18n['search.resultsView.table.searchInResults'],
+        zeroRecords: i18n['search.resultsView.table.zeroRecords'],
+        paginate: {
+            next: i18n['search.resultsView.table.next'],
+            previous: i18n['search.resultsView.table.previous']
+        }
+    };
 
     var TableCollection = BaseCollection.extend({
         url: '../api/public/parametric/dependent-values',
@@ -109,9 +121,7 @@ define([
                         data: 'count',
                         title: i18n['search.resultsView.table.count']
                     }],
-                    language: {
-                        search: i18n['search.resultsView.table.searchInResults']
-                    }
+                    language: strings
                 });
             }
             else {
@@ -119,7 +129,7 @@ define([
                     return {
                         data: name,
                         defaultContent: 0,
-                        title: name === NONE_COLUMN ? 'NONE' : name
+                        title: name === NONE_COLUMN ? i18n['search.resultsView.table.noneHeader'] : name
                     }
                 });
 
@@ -133,9 +143,7 @@ define([
                         data: 'text',
                         title: this.fieldsCollection.at(0).get('field')
                     }].concat(columns),
-                    language: {
-                        search: i18n['search.resultsView.table.searchInResults']
-                    }
+                    language: strings
                 });
             }
 

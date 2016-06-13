@@ -163,7 +163,14 @@ define([
         'search.resultsView.table.error.noParametricValues': 'There are no parametric values to display for your current search',
         'search.resultsView.table.error.query': 'An error occurred displaying table view',
         'search.resultsView.table.error.noDependentParametricValues': 'There are too many parametric fields to display in table view',
+        'search.resultsView.table.info': 'Showing _START_ to _END_ of _TOTAL_ entries', // see https://datatables.net/reference/option/language.info
+        'search.resultsView.table.infoFiltered': '(filtered from _MAX_ total entries)', // see https://datatables.net/reference/option/language.infoFiltered
+        'search.resultsView.table.lengthMenu': 'Show _MENU_ entries', // see https://datatables.net/reference/option/language.lengthMenu
+        'search.resultsView.table.next': 'Next',
+        'search.resultsView.table.noneHeader': 'NONE',
+        'search.resultsView.table.previous': 'Previous',
         'search.resultsView.table.searchInResults': 'Search in Results',
+        'search.resultsView.table.zeroRecords': 'No matching records found',
         'search.resultsView.amount.shown': 'Showing <strong>{0}</strong> to <strong>{1}</strong> of <strong>{2}</strong> results',
         'search.resultsView.amount.shown.no.increment': 'Showing the top <strong>{0}</strong> results of <strong>{1}</strong>',
         'search.resultsView.amount.shown.no.results': 'There are no results with the location field selected',
