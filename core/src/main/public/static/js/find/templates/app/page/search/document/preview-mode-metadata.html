@@ -1,11 +1,16 @@
-<% _.each(['index', 'reference'], function(field) { %>
-  <% if(model.has(field)) { %>
-    <tr>
-      <th class="font-bold"><%-i18n['search.document.' + field]%></th>
-      <td class="break-all"><%-model.get(field)%></td>
-    </tr>
-  <% } %>
-<% }); %>
+<% if(model.has('reference')) { %>
+  <tr>
+    <th class="font-bold"><%-reference%></th>
+    <td class="break-all"><%-model.get('reference')%></td>
+  </tr>
+<% } %>
+<% if(model.has('index')) { %>
+  <tr>
+    <th class="font-bold"><%-index%></th>
+    <td class="break-all"><%-model.get('index')%></td>
+  </tr>
+<% } %>
+
 
 <% _.each(model.get('fields'), function(field) { %>
 <% if (field.displayName) { %>

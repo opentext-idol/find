@@ -99,7 +99,6 @@ define([
         'search.document.detail.tabs.similarSources': 'Similar sources',
         'search.document.detail.tabs.transcript': 'Transcript',
         'search.document.domain': 'Domain',
-        'search.document.index': 'Index',
         'search.document.openInNewTab': 'Open in New Tab',
         'search.document.reference': 'Reference',
         'search.document.staticContent': 'Static Content',

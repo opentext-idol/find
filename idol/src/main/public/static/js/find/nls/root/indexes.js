@@ -13,6 +13,7 @@ define([
         'search.indexes': 'Databases',
         'search.indexes.all': 'All',
         'search.indexes.empty': 'No Available Databases',
-        'search.indexes.invalidIndex': 'This database no longer exists'
+        'search.indexes.invalidIndex': 'This database no longer exists',
+        'search.document.index': 'Database'
     });
 });
