@@ -2,10 +2,10 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
+import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
-import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -95,6 +95,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         findService.search(new Query("bart"));
 
         for (int i = 1; i <= 5; i++) {
+            Waits.loadOrFadeWait();
             similarDocuments = findService.goToSimilarDocuments(i);
             WebElement seedLink  = similarDocuments.seedLink();
             String seedTitle = seedLink.getText();
@@ -128,6 +129,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     private void previewSeedOnPrem(WebElement seedLink){
         seedLink.click();
         verifyThat("SeedLink goes to detailed document preview",getDriver().getCurrentUrl(),containsString("document"));
+        getElementFactory().getDetailedPreview().goBackToSearch();
 
     }
     private Window openSeed(WebElement seedLink) {
@@ -222,7 +224,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         Date previousDate = null;
 
-        for(int i = 1; i <= 10; i++){
+        for(int i = 0; i <= 10; i++){
             String badFormatDate = searchResults.get(i).getDate();
             String date = similarDocuments.convertDate(badFormatDate);
             Date currentDate = SimilarDocumentsView.DATE_FORMAT.parse(date);
