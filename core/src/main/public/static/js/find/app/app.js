@@ -40,6 +40,9 @@ define([
         initialize: function() {
             $.ajaxSetup({cache: false});
 
+            // disable Datatables alerting behaviour
+            if ($.fn.dataTableExt) { $.fn.dataTableExt.sErrMode = 'throw'; }
+
             testBrowser().done(function() {
                 var modelRegistry = new ModelRegistry(this.getModelData());
                 var pageData = this.getPageData();
