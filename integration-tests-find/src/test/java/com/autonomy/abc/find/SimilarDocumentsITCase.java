@@ -7,14 +7,11 @@ import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
-import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
-import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -22,7 +19,6 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -30,7 +26,6 @@ import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
-import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.url;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsIgnoringCase;
@@ -100,12 +95,12 @@ public class SimilarDocumentsITCase extends FindTestBase {
             WebElement seedLink  = similarDocuments.seedLink();
             String seedTitle = seedLink.getText();
 
-            previewSeedOnPrem(seedLink);
+            previewSeed(seedLink);
             similarDocuments.backButton().click();
         }
     }
 
-    private void previewSeedOnPrem(WebElement seedLink){
+    private void previewSeed(WebElement seedLink){
         seedLink.click();
         verifyThat("SeedLink goes to detailed document preview",getDriver().getCurrentUrl(),containsString("document"));
         getElementFactory().getDetailedPreview().goBackToSearch();

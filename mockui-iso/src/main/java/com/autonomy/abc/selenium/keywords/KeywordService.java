@@ -6,7 +6,6 @@ import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 public class KeywordService extends ServiceBase<IsoElementFactory> {
@@ -121,6 +119,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
         }
     }
 
+    //Problem with deletion not solved - sometimes fails
     private void removeKeywordGroupAsync(WebElement group) {
         List<WebElement> removeButtons = keywordsPage.removeButtons(group);
         if(removeButtons.size() > 1){removeButtons.remove(0);}
