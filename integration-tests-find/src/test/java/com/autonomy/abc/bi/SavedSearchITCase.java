@@ -1,4 +1,4 @@
-package com.autonomy.abc.find;
+package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
