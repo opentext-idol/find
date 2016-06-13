@@ -29,7 +29,7 @@ define([
         mediaTemplate: _.template(mediaTemplate),
         documentTemplate: _.template(documentTemplate),
 
-        className: 'row document-detail-flex-container',
+        className: 'service-view-flex-container',
 
         events: {
             'click .detail-view-back-button': function() {
@@ -37,7 +37,7 @@ define([
             },
             'click .document-detail-open-original-link': function () {
                 // the link itself is responsible for opening the window
-                events().original()
+                events().original();
             },
             'shown.bs.tab a[data-toggle=tab]': function (event) {
                 var tab = this.tabs[$(event.target).parent().index()];

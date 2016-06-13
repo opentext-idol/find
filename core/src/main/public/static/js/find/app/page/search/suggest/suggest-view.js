@@ -16,7 +16,7 @@ define([
     'use strict';
 
     return Backbone.View.extend({
-        className: 'flex-container',
+        className: 'service-view-flex-container',
         template: _.template(template),
 
         // Abstract

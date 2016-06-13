@@ -1441,7 +1441,7 @@ input:-moz-placeholder::before {
     height: 60vh;
 }
 
-.document-detail-flex-container {
+.service-view-flex-container {
     display: flex;
     min-height: 100%;
 }
@@ -1602,13 +1602,6 @@ h4.similar-dates-message {
 
 .before-slider-div .slider.slider-horizontal .slider-track .slider-tick.round{
     opacity: 1;
-}
-
-@media (min-width: 980px) {
-    .flex-container {
-        display: flex;
-        min-height: 100%;
-    }
 }
 
 .precision-slider-block {
