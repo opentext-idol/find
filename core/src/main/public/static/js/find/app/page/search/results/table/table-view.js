@@ -4,17 +4,14 @@
  */
 
 define([
-    'find/app/model/find-base-collection',
     'find/app/page/search/results/parametric-results-view',
+    'find/app/page/search/results/table/table-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/results/table/table-view.html',
     'datatables.net-bs',
     'datatables.net-fixedColumns'
-], function(BaseCollection, ParametricResultsView, i18n, tableTemplate) {
+], function(ParametricResultsView, TableCollection, i18n, tableTemplate) {
     'use strict';
-
-    // As this is mixed case, it can't match an IDOL field or a HOD field
-    var NONE_COLUMN = 'defaultColumn';
 
     var strings = {
         info: i18n['search.resultsView.table.info'],
@@ -27,58 +24,6 @@ define([
             previous: i18n['search.resultsView.table.previous']
         }
     };
-
-    var TableCollection = BaseCollection.extend({
-        url: '../api/public/parametric/dependent-values',
-
-        parse: function(data) {
-            this.columnNames = _.chain(data)
-                // take all the field arrays
-                .pluck('field')
-                // flatten into a single array so we can pluck the values
-                .flatten()
-                .pluck('value')
-                // make unique and sort
-                .uniq()
-                .sort()
-                .value();
-
-            if (_.contains(this.columnNames, '')) {
-                // remove '' and replace it with our magic name at the front if it exists as a value
-                this.columnNames = _.without(this.columnNames, '');
-
-                this.columnNames.unshift(NONE_COLUMN);
-            }
-
-            if (_.isEmpty(this.columnNames)) {
-                return _.map(data, function(datum) {
-                    return {
-                        count: Number(datum.count),
-                        text: datum.value
-                    }
-                });
-            }
-            else {
-                return _.map(data, function(datum) {
-                    var columns = _.chain(datum.field)
-                        .map(function(field) {
-                            var value = {};
-                            value[field.value || NONE_COLUMN] = Number(field.count);
-
-                            return value;
-                        })
-                        .reduce(function(memo, fieldAndCount) {
-                            return _.extend(memo, fieldAndCount);
-                        }, {})
-                        .value();
-
-                    return _.extend({
-                        text: datum.value
-                    }, columns);
-                }, this);
-            }
-        }
-    });
 
     return ParametricResultsView.extend({
 
@@ -129,7 +74,7 @@ define([
                     return {
                         data: name,
                         defaultContent: 0,
-                        title: name === NONE_COLUMN ? i18n['search.resultsView.table.noneHeader'] : name
+                        title: name === TableCollection.noneColumn ? i18n['search.resultsView.table.noneHeader'] : name
                     }
                 });
 
