@@ -1,6 +1,7 @@
 {
   "app": {
     "type": "On Premise",
+    "deployment": "develop",
     "find": "http://find-dev.hpswlabs.hp.com:8080"
   },
   "selenium": {
