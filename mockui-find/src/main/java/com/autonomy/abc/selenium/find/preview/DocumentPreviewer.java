@@ -13,7 +13,7 @@ import org.openqa.selenium.WebElement;
 public class DocumentPreviewer extends DocumentViewer {
 
     private DocumentPreviewer(WebDriver driver){
-        super(driver,driver.findElement(By.className("preview-mode-container")));
+        super(driver,driver.findElement(By.cssSelector(".preview-mode-wrapper:not(.hide) .preview-mode-container")));
     }
 
     public static DocumentPreviewer make(WebDriver driver){

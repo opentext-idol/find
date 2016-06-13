@@ -2,6 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
+import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
@@ -266,5 +267,26 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
             docPreview.close();
         }
+    }
+
+    @Test
+    public void testDetailedDocumentPreviewFromSimilar(){
+        findService.search(new Query("stars"));
+        similarDocuments = findService.goToSimilarDocuments(1);
+
+        FindResult firstSimilar =similarDocuments.getResult(1);
+        String title = firstSimilar.getTitleString();
+
+        firstSimilar.openDocumentPreview();
+        getElementFactory().getInlinePreview().openDetailedPreview();
+        DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+
+        verifyThat("Have opened right detailed preview", detailedPreviewPage.getTitle(),equalToIgnoringCase(title));
+        detailedPreviewPage.goBackToSearch();
+
+        verifyThat("'Similar documents' results' url",getDriver().getCurrentUrl(),containsString("suggest"));
+        similarDocuments = getElementFactory().getSimilarDocumentsView();
+        verifyThat("Back button still exists because on similar documents",similarDocuments.backButton().isDisplayed());
+
     }
 }
