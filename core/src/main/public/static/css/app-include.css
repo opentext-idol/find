@@ -1646,3 +1646,8 @@ h4.similar-dates-message {
 .numeric-parametric-slider-block > .slider{
     width: 100%;
 }
+
+/* HPE Elements adds transitions to all li elements with class active... */
+.dataTables_paginate ul.pagination li.active {
+    transition: none;
+}

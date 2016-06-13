@@ -60,7 +60,7 @@ define([
 
             this.$loadingSpinner = this.$('.parametric-loading').addClass('hide');
 
-            this.$content = this.$('.parametric-content').addClass('hide');
+            this.$content = this.$('.parametric-content').addClass('invisible');
 
             this.$message = this.$('.parametric-view-message');
 
@@ -89,7 +89,7 @@ define([
 
         toggleLoading: function () {
             this.$loadingSpinner.toggleClass('hide', !this.model.get('loading'));
-            this.$content.toggleClass('hide', this.model.get('loading'));
+            this.$content.toggleClass('invisible', this.model.get('loading'));
             this.$parametricSelections.toggleClass('hide', this.noMoreParametricFields());
             this.updateMessage();
         },
@@ -229,7 +229,7 @@ define([
 
         updateMessage: function (message) {
             if (message) {
-                this.$content.addClass('hide');
+                this.$content.addClass('invisible');
                 this.$message.text(message);
             } else {
                 this.$message.empty();
@@ -238,7 +238,7 @@ define([
         },
 
         toggleContentDisplay: function () {
-            this.$content.toggleClass('hide', this.parametricCollection.isEmpty() || this.dependentParametricCollection.isEmpty() || this.noMoreParametricFields());
+            this.$content.toggleClass('invisible', this.parametricCollection.isEmpty() || this.dependentParametricCollection.isEmpty() || this.noMoreParametricFields());
         },
 
         noMoreParametricFields: function () {
