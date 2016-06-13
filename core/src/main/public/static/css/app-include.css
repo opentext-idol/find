@@ -1484,6 +1484,10 @@ input:-moz-placeholder::before {
     padding-left: 3px;
 }
 
+.topic-map-comparison-selection, .topic-map-comparison-container {
+    padding-left: 40px;
+}
+
 .both-location-cluster {
     background-color: rgba(161, 51, 54, 0.6);
 }
