@@ -121,7 +121,15 @@ define([
         updateText: function() {
             if (this.$input) {
                 this.$input.typeahead('val', this.model.get('inputText'));
-                this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', this.model.get('inputText') === '*');
+                this.updateSeeAllDocumentsLink();
+            }
+        },
+
+        updateSeeAllDocumentsLink: function() {
+            if(this.model.get('inputText') === '*' && !this.model.get('relatedConcepts').length) {
+                this.$('.see-all-documents').addClass('disabled-clicks cursor-not-allowed');
+            } else {
+                this.$('.see-all-documents').removeClass('disabled-clicks cursor-not-allowed');
             }
         },
 
@@ -146,6 +154,8 @@ define([
 
                 this.updateScrollingButtons();
             }
+
+            this.updateSeeAllDocumentsLink();
         },
 
         updateScrollingButtons: function() {

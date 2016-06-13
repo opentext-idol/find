@@ -438,7 +438,10 @@ define([
             this.$('.query-service-view-container').removeClass('hide');
             this.$('.app-logo').addClass('hide');
             this.$('.hp-logo-footer').addClass('hide');
-            this.$('.see-all-documents').addClass('hide');
+
+            if(config.hasBiRole) {
+                this.$('.see-all-documents').addClass('hide');
+            }
 
             this.removeDocumentDetailView();
             this.removeSuggestView();
