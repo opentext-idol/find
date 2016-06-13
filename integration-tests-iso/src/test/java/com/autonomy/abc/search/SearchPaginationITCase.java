@@ -105,7 +105,8 @@ public class SearchPaginationITCase extends HybridIsoTestBase {
         searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
 
-        assertThat("Page doesn't contain error",searchPage.getText(),not(containsString("Error Occurred")));
+        assertThat(searchPage, not(containsText("Search for something")));
+        assertThat(searchPage, not(containsText("Error Occurred")));
         checkOnPage(lastPage);
         assertThat(searchPage.getSearchResult(1).getTitleString(), is(docTitle));
     }

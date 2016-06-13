@@ -325,7 +325,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@ActiveBug("CSA-1818")
+	@ResolvedBug("CSA-1818")
 	public void testSearchResultsCount() {
 		searchPage.selectLanguage(Language.ENGLISH);
 		for (final String query : Arrays.asList("dog", "chips", "dinosaur", "melon", "art")) {
@@ -379,7 +379,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@ActiveBug("ISO-38")
+	@ResolvedBug("ISO-38")
 	public void testRelatedConceptsLinks() {
 		String queryText = "elephant";
 		search(queryText);
@@ -627,7 +627,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@ActiveBug("ISO-16")
+	@ResolvedBug("ISO-16")
 	public void testSelectedIndexesAppearInSausage() {
 		searchService.search(new Query("mellow").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.ALL));
 		IndexesTree indexesTree = searchPage.indexesTree();

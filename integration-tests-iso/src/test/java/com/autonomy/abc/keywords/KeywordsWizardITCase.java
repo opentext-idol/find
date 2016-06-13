@@ -240,7 +240,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
 
     //Duplicate blacklisted terms are not allowed to be created within the same language
     @Test
-    @ActiveBug("CSA-1791")
+    @ResolvedBug("CSA-1791")
     public void testCreateDuplicateBlacklist() throws InterruptedException {
         final String term = "fish";
         final String other = "chips";

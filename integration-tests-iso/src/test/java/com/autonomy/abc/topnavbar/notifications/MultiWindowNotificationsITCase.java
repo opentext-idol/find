@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
@@ -56,7 +57,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @ActiveBug("CSA-1542")
+    @ActiveBug(value = "HSOD-66", type = ApplicationType.HOSTED)
     public void testNotificationsOverTwoWindows() throws InterruptedException {
         first.keywordService().goToKeywords();
         second.keywordService().goToKeywords();

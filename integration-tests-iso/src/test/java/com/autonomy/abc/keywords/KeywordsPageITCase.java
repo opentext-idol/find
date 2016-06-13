@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.SearchPage;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
@@ -219,7 +220,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	//Notification should drop down on creation of new keywords
 	@Test
 	@ResolvedBug("CSA-1447")
-	@ActiveBug("CSA-1822")
+	@ActiveBug(value = "CSA-1882", type = ApplicationType.HOSTED)
 	public void testNotificationForCreatedBlacklistedTermAndSynonymGroup() throws InterruptedException {
 		List<String> notificationContents = new ArrayList<>();
 
@@ -588,7 +589,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	@ActiveBug("CSA-1882")
+	@ActiveBug(value = "CSA-1882", type = ApplicationType.HOSTED)
 	public void testClickingOnNotifications() throws InterruptedException {
 		keywordService.addSynonymGroup("squid kraken octopus monster");
 
