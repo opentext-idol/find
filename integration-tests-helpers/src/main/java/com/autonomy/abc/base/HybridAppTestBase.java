@@ -60,7 +60,7 @@ public class HybridAppTestBase<A extends Application<? extends F>, F extends Ele
     }
 
     @Override
-    protected TestConfig getConfig() {
+    public TestConfig getConfig() {
         return (TestConfig) super.getConfig();
     }
 }
