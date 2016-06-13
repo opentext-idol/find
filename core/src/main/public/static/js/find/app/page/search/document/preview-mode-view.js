@@ -93,8 +93,8 @@ define([
             this.$('.preview-mode-document-title').text(this.model.get('title'));
 
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
-                reference: i18n['search.document.reference'],
-                index: i18nIndexes['search.document.index'],
+                i18n: i18n,
+                i18nIndexes: i18nIndexes,
                 model: this.model
             }));
 
