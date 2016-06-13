@@ -61,7 +61,9 @@ define([
 
             this.highlightModel = new Backbone.Model({highlightEntities: false});
             this.entityCollection = new EntityCollection([], {
-                queryState: this.queryState
+                getSelectedRelatedConcepts: function() {
+                    return _.flatten(this.queryState.queryTextModel.get('relatedConcepts')).concat([this.queryState.queryTextModel.get('inputText')])
+                }.bind(this)
             });
 
             var searchType = this.savedSearchModel.get('type');

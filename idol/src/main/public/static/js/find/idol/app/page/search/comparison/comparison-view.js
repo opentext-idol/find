@@ -4,16 +4,16 @@ define([
     'find/idol/app/page/search/results/idol-results-view',
     'find/idol/app/page/search/results/comparison-lists',
     'find/idol/app/page/search/results/comparison-map',
+    'find/idol/app/page/search/results/comparison-topic-map',
     'find/app/page/search/results/state-token-strategy',
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
     'text!find/idol/templates/comparison/comparison-view.html',
     'text!find/idol/templates/comparison/comparison-list-container.html',
     'find/app/util/search-data-util',
-    'i18n!find/nls/bundle',
-    'i18n!find/idol/nls/comparisons'
-], function(Backbone, ComparisonDocumentsCollection, ResultsView, ResultsLists, ComparisonMap,  stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
-            template, comparisonListContainer, searchDataUtil, i18n, comparisonsI18n) {
+    'i18n!find/nls/bundle'
+], function(Backbone, ComparisonDocumentsCollection, ResultsView, ResultsLists, ComparisonMap, ComparisonTopicMap,  stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
+            template, comparisonListContainer, searchDataUtil, i18n) {
 
     return Backbone.View.extend({
         className: 'service-view-container',
@@ -56,6 +56,20 @@ define([
                     selector: {
                         displayNameKey: 'map',
                         icon: 'hp-map-view'
+                    }
+                },
+                {
+                    Constructor: ComparisonTopicMap,
+                    id: 'topic-map',
+                    uniqueId: _.uniqueId('results-view-item-'),
+                    constructorArguments: {
+                        searchModels: options.searchModels,
+                        escapeCallback: options.escapeCallback,
+                        model: this.model
+                    },
+                    selector: {
+                        displayNameKey: 'topic-map',
+                        icon: 'hp-grid'
                     }
                 }
             ];

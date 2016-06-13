@@ -4,44 +4,14 @@
  */
 
 define([
-    'find/idol/app/page/search/results/comparison-map',
-    'find/app/page/search/results/map-view',
-    'find/app/configuration',
+    'find/idol/app/page/search/results/comparison-topic-map',
     'backbone',
+    'jquery',
     'jasmine-jquery'
-], function(ComparisonMap, MockMapView, configuration, Backbone) {
+], function(ComparisonTopicMap, Backbone, $) {
 
-    describe('Comparison Map view', function() {
+    describe('Comparison Topic Map view', function() {
         beforeEach(function() {
-            configuration.and.returnValue({
-                map: {
-                    enabled: true,
-                    initialLocation: {
-                        latitude: 51.5074,
-                        longitude:  0.1278
-                    },
-                    locationFields: [{
-                        displayName: 'test',
-                        latitudeField: 'latitude',
-                        longitudeField: 'longitude'
-                    }]
-                },
-                fieldsInfo: {
-                    latitude: {
-                        names: [
-                            "LAT"
-                        ],
-                        type: "NUMBER"
-                    },
-                    longitude: {
-                        names: [
-                            "LON"
-                        ],
-                        type: "NUMBER"
-                    }
-                }
-
-            });
 
             this.model = new Backbone.Model({
                 id: 0,
@@ -68,7 +38,7 @@ define([
                 field: 'test'
             });
 
-            this.view = new ComparisonMap({
+            this.view = new ComparisonTopicMap({
                 model: this.model,
                 searchModels: {
                     first: firstModel,
@@ -77,89 +47,32 @@ define([
                 }
             });
 
-            this.mapView = MockMapView.instances[0];
-
             this.view.render();
+            this.view.$el.appendTo($('body'));
         });
 
-        it('displays three dropdown boxes with the correct field names', function() {
-            var $selects = this.view.$('.chosen-select');
-            expect($selects).toHaveLength(3);
-            expect($selects[0]).toHaveText('test');
-            expect($selects[1]).toHaveText('test');
-            expect($selects[2]).toHaveText('test');
+        afterEach(function() {
+            this.view.remove();
         });
 
-        it('should show the show more button but it should be disabled', function() {
-            var $showMore = this.view.$('.location-comparison-show-more');
-
-            expect($showMore).toExist();
-            expect($showMore).toBeDisabled();
+        it('should have three tabs with the first one selected', function() {
+            var $tabs = this.view.$('.topic-map-comparison-container > div');
+            expect($tabs.children()).toHaveLength(3);
+            expect($tabs.children()[0]).toHaveClass('active');
         });
 
-        it('should enable the show more button when the collections are not fetching', function() {
-            _.each(this.view.comparisons, function(comparison) {
-                comparison.collection.fetching = false;
-                comparison.collection.trigger('sync');
-            });
+        it('should change tab when clicked', function() {
+            var $tabs = this.view.$('.topic-map-comparison-container > div');
+            expect($tabs.children()).toHaveLength(3);
+            expect($tabs.children()[0]).toHaveClass('active');
 
-            var $showMore = this.view.$('.location-comparison-show-more');
-            expect($showMore).toExist();
-            expect($showMore).not.toBeDisabled();
-        });
+            var $tabSelectors = this.view.$('.topic-map-comparison-selection > ul > li');
+            expect($tabSelectors).toHaveLength(3);
+            expect($tabSelectors[0]).toHaveClass('active');
 
-        describe('after triggering a fetch', function() {
-            beforeEach(function() {
-                _.each(this.view.comparisons, function(comparison) {
-                    comparison.collection.fetching = true;
-                    comparison.model.trigger('change:field');
-                });
-
-            });
-            
-            it('should disable the show more button when the collections are fetching', function() {
-                var $showMore = this.view.$('.location-comparison-show-more');
-                expect($showMore).toExist();
-                expect($showMore).toBeDisabled();
-            });            
-            
-            it('should show the loading spinner when the collections are fetching', function() {
-                var $showMore = this.view.$('.location-comparison-show-more');
-                expect($showMore).toExist();
-                expect($showMore).toBeDisabled();
-            });            
-        });
-
-        describe('after adding a model', function() {
-            beforeEach(function() {
-                this.view.comparisons[0].collection.add(new Backbone.Model({
-                    title: 'testTitle',
-                    locations: [{
-                        displayName: 'test',
-                        latitude: 100,
-                        longitude: 42
-                    }]
-                }));
-            });
-
-            it('should add a marker to the map', function() {
-                expect(this.view.comparisons[0].layer.addLayer.calls.count()).toEqual(1);
-                expect(this.view.mapView.getIcon.calls.count()).toEqual(1);
-                expect(this.view.mapView.getMarker.calls.count()).toEqual(1);
-            });
-        });
-
-        describe('after a sync', function() {
-            beforeEach(function() {
-                _.each(this.view.comparisons, function(comparison) {
-                    comparison.collection.fetching = false;
-                });
-                this.view.comparisons[0].collection.trigger('sync');
-            });
-
-            it('should call loaded on the map view', function() {
-                expect(this.view.mapView.loaded.calls.count()).toEqual(1);
-            });
+            this.view.$($tabSelectors[1]).find('a').trigger('click');
+            expect($tabSelectors[1]).toHaveClass('active');
+            expect($tabs.children()[1]).toHaveClass('active');
         });
     });
 });

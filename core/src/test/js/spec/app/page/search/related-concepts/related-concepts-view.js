@@ -40,9 +40,7 @@ define([
             });
             
             this.entityCollection = new EntityCollection([], {
-                queryState: {
-                    queryTextModel: this.queryTextModel
-                }
+                getSelectedRelatedConcepts: _.constant([])
             });
         });
 

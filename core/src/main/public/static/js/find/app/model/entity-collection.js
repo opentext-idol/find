@@ -12,7 +12,7 @@ define([
         url: '../api/public/search/find-related-concepts',
 
         initialize: function(models, options){
-            this.queryState = options.queryState;
+            this.getSelectedRelatedConcepts = options.getSelectedRelatedConcepts;
         },
 
         parse: function(response) {
@@ -51,11 +51,12 @@ define([
         },
 
         displayRelatedConcept: function (concept) {
-            var selectedRelatedConcepts = _.flatten(this.queryState.queryTextModel.get('relatedConcepts'));
+            var selectedRelatedConcepts = this.getSelectedRelatedConcepts();
 
             // check to ensure each related concept are not the same as the query text or in the selected related concepts
-            return concept.text.toLowerCase() !== this.queryState.queryTextModel.get('inputText').toLowerCase()
-                && (selectedRelatedConcepts.length === 0 || !_.contains(selectedRelatedConcepts, concept.text));
+            return _.every(selectedRelatedConcepts, function (string) {
+                return concept.text.toLowerCase() !== string.toLowerCase()
+            });
         }
     });
 
