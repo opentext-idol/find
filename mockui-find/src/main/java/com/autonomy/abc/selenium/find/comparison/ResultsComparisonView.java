@@ -26,9 +26,13 @@ public class ResultsComparisonView {
         this(driver.findElement(By.cssSelector(".service-view-container:not(.hide)")), driver);
     }
 
-    public List<FindResult> commonToBoth() {
+    public List<FindResult> resultsCommonToBoth() {
+        return commonToBoth().getResults();
+    }
+
+    public FindResultsPage commonToBoth() {
         WebElement middleContainer = wholeContainer.findElement(By.className("comparison-results-view-container-middle"));
-        return new FindResultsPage(middleContainer, driver).getResults();
+        return new FindResultsPage(middleContainer, driver);
     }
 
     private static void waitForLoad(WebDriver driver) {

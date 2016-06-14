@@ -25,7 +25,11 @@ public class ComparisonModal extends ModalView {
     }
 
     public void waitForComparisonToLoad() {
-        new WebDriverWait(getDriver(), 60)
+        waitForComparisonToLoad(60);
+    }
+
+    public void waitForComparisonToLoad(int timeout) {
+        new WebDriverWait(getDriver(), timeout)
                 .withMessage("waiting for comparison to be fetched")
                 .until(stalenessOf(this));
     }
