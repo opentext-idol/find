@@ -27,7 +27,6 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.modalIs
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
-import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UserTestHelper {
     private final IsoApplication<?> app;

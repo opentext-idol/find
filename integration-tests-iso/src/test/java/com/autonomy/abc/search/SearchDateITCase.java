@@ -1,7 +1,6 @@
 package com.autonomy.abc.search;
 
 import com.autonomy.abc.base.HybridIsoTestBase;
-import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.IsoSearchResult;
 import com.autonomy.abc.selenium.search.SearchPage;
@@ -12,7 +11,6 @@ import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.http.util.LangUtils;
 import org.junit.Before;
 import org.junit.Test;
 
