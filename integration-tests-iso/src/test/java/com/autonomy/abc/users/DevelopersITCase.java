@@ -12,7 +12,6 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class DevelopersITCase extends IsoHsodTestBase {
-    private HsodDeveloperService developerService;
     private HsodDevelopersPage developersPage;
 
     public DevelopersITCase(TestConfig config) {
@@ -21,7 +20,7 @@ public class DevelopersITCase extends IsoHsodTestBase {
 
     @Before
     public void setUp(){
-        developerService = getApplication().developerService();
+        final HsodDeveloperService developerService = getApplication().developerService();
         developersPage = developerService.goToDevs();
     }
 

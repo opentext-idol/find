@@ -18,7 +18,6 @@ import java.util.Map;
 public class HsodUserConfigParser implements UserConfigParser<JsonNode> {
     private final String emailPrefix = "hodtestqa401";
     private final String emailSuffix = "@gmail.com";
-    private final String password = "qoxntlozubjaamyszerfk";
 
     @Override
     public User parseUser(JsonNode userNode) {
@@ -61,6 +60,7 @@ public class HsodUserConfigParser implements UserConfigParser<JsonNode> {
     }
 
     private GoogleAuth getAuthProvider() {
+        final String password = "qoxntlozubjaamyszerfk";
         return new GoogleAuth(emailPrefix + emailSuffix, password);
     }
 

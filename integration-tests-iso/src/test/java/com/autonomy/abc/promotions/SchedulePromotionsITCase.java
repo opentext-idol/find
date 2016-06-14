@@ -33,7 +33,6 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 
 	private SearchPage searchPage;
 	private SchedulePage schedulePage;
-	private IdolPromotionsDetailPage promotionsDetailPage;
     private PromotionService promotionService;
 	private SchedulePromotionService schedulePromotionService;
 
@@ -155,8 +154,8 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		Waits.loadOrFadeWait();
 		schedulePage.finishButton().click();
 
-		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-		verifyThat("Returned to promotions detail page",promotionsDetailPage.promotionTitle().getValue(),is("Spotlight for: chips, ice cream"));
+        final IdolPromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+		verifyThat("Returned to promotions detail page", promotionsDetailPage.promotionTitle().getValue(),is("Spotlight for: chips, ice cream"));
 	}
 
 	private void scheduleClickAndCheck(){

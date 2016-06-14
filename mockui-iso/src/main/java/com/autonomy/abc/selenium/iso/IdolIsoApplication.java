@@ -8,7 +8,6 @@ import com.hp.autonomy.frontend.selenium.control.Window;
 
 
 public class IdolIsoApplication extends IsoApplication<IdolIsoElementFactory> {
-    private Window window;
     private IdolIsoElementFactory factory;
 
     @Override
@@ -18,7 +17,7 @@ public class IdolIsoApplication extends IsoApplication<IdolIsoElementFactory> {
 
     @Override
     public IdolIsoApplication inWindow(Window window) {
-        this.window = window;
+        final Window window1 = window;
         this.factory = new IdolIsoElementFactory(window.getSession().getDriver());
         return this;
     }
