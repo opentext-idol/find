@@ -790,7 +790,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	private List<String> getSynonyms(){
-		final List<String> synonyms = new ArrayList<String>();
+		final List<String> synonyms = new ArrayList<>();
 		synonyms.add("aardvark face tumultuous");
 		synonyms.add("yellow vader nibble");
 		synonyms.add("pistachio unreal");
