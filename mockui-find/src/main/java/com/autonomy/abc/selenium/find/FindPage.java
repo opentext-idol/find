@@ -122,6 +122,10 @@ public class FindPage extends AppElement implements AppPage,
         results.waitForResultsToLoad();
     }
 
+    protected WebElement mainContainer() {
+        return Container.currentTabContents(getDriver());
+    }
+
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {
         @Override
         public FindPage create(final WebDriver context) {

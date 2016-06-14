@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.bi.TableView;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
+import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.login.IdolFindLoginPage;
 import com.autonomy.abc.selenium.find.save.SearchOptionsBar;
@@ -50,5 +51,9 @@ public class IdolFindElementFactory extends FindElementFactory {
 
     public TableView getTableView() {
         return new TableView(getDriver());
+    }
+
+    public ResultsComparisonView getResultsComparison() {
+        return new ResultsComparisonView(getDriver());
     }
 }

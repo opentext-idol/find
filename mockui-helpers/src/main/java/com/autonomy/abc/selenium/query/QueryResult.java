@@ -47,4 +47,13 @@ public abstract class QueryResult {
     protected WebDriver getDriver(){
         return driver;
     }
+
+    @Override
+    public String toString() {
+        try {
+            return this.getClass().getSimpleName() + "<" + getTitleString() + '>';
+        } catch (final Exception e) {
+            return this.getClass().getSimpleName() + "<unknown contents>";
+        }
+    }
 }

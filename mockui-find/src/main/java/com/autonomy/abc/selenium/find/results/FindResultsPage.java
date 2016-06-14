@@ -14,8 +14,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class FindResultsPage extends AppElement implements QueryResultsPage {
+    public FindResultsPage(final WebElement element, WebDriver driver) {
+        super(element, driver);
+    }
+
     public FindResultsPage(final WebDriver driver) {
-        super(driver.findElement(By.className("service-view-container")), driver);
+        this(driver.findElement(By.className("service-view-container")), driver);
     }
 
     @Override
@@ -41,7 +45,7 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
 
     public List<FindResult> getResults() {
         final List<FindResult> results = new ArrayList<>();
-        for (final WebElement result : findElements(By.xpath("//*[starts-with(@class,'main-results-container')]"))) {
+        for (final WebElement result : findElements(By.className("main-results-container"))) {
             results.add(new FindResult(result, getDriver()));
         }
         return results;

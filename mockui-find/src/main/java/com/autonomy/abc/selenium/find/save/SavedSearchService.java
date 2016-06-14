@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.find.save;
 
 import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
+import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 
 public class SavedSearchService {
     private final IdolFindElementFactory elementFactory;
@@ -34,5 +35,12 @@ public class SavedSearchService {
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
         options.openDeleteModal();
         options.confirmDelete();
+    }
+
+    public void compareCurrentWith(String savedSearchName) {
+        ComparisonModal modal = elementFactory.getFindPage().openCompareModal();
+        modal.select(savedSearchName);
+        modal.compareButton().click();
+        modal.waitForComparisonToLoad();
     }
 }
