@@ -3,9 +3,8 @@ define([
     'underscore',
     'jquery',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/util/results-view-container.html',
     'text!find/templates/app/util/content-container.html'
-], function (Backbone, _, $, i18n, viewHtml, contentContainerTemplate) {
+], function (Backbone, _, $, i18n, contentContainerTemplate) {
 
     return Backbone.View.extend({
         contentContainerTemplate: _.template(contentContainerTemplate, {variable: 'data'}),
@@ -18,16 +17,14 @@ define([
         },
 
         render: function() {
-            this.$el.html(viewHtml);
-
-            this.$contentList = this.$('.content-list');
+            this.$tabContent = $('<div class="tab-content"></div>');
 
             var selectedTab = this.model.get('selectedTab');
 
             _.each(this.views, function(viewData) {
                 var $viewElement = $(this.contentContainerTemplate(viewData))
                     .toggleClass('active', viewData.id === selectedTab)
-                    .appendTo(this.$contentList);
+                    .appendTo(this.$tabContent);
 
                 viewData.content = new viewData.Constructor(viewData.constructorArguments);
 
@@ -38,6 +35,7 @@ define([
                 viewData.content.setElement($viewElement);
             }, this);
 
+            this.$el.empty().append(this.$tabContent);
             this.selectTab();
         },
 
@@ -46,8 +44,8 @@ define([
             var viewData = _.findWhere(this.views, {id: tabId});
 
             // Deactivate all tabs and activate the selected tab
-            this.$contentList.find('.tab-pane').removeClass('active');
-            this.$contentList.find('#' + viewData.uniqueId).addClass('active');
+            this.$tabContent.find('.tab-pane').removeClass('active');
+            this.$tabContent.find('#' + viewData.uniqueId).addClass('active');
 
             if (viewData) {
                 if (!viewData.rendered) {
