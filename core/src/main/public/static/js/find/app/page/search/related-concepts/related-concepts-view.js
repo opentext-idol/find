@@ -126,34 +126,34 @@ define([
             // Each instance of this view gets its own bound, de-bounced popover handler
             var handlePopover = _.debounce(_.bind(popoverHandler, this), 500);
 
-            this.listenTo(this.entityCollection, 'reset', function () {
-                if (this.indexesCollection.isEmpty()) {
-                    this.model.set('viewState', ViewState.NOT_LOADING);
-                } else {
-                    if (this.entityCollection.isEmpty()) {
-                        this.model.set('viewState', ViewState.NONE);
+            this.listenTo(this.entityCollection, 'reset update', function () {
+                if (this.entityCollection.isEmpty()) {
+                    if (this.indexesCollection.isEmpty()) {
+                        this.model.set('viewState', ViewState.NOT_LOADING);
                     } else {
-                        this.model.set('viewState', ViewState.LIST);
-
-                        var html = this.entityCollection.chain()
-                            .groupBy(function (model) {
-                                return model.get('cluster');
-                            })
-                            .map(function (models, cluster) {
-                                return clusterTemplateFunction({
-                                    entities: _.map(models, function (model) {
-                                        return model.get('text');
-                                    }),
-                                    cluster: cluster
-                                });
-                            })
-                            .value()
-                            .join('');
-
-                        this.$list.html(html);
-
-                        popover(this.$list.find('.entity-text'), 'hover', handlePopover);
+                        this.model.set('viewState', ViewState.NONE);
                     }
+                } else {
+                    this.model.set('viewState', ViewState.LIST);
+
+                    var html = this.entityCollection.chain()
+                        .groupBy(function (model) {
+                            return model.get('cluster');
+                        })
+                        .map(function (models, cluster) {
+                            return clusterTemplateFunction({
+                                entities: _.map(models, function (model) {
+                                    return model.get('text');
+                                }),
+                                cluster: cluster
+                            });
+                        })
+                        .value()
+                        .join('');
+
+                    this.$list.html(html);
+
+                    popover(this.$list.find('.entity-text'), 'hover', handlePopover);
                 }
             });
 
