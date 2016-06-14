@@ -22,6 +22,7 @@ public abstract class SOPageBase extends AppElement implements AppPage {
             this.returnType = returnType;
         }
 
+        @Override
         public Class<T> getPageType() {
             return returnType;
         }

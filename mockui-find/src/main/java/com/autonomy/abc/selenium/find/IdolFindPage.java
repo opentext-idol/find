@@ -17,6 +17,7 @@ public class IdolFindPage extends FindPage {
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {
+        @Override
         public IdolFindPage create(final WebDriver context) {
             return new IdolFindPage(context);
         }

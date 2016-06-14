@@ -14,10 +14,12 @@ public class IdolIsoUserService extends UserService<IdolIsoElementFactory> {
         super(application);
     }
 
+    @Override
     public IdolUsersPage goToUsers() {
         return getApplication().switchTo(IdolUsersPage.class);
     }
 
+    @Override
     public User changeRole(final User user, final Role newRole) {
         goToUsers().getUserRow(user).changeRoleTo(newRole);
         return new User(user.getAuthProvider(), user.getUsername(), newRole);

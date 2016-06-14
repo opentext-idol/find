@@ -12,6 +12,7 @@ public class IdolPromotionsPage extends PromotionsPage {
             super(IdolPromotionsPage.class);
         }
 
+        @Override
         public IdolPromotionsPage create(final WebDriver context) {
             return new IdolPromotionsPage(context);
         }

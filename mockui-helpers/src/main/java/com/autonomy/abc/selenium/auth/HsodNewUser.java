@@ -20,6 +20,7 @@ public class HsodNewUser implements NewUser {
         this.provider = provider;
     }
 
+    @Override
     public HsodUser createWithRole(final Role role) {
         return new HsodUserBuilder(username)
                 .setEmail(email)

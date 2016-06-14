@@ -20,6 +20,7 @@ public class IdolKeywordsPage extends KeywordsPage {
             super(IdolKeywordsPage.class);
         }
 
+        @Override
         public IdolKeywordsPage create(final WebDriver context) {
             return new IdolKeywordsPage(context);
         }

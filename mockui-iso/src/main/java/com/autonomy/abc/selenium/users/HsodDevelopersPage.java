@@ -33,6 +33,7 @@ public class HsodDevelopersPage extends UsersPage<HsodDeveloperTableRow> {
             super(HsodDevelopersPage.class);
         }
 
+        @Override
         public HsodDevelopersPage create(final WebDriver context) {
             return new HsodDevelopersPage(context);
         }

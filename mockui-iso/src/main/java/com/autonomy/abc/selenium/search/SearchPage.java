@@ -87,7 +87,8 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 
 	protected abstract LanguageDropdown languageDropdown();
 
-	public void selectLanguage(final Language language) {
+	@Override
+    public void selectLanguage(final Language language) {
 		languageDropdown().select(language);
 		waitForSearchLoadIndicatorToDisappear();
 	}

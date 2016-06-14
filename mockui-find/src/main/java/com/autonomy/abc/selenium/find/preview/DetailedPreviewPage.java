@@ -76,6 +76,7 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, DetailedPreviewPage> {
+        @Override
         public DetailedPreviewPage create(final WebDriver context) {
             return new DetailedPreviewPage(context);
         }

@@ -123,6 +123,7 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {
+        @Override
         public FindPage create(final WebDriver context) {
             return new FindPage(context);
         }

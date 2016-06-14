@@ -60,6 +60,7 @@ enum IdolIsoPage implements PageMapper.Page, PageMapper.SwitchStrategy<IsoElemen
         return factory.getPageType();
     }
 
+    @Override
     public Object loadAsObject(final WebDriver driver) {
         return this.factory.create(driver);
     }

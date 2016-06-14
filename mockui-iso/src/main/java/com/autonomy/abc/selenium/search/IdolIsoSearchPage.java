@@ -60,6 +60,7 @@ public class IdolIsoSearchPage extends SearchPage {
             super(IdolIsoSearchPage.class);
         }
 
+        @Override
         public IdolIsoSearchPage create(final WebDriver context) {
             return new IdolIsoSearchPage(context);
         }

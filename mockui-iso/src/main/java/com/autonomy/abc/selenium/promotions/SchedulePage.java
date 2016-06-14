@@ -202,7 +202,8 @@ public class SchedulePage extends SOPageBase {
 			super(SchedulePage.class);
 		}
 
-		public SchedulePage create(final WebDriver context) {
+		@Override
+        public SchedulePage create(final WebDriver context) {
 			SchedulePage.waitForLoad(context);
 			return new SchedulePage(context);
 		}

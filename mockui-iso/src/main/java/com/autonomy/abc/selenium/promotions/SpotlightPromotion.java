@@ -28,6 +28,7 @@ public class SpotlightPromotion extends Promotion {
         return spotlightType.getOption();
     }
 
+    @Override
     public Wizard makeWizard(final CreateNewPromotionsBase createNewPromotionsBase) {
         return new SpotlightPromotionWizard(createNewPromotionsBase);
     }

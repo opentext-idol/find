@@ -52,6 +52,7 @@ public class HsodUsersPage extends UsersPage<HsodUserTableRow> {
             super(HsodUsersPage.class);
         }
 
+        @Override
         public HsodUsersPage create(final WebDriver context) {
             return new HsodUsersPage(context);
         }

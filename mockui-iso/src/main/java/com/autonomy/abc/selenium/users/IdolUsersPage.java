@@ -61,6 +61,7 @@ public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
             super(IdolUsersPage.class);
         }
 
+        @Override
         public IdolUsersPage create(final WebDriver context) {
             return new IdolUsersPage(context);
         }

@@ -45,6 +45,7 @@ public abstract class Wizard implements Action {
 
     public abstract void cancel();
 
+    @Override
     public Object apply() {
         for (final WizardStep wizardStep : steps) {
             wizardStep.apply();

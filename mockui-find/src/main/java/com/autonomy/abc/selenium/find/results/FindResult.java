@@ -38,6 +38,7 @@ public class FindResult extends QueryResult {
 
     private Boolean previewButtonExists(){ return !findElements(By.className("preview-documents-trigger")).isEmpty();}
 
+    @Override
     public DocumentViewer openDocumentPreview(){
         if (previewButtonExists()){
             previewButton().click();

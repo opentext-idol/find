@@ -16,6 +16,7 @@ public class HsodUserCreationModal extends UserCreationModal {
         return new FormInput(findElement(By.className("create-user-email-input")), getDriver());
     }
 
+    @Override
     public void createUser() {
         createButton().click();
         new WebDriverWait(getDriver(), 15)

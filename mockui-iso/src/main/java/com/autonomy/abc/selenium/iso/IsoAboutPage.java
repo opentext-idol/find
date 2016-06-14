@@ -65,7 +65,8 @@ public class IsoAboutPage extends SOPageBase {
 			super(IsoAboutPage.class);
 		}
 
-		public IsoAboutPage create(final WebDriver context) {
+		@Override
+        public IsoAboutPage create(final WebDriver context) {
 			IsoAboutPage.waitForLoad(context);
 			return new IsoAboutPage(context);
 		}

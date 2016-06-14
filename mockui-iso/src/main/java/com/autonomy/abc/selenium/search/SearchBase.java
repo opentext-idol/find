@@ -37,7 +37,8 @@ public abstract class SearchBase extends SOPageBase implements
 		super(element, driver);
 	}
 
-	public WebElement errorContainer() {
+	@Override
+    public WebElement errorContainer() {
 		return findElement(By.cssSelector(".search-results-view .search-information"));
 	}
 
@@ -175,7 +176,8 @@ public abstract class SearchBase extends SOPageBase implements
 	}
 
 	/* indexes/databases */
-	public IndexesTree indexesTree() {
+	@Override
+    public IndexesTree indexesTree() {
 		return new IndexesTree.Factory().create(allIndexes());
 	}
 
@@ -184,11 +186,13 @@ public abstract class SearchBase extends SOPageBase implements
 	}
 
 	/* date filter */
-	public FormInput fromDateInput() {
+	@Override
+    public FormInput fromDateInput() {
 		return dateInput(By.cssSelector("[data-filter-name=\"minDate\"] input"));
 	}
 
-	public FormInput untilDateInput() {
+	@Override
+    public FormInput untilDateInput() {
 		return dateInput(By.cssSelector("[data-filter-name=\"maxDate\"] input"));
 	}
 
@@ -199,11 +203,13 @@ public abstract class SearchBase extends SOPageBase implements
 		return new FormInput(textBox, getDriver());
 	}
 
-	public DatePicker fromDatePicker() {
+	@Override
+    public DatePicker fromDatePicker() {
 		return datePicker(By.cssSelector("[data-filter-name='minDate']"));
 	}
 
-	public DatePicker untilDatePicker() {
+	@Override
+    public DatePicker untilDatePicker() {
 		return datePicker(By.cssSelector("[data-filter-name='maxDate']"));
 	}
 
@@ -349,7 +355,8 @@ public abstract class SearchBase extends SOPageBase implements
 
 	// TODO: move all these waits into an enum
 	// e.g. waitUntilLoaded(SearchBase.Section.PARAMETRIC_VALUES)
-	public void waitForParametricValuesToLoad() {
+	@Override
+    public void waitForParametricValuesToLoad() {
 		new WebDriverWait(getDriver(), 30)
 				.withMessage("loading parametric values list")
 				.until(new ExpectedCondition<Boolean>() {
@@ -373,7 +380,8 @@ public abstract class SearchBase extends SOPageBase implements
 		return ElementUtil.getTexts(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
 	}
 
-	public void filterBy(final QueryFilter filter) {
+	@Override
+    public void filterBy(final QueryFilter filter) {
 		filter.apply(this);
 		Waits.loadOrFadeWait();
 		waitForSearchLoadIndicatorToDisappear();

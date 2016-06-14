@@ -12,6 +12,7 @@ public class PinToPositionPromotion extends Promotion {
         this.position = position;
     }
 
+    @Override
     public String getName() {
         return "pin to position";
     }

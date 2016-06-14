@@ -170,6 +170,7 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, SimilarDocumentsView> {
+        @Override
         public SimilarDocumentsView create(final WebDriver context) {
             return new SimilarDocumentsView(context);
         }

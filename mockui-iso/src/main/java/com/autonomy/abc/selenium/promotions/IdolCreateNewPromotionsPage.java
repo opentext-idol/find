@@ -26,6 +26,7 @@ public class IdolCreateNewPromotionsPage extends CreateNewPromotionsPage {
             super(IdolCreateNewPromotionsPage.class);
         }
 
+        @Override
         public IdolCreateNewPromotionsPage create(final WebDriver context) {
             return new IdolCreateNewPromotionsPage(context);
         }
