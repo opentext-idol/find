@@ -27,7 +27,7 @@ public class PromotionDetailPageITCase extends HybridIsoTestBase {
     private PromotionsDetailPage promotionsDetailPage;
 
 
-    public PromotionDetailPageITCase(TestConfig config) {
+    public PromotionDetailPageITCase(final TestConfig config) {
         super(config);
     }
 
@@ -47,11 +47,11 @@ public class PromotionDetailPageITCase extends HybridIsoTestBase {
 
         SearchPage searchPage = searchService.search(new Query(updateQueryTerm).withFilter(new LanguageFilter(Language.FRENCH)));
         final String updatePromotedResult = searchPage.getSearchResult(1).title().getText();
-        Promotion promotion = new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, initialTrigger);
+        final Promotion promotion = new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, initialTrigger);
         final String initialPromotedResult = promotionService.setUpPromotion(promotion, new Query(initialQueryTerm).withFilter(new LanguageFilter(Language.FRENCH)), 1).get(0);
 
         promotionsDetailPage = promotionService.goToDetails(promotion);
-        PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
+        final PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
         triggerForm.addTrigger(updateTrigger);
         triggerForm.removeTrigger(initialTrigger);
 
@@ -60,7 +60,7 @@ public class PromotionDetailPageITCase extends HybridIsoTestBase {
 
         promotionsDetailPage = promotionService.goToDetails(initialTrigger);
 
-        Editable queryText = promotionsDetailPage.queryText();
+        final Editable queryText = promotionsDetailPage.queryText();
         verifyThat("correct query text displayed", queryText.getValue(), is(initialQueryTerm));
 
         queryText.setValueAndWait(updateQueryTerm);
@@ -78,20 +78,20 @@ public class PromotionDetailPageITCase extends HybridIsoTestBase {
     @Test
     @ResolvedBug("CSA-1494")
     public void testAddingMultipleTriggersNotifications() {
-        Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE,"moscow");
+        final Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE,"moscow");
 
         promotionService.setUpPromotion(promotion, "Mother Russia", 4);
         promotionsDetailPage = promotionService.goToDetails(promotion);
 
-        String[] triggers = {"HC", "Sochi", "CKSA", "SKA", "Dinamo", "Riga"};
+        final String[] triggers = {"HC", "Sochi", "CKSA", "SKA", "Dinamo", "Riga"};
         promotionsDetailPage.getTriggerForm().addTrigger(StringUtils.join(triggers, ' '));
 
         getElementFactory().getTopNavBar().notificationsDropdown();
 
         verifyThat(getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages(), hasItem("Edited a spotlight promotion"));
 
-        for(String notification : getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages()){
-            for(String trigger : triggers){
+        for(final String notification : getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages()){
+            for(final String trigger : triggers){
                 verifyThat(notification, not(containsString(trigger)));
             }
         }
@@ -101,7 +101,7 @@ public class PromotionDetailPageITCase extends HybridIsoTestBase {
     @Test
     @ResolvedBug("CSA-1769")
     public void testUpdatingAndDeletingPinToPosition(){
-        PinToPositionPromotion pinToPositionPromotion = new PinToPositionPromotion(1, "say anything");
+        final PinToPositionPromotion pinToPositionPromotion = new PinToPositionPromotion(1, "say anything");
 
         promotionService.setUpPromotion(pinToPositionPromotion, "Max Bemis", 2);
         promotionsDetailPage = promotionService.goToDetails(pinToPositionPromotion);
@@ -109,7 +109,7 @@ public class PromotionDetailPageITCase extends HybridIsoTestBase {
         promotionsDetailPage.pinPosition().setValueAndWait("4");
         verifyThat(promotionsDetailPage.pinPosition().getValue(), is("4"));
 
-        String newTitle = "Admit It!!!";
+        final String newTitle = "Admit It!!!";
 
         promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
         Waits.loadOrFadeWait();

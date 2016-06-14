@@ -11,7 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
 
 public class HsodUserTableRow extends UserTableRow {
-    public HsodUserTableRow(WebElement element, WebDriver driver) {
+    public HsodUserTableRow(final WebElement element, final WebDriver driver) {
         super(element, driver);
     }
 
@@ -20,8 +20,8 @@ public class HsodUserTableRow extends UserTableRow {
     }
 
     @Override
-    public void changeRoleTo(Role newRole) {
-        Dropdown dropdown = roleDropdown();
+    public void changeRoleTo(final Role newRole) {
+        final Dropdown dropdown = roleDropdown();
         if (newRole.equals(getRole())) {
             dropdown.open();
             dropdown.close();

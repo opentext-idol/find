@@ -13,17 +13,17 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DocumentViewer extends AppElement implements AppPage {
 
-    protected DocumentViewer(WebDriver driver, WebElement element){
+    protected DocumentViewer(final WebDriver driver, final WebElement element){
         super(element,driver);
     }
 
-    private DocumentViewer(WebDriver driver) {
+    private DocumentViewer(final WebDriver driver) {
         super(driver.findElement(By.id("colorbox")), driver);
     }
 
-    public static DocumentViewer make(WebDriver driver) {
+    public static DocumentViewer make(final WebDriver driver) {
 //        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.id("cboxClose")));
-        DocumentViewer documentViewer = new DocumentViewer(driver);
+        final DocumentViewer documentViewer = new DocumentViewer(driver);
         documentViewer.waitForLoad();
         return documentViewer;
     }
@@ -62,10 +62,10 @@ public class DocumentViewer extends AppElement implements AppPage {
         return findElement(By.tagName("iframe"));
     }
 
-    public String getField(String name) {
+    public String getField(final String name) {
         try {
             return findElement(By.xpath(".//th[contains(text(), '" + name + "')]/../td")).getText();
-        } catch (NoSuchElementException e) {
+        } catch (final NoSuchElementException e) {
             return null;
         }
     }
@@ -91,12 +91,12 @@ public class DocumentViewer extends AppElement implements AppPage {
     }
 
     public int getCurrentDocumentNumber() {
-        String[] current = findElement(By.id("cboxCurrent")).getText().split(" ");
+        final String[] current = findElement(By.id("cboxCurrent")).getText().split(" ");
         return Integer.parseInt(current[current.length - 3]);
     }
 
     public int getTotalDocumentsNumber() {
-        String[] current = findElement(By.id("cboxCurrent")).getText().split(" ");
+        final String[] current = findElement(By.id("cboxCurrent")).getText().split(" ");
         return Integer.parseInt(current[current.length - 1]);
     }
 

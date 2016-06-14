@@ -17,15 +17,15 @@ import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 
 public class SharedPreviewTests {
 
-    public static void testDocumentPreviews(Session session, List<? extends QueryResult> searchResults, Index index) {
-        for(QueryResult queryResult : searchResults) {
-            DocumentViewer documentViewer = queryResult.openDocumentPreview();
+    public static void testDocumentPreviews(final Session session, final List<? extends QueryResult> searchResults, final Index index) {
+        for(final QueryResult queryResult : searchResults) {
+            final DocumentViewer documentViewer = queryResult.openDocumentPreview();
             testDocumentPreview(session, documentViewer, index);
             documentViewer.close();
         }
     }
 
-    public static void testDocumentPreview(Session session, DocumentViewer documentViewer, Index index){
+    public static void testDocumentPreview(final Session session, final DocumentViewer documentViewer, final Index index){
         if(index == null){
             verifyThat("index is displayed", documentViewer.getIndex(), not(nullValue()));
         } else {
@@ -36,7 +36,7 @@ public class SharedPreviewTests {
         //TODO this isn't being used on HSOD; CSA-1986 needs to be completed
         //verifyThat("content type is displayed", documentViewer.getContentType(), not(isEmptyOrNullString()));
 
-        String frameText = new Frame(session.getActiveWindow(), documentViewer.frame()).getText();
+        final String frameText = new Frame(session.getActiveWindow(), documentViewer.frame()).getText();
 
         verifyThat("frame has content", frameText, not(isEmptyOrNullString()));
         verifyThat(frameText, not(containsString("server error")));
@@ -44,17 +44,17 @@ public class SharedPreviewTests {
         testOpenInNewTabFromViewer(session, documentViewer);
     }
 
-    public static void testDocumentPreview(Session session, DocumentViewer documentViewer){
+    public static void testDocumentPreview(final Session session, final DocumentViewer documentViewer){
         testDocumentPreview(session, documentViewer, null);
     }
 
-    public static void testOpenInNewTabFromViewer(Session session, DocumentViewer documentViewer){
-        String reference = documentViewer.getReference();
+    public static void testOpenInNewTabFromViewer(final Session session, final DocumentViewer documentViewer){
+        final String reference = documentViewer.getReference();
 
-        Window original = session.getActiveWindow();
+        final Window original = session.getActiveWindow();
         documentViewer.openInNewTab();
         Waits.loadOrFadeWait();
-        Window newWindow = session.switchWindow(session.countWindows() - 1);
+        final Window newWindow = session.switchWindow(session.countWindows() - 1);
         newWindow.activate();
 
         verifyThat(reference,containsString(session.getDriver().getCurrentUrl()));

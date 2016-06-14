@@ -12,7 +12,7 @@ import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.openqa.selenium.WebDriver;
 
 public class IdolFindElementFactory extends FindElementFactory {
-    IdolFindElementFactory(WebDriver driver) {
+    IdolFindElementFactory(final WebDriver driver) {
         super(driver);
     }
 

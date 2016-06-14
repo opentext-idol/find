@@ -12,24 +12,24 @@ public class HodAuthenticationStrategy implements AuthenticationStrategy {
     private final Factory<WebDriver> factory;
     private final GoesToAuthPage strategy;
 
-    public HodAuthenticationStrategy(Factory<WebDriver> driverFactory, GoesToAuthPage authStrategy) {
+    public HodAuthenticationStrategy(final Factory<WebDriver> driverFactory, final GoesToAuthPage authStrategy) {
         factory = driverFactory;
         strategy = authStrategy;
     }
 
     @Override
-    public void authenticate(User user) {
-        WebDriver driver = factory.create();
+    public void authenticate(final User user) {
+        final WebDriver driver = factory.create();
 
         try {
             strategy.tryGoingToAuthPage(driver);
-            LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
+            final LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
             try {
                 loginPage.loginWith(user.getAuthProvider());
-            } catch (TimeoutException e) {
+            } catch (final TimeoutException e) {
             /* already signed in to auth account */
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         } finally {
             driver.quit();
@@ -37,7 +37,7 @@ public class HodAuthenticationStrategy implements AuthenticationStrategy {
     }
 
     @Override
-    public void cleanUp(WebDriver driver) {
+    public void cleanUp(final WebDriver driver) {
         strategy.cleanUp(driver);
     }
 }

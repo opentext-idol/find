@@ -22,7 +22,7 @@ public class StaticPromotionsCoreITCase extends IsoHsodTestBase {
     private HsodPromotionService promotionService;
     private SearchService searchService;
 
-    public StaticPromotionsCoreITCase(TestConfig config) {
+    public StaticPromotionsCoreITCase(final TestConfig config) {
         super(config);
     }
 
@@ -39,9 +39,9 @@ public class StaticPromotionsCoreITCase extends IsoHsodTestBase {
 
     @Test
     public void testCreateStaticPromotion() {
-        StaticPromotion promotion = new StaticPromotion("body", "content", "qwmbgh");
+        final StaticPromotion promotion = new StaticPromotion("body", "content", "qwmbgh");
         promotionService.setUpStaticPromotion(promotion);
-        SearchPage searchPage = searchService.search(promotion.getTrigger());
+        final SearchPage searchPage = searchService.search(promotion.getTrigger());
         assertThat(searchPage.getPromotedDocumentTitles(false), not(empty()));
     }
 }

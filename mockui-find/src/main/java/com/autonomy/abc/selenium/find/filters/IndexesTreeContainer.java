@@ -9,7 +9,7 @@ import java.util.List;
 
 class IndexesTreeContainer extends FilterContainer {
 
-    IndexesTreeContainer(WebElement element, WebDriver webDriver){
+    IndexesTreeContainer(final WebElement element, final WebDriver webDriver){
         super(element,webDriver);
     }
 

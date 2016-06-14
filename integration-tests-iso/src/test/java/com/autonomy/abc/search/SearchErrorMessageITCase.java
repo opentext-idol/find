@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.not;
 public class SearchErrorMessageITCase extends HybridIsoTestBase {
     private SearchService searchService;
 
-    public SearchErrorMessageITCase(TestConfig config) {
+    public SearchErrorMessageITCase(final TestConfig config) {
         super(config);
     }
 
@@ -45,7 +45,7 @@ public class SearchErrorMessageITCase extends HybridIsoTestBase {
     @ResolvedBug("CCUK-3741")
     @ActiveBug(value = "HOD-2170", type = ApplicationType.HOSTED)
     public void testSearchQuotationMarks() {
-        @RelatedTo("CCUK-3747")
+        @RelatedTo("CCUK-3747") final
         Serializable error = isHosted() ?
                 Errors.Search.INVALID : Errors.Search.QUOTES;
         new QueryTestHelper<>(searchService).mismatchedQuoteQueryText(error);
@@ -54,10 +54,10 @@ public class SearchErrorMessageITCase extends HybridIsoTestBase {
     @Test
     @ResolvedBug("CCUK-3741")
     public void testQueriesWithNoTerms() {
-        @RelatedTo("CCUK-3747")
+        @RelatedTo("CCUK-3747") final
         Serializable booleanError = isHosted() ?
                 Errors.Search.INVALID : Errors.Search.OPENING_BOOL;
-        Serializable emptyError = isHosted() ?
+        final Serializable emptyError = isHosted() ?
                 Errors.Search.INVALID : Errors.Search.NO_TEXT;
 
         new QueryTestHelper<>(searchService).booleanOperatorQueryText(booleanError);
@@ -67,8 +67,8 @@ public class SearchErrorMessageITCase extends HybridIsoTestBase {
     @Test
     public void testQueryAnalysisForBadQueries() {
         for (final String term : QueryTestHelper.NO_TERMS) {
-            Query query = new Query(term).withFilter(new LanguageFilter(Language.ENGLISH));
-            String error = searchService.search(query).getKeywordError();
+            final Query query = new Query(term).withFilter(new LanguageFilter(Language.ENGLISH));
+            final String error = searchService.search(query).getKeywordError();
             assertThat(error, not(isEmptyOrNullString()));
             assertThat(error, containsString(Errors.Keywords.NO_TERMS));
         }

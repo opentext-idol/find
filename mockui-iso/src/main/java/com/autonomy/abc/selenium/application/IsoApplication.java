@@ -35,7 +35,7 @@ public abstract class IsoApplication<T extends IsoElementFactory> implements App
         return loginService;
     }
 
-    public <S extends AppPage> S switchTo(Class<S> pageType) {
+    public <S extends AppPage> S switchTo(final Class<S> pageType) {
         elementFactory().handleSwitch(pageType);
         return elementFactory().loadPage(pageType);
     }
@@ -45,7 +45,7 @@ public abstract class IsoApplication<T extends IsoElementFactory> implements App
         return "Search";
     }
 
-    public static IsoApplication<?> ofType(ApplicationType type) {
+    public static IsoApplication<?> ofType(final ApplicationType type) {
         switch (type) {
             case HOSTED:
                 return new IsoHsodApplication();

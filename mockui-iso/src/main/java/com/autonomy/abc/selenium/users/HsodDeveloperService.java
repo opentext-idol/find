@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HsodDeveloperService extends ServiceBase<IsoHsodElementFactory> {
 
-    public HsodDeveloperService(IsoApplication<? extends IsoHsodElementFactory> application){
+    public HsodDeveloperService(final IsoApplication<? extends IsoHsodElementFactory> application){
         super(application);
     }
 
@@ -21,7 +21,7 @@ public class HsodDeveloperService extends ServiceBase<IsoHsodElementFactory> {
         return devsPage;
     }
 
-    public User editUsername(User user, String newUsername) {
+    public User editUsername(final User user, final String newUsername) {
         goToDevs().getUserRow(user).changeUsernameTo(newUsername);
         Waits.loadOrFadeWait();
         return new HsodUserBuilder(user)

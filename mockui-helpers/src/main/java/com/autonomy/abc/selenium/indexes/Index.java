@@ -13,22 +13,22 @@ public class Index {
 
     public final static Index DEFAULT = new Index("default_index", "Default Index");
 
-    public Index(String name) {
+    public Index(final String name) {
         this.name = name;
         this.displayName = null;
     }
 
-    public Index(String name, String displayName) {
+    public Index(final String name, final String displayName) {
         this.name = name;
         this.displayName = displayName;
     }
 
-    public Index withParametricFields(Collection<String> fields) {
+    public Index withParametricFields(final Collection<String> fields) {
         parametricFields.addAll(fields);
         return this;
     }
 
-    public Index withIndexFields(Collection<String> fields) {
+    public Index withIndexFields(final Collection<String> fields) {
         indexFields.addAll(fields);
         return this;
     }
@@ -54,7 +54,7 @@ public class Index {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if(obj instanceof Index){
             if (((Index) obj).getName().equals(getName())){
                 return true;

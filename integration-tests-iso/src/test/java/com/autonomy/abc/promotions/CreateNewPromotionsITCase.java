@@ -50,10 +50,10 @@ public class CreateNewPromotionsITCase extends HybridIsoTestBase {
     private PromotionService promotionService;
     private TriggerForm triggerForm;
 
-    private List<String> goToWizard(String query, int numberOfDocs) {
+    private List<String> goToWizard(final String query, final int numberOfDocs) {
         searchPage = searchService.search(query);
         searchPage.openPromotionsBucket();
-        List<String> promotedDocTitles = searchPage.addDocsToBucket(numberOfDocs);
+        final List<String> promotedDocTitles = searchPage.addDocsToBucket(numberOfDocs);
         DriverUtil.waitUntilClickableThenClick(getDriver(), searchPage.promoteTheseItemsButton());
         createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         return promotedDocTitles;
@@ -65,7 +65,7 @@ public class CreateNewPromotionsITCase extends HybridIsoTestBase {
     }
 
     private void goToTriggerStep() {
-        Promotion promotion = new PinToPositionPromotion(2, "");
+        final Promotion promotion = new PinToPositionPromotion(2, "");
         wizard = promotion.makeWizard(createPromotionsPage);
         wizard.getCurrentStep().apply();
         wizard.next();
@@ -144,7 +144,7 @@ public class CreateNewPromotionsITCase extends HybridIsoTestBase {
         getElementFactory().getSideNavBar().toggle();
     }
 
-    private void trySendKeysToPinPosition(CharSequence... keys) {
+    private void trySendKeysToPinPosition(final CharSequence... keys) {
         try {
             createPromotionsPage.pinToPositionInput().sendKeys(keys);
         } catch (final WebDriverException e) {
@@ -186,12 +186,12 @@ public class CreateNewPromotionsITCase extends HybridIsoTestBase {
     }
 
     private void addSpotlightPromotion(final Promotion.SpotlightType spotlightType, final String searchTrigger) {
-        Promotion promotion = new SpotlightPromotion(spotlightType, searchTrigger);
+        final Promotion promotion = new SpotlightPromotion(spotlightType, searchTrigger);
 
         wizard = promotion.makeWizard(createPromotionsPage);
         for (int i=0; i<wizard.getSteps().size(); i++) {
             verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
-            WebElement button;
+            final WebElement button;
             if (wizard.onFinalStep()) {
                 button = createPromotionsPage.finishButton();
             } else {
@@ -258,7 +258,7 @@ public class CreateNewPromotionsITCase extends HybridIsoTestBase {
         for (int i=0; i<wizard.getSteps().size(); i++) {
             verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
 
-            WebElement button;
+            final WebElement button;
             if (wizard.onFinalStep()) {
                 button = createPromotionsPage.finishButton();
             } else {
@@ -302,7 +302,7 @@ public class CreateNewPromotionsITCase extends HybridIsoTestBase {
     public void testWizardCancelButtonAfterClickingNavBarToggleButton() {
         verifyThat(getWindow(), url(endsWith("promotions/create")));
         toggleAndCancel();
-        SpotlightPromotion spotlight = new SpotlightPromotion("whatever");
+        final SpotlightPromotion spotlight = new SpotlightPromotion("whatever");
         wizard = spotlight.makeWizard(createPromotionsPage);
         wizard.getCurrentStep().apply();
         wizard.next();
@@ -312,7 +312,7 @@ public class CreateNewPromotionsITCase extends HybridIsoTestBase {
             toggleAndCancel();
 
             for (final Promotion.SpotlightType spotlightType : Promotion.SpotlightType.values()) {
-                SpotlightPromotion promotion = new SpotlightPromotion(spotlightType, "whatever");
+                final SpotlightPromotion promotion = new SpotlightPromotion(spotlightType, "whatever");
                 wizard = promotion.makeWizard(createPromotionsPage);
                 wizard.getCurrentStep().apply();
                 wizard.next();
@@ -322,7 +322,7 @@ public class CreateNewPromotionsITCase extends HybridIsoTestBase {
                 toggleAndCancel();
             }
 
-            PinToPositionPromotion promotion = new PinToPositionPromotion(2, "whatever");
+            final PinToPositionPromotion promotion = new PinToPositionPromotion(2, "whatever");
             wizard = promotion.makeWizard(createPromotionsPage);
             verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
             toggleAndCancel();
@@ -341,8 +341,8 @@ public class CreateNewPromotionsITCase extends HybridIsoTestBase {
     @RelatedTo("CSA-893")
     public void testNotificationsForPromotions() {
         final List<Promotion> promotions = new ArrayList<>();
-        for (Promotion.SpotlightType type : Promotion.SpotlightType.values()) {
-            String trigger = "MyFirstNotification" + type.getOption().replaceAll("\\s+", "");
+        for (final Promotion.SpotlightType type : Promotion.SpotlightType.values()) {
+            final String trigger = "MyFirstNotification" + type.getOption().replaceAll("\\s+", "");
             promotions.add(new SpotlightPromotion(type, trigger));
         }
 

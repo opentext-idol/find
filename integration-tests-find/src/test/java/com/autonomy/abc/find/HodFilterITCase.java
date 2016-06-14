@@ -31,7 +31,7 @@ public class HodFilterITCase extends HsodFindTestBase {
     private FindResultsPage results;
     private FindService findService;
 
-    public HodFilterITCase(TestConfig config) {
+    public HodFilterITCase(final TestConfig config) {
         super(config);
     }
 
@@ -52,11 +52,11 @@ public class HodFilterITCase extends HsodFindTestBase {
         checkContentTypeFilter("TEXT/HTML", "html");
     }
 
-    private void checkContentTypeFilter(String filterType, String extension) {
-        Query query = new Query("red star")
+    private void checkContentTypeFilter(final String filterType, final String extension) {
+        final Query query = new Query("red star")
                 .withFilter(new ParametricFilter("Content Type", filterType));
         findService.search(query);
-        for(String type : results.getDisplayedDocumentsDocumentTypes()){
+        for(final String type : results.getDisplayedDocumentsDocumentTypes()){
             assertThat(type, containsString(extension));
         }
     }
@@ -65,10 +65,10 @@ public class HodFilterITCase extends HsodFindTestBase {
     public void testFileTypes(){
         findService.search("love ");
 
-        for(FileType f : FileType.values()) {
+        for(final FileType f : FileType.values()) {
             findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
 
-            for(FindResult result : results.getResults()){
+            for(final FindResult result : results.getResults()){
                 assertThat(result.icon().getAttribute("class"), containsString(f.getFileIconString()));
             }
 
@@ -79,7 +79,7 @@ public class HodFilterITCase extends HsodFindTestBase {
     @Test
     @ActiveBug("CCUK-3641")
     public void testAuthor(){
-        String author = "FIFA.COM";
+        final String author = "FIFA.COM";
 
         findService.search(new Query("football")
                 .withFilter(new IndexFilter("fifa"))
@@ -87,10 +87,10 @@ public class HodFilterITCase extends HsodFindTestBase {
 
         assertThat(results.resultsDiv(), not(containsText(Errors.Find.GENERAL)));
 
-        List<FindResult> searchResults = results.getResults();
+        final List<FindResult> searchResults = results.getResults();
 
         for(int i = 0; i < 6; i++){
-            DocumentViewer documentViewer = searchResults.get(i).openDocumentPreview();
+            final DocumentViewer documentViewer = searchResults.get(i).openDocumentPreview();
             verifyThat(documentViewer.getAuthor(), equalToIgnoringCase(author));
             documentViewer.close();
         }
@@ -118,7 +118,7 @@ public class HodFilterITCase extends HsodFindTestBase {
         private final String sidebarString;
         private final String fileIconString;
 
-        FileType(String sidebarString, String fileIconString){
+        FileType(final String sidebarString, final String fileIconString){
             this.sidebarString = sidebarString;
             this.fileIconString = fileIconString;
         }

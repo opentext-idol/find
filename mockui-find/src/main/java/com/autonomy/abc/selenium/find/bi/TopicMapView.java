@@ -14,7 +14,7 @@ public class TopicMapView {
     private final WebDriver driver;
     private final WebElement container;
 
-    public TopicMapView(WebDriver driver) {
+    public TopicMapView(final WebDriver driver) {
         this.driver = driver;
         this.container = driver.findElement(By.className("service-view-container"));
     }
@@ -51,9 +51,9 @@ public class TopicMapView {
     }
 
     //adds text from input fraction of map and clicks each
-    public List<String> clickEntitiesAndAddText(int fraction){
-         List<String> addedConcepts = new ArrayList<>();
-         int max = mapEntities().size() - 1;
+    public List<String> clickEntitiesAndAddText(final int fraction){
+         final List<String> addedConcepts = new ArrayList<>();
+         final int max = mapEntities().size() - 1;
          for(int i=0; i<mapEntities().size()/fraction;i++){
              waitForReload();
              addedConcepts.add(mapEntityTextElements().get(i).getText().replace(" ","").toLowerCase());
@@ -74,11 +74,11 @@ public class TopicMapView {
         return driver;
     }
 
-    private WebElement findElement(By locator) {
+    private WebElement findElement(final By locator) {
         return container.findElement(locator);
     }
 
-    private List<WebElement> findElements(By locator) {
+    private List<WebElement> findElements(final By locator) {
         return container.findElements(locator);
     }
  }

@@ -8,23 +8,23 @@ import org.openqa.selenium.WebElement;
 public class FieldTextFilter implements QueryFilter {
     private final String fieldText;
 
-    public FieldTextFilter(String fieldText) {
+    public FieldTextFilter(final String fieldText) {
         this.fieldText = fieldText;
     }
 
     @Override
-    public void apply(QueryFilter.Filterable page) {
+    public void apply(final QueryFilter.Filterable page) {
         if (page instanceof SearchBase) {
-            SearchBase searchBase = (SearchBase) page;
+            final SearchBase searchBase = (SearchBase) page;
             searchBase.expand(SearchBase.Facet.FIELD_TEXT);
             try {
                 searchBase.fieldTextAddButton().click();
                 Waits.loadOrFadeWait();
-            } catch (ElementNotVisibleException e) {
+            } catch (final ElementNotVisibleException e) {
 			/* already clicked */
             }
 
-            WebElement editButton = searchBase.fieldTextEditButton();
+            final WebElement editButton = searchBase.fieldTextEditButton();
 
             if(editButton.isDisplayed()) {
                 searchBase.fieldTextEditButton().click();
@@ -34,7 +34,7 @@ public class FieldTextFilter implements QueryFilter {
         }
     }
 
-    public void clear(QueryFilter.Filterable page) {
+    public void clear(final QueryFilter.Filterable page) {
         if (page instanceof SearchBase) {
             ((SearchBase) page).clearFieldText();
         }

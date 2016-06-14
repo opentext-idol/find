@@ -9,7 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class IdolUserTableRow extends UserTableRow {
-    public IdolUserTableRow(WebElement element, WebDriver driver) {
+    public IdolUserTableRow(final WebElement element, final WebDriver driver) {
         super(element, driver);
     }
 
@@ -19,7 +19,7 @@ public class IdolUserTableRow extends UserTableRow {
     }
 
     @Override
-    public void changeUsernameTo(String newUsername) {
+    public void changeUsernameTo(final String newUsername) {
         usernameEditBox();
     }
 
@@ -29,7 +29,7 @@ public class IdolUserTableRow extends UserTableRow {
     }
 
     @Override
-    public void changeRoleTo(Role newRole) {
+    public void changeRoleTo(final Role newRole) {
         roleLink().click();
         setRoleValue(newRole);
         submitPendingEdit();
@@ -40,7 +40,7 @@ public class IdolUserTableRow extends UserTableRow {
         return findElement(By.cssSelector(".role"));
     }
 
-    private void setRoleValue(Role newRole) {
+    private void setRoleValue(final Role newRole) {
         findElement(By.cssSelector(".input-admin")).findElement(By.xpath(".//*[text() = '" + newRole + "']")).click();
     }
 

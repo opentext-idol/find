@@ -9,7 +9,7 @@ import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
 
 public abstract class UserService<T extends IsoElementFactory> extends ServiceBase<T> {
-    public UserService(IsoApplication<? extends T> application) {
+    public UserService(final IsoApplication<? extends T> application) {
         super(application);
     }
 
@@ -17,8 +17,8 @@ public abstract class UserService<T extends IsoElementFactory> extends ServiceBa
     public abstract User changeRole(User user, Role newRole);
     protected abstract void deleteUserInRow(UserTableRow row);
 
-    public User createNewUser(NewUser newUser, Role role){
-        UsersPage usersPage = goToUsers();
+    public User createNewUser(final NewUser newUser, final Role role){
+        final UsersPage usersPage = goToUsers();
         usersPage.createUserButton().click();
         try {
             return usersPage.addNewUser(newUser, role);
@@ -27,14 +27,14 @@ public abstract class UserService<T extends IsoElementFactory> extends ServiceBa
         }
     }
 
-    public void deleteUser(User user){
-        UsersPage<?> usersPage = goToUsers();
+    public void deleteUser(final User user){
+        final UsersPage<?> usersPage = goToUsers();
         deleteUserInRow(usersPage.getUserRow(user));
     }
 
     public void deleteOtherUsers(){
-        UsersPage<?> usersPage = goToUsers();
-        for (UserTableRow row : usersPage.getTable()) {
+        final UsersPage<?> usersPage = goToUsers();
+        for (final UserTableRow row : usersPage.getTable()) {
             if (row.canDeleteUser()) {
                 deleteUserInRow(row);
             }

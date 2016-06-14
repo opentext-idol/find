@@ -10,7 +10,7 @@ public class IsoHsodApplication extends IsoApplication<IsoHsodElementFactory> {
     private IsoHsodElementFactory factory;
 
     @Override
-    public IsoHsodApplication inWindow(Window window) {
+    public IsoHsodApplication inWindow(final Window window) {
         this.factory = new IsoHsodElementFactory(window.getSession().getDriver());
         return this;
     }

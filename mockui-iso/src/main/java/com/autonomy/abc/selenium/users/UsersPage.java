@@ -23,7 +23,7 @@ public abstract class UsersPage<T extends UserTableRow> extends SOPageBase {
 	}
 
 	public int getUserCountInTitle() {
-		String title = getDriver().findElement(By.tagName("h1")).getText();
+		final String title = getDriver().findElement(By.tagName("h1")).getText();
 		return Integer.parseInt(title.replaceAll("\\D+", ""));
 	}
 
@@ -53,11 +53,11 @@ public abstract class UsersPage<T extends UserTableRow> extends SOPageBase {
 		return getTable().getUsernames();
 	}
 
-	public T getUserRow(User user) {
+	public T getUserRow(final User user) {
 		return getTable().rowFor(user);
 	}
 
-	public Role getRoleOf(User user) {
+	public Role getRoleOf(final User user) {
 		return getUserRow(user).getRole();
 	}
 
@@ -66,7 +66,7 @@ public abstract class UsersPage<T extends UserTableRow> extends SOPageBase {
 		waitForLoad(getDriver());
 	}
 
-	private static void waitForLoad(WebDriver driver) {
+	private static void waitForLoad(final WebDriver driver) {
 		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.id("create-user")));
 	}
 }

@@ -12,7 +12,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 public class IsoSearchResult extends QueryResult {
-    public IsoSearchResult(WebElement result, WebDriver driver){
+    public IsoSearchResult(final WebElement result, final WebDriver driver){
         super(result, driver);
     }
 
@@ -48,7 +48,7 @@ public class IsoSearchResult extends QueryResult {
         if (!dateString.isEmpty()) {
             try {
                 date = SearchBase.RESULT_DATE_FORMAT.parse(dateString.split(", ")[1]);
-            } catch (ParseException e) {
+            } catch (final ParseException e) {
                 /* NOOP */
             }
         }

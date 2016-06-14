@@ -7,7 +7,7 @@ import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 
 class UserConfigParserFactory implements ParametrizedFactory<ApplicationType, UserConfigParser<JsonNode>> {
     @Override
-    public UserConfigParser<JsonNode> create(ApplicationType context) {
+    public UserConfigParser<JsonNode> create(final ApplicationType context) {
         switch (context) {
             case HOSTED:
                 return new HsodUserConfigParser();

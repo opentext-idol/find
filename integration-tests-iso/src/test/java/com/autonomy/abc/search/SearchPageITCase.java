@@ -66,15 +66,15 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		searchPage = searchService.search("example");
 	}
 
-	private void search(String searchTerm){
+	private void search(final String searchTerm){
 		logger.info("Searching for: '" + searchTerm + "'");
 		searchPage = searchService.search(searchTerm);
 	}
 
 	@Test
 	public void testSearchHeading(){
-		List<String> terms = Arrays.asList("dog", "cat", "ElEPhanT");
-		for (String term : terms) {
+		final List<String> terms = Arrays.asList("dog", "cat", "ElEPhanT");
+		for (final String term : terms) {
 			search(term);
 			assertThat(searchPage.getHeadingSearchTerm(), is(term));
 		}
@@ -215,14 +215,14 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		verifyRemovingFinalItem(doc1, doc1Index);
 	}
 
-	private void verifyRemovingFirstItem(String toRemove, int number) {
+	private void verifyRemovingFirstItem(final String toRemove, final int number) {
 		searchPage.deleteDocFromWithinBucket(toRemove);
 		assertThat(searchPage.getBucketTitles(), hasSize(1));
 		assertThat(searchPage.getBucketTitles(), not(hasItem(equalToIgnoringCase(toRemove))));
 		assertThat(searchPage.searchResultCheckbox(number), not(checked()));
 	}
 
-	private void verifyRemovingFinalItem(String toRemove, int number) {
+	private void verifyRemovingFinalItem(final String toRemove, final int number) {
 		searchPage.deleteDocFromWithinBucket(toRemove);
 		assertThat(searchPage.getBucketTitles(), empty());
 		assertThat(searchPage.searchResultCheckbox(number), not(checked()));
@@ -266,8 +266,8 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	// TODO: after CCUK-3728 use SharedPreviewTests
 	@RelatedTo("CCUK-3728")
 	private void checkViewResult() {
-		DocumentViewer docViewer = DocumentViewer.make(getDriver());
-		Frame frame = new Frame(getWindow(), docViewer.frame());
+		final DocumentViewer docViewer = DocumentViewer.make(getDriver());
+		final Frame frame = new Frame(getWindow(), docViewer.frame());
 
 		verifyThat(frame.getText(), not(isEmptyOrNullString()));
 		docViewer.close();
@@ -278,7 +278,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
 		assertThat(searchPage.fieldTextAddButton(), displayed());
 
-		WebElement fieldTextInputElement = searchPage.fieldTextInput().getElement();
+		final WebElement fieldTextInputElement = searchPage.fieldTextInput().getElement();
 
 		searchPage.fieldTextAddButton().click();
 		assertThat(searchPage.fieldTextAddButton(), not(displayed()));
@@ -319,7 +319,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		verifyThat(orCount, is(unquotedCount));
 	}
 
-	private int getResultCount(String searchTerm) {
+	private int getResultCount(final String searchTerm) {
 		search(searchTerm);
 		return searchPage.getHeadingResultsCount();
 	}
@@ -358,9 +358,9 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		checkWeightsForPages(5);
 	}
 
-	private void checkWeightsForPages(int numberOfPages) {
-		List<Float> weights = searchPage.getWeightsOnPage(numberOfPages);
-		List<Float> sortedWeights = new ArrayList<>(weights);
+	private void checkWeightsForPages(final int numberOfPages) {
+		final List<Float> weights = searchPage.getWeightsOnPage(numberOfPages);
+		final List<Float> sortedWeights = new ArrayList<>(weights);
 		Collections.sort(sortedWeights, Collections.reverseOrder());
 		assertThat(sortedWeights, equalTo(weights));
 	}
@@ -398,9 +398,9 @@ public class SearchPageITCase extends HybridIsoTestBase {
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 
 			assertThat(topNavBar.getSearchBarText(), is(queryText));
-			List<String> words = new ArrayList<>();
+			final List<String> words = new ArrayList<>();
 			// HACK: avoid stopwords
-			for (String word : queryText.split("\\s+")) {
+			for (final String word : queryText.split("\\s+")) {
 				if (word.length() > 3) {
 					words.add(word);
 				}
@@ -456,16 +456,16 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		verifyTicks(false, true);
 	}
 
-	private void verifyResultCounts(SOCheckbox checked, int expectedResults){
-		int resultsTotal = ((searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE) + searchPage.visibleDocumentsCount();
-		int checkboxResults = checked.getResultsCount();
+	private void verifyResultCounts(final SOCheckbox checked, final int expectedResults){
+		final int resultsTotal = ((searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE) + searchPage.visibleDocumentsCount();
+		final int checkboxResults = checked.getResultsCount();
 
 		verifyThat(searchPage.getHeadingResultsCount(), is(expectedResults));
 		verifyThat(resultsTotal, is(expectedResults));
 		verifyThat(checkboxResults, is(expectedResults));
 	}
 
-	private void verifyTicks(boolean plainChecked, boolean simpsonsChecked) {
+	private void verifyTicks(final boolean plainChecked, final boolean simpsonsChecked) {
 		verifyThat(plainTextCheckbox().isChecked(), is(plainChecked));
 		verifyThat(simpsonsArchiveCheckbox().isChecked(), is(simpsonsChecked));
 	}
@@ -475,7 +475,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 			Waits.loadOrFadeWait();
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 			searchPage.switchResultsPage(Pagination.LAST);
-		} catch (WebDriverException e) {
+		} catch (final WebDriverException e) {
 			/* Already on last page */
 		}
 	}
@@ -490,19 +490,19 @@ public class SearchPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testSearchTermHighlightedInResults() {
-		String searchTerm = "Tiger";
+		final String searchTerm = "Tiger";
 
 		search(searchTerm);
 
 		for(int i = 0; i < 3; i++) {
-			for (WebElement searchElement : getDriver().findElements(By.xpath("//div[contains(@class,'search-results-view')]//p//*[contains(text(),'" + searchTerm + "')]"))) {
+			for (final WebElement searchElement : getDriver().findElements(By.xpath("//div[contains(@class,'search-results-view')]//p//*[contains(text(),'" + searchTerm + "')]"))) {
 				if (searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
 					verifyThat(searchElement.getText(), containsString(searchTerm));
 				}
 				verifyThat(searchElement.getTagName(), is("a"));
 				verifyThat(searchElement.getAttribute("class"), is("query-text"));
 
-				WebElement parent = searchElement.findElement(By.xpath(".//.."));
+				final WebElement parent = searchElement.findElement(By.xpath(".//.."));
 				verifyThat(parent.getTagName(), is("span"));
 				verifyThat(parent.getAttribute("class"), containsString("label"));
 			}
@@ -515,7 +515,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	public void testParametricLabelsNotUndefined(){
 		searchService.search(new Query("simpsons").withFilter(new ParametricFilter("Content Type", "TEXT/HTML")));
 
-		for(WebElement filter : searchPage.findElements(By.cssSelector(".filter-display-view span"))){
+		for(final WebElement filter : searchPage.findElements(By.cssSelector(".filter-display-view span"))){
 			assertThat(filter.getText().toLowerCase(),not(containsString("undefined")));
 		}
 	}
@@ -529,7 +529,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		//Hopefully less important documents will be on the last page
 		searchPage.switchResultsPage(Pagination.LAST);
 		int results = searchPage.getHeadingResultsCount();
-		String deletedDoc = searchPage.getSearchResult(1).getTitleString();
+		final String deletedDoc = searchPage.getSearchResult(1).getTitleString();
 
 		// Might wanna check this doesn't come up --- hp-icon hp-trash hp-lg fa-spin fa-circle-o-notch
 		searchService.deleteDocument(deletedDoc);
@@ -540,8 +540,8 @@ public class SearchPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testIndexSelection() {
-		Index firstIndex;
-		Index secondIndex;
+		final Index firstIndex;
+		final Index secondIndex;
 		if (isOnPrem()) {
 			firstIndex = new Index("WikiEnglish");
 			secondIndex = new Index("Wookiepedia");
@@ -549,13 +549,13 @@ public class SearchPageITCase extends HybridIsoTestBase {
 			firstIndex = new Index("news_eng");
 			secondIndex = new Index("news_ger");
 		}
-		List<Index> selected = new ArrayList<>();
+		final List<Index> selected = new ArrayList<>();
 
 		searchService.search(
 				new Query("car")
 						.withFilter(new LanguageFilter(Language.ENGLISH))
 						.withFilter(IndexFilter.ALL));
-		IndexesTree indexesTree = searchPage.indexesTree();
+		final IndexesTree indexesTree = searchPage.indexesTree();
 
 		assertThat(indexesTree.allIndexes(), selected());
 		assertThat(indexesTree, everyItem(selected()));
@@ -587,34 +587,34 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	private Matcher<IndexNodeElement> selected() {
 		return new TypeSafeMatcher<IndexNodeElement>() {
 			@Override
-			protected boolean matchesSafely(IndexNodeElement indexNodeElement) {
+			protected boolean matchesSafely(final IndexNodeElement indexNodeElement) {
 				return indexNodeElement.isSelected();
 			}
 
 			@Override
-			public void describeTo(Description description) {
+			public void describeTo(final Description description) {
 				description.appendText("selected");
 			}
 		};
 	}
 
-	private void checkIndexes(List<Index> selected) {
-		IndexesTree indexesTree = searchPage.indexesTree();
+	private void checkIndexes(final List<Index> selected) {
+		final IndexesTree indexesTree = searchPage.indexesTree();
 		assertThat(indexesTree.getSelected(), hasSize(selected.size()));
 		assertThat(indexesTree.getSelected(), containsItems(selected));
 	}
 
-	private void selectIndex(Index toSelect, List<Index> selected) {
+	private void selectIndex(final Index toSelect, final List<Index> selected) {
 		searchPage.indexesTree().select(toSelect);
 		selected.add(toSelect);
 	}
 
-	private void deselectIndex(Index toDeselect, List<Index> selected) {
+	private void deselectIndex(final Index toDeselect, final List<Index> selected) {
 		searchPage.indexesTree().deselect(toDeselect);
 		selected.remove(toDeselect);
 	}
 
-	private void checkResultPagesForIndexes(int numberOfPages, List<Index> indexes) {
+	private void checkResultPagesForIndexes(final int numberOfPages, final List<Index> indexes) {
 		for (int j = 1; j <= numberOfPages; j++) {
 			for (int i = 1; i <= SearchPage.RESULTS_PER_PAGE; i++) {
 				assertThat("result p" + j + " #" + i + " in " + indexes,
@@ -630,11 +630,11 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	@ResolvedBug("ISO-16")
 	public void testSelectedIndexesAppearInSausage() {
 		searchService.search(new Query("mellow").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.ALL));
-		IndexesTree indexesTree = searchPage.indexesTree();
+		final IndexesTree indexesTree = searchPage.indexesTree();
 
-		for (Index removedIndex : indexesTree.getSelected()) {
+		for (final Index removedIndex : indexesTree.getSelected()) {
 			indexesTree.deselect(removedIndex);
-			for (Index index : indexesTree.getSelected()) {
+			for (final Index index : indexesTree.getSelected()) {
 				verifyThat("Database/index sausage contains selected indexes", searchPage.getDatabaseFilterSausage().getText(), containsIgnoringCase(index.getName()));
 			}
 		}
@@ -655,7 +655,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	public void testResultIndex(){
 		searchService.search(new Query("Jamaica"));
 
-		for(IsoSearchResult searchResult : searchPage.getSearchResults()){
+		for(final IsoSearchResult searchResult : searchPage.getSearchResults()){
 			verifyThat(searchResult.getIndex().getDisplayName(), not(containsString("Object")));
 		}
 	}

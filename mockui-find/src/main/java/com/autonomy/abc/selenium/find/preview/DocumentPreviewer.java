@@ -12,12 +12,12 @@ import org.openqa.selenium.WebElement;
  */
 public class DocumentPreviewer extends DocumentViewer {
 
-    private DocumentPreviewer(WebDriver driver){
+    private DocumentPreviewer(final WebDriver driver){
         super(driver,driver.findElement(By.cssSelector(".preview-mode-wrapper:not(.hide) .preview-mode-container")));
     }
 
-    public static DocumentPreviewer make(WebDriver driver){
-        DocumentPreviewer docPreviewer = new DocumentPreviewer(driver);
+    public static DocumentPreviewer make(final WebDriver driver){
+        final DocumentPreviewer docPreviewer = new DocumentPreviewer(driver);
         docPreviewer.waitForLoad();
         return docPreviewer;
     }

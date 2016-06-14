@@ -8,16 +8,16 @@ public class DynamicPromotion extends Promotion {
     private final SpotlightType spotlightType;
 
     // for HSO
-    public DynamicPromotion(int numberOfResults, String trigger) {
+    public DynamicPromotion(final int numberOfResults, final String trigger) {
         this(SpotlightType.SPONSORED, numberOfResults, trigger);
     }
 
     // for OP
-    public DynamicPromotion(SpotlightType spotlightType, String trigger) {
+    public DynamicPromotion(final SpotlightType spotlightType, final String trigger) {
         this(spotlightType, 10, trigger);
     }
 
-    public DynamicPromotion(SpotlightType spotlightType, int numberOfResults, String trigger) {
+    public DynamicPromotion(final SpotlightType spotlightType, final int numberOfResults, final String trigger) {
         super(trigger);
         this.numberOfResults = numberOfResults;
         this.spotlightType = spotlightType;
@@ -37,12 +37,12 @@ public class DynamicPromotion extends Promotion {
     }
 
     @Override
-    public Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase) {
+    public Wizard makeWizard(final CreateNewPromotionsBase createNewPromotionsBase) {
         return new DynamicPromotionsWizard(createNewPromotionsBase);
     }
 
     private class DynamicPromotionsWizard extends PromotionWizard {
-        public DynamicPromotionsWizard(CreateNewPromotionsBase page) {
+        public DynamicPromotionsWizard(final CreateNewPromotionsBase page) {
             super(page);
             // steps are app-specific, so are set using the dynamic type of the page
             // but also need to get (app-specific) info related to the promotion

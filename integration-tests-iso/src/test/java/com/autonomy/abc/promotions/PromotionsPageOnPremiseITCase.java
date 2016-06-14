@@ -46,21 +46,21 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 		promotionService.deleteAll();
 	}
 
-    private void search(String term) {
+    private void search(final String term) {
         searchPage = searchService.search(term);
     }
 
 	@Test
 	public void testInvalidFieldText() {
-		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "hot");
+		final Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "hot");
 		promotionService.setUpPromotion(promotion, "hot", 1);
-		List<String> badValues = Arrays.asList("", "bad", "<h1>h1</h1>");
+		final List<String> badValues = Arrays.asList("", "bad", "<h1>h1</h1>");
 
 		promotionsDetailPage = promotionService.goToDetails(promotion);
-		FormInput inputBox = promotionsDetailPage.fieldTextInput();
-		Editable editableFieldText = promotionsDetailPage.editableFieldText();
+		final FormInput inputBox = promotionsDetailPage.fieldTextInput();
+		final Editable editableFieldText = promotionsDetailPage.editableFieldText();
 
-		for (String badValue : badValues) {
+		for (final String badValue : badValues) {
 			promotionsDetailPage.fieldTextAddButton().click();
 			verifyThat("error message not visible", promotionsDetailPage.getFieldTextError(), isEmptyOrNullString());
 			inputBox.setAndSubmit(badValue);
@@ -72,7 +72,7 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 		promotionsDetailPage.addFieldText(goodText);
 		verifyThat("field text added", editableFieldText.getValue(), is(goodText));
 
-		for (String badValue : badValues) {
+		for (final String badValue : badValues) {
 			editableFieldText.editButton().click();
 			verifyThat("error message not visible", promotionsDetailPage.getFieldTextError(), isEmptyOrNullString());
 			inputBox.setAndSubmit(badValue);
@@ -88,27 +88,27 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 		verifyThat("field text removed", promotionsDetailPage.fieldTextAddButton(), displayed());
 	}
 
-	private void verifyDisplayed(String searchTerm) {
+	private void verifyDisplayed(final String searchTerm) {
 		search(searchTerm);
 		Waits.loadOrFadeWait();
 		verifyThat("promotion displayed for search term '" + searchTerm + "'", searchPage.promotionsSummary(), displayed());
 	}
 
-	private void verifyNotDisplayed(String searchTerm) {
+	private void verifyNotDisplayed(final String searchTerm) {
 		search(searchTerm);
 		verifyThat("promotion not displayed for search term '" + searchTerm + "'", searchPage.promotionsSummary(), not(displayed()));
 	}
 
 	@Test
 	public void testPromotionFieldTextRestriction() {
-        Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "hot");
+        final Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "hot");
         promotionService.setUpPromotion(promotion, "hot", 1);
 
         promotionsDetailPage = promotionService.goToDetails(promotion);
 		promotionsDetailPage.addFieldText("MATCH{hot}:DRECONTENT");
 
 		verifyDisplayed("hot");
-		for (String badValue : Arrays.asList("hot pot", "hots")) {
+		for (final String badValue : Arrays.asList("hot pot", "hots")) {
 			verifyNotDisplayed(badValue);
 		}
 
@@ -116,7 +116,7 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 
 		promotionsDetailPage.removableFieldText().removeAndWait();
 
-		for (String goodValue : Arrays.asList("hot", "hot chocolate", "hots")) {
+		for (final String goodValue : Arrays.asList("hot", "hot chocolate", "hots")) {
 			verifyDisplayed(goodValue);
 		}
 
@@ -125,36 +125,36 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 		promotionsDetailPage.editableFieldText().setValueAndWait("MATCH{hot dog}:DRECONTENT");
 
 		verifyDisplayed("hot dog");
-		for (String badValue : Arrays.asList("hot chocolate", "hot", "dog", "hot dogs")) {
+		for (final String badValue : Arrays.asList("hot chocolate", "hot", "dog", "hot dogs")) {
 			verifyNotDisplayed(badValue);
 		}
     }
 
 	@Test
 	public void testPromotionFieldTextOrRestriction() {
-		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "highway street");
+		final Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "highway street");
 		promotionService.setUpPromotion(promotion, "road", 1);
 		promotionsDetailPage = promotionService.goToDetails(promotion);
 
 		promotionsDetailPage.addFieldText("MATCH{highway}:DRECONTENT OR MATCH{street}:DRECONTENT");
 
-		for (String goodTerm : Arrays.asList("highway", "street")) {
+		for (final String goodTerm : Arrays.asList("highway", "street")) {
 			verifyDisplayed(goodTerm);
 		}
-		for (String badTerm : Arrays.asList("highway street", "road", "ROAD", "highway street", "street highway", "street street", "highwaystreet", "highway AND street", "highway OR street")) {
+		for (final String badTerm : Arrays.asList("highway street", "road", "ROAD", "highway street", "street highway", "street street", "highwaystreet", "highway AND street", "highway OR street")) {
 			verifyNotDisplayed(badTerm);
 		}
 	}
 
 	@Test
 	public void testPromotionFieldTextAndRestriction() {
-		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "highway street");
+		final Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "highway street");
 		promotionService.setUpPromotion(promotion, "road", 1);
 		promotionsDetailPage = promotionService.goToDetails(promotion);
 
 		promotionsDetailPage.addFieldText("MATCH{highway street}:DRECONTENT");
 
-		for (String badTerm : Arrays.asList("highway", "street", "road", "ROAD", "street street", "street highway", "highwaystreet")) {
+		for (final String badTerm : Arrays.asList("highway", "street", "road", "ROAD", "street street", "street highway", "highwaystreet")) {
 			verifyNotDisplayed(badTerm);
 		}
 		verifyDisplayed("highway street");
@@ -162,7 +162,7 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 
 	@Test
 	public void testFieldTextSubmitTextOnEnter() {
-		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "highway street");
+		final Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "highway street");
 		promotionService.setUpPromotion(promotion, "road", 1);
 		promotionsDetailPage = promotionService.goToDetails(promotion);
 
@@ -175,14 +175,14 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 
 	@Test
 	public void testCreateFieldTextField() {
-        Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "best mediocre worse worser worstest");
+        final Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "best mediocre worse worser worstest");
 
 		promotionService.setUpPromotion(promotion, "unreal", 1);
         promotionsDetailPage = promotionService.goToDetails(promotion);
 
 		promotionsDetailPage.addFieldText("MATCH{best}:DRECONTENT");
 		verifyDisplayed("best");
-		for (String badTerm : Arrays.asList("mediocre", "worse", "worser", "worstest")) {
+		for (final String badTerm : Arrays.asList("mediocre", "worse", "worser", "worstest")) {
 			verifyNotDisplayed(badTerm);
 		}
 

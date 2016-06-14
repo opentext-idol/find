@@ -19,7 +19,7 @@ public class HsodFind extends FindApplication<HsodFindElementFactory> {
     }
 
     @Override
-    public HsodFind inWindow(Window window) {
+    public HsodFind inWindow(final Window window) {
         this.factory = new HsodFindElementFactory(window.getSession().getDriver());
         return this;
     }

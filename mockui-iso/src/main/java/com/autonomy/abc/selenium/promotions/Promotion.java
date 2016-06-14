@@ -6,7 +6,7 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 public abstract class Promotion {
     private final String trigger;
 
-    public Promotion(String trigger) {
+    public Promotion(final String trigger) {
         this.trigger = trigger;
     }
 
@@ -34,7 +34,7 @@ public abstract class Promotion {
 
         private final String option;
 
-        Type(String option) {
+        Type(final String option) {
             this.option = option;
         }
 
@@ -50,7 +50,7 @@ public abstract class Promotion {
 
         private final String option;
 
-        SpotlightType(String option) {
+        SpotlightType(final String option) {
             this.option = option;
         }
 
@@ -64,7 +64,7 @@ public abstract class Promotion {
     protected class PromotionWizard extends Wizard {
         private final CreateNewPromotionsBase page;
 
-        public PromotionWizard(CreateNewPromotionsBase createNewPromotionsBase) {
+        public PromotionWizard(final CreateNewPromotionsBase createNewPromotionsBase) {
             page = createNewPromotionsBase;
         }
 

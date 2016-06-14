@@ -13,7 +13,7 @@ public abstract class Wizard implements Action {
         steps = new ArrayList<>();
     }
 
-    public Wizard(List<WizardStep> steps) {
+    public Wizard(final List<WizardStep> steps) {
         this.steps = steps;
     }
 
@@ -21,11 +21,11 @@ public abstract class Wizard implements Action {
         return steps;
     }
 
-    protected void setSteps(List<WizardStep> steps) {
+    protected void setSteps(final List<WizardStep> steps) {
         this.steps = steps;
     }
 
-    protected void add(WizardStep wizardStep) {
+    protected void add(final WizardStep wizardStep) {
         steps.add(wizardStep);
     }
 
@@ -46,7 +46,7 @@ public abstract class Wizard implements Action {
     public abstract void cancel();
 
     public Object apply() {
-        for (WizardStep wizardStep : steps) {
+        for (final WizardStep wizardStep : steps) {
             wizardStep.apply();
             next();
         }

@@ -33,7 +33,7 @@ public class QueryTermsITCase extends FindTestBase {
     private FindResultsPage results;
     private FindService findService;
 
-    public QueryTermsITCase(TestConfig config) {
+    public QueryTermsITCase(final TestConfig config) {
         super(config);
     }
 
@@ -48,7 +48,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     public void testSendKeys() throws InterruptedException {
-        String searchTerm = "Fred is a chimpanzee";
+        final String searchTerm = "Fred is a chimpanzee";
         findService.search(searchTerm);
         assertThat(navBar.getSearchBoxTerm(), is(searchTerm));
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
@@ -56,49 +56,49 @@ public class QueryTermsITCase extends FindTestBase {
 
     @Test
     public void testBooleanOperators() {
-        String termOne = "musketeers";
-        String termTwo = "\"dearly departed\"";
+        final String termOne = "musketeers";
+        final String termTwo = "\"dearly departed\"";
 
         findService.search(termOne);
-        List<String> musketeersSearchResults = results.getResultTitles();
-        int numberOfMusketeersResults = musketeersSearchResults.size();
+        final List<String> musketeersSearchResults = results.getResultTitles();
+        final int numberOfMusketeersResults = musketeersSearchResults.size();
 
         findService.search(termTwo);
-        List<String> dearlyDepartedSearchResults = results.getResultTitles();
-        int numberOfDearlyDepartedResults = dearlyDepartedSearchResults.size();
+        final List<String> dearlyDepartedSearchResults = results.getResultTitles();
+        final int numberOfDearlyDepartedResults = dearlyDepartedSearchResults.size();
 
         findService.search(termOne + " AND " + termTwo);
-        List<String> andResults = results.getResultTitles();
-        int numberOfAndResults = andResults.size();
+        final List<String> andResults = results.getResultTitles();
+        final int numberOfAndResults = andResults.size();
 
         assertThat(numberOfMusketeersResults, greaterThanOrEqualTo(numberOfAndResults));
         assertThat(numberOfDearlyDepartedResults, greaterThanOrEqualTo(numberOfAndResults));
-        String[] andResultsArray = andResults.toArray(new String[andResults.size()]);
+        final String[] andResultsArray = andResults.toArray(new String[andResults.size()]);
         assertThat(musketeersSearchResults, hasItems(andResultsArray));
         assertThat(dearlyDepartedSearchResults, hasItems(andResultsArray));
 
         findService.search(termOne + " OR " + termTwo);
-        List<String> orResults = results.getResultTitles();
-        Set<String> concatenatedResults = new HashSet<>(ListUtils.union(musketeersSearchResults, dearlyDepartedSearchResults));
+        final List<String> orResults = results.getResultTitles();
+        final Set<String> concatenatedResults = new HashSet<>(ListUtils.union(musketeersSearchResults, dearlyDepartedSearchResults));
         assertThat(orResults.size(), is(concatenatedResults.size()));
         assertThat(orResults, containsInAnyOrder(concatenatedResults.toArray()));
 
         findService.search(termOne + " XOR " + termTwo);
-        List<String> xorResults = results.getResultTitles();
+        final List<String> xorResults = results.getResultTitles();
         concatenatedResults.removeAll(andResults);
         assertThat(xorResults.size(), is(concatenatedResults.size()));
         assertThat(xorResults, containsInAnyOrder(concatenatedResults.toArray()));
 
         findService.search(termOne + " NOT " + termTwo);
-        List<String> notTermTwo = results.getResultTitles();
-        Set<String> t1NotT2 = new HashSet<>(concatenatedResults);
+        final List<String> notTermTwo = results.getResultTitles();
+        final Set<String> t1NotT2 = new HashSet<>(concatenatedResults);
         t1NotT2.removeAll(dearlyDepartedSearchResults);
         assertThat(notTermTwo.size(), is(t1NotT2.size()));
         assertThat(notTermTwo, containsInAnyOrder(t1NotT2.toArray()));
 
         findService.search(termTwo + " NOT " + termOne);
-        List<String> notTermOne = results.getResultTitles();
-        Set<String> t2NotT1 = new HashSet<>(concatenatedResults);
+        final List<String> notTermOne = results.getResultTitles();
+        final Set<String> t2NotT1 = new HashSet<>(concatenatedResults);
         t2NotT1.removeAll(musketeersSearchResults);
         assertThat(notTermOne.size(), is(t2NotT1.size()));
         assertThat(notTermOne, containsInAnyOrder(t2NotT1.toArray()));
@@ -133,13 +133,13 @@ public class QueryTermsITCase extends FindTestBase {
     public void testWhitespaceSearch() {
         try {
             findService.search("       ");
-        } catch (WebDriverException e) { /* Expected behaviour */ }
+        } catch (final WebDriverException e) { /* Expected behaviour */ }
 
         assertThat(findPage.footerLogo(), displayed());
 
         findService.search("Kevin Costner");
 
-        List<String> resultTitles = results.getResultTitles();
+        final List<String> resultTitles = results.getResultTitles();
 
         findService.search(" ");
         assertThat(results.getResultTitles(), is(resultTitles));

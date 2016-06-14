@@ -14,7 +14,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 public class DevelopersITCase extends IsoHsodTestBase {
     private HsodDevelopersPage developersPage;
 
-    public DevelopersITCase(TestConfig config) {
+    public DevelopersITCase(final TestConfig config) {
         super(config);
     }
 
@@ -26,9 +26,9 @@ public class DevelopersITCase extends IsoHsodTestBase {
 
     @Test
     public void testEditDevUsername(){
-        UserTableRow row = developersPage.getTable().row(0);
-        String originalUsername = row.getUsername();
-        String newUsername = "Jeremy Clarkson";
+        final UserTableRow row = developersPage.getTable().row(0);
+        final String originalUsername = row.getUsername();
+        final String newUsername = "Jeremy Clarkson";
         try {
             row.changeUsernameTo(newUsername);
             verifyThat(developersPage.getUsernames(), hasItem(newUsername));

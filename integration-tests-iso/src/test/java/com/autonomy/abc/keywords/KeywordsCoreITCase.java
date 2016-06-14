@@ -21,7 +21,7 @@ public class KeywordsCoreITCase extends HybridIsoTestBase {
     private KeywordService keywordService;
     private SearchService searchService;
 
-    public KeywordsCoreITCase(TestConfig config) {
+    public KeywordsCoreITCase(final TestConfig config) {
         super(config);
     }
 
@@ -40,7 +40,7 @@ public class KeywordsCoreITCase extends HybridIsoTestBase {
     public void testCreateBlacklist() {
         final String blacklist = "naughty";
         keywordService.addBlacklistTerms(blacklist);
-        SearchPage searchPage = searchService.search(blacklist);
+        final SearchPage searchPage = searchService.search(blacklist);
         assertThat(searchPage.visibleDocumentsCount(), is(0));
     }
 
@@ -49,7 +49,7 @@ public class KeywordsCoreITCase extends HybridIsoTestBase {
         final String hasResults = "car";
         final String noResults = "zxpqw";
         keywordService.addSynonymGroup(hasResults, noResults);
-        SearchPage searchPage = searchService.search(noResults);
+        final SearchPage searchPage = searchService.search(noResults);
         assertThat(searchPage.visibleDocumentsCount(), greaterThan(0));
     }
 

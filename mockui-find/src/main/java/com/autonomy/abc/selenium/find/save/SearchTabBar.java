@@ -13,7 +13,7 @@ import java.util.List;
 public class SearchTabBar implements Iterable<SearchTab> {
     private final WebElement bar;
 
-    public SearchTabBar(WebDriver driver) {
+    public SearchTabBar(final WebDriver driver) {
         bar = driver.findElement(By.className("search-tabs-list"));
     }
 
@@ -24,7 +24,7 @@ public class SearchTabBar implements Iterable<SearchTab> {
 
     public List<SearchTab> tabs() {
         final List<SearchTab> tabs = new ArrayList<>();
-        for (WebElement tab : bar.findElements(By.className("search-tab"))) {
+        for (final WebElement tab : bar.findElements(By.className("search-tab"))) {
             tabs.add(new SearchTab(tab));
         }
         return tabs;
@@ -34,8 +34,8 @@ public class SearchTabBar implements Iterable<SearchTab> {
         return new SearchTab(bar.findElement(By.cssSelector(".search-tab.active")));
     }
 
-    public SearchTab tab(String title) {
-        for (SearchTab tab : tabs()) {
+    public SearchTab tab(final String title) {
+        for (final SearchTab tab : tabs()) {
             if (tab.getTitle().equals(title)) {
                 return tab;
             }

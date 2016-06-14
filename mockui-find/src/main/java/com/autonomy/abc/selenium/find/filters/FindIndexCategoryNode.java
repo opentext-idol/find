@@ -13,7 +13,7 @@ class FindIndexCategoryNode extends IndexCategoryNode {
     private final WebElement container;
     private final WebDriver driver;
 
-    FindIndexCategoryNode(WebElement clickable, WebDriver webDriver) {
+    FindIndexCategoryNode(final WebElement clickable, final WebDriver webDriver) {
         super(new FindIndexLeafNode(clickable, webDriver), clickable, webDriver);
         container = clickable;
         driver = webDriver;
@@ -26,22 +26,22 @@ class FindIndexCategoryNode extends IndexCategoryNode {
 
     @Override
     protected List<IndexNodeElement> getIndexNodes() {
-        List<IndexNodeElement> nodes = new ArrayList<>();
-        for (WebElement element : container.findElements(By.cssSelector(".clickable[data-name]"))) {
+        final List<IndexNodeElement> nodes = new ArrayList<>();
+        for (final WebElement element : container.findElements(By.cssSelector(".clickable[data-name]"))) {
             nodes.add(new FindIndexLeafNode(element, driver));
         }
         return nodes;
     }
 
     @Override
-    protected IndexNodeElement find(String name) {
-        WebElement childElement = container.findElement(By.cssSelector(".clickable[data-name='" + name+"']"));
+    protected IndexNodeElement find(final String name) {
+        final WebElement childElement = container.findElement(By.cssSelector(".clickable[data-name='" + name+"']"));
         return new FindIndexLeafNode(childElement, driver);
     }
 
     @Override
-    protected IndexCategoryNode findCategory(String name) {
-        WebElement childElement = container.findElement(By.cssSelector(".clickable[data-category-id='" + name.toLowerCase() + "']"));
+    protected IndexCategoryNode findCategory(final String name) {
+        final WebElement childElement = container.findElement(By.cssSelector(".clickable[data-category-id='" + name.toLowerCase() + "']"));
         return new FindIndexCategoryNode(childElement, driver);
     }
 

@@ -12,7 +12,7 @@ public class AuthHasLoggedIn implements HasLoggedIn {
 
     @Override
     public boolean hasLoggedIn() {
-        String url = driver.getCurrentUrl();
+        final String url = driver.getCurrentUrl();
         return url.contains("sso") && !url.contains("verification");
     }
 }

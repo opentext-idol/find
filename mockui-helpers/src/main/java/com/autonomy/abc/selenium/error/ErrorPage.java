@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class ErrorPage implements AppPage {
     private final WebDriver driver;
 
-    public ErrorPage(WebDriver driver) {
+    public ErrorPage(final WebDriver driver) {
         this.driver = driver;
         waitForLoad();
     }

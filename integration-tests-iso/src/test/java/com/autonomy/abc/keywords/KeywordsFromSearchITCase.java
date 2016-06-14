@@ -59,7 +59,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
     private KeywordService keywordService;
     private SearchService searchService;
 
-    public KeywordsFromSearchITCase(TestConfig config) {
+    public KeywordsFromSearchITCase(final TestConfig config) {
         super(config);
     }
 
@@ -92,7 +92,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link directed to blacklist wizard", createKeywordsPage.getText(), containsString("Select terms to blacklist"));
 
-        TriggerForm triggerForm = createKeywordsPage.getTriggerForm();
+        final TriggerForm triggerForm = createKeywordsPage.getTriggerForm();
 
         assertThat(triggerForm.getNumberOfTriggers(), is(1));
         assertThat("keywords list includes term 'noir'", triggerForm.getTriggersAsStrings().contains("noir"));
@@ -123,7 +123,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link directed to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
 
-        TriggerForm triggerForm = createKeywordsPage.getTriggerForm();
+        final TriggerForm triggerForm = createKeywordsPage.getTriggerForm();
 
         assertThat(triggerForm.getNumberOfTriggers(), is(1));
         assertThat("keywords list includes term 'rouge'", triggerForm.getTriggersAsStrings(), hasItem("rouge"));
@@ -171,7 +171,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link directed to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
 
-        TriggerForm triggerForm = createKeywordsPage.getTriggerForm();
+        final TriggerForm triggerForm = createKeywordsPage.getTriggerForm();
 
         assertThat(triggerForm.getNumberOfTriggers(), is(3));
         assertThat("prospective blacklisted terms added", triggerForm.getTriggersAsStrings(), hasItems("lodge", "dodge", "podge"));
@@ -245,7 +245,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
 
     @Test
     public void testAddingSynonymGroupFromSearchPageOnlyAddsWords(){
-        String phrase = "the quick brown fox jumps over the lazy dog";
+        final String phrase = "the quick brown fox jumps over the lazy dog";
         search(phrase, Language.ENGLISH);
         searchPage.createSynonymsLink().click();
 
@@ -253,10 +253,10 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
 
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
-        ArrayList<String> wordsInPhrase = new ArrayList<>(Arrays.asList(phrase.split(" ")));
+        final ArrayList<String> wordsInPhrase = new ArrayList<>(Arrays.asList(phrase.split(" ")));
         wordsInPhrase.removeAll(Collections.singleton("the"));
 
-        List<String> prospectiveKeywords = createKeywordsPage.getTriggerForm().getTriggersAsStrings();
+        final List<String> prospectiveKeywords = createKeywordsPage.getTriggerForm().getTriggersAsStrings();
 
         assertThat(prospectiveKeywords, containsItems(wordsInPhrase));
         assertThat(prospectiveKeywords, not(hasItem("the")));
@@ -274,7 +274,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
 
         try {
             searchPage.waitForSearchLoadIndicatorToDisappear();
-        } catch (TimeoutException e) {
+        } catch (final TimeoutException e) {
             fail("Search does not find results after cancelling synonym wizard");
         }
     }
@@ -283,8 +283,8 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
     @ResolvedBug({"CSA-1719", "CSA-1792", "CSA-2064"})
     public void testBlacklistTermsBehaveAsExpected() throws InterruptedException {
 
-        String blacklistOne = "cheese";
-        String blacklistTwo = "mouse";
+        final String blacklistOne = "cheese";
+        final String blacklistTwo = "mouse";
 
         assertThat("Keywords Load",!keywordsPage.loadingIndicator().isDisplayed());
 
@@ -317,7 +317,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
     @Category(SlowTest.class)
     @ResolvedBug({"CCUK-3471", "CSA-1808"})
     public void testCreateLargeSynonymGroup() {
-        List<String> synonyms = new ArrayList<>();
+        final List<String> synonyms = new ArrayList<>();
         for (int i=0; i<10; i++) {
             synonyms.add("term" + i);
         }
@@ -365,7 +365,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
         assertThat(searchPage, not(containsText(Errors.Search.BACKEND)));
     }
 
-    private void search(String searchTerm, Language language) {
+    private void search(final String searchTerm, final Language language) {
         Query query = new Query(searchTerm).withFilter(new LanguageFilter(language));
         if (isHosted()) {
             query = query.withFilter(new IndexFilter("news_eng"));
@@ -374,7 +374,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
     }
 
     private void waitForKeywordCreation() {
-        FluentWait<WebDriver> wait = new WebDriverWait(getDriver(), 30).withMessage("waiting for keywords to be created");
+        final FluentWait<WebDriver> wait = new WebDriverWait(getDriver(), 30).withMessage("waiting for keywords to be created");
         wait.until(GritterNotice.notificationAppears());
         wait.until(GritterNotice.notificationsDisappear());
     }

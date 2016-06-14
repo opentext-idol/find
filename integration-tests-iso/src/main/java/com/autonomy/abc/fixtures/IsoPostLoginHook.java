@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.application.IsoApplication;
 public class IsoPostLoginHook implements Command {
     private final IsoApplication<?> app;
 
-    public IsoPostLoginHook(IsoApplication<?> app) {
+    public IsoPostLoginHook(final IsoApplication<?> app) {
         this.app = app;
     }
 

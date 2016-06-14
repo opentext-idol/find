@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IdolIsoSearchPage extends SearchPage {
-    private IdolIsoSearchPage(WebDriver driver) {
+    private IdolIsoSearchPage(final WebDriver driver) {
         super(driver);
     }
 
@@ -60,7 +60,7 @@ public class IdolIsoSearchPage extends SearchPage {
             super(IdolIsoSearchPage.class);
         }
 
-        public IdolIsoSearchPage create(WebDriver context) {
+        public IdolIsoSearchPage create(final WebDriver context) {
             return new IdolIsoSearchPage(context);
         }
     }

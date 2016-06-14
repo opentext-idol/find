@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class SOCheckbox extends Checkbox {
-    public SOCheckbox(WebElement element, WebDriver driver) {
+    public SOCheckbox(final WebElement element, final WebDriver driver) {
         super(element, element.findElement(By.className("icheckbox_square-green")), driver);
     }
 

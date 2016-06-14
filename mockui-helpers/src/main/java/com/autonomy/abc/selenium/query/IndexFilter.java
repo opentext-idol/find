@@ -15,35 +15,35 @@ public class IndexFilter implements QueryFilter{
     public final static IndexFilter PUBLIC = new PublicIndexFilter();
     public final static IndexFilter PRIVATE = new PrivateIndexFilter();
 
-    public IndexFilter(String index) {
+    public IndexFilter(final String index) {
         indexes = new HashSet<>();
         indexes.add(index);
     }
 
-    public IndexFilter(Collection<String> indexes) {
+    public IndexFilter(final Collection<String> indexes) {
         this.indexes = new HashSet<>(indexes);
     }
 
-    public IndexFilter(Index index){
+    public IndexFilter(final Index index){
         indexes = new HashSet<>();
         indexes.add(index.getName());
     }
 
-    public void add(Index index){add(index.getName());
+    public void add(final Index index){add(index.getName());
     }
-    public void add(String index){indexes.add(index);}
+    public void add(final String index){indexes.add(index);}
 
     @Override
-    public final void apply(QueryFilter.Filterable page) {
+    public final void apply(final QueryFilter.Filterable page) {
         if (page instanceof IndexFilter.Filterable) {
             apply((IndexFilter.Filterable) page);
         }
     }
 
-    protected void apply(IndexFilter.Filterable page) {
+    protected void apply(final IndexFilter.Filterable page) {
         NONE.apply(page);
-        IndexesTree indexesTree = page.indexesTree();
-        for (String index : indexes) {
+        final IndexesTree indexesTree = page.indexesTree();
+        for (final String index : indexes) {
             indexesTree.select(index);
         }
     }
@@ -59,7 +59,7 @@ public class IndexFilter implements QueryFilter{
         }
 
         @Override
-        public void apply(IndexFilter.Filterable page) {
+        public void apply(final IndexFilter.Filterable page) {
             page.indexesTree().allIndexes().select();
         }
     }
@@ -70,7 +70,7 @@ public class IndexFilter implements QueryFilter{
         }
 
         @Override
-        protected void apply(IndexFilter.Filterable page) {
+        protected void apply(final IndexFilter.Filterable page) {
             page.indexesTree().allIndexes().select();
             page.indexesTree().allIndexes().deselect();
         }
@@ -82,7 +82,7 @@ public class IndexFilter implements QueryFilter{
         }
 
         @Override
-        protected void apply(IndexFilter.Filterable page) {
+        protected void apply(final IndexFilter.Filterable page) {
             page.indexesTree().privateIndexes().deselect();
             page.indexesTree().publicIndexes().select();
         }
@@ -94,7 +94,7 @@ public class IndexFilter implements QueryFilter{
         }
 
         @Override
-        protected void apply(IndexFilter.Filterable page) {
+        protected void apply(final IndexFilter.Filterable page) {
             page.indexesTree().privateIndexes().select();
             page.indexesTree().publicIndexes().deselect();
         }

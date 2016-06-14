@@ -9,7 +9,7 @@ public class HsodUser extends User {
     private final String apiKey;
     private final String domain;
 
-    HsodUser(String username, String email, Role role, AuthProvider provider, String apikey, String domain) {
+    HsodUser(final String username, final String email, final Role role, final AuthProvider provider, final String apikey, final String domain) {
         super(provider, username, role);
         this.email = email;
         this.apiKey = apikey;

@@ -30,7 +30,7 @@ public class TopicMapITCase extends IdolFindTestBase {
     private FindService findService;
     private FindTopNavBar navBar;
 
-    public TopicMapITCase(TestConfig config) {
+    public TopicMapITCase(final TestConfig config) {
         super(config);
     }
 
@@ -62,11 +62,11 @@ public class TopicMapITCase extends IdolFindTestBase {
         verifyThat("Number of topics tooltip number correct", results.numberTopicsSlider().getValue(), is(results.numberOfMapEntities()));
     }
 
-    private void slidingIncreasesNumber(Slider slider) {
+    private void slidingIncreasesNumber(final Slider slider) {
         slider.hover();
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(slider.tooltip()));
         verifyThat("Tooltip appears on hover", slider.tooltip().isDisplayed());
-        int firstNumber = slider.getValue();
+        final int firstNumber = slider.getValue();
 
         slider.dragBy(100);
         slider.hover();
@@ -84,12 +84,12 @@ public class TopicMapITCase extends IdolFindTestBase {
 
         results.waitForMapLoaded();
         results.numberTopicsSlider().hover();
-        int numberEntities = results.numberTopicsSlider().getValue();
+        final int numberEntities = results.numberTopicsSlider().getValue();
 
-        List<WebElement> textElements = results.mapEntityTextElements();
+        final List<WebElement> textElements = results.mapEntityTextElements();
         verifyThat("Same number of text elements as map pieces", textElements.size(), is(numberEntities));
 
-        for (WebElement textElement : textElements) {
+        for (final WebElement textElement : textElements) {
             verifyThat("Text element not empty", textElement.getText(), not(""));
         }
 
@@ -97,12 +97,12 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Test
     public void testApplyingFiltersToMap() {
-        String searchTerm = "European Union";
+        final String searchTerm = "European Union";
         findService.search(searchTerm);
         results.goToTopicMap();
 
-        FindParametricCheckbox filter = getElementFactory().getFilterPanel().checkboxForParametricValue(0, 0);
-        String filterName = filter.getName();
+        final FindParametricCheckbox filter = getElementFactory().getFilterPanel().checkboxForParametricValue(0, 0);
+        final String filterName = filter.getName();
         filter.check();
 
         results.waitForReload();
@@ -118,13 +118,13 @@ public class TopicMapITCase extends IdolFindTestBase {
         results.waitForMapLoaded();
         Waits.loadOrFadeWait();
 
-        List<String> addedConcepts = results.clickEntitiesAndAddText(3);
+        final List<String> addedConcepts = results.clickEntitiesAndAddText(3);
         verifyThat("All "+addedConcepts.size()+" added concept terms added to search",relatedConceptsWithoutSpaces(),containsItems(addedConcepts));
     }
 
     private List<String> relatedConceptsWithoutSpaces(){
-        List<String> termsNoSpaces = new ArrayList<>();
-        for(String term: navBar.getAlsoSearchingForTerms()){
+        final List<String> termsNoSpaces = new ArrayList<>();
+        for(final String term: navBar.getAlsoSearchingForTerms()){
             termsNoSpaces.add(term.replace(" ",""));
         }
         return termsNoSpaces;

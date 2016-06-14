@@ -7,18 +7,18 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class IdolUserTable extends UserTable<IdolUserTableRow> {
-    public IdolUserTable(WebElement element, WebDriver driver) {
+    public IdolUserTable(final WebElement element, final WebDriver driver) {
         super(element, driver);
     }
 
     @Override
-    public IdolUserTableRow rowFor(User user) {
-        WebElement usernameEl = findElement(new Locator().containingText(user.getUsername()));
+    public IdolUserTableRow rowFor(final User user) {
+        final WebElement usernameEl = findElement(new Locator().containingText(user.getUsername()));
         return rowForElement(ElementUtil.ancestor(usernameEl, 2));
     }
 
     @Override
-    protected IdolUserTableRow rowForElement(WebElement element) {
+    protected IdolUserTableRow rowForElement(final WebElement element) {
         return new IdolUserTableRow(element, getDriver());
     }
 }

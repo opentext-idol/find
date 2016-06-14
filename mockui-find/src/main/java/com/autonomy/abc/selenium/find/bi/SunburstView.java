@@ -24,7 +24,7 @@ public class SunburstView {
     private final WebDriver driver;
     private final WebElement container;
 
-    public SunburstView(WebDriver driver) {
+    public SunburstView(final WebDriver driver) {
         this.driver = driver;
         this.container = driver.findElement(By.className("service-view-container"));
     }
@@ -59,8 +59,8 @@ public class SunburstView {
         return findElements(By.className("sunburst-sector-name")).size()>0;
     }
 
-    public WebElement getIthSunburstSegment(int i){
-        List<WebElement> actualSegments = findSunburstSegments();
+    public WebElement getIthSunburstSegment(final int i){
+        final List<WebElement> actualSegments = findSunburstSegments();
         return actualSegments.get(i);
     }
 
@@ -72,20 +72,20 @@ public class SunburstView {
         return findElements(By.cssSelector("svg > path[fill='#f0f0f0']")).size()>0;
     }
 
-    public String hoverOnSegmentGetCentre(int i){
+    public String hoverOnSegmentGetCentre(final int i){
         DriverUtil.hover(getDriver(),getIthSunburstSegment(i));
         return getSunburstCentreName();
     }
 
-    public void segmentHover(WebElement segment){
+    public void segmentHover(final WebElement segment){
         DriverUtil.hover(getDriver(),segment);
         if(!sunburstCentreHasText()|| (sunburstCentreHasText() && getSunburstCentreName().equals("Parametric Distribution"))){
             specialHover(segment);
         }
     }
 
-    private void specialHover(WebElement segment){
-        Dimension dimensions = segment.getSize();
+    private void specialHover(final WebElement segment){
+        final Dimension dimensions = segment.getSize();
 
         hoveringOffSide(segment,(dimensions.getWidth()/4)*3, dimensions.getHeight()/2);
         if(!sunburstCentreHasText()|| (sunburstCentreHasText() && getSunburstCentreName().equals("Parametric Distribution"))){
@@ -93,30 +93,30 @@ public class SunburstView {
         }
     }
 
-    private void hoveringOffSide(WebElement element, int xOffSet,int yOffSet){
-        Actions builder = new Actions(getDriver());
+    private void hoveringOffSide(final WebElement element, final int xOffSet, final int yOffSet){
+        final Actions builder = new Actions(getDriver());
         builder.moveToElement(element,xOffSet,yOffSet);
-        Action hover = builder.build();
+        final Action hover = builder.build();
         hover.perform();
     }
 
     //Parametric Filtering
-    public String getSelectedFieldName(int i){
+    public String getSelectedFieldName(final int i){
         return nthParametricFilter(i).getText();
     }
 
-    private WebElement nthParametricFilter(int i){
+    private WebElement nthParametricFilter(final int i){
         return findElement(By.cssSelector(".parametric-selections span:nth-child("+i+")"));
     }
 
     public boolean parametricSelectionDropdownsExist(){return findElement(By.cssSelector(".parametric-selections span")).isDisplayed();}
 
-    public ChosenDrop parametricSelectionDropdown(int i){
+    public ChosenDrop parametricSelectionDropdown(final int i){
         return new ChosenDrop(nthParametricFilter(i),getDriver());
     }
 
-    public List<String> getParametricDropdownItems(int i){
-        ChosenDrop dropdown = parametricSelectionDropdown(i);
+    public List<String> getParametricDropdownItems(final int i){
+        final ChosenDrop dropdown = parametricSelectionDropdown(i);
         return ElementUtil.getTexts(dropdown.getItems());
     }
 
@@ -126,16 +126,16 @@ public class SunburstView {
      * @param checkboxes some iterable of parametric values
      * @return the significant values
      */
-    public static List<String> expectedParametricValues(Iterable<FindParametricCheckbox> checkboxes) {
+    public static List<String> expectedParametricValues(final Iterable<FindParametricCheckbox> checkboxes) {
         final List<String> expected = new ArrayList<>();
 
         int totalResults = 0;
-        for (FindParametricCheckbox checkbox : checkboxes) {
+        for (final FindParametricCheckbox checkbox : checkboxes) {
             totalResults += checkbox.getResultsCount();
         }
 
-        for (FindParametricCheckbox checkbox : checkboxes) {
-            int thisCount = checkbox.getResultsCount();
+        for (final FindParametricCheckbox checkbox : checkboxes) {
+            final int thisCount = checkbox.getResultsCount();
             if (expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) {
                 expected.add(checkbox.getName());
             } else {
@@ -145,7 +145,7 @@ public class SunburstView {
         return expected;
     }
 
-    private static boolean isBigEnough(int thisCount, int totalResults) {
+    private static boolean isBigEnough(final int thisCount, final int totalResults) {
         return ((double) thisCount)/totalResults >= 0.05;
     }
 
@@ -153,11 +153,11 @@ public class SunburstView {
         return driver;
     }
 
-    private WebElement findElement(By locator) {
+    private WebElement findElement(final By locator) {
         return container.findElement(locator);
     }
 
-    private List<WebElement> findElements(By locator) {
+    private List<WebElement> findElements(final By locator) {
         return container.findElements(locator);
     }
 }

@@ -21,7 +21,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage newKeywordsPage;
 
-    public KeywordService(IsoApplication<? extends IsoElementFactory> application) {
+    public KeywordService(final IsoApplication<? extends IsoElementFactory> application) {
         super(application);
     }
 
@@ -37,40 +37,40 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
         return newKeywordsPage;
     }
 
-    public SearchPage addSynonymGroup(String... synonyms) {
+    public SearchPage addSynonymGroup(final String... synonyms) {
         return addSynonymGroup(Arrays.asList(synonyms));
     }
 
-    public SearchPage addSynonymGroup(Iterable<String> synonyms) {
+    public SearchPage addSynonymGroup(final Iterable<String> synonyms) {
         return addSynonymGroup(Language.ENGLISH, synonyms);
     }
 
-    public SearchPage addSynonymGroup(Language language, String... synonyms) {
+    public SearchPage addSynonymGroup(final Language language, final String... synonyms) {
         return addSynonymGroup(language, Arrays.asList(synonyms));
     }
     //bad because assumes redirected to search page which not be if no docs in that language
-    public SearchPage addSynonymGroup(Language language, Iterable<String> synonyms) {
+    public SearchPage addSynonymGroup(final Language language, final Iterable<String> synonyms) {
         addKeywords(KeywordWizardType.SYNONYMS, language, synonyms);
-        SearchPage searchPage = getElementFactory().getSearchPage();
+        final SearchPage searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
         return searchPage;
     }
 
-    public KeywordsPage addBlacklistTerms(String... blacklists) {
+    public KeywordsPage addBlacklistTerms(final String... blacklists) {
         return addBlacklistTerms(Arrays.asList(blacklists));
     }
 
-    public KeywordsPage addBlacklistTerms(Iterable<String> blacklists) {
+    public KeywordsPage addBlacklistTerms(final Iterable<String> blacklists) {
         return addBlacklistTerms(Language.ENGLISH, blacklists);
     }
 
-    public KeywordsPage addBlacklistTerms(Language language, String... blacklists) {
+    public KeywordsPage addBlacklistTerms(final Language language, final String... blacklists) {
         return addBlacklistTerms(language, Arrays.asList(blacklists));
     }
 
-    public KeywordsPage addBlacklistTerms(Language language, Iterable<String> blacklists) {
+    public KeywordsPage addBlacklistTerms(final Language language, final Iterable<String> blacklists) {
         addKeywords(KeywordWizardType.BLACKLIST, language, blacklists);
-        FluentWait<WebDriver> wait = new WebDriverWait(getDriver(), 40)
+        final FluentWait<WebDriver> wait = new WebDriverWait(getDriver(), 40)
                 .withMessage("adding " + blacklists + " to the blacklist");
         wait.until(GritterNotice.notificationContaining("to the blacklist"));
         // terms appear asynchronously - must wait until they have ALL been added
@@ -79,7 +79,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     }
 
     // this does not wait at the end, generally not the one you want
-    public void addKeywords(KeywordWizardType type, Language language, Iterable<String> keywords) {
+    public void addKeywords(final KeywordWizardType type, Language language, final Iterable<String> keywords) {
         goToKeywordsWizard();
         if (getApplication().isHosted() && !language.equals(Language.ENGLISH)) {
             LOGGER.warn("hosted mode does not support foreign keywords, using English instead");
@@ -88,17 +88,17 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
         new KeywordGroup(type, language, keywords).makeWizard(newKeywordsPage).apply();
     }
 
-    public KeywordsPage deleteAll(KeywordFilter type) {
+    public KeywordsPage deleteAll(final KeywordFilter type) {
         goToKeywords();
         keywordsPage.filterView(type);
         int count = 0;
         for (final Language language : keywordsPage.getLanguageList()) {
-            int current = keywordsPage.countKeywords();
+            final int current = keywordsPage.countKeywords();
             if (current > 0) {
                 count += current;
                 try {
                     tryDeleteAll(language);
-                } catch (StaleElementReferenceException e) {
+                } catch (final StaleElementReferenceException e) {
                     return deleteAll(type);
                 }
             }
@@ -107,40 +107,40 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
         return keywordsPage;
     }
 
-    private void tryDeleteAll(Language language) throws StaleElementReferenceException {
+    private void tryDeleteAll(final Language language) throws StaleElementReferenceException {
         try {
             keywordsPage.selectLanguage(language);
-        } catch (WebDriverException e) {
+        } catch (final WebDriverException e) {
             /* language dropdown disabled */
         }
-        List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
-        for(WebElement group : keywordGroups){
+        final List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
+        for(final WebElement group : keywordGroups){
             removeKeywordGroupAsync(group);
         }
     }
 
     //Problem with deletion not solved - sometimes fails
-    private void removeKeywordGroupAsync(WebElement group) {
-        List<WebElement> removeButtons = keywordsPage.removeButtons(group);
+    private void removeKeywordGroupAsync(final WebElement group) {
+        final List<WebElement> removeButtons = keywordsPage.removeButtons(group);
         if(removeButtons.size() > 1){removeButtons.remove(0);}
-        for(WebElement removeButton:removeButtons){
+        for(final WebElement removeButton:removeButtons){
             new WebDriverWait(getDriver(),20).until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-spin")));
             removeButton.click();
         }
     }
 
-    private void waitUntilNoKeywords(int timeout) {
+    private void waitUntilNoKeywords(final int timeout) {
         new WebDriverWait(getDriver(), timeout)
                 .withMessage("deleting keywords")
                 .until(ExpectedConditions.textToBePresentInElement(keywordsPage, "No keywords found"));
     }
 
-    public void removeKeywordGroup(WebElement group) {
+    public void removeKeywordGroup(final WebElement group) {
         removeKeywordGroupAsync(group);
         keywordsPage.waitForRefreshIconToDisappear();
     }
 
-    public KeywordsPage deleteKeyword(String term) {
+    public KeywordsPage deleteKeyword(final String term) {
         goToKeywords();
         keywordsPage.deleteKeyword(term);
         return keywordsPage;

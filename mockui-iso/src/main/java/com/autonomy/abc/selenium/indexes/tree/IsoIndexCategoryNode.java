@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IsoIndexCategoryNode extends IndexCategoryNode {
-    public IsoIndexCategoryNode(WebElement element, WebDriver webDriver) {
+    public IsoIndexCategoryNode(final WebElement element, final WebDriver webDriver) {
         super(new IndexLeafNode(element, webDriver), element, webDriver);
     }
 
@@ -18,22 +18,22 @@ public class IsoIndexCategoryNode extends IndexCategoryNode {
 
     @Override
     protected List<IndexNodeElement> getIndexNodes() {
-        List<IndexNodeElement> nodes = new ArrayList<>();
-        for (WebElement element : getContainer().findElements(By.cssSelector(".checkbox[data-name]"))) {
+        final List<IndexNodeElement> nodes = new ArrayList<>();
+        for (final WebElement element : getContainer().findElements(By.cssSelector(".checkbox[data-name]"))) {
             nodes.add(new IndexLeafNode(element, getDriver()));
         }
         return nodes;
     }
 
     @Override
-    protected IndexNodeElement find(String name) {
-        WebElement childElement = getContainer().findElement(By.cssSelector(".checkbox[data-name='" +name+ "']"));
+    protected IndexNodeElement find(final String name) {
+        final WebElement childElement = getContainer().findElement(By.cssSelector(".checkbox[data-name='" +name+ "']"));
         return new IndexLeafNode(childElement, getDriver());
     }
 
     @Override
-    protected IndexCategoryNode findCategory(String name) {
-        WebElement childElement = ElementUtil.ancestor(getContainer().findElement(By.cssSelector(".checkbox[data-category-id='" + name.toLowerCase() + "']")), 1);
+    protected IndexCategoryNode findCategory(final String name) {
+        final WebElement childElement = ElementUtil.ancestor(getContainer().findElement(By.cssSelector(".checkbox[data-category-id='" + name.toLowerCase() + "']")), 1);
         return new IsoIndexCategoryNode(childElement, getDriver());
     }
 }

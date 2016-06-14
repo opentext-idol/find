@@ -43,7 +43,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     private FindService findService;
     private SimilarDocumentsView similarDocuments;
 
-    public SimilarDocumentsITCase(TestConfig config) {
+    public SimilarDocumentsITCase(final TestConfig config) {
         super(config);
     }
 
@@ -58,7 +58,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         findService.search(new Query("Doe"));
 
         for (int i = 1; i <= 5; i++) {
-            String title = results.getResult(i).getTitleString();
+            final String title = results.getResult(i).getTitleString();
             similarDocuments = findService.goToSimilarDocuments(i);
 
             verifyThat(getWindow(), urlContains("suggest"));
@@ -78,7 +78,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         for(int i = 1; i <= 5; i++){
             similarDocuments = findService.goToSimilarDocuments(i);
-            WebElement seedLink = similarDocuments.seedLink();
+            final WebElement seedLink = similarDocuments.seedLink();
             verifyThat(seedLink, displayed());
             verifyThat(seedLink.getText(), not(isEmptyOrNullString()));
             similarDocuments.backButton().click();
@@ -92,15 +92,15 @@ public class SimilarDocumentsITCase extends FindTestBase {
         for (int i = 1; i <= 5; i++) {
             Waits.loadOrFadeWait();
             similarDocuments = findService.goToSimilarDocuments(i);
-            WebElement seedLink  = similarDocuments.seedLink();
-            String seedTitle = seedLink.getText();
+            final WebElement seedLink  = similarDocuments.seedLink();
+            final String seedTitle = seedLink.getText();
 
             previewSeed(seedLink);
             similarDocuments.backButton().click();
         }
     }
 
-    private void previewSeed(WebElement seedLink){
+    private void previewSeed(final WebElement seedLink){
         seedLink.click();
         verifyThat("SeedLink goes to detailed document preview",getDriver().getCurrentUrl(),containsString("document"));
         getElementFactory().getDetailedPreview().goBackToSearch();
@@ -119,7 +119,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         }
     }
 
-    private void verifySimilarDocsNotEmpty(int i) {
+    private void verifySimilarDocsNotEmpty(final int i) {
         similarDocuments = findService.goToSimilarDocuments(i);
         verifyThat(similarDocuments.mainResultsContent().getText(), not(isEmptyOrNullString()));
         similarDocuments.backButton().click();
@@ -135,10 +135,10 @@ public class SimilarDocumentsITCase extends FindTestBase {
         String previousTitle = similarDocuments.seedLink().getText();
         for(int i = 0; i < 5; i++) {
             //Generate a random number between 1 and 5
-            int number = (int) (Math.random() * 5 + 1);
+            final int number = (int) (Math.random() * 5 + 1);
 
-            FindResult doc = similarDocuments.getResult(number);
-            String docTitle = doc.getTitleString();
+            final FindResult doc = similarDocuments.getResult(number);
+            final String docTitle = doc.getTitleString();
 
             doc.similarDocuments().click();
             Waits.loadOrFadeWait();
@@ -160,7 +160,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         for(int i = 30; i <= 150; i += 30) {
             verifyThat(similarDocuments.getVisibleResultsCount(), is(i));
-            DocumentViewer documentViewer = similarDocuments.getResult(i).openDocumentPreview();
+            final DocumentViewer documentViewer = similarDocuments.getResult(i).openDocumentPreview();
             assertThat("Have opened preview container",documentViewer.previewPresent());
             documentViewer.close();
             verifyThat(similarDocuments.getVisibleResultsCount(),is(i+30));
@@ -176,14 +176,14 @@ public class SimilarDocumentsITCase extends FindTestBase {
         similarDocuments = findService.goToSimilarDocuments(1);
         Waits.loadOrFadeWait();
         similarDocuments.sortByDate();
-        List<FindResult> searchResults = similarDocuments.getResults();
+        final List<FindResult> searchResults = similarDocuments.getResults();
 
         Date previousDate = null;
 
         for(int i = 0; i <= 10; i++){
-            String badFormatDate = searchResults.get(i).getDate();
-            String date = similarDocuments.convertDate(badFormatDate);
-            Date currentDate = SimilarDocumentsView.DATE_FORMAT.parse(date);
+            final String badFormatDate = searchResults.get(i).getDate();
+            final String date = similarDocuments.convertDate(badFormatDate);
+            final Date currentDate = SimilarDocumentsView.DATE_FORMAT.parse(date);
 
             if(previousDate != null){
                 verifyThat(currentDate, lessThanOrEqualTo(previousDate));
@@ -200,9 +200,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
         testDocPreview(similarDocuments.getResults(5));
     }
 
-    private void testDocPreview(List<FindResult> results) {
-        for (FindResult result : results) {
-            DocumentViewer docPreview = result.openDocumentPreview();
+    private void testDocPreview(final List<FindResult> results) {
+        for (final FindResult result : results) {
+            final DocumentViewer docPreview = result.openDocumentPreview();
 
             assertThat("Have opened preview container",docPreview.previewPresent());
             verifyThat("Preview not stuck loading", !similarDocuments.loadingIndicator().isDisplayed());
@@ -210,8 +210,8 @@ public class SimilarDocumentsITCase extends FindTestBase {
             verifyThat("Index displayed", docPreview.getIndex(), not(nullValue()));
             verifyThat("Reference displayed", docPreview.getReference(), not(nullValue()));
 
-            Frame previewFrame = new Frame(getWindow(), docPreview.frame());
-            String frameText = previewFrame.getText();
+            final Frame previewFrame = new Frame(getWindow(), docPreview.frame());
+            final String frameText = previewFrame.getText();
 
             verifyThat("Preview document has content", frameText, not(isEmptyOrNullString()));
             assertThat("Preview document has no error", previewFrame.getText(), not(containsString("encountered an error")));
@@ -225,12 +225,12 @@ public class SimilarDocumentsITCase extends FindTestBase {
         findService.search(new Query("stars"));
         similarDocuments = findService.goToSimilarDocuments(1);
 
-        FindResult firstSimilar =similarDocuments.getResult(1);
-        String title = firstSimilar.getTitleString();
+        final FindResult firstSimilar =similarDocuments.getResult(1);
+        final String title = firstSimilar.getTitleString();
 
         firstSimilar.openDocumentPreview();
         getElementFactory().getInlinePreview().openDetailedPreview();
-        DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
 
         verifyThat("Have opened right detailed preview", detailedPreviewPage.getTitle(),equalToIgnoringCase(title));
         detailedPreviewPage.goBackToSearch();

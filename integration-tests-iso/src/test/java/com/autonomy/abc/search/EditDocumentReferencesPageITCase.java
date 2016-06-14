@@ -141,7 +141,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
     @Test
     @ResolvedBug("CSA-1755")
     public void testRefreshEditPromotionPage() throws InterruptedException {
-        String originalDoc = setUpPromotion("Luke", "jedi master", 1).get(0);
+        final String originalDoc = setUpPromotion("Luke", "jedi master", 1).get(0);
         assumeThat(editReferencesPage.getBucketTitles(), not(empty()));
         verifyRefreshing();
 
@@ -159,7 +159,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
                 .withMessage("Waiting for promotion bucket to have results")
                 .until(new ExpectedCondition<Boolean>() {
                     @Override
-                    public Boolean apply(WebDriver driver) {
+                    public Boolean apply(final WebDriver driver) {
                         return !editReferencesPage.getBucketTitles().isEmpty();
                     }
                 });
@@ -179,7 +179,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
 
     @Test
     public void testEditDocumentReferencesCancel() {
-        String originalDoc = setUpPromotion("house", "home", 1).get(0);
+        final String originalDoc = setUpPromotion("house", "home", 1).get(0);
         assumeThat(editReferencesPage.getBucketTitles(), not(empty()));
 
         editReferencesPage.deleteDocFromWithinBucket(originalDoc);
@@ -225,7 +225,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
         verifyThat(getWindow(), urlContains("promotions/edit"));
     }
 
-    private void checkDocumentViewable(String title) {
+    private void checkDocumentViewable(final String title) {
         final DocumentViewer docViewer = DocumentViewer.make(getDriver());
         final Frame frame = new Frame(getWindow(), docViewer.frame());
 
@@ -336,13 +336,13 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
         editDocumentSearch("Friday");
 
         editReferencesPage.addDocToBucket(5);
-        String title = editReferencesPage.getSearchResult(5).getTitleString();
+        final String title = editReferencesPage.getSearchResult(5).getTitleString();
         DriverUtil.scrollIntoView(getDriver(), editReferencesPage.saveButton());
         editReferencesPage.saveButton().click();
 
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 
-        List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
+        final List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
         verifyThat(promotedTitles, not(hasItem("Unknown Document")));
 
         if (verifyThat(promotedTitles, hasItem(title))) {

@@ -64,8 +64,8 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testKeywordsFilter() throws InterruptedException {
-		List<String> synonyms = Arrays.asList("dog", "hound", "canine");
-		String blacklist = "illegal";
+		final List<String> synonyms = Arrays.asList("dog", "hound", "canine");
+		final String blacklist = "illegal";
 
 		searchPage = keywordService.addSynonymGroup(synonyms);
 		verifyThat("search title contains one of the synonym group", searchPage.getHeadingSearchTerm(), isIn(synonyms));
@@ -107,7 +107,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	//The keyword 'orange' exists in two different synonym groups. Tests that deleting this keyword does not affect the other synonym group
 	@Test
 	public void testDeleteSynonymsFromOverlappingSynonymGroups() throws InterruptedException {
-		String duplicate = "orange";
+		final String duplicate = "orange";
 		List<String> fruits = Arrays.asList("apple", "pear", "banana", duplicate);
 		List<String> colours = Arrays.asList("red", "blue", "yellow", duplicate);
 
@@ -144,7 +144,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		verifyNoSynonyms();
 	}
 
-	private void verifyDuplicateCount(String duplicate, int count) {
+	private void verifyDuplicateCount(final String duplicate, final int count) {
 		verifyThat(duplicate + " appears " + count + " times", keywordsPage.countSynonymGroupsWithSynonym(duplicate), is(count));
 	}
 
@@ -168,7 +168,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	// TODO: this still does not work
 	private List<String> readSynonymFile() {
 		final List<String> groupsOfFiveSynonyms = new ArrayList<>();
-		Scanner scanner = new Scanner(ClassLoader.getSystemResource("/100SynonymGroups.txt").getFile());
+		final Scanner scanner = new Scanner(ClassLoader.getSystemResource("/100SynonymGroups.txt").getFile());
 		while (scanner.hasNextLine()) {
 			groupsOfFiveSynonyms.add(scanner.nextLine());
 		}
@@ -222,7 +222,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	@ResolvedBug("CSA-1447")
 	@ActiveBug(value = "CSA-1882", type = ApplicationType.HOSTED)
 	public void testNotificationForCreatedBlacklistedTermAndSynonymGroup() throws InterruptedException {
-		List<String> notificationContents = new ArrayList<>();
+		final List<String> notificationContents = new ArrayList<>();
 
 		keywordService.addBlacklistTerms("orange");
 		notificationContents.add("Added \"orange\" to the blacklist");
@@ -253,11 +253,11 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		verifyNotifications(notificationContents);
 	}
 
-	private void verifyNotifications(List<String> contents) {
+	private void verifyNotifications(final List<String> contents) {
 		getElementFactory().getTopNavBar().notificationsDropdown();
 		notifications = getElementFactory().getTopNavBar().getNotifications();
 
-		int size = Math.min(contents.size(), 5);
+		final int size = Math.min(contents.size(), 5);
 		for (int i=1; i <= size ; i++) {
 			verifyThat(notifications.notificationNumber(i), containsText(contents.get(size-i)));
 		}
@@ -265,7 +265,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	private void verifyClickNotification() {
-		WebDriverWait wait = new WebDriverWait(getDriver(),15);
+		final WebDriverWait wait = new WebDriverWait(getDriver(),15);
 		wait.until(GritterNotice.notificationsDisappear());
 		wait.until(ExpectedConditions.visibilityOf(notifications.notificationNumber(1))).click();
 		verifyThat("clicking notification does nothing", notifications, displayed());
@@ -307,7 +307,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		keywordService.goToKeywords();
 		keywordsPage.selectLanguage(Language.ENGLISH);
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
-		FormInput filterBox = keywordsPage.searchFilterBox();
+		final FormInput filterBox = keywordsPage.searchFilterBox();
 
 		verifyKeywordState(2, 6);
 		verifySynonymGroup(synonymListBears);
@@ -320,7 +320,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 		filterBox.setValue("buzz");
 		verifyKeywordState(1, 3);
-		List<String> beeSynonyms = keywordsPage.getSynonymGroupSynonyms(synonymListBees.get(0));
+		final List<String> beeSynonyms = keywordsPage.getSynonymGroupSynonyms(synonymListBees.get(0));
 		verifyThat(synonymListBees, everyItem(isIn(beeSynonyms)));
 		verifyThat(synonymListBears, everyItem(not(isIn(beeSynonyms))));
 
@@ -330,7 +330,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 		filterBox.setValue("Bear");
 		verifyKeywordState(1, 3);
-		List<String> bearSynonyms = keywordsPage.getSynonymGroupSynonyms(synonymListBears.get(0));
+		final List<String> bearSynonyms = keywordsPage.getSynonymGroupSynonyms(synonymListBears.get(0));
 		verifyThat(synonymListBears, everyItem(isIn(bearSynonyms)));
 		verifyThat(synonymListBees, everyItem(not(isIn(bearSynonyms))));
 
@@ -343,7 +343,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	@RelatedTo({"CSA-1724", "CSA-1893"})
 	private void verifySearchKeywords(final List<String> synonyms) {
 		verifyThat("One of the synonyms is included in title", searchPage.getHeadingSearchTerm(), isIn(synonyms));
-		for(String searchedFor : searchPage.youSearchedFor()) {
+		for(final String searchedFor : searchPage.youSearchedFor()) {
 			verifyThat("All searched for terms are within synonym group", searchedFor, isIn(synonyms));
 		}
 		// TODO: re-enable query analysis
@@ -360,8 +360,8 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		keywordsPage.selectLanguage(Language.URDU);
 		Waits.loadOrFadeWait();
 
-		Window mainWindow = getWindow();
-		Window secondWindow = getMainSession().openWindow(mainWindow.getUrl());
+		final Window mainWindow = getWindow();
+		final Window secondWindow = getMainSession().openWindow(mainWindow.getUrl());
 
 		final KeywordsPage secondKeywordsPage = getElementFactory().getKeywordsPage();
 		assertThat(secondKeywordsPage.countSynonymLists(), is(1));
@@ -441,18 +441,18 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	@ResolvedBug("CCUK-3245")
 	public void testAddingForbiddenKeywordsFromUrl() {
 		keywordService.goToKeywords();
-		String curURL = getDriver().getCurrentUrl();
-		String blacklistUrl = curURL + "/create/blacklisted/"+getURLEnd()+"/";
+		final String curURL = getDriver().getCurrentUrl();
+		final String blacklistUrl = curURL + "/create/blacklisted/"+getURLEnd()+"/";
 
 		for (final String forbidden : Arrays.asList("(", "...","the")) {
 			checkForbiddenKeywordNotAccepted(blacklistUrl,forbidden);
 		}
 	}
 
-	private void checkForbiddenKeywordNotAccepted(String url,String forbidden){
+	private void checkForbiddenKeywordNotAccepted(final String url, final String forbidden){
 		getDriver().get(url + forbidden);
 		Waits.loadOrFadeWait();
-		CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+		final CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
 		Waits.loadOrFadeWait();
 		if(!createKeywordsPage.finishWizardButton().isEnabled()){
@@ -511,10 +511,10 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testDeletingOfSynonymsAndBlacklistedTerms() throws InterruptedException {
-		String blacklistTerms = "aa ba ca da ab bb cb db";
-		String synonyms = "ea es ed ef eg eh";
-		String[] blacklistTermsToDelete = {"db", "aa", "da"};
-		String[] synonymsToDelete = {"es", "ea", "ef", "ed", "eg"};
+		final String blacklistTerms = "aa ba ca da ab bb cb db";
+		final String synonyms = "ea es ed ef eg eh";
+		final String[] blacklistTermsToDelete = {"db", "aa", "da"};
+		final String[] synonymsToDelete = {"es", "ea", "ef", "ed", "eg"};
 
 		keywordService.addBlacklistTerms(blacklistTerms);
 		keywordService.addSynonymGroup(synonyms);
@@ -528,8 +528,8 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		verifyDeletes(blacklistTermsToDelete);
 	}
 
-	private void verifyDeletes(String[] keywords) {
-		for (String keyword : keywords) {
+	private void verifyDeletes(final String[] keywords) {
+		for (final String keyword : keywords) {
 			keywordService.deleteKeyword(keyword);
 			verifyThat("successfully removed keyword '" + keyword + "'", !keywordsPage.areAnyKeywordsDisabled());
 		}
@@ -545,7 +545,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 		// the last 2 synonyms should be removed together
 		for (int i = 0; i < synonyms.size()-1; i++) {
-			String synonym = synonyms.get(i);
+			final String synonym = synonyms.get(i);
 			keywordsPage.getSynonymIcon(synonym).click();
 
 			if(i < synonyms.size()-2) {
@@ -562,11 +562,11 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testSynonymNotificationText() throws InterruptedException {
-		String synonymOne = "Flesh";
-		String synonymTwo = "Meat";
-		String synonymThree = "Skin";
+		final String synonymOne = "Flesh";
+		final String synonymTwo = "Meat";
+		final String synonymThree = "Skin";
 
-		String[] synonyms = new String[]{synonymOne, synonymTwo, synonymThree};
+		final String[] synonyms = new String[]{synonymOne, synonymTwo, synonymThree};
 		keywordService.addSynonymGroup(synonyms);
 		Arrays.sort(synonyms);
 		getElementFactory().getTopNavBar().notificationsDropdown();
@@ -576,8 +576,8 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testBlacklistNotificationText() throws InterruptedException {
-		String blacklistOne = "Aardvark";
-		String blacklistTwo = "Aardwolf";
+		final String blacklistOne = "Aardvark";
+		final String blacklistTwo = "Aardwolf";
 
 		keywordService.addBlacklistTerms(blacklistOne, blacklistTwo);
 		getElementFactory().getTopNavBar().notificationsDropdown();
@@ -622,9 +622,9 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	 */
 	@Test
 	public void testOverlappingBlacklistSynonym() {
-		String blacklist = "blacklist";
-		String synonym = "synonym";
-		String[] synonymGroup = new String[]{blacklist, synonym};
+		final String blacklist = "blacklist";
+		final String synonym = "synonym";
+		final String[] synonymGroup = new String[]{blacklist, synonym};
 
 		keywordService.addSynonymGroup(synonymGroup);
 		keywordService.addBlacklistTerms(blacklist);
@@ -659,8 +659,8 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	@Test
 	@ResolvedBug("CSA-1686")
 	public void testBlacklistTermsNotOverwritten(){
-		String blacklistOne = "uno";
-		String blacklistTwo = "duo";
+		final String blacklistOne = "uno";
+		final String blacklistTwo = "duo";
 
 		keywordService.addBlacklistTerms(blacklistOne);
 
@@ -672,11 +672,11 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		verifyBlacklisted(blacklistOne);
 	}
 
-	private void verifyBlacklisted(String blacklist) {
+	private void verifyBlacklisted(final String blacklist) {
 		verifyThat("'" + blacklist + "' is blacklisted", keywordsPage.getBlacklistedTerms(), hasItem(blacklist));
 	}
 
-	private void verifySynonymGroup(List<String> synonymGroup) {
+	private void verifySynonymGroup(final List<String> synonymGroup) {
 		verifyThat(keywordsPage.getSynonymGroupSynonyms(synonymGroup.get(0)), containsItems(synonymGroup, String.CASE_INSENSITIVE_ORDER));
 	}
 
@@ -688,19 +688,19 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		verifyThat("no synonyms displayed", keywordsPage.countSynonymLists(), is(0));
 	}
 
-	private void verifyNumberOfSynonymGroups(int count) {
+	private void verifyNumberOfSynonymGroups(final int count) {
 		verifyThat("number of synonym groups is " + count, keywordsPage.countSynonymLists(), is(count));
 	}
 
-	private void verifySynonymGroupSize(List<String> synonyms) {
+	private void verifySynonymGroupSize(final List<String> synonyms) {
 		verifySynonymGroupSize(synonyms.get(0), synonyms.size());
 	}
 
-	private void verifySynonymGroupSize(String synonym, int size) {
+	private void verifySynonymGroupSize(final String synonym, final int size) {
 		verifyThat(keywordsPage.getSynonymGroupSynonyms(synonym), hasSize(size));
 	}
 
-	private void addSynonymsAndVerify(List<String> synonyms) {
+	private void addSynonymsAndVerify(final List<String> synonyms) {
 		keywordService.addSynonymGroup(synonyms);
 		keywordService.goToKeywords();
 		keywordsPage.filterView(KeywordFilter.ALL);
@@ -708,7 +708,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		verifySynonymGroupSize(synonyms);
 	}
 
-	private List<String> deleteSynonymAndVerify(String toDelete, List<String> synonyms) {
+	private List<String> deleteSynonymAndVerify(final String toDelete, final List<String> synonyms) {
 		if (synonyms.size() == 2) {
 			deleteSynonymGroupAndVerify(toDelete);
 			return Collections.emptyList();
@@ -716,11 +716,11 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		return deleteSingleSynonymAndVerify(toDelete, synonyms);
 	}
 
-	private List<String> deleteSingleSynonymAndVerify(String toDelete, List<String> synonyms) {
+	private List<String> deleteSingleSynonymAndVerify(final String toDelete, List<String> synonyms) {
 		synonyms = new ArrayList<>(synonyms);
 		synonyms.remove(toDelete);
-		int expectedGroups = keywordsPage.countSynonymLists();
-		int expectedKeywords = keywordsPage.countKeywords() - 1;
+		final int expectedGroups = keywordsPage.countSynonymLists();
+		final int expectedKeywords = keywordsPage.countKeywords() - 1;
 		keywordsPage.deleteSynonym(toDelete, keywordsPage.synonymGroupContaining(synonyms.get(0)));
 
 		verifySynonymGroup(synonyms);
@@ -730,24 +730,24 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		return synonyms;
 	}
 
-	private void deleteSynonymGroupAndVerify(String synonym) {
-		int expectedGroups = keywordsPage.countSynonymLists() - 1;
-		int expectedKeywords = keywordsPage.countKeywords() - keywordsPage.getSynonymGroupSynonyms(synonym).size();
+	private void deleteSynonymGroupAndVerify(final String synonym) {
+		final int expectedGroups = keywordsPage.countSynonymLists() - 1;
+		final int expectedKeywords = keywordsPage.countKeywords() - keywordsPage.getSynonymGroupSynonyms(synonym).size();
 
 		keywordService.removeKeywordGroup(keywordsPage.synonymGroup(synonym));
 		verifyKeywordState(expectedGroups, expectedKeywords);
 	}
 
-	private void verifyKeywordState(int expectedGroups, int expectedKeywords) {
+	private void verifyKeywordState(final int expectedGroups, final int expectedKeywords) {
 		verifyNumberOfSynonymGroups(expectedGroups);
 		verifyThat("number of keywords is " + expectedKeywords, keywordsPage.countKeywords(), is(expectedKeywords));
 	}
 
-	private List<String> verifyAddToGroup(String toAdd, List<String> synonyms) {
+	private List<String> verifyAddToGroup(final String toAdd, List<String> synonyms) {
 		synonyms = new ArrayList<>(synonyms);
 		synonyms.add(toAdd);
-		int expectedGroups = keywordsPage.countSynonymLists();
-		int expectedKeywords = keywordsPage.countKeywords() + 1;
+		final int expectedGroups = keywordsPage.countSynonymLists();
+		final int expectedKeywords = keywordsPage.countKeywords() + 1;
 		keywordsPage.addSynonymToGroup(toAdd, keywordsPage.synonymGroupContaining(synonyms.get(0)));
 
 		verifyThat("'" + toAdd + "' added to synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), hasItem(equalToIgnoringCase(toAdd)));
@@ -757,10 +757,10 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		return synonyms;
 	}
 
-	private void verifyCannotAddToGroup(String toAdd, List<String> synonyms) {
-		int expectedGroups = keywordsPage.countSynonymLists();
-		int expectedKeywords = keywordsPage.countKeywords();
-		SynonymGroup group = keywordsPage.synonymGroupContaining(synonyms.get(0));
+	private void verifyCannotAddToGroup(final String toAdd, final List<String> synonyms) {
+		final int expectedGroups = keywordsPage.countSynonymLists();
+		final int expectedKeywords = keywordsPage.countKeywords();
+		final SynonymGroup group = keywordsPage.synonymGroupContaining(synonyms.get(0));
 		group.synonymAddButton().click();
 		group.synonymInput().setAndSubmit(toAdd);
 
@@ -773,24 +773,24 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	@Test
 	@ResolvedBug("ISO-14")
 	public void testKeywordsAlphabeticallyListed(){
-		for (String group: getSynonyms()) {
+		for (final String group: getSynonyms()) {
 			keywordService.addSynonymGroup(group);
 		}
 		Waits.loadOrFadeWait();
 		keywordService.addBlacklistTerms(getBlacklisted());
 
-		KeywordsPage keywordsPage = keywordService.goToKeywords();
+		final KeywordsPage keywordsPage = keywordService.goToKeywords();
 		final List<String> keywords = keywordsPage.getAllFirstKeywords();
 
 		for (int i = 0; i < keywords.size() - 2; i++) {
-			String word1 = keywords.get(i);
-			String word2 = keywords.get(i+1);
+			final String word1 = keywords.get(i);
+			final String word2 = keywords.get(i+1);
 			verifyThat(word1+" vs. "+word2,word1.compareTo(word2) <= 0, is(true));
 		}
 	}
 
 	private List<String> getSynonyms(){
-		List<String> synonyms = new ArrayList<String>();
+		final List<String> synonyms = new ArrayList<String>();
 		synonyms.add("aardvark face tumultuous");
 		synonyms.add("yellow vader nibble");
 		synonyms.add("pistachio unreal");

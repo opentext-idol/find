@@ -16,7 +16,7 @@ import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
 public abstract class FindElementFactory extends ElementFactoryBase {
-    protected FindElementFactory(WebDriver driver) {
+    protected FindElementFactory(final WebDriver driver) {
         super(driver, null);
     }
 
@@ -60,7 +60,7 @@ public abstract class FindElementFactory extends ElementFactoryBase {
     }
 
     @Override
-    public <T extends AppPage> T loadPage(Class<T> type) {
+    public <T extends AppPage> T loadPage(final Class<T> type) {
         throw new UnsupportedOperationException("loadPage does not make sense for a single page application");
     }
 }

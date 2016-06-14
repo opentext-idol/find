@@ -23,8 +23,8 @@ public class DualConfigLocator {
     }
 
     public JsonConfig getJsonConfig() throws IOException {
-        JsonConfig base = maybeReadConfig(BASE_CONFIG_LOCATION);
-        JsonConfig override = maybeReadConfig(OVERRIDE_CONFIG_LOCATION);
+        final JsonConfig base = maybeReadConfig(BASE_CONFIG_LOCATION);
+        final JsonConfig override = maybeReadConfig(OVERRIDE_CONFIG_LOCATION);
         if (base == null) {
             LOGGER.warn("base config not found");
             return override;
@@ -36,7 +36,7 @@ public class DualConfigLocator {
         return reader.toJsonNode(BASE_CONFIG_LOCATION);
     }
 
-    private JsonConfig maybeReadConfig(String path) throws IOException {
+    private JsonConfig maybeReadConfig(final String path) throws IOException {
         if (path == null || path.isEmpty()) {
             return null;
         }
@@ -44,16 +44,16 @@ public class DualConfigLocator {
     }
 
     private static class ResourceJsonConfigReader {
-        public JsonConfig toJsonConfig(String path) throws IOException {
+        public JsonConfig toJsonConfig(final String path) throws IOException {
             return path == null ? null : new JsonConfig(toJsonNode(path), new UserConfigParserFactory());
         }
 
-        public JsonNode toJsonNode(String path) throws IOException {
+        public JsonNode toJsonNode(final String path) throws IOException {
             return new ObjectMapper().readTree(urlForPath(path));
         }
 
-        private static URL urlForPath(String path) throws FileNotFoundException {
-            URL resource = ClassLoader.getSystemResource(path);
+        private static URL urlForPath(final String path) throws FileNotFoundException {
+            final URL resource = ClassLoader.getSystemResource(path);
             if (resource == null) {
                 throw new FileNotFoundException("Config file " + path + " not found in the resources directory");
             }

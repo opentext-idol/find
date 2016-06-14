@@ -17,26 +17,26 @@ public enum NavBarTabId {
     DOCUMENTATION("Documentation"),
     GETTING_STARTED("Getting Started"){
         @Override
-        public void click(WebDriver driver) {
+        public void click(final WebDriver driver) {
             nestedClick(driver, DOCUMENTATION);
         }
     },
     TUTORIALS("Tutorials"){
         @Override
-        public void click(WebDriver driver) {
+        public void click(final WebDriver driver) {
             nestedClick(driver, DOCUMENTATION);
         }
     },
     USER_MGMT("User Management"),
     DEVELOPERS("Haven OnDemand Developers"){
         @Override
-        public void click(WebDriver driver) {
+        public void click(final WebDriver driver) {
             nestedClick(driver, USER_MGMT);
         }
     },
     USERS("Haven Search OnDemand Users"){
         @Override
-        public void click(WebDriver driver) {
+        public void click(final WebDriver driver) {
             nestedClick(driver, USER_MGMT);
         }
     },
@@ -52,20 +52,20 @@ public enum NavBarTabId {
         return tabName;
     }
 
-    public void click(WebDriver driver) {
+    public void click(final WebDriver driver) {
         defaultClick(driver);
     }
 
-    protected void defaultClick(WebDriver driver){
-        WebElement element = new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul//li//a[contains(.,'" + toString() + "')]")));
+    protected void defaultClick(final WebDriver driver){
+        final WebElement element = new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul//li//a[contains(.,'" + toString() + "')]")));
         try {
             element.click();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             ElementUtil.ancestor(element, 1).click();
         }
     }
 
-    protected void nestedClick(WebDriver driver, NavBarTabId parent){
+    protected void nestedClick(final WebDriver driver, final NavBarTabId parent){
         if(!this.isDisplayed(driver)){
             parent.click(driver);
         }
@@ -73,7 +73,7 @@ public enum NavBarTabId {
         this.defaultClick(driver);
     }
 
-    protected boolean isDisplayed(WebDriver driver){
+    protected boolean isDisplayed(final WebDriver driver){
         return driver.findElement(By.xpath("//a[contains(.,'" + this.tabName + "')]")).isDisplayed();
     }
 }

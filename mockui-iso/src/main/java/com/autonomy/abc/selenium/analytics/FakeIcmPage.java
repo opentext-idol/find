@@ -13,7 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * be in with the HSOD tests
  */
 public class FakeIcmPage extends DashboardBase {
-    public FakeIcmPage(WebDriver driver) {
+    public FakeIcmPage(final WebDriver driver) {
         super(waitForLoad(driver), driver);
     }
 
@@ -22,7 +22,7 @@ public class FakeIcmPage extends DashboardBase {
         waitForLoad(getDriver());
     }
 
-    private static WebElement waitForLoad(WebDriver driver) {
+    private static WebElement waitForLoad(final WebDriver driver) {
         return new WebDriverWait(driver, 30)
                 .withMessage("switching to ICM")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content")));
@@ -35,7 +35,7 @@ public class FakeIcmPage extends DashboardBase {
         }
 
         @Override
-        public FakeIcmPage create(WebDriver driver) {
+        public FakeIcmPage create(final WebDriver driver) {
             return new FakeIcmPage(driver);
         }
     }

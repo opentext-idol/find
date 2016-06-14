@@ -27,7 +27,7 @@ public class SOHasLoggedIn implements HasLoggedIn {
 
     private static class LoginCondition implements ExpectedCondition<Boolean> {
         @Override
-        public Boolean apply(WebDriver input) {
+        public Boolean apply(final WebDriver input) {
             if (navbarIsVisible(input)) {
                 return true;
             } else if (signedInTextVisible(input)) {
@@ -37,11 +37,11 @@ public class SOHasLoggedIn implements HasLoggedIn {
             }
         }
 
-        private boolean navbarIsVisible(WebDriver driver) {
+        private boolean navbarIsVisible(final WebDriver driver) {
             return driver.findElements(By.className("navbar-static-top")).size() > 0;
         }
 
-        private boolean signedInTextVisible(WebDriver driver) {
+        private boolean signedInTextVisible(final WebDriver driver) {
             return driver.findElements(By.xpath("//*[text()='Signed in']")).size() > 0;
         }
     }

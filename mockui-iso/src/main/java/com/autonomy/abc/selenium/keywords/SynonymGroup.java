@@ -17,27 +17,27 @@ public class SynonymGroup {
     private final WebElement group;
     private final WebDriver driver;
 
-    public SynonymGroup(WebElement group, WebDriver driver) {
+    public SynonymGroup(final WebElement group, final WebDriver driver) {
         this.group = group;
         this.driver = driver;
     }
 
-    public void add(String synonym) {
+    public void add(final String synonym) {
         try {
             synonymAddButton().click();
-        } catch (ElementNotVisibleException e) {
+        } catch (final ElementNotVisibleException e) {
             /* box already open */
         }
         synonymInput().setAndSubmit(synonym);
         new WebDriverWait(driver, 30).until(GritterNotice.notificationContaining("Added \"" + synonym.toLowerCase() + "\" to a synonym group"));
     }
 
-    public void remove(String synonym) {
+    public void remove(final String synonym) {
         synonymBox(synonym).removeAndWait();
     }
 
-    public Removable synonymBox(String synonym) {
-        WebElement synonymBox = group.findElement(By.cssSelector("[data-term='" + synonym.toLowerCase() + "']"));
+    public Removable synonymBox(final String synonym) {
+        final WebElement synonymBox = group.findElement(By.cssSelector("[data-term='" + synonym.toLowerCase() + "']"));
         return new LabelBox(synonymBox, driver);
     }
 

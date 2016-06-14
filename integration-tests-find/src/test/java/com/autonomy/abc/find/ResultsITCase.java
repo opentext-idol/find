@@ -29,7 +29,7 @@ public class ResultsITCase extends FindTestBase {
     private FindResultsPage results;
     private FindService findService;
 
-    public ResultsITCase(TestConfig config) {
+    public ResultsITCase(final TestConfig config) {
         super(config);
     }
 
@@ -43,11 +43,11 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("CSA-1665")
     public void testSearchTermInResults() {
-        String searchTerm = "tiger";
+        final String searchTerm = "tiger";
 
         findService.search(searchTerm);
 
-        for (WebElement searchElement : getDriver().findElements(By.xpath("//*[contains(@class,'search-text') and contains(text(),'" + searchTerm + "')]"))) {
+        for (final WebElement searchElement : getDriver().findElements(By.xpath("//*[contains(@class,'search-text') and contains(text(),'" + searchTerm + "')]"))) {
             if (searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                 verifyThat(searchElement.getText().toLowerCase(), containsString(searchTerm));
             }
@@ -69,8 +69,8 @@ public class ResultsITCase extends FindTestBase {
         findPage.scrollToBottom();
         verifyThat(results.getResults(), hasSize(allOf(greaterThanOrEqualTo(60), lessThanOrEqualTo(90))));
 
-        List<String> titles = results.getResultTitles();
-        Set<String> titlesSet = new HashSet<>(titles);
+        final List<String> titles = results.getResultTitles();
+        final Set<String> titlesSet = new HashSet<>(titles);
 
         verifyThat("No duplicate titles", titles, hasSize(titlesSet.size()));
     }
@@ -95,7 +95,7 @@ public class ResultsITCase extends FindTestBase {
 
         findPage.scrollToBottom();
 
-        int occurrences = StringUtils.countMatches(results.resultsDiv().getText(), "results found");
+        final int occurrences = StringUtils.countMatches(results.resultsDiv().getText(), "results found");
         verifyThat("Only one message showing at the bottom of search results", occurrences, is(1));
     }
 

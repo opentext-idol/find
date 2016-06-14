@@ -13,7 +13,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
-    private IdolUsersPage(WebDriver driver) {
+    private IdolUsersPage(final WebDriver driver) {
         super(driver);
         waitForLoad();
     }
@@ -24,7 +24,7 @@ public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
     }
 
     @Override
-    public User addNewUser(NewUser newUser, Role role) {
+    public User addNewUser(final NewUser newUser, final Role role) {
         if (newUser instanceof IdolIsoNewUser) {
             return addIdolNewUser((IdolIsoNewUser) newUser, role);
         }
@@ -32,8 +32,8 @@ public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
     }
 
     // TODO: move to IdolIsoSignupService
-    private User addIdolNewUser(IdolIsoNewUser newUser, Role role) {
-        IdolUserCreationModal modal = new IdolUserCreationModal(getDriver());
+    private User addIdolNewUser(final IdolIsoNewUser newUser, final Role role) {
+        final IdolUserCreationModal modal = new IdolUserCreationModal(getDriver());
         modal.usernameInput().setValue(newUser.getUsername());
         modal.passwordInput().setValue(newUser.getPassword());
         modal.passwordConfirmInput().setValue(newUser.getPassword());
@@ -47,9 +47,9 @@ public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
         return new IdolUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
     }
 
-    public User replaceAuthFor(User user, ReplacementAuth newAuth) {
+    public User replaceAuthFor(final User user, final ReplacementAuth newAuth) {
         if (newAuth instanceof IdolIsoReplacementAuth) {
-            PasswordBox passwordBox = getUserRow(user).passwordBox();
+            final PasswordBox passwordBox = getUserRow(user).passwordBox();
             ((IdolIsoReplacementAuth) newAuth).sendTo(passwordBox);
             passwordBox.waitForUpdate();
         }
@@ -61,7 +61,7 @@ public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
             super(IdolUsersPage.class);
         }
 
-        public IdolUsersPage create(WebDriver context) {
+        public IdolUsersPage create(final WebDriver context) {
             return new IdolUsersPage(context);
         }
     }

@@ -8,21 +8,21 @@ public class LanguageFilter implements QueryFilter {
     private final Language language;
     private final Logger logger = LoggerFactory.getLogger(LanguageFilter.class);
 
-    public LanguageFilter(String language) {
+    public LanguageFilter(final String language) {
         this.language = Language.fromString(language);
     }
 
-    public LanguageFilter(Language language) {
+    public LanguageFilter(final Language language) {
         this.language = language;
     }
 
     // TODO: create via app-specific factory
     @Override
-    public void apply(QueryFilter.Filterable page) {
+    public void apply(final QueryFilter.Filterable page) {
         if (page instanceof LanguageFilter.Filterable) {
             try {
                 ((LanguageFilter.Filterable) page).selectLanguage(language);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("language not found");
             }
         } else {

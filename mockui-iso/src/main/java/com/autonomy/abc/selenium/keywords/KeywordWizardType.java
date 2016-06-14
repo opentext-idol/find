@@ -7,7 +7,7 @@ public enum KeywordWizardType {
     private final String option;
     private final String inputTitle;
 
-    KeywordWizardType(String option, String inputTitle) {
+    KeywordWizardType(final String option, final String inputTitle) {
         this.option = option;
         this.inputTitle = inputTitle;
     }

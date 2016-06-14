@@ -60,7 +60,7 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
     private IsoApplication<?> userApp;
     private IsoElementFactory userElementFactory;
 
-    public UserPermissionsITCase(TestConfig config) {
+    public UserPermissionsITCase(final TestConfig config) {
         super(config);
     }
 
@@ -78,7 +78,7 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
 
         try {
             userApp.loginService().login(user);
-        } catch (NoSuchElementException e) {
+        } catch (final NoSuchElementException e) {
             boolean assumeFailed = true;
 
             try {
@@ -107,13 +107,13 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
 
     @Test
     public void testCannotAddKeywords(){
-        List<String> blacklist = new ArrayList<>();
+        final List<String> blacklist = new ArrayList<>();
         blacklist.add("Dave");
 
-        KeywordsPage keywordsPage = userApp.keywordService().goToKeywords();
+        final KeywordsPage keywordsPage = userApp.keywordService().goToKeywords();
 
         keywordsPage.createNewKeywordsButton().click();
-        CreateNewKeywordsPage createNewKeywordsPage = userElementFactory.getCreateNewKeywordsPage();
+        final CreateNewKeywordsPage createNewKeywordsPage = userElementFactory.getCreateNewKeywordsPage();
 
         Waits.loadOrFadeWait();
 
@@ -123,13 +123,13 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
             new KeywordGroup(KeywordWizardType.BLACKLIST, Language.ENGLISH, blacklist).makeWizard(createNewKeywordsPage).apply();
 
             verifyError();
-        } catch (TimeoutException e) {
+        } catch (final TimeoutException e) {
             try {
                 verifyError();
-            } catch (Exception f) {
+            } catch (final Exception f) {
                 verifyAuthFailed();
             }
-        } catch (StaleElementReferenceException e) {
+        } catch (final StaleElementReferenceException e) {
             Waits.loadOrFadeWait();
             verifyAuthFailed();
         }
@@ -158,12 +158,12 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
     public void testCannotAddStaticPromotion() {
         assumeThat(isHosted(), is(true));
 
-        IsoHsodApplication userApp = (IsoHsodApplication) this.userApp;
+        final IsoHsodApplication userApp = (IsoHsodApplication) this.userApp;
 
-        HsodPromotionsPage promotionsPage = userApp.promotionService().goToPromotions();
+        final HsodPromotionsPage promotionsPage = userApp.promotionService().goToPromotions();
 
         promotionsPage.staticPromotionButton().click();
-        CreateNewPromotionsPage createNewPromotionsPage = userElementFactory.getCreateNewPromotionsPage();
+        final CreateNewPromotionsPage createNewPromotionsPage = userElementFactory.getCreateNewPromotionsPage();
 
         deleteUser();
 
@@ -171,14 +171,14 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
             new StaticPromotion("TITLE", "CONTENT", "TRIGGER").makeWizard(createNewPromotionsPage).apply();
 
             verifyError();
-        } catch (StaleElementReferenceException e) {
+        } catch (final StaleElementReferenceException e) {
             verifyAuthFailed();
         }
     }
 
     @Test
     public void testCannotAddUser(){
-        UsersPage usersPage = userApp.userService().goToUsers();
+        final UsersPage usersPage = userApp.userService().goToUsers();
 
         deleteUser();
 
@@ -201,9 +201,9 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
     }
 
     private void verifyError(){
-        TopNavBar topNavBar = userElementFactory.getTopNavBar();
+        final TopNavBar topNavBar = userElementFactory.getTopNavBar();
         topNavBar.openNotifications();
-        NotificationsDropDown notificationsDropDown = topNavBar.getNotifications();
+        final NotificationsDropDown notificationsDropDown = topNavBar.getNotifications();
         verifyThat(notificationsDropDown.getNotification(1).getMessage(), containsString("Error"));
     }
 

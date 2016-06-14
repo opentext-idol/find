@@ -13,17 +13,17 @@ public class HybridTestSetupStrategy {
     private final User initialUser;
     private boolean hasSetUp = false;
 
-    public HybridTestSetupStrategy(Application<?> app, User initialUser) {
+    public HybridTestSetupStrategy(final Application<?> app, final User initialUser) {
         this.app = app;
         this.initialUser = initialUser;
     }
 
-    public void setUp(Command postSetUpHook) {
+    public void setUp(final Command postSetUpHook) {
         if (!initialUser.equals(User.NULL)) {
             try {
                 app.loginService().login(initialUser);
                 postSetUpHook.execute();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOGGER.error("Unable to login");
                 LOGGER.error(e.toString());
                 throw new AssertionError("Unable to login", e);

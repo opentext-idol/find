@@ -20,7 +20,7 @@ public class SimilarDocumentsView implements AppPage {
     //TODO find somewhere more suitable for this
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE MMMMM dd kk:mm:ss zzz yyyy");
 
-    private SimilarDocumentsView(WebDriver driver) {
+    private SimilarDocumentsView(final WebDriver driver) {
         this.driver = driver;
         this.container = driver.findElement(By.className("suggest-service-view-container"));
     }
@@ -71,19 +71,19 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     public List<FindResult> getResults(){
-        List<FindResult> results = new ArrayList<>();
-        for(WebElement result : findElements(By.className("main-results-container"))){
+        final List<FindResult> results = new ArrayList<>();
+        for(final WebElement result : findElements(By.className("main-results-container"))){
             results.add(new FindResult(result, getDriver()));
         }
         return results;
     }
 
-    public List<FindResult> getResults(int maxResults) {
-        List<FindResult> results = getResults();
+    public List<FindResult> getResults(final int maxResults) {
+        final List<FindResult> results = getResults();
         return results.subList(0, Math.min(maxResults, results.size()));
     }
 
-    public FindResult getResult(int i) {
+    public FindResult getResult(final int i) {
         return new FindResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ")")), getDriver());
     }
 
@@ -94,11 +94,11 @@ public class SimilarDocumentsView implements AppPage {
                 .until(ExpectedConditions.visibilityOf(backButton()));
     }
 
-    private WebElement findElement(By locator) {
+    private WebElement findElement(final By locator) {
         return container.findElement(locator);
     }
 
-    private List<WebElement> findElements(By locator) {
+    private List<WebElement> findElements(final By locator) {
         return container.findElements(locator);
     }
 
@@ -118,10 +118,10 @@ public class SimilarDocumentsView implements AppPage {
         sortBy(2);
     }
 
-    public String convertDate(String badFormatDate){
-        String[] words = badFormatDate.split(" ");
-        int timeAmount;
-        String timeUnit;
+    public String convertDate(final String badFormatDate){
+        final String[] words = badFormatDate.split(" ");
+        final int timeAmount;
+        final String timeUnit;
         if(words[0].equals("a")||words[0].equals("an")){
             timeAmount=1;
             timeUnit = words[1];
@@ -131,7 +131,7 @@ public class SimilarDocumentsView implements AppPage {
             timeUnit = words[1];
         }
 
-        Calendar date = Calendar.getInstance();
+        final Calendar date = Calendar.getInstance();
 
         switch (timeUnit) {
             case "minute":
@@ -164,13 +164,13 @@ public class SimilarDocumentsView implements AppPage {
     }
 
 
-    private void sortBy(int dropdownRow){
+    private void sortBy(final int dropdownRow){
         findElement(By.className("current-search-sort")).click();
         findElement(By.cssSelector(".search-results-sort li:nth-child(" + dropdownRow + ")")).click();
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, SimilarDocumentsView> {
-        public SimilarDocumentsView create(WebDriver context) {
+        public SimilarDocumentsView create(final WebDriver context) {
             return new SimilarDocumentsView(context);
         }
     }

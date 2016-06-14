@@ -34,7 +34,7 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     private FindResultsPage results;
     private FindService findService;
 
-    public HodDocumentPreviewITCase(TestConfig config) {
+    public HodDocumentPreviewITCase(final TestConfig config) {
         super(config);
     }
 
@@ -50,18 +50,18 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     public void testViewDocumentsOpenFromFind(){
         findService.search("Review");
 
-        for(FindResult result : results.getResults(5)){
+        for(final FindResult result : results.getResults(5)){
             try {
-                DocumentViewer docViewer = result.openDocumentPreview();
+                final DocumentViewer docViewer = result.openDocumentPreview();
                 verifyDocumentViewer(docViewer);
                 docViewer.close();
-            } catch (WebDriverException e){
+            } catch (final WebDriverException e){
                 fail("Could not click on preview button - most likely CSA-1767");
             }
         }
     }
 
-    private void verifyDocumentViewer(DocumentViewer docViewer) {
+    private void verifyDocumentViewer(final DocumentViewer docViewer) {
         final Frame frame = new Frame(getWindow(), docViewer.frame());
 
         verifyThat("document visible", docViewer, displayed());
@@ -70,10 +70,10 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
 
         frame.activate();
 
-        Locator errorHeader = new Locator()
+        final Locator errorHeader = new Locator()
                 .withTagName("h1")
                 .containingText("500");
-        Locator errorBody = new Locator()
+        final Locator errorBody = new Locator()
                 .withTagName("h2")
                 .containingCaseInsensitive("error");
         verifyThat("no backend error", frame.content().findElements(errorHeader), empty());
@@ -104,19 +104,19 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
 
         findPage.scrollToBottom();
 
-        DocumentViewer docViewer = results.getResult(1).openDocumentPreview();
+        final DocumentViewer docViewer = results.getResult(1).openDocumentPreview();
         verifyThat(docViewer.getTotalDocumentsNumber(),lessThanOrEqualTo(60));
         docViewer.close();
 
         verifyThat(results.resultsDiv(), containsText("No more results found"));
     }
 
-    private void verifyDocViewerTotalDocuments(int docs){
+    private void verifyDocViewerTotalDocuments(final int docs){
         verifyDocViewerTotalDocuments(is(docs));
     }
 
-    private void verifyDocViewerTotalDocuments(Matcher matcher){
-        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+    private void verifyDocViewerTotalDocuments(final Matcher matcher){
+        final DocumentViewer docViewer = DocumentViewer.make(getDriver());
         verifyThat(docViewer.getTotalDocumentsNumber(), matcher);
         docViewer.close();
     }
@@ -125,7 +125,7 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     @ResolvedBug("CSA-1767 - footer not hidden properly")
     @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
     public void testDocumentPreview(){
-        Index index = new Index("fifa");
+        final Index index = new Index("fifa");
         findService.search(new Query("document preview").withFilter(new IndexFilter(index)));
 
         SharedPreviewTests.testDocumentPreviews(getMainSession(), results.getResults(5), index);
@@ -136,12 +136,12 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
         findService.search("Refuse to Feel");
 
         for(int i = 1; i <= 5; i++){
-            Window original = getWindow();
-            FindResult result = results.getResult(i);
-            String reference = result.getReference();
+            final Window original = getWindow();
+            final FindResult result = results.getResult(i);
+            final String reference = result.getReference();
             result.title().click();
             Waits.loadOrFadeWait();
-            Window newWindow = getMainSession().switchWindow(getMainSession().countWindows() - 1);
+            final Window newWindow = getMainSession().switchWindow(getMainSession().countWindows() - 1);
 
             verifyThat(getDriver().getCurrentUrl(), containsString(reference));
 
@@ -154,7 +154,7 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     public void testViewDocumentsOpenWithArrows(){
         findService.search("Review");
 
-        DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
+        final DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
         for(int i = 0; i < 5; i++) {
             verifyDocumentViewer(docViewer);
             docViewer.next();

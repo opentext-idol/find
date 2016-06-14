@@ -7,12 +7,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class PromotionsDetailTriggerForm extends TriggerForm {
-    public PromotionsDetailTriggerForm(WebElement element, WebDriver driver) {
+    public PromotionsDetailTriggerForm(final WebElement element, final WebDriver driver) {
         super(element, driver);
     }
 
     @Override
-    public void addTrigger(String trigger) {
+    public void addTrigger(final String trigger) {
         super.addTrigger(trigger);
         waitForTriggerRefresh();
     }

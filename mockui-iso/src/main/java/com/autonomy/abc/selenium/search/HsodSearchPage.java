@@ -21,7 +21,7 @@ public class HsodSearchPage extends SearchPage {
         }
 
         @Override
-        public HsodSearchPage create(WebDriver context) {
+        public HsodSearchPage create(final WebDriver context) {
             return new HsodSearchPage(context);
         }
     }

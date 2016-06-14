@@ -15,7 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public abstract class TopNavBar extends AppElement implements LoginService.LogoutHandler {
     private WebElement searchbox;
 
-    public TopNavBar(WebDriver driver) {
+    public TopNavBar(final WebDriver driver) {
         super(new WebDriverWait(driver, 30).withMessage("top nav bar to be visible").until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top.affix-element"))), driver);
     }
 
@@ -65,8 +65,8 @@ public abstract class TopNavBar extends AppElement implements LoginService.Logou
         }
     }
 
-    public void search(String searchTerm) {
-        WebElement topSearch = searchBox();
+    public void search(final String searchTerm) {
+        final WebElement topSearch = searchBox();
 
         topSearch.clear();
         topSearch.sendKeys(searchTerm);

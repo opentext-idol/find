@@ -18,7 +18,7 @@ public class IdolFind extends FindApplication<IdolFindElementFactory> {
     }
 
     @Override
-    public Application<IdolFindElementFactory> inWindow(Window window) {
+    public Application<IdolFindElementFactory> inWindow(final Window window) {
         this.elementFactory = new IdolFindElementFactory(window.getSession().getDriver());
         return this;
     }

@@ -15,7 +15,7 @@ public class Errors {
 
         private final String value;
 
-        Term(String text) {
+        Term(final String text) {
             value = text;
         }
 
@@ -46,7 +46,7 @@ public class Errors {
 
         private final String value;
 
-        Search(String content) {
+        Search(final String content) {
             value = content;
         }
 
@@ -63,7 +63,7 @@ public class Errors {
 
         private final String value;
 
-        Keywords(String text) {
+        Keywords(final String text) {
             value = text;
         }
 
@@ -81,7 +81,7 @@ public class Errors {
 
         private final String value;
 
-        User(String text) {
+        User(final String text) {
             value = text;
         }
 
@@ -100,7 +100,7 @@ public class Errors {
 
         private final String value;
 
-        Index(String text) {
+        Index(final String text) {
             value = text;
         }
 
@@ -116,7 +116,7 @@ public class Errors {
 
         private final String value;
 
-        Find(String text) {
+        Find(final String text) {
             value = text;
         }
 

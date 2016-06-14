@@ -85,7 +85,7 @@ public class IsoOverviewPage extends DashboardBase {
 			return IsoOverviewPage.class;
 		}
 
-		public IsoOverviewPage create(WebDriver context) {
+		public IsoOverviewPage create(final WebDriver context) {
 			IsoOverviewPage.waitForLoad(context);
 			return new IsoOverviewPage(context);
 		}

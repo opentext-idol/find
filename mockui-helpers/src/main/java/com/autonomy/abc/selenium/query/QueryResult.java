@@ -11,7 +11,7 @@ public abstract class QueryResult {
     private final WebElement result;
     private final WebDriver driver;
 
-    protected QueryResult(WebElement result, WebDriver driver) {
+    protected QueryResult(final WebElement result, final WebDriver driver) {
         this.result = result;
         this.driver = driver;
     }
@@ -36,11 +36,11 @@ public abstract class QueryResult {
         return findElement(By.className("hp-favorite"));
     }
 
-    protected WebElement findElement(By locator) {
+    protected WebElement findElement(final By locator) {
         return result.findElement(locator);
     }
 
-    protected List<WebElement> findElements(By locator) {
+    protected List<WebElement> findElements(final By locator) {
         return result.findElements(locator);
     }
 

@@ -11,7 +11,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 
 public class HsodUsersPage extends UsersPage<HsodUserTableRow> {
-    private HsodUsersPage(WebDriver driver) {
+    private HsodUsersPage(final WebDriver driver) {
         super(driver);
         waitForLoad();
     }
@@ -22,21 +22,21 @@ public class HsodUsersPage extends UsersPage<HsodUserTableRow> {
     }
 
     @Override
-    public HsodUser addNewUser(NewUser newUser, Role role) {
+    public HsodUser addNewUser(final NewUser newUser, final Role role) {
         if (newUser instanceof HsodNewUser) {
             return addHsodNewUser((HsodNewUser) newUser, role);
         }
         throw new IllegalStateException("Cannot create new user " + newUser);
     }
 
-    private HsodUser addHsodNewUser(HsodNewUser newUser, Role role) {
-        HsodUserCreationModal modal = userCreationModal();
+    private HsodUser addHsodNewUser(final HsodNewUser newUser, final Role role) {
+        final HsodUserCreationModal modal = userCreationModal();
         modal.usernameInput().setValue(newUser.getUsername());
         modal.emailInput().setValue(newUser.getEmail());
         modal.selectRole(role);
         try {
             modal.createUser();
-        } catch (TimeoutException e) {
+        } catch (final TimeoutException e) {
             throw new UserNotCreatedException(newUser);
         }
         return newUser.createWithRole(role);
@@ -52,7 +52,7 @@ public class HsodUsersPage extends UsersPage<HsodUserTableRow> {
             super(HsodUsersPage.class);
         }
 
-        public HsodUsersPage create(WebDriver context) {
+        public HsodUsersPage create(final WebDriver context) {
             return new HsodUsersPage(context);
         }
     }

@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 class IdolIsoTopNavBar extends TopNavBar {
-    IdolIsoTopNavBar(WebDriver driver) {
+    IdolIsoTopNavBar(final WebDriver driver) {
         super(driver);
     }
 
@@ -23,7 +23,7 @@ class IdolIsoTopNavBar extends TopNavBar {
         Waits.loadOrFadeWait();
     }
 
-    void switchPage(TabId tab) {
+    void switchPage(final TabId tab) {
         clickCog();
         findElement(tab.locator).click();
     }
@@ -35,7 +35,7 @@ class IdolIsoTopNavBar extends TopNavBar {
 
         private final By locator;
 
-        TabId(String linkText) {
+        TabId(final String linkText) {
             locator = By.linkText(linkText);
         }
     }

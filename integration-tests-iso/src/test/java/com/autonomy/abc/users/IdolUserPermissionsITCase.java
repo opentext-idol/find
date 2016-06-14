@@ -29,7 +29,7 @@ public class IdolUserPermissionsITCase extends IdolIsoTestBase {
     private final NewUser aNewUser;
     private UserTestHelper helper;
 
-    public IdolUserPermissionsITCase(TestConfig config) {
+    public IdolUserPermissionsITCase(final TestConfig config) {
         super(config);
         aNewUser = config.getNewUser("james");
     }
@@ -37,7 +37,7 @@ public class IdolUserPermissionsITCase extends IdolIsoTestBase {
     @Before
     public void setUp() {
         helper = new UserTestHelper(getApplication(), getConfig());
-        IdolIsoUserService userService = getApplication().userService();
+        final IdolIsoUserService userService = getApplication().userService();
         userService.deleteOtherUsers();
         new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationsDisappear());
 
@@ -47,8 +47,8 @@ public class IdolUserPermissionsITCase extends IdolIsoTestBase {
     @After
     public void userTearDown() {
         if (hasSetUp()) {
-            IsoApplication<?> tempApp = IsoApplication.ofType(getConfig().getType());
-            Session tempSession = launchInNewSession(tempApp);
+            final IsoApplication<?> tempApp = IsoApplication.ofType(getConfig().getType());
+            final Session tempSession = launchInNewSession(tempApp);
             tempApp.loginService().login(getInitialUser());
             tempApp.userService().deleteOtherUsers();
             getSessionRegistry().endSession(tempSession);

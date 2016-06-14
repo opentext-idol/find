@@ -32,7 +32,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
     private AppWindow first;
     private AppWindow second;
 
-    public MultiWindowNotificationsITCase(TestConfig config) {
+    public MultiWindowNotificationsITCase(final TestConfig config) {
         super(config);
     }
 
@@ -41,8 +41,8 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
 
         first = new AppWindow(getApplication(), getWindow());
 
-        IsoApplication<?> secondApp = IsoApplication.ofType(getConfig().getType());
-        Window secondWindow = launchInNewWindow(secondApp);
+        final IsoApplication<?> secondApp = IsoApplication.ofType(getConfig().getType());
+        final Window secondWindow = launchInNewWindow(secondApp);
         second = new AppWindow(secondApp, secondWindow);
     }
 
@@ -86,22 +86,22 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         }
     }
 
-    private void notificationsCountsShouldBe(int expected) {
+    private void notificationsCountsShouldBe(final int expected) {
         checkNotificationsCountFrom(second, is(expected));
-        List<String> secondNotifications = second.allNotifications();
+        final List<String> secondNotifications = second.allNotifications();
         checkNotificationsCountFrom(first, is(expected));
         verifyThat(first.allNotifications(), containsItems(secondNotifications));
     }
 
     private void checkFirstNotification() {
         checkNotificationsCountFrom(first, is(1));
-        String windowOneNotificationText = first.mostRecentNotification();
+        final String windowOneNotificationText = first.mostRecentNotification();
         checkNotificationsCountFrom(second, is(1));
         verifyThat(second.mostRecentNotification(), is(windowOneNotificationText));
         second.getNavBar().closeNotifications();
     }
 
-    private void checkNotificationsCountFrom(AppWindow inst, Matcher<Integer> expectation) {
+    private void checkNotificationsCountFrom(final AppWindow inst, final Matcher<Integer> expectation) {
         inst.activate();
         inst.getNavBar().openNotifications();
         verifyThat(inst.countNotifications(), expectation);
@@ -113,7 +113,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
         private final KeywordService keywordService;
         private final PromotionService<?> promotionService;
 
-        AppWindow(IsoApplication<?> app, Window window) {
+        AppWindow(final IsoApplication<?> app, final Window window) {
             this.app = app;
             this.window = window;
             keywordService = app.keywordService();
@@ -134,7 +134,7 @@ public class MultiWindowNotificationsITCase extends HybridIsoTestBase {
             return keywordService;
         }
 
-        void switchTo(Class<? extends AppPage> pageType) {
+        void switchTo(final Class<? extends AppPage> pageType) {
             activate();
             app.switchTo(pageType);
         }

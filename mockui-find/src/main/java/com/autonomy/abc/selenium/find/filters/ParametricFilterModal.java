@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParametricFilterModal extends ModalView{
-    ParametricFilterModal(WebElement element, WebDriver driver){super(element,driver);}
+    ParametricFilterModal(final WebElement element, final WebDriver driver){super(element,driver);}
 
-    public static ParametricFilterModal getParametricModal(WebDriver driver){
-        WebElement $el = (WebElement)(new WebDriverWait(driver, 30)).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".parametric-modal")));
-        ParametricFilterModal view = new ParametricFilterModal($el, driver);
+    public static ParametricFilterModal getParametricModal(final WebDriver driver){
+        final WebElement $el = (WebElement)(new WebDriverWait(driver, 30)).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".parametric-modal")));
+        final ParametricFilterModal view = new ParametricFilterModal($el, driver);
         return view;
     }
 
@@ -42,7 +42,7 @@ public class ParametricFilterModal extends ModalView{
     public String activeTabName(){return findElement(By.cssSelector("li.category-title.active span")).getText();}
 
     //input 0-indexed like panel
-    public void goToTab(int tabNumber){
+    public void goToTab(final int tabNumber){
         findElement(By.cssSelector(".category-title:nth-child("+ CssUtil.cssifyIndex(tabNumber)+")"));
     }
 
@@ -51,15 +51,15 @@ public class ParametricFilterModal extends ModalView{
 
     public List<WebElement> activeFieldList(){return activePane().findElements(By.cssSelector(".checkbox.parametric-field-label"));}
 
-    public String checkCheckBoxInActivePane(int i){
-        ParametricModalCheckbox box = new ParametricModalCheckbox(activeFieldList().get(i),getDriver());
+    public String checkCheckBoxInActivePane(final int i){
+        final ParametricModalCheckbox box = new ParametricModalCheckbox(activeFieldList().get(i),getDriver());
         box.check();
         return box.getName();
     }
 
     public List<String> checkedFieldsAllPanes() {
-        List<String> allCheckedFields = new ArrayList<>();
-        for (WebElement tab : tabs()) {
+        final List<String> allCheckedFields = new ArrayList<>();
+        for (final WebElement tab : tabs()) {
             tab.click();
             allCheckedFields.addAll(ElementUtil.getTexts(activePane().findElements(By.cssSelector(".icheckbox-hp.checked + span"))));
         }

@@ -25,7 +25,7 @@ public abstract class FindApplication<T extends FindElementFactory> implements A
         return "Find";
     }
 
-    public static FindApplication<?> ofType(ApplicationType type) {
+    public static FindApplication<?> ofType(final ApplicationType type) {
         switch (type) {
             case HOSTED:
                 return new HsodFind();

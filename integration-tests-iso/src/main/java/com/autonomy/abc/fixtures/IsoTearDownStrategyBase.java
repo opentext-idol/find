@@ -6,7 +6,7 @@ import com.hp.autonomy.frontend.selenium.base.TearDown;
 
 public abstract class IsoTearDownStrategyBase implements TearDown<HybridAppTestBase<? extends IsoApplication<?>, ?>> {
     @Override
-    public final void tearDown(HybridAppTestBase<? extends IsoApplication<?>, ?> test) {
+    public final void tearDown(final HybridAppTestBase<? extends IsoApplication<?>, ?> test) {
         if (test.hasSetUp()) {
             cleanUpApp(test.getApplication());
         }

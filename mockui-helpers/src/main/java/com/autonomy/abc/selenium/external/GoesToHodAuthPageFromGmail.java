@@ -16,12 +16,12 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
     private final GoogleAuth googleAuth;
     private WebDriver driver;
 
-    public GoesToHodAuthPageFromGmail(GoogleAuth auth) {
+    public GoesToHodAuthPageFromGmail(final GoogleAuth auth) {
         this.googleAuth = auth;
     }
 
     @Override
-    public void cleanUp(WebDriver driver) {
+    public void cleanUp(final WebDriver driver) {
         this.driver = driver;
         goToGoogleAndLogIn();
         markAllEmailAsRead();
@@ -44,7 +44,7 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
     }
 
     @Override
-    public void tryGoingToAuthPage(WebDriver driver) throws EmailNotFoundException {
+    public void tryGoingToAuthPage(final WebDriver driver) throws EmailNotFoundException {
         this.driver = driver;
         goToGoogleAndLogIn();
         while (haveNewMessages()) {
@@ -52,7 +52,7 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
             try {
                 clickLinkToAuthPage();
                 return;
-            } catch (EmailNotFoundException e) {
+            } catch (final EmailNotFoundException e) {
                 // it was probably spam
                 returnToInbox();
             }
@@ -66,18 +66,18 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
                     .withMessage("waiting for new email")
                     .until(new ExpectedCondition<Boolean>() {
                         @Override
-                        public Boolean apply(WebDriver driver) {
+                        public Boolean apply(final WebDriver driver) {
                             return haveNewMessagesNow(driver);
                         }
                     });
             return true;
-        } catch (TimeoutException f) {
+        } catch (final TimeoutException f) {
             return false;
         }
     }
 
-    private boolean haveNewMessagesNow(WebDriver driver) {
-        List<WebElement> unreadEmails = driver.findElements(By.cssSelector(".zA.zE"));
+    private boolean haveNewMessagesNow(final WebDriver driver) {
+        final List<WebElement> unreadEmails = driver.findElements(By.cssSelector(".zA.zE"));
 
         if (unreadEmails.size() > 0) {
             return true;
@@ -108,24 +108,24 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
         try {
             new WebDriverWait(driver,10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img.ajT")));
 
-            List<WebElement> ellipses = driver.findElements(By.cssSelector("img.ajT"));
-            WebElement finalEllipses = ellipses.get(ellipses.size() - 1);
+            final List<WebElement> ellipses = driver.findElements(By.cssSelector("img.ajT"));
+            final WebElement finalEllipses = ellipses.get(ellipses.size() - 1);
 
             if(finalEllipses.isDisplayed()){
                 finalEllipses.click();
             }
-        } catch (Exception e) { /* No Ellipses */ }
+        } catch (final Exception e) { /* No Ellipses */ }
     }
 
     private void clickLinkToAuthPage() throws EmailNotFoundException {
         try {
             driver.findElement(By.partialLinkText("here")).click();
-        } catch (NoSuchElementException e) {
+        } catch (final NoSuchElementException e) {
             throw new EmailNotFoundException();
         }
 
         Waits.loadOrFadeWait();
-        List<String> handles = new ArrayList<>(driver.getWindowHandles());
+        final List<String> handles = new ArrayList<>(driver.getWindowHandles());
         driver.switchTo().window(handles.get(1));
 
         // TODO: handle the "already verified" case better

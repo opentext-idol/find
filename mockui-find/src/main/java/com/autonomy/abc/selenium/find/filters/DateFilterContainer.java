@@ -18,7 +18,7 @@ class DateFilterContainer extends FilterContainer implements DatePickerFilter.Fi
 
     private final WebDriver driver;
 
-    DateFilterContainer(WebElement element, WebDriver webDriver){
+    DateFilterContainer(final WebElement element, final WebDriver webDriver){
         super(element,webDriver);
         driver = webDriver;
     }
@@ -32,16 +32,16 @@ class DateFilterContainer extends FilterContainer implements DatePickerFilter.Fi
         return ElementUtil.getTexts(getChildren());
     }
 
-    private boolean isFilteringBy(DateOption filter) {
-        WebElement checkIcon = findDateFilter(filter).findElement(By.tagName("i"));
+    private boolean isFilteringBy(final DateOption filter) {
+        final WebElement checkIcon = findDateFilter(filter).findElement(By.tagName("i"));
         return !ElementUtil.hasClass("hide", checkIcon);
     }
 
-    void toggleFilter(DateOption filter) {
+    void toggleFilter(final DateOption filter) {
         findDateFilter(filter).click();
     }
 
-    private WebElement findDateFilter(DateOption filter) {
+    private WebElement findDateFilter(final DateOption filter) {
         return getContainer().findElement(By.cssSelector("[data-filter-id='" + filter + "']"));
     }
 
@@ -55,9 +55,9 @@ class DateFilterContainer extends FilterContainer implements DatePickerFilter.Fi
         return datePicker(2);
     }
 
-    private DatePicker datePicker(int nthOfType) {
+    private DatePicker datePicker(final int nthOfType) {
         showCustomDateBoxes();
-        WebElement formGroup = getContainer().findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ")"));
+        final WebElement formGroup = getContainer().findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ")"));
         return new DatePicker(formGroup, getDriver());
     }
 
@@ -72,13 +72,13 @@ class DateFilterContainer extends FilterContainer implements DatePickerFilter.Fi
     }
 
     @Override
-    public String formatInputDate(Date date) {
+    public String formatInputDate(final Date date) {
         return FORMAT.format(date);
     }
 
-    private FormInput dateInput(int nthOfType) {
+    private FormInput dateInput(final int nthOfType) {
         showCustomDateBoxes();
-        WebElement inputBox = getContainer().findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ") input"));
+        final WebElement inputBox = getContainer().findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ") input"));
         return new FormInput(inputBox, getDriver());
     }
 

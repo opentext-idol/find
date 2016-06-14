@@ -90,9 +90,9 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testSynonymNotifications() throws InterruptedException {
-		String synonymOne = "Brock".toLowerCase();
-		String synonymTwo = "Lesnar".toLowerCase();
-		String synonymNotificationText = "Created a new synonym group containing: "+synonymOne+", "+synonymTwo;
+		final String synonymOne = "Brock".toLowerCase();
+		final String synonymTwo = "Lesnar".toLowerCase();
+		final String synonymNotificationText = "Created a new synonym group containing: "+synonymOne+", "+synonymTwo;
 
 		// waiting for the notification - just do the wizard
 		keywordService.addKeywords(KeywordWizardType.SYNONYMS, Language.ENGLISH, Arrays.asList(synonymOne, synonymTwo));
@@ -106,9 +106,9 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testBlacklistNotifications() throws InterruptedException {
-		String blacklistOne = "seth";
-		String blacklistTwo = "rollins";
-		String blacklistNotificationText = "Added \"placeholder\" to the blacklist";
+		final String blacklistOne = "seth";
+		final String blacklistTwo = "rollins";
+		final String blacklistNotificationText = "Added \"placeholder\" to the blacklist";
 
 		keywordService.deleteAll(KeywordFilter.ALL);
 		keywordService.addBlacklistTerms(blacklistOne, blacklistTwo);
@@ -125,9 +125,9 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testSpotlightPromotionNotifications(){
-		String promotionTrigger = "blatter";
-		String search = "thief";
-		String promotionNotificationText = "Created a new spotlight promotion: Spotlight for: "+promotionTrigger;
+		final String promotionTrigger = "blatter";
+		final String search = "thief";
+		final String promotionNotificationText = "Created a new spotlight promotion: Spotlight for: "+promotionTrigger;
 
 		promotionService.setUpPromotion(new SpotlightPromotion(promotionTrigger), search, 2);
 		try {
@@ -140,11 +140,11 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testRemovingSpotlightPromotionNotifications(){
-		String promotionTrigger = "lack";
-		String search = "colour";
-		String promotionNotificationText = "Removed a spotlight promotion";
+		final String promotionTrigger = "lack";
+		final String search = "colour";
+		final String promotionNotificationText = "Removed a spotlight promotion";
 
-		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(promotionTrigger);
+		final SpotlightPromotion spotlightPromotion = new SpotlightPromotion(promotionTrigger);
 
 		promotionService.setUpPromotion(spotlightPromotion, search, 2);
 		promotionService.delete(spotlightPromotion);
@@ -154,10 +154,10 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testPinToPositionPromotionNotifications(){
-		int pinToPositionPosition = 1;
-		String promotionTrigger = "Ziggler".toLowerCase();
-		String search = "Cena".toLowerCase();
-		String promotionNotificationText = "Created a new pin to position promotion: Pin to Position for: "+promotionTrigger;
+		final int pinToPositionPosition = 1;
+		final String promotionTrigger = "Ziggler".toLowerCase();
+		final String search = "Cena".toLowerCase();
+		final String promotionNotificationText = "Created a new pin to position promotion: Pin to Position for: "+promotionTrigger;
 
 		promotionService.setUpPromotion(new PinToPositionPromotion(pinToPositionPosition, promotionTrigger), search, 1);
 		try {
@@ -170,12 +170,12 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testRemovingPinToPositionPromotionNotifications(){
-		int pinToPositionPosition = 1;
-		String promotionTrigger = "Ziggler".toLowerCase();
-		String search = "Cena".toLowerCase();
-		String promotionNotificationText = "Removed a pin to position promotion";
+		final int pinToPositionPosition = 1;
+		final String promotionTrigger = "Ziggler".toLowerCase();
+		final String search = "Cena".toLowerCase();
+		final String promotionNotificationText = "Removed a pin to position promotion";
 
-		PinToPositionPromotion ptpp = new PinToPositionPromotion(pinToPositionPosition,promotionTrigger);
+		final PinToPositionPromotion ptpp = new PinToPositionPromotion(pinToPositionPosition,promotionTrigger);
 
 		promotionService.setUpPromotion(ptpp, search, 1);
 		promotionService.delete(ptpp);
@@ -185,10 +185,10 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testDynamicPromotionNotifications(){
-		int numberOfResults = 10;
-		String promotionTrigger = "football";
-		String search = "soccer";
-		String promotionNotificationText = "Created a new dynamic spotlight promotion: Dynamic Spotlight for: " + promotionTrigger;
+		final int numberOfResults = 10;
+		final String promotionTrigger = "football";
+		final String search = "soccer";
+		final String promotionNotificationText = "Created a new dynamic spotlight promotion: Dynamic Spotlight for: " + promotionTrigger;
 
 		promotionService.setUpPromotion(new DynamicPromotion(numberOfResults, promotionTrigger), search, 1);
 		try {
@@ -201,12 +201,12 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testRemovingDynamicPromotionNotifications(){
-		int numberOfResults = 10;
-		String promotionTrigger = "platini";
-		String search = "liar";
-		String promotionNotificationText = "Removed a dynamic spotlight promotion";
+		final int numberOfResults = 10;
+		final String promotionTrigger = "platini";
+		final String search = "liar";
+		final String promotionNotificationText = "Removed a dynamic spotlight promotion";
 
-		DynamicPromotion dynamic = new DynamicPromotion(numberOfResults, promotionTrigger);
+		final DynamicPromotion dynamic = new DynamicPromotion(numberOfResults, promotionTrigger);
 
 		promotionService.setUpPromotion(dynamic, search, 1);
 		promotionService.delete(dynamic);
@@ -216,20 +216,20 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testDeletingSynonymsNotifications() throws InterruptedException {
-		String synonymOne = "Dean".toLowerCase();
-		String synonymTwo = "Ambrose".toLowerCase();
-		String synonymThree = "Shield".toLowerCase();
+		final String synonymOne = "Dean".toLowerCase();
+		final String synonymTwo = "Ambrose".toLowerCase();
+		final String synonymThree = "Shield".toLowerCase();
 
 		//Have to add synonyms first before deleting them
 		keywordService.addSynonymGroup(synonymOne, synonymTwo, synonymThree);
-		KeywordsPage keywordsPage = keywordService.goToKeywords();
+		final KeywordsPage keywordsPage = keywordService.goToKeywords();
 
 		try {
-			String removeSynonymOneNotification = "Removed \"" + synonymOne + "\" from a synonym group";
+			final String removeSynonymOneNotification = "Removed \"" + synonymOne + "\" from a synonym group";
 			keywordsPage.synonymGroupContaining(synonymOne).synonymBox(synonymOne).removeAsync();
 			helper.checkForNotification(removeSynonymOneNotification);
 			getElementFactory().getTopNavBar().notificationsDropdown(); //Close notifications dropdown
-			String removeSynonymGroupNotification = "Removed a synonym group";
+			final String removeSynonymGroupNotification = "Removed a synonym group";
 			keywordsPage.synonymGroupContaining(synonymTwo).synonymBox(synonymTwo).removeAsync();
 			helper.checkForNotification(removeSynonymGroupNotification);
 		} finally {
@@ -239,11 +239,11 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testDeletingBlacklistNotifications() throws InterruptedException {
-		String blacklistOne = "Rollins".toLowerCase();
-		String blacklistTwo = "Seth".toLowerCase();
-		String blacklistNotificationText = "Removed \"placeholder\" from the blacklist";
+		final String blacklistOne = "Rollins".toLowerCase();
+		final String blacklistTwo = "Seth".toLowerCase();
+		final String blacklistNotificationText = "Removed \"placeholder\" from the blacklist";
 
-		KeywordsPage keywordsPage = keywordService.addBlacklistTerms(blacklistOne, blacklistTwo);
+		final KeywordsPage keywordsPage = keywordService.addBlacklistTerms(blacklistOne, blacklistTwo);
 
 		try {
 			keywordsPage.deleteBlacklistedTerm(blacklistOne);        //The gritter happens during this phase so cannot wait to check if gritter is okay afterward

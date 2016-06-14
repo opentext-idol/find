@@ -9,7 +9,7 @@ import org.openqa.selenium.WebElement;
 public class ParametricModalCheckbox extends Checkbox {
     private final By count = By.tagName("label");
 
-    ParametricModalCheckbox(WebElement element, WebDriver driver) {
+    ParametricModalCheckbox(final WebElement element, final WebDriver driver) {
         super(element, element.findElement(By.cssSelector(".icheckbox-hp")), driver);
     }
 

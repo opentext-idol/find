@@ -8,7 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class FindResult extends QueryResult {
-    FindResult(WebElement result, WebDriver driver){
+    FindResult(final WebElement result, final WebDriver driver){
         super(result, driver);
     }
 

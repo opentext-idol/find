@@ -14,7 +14,7 @@ public class FilterContainer implements Collapsible {
     private final WebElement container;
     private final Collapsible collapsible;
 
-    FilterContainer(WebElement element, WebDriver webDriver) {
+    FilterContainer(final WebElement element, final WebDriver webDriver) {
         container=element;
         collapsible=new ChevronContainer(container, webDriver);
     }
@@ -24,7 +24,7 @@ public class FilterContainer implements Collapsible {
     }
 
     protected WebElement getParent(){
-        WebElement filterElement = container.findElement(By.xpath(".//ancestor::div[contains(@class,'collapse')]"));
+        final WebElement filterElement = container.findElement(By.xpath(".//ancestor::div[contains(@class,'collapse')]"));
         return ElementUtil.getFirstChild(filterElement.findElement(By.xpath(".//preceding-sibling::div")));
     }
 
@@ -33,7 +33,7 @@ public class FilterContainer implements Collapsible {
     }
 
     public List<String> getChildNames(){
-        List<WebElement> children = container.findElements(By.cssSelector(".parametric-value-name"));
+        final List<WebElement> children = container.findElements(By.cssSelector(".parametric-value-name"));
         children.addAll(container.findElements(By.cssSelector("[data-filter-id] > td:nth-child(2)")));
         children.addAll(container.findElements(By.className("database-name")));
         return ElementUtil.getTexts(children);

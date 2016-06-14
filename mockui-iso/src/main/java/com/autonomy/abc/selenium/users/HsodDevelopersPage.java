@@ -9,7 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class HsodDevelopersPage extends UsersPage<HsodDeveloperTableRow> {
-    private HsodDevelopersPage(WebDriver driver) {
+    private HsodDevelopersPage(final WebDriver driver) {
         super(driver);
     }
 
@@ -19,7 +19,7 @@ public class HsodDevelopersPage extends UsersPage<HsodDeveloperTableRow> {
     }
 
     @Override
-    public User addNewUser(NewUser newUser, Role role) {
+    public User addNewUser(final NewUser newUser, final Role role) {
         throw new UnsupportedOperationException("Cannot add new developers to a tenancy");
     }
 
@@ -33,7 +33,7 @@ public class HsodDevelopersPage extends UsersPage<HsodDeveloperTableRow> {
             super(HsodDevelopersPage.class);
         }
 
-        public HsodDevelopersPage create(WebDriver context) {
+        public HsodDevelopersPage create(final WebDriver context) {
             return new HsodDevelopersPage(context);
         }
     }

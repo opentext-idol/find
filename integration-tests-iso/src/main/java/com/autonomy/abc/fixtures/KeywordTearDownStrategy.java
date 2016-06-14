@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 
 public class KeywordTearDownStrategy extends IsoTearDownStrategyBase {
     @Override
-    public void cleanUpApp(IsoApplication<?> app) {
+    public void cleanUpApp(final IsoApplication<?> app) {
         app.keywordService().deleteAll(KeywordFilter.ALL);
     }
 }

@@ -22,23 +22,23 @@ public class SchedulePage extends SOPageBase {
     }
 
 	//GENERAL
-	private WebElement dataOption(String optionName){
+	private WebElement dataOption(final String optionName){
 		return findElement(By.cssSelector("[data-option='"+optionName+"']"));
 	}
 
-	public boolean optionSelected(WebElement option){
+	public boolean optionSelected(final WebElement option){
 		return ElementUtil.hasClass("progressive-disclosure-selection",option);
 	}
 
-	public String dateText(WebElement dateTextBox){
+	public String dateText(final WebElement dateTextBox){
 		return dateTextBox.getAttribute("value");
 	}
 
-	public String date(WebElement dateTextBox){
+	public String date(final WebElement dateTextBox){
 		return dateText(dateTextBox).split(" ")[0];
 	}
 
-	public String time(WebElement dateTextBox){
+	public String time(final WebElement dateTextBox){
 		return dateText(dateTextBox).split(" ")[1];
 	}
 
@@ -54,7 +54,7 @@ public class SchedulePage extends SOPageBase {
 		return findElement(By.cssSelector(".finish-step"));
 	}
 
-	public boolean buttonDisabled(WebElement button){
+	public boolean buttonDisabled(final WebElement button){
 		if (ElementUtil.isDisabled(button)){
 			return true;
 		}
@@ -75,7 +75,7 @@ public class SchedulePage extends SOPageBase {
 		return Integer.parseInt((new SimpleDateFormat("dd")).format(todayIncrementedByDays(plusDays)));
 	}
 
-	public Date todayIncrementedByDays(int plusDays){
+	public Date todayIncrementedByDays(final int plusDays){
 		return DateUtils.addDays(getTodayDate(),plusDays);
 	}
 
@@ -93,7 +93,7 @@ public class SchedulePage extends SOPageBase {
 
 		try {
 			return rightDate.format(wrongDate.parse(date));
-		} catch (ParseException e) {//}
+		} catch (final ParseException e) {//}
 			return "Date didn't parse correctly!";
 		}
 	}
@@ -205,7 +205,7 @@ public class SchedulePage extends SOPageBase {
 			super(SchedulePage.class);
 		}
 
-		public SchedulePage create(WebDriver context) {
+		public SchedulePage create(final WebDriver context) {
 			SchedulePage.waitForLoad(context);
 			return new SchedulePage(context);
 		}

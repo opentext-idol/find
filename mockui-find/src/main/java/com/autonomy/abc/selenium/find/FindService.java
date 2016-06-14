@@ -12,13 +12,13 @@ public class FindService implements QueryService<FindResultsPage> {
     private final FindElementFactory elementFactory;
     private final FindPage findPage;
 
-    public FindService(FindApplication<?> find) {
+    public FindService(final FindApplication<?> find) {
         elementFactory = find.elementFactory();
         findPage = elementFactory.getFindPage();
     }
 
     @Override
-    public FindResultsPage search(String query){
+    public FindResultsPage search(final String query){
         return search(new Query(query));
     }
 
@@ -31,7 +31,7 @@ public class FindService implements QueryService<FindResultsPage> {
     }
 
     public SimilarDocumentsView goToSimilarDocuments(final int resultNumber) {
-        FindResultsPage resultsPage = elementFactory.getResultsPage();
+        final FindResultsPage resultsPage = elementFactory.getResultsPage();
         resultsPage.getResult(resultNumber).similarDocuments().click();
         resultsPage.waitForResultsToLoad();
         return elementFactory.getSimilarDocumentsView();

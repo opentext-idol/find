@@ -16,7 +16,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HsodUserService extends UserService<IsoHsodElementFactory> {
 
-    public HsodUserService(IsoApplication<? extends IsoHsodElementFactory> application) {
+    public HsodUserService(final IsoApplication<? extends IsoHsodElementFactory> application) {
         super(application);
     }
 
@@ -27,27 +27,27 @@ public class HsodUserService extends UserService<IsoHsodElementFactory> {
     }
 
     @Override
-    protected void deleteUserInRow(UserTableRow row) {
+    protected void deleteUserInRow(final UserTableRow row) {
         row.deleteButton().click();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
     }
 
     @Override
-    public HsodUser changeRole(User user, Role newRole) {
+    public HsodUser changeRole(final User user, final Role newRole) {
         goToUsers().getUserRow(user).changeRoleTo(newRole);
         return new HsodUserBuilder(user)
                 .setRole(newRole)
                 .build();
     }
 
-    public void resetAuthentication(User user) {
+    public void resetAuthentication(final User user) {
         goToUsers().getUserRow(user).openResetAuthModal();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Reset authentication for " + user.getUsername()));
     }
 
-    public User editUsername(User user, String newUsername) {
+    public User editUsername(final User user, final String newUsername) {
         goToUsers().getUserRow(user).changeUsernameTo(newUsername);
         return new HsodUserBuilder(user)
                 .setUsername(newUsername)

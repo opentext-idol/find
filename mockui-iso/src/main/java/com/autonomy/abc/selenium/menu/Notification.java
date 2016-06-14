@@ -8,13 +8,13 @@ public class Notification {
     private final String username;
     private final String time;
 
-    public Notification(String message, String username, String time){
+    public Notification(final String message, final String username, final String time){
         this.message = message;
         this.username = username;
         this.time = time;
     }
 
-    public Notification(WebElement notification){
+    public Notification(final WebElement notification){
         this(
                 notification.findElement(By.className("notification-message")).getText(),
                 notification.findElement(By.cssSelector(".small:not(.notification-time)")).getText(),
@@ -35,9 +35,9 @@ public class Notification {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if(obj instanceof Notification){
-            Notification notification = (Notification) obj;
+            final Notification notification = (Notification) obj;
             return notification.getMessage().equals(message) && notification.getUsername().equals(username);
         }
 

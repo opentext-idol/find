@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class FindHasLoggedIn implements HasLoggedIn {
     private final WebDriver driver;
 
-    public FindHasLoggedIn(WebDriver driver) {
+    public FindHasLoggedIn(final WebDriver driver) {
         this.driver = driver;
     }
 
@@ -21,7 +21,7 @@ public class FindHasLoggedIn implements HasLoggedIn {
                     .withMessage("logging in to Find")
                     .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid")));
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (signedInTextVisible()) {
                 throw new SSOFailureException();
             }

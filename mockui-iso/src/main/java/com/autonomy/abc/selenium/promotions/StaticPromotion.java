@@ -9,7 +9,7 @@ public class StaticPromotion extends Promotion {
     private final String title;
     private final String content;
 
-    public StaticPromotion(String title, String content, String trigger) {
+    public StaticPromotion(final String title, final String content, final String trigger) {
         super(trigger);
         this.title = title;
         this.content = content;
@@ -21,12 +21,12 @@ public class StaticPromotion extends Promotion {
     }
 
     @Override
-    public Wizard makeWizard(CreateNewPromotionsBase newPromotionsBase) {
+    public Wizard makeWizard(final CreateNewPromotionsBase newPromotionsBase) {
         return new StaticPromotionWizard((HsodCreateNewPromotionsPage) newPromotionsBase);
     }
 
     private class StaticPromotionWizard extends PromotionWizard {
-        public StaticPromotionWizard(HsodCreateNewPromotionsPage page) {
+        public StaticPromotionWizard(final HsodCreateNewPromotionsPage page) {
             super(page);
             add(new NewDocumentDetailsStep(page, title, content));
             add(new BlankWizardStep("Language"));

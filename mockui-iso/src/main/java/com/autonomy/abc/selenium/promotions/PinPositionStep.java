@@ -6,7 +6,7 @@ public class PinPositionStep implements WizardStep<Integer> {
     private final CreateNewPromotionsPage page;
     private final int position;
 
-    public PinPositionStep(CreateNewPromotionsPage page, int position) {
+    public PinPositionStep(final CreateNewPromotionsPage page, final int position) {
         this.page = page;
         this.position = position;
     }

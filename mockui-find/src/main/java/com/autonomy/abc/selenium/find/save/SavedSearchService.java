@@ -6,12 +6,12 @@ import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 public class SavedSearchService {
     private final IdolFindElementFactory elementFactory;
 
-    public SavedSearchService(IdolFind find) {
+    public SavedSearchService(final IdolFind find) {
         elementFactory = find.elementFactory();
     }
 
-    public void saveCurrentAs(String searchName, SearchType type) {
-        SearchOptionsBar options = elementFactory.getSearchOptionsBar();
+    public void saveCurrentAs(final String searchName, final SearchType type) {
+        final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
         options.saveAsButton().click();
         options.searchTitleInput().setValue(searchName);
         options.searchTypeButton(type).click();
@@ -24,14 +24,14 @@ public class SavedSearchService {
     }
 
     public void deleteAll() {
-        for (SearchTab tab : elementFactory.getSearchTabBar()) {
+        for (final SearchTab tab : elementFactory.getSearchTabBar()) {
             tab.activate();
             deleteCurrentSearch();
         }
     }
 
     private void deleteCurrentSearch() {
-        SearchOptionsBar options = elementFactory.getSearchOptionsBar();
+        final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
         options.openDeleteModal();
         options.confirmDelete();
     }

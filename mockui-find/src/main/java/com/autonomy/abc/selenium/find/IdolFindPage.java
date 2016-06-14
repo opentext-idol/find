@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 
 public class IdolFindPage extends FindPage {
 
-    private IdolFindPage(WebDriver driver) {
+    private IdolFindPage(final WebDriver driver) {
         super(driver);
     }
 
@@ -17,7 +17,7 @@ public class IdolFindPage extends FindPage {
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {
-        public IdolFindPage create(WebDriver context) {
+        public IdolFindPage create(final WebDriver context) {
             return new IdolFindPage(context);
         }
     }

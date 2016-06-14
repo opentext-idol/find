@@ -31,10 +31,10 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 
 	static {
 		try {
-			JsonNode node = new DualConfigLocator().getJsonNode().path("servers");
+			final JsonNode node = new DualConfigLocator().getJsonNode().path("servers");
 			HOSTS_AND_PORTS = new ObjectMapper().convertValue(node, new TypeReference<Map<IsoSettingsPage.Panel, IdolHostAndPorts>>() {});
 			System.out.println(HOSTS_AND_PORTS);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new IllegalStateException(e);
 		}
 	}

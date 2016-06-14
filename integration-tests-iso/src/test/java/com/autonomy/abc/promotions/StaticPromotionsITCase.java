@@ -41,7 +41,7 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
     private final String trigger = "dog";
     private final StaticPromotion promotion = new StaticPromotion(title, content, trigger);
 
-    public StaticPromotionsITCase(TestConfig config) {
+    public StaticPromotionsITCase(final TestConfig config) {
         super(config);
     }
 
@@ -63,7 +63,7 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
         promotionsPage.promotionDeleteButton(trigger).click();
         final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
         verifyThat(deleteModal, containsText(trigger));
-        WebElement cancelButton = deleteModal.findElement(By.className("btn-default"));
+        final WebElement cancelButton = deleteModal.findElement(By.className("btn-default"));
         verifyThat(cancelButton, hasTextThat(equalToIgnoringCase("Close")));
         cancelButton.click();
 
@@ -71,7 +71,7 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
         verifyThat("bottom right close button works", promotionsPage, promotionsList(hasItem(containsText(trigger))));
 
         promotionsPage.promotionDeleteButton(trigger).click();
-        ModalView modalView2 = ModalView.getVisibleModalView(getDriver());
+        final ModalView modalView2 = ModalView.getVisibleModalView(getDriver());
         modalView2.close();
         verifyThat("top right close button works", promotionsPage, promotionsList(hasItem(containsText(trigger))));
 
@@ -88,7 +88,7 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
     public void testEditStaticPromotion() {
         goToDetails();
 
-        Editable editTitle = promotionsDetailPage.staticPromotedDocumentTitle();
+        final Editable editTitle = promotionsDetailPage.staticPromotedDocumentTitle();
         final Editable editContent = promotionsDetailPage.staticPromotedDocumentContent();
         verifyThat(editTitle.getValue(), is(title));
         verifyThat(editContent.getValue(), is(content));
@@ -118,11 +118,11 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
         verifyNotification("delete", promotion.getDeleteNotification());
     }
 
-    private void verifyNotification(String notificationType, String notificationText) {
+    private void verifyNotification(final String notificationType, final String notificationText) {
         WebElement notification = null;
         try {
             notification = new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationAppears());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         verifyThat(notificationType + " notification appeared", notification, not(nullValue()));
@@ -140,8 +140,8 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
     @Test
     public void testPromotionViewable() {
         searchPage.promotedDocumentTitle(1).click();
-        DocumentViewer documentViewer = DocumentViewer.make(getDriver());
-        Frame frame = new Frame(getWindow(), documentViewer.frame());
+        final DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+        final Frame frame = new Frame(getWindow(), documentViewer.frame());
         verifyThat("document has a reference", documentViewer.getField("Reference"), not(isEmptyOrNullString()));
 
         frame.activate();
@@ -154,7 +154,7 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
     @Test
     @ResolvedBug("CSA-2059")
     public void testPromotionMetadata() {
-        IsoSearchResult promoted = searchPage.getPromotedResult(1);
+        final IsoSearchResult promoted = searchPage.getPromotedResult(1);
         verifyThat("promotion label visible", promoted.isPromoted(), is(true));
         verifyThat(promoted.indexLabel(), not(containsTextIgnoringCase("index")));
         verifyThat(promoted.indexLabel(), containsTextIgnoringCase("static"));
@@ -162,7 +162,7 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
         Object threw = null;
         try {
             promoted.getWeight();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             threw = e;
         }
         verifyThat(threw, notNullValue());
@@ -175,7 +175,7 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
         final String newTitle = "aaa";
         final String newTrigger = "alternative";
 
-        PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
+        final PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
 
         promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
         triggerForm.addTrigger(newTrigger);

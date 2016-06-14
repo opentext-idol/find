@@ -20,7 +20,7 @@ public class WarningLanguageDropdown implements LanguageDropdown {
         return Language.ENGLISH;
     }
 
-    public void select(Language language) {
+    public void select(final Language language) {
         LOGGER.warn("cannot select language");
     }
 

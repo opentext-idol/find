@@ -5,12 +5,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class HsodDeveloperTableRow extends UserTableRow {
-    public HsodDeveloperTableRow(WebElement element, WebDriver driver) {
+    public HsodDeveloperTableRow(final WebElement element, final WebDriver driver) {
         super(element, driver);
     }
 
     @Override
-    public void changeRoleTo(Role newRole) {
+    public void changeRoleTo(final Role newRole) {
         throw new UnsupportedOperationException("Cannot change role for HSOD developer users");
     }
 

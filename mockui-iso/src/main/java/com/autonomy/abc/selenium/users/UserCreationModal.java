@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public abstract class UserCreationModal extends ModalView {
-    UserCreationModal(WebDriver driver) {
+    UserCreationModal(final WebDriver driver) {
         super(ModalView.getVisibleModalView(driver), driver);
     }
 
@@ -31,7 +31,7 @@ public abstract class UserCreationModal extends ModalView {
         return findElement(By.id("create-users-role"));
     }
 
-    public void selectRole(Role role) {
+    public void selectRole(final Role role) {
         findElement(new Locator()
                 .withTagName("option")
                 .containingText(role.toString())

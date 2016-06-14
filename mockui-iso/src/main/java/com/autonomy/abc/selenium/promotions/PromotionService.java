@@ -21,7 +21,7 @@ import java.util.List;
 public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T> {
     private PromotionsPage promotionsPage;
 
-    public PromotionService(IsoApplication<? extends T> application) {
+    public PromotionService(final IsoApplication<? extends T> application) {
         super(application);
     }
 
@@ -30,20 +30,20 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
         return promotionsPage;
     }
 
-    public PromotionsDetailPage goToDetails(Promotion promotion) {
+    public PromotionsDetailPage goToDetails(final Promotion promotion) {
         return goToDetails(promotion.getTrigger());
     }
 
-    public PromotionsDetailPage goToDetails(String title) {
+    public PromotionsDetailPage goToDetails(final String title) {
         goToPromotions();
         promotionsPage.getPromotionLinkWithTitleContaining(title).click();
         return getElementFactory().getPromotionsDetailPage();
     }
 
-    public List<String> setUpPromotion(Promotion promotion, Query query, int numberOfDocs) {
-        SearchPage searchPage = getApplication().searchService().search(query);
+    public List<String> setUpPromotion(final Promotion promotion, final Query query, final int numberOfDocs) {
+        final SearchPage searchPage = getApplication().searchService().search(query);
         searchPage.openPromotionsBucket();
-        List<String> promotedDocTitles = searchPage.addDocsToBucket(numberOfDocs);
+        final List<String> promotedDocTitles = searchPage.addDocsToBucket(numberOfDocs);
 
         if (promotion instanceof DynamicPromotion) {
             searchPage.promoteThisQueryButton().click();
@@ -57,7 +57,7 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
         return promotedDocTitles;
     }
 
-    public List<String> setUpPromotion(Promotion promotion, String searchTerm, int numberOfDocs) {
+    public List<String> setUpPromotion(final Promotion promotion, final String searchTerm, final int numberOfDocs) {
         return setUpPromotion(promotion, new Query(searchTerm), numberOfDocs);
     }
 
@@ -65,7 +65,7 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
         getElementFactory().getSearchPage();
     }
 
-    public PromotionsPage delete(Promotion promotion) {
+    public PromotionsPage delete(final Promotion promotion) {
         goToPromotions();
         waitForDeleteButtonsToBeClickable();
         promotionsPage.promotionDeleteButton(promotion.getTrigger()).click();
@@ -75,8 +75,8 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
         return promotionsPage;
     }
 
-    private WebElement deleteNoWait(WebElement element) {
-        WebElement deleteButton = promotionsPage.promotionDeleteButton(element);
+    private WebElement deleteNoWait(final WebElement element) {
+        final WebElement deleteButton = promotionsPage.promotionDeleteButton(element);
         deleteButton.click();
         final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
         deleteModal.findElement(By.cssSelector(".btn-danger")).click();
@@ -84,10 +84,10 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
         return deleteButton;
     }
 
-    public PromotionsPage delete(String title) {
+    public PromotionsPage delete(final String title) {
         goToPromotions();
         waitForDeleteButtonsToBeClickable();
-        WebElement deleteButton = deleteNoWait(promotionsPage.getPromotionLinkWithTitleContaining(title));
+        final WebElement deleteButton = deleteNoWait(promotionsPage.getPromotionLinkWithTitleContaining(title));
         new WebDriverWait(getDriver(), 20)
                 .withMessage("deleting promotion with title " + title)
                 .until(ExpectedConditions.stalenessOf(deleteButton));
@@ -99,8 +99,8 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
         waitForDeleteButtonsToBeClickable();
         // TODO: possible stale element? refresh promotionsList, or select using int?
         // (multiple promotions may have the same title)
-        List<WebElement> promotionsList = promotionsPage.promotionsList();
-        for (WebElement promotion : promotionsList) {
+        final List<WebElement> promotionsList = promotionsPage.promotionsList();
+        for (final WebElement promotion : promotionsList) {
             deleteNoWait(promotion);
         }
         waitForPromotionsToBeDeleted(promotionsList.size());
@@ -113,8 +113,8 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
                 .until(GritterNotice.notificationsDisappear());
     }
 
-    private void waitForPromotionsToBeDeleted(int numberOfPromotions) {
-        int duration = 10 * (numberOfPromotions + 2);
+    private void waitForPromotionsToBeDeleted(final int numberOfPromotions) {
+        final int duration = 10 * (numberOfPromotions + 2);
         new WebDriverWait(getDriver(), duration)
                 .withMessage("deleting promotions")
                 .until(promotionsAreDeleted());
@@ -123,7 +123,7 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
     private ExpectedCondition<Boolean> promotionsAreDeleted() {
         return new ExpectedCondition<Boolean>() {
             @Override
-            public Boolean apply(WebDriver input) {
+            public Boolean apply(final WebDriver input) {
                 return promotionsPage.promotionsList().isEmpty();
             }
         };

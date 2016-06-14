@@ -13,19 +13,19 @@ public class EmailTearDownStrategy implements TearDown<HybridAppTestBase<?, ?>> 
     private final Session session;
     private final AuthenticationStrategy strategy;
 
-    public EmailTearDownStrategy(Session session, AuthenticationStrategy strategy) {
+    public EmailTearDownStrategy(final Session session, final AuthenticationStrategy strategy) {
         this.session = session;
         this.strategy = strategy;
     }
 
     @Override
-    public void tearDown(HybridAppTestBase<?, ?> test) {
+    public void tearDown(final HybridAppTestBase<?, ?> test) {
         if (shouldTearDown(test)) {
-            Window firstWindow = session.getActiveWindow();
-            Window secondWindow = session.openWindow("about:blank");
+            final Window firstWindow = session.getActiveWindow();
+            final Window secondWindow = session.openWindow("about:blank");
             try {
                 strategy.cleanUp(session.getDriver());
-            } catch (TimeoutException e) {
+            } catch (final TimeoutException e) {
                 LoggerFactory.getLogger(EmailTearDownStrategy.class).warn("Could not tear down");
             } finally {
                 secondWindow.close();
@@ -34,7 +34,7 @@ public class EmailTearDownStrategy implements TearDown<HybridAppTestBase<?, ?>> 
         }
     }
 
-    private boolean shouldTearDown(HybridAppTestBase<?, ?> test) {
+    private boolean shouldTearDown(final HybridAppTestBase<?, ?> test) {
         return test.hasSetUp() && !strategy.equals(NullAuthenticationStrategy.getInstance());
     }
 }

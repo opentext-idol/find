@@ -12,7 +12,7 @@ import java.util.Collections;
 
 @RunWith(Parameterized.class)
 public class HsodFindTestBase extends HybridAppTestBase<HsodFind, HsodFindElementFactory> {
-    protected HsodFindTestBase(TestConfig config) {
+    protected HsodFindTestBase(final TestConfig config) {
         super(config, new HsodFind());
     }
 

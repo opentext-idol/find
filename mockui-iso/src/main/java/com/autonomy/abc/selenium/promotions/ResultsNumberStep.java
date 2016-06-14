@@ -6,7 +6,7 @@ class ResultsNumberStep implements WizardStep {
     private final HsodCreateNewPromotionsPage page;
     private final int count;
 
-    ResultsNumberStep(HsodCreateNewPromotionsPage page, int count) {
+    ResultsNumberStep(final HsodCreateNewPromotionsPage page, final int count) {
         this.page = page;
         this.count = count;
     }

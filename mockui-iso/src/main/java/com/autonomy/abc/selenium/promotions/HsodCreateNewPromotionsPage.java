@@ -11,16 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public class HsodCreateNewPromotionsPage extends CreateNewPromotionsPage {
-    private HsodCreateNewPromotionsPage(WebDriver driver) {
+    private HsodCreateNewPromotionsPage(final WebDriver driver) {
         super(driver);
     }
 
-    private FormInput dataInput(String attribute) {
+    private FormInput dataInput(final String attribute) {
         return new FormInput(findElement(By.cssSelector("[data-attribute='" + attribute + "']")), getDriver());
     }
 
     @Override
-    public List<WizardStep> getWizardSteps(SpotlightPromotion promotion) {
+    public List<WizardStep> getWizardSteps(final SpotlightPromotion promotion) {
         return Arrays.asList(
             new OptionWizardStep(this, "Promotion type", Promotion.Type.SPOTLIGHT.getOption()),
             new SearchTriggerStep(this, promotion.getTrigger())
@@ -32,13 +32,13 @@ public class HsodCreateNewPromotionsPage extends CreateNewPromotionsPage {
         return findElement(By.cssSelector("input.dial"));
     }
 
-    void setDialValue(int value) {
+    void setDialValue(final int value) {
         // .clear() does not work properly due to validation
         dial().sendKeys("\b\b" + Integer.toString(value));
     }
 
     @Override
-    public List<WizardStep> getWizardSteps(DynamicPromotion promotion) {
+    public List<WizardStep> getWizardSteps(final DynamicPromotion promotion) {
         return Arrays.asList(
             new ResultsNumberStep(this, promotion.getNumberOfResults()),
             new SearchTriggerStep(this, promotion.getTrigger())
@@ -60,7 +60,7 @@ public class HsodCreateNewPromotionsPage extends CreateNewPromotionsPage {
         }
 
         @Override
-        public HsodCreateNewPromotionsPage create(WebDriver context) {
+        public HsodCreateNewPromotionsPage create(final WebDriver context) {
             return new HsodCreateNewPromotionsPage(context);
         }
     }

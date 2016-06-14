@@ -13,7 +13,7 @@ public enum Container {
 
     private final String container;
 
-    Container(String container) {
+    Container(final String container) {
         this.container = container;
     }
 
@@ -21,10 +21,10 @@ public enum Container {
         return "." + container + "-container";
     }
 
-    public void waitForLoad(WebDriver driver) {
+    public void waitForLoad(final WebDriver driver) {
         try {
             new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(asCssClass() + " .loading-spinner")));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //Noop
         }
 
@@ -33,7 +33,7 @@ public enum Container {
                 .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(asCssClass() + " .fa-spinner")));
     }
 
-    public WebElement findUsing(WebDriver driver) {
+    public WebElement findUsing(final WebDriver driver) {
         return driver.findElement(By.cssSelector(".full-height-viewport:not(.hide) " + asCssClass() + ", [data-pagename=search] " + asCssClass()));
     }
 }
