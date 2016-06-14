@@ -11,7 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class IdolPromotionsDetailPage extends PromotionsDetailPage {
-    private AppElement fieldTextContainer;
+    private final AppElement fieldTextContainer;
 
     private IdolPromotionsDetailPage(WebDriver driver) {
         super(driver);

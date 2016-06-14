@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 
 public class PinToPositionPromotion extends Promotion {
     private final static Type TYPE = Type.PIN_TO_POSITION;
-    private int position;
+    private final int position;
 
     public PinToPositionPromotion(int position, String trigger) {
         super(trigger);

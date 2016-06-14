@@ -3,8 +3,8 @@ package com.autonomy.abc.selenium.promotions;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 
 public class PinPositionStep implements WizardStep<Integer> {
-    private CreateNewPromotionsPage page;
-    private int position;
+    private final CreateNewPromotionsPage page;
+    private final int position;
 
     public PinPositionStep(CreateNewPromotionsPage page, int position) {
         this.page = page;

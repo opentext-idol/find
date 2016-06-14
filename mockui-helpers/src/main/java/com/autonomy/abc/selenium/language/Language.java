@@ -25,7 +25,7 @@ public enum Language {
     UNKNOWN("???");
 
     private final static Map<String, Language> inverse;
-    private String name;
+    private final String name;
 
     static {
         inverse = new HashMap<>();

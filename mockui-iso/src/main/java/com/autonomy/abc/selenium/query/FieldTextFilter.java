@@ -6,7 +6,7 @@ import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebElement;
 
 public class FieldTextFilter implements QueryFilter {
-    private String fieldText;
+    private final String fieldText;
 
     public FieldTextFilter(String fieldText) {
         this.fieldText = fieldText;

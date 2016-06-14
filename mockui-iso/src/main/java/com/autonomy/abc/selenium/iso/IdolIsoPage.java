@@ -39,7 +39,7 @@ enum IdolIsoPage implements PageMapper.Page, PageMapper.SwitchStrategy<IsoElemen
     SETTINGS(IdolIsoTopNavBar.TabId.SETTINGS, new IsoSettingsPage.Factory());
 
     private PageMapper.SwitchStrategy<IsoElementFactory> switchStrategy;
-    private AppPageFactory<?> factory;
+    private final AppPageFactory<?> factory;
 
     <T extends AppPage> IdolIsoPage(AppPageFactory<T> factory) {
         this.factory = factory;

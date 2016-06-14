@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class Query {
-    private String term;
-    private List<QueryFilter> filters;
+    private final String term;
+    private final List<QueryFilter> filters;
 
     public Query(String searchTerm) {
         term = searchTerm;

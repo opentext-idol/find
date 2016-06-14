@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.actions.wizard;
 
 public class BlankWizardStep implements WizardStep {
-    private String title;
+    private final String title;
 
     public BlankWizardStep(String title) {
         this.title = title;

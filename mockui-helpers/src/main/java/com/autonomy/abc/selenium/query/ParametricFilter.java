@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ParametricFilter implements QueryFilter {
-    private Map<String, String> map;
+    private final Map<String, String> map;
 
     public ParametricFilter(String category, String field){
         this.map = new HashMap<>();

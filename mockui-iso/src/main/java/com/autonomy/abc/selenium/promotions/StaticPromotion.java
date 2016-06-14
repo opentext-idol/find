@@ -6,8 +6,8 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 
 
 public class StaticPromotion extends Promotion {
-    private String title;
-    private String content;
+    private final String title;
+    private final String content;
 
     public StaticPromotion(String title, String content, String trigger) {
         super(trigger);

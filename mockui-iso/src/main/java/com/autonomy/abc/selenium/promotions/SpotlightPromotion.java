@@ -4,7 +4,7 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 
 public class SpotlightPromotion extends Promotion {
     private final static Type TYPE = Type.SPOTLIGHT;
-    private SpotlightType spotlightType;
+    private final SpotlightType spotlightType;
 
     public SpotlightPromotion(String trigger) {
         this(SpotlightType.SPONSORED, trigger);

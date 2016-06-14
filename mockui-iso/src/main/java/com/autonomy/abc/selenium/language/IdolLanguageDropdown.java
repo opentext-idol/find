@@ -6,7 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class IdolLanguageDropdown implements LanguageDropdown {
-    private Dropdown dropdown;
+    private final Dropdown dropdown;
 
     public IdolLanguageDropdown(AppElement element) {
         dropdown = new Dropdown(element);

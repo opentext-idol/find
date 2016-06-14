@@ -8,9 +8,9 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 
 public class KeywordGroup {
-    private String keywordString;
-    private KeywordWizardType type;
-    private Language language;
+    private final String keywordString;
+    private final KeywordWizardType type;
+    private final Language language;
 
     public KeywordGroup(KeywordWizardType type, Language language, Iterable<String> keywords) {
         this.keywordString = StringUtils.join(keywords, " ");
@@ -23,7 +23,7 @@ public class KeywordGroup {
     }
 
     private class KeywordWizard extends Wizard {
-        private CreateNewKeywordsPage page;
+        private final CreateNewKeywordsPage page;
 
         private KeywordWizard(CreateNewKeywordsPage newKeywordsPage) {
             page = newKeywordsPage;
@@ -53,7 +53,7 @@ public class KeywordGroup {
     }
 
     private class TypeStep extends OptionWizardStep {
-        private CreateNewKeywordsPage page;
+        private final CreateNewKeywordsPage page;
 
         public TypeStep(CreateNewKeywordsPage container) {
             super(container, "Select Type of Keywords", type.getOption());
@@ -69,7 +69,7 @@ public class KeywordGroup {
     }
 
     private class InputStep implements WizardStep {
-        private CreateNewKeywordsPage page;
+        private final CreateNewKeywordsPage page;
 
         public InputStep(CreateNewKeywordsPage container) {
             this.page = container;

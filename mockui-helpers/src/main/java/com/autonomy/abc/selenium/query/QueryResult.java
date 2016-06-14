@@ -8,8 +8,8 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 
 public abstract class QueryResult {
-    private WebElement result;
-    private WebDriver driver;
+    private final WebElement result;
+    private final WebDriver driver;
 
     protected QueryResult(WebElement result, WebDriver driver) {
         this.result = result;

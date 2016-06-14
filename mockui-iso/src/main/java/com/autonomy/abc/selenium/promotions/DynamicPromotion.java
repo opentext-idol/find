@@ -4,8 +4,8 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 
 // TODO: refactor using factories
 public class DynamicPromotion extends Promotion {
-    private int numberOfResults;
-    private SpotlightType spotlightType;
+    private final int numberOfResults;
+    private final SpotlightType spotlightType;
 
     // for HSO
     public DynamicPromotion(int numberOfResults, String trigger) {

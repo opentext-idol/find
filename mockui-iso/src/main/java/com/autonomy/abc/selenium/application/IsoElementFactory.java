@@ -18,7 +18,7 @@ import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
 public abstract class IsoElementFactory extends ElementFactoryBase {
-    private PageMapper<? extends PageMapper.SwitchStrategy<? super IsoElementFactory>> switchMapper;
+    private final PageMapper<? extends PageMapper.SwitchStrategy<? super IsoElementFactory>> switchMapper;
 
     protected IsoElementFactory(WebDriver driver, PageMapper<? extends PageMapper.SwitchStrategy<? super IsoElementFactory>> mapper) {
         super(driver, mapper);

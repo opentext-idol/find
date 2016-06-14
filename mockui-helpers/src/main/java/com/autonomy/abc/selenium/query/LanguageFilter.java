@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LanguageFilter implements QueryFilter {
-    private Language language;
-    private Logger logger = LoggerFactory.getLogger(LanguageFilter.class);
+    private final Language language;
+    private final Logger logger = LoggerFactory.getLogger(LanguageFilter.class);
 
     public LanguageFilter(String language) {
         this.language = Language.fromString(language);

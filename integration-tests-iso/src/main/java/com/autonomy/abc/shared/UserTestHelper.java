@@ -30,11 +30,11 @@ import static org.hamcrest.Matchers.containsString;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UserTestHelper {
-    private IsoApplication<?> app;
-    private AuthenticationStrategy authStrategy;
-    private UserService userService;
-    private TestConfig config;
-    private IsoElementFactory factory;
+    private final IsoApplication<?> app;
+    private final AuthenticationStrategy authStrategy;
+    private final UserService userService;
+    private final TestConfig config;
+    private final IsoElementFactory factory;
 
     public UserTestHelper(IsoApplication<?> app, TestConfig config) {
         this.app = app;

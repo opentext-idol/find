@@ -48,7 +48,7 @@ enum IsoHsodPage implements PageMapper.Page, PageMapper.SwitchStrategy<IsoElemen
     USERS(NavBarTabId.USERS, new HsodUsersPage.Factory());
 
     private PageMapper.SwitchStrategy<IsoElementFactory> switchStrategy;
-    private AppPageFactory<?> factory;
+    private final AppPageFactory<?> factory;
 
     <T extends AppPage> IsoHsodPage(AppPageFactory<T> factory) {
         this.factory = factory;

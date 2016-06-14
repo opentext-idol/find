@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class IndexFilter implements QueryFilter{
 
-    private Set<String> indexes;
+    private final Set<String> indexes;
     public final static IndexFilter ALL = new AllIndexFilter();
     public final static IndexFilter NONE = new EmptyIndexFilter();
     public final static IndexFilter PUBLIC = new PublicIndexFilter();
