@@ -52,7 +52,7 @@ public abstract class SearchBase extends SOPageBase implements
 	}
 
 	public IsoSearchResult getSearchResult(final int searchResult) {
-		return new IsoSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
+		return new IsoSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ')')), getDriver());
 	}
 
 	public Checkbox searchResultCheckbox(final int resultNumber) {

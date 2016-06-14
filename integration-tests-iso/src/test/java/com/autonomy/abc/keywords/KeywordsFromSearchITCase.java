@@ -359,7 +359,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
         }
         synonyms = new ArrayList<>();
         for (int outer=0; outer<10; outer++) {
-            synonyms.add("term" + outer + "0");
+            synonyms.add("term" + outer + '0');
         }
         search(StringUtils.join(synonyms, " "), Language.ENGLISH);
         assertThat(searchPage, not(containsText(Errors.Search.BACKEND)));

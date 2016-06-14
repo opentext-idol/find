@@ -145,7 +145,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 
 	public IsoSearchResult getPromotedResult(final int resultNumber) {
 		waitForPromotionsLoadIndicatorToDisappear();
-		return new IsoSearchResult(findElement(By.cssSelector(".promotions-list li:nth-child(" + resultNumber + ")")), getDriver());
+		return new IsoSearchResult(findElement(By.cssSelector(".promotions-list li:nth-child(" + resultNumber + ')')), getDriver());
 	}
 
 	public WebElement promotionsSummary() {
@@ -196,7 +196,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 	}
 
 	public WebElement promotedResult(final int number) {
-		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + String.valueOf(number) + ")")));
+		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + String.valueOf(number) + ')')));
 	}
 
 	public boolean isPromotionsBoxVisible() {

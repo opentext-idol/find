@@ -61,7 +61,7 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 			promotionsDetailPage.fieldTextAddButton().click();
 			verifyThat("error message not visible", promotionsDetailPage.getFieldTextError(), isEmptyOrNullString());
 			inputBox.setAndSubmit(badValue);
-			verifyThat("cannot add field text '" + badValue + "'", promotionsDetailPage.getFieldTextError(), containsString("SyntaxError"));
+			verifyThat("cannot add field text '" + badValue + '\'', promotionsDetailPage.getFieldTextError(), containsString("SyntaxError"));
 			promotionsDetailPage.closeFieldTextBox();
 		}
 
@@ -73,7 +73,7 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 			editableFieldText.editButton().click();
 			verifyThat("error message not visible", promotionsDetailPage.getFieldTextError(), isEmptyOrNullString());
 			inputBox.setAndSubmit(badValue);
-			verifyThat("cannot set field text to '" + badValue + "'", promotionsDetailPage.getFieldTextError(), containsString("SyntaxError"));
+			verifyThat("cannot set field text to '" + badValue + '\'', promotionsDetailPage.getFieldTextError(), containsString("SyntaxError"));
 			promotionsDetailPage.closeFieldTextBox();
 		}
 
@@ -88,12 +88,12 @@ public class PromotionsPageOnPremiseITCase extends IdolIsoTestBase {
 	private void verifyDisplayed(final String searchTerm) {
 		search(searchTerm);
 		Waits.loadOrFadeWait();
-		verifyThat("promotion displayed for search term '" + searchTerm + "'", searchPage.promotionsSummary(), displayed());
+		verifyThat("promotion displayed for search term '" + searchTerm + '\'', searchPage.promotionsSummary(), displayed());
 	}
 
 	private void verifyNotDisplayed(final String searchTerm) {
 		search(searchTerm);
-		verifyThat("promotion not displayed for search term '" + searchTerm + "'", searchPage.promotionsSummary(), not(displayed()));
+		verifyThat("promotion not displayed for search term '" + searchTerm + '\'', searchPage.promotionsSummary(), not(displayed()));
 	}
 
 	@Test

@@ -56,7 +56,7 @@ public class HsodUserConfigParser implements UserConfigParser<JsonNode> {
     }
 
     private String gmailString(final String extra) {
-        return emailPrefix + "+" + extra + emailSuffix;
+        return emailPrefix + '+' + extra + emailSuffix;
     }
 
     private GoogleAuth getAuthProvider() {

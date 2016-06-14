@@ -63,7 +63,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
             verifyThat(getWindow(), urlContains("suggest"));
 
-            verifyThat(similarDocuments.getTitle(),allOf(containsIgnoringCase("Similar results"),containsIgnoringCase("\"" + title + "\"")));
+            verifyThat(similarDocuments.getTitle(),allOf(containsIgnoringCase("Similar results"),containsIgnoringCase('"' + title + '"')));
             verifyThat(similarDocuments.getTotalResults(), greaterThan(0));
             verifyThat(similarDocuments.getResults(1), not(empty()));
 

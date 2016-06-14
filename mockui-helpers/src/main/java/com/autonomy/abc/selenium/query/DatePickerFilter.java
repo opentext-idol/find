@@ -32,7 +32,7 @@ public class DatePickerFilter implements QueryFilter {
 
     @Override
     public String toString() {
-        return "DatePickerFilter:" + fromHandler + "-" + untilHandler;
+        return "DatePickerFilter:" + fromHandler + '-' + untilHandler;
     }
 
     public interface Filterable {

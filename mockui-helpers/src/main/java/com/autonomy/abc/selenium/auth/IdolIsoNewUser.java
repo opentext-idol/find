@@ -34,6 +34,6 @@ public class IdolIsoNewUser implements NewUser, ReplacementAuth {
 
     @Override
     public String toString() {
-        return "NewUser<OP:" + username + ">";
+        return "NewUser<OP:" + username + '>';
     }
 }

@@ -66,7 +66,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	private void search(final String searchTerm){
-		logger.info("Searching for: '" + searchTerm + "'");
+		logger.info("Searching for: '" + searchTerm + '\'');
 		searchPage = searchService.search(searchTerm);
 	}
 

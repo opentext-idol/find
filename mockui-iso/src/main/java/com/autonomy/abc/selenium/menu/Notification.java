@@ -46,6 +46,6 @@ public class Notification {
 
     @Override
     public String toString() {
-        return getMessage() + " " + getTime() + ", performed by " + getUsername();
+        return getMessage() + ' ' + getTime() + ", performed by " + getUsername();
     }
 }

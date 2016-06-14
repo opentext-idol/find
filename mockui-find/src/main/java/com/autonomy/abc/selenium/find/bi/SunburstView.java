@@ -106,7 +106,7 @@ public class SunburstView {
     }
 
     private WebElement nthParametricFilter(final int i){
-        return findElement(By.cssSelector(".parametric-selections span:nth-child("+i+")"));
+        return findElement(By.cssSelector(".parametric-selections span:nth-child("+i+ ')'));
     }
 
     public boolean parametricSelectionDropdownsExist(){return findElement(By.cssSelector(".parametric-selections span")).isDisplayed();}

@@ -57,7 +57,7 @@ class DateFilterContainer extends FilterContainer implements DatePickerFilter.Fi
 
     private DatePicker datePicker(final int nthOfType) {
         showCustomDateBoxes();
-        final WebElement formGroup = getContainer().findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ")"));
+        final WebElement formGroup = getContainer().findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ')'));
         return new DatePicker(formGroup, getDriver());
     }
 

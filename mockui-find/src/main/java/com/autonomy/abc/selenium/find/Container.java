@@ -18,7 +18,7 @@ public enum Container {
     }
 
     private String asCssClass() {
-        return "." + container + "-container";
+        return '.' + container + "-container";
     }
 
     public void waitForLoad(final WebDriver driver) {

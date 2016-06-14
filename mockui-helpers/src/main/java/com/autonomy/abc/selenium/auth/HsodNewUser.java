@@ -39,6 +39,6 @@ public class HsodNewUser implements NewUser {
 
     @Override
     public String toString() {
-        return "NewUser<" + username + ":" + email + "|" + provider + ">";
+        return "NewUser<" + username + ':' + email + '|' + provider + '>';
     }
 }

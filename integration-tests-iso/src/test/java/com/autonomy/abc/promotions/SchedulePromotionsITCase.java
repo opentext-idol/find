@@ -84,7 +84,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		final String startDate =  schedulePage.parseDateObjectToPromotions(start.toString());
 		final String endDate =  schedulePage.parseDateObjectToPromotions(end.toString());
 
-		verifyThat("Summary text present: duration", promotionsDetailPage.getText(), containsString("The promotion is scheduled to run starting on " +startDate+ " for the duration of "+duration+" days, ending on " +endDate+"."));
+		verifyThat("Summary text present: duration", promotionsDetailPage.getText(), containsString("The promotion is scheduled to run starting on " +startDate+ " for the duration of "+duration+" days, ending on " +endDate+ '.'));
 		verifyThat("Summary text present: recurrence", promotionsDetailPage.getText(), containsString("This promotion schedule will run yearly forever."));
 
 		getElementFactory().getTopNavBar().search("chips");

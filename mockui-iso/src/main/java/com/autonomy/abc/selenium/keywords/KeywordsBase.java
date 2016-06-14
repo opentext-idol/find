@@ -54,7 +54,7 @@ public abstract class KeywordsBase extends SOPageBase {
 	}
 
 	public void deleteSynonym(final String synonym, final SynonymGroup synonymGroup){
-		logger.info("Deleting '" + synonym + "'");
+		logger.info("Deleting '" + synonym + '\'');
 		synonymGroup.remove(synonym);
 	}
 

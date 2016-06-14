@@ -84,7 +84,7 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     public FindResult getResult(final int i) {
-        return new FindResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ")")), getDriver());
+        return new FindResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ')')), getDriver());
     }
 
     @Override
@@ -166,7 +166,7 @@ public class SimilarDocumentsView implements AppPage {
 
     private void sortBy(final int dropdownRow){
         findElement(By.className("current-search-sort")).click();
-        findElement(By.cssSelector(".search-results-sort li:nth-child(" + dropdownRow + ")")).click();
+        findElement(By.cssSelector(".search-results-sort li:nth-child(" + dropdownRow + ')')).click();
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, SimilarDocumentsView> {

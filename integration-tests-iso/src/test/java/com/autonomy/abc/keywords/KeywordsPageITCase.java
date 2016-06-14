@@ -442,7 +442,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	public void testAddingForbiddenKeywordsFromUrl() {
 		keywordService.goToKeywords();
 		final String curURL = getDriver().getCurrentUrl();
-		final String blacklistUrl = curURL + "/create/blacklisted/"+getURLEnd()+"/";
+		final String blacklistUrl = curURL + "/create/blacklisted/"+getURLEnd()+ '/';
 
 		for (final String forbidden : Arrays.asList("(", "...","the")) {
 			checkForbiddenKeywordNotAccepted(blacklistUrl,forbidden);
@@ -531,7 +531,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	private void verifyDeletes(final String[] keywords) {
 		for (final String keyword : keywords) {
 			keywordService.deleteKeyword(keyword);
-			verifyThat("successfully removed keyword '" + keyword + "'", !keywordsPage.areAnyKeywordsDisabled());
+			verifyThat("successfully removed keyword '" + keyword + '\'', !keywordsPage.areAnyKeywordsDisabled());
 		}
 	}
 
@@ -673,7 +673,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	private void verifyBlacklisted(final String blacklist) {
-		verifyThat("'" + blacklist + "' is blacklisted", keywordsPage.getBlacklistedTerms(), hasItem(blacklist));
+		verifyThat('\'' + blacklist + "' is blacklisted", keywordsPage.getBlacklistedTerms(), hasItem(blacklist));
 	}
 
 	private void verifySynonymGroup(final List<String> synonymGroup) {
@@ -724,7 +724,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		keywordsPage.deleteSynonym(toDelete, keywordsPage.synonymGroupContaining(synonyms.get(0)));
 
 		verifySynonymGroup(synonyms);
-		verifyThat("'" + toDelete + "' is no longer in synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), not(hasItem(equalToIgnoringCase(toDelete))));
+		verifyThat('\'' + toDelete + "' is no longer in synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), not(hasItem(equalToIgnoringCase(toDelete))));
 		verifySynonymGroupSize(synonyms);
 		verifyKeywordState(expectedGroups, expectedKeywords);
 		return synonyms;
@@ -750,7 +750,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		final int expectedKeywords = keywordsPage.countKeywords() + 1;
 		keywordsPage.addSynonymToGroup(toAdd, keywordsPage.synonymGroupContaining(synonyms.get(0)));
 
-		verifyThat("'" + toAdd + "' added to synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), hasItem(equalToIgnoringCase(toAdd)));
+		verifyThat('\'' + toAdd + "' added to synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), hasItem(equalToIgnoringCase(toAdd)));
 		verifySynonymGroup(synonyms);
 		verifySynonymGroupSize(synonyms);
 		verifyKeywordState(expectedGroups, expectedKeywords);
@@ -764,7 +764,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		group.synonymAddButton().click();
 		group.synonymInput().setAndSubmit(toAdd);
 
-		verifyThat("'" + toAdd + "' not added to synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), not(hasItem(equalToIgnoringCase(toAdd))));
+		verifyThat('\'' + toAdd + "' not added to synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), not(hasItem(equalToIgnoringCase(toAdd))));
 		verifyThat("synonym box not closed", keywordsPage.synonymGroupTextBox(synonyms.get(0)), displayed());
 		verifySynonymGroup(synonyms);
 		verifySynonymGroupSize(synonyms);

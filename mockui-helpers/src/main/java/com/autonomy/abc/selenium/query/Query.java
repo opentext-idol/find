@@ -28,6 +28,6 @@ public class Query {
 
     @Override
     public String toString() {
-        return "Query<" + getTerm() + "|" + getFilters() + ">";
+        return "Query<" + getTerm() + '|' + getFilters() + '>';
     }
 }

@@ -66,7 +66,7 @@ public class Index {
 
     @Override
     public String toString() {
-        return "Index<" + getName() + ">";
+        return "Index<" + getName() + '>';
     }
 
     public String getDisplayName() {
