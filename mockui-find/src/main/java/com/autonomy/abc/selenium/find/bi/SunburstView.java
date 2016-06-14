@@ -31,7 +31,7 @@ public class SunburstView {
 
     //Navigation
     public void goToSunburst(){
-       findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
+        findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
         new WebDriverWait(getDriver(),15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".sunburst"))));
     }
 
@@ -50,7 +50,7 @@ public class SunburstView {
 
     public void waitForSunburst(){
         new WebDriverWait(getDriver(),15).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
-        }
+    }
 
     public String getSunburstCentreName(){
         return findElement(By.className("sunburst-sector-name")).getText();}
