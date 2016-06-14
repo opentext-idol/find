@@ -38,6 +38,8 @@ define([
     });
 
     return AbstractView.extend({
+        getBucketingRequestData: null,
+        
         template: _.template(template)({i18n: i18n}),
 
         initialize: function (options) {
@@ -74,12 +76,7 @@ define([
                 const targetNumberOfBuckets = _.times(this.fieldsCollection.length, _.constant(Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)));
 
                 this.collection.fetch({
-                    data: {
-                        fieldNames: fieldNames,
-                        databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('queryText'),
-                        targetNumberOfBuckets: targetNumberOfBuckets
-                    }
+                    data: this.getBucketingRequestData(fieldNames, targetNumberOfBuckets)
                 });
             }
         },

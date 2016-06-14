@@ -48,6 +48,7 @@ define([
         ResultsView: null,
         ResultsViewAugmentation: null,
         fetchParametricFields: null,
+        fetchParametricValues: null,
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
@@ -294,21 +295,7 @@ define([
             this.fetchEntities();
             this.fetchParametricValues(this.parametricFieldsCollection, this.parametricCollection);
         },
-        
-        fetchParametricValues: function (fieldsCollection, valuesCollection) {
-            valuesCollection.reset();
 
-            if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
-                var fieldNames = fieldsCollection.pluck('id');
-                if (fieldNames.length > 0) {
-                    valuesCollection.fetch({data: {
-                        databases: this.queryModel.get('indexes'),
-                        fieldNames: fieldNames
-                    }});
-                }
-            }
-        },
-        
         fetchEntities: function () {
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
