@@ -61,7 +61,7 @@ public abstract class Promotion {
 
     public abstract Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase);
 
-    protected class PromotionWizard extends Wizard {
+    protected static class PromotionWizard extends Wizard {
         private final CreateNewPromotionsBase page;
 
         public PromotionWizard(final CreateNewPromotionsBase createNewPromotionsBase) {
