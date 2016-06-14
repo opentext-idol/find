@@ -9,10 +9,11 @@ define([
 ], function(SearchFiltersCollection, i18n) {
     'use strict';
 
+    //noinspection JSUnusedGlobalSymbols
     return SearchFiltersCollection.extend({
         getDatabasesFilterText: function() {
             var databaseFilter = this.selectedIndexesCollection.map(function (model) {
-                var displayName = this.indexesCollection.findWhere({name: model.get('name'), domain: model.get('domain')}).get('displayName');
+                var displayName = this.selectedIndexesCollection.findWhere({name: model.get('name'), domain: model.get('domain')}).get('displayName');
                 return displayName || model.get('name');
             }, this);
 
