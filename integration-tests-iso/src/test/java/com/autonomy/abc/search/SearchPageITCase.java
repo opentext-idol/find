@@ -59,7 +59,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Before
-	public void setUp() throws MalformedURLException {
+	public void setUp() {
 		topNavBar = getElementFactory().getTopNavBar();
 		searchService = getApplication().searchService();
 		searchPage = searchService.search("example");

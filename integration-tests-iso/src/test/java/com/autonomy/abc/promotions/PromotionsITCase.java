@@ -57,7 +57,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	private PromotionService<?> promotionService;
 
 	@Before
-	public void setUp() throws MalformedURLException {
+	public void setUp() {
 		searchService = getApplication().searchService();
 		promotionService = getApplication().promotionService();
 		promotionsPage = promotionService.deleteAll();

@@ -39,7 +39,7 @@ public class SearchPageHostedITCase extends IsoHsodTestBase {
 	}
 
 	@Before
-	public void setUp() throws MalformedURLException {
+	public void setUp() {
 		searchService = getApplication().searchService();
 		searchPage = searchService.search("example");
 	}

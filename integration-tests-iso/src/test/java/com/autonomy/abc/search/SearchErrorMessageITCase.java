@@ -31,7 +31,7 @@ public class SearchErrorMessageITCase extends HybridIsoTestBase {
     }
 
     @Before
-    public void setUp() throws MalformedURLException {
+    public void setUp() {
         searchService = getApplication().searchService();
     }
 
