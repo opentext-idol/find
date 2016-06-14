@@ -64,15 +64,15 @@ public class ResultsITCase extends FindTestBase {
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
         findPage.scrollToBottom();
-        verifyThat(results.getResults().size(), allOf(greaterThanOrEqualTo(30), lessThanOrEqualTo(60)));
+        verifyThat(results.getResults(), hasSize(allOf(greaterThanOrEqualTo(30), lessThanOrEqualTo(60))));
 
         findPage.scrollToBottom();
-        verifyThat(results.getResults().size(), allOf(greaterThanOrEqualTo(60), lessThanOrEqualTo(90)));
+        verifyThat(results.getResults(), hasSize(allOf(greaterThanOrEqualTo(60), lessThanOrEqualTo(90))));
 
         List<String> titles = results.getResultTitles();
         Set<String> titlesSet = new HashSet<>(titles);
 
-        verifyThat("No duplicate titles", titles.size(), is(titlesSet.size()));
+        verifyThat("No duplicate titles", titles, hasSize(titlesSet.size()));
     }
 
     @Test
