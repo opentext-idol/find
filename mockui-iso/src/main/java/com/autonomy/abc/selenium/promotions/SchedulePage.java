@@ -55,11 +55,8 @@ public class SchedulePage extends SOPageBase {
 	}
 
 	public boolean buttonDisabled(final WebElement button){
-		if (ElementUtil.isDisabled(button)){
-			return true;
-		}
-		return false;
-	}
+        return ElementUtil.isDisabled(button);
+    }
 
 	public Date getTodayDate() {
 		return new Date();
