@@ -18,15 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SunburstView {
+public class SunburstView extends ParametricFieldView {
     private static final int VISIBLE_SEGMENTS = 20;
 
-    private final WebDriver driver;
-    private final WebElement container;
-
     public SunburstView(final WebDriver driver) {
-        this.driver = driver;
-        this.container = driver.findElement(By.className("service-view-container"));
+        super(driver);
     }
 
     //Navigation
@@ -49,11 +45,13 @@ public class SunburstView {
     }
 
     public void waitForSunburst(){
+        // TODO: view-server?
         new WebDriverWait(getDriver(),15).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
     }
 
     public String getSunburstCentreName(){
-        return findElement(By.className("sunburst-sector-name")).getText();}
+        return findElement(By.className("sunburst-sector-name")).getText();
+    }
 
     private boolean sunburstCentreHasText(){
         return !findElements(By.className("sunburst-sector-name")).isEmpty();
@@ -100,26 +98,6 @@ public class SunburstView {
         hover.perform();
     }
 
-    //Parametric Filtering
-    public String getSelectedFieldName(final int i){
-        return nthParametricFilter(i).getText();
-    }
-
-    private WebElement nthParametricFilter(final int i){
-        return findElement(By.cssSelector(".parametric-selections span:nth-child("+i+ ')'));
-    }
-
-    public boolean parametricSelectionDropdownsExist(){return findElement(By.cssSelector(".parametric-selections span")).isDisplayed();}
-
-    public ChosenDrop parametricSelectionDropdown(final int i){
-        return new ChosenDrop(nthParametricFilter(i),getDriver());
-    }
-
-    public List<String> getParametricDropdownItems(final int i){
-        final ChosenDrop dropdown = parametricSelectionDropdown(i);
-        return ElementUtil.getTexts(dropdown.getItems());
-    }
-
     /**
      * Determines which values for a parametric field are significant
      * enough to be displayed in sunburst
@@ -149,15 +127,4 @@ public class SunburstView {
         return ((double) thisCount)/totalResults >= 0.05;
     }
 
-    private WebDriver getDriver() {
-        return driver;
-    }
-
-    private WebElement findElement(final By locator) {
-        return container.findElement(locator);
-    }
-
-    private List<WebElement> findElements(final By locator) {
-        return container.findElements(locator);
-    }
 }
