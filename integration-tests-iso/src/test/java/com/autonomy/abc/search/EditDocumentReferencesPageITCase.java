@@ -49,7 +49,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
     private SearchService searchService;
 
     @Before
-    public void setUp() throws MalformedURLException {
+    public void setUp() {
         promotionService = getApplication().promotionService();
         searchService = getApplication().searchService();
 

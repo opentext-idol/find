@@ -37,7 +37,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 	private SchedulePromotionService schedulePromotionService;
 
 	@Before
-	public void setUp() throws MalformedURLException, InterruptedException {
+	public void setUp() {
 		schedulePromotionService = getApplication().schedulePromotionService();
         promotionService = getApplication().promotionService();
 		promotionService.deleteAll();

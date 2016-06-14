@@ -39,7 +39,7 @@ public class LoginPageOnPremiseITCase extends IdolIsoTestBase {
 	}
 
 	@Before
-	public void setUp() throws InterruptedException {
+	public void setUp() {
         final UserService userService = getApplication().userService();
 		userService.deleteOtherUsers();
 		userService.createNewUser(new IdolIsoNewUser("admin", "qwerty"), Role.ADMIN);

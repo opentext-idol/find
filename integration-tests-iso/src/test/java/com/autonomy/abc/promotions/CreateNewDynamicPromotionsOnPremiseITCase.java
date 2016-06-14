@@ -45,7 +45,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 	private TriggerForm triggerForm;
 
 	@Before
-	public void setUp() throws InterruptedException {
+	public void setUp() {
         promotionService = getApplication().promotionService();
         searchService = getApplication().searchService();
 
