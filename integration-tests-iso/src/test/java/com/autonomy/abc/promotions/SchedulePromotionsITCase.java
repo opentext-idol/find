@@ -16,6 +16,7 @@ import org.openqa.selenium.Keys;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -337,7 +338,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		setEndDateCheckFrequencies(DateUtils.addWeeks(schedulePage.getTodayDate(), 2),Arrays.asList("Yearly","Monthly"));
 		getElementFactory().getPromotionsDetailPage().schedulePromotion();
 
-		setEndDateCheckFrequencies(DateUtils.addMonths(schedulePage.getTodayDate(), 1),Arrays.asList("Yearly"));
+		setEndDateCheckFrequencies(DateUtils.addMonths(schedulePage.getTodayDate(), 1), Collections.singletonList("Yearly"));
 	}
 
 	private void setEndDateCheckFrequencies(final Date endDate, final List<String> correctFrequencyOptions){
