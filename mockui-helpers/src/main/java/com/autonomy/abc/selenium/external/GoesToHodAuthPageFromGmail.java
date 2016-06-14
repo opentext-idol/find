@@ -154,6 +154,8 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
     }
 
     public static class EmailNotFoundException extends Exception {
+        private static final long serialVersionUID = -802053624671376582L;
+
         private EmailNotFoundException() {}
     }
 }
