@@ -28,7 +28,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 
