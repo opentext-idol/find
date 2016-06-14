@@ -336,7 +336,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
             synonyms = new ArrayList<>();
             synonyms.add("everywhere");
             for (int inner=0; inner<10; inner++) {
-                synonyms.add("term" + outer + "" + inner);
+                synonyms.add("term" + outer + inner);
             }
             keywordService.addSynonymGroup(synonyms);
         }
@@ -353,7 +353,7 @@ public class KeywordsFromSearchITCase extends HybridIsoTestBase {
         for (int outer=0; outer<10; outer++) {
             synonyms = new ArrayList<>();
             for (int inner=0; inner<10; inner++) {
-                synonyms.add("term" + outer + "" + inner);
+                synonyms.add("term" + outer + inner);
             }
             keywordService.addSynonymGroup(synonyms);
         }
