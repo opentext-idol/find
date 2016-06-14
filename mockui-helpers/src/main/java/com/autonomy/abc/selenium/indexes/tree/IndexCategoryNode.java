@@ -3,8 +3,6 @@ package com.autonomy.abc.selenium.indexes.tree;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.hp.autonomy.frontend.selenium.element.ChevronContainer;
 import com.hp.autonomy.frontend.selenium.element.Collapsible;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -74,14 +72,12 @@ public abstract class IndexCategoryNode implements IndexNodeElement, Collapsible
         return new Index(getIndexNodes().get(i).getName());
     }
 
-    public void seeMore() {
-        // TODO: only seeMore on Find
-        try {
-            container.findElement(By.className("toggle-more")).click();
-        } catch (NoSuchElementException e) {
-            /* only exists on Find, not ISO */
-        }
-    }
+    /**
+     * different from expand(): some applications only show a fixed
+     * number of indexes after expanding by default, and allow
+     * displaying the rest by clicking an additional "see more" option
+     */
+    protected abstract void seeMore();
 
     protected abstract List<IndexNodeElement> getIndexNodes();
 

@@ -20,6 +20,11 @@ class FindIndexCategoryNode extends IndexCategoryNode {
     }
 
     @Override
+    protected void seeMore() {
+        container.findElement(By.className("toggle-more")).click();
+    }
+
+    @Override
     protected List<IndexNodeElement> getIndexNodes() {
         List<IndexNodeElement> nodes = new ArrayList<>();
         for (WebElement element : container.findElements(By.cssSelector(".clickable[data-name]"))) {

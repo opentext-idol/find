@@ -14,6 +14,9 @@ public class IsoIndexCategoryNode extends IndexCategoryNode {
     }
 
     @Override
+    protected void seeMore() {}
+
+    @Override
     protected List<IndexNodeElement> getIndexNodes() {
         List<IndexNodeElement> nodes = new ArrayList<>();
         for (WebElement element : getContainer().findElements(By.cssSelector(".checkbox[data-name]"))) {
