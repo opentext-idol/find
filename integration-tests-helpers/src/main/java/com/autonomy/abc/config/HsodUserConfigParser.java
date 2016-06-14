@@ -16,8 +16,8 @@ import org.openqa.selenium.WebDriver;
 import java.util.Map;
 
 public class HsodUserConfigParser implements UserConfigParser<JsonNode> {
-    private final String emailPrefix = "hodtestqa401";
-    private final String emailSuffix = "@gmail.com";
+    private static final String emailPrefix = "hodtestqa401";
+    private static final String emailSuffix = "@gmail.com";
 
     @Override
     public User parseUser(final JsonNode userNode) {

@@ -36,9 +36,9 @@ public class StaticPromotionsITCase extends IsoHsodTestBase {
     private PromotionsDetailPage promotionsDetailPage;
     private SearchPage searchPage;
     private HsodPromotionService promotionService;
-    private final String title = "title";
-    private final String content = "content";
-    private final String trigger = "dog";
+    private static final String title = "title";
+    private static final String content = "content";
+    private static final String trigger = "dog";
     private final StaticPromotion promotion = new StaticPromotion(title, content, trigger);
 
     public StaticPromotionsITCase(final TestConfig config) {
