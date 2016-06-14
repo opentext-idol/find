@@ -41,7 +41,7 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     private Boolean resultsMessageContainerExists(){
-        return findElements(By.cssSelector(".results-message-container h4")).size()>0;
+        return !findElements(By.cssSelector(".results-message-container h4")).isEmpty();
     }
 
     public String getTitle() {

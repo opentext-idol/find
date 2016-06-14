@@ -30,6 +30,6 @@ public class FindHasLoggedIn implements HasLoggedIn {
     }
 
     private boolean signedInTextVisible() {
-        return driver.findElements(By.xpath("//*[text()='Signed in']")).size() > 0;
+        return !driver.findElements(By.xpath("//*[text()='Signed in']")).isEmpty();
     }
 }

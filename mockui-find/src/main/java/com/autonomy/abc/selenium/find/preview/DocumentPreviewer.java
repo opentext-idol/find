@@ -47,6 +47,6 @@ public class DocumentPreviewer extends DocumentViewer {
     public int getTotalDocumentsNumber() {throw new UnsupportedOperationException("Idol-Find DocPreview doesn't have number of docs");}
 
     @Override
-    public boolean previewPresent(){return findElements(By.className("preview-mode-contents")).size()>0;}
+    public boolean previewPresent(){return !findElements(By.className("preview-mode-contents")).isEmpty();}
 
 }

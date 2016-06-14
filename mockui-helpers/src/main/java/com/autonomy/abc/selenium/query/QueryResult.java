@@ -29,7 +29,7 @@ public abstract class QueryResult {
     }
 
     public boolean isPromoted() {
-        return findElements(By.className("promoted-label")).size() > 0;
+        return !findElements(By.className("promoted-label")).isEmpty();
     }
 
     public WebElement star() {

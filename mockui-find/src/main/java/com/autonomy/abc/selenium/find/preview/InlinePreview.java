@@ -14,7 +14,7 @@ public class InlinePreview {
     }
 
     public boolean loadingIndicatorExists() {
-        return findElements(By.className("view-server-loading-indicator")).size()>0;
+        return !findElements(By.className("view-server-loading-indicator")).isEmpty();
     }
 
     public WebElement loadingIndicator(){

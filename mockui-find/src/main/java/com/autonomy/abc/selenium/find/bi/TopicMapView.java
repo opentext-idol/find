@@ -24,7 +24,7 @@ public class TopicMapView {
     }
 
     public boolean topicMapVisible(){
-         return findElements(By.cssSelector(".entity-topic-map")).size()>0;
+         return !findElements(By.cssSelector(".entity-topic-map")).isEmpty();
     }
 
     private WebElement sliderBlock(){return findElement(By.cssSelector(".slider-block div:nth-child(2)"));}

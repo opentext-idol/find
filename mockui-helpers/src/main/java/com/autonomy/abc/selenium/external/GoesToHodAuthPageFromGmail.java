@@ -79,7 +79,7 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
     private boolean haveNewMessagesNow(final WebDriver driver) {
         final List<WebElement> unreadEmails = driver.findElements(By.cssSelector(".zA.zE"));
 
-        if (unreadEmails.size() > 0) {
+        if (!unreadEmails.isEmpty()) {
             return true;
         }
 

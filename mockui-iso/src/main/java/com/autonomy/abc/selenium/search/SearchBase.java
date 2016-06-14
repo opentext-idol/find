@@ -334,7 +334,7 @@ public abstract class SearchBase extends SOPageBase implements
     }
 
 	private boolean resultsAreLoaded(final WebElement promotionsBox) {
-		return promotionsBox.findElements(By.cssSelector(".search-result-title")).size() > 0;
+		return !promotionsBox.findElements(By.cssSelector(".search-result-title")).isEmpty();
 	}
 
 	public void waitForRelatedConceptsLoadIndicatorToDisappear() {

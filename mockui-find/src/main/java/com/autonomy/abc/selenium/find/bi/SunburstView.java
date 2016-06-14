@@ -56,7 +56,7 @@ public class SunburstView {
         return findElement(By.className("sunburst-sector-name")).getText();}
 
     private boolean sunburstCentreHasText(){
-        return findElements(By.className("sunburst-sector-name")).size()>0;
+        return !findElements(By.className("sunburst-sector-name")).isEmpty();
     }
 
     public WebElement getIthSunburstSegment(final int i){
@@ -69,7 +69,7 @@ public class SunburstView {
     }
 
     public boolean greySunburstAreaExists(){
-        return findElements(By.cssSelector("svg > path[fill='#f0f0f0']")).size()>0;
+        return !findElements(By.cssSelector("svg > path[fill='#f0f0f0']")).isEmpty();
     }
 
     public String hoverOnSegmentGetCentre(final int i){

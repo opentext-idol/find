@@ -28,7 +28,7 @@ public class IdolIsoSearchPage extends SearchPage {
     }
 
     public boolean promotionsLabelsExist(){
-        return findElements(By.cssSelector(".promotions .promotion-name")).size()>0;
+        return !findElements(By.cssSelector(".promotions .promotion-name")).isEmpty();
     }
     @Override
     public IndexesTree indexesTree() {

@@ -38,11 +38,11 @@ public class SOHasLoggedIn implements HasLoggedIn {
         }
 
         private boolean navbarIsVisible(final WebDriver driver) {
-            return driver.findElements(By.className("navbar-static-top")).size() > 0;
+            return !driver.findElements(By.className("navbar-static-top")).isEmpty();
         }
 
         private boolean signedInTextVisible(final WebDriver driver) {
-            return driver.findElements(By.xpath("//*[text()='Signed in']")).size() > 0;
+            return !driver.findElements(By.xpath("//*[text()='Signed in']")).isEmpty();
         }
     }
 }
