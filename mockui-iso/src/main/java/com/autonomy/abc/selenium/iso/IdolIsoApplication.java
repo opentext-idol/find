@@ -17,7 +17,6 @@ public class IdolIsoApplication extends IsoApplication<IdolIsoElementFactory> {
 
     @Override
     public IdolIsoApplication inWindow(final Window window) {
-        final Window window1 = window;
         this.factory = new IdolIsoElementFactory(window.getSession().getDriver());
         return this;
     }

@@ -17,8 +17,7 @@ public class HsodDeveloperService extends ServiceBase<IsoHsodElementFactory> {
     }
 
     public HsodDevelopersPage goToDevs(){
-        final HsodDevelopersPage devsPage = getApplication().switchTo(HsodDevelopersPage.class);
-        return devsPage;
+        return getApplication().switchTo(HsodDevelopersPage.class);
     }
 
     public User editUsername(final User user, final String newUsername) {
