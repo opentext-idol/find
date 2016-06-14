@@ -110,7 +110,7 @@ public class OverviewPageITCase extends IdolIsoTestBase {
 				final List<Integer> searchCounts = new ArrayList<>(Collections.nCopies(10, 0));
 
 				for (final WebElement tableRowLink : tableRowLinks) {
-					if (!tableRowLink.getText().equals("")) {
+					if (!tableRowLink.getText().isEmpty()) {
 						final int rowIndex = tableRowLinks.indexOf(tableRowLink);
 						final int searchCount = overviewPage.searchTermSearchCount(tableRowLink.getText());
 						searchCounts.add(rowIndex, searchCount);
