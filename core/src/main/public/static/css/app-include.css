@@ -914,8 +914,9 @@ input.find-input {
     margin-left: 5px;
 }
 
-.selected-related-concept-text {
-    max-width: 100px;
+.selected-related-concept-text,
+.database-name {
+    max-width: 110px;
 }
 
 .concept-remove-icon {
@@ -1408,6 +1409,10 @@ input:-moz-placeholder::before {
 
 .child-categories li:first-child {
     border-top: 1px solid #C9C9C9;
+}
+
+.child-categories li:last-child {
+    border-bottom: none;
 }
 
 /* View server */

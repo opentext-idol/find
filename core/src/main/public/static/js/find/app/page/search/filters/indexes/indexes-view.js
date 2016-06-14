@@ -24,7 +24,7 @@ define([
 
         template: _.template(template),
         categoryTemplate: _.template(listTemplate),
-        seeMoreButtonTemplate: _.template('<li class="toggle-more clickable"><i class="hp-icon <%-showMoreClass%> col-md-1"></i> <span class="toggle-more-text inline-block"><%-i18n["app.seeMore"]%></span></li>'),
+        seeMoreButtonTemplate: _.template('<li class="toggle-more clickable"><i class="hp-icon <%-showMoreClass%> col-md-1"></i> <span class="toggle-more-text"><%-i18n["app.seeMore"]%></span></li>'),
 
         events: {
             'click li[data-id]:not(disabled-index)': function(e) {
