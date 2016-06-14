@@ -45,6 +45,11 @@ public class Notification {
     }
 
     @Override
+    public int hashCode() {
+        return 31 * message.hashCode() + username.hashCode();
+    }
+
+    @Override
     public String toString() {
         return getMessage() + ' ' + getTime() + ", performed by " + getUsername();
     }
