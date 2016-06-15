@@ -33,7 +33,7 @@ define([
 
         initialize: function (options) {
             this.queryModel = options.queryModel;
-            this.parametricCollection = options.parametricCollection;
+            this.parametricCollection = options.restrictedParametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
             this.emptyDependentMessage = options.emptyDependentMessage;

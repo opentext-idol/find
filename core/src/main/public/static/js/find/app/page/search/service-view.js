@@ -115,6 +115,9 @@ define([
             this.parametricFieldsCollection = new ParametricFieldsCollection([], {
                 url: '../api/public/fields/parametric'
             });
+            this.restrictedParametricCollection = new ParametricCollection([], {
+                url: '../api/public/parametric/restricted'
+            });
             this.numericParametricFieldsCollection = new ParametricFieldsCollection([], {
                 url: '../api/public/fields/parametric-numeric'
             });
@@ -133,6 +136,8 @@ define([
                 documentsCollection: this.documentsCollection,
                 selectedTabModel: this.selectedTabModel,
                 parametricCollection: this.parametricCollection,
+                restrictedParametricCollection: this.restrictedParametricCollection,                
+                parametricFieldsCollection: this.parametricFieldsCollection,
                 numericParametricFieldsCollection: this.numericParametricFieldsCollection,
                 dateParametricFieldsCollection: this.dateParametricFieldsCollection,
                 queryModel: this.queryModel,
@@ -253,10 +258,12 @@ define([
             });
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
+            this.listenTo(this.queryModel, 'change', this.fetchRestrictedParametricCollection);
             this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
             this.fetchParametricFields(this.numericParametricFieldsCollection);
             this.fetchParametricFields(this.dateParametricFieldsCollection);
             this.fetchEntities();
+            this.fetchRestrictedParametricCollection();
         },
 
         render: function() {
@@ -320,6 +327,21 @@ define([
             $sideContainer.find('.side-panel-content').toggleClass('hide', hide);
             $sideContainer.toggleClass('small-container', hide);
             $containerToggle.toggleClass('fa-rotate-180', hide);
+        },
+
+        fetchRestrictedParametricCollection: function() {
+            this.restrictedParametricCollection.fetch({
+                data: {
+                    fieldNames: this.parametricFieldsCollection.pluck('id'),
+                    databases: this.queryModel.get('indexes'),
+                    queryText: this.queryModel.get('queryText'),
+                    fieldText: this.queryModel.get('fieldText'),
+                    minDate: this.queryModel.getIsoDate('minDate'),
+                    maxDate: this.queryModel.getIsoDate('maxDate'),
+                    minScore: this.queryModel.get('minScore'),
+                    stateTokens: this.queryModel.get('stateMatchIds')
+                }
+            })
         },
 
         rightSideContainerHideToggle: function(toggle) {

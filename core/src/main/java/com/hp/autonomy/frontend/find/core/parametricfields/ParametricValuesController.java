@@ -10,6 +10,7 @@ import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.types.idol.RecursiveField;
+import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
 import com.hp.autonomy.types.requests.idol.actions.tags.RangeInfo;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.apache.commons.collections4.ListUtils;
@@ -27,6 +28,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
@@ -35,6 +37,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
 
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_VALUES_PATH = "/api/public/parametric";
+    private static final String RESTRICTED_PARAMETRIC_VALUES_PATH = "/restricted";
     protected static final String BUCKET_PARAMETRIC_PATH = "/buckets";
     public static final String DEPENDENT_VALUES_PATH = "/dependent-values";
 
@@ -90,6 +93,22 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         }
 
         return parametricValuesService.getNumericParametricValuesInBuckets(parametricRequest, bucketingParamsPerField);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = RESTRICTED_PARAMETRIC_VALUES_PATH)
+    @ResponseBody
+    public Set<QueryTagInfo> getRestrictedParametricValues(
+            @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
+            @RequestParam(value = QUERY_TEXT_PARAM, defaultValue = "*") final String queryText,
+            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(DATABASES_PARAM) final List<S> databases,
+            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+            @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
+            @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
+    ) throws E {
+        final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, MAX_VALUES_DEFAULT, SortParam.DocumentCount);
+        return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
