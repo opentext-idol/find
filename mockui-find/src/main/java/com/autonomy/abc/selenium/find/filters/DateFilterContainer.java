@@ -42,7 +42,7 @@ class DateFilterContainer extends FilterContainer implements DatePickerFilter.Fi
     }
 
     private WebElement findDateFilter(DateOption filter) {
-        return getContainer().findElement(By.cssSelector("[data-filter-id=" + filter + "]"));
+        return getContainer().findElement(By.cssSelector("[data-filter-id='" + filter + "']"));
     }
 
     @Override

@@ -31,8 +31,8 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     public void goBackToSearch(){findElement(By.className("detail-view-back-button")).click();}
 
     //elements
-    public WebElement serverLoadingIndicator(){
-        return findElement(By.className("view-server-loading-indicator"));
+    public boolean serverLoadingIndicatorPresent(){
+        return findElements(By.className("view-server-loading-indicator")).size()>0;
     }
 
     public WebElement loadingIndicator(){
@@ -65,7 +65,8 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
 
     //metadata
     public String getReference(){ return getField("Reference");}
-    public String getIndex(){ return getField("Index");}
+    public String getIndex() { return getField("Index");}
+    public String getDatabase(){return getField("Database");}
     public String getTitle(){ return getField("Title");}
     public String getSummary(){ return getField("Summary");}
     public String getDate(){ return getField("Date");}

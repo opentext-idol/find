@@ -4,6 +4,7 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
@@ -45,6 +46,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     @Test
     public void testShowDocumentPreview(){
         findService.search("cake");
+        findPage.filterBy(new IndexFilter(filters().getIndex(1).getName()));
 
         DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
         InlinePreview inlinePreview = getElementFactory().getInlinePreview();
@@ -103,13 +105,14 @@ public class DocumentPreviewITCase extends FindTestBase {
     @Test
     public void testDetailedPreview() {
         findService.search("tragic");
+        findPage.filterBy(new IndexFilter(filters().getIndex(1).getName()));
+
         results.getResult(1).openDocumentPreview();
         getElementFactory().getInlinePreview().openDetailedPreview();
 
         DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
 
         //loading
-        verifyThat("Preview not stuck loading", !detailedPreviewPage.serverLoadingIndicator().isDisplayed());
         String frameText = new Frame(getMainSession().getActiveWindow(), detailedPreviewPage.frame()).getText();
         verifyThat("Frame has content", frameText, not(isEmptyOrNullString()));
         verifyThat("Preview frame has no error",frameText,not(containsString("encountered an error")));
@@ -127,7 +130,9 @@ public class DocumentPreviewITCase extends FindTestBase {
     private void checkHasMetaDataFields(DetailedPreviewPage detailedPreviewPage){
         verifyThat("Tab loads",!(detailedPreviewPage.loadingIndicator().isDisplayed()));
         verifyThat("Detailed Preview has reference",detailedPreviewPage.getReference(),not(nullValue()));
-        verifyThat("Detailed Preview has index",detailedPreviewPage.getIndex(),not(nullValue()));
+        if(isHosted()){
+        verifyThat("Detailed Preview has index",detailedPreviewPage.getIndex(),not(nullValue()));}
+        else{verifyThat("Detailed Preview has database",detailedPreviewPage.getDatabase(),not(nullValue()));}
         verifyThat("Detailed Preview has title",detailedPreviewPage.getTitle(),not(nullValue()));
         verifyThat("Detailed Preview has summary", detailedPreviewPage.getSummary(), not(nullValue()));
 //        verifyThat("Detailed Preview has date",detailedPreviewPage.getDate(),not(nullValue()));
@@ -162,6 +167,10 @@ public class DocumentPreviewITCase extends FindTestBase {
 
         detailedPreviewPage.goBackToSearch();
 
+    }
+
+    private FilterPanel filters() {
+        return getElementFactory().getFilterPanel();
     }
 }
 
