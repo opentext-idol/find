@@ -25,31 +25,16 @@ public class ResultsComparisonView {
         this(driver.findElement(By.cssSelector(".service-view-container:not(.hide)")), driver);
     }
 
-    public List<FindResult> resultsExclusiveToThis() {
-        return exclusiveToThis().getResults();
+    public List<FindResult> getResults(AppearsIn appearsIn) {
+        return resultsView(appearsIn).getResults();
     }
 
-    public List<FindResult> resultsCommonToBoth() {
-        return commonToBoth().getResults();
+    public int getResultsCountFor(AppearsIn appearsIn) {
+        return resultsView(appearsIn).getResultsCount();
     }
 
-    public List<FindResult> resultsExclusiveToOther() {
-        return exclusiveToOther().getResults();
-    }
-
-    public ResultsView exclusiveToThis() {
-        WebElement leftContainer = wholeContainer.findElement(By.className("comparison-results-view-container-left"));
-        return new ResultsView(leftContainer, driver);
-    }
-
-    public ResultsView commonToBoth() {
-        WebElement middleContainer = wholeContainer.findElement(By.className("comparison-results-view-container-middle"));
-        return new ResultsView(middleContainer, driver);
-    }
-
-    public ResultsView exclusiveToOther() {
-        WebElement rightContainer = wholeContainer.findElement(By.className("comparison-results-view-container-right"));
-        return new ResultsView(rightContainer, driver);
+    public ResultsView resultsView(AppearsIn appearsIn) {
+        return new ResultsView(wholeContainer.findElement(appearsIn.getResultsListLocator()), driver);
     }
 
     private static void waitForLoad(WebDriver driver) {

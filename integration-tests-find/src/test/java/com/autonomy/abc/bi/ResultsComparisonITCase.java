@@ -3,8 +3,10 @@ package com.autonomy.abc.bi;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.comparison.AppearsIn;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -68,8 +70,9 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService.compareCurrentWith("polar");
 
         resultsComparison = getElementFactory().getResultsComparison();
-        assertThat(resultsComparison.resultsCommonToBoth(), empty());
-        assertThat(resultsComparison.commonToBoth(), containsText("No results found"));
+        final ResultsView resultsView = resultsComparison.resultsView(AppearsIn.BOTH);
+        assertThat(resultsView.getResults(), empty());
+        assertThat(resultsView, containsText("No results found"));
     }
 
     @Test
@@ -86,12 +89,12 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService.compareCurrentWith("outer");
         resultsComparison = getElementFactory().getResultsComparison();
 
-        verifyThat(resultsComparison.resultsExclusiveToThis(), empty());
-        verifyThat(resultsComparison.resultsExclusiveToOther(), not(empty()));
+        verifyThat(resultsComparison.getResults(AppearsIn.THIS_ONLY), empty());
+        verifyThat(resultsComparison.getResults(AppearsIn.OTHER_ONLY), not(empty()));
 
-        verifyThat(resultsComparison.exclusiveToThis().getResultsCount(), is(0));
-        verifyThat(resultsComparison.commonToBoth().getResultsCount(), is(innerCount));
-        verifyThat(resultsComparison.exclusiveToOther().getResultsCount(), is(outerCount - innerCount));
+        verifyThat(resultsComparison.getResultsCountFor(AppearsIn.THIS_ONLY), is(0));
+        verifyThat(resultsComparison.getResultsCountFor(AppearsIn.BOTH), is(innerCount));
+        verifyThat(resultsComparison.getResultsCountFor(AppearsIn.OTHER_ONLY), is(outerCount - innerCount));
     }
 
     private int getTotalResults() {
