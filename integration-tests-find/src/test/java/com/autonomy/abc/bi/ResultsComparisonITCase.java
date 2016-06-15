@@ -73,6 +73,32 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-240")
+    public void testSubSearch() {
+        final Query outerQuery = new Query("documents");
+        final Query innerQuery = new Query("\"secret documents\"");
+        searchAndSave(outerQuery, "outer");
+        final int outerCount = getTotalResults();
+        savedSearchService.openNewTab();
+        searchAndSave(innerQuery, "inner");
+        final int innerCount = getTotalResults();
+
+        savedSearchService.compareCurrentWith("outer");
+        resultsComparison = getElementFactory().getResultsComparison();
+
+        verifyThat(resultsComparison.resultsExclusiveToThis(), empty());
+        verifyThat(resultsComparison.resultsExclusiveToOther(), not(empty()));
+
+        verifyThat(resultsComparison.exclusiveToThis().getResultsCount(), is(0));
+        verifyThat(resultsComparison.commonToBoth().getResultsCount(), is(innerCount));
+        verifyThat(resultsComparison.exclusiveToOther().getResultsCount(), is(outerCount - innerCount));
+    }
+
+    private int getTotalResults() {
+        return getElementFactory().getResultsPage().getResultsCount();
+    }
+
+    @Test
     @ActiveBug("FIND-228")
     public void testCompareUnsavedSearches() {
         findService.search("\"not many results\"");

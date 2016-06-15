@@ -19,7 +19,11 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
     }
 
     public FindResultsPage(final WebDriver driver) {
-        this(driver.findElement(By.className("service-view-container")), driver);
+        this(Container.currentTabContents(driver).findElement(By.className("middle-container")), driver);
+    }
+
+    public int getResultsCount() {
+        return Integer.valueOf(findElement(By.className("total-results-number")).getText());
     }
 
     @Override
