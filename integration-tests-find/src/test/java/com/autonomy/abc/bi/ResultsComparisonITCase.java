@@ -6,9 +6,12 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.comparison.AppearsIn;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchType;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -19,6 +22,7 @@ import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -33,6 +37,9 @@ import static org.hamcrest.Matchers.*;
  * them working on your local machine
  */
 public class ResultsComparisonITCase extends IdolFindTestBase {
+    private static final Index SOME_INDEX = new Index("AmericanNews");
+    private static final Index OTHER_INDEX = new Index("Wookiepedia");
+
     private FindService findService;
     private SavedSearchService savedSearchService;
 
@@ -61,8 +68,8 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
     @Test
     public void testNoOverlap() {
-        final Query polar = new Query("\"polar bear\"").withFilter(new IndexFilter("Wikipedia"));
-        final Query opposites = new Query("\"opposable thumbs\"").withFilter(new IndexFilter("Wookiepedia"));
+        final Query polar = new Query("\"polar bear\"").withFilter(new IndexFilter(SOME_INDEX));
+        final Query opposites = new Query("\"opposable thumbs\"").withFilter(new IndexFilter(OTHER_INDEX));
 
         searchAndSave(polar, "polar");
         savedSearchService.openNewTab();
@@ -147,6 +154,34 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         List<String> options = modal.getItems();
         modal.close();
         return options;
+    }
+
+    @Test
+    public void testSimilarDocumentsNavigation() {
+        final Index expectedIndex = SOME_INDEX;
+        final String comparedTabName = "nope";
+        final String expectedTabName = "expected";
+
+        searchAndSave(new Query("the wrong place"), comparedTabName);
+        searchAndSave(new Query("return here").withFilter(new IndexFilter(expectedIndex)), expectedTabName);
+        final String firstTitle = getElementFactory().getResultsPage().getResult(1).getTitleString();
+
+        savedSearchService.compareCurrentWith(comparedTabName);
+        getElementFactory().getResultsComparison()
+                .resultsView(AppearsIn.THIS_ONLY)
+                .getResult(1)
+                .similarDocuments()
+                .click();
+
+        final SimilarDocumentsView similarDocs = getElementFactory().getSimilarDocumentsView();
+        assertThat(similarDocs.getTitle(), containsString(firstTitle));
+
+        similarDocs.backButton().click();
+        final FilterPanel filters = getElementFactory().getFilterPanel();
+
+        assertThat(getElementFactory().getResultsPage().getResult(1).getTitleString(), is(firstTitle));
+        assertThat(filters.indexesTree().getSelected(), is(Collections.singletonList(expectedIndex)));
+        assertThat(getElementFactory().getSearchTabBar().getCurrentTabTitle(), is(expectedTabName));
     }
 
     private void searchAndSave(Query query, String saveAs) {

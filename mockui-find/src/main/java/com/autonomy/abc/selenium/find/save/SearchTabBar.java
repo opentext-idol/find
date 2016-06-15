@@ -29,6 +29,10 @@ public class SearchTabBar implements Iterable<SearchTab> {
         return tabs;
     }
 
+    public String getCurrentTabTitle() {
+        return currentTab().getTitle();
+    }
+
     public SearchTab currentTab() {
         return new SearchTab(bar.findElement(By.cssSelector(".search-tab.active")));
     }

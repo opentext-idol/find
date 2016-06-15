@@ -28,7 +28,7 @@ class FindIndexLeafNode implements IndexNodeElement {
 
     @Override
     public boolean isSelected() {
-        return ElementUtil.hasClass("icon-ok", container.findElement(By.cssSelector(".database-icon")));
+        return checkbox.isChecked();
     }
 
     @Override
