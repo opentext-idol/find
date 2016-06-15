@@ -130,6 +130,6 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     }
 
     private void switchToTab(String tabName) {
-        getElementFactory().getSearchTabBar().tab(tabName).activate();
+        getElementFactory().getSearchTabBar().switchTo(tabName);
     }
 }

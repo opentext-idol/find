@@ -80,7 +80,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         findService.search("open");
         saveService.saveCurrentAs("sesame", SearchType.SNAPSHOT);
         findService.search("no longer open");
-        searchTabBar.tab("sesame").activate();
+        searchTabBar.switchTo("sesame");
 
         getElementFactory().getSearchOptionsBar().openSnapshotAsQuery();
 
@@ -117,7 +117,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         other.findService().search("blur");
 
         final IdolFindElementFactory factory = other.elementFactory();
-        factory.getSearchTabBar().tab("oasis").activate();
+        factory.getSearchTabBar().switchTo("oasis");
         factory.getFilterPanel().waitForParametricFields();
         assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
         assertThat(factory.getFilterPanel().checkboxForParametricValue("OVERALL VIBE", "POSITIVE"), checked());

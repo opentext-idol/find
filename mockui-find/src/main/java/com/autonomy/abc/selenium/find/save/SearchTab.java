@@ -18,7 +18,7 @@ public class SearchTab {
         return tab.findElement(By.cssSelector(".search-tab-title .hp-new")).isDisplayed();
     }
 
-    public void activate() {
+    void activate() {
         tab.click();
     }
 
