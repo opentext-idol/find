@@ -15,8 +15,10 @@ public class FindParametricCheckbox extends Checkbox {
 
     @Override
     public String getName() {
-        return findElement(By.className("parametric-value-text")).getText().trim();
+        return name().getText().trim();
     }
+
+    public WebElement name(){return findElement(By.className("parametric-value-text")); }
 
     @Override
     public boolean isChecked() {

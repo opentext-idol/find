@@ -1,14 +1,15 @@
 package com.autonomy.abc.selenium.find.application;
 
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindTopNavBar;
+import com.autonomy.abc.selenium.find.ToolTips;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
-import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
-import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
-import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
-import com.autonomy.abc.selenium.find.FindTopNavBar;
+import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
+import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -43,6 +44,8 @@ public abstract class FindElementFactory extends ElementFactoryBase {
     public FilterPanel getFilterPanel() {
         return new FilterPanel(new IndexesTree.Factory(), getDriver());
     }
+
+    public ToolTips getToolTips(){return new ToolTips(getDriver());}
 
     public SimilarDocumentsView getSimilarDocumentsView() {
         return new SimilarDocumentsView.Factory().create(getDriver());

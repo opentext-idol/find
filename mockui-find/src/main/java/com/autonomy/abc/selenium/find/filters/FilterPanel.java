@@ -75,7 +75,7 @@ public class FilterPanel {
     }
 
     private DateFilterContainer dateFilterContainer() {
-        WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
+        WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Dates')]"));
         WebElement container = ElementUtil.ancestor(heading, 2);
         return new DateFilterContainer(container, getDriver());
     }
@@ -88,12 +88,18 @@ public class FilterPanel {
         return containers;
     }
 
+    public ParametricFieldContainer getParametricFieldContainer(int i){return parametricFieldContainers().get(i);}
+
     private List<WebElement> getParametricFilters() {
         List<WebElement> ancestors = new ArrayList<>();
         for (WebElement element : panel.findElements(By.className("parametric-fields-table"))) {
             ancestors.add(ElementUtil.ancestor(element, 3));
         }
         return ancestors;
+    }
+
+    public List<FindParametricCheckbox> checkBoxesForParametricFieldContainer(int i ){
+        return parametricFieldContainers().get(i).values();
     }
 
     public void filterResults(String term) {
