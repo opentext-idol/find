@@ -6,11 +6,8 @@ author "Copyright 2014, Hewlett-Packard Development Company, L.P., All rights re
 start on startup
 stop on shutdown
 
-
-setuid {{find_user}}
-setgid {{find_group}}
-
 env APP_HOME={{find_root_dir}} #app installation directory
+env APP_USER={{find_user}} # Linux user to run app as
 
 env APP_SYSLOG={{find_log_dir}}/{{find_log_file}} # Where to write startup logging to
 env APP_PID=/var/run/{{find_service_name}}.pid # app process id file
@@ -19,7 +16,8 @@ env JAVA_BIN=/usr/bin/java # Path to Java 7 binary
 
 script
 	cd $APP_HOME
-	exec $JAVA_BIN {{find_options | join(" ")}} -jar $APP_HOME/{{find_archive_name}} >> $APP_SYSLOG
+	echo $$ > $APP_PID
+	exec sudo -u $APP_USER $JAVA_BIN {{find_options | join(" ")}} -jar $APP_HOME/{{find_archive_name}} >> $APP_SYSLOG
 end script
 
 pre-start script
