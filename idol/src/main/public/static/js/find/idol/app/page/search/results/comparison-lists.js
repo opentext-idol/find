@@ -1,5 +1,6 @@
 define([
     'backbone',
+    'jquery',
     'find/idol/app/model/comparison/comparison-documents-collection',
     'find/idol/app/page/search/results/idol-results-view',
     'find/app/page/search/results/state-token-strategy',
@@ -7,17 +8,17 @@ define([
     'find/app/util/search-data-util',
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/comparisons'
-], function(Backbone, ComparisonDocumentsCollection, ResultsView,  stateTokenStrategy,
-            comparisonListContainer, searchDataUtil, i18n, comparisonsI18n) {
+], function(Backbone, $, ComparisonDocumentsCollection, ResultsView,  stateTokenStrategy, comparisonListContainer,
+            searchDataUtil, i18n, comparisonsI18n) {
 
     return Backbone.View.extend({
         className: 'service-view-container container-fluid',
         comparisonListContainer: _.template(comparisonListContainer, {variable: 'data'}),
 
-
         initialize: function(options) {
             this.searchModels = options.searchModels;
             this.escapeCallback = options.escapeCallback;
+            this.scrollModel = options.scrollModel;
 
             this.resultsLists = {
                 both: this.constructComparisonResultsView(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]),
@@ -69,7 +70,8 @@ define([
                 hidePromotions: true,
                 queryModel: queryModel,
                 documentsCollection: collection,
-                fetchStrategy: stateTokenStrategy
+                fetchStrategy: stateTokenStrategy,
+                scrollModel: this.scrollModel
             });
         }
     });

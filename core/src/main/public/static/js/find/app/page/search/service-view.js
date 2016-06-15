@@ -16,7 +16,6 @@ define([
     'find/app/model/parametric-fields-collection',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
-    'find/app/page/search/results/results-view-augmentation',
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
@@ -31,11 +30,24 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, ParametricFieldsCollection,
-            queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, Collapsible,
+            queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, Collapsible,
             addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, TableView, configuration, i18n, templateString) {
     'use strict';
 
+    var $window = $(window);
     var template = _.template(templateString);
+
+    function updateScrollParameters() {
+        if (this.$middleContainer) {
+            this.middleColumnScrollModel.set({
+                innerHeight: this.$middleContainer.innerHeight(),
+                scrollTop: this.$middleContainer.scrollTop(),
+                scrollHeight: this.$middleContainer.prop('scrollHeight'),
+                top: this.$middleContainer.get(0).getBoundingClientRect().top,
+                bottom: this.$middleContainer.get(0).getBoundingClientRect().bottom
+            });
+        }
+    }
 
     return Backbone.View.extend({
         // Can be overridden
@@ -59,9 +71,10 @@ define([
             this.searchCollections = options.searchCollections;
 
             this.highlightModel = new Backbone.Model({highlightEntities: false});
+
             this.entityCollection = new EntityCollection([], {
                 getSelectedRelatedConcepts: function() {
-                    return _.flatten(this.queryState.queryTextModel.get('relatedConcepts')).concat([this.queryState.queryTextModel.get('inputText')])
+                    return _.flatten(this.queryState.queryTextModel.get('relatedConcepts')).concat([this.queryState.queryTextModel.get('inputText')]);
                 }.bind(this)
             });
 
@@ -105,7 +118,8 @@ define([
             // If the saved search is unmodified and not new, update the last fetched date
             this.listenTo(this.documentsCollection, 'sync', function() {
                 var changed = this.queryState ? !this.savedSearchModel.equalsQueryState(this.queryState) : false;
-                if(!changed && !this.savedSearchModel.isNew()) {
+
+                if (!changed && !this.savedSearchModel.isNew()) {
                     this.savedSearchModel.save({dateDocsLastFetched: moment()});
                 }
             });
@@ -174,11 +188,14 @@ define([
                 title: i18n['search.relatedConcepts']
             });
 
+            this.middleColumnScrollModel = new Backbone.Model();
+
             var resultsView = new this.ResultsView(_.defaults({
                 enablePreview: true,
                 relatedConceptsClickHandler: relatedConceptsClickHandler,
                 fetchStrategy: this.searchTypes[searchType].fetchStrategy,
-                highlightModel: this.highlightModel
+                highlightModel: this.highlightModel,
+                scrollModel: this.middleColumnScrollModel
             }, subViewArguments));
 
             var hasBiRole = configuration().hasBiRole;
@@ -190,7 +207,8 @@ define([
                 uniqueId: _.uniqueId('results-view-item-'),
                 constructorArguments: {
                     resultsView: resultsView,
-                    queryModel: this.queryModel
+                    queryModel: this.queryModel,
+                    scrollModel: this.middleColumnScrollModel
                 },
                 events: {
                     // needs binding as the view container will be the eventual listener
@@ -272,6 +290,12 @@ define([
             this.fetchParametricFields(this.dateParametricFieldsCollection);
             this.fetchEntities();
             this.fetchRestrictedParametricCollection();
+
+            this.updateScrollParameters = updateScrollParameters.bind(this);
+
+            $window
+                .scroll(this.updateScrollParameters)
+                .resize(this.updateScrollParameters);
         },
 
         render: function() {
@@ -279,7 +303,7 @@ define([
                 i18n: i18n,
                 headerControlsHtml: this.headerControlsHtml
             }));
-            
+
             if (configuration().hasBiRole) {
                 this.$('.query-service-view').addClass('bi-query-service-view');
             }
@@ -308,6 +332,9 @@ define([
             }
 
             this.$('.container-toggle').on('click', this.containerToggle);
+
+            this.$middleContainer = this.$('.middle-container').scroll(this.updateScrollParameters);
+            this.updateScrollParameters();
         },
 
         fetchData: function() {
@@ -361,6 +388,10 @@ define([
         },
 
         remove: function() {
+            $window
+                .off('resize', this.updateScrollParameters)
+                .off('scroll', this.updateScrollParameters);
+
             this.queryModel.stopListening();
 
             _.chain([

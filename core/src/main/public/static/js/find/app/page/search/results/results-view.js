@@ -22,17 +22,13 @@ define([
             ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, template, resultsTemplate,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
-    function checkScroll() {
-        var triggerPoint = 500;
-        var resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
-
-        if (resultsPresent && this.resultsFinished && this.el.scrollHeight > 0 && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
-            this.infiniteScroll();
-        }
-    }
+    var SCROLL_INCREMENT = 30;
+    var INFINITE_SCROLL_POSITION_PIXELS = 500;
 
     function infiniteScroll() {
-        if (!this.endOfResults) {
+        var resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
+
+        if (resultsPresent && this.resultsFinished && !this.endOfResults) {
             this.start = this.maxResults + 1;
             this.maxResults += SCROLL_INCREMENT;
 
@@ -41,8 +37,6 @@ define([
             events().page(this.maxResults / SCROLL_INCREMENT);
         }
     }
-
-    var SCROLL_INCREMENT = 30;
 
     return Backbone.View.extend({
         //to be overridden
@@ -109,6 +103,7 @@ define([
             this.documentsCollection = options.documentsCollection;
 
             this.indexesCollection = options.indexesCollection;
+            this.scrollModel = options.scrollModel;
 
             if (this.indexesCollection) {
                 this.selectedIndexesCollection = options.queryState.selectedIndexes;
@@ -143,8 +138,13 @@ define([
 
             this.listenTo(this.queryModel, 'change refresh', this.refreshResults);
 
-            this.checkScroll = checkScroll.bind(this);
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
+
+            this.listenTo(this.scrollModel, 'change', function() {
+                if (this.scrollModel.get('scrollTop') > this.scrollModel.get('scrollHeight') - INFINITE_SCROLL_POSITION_PIXELS - this.scrollModel.get('innerHeight')) {
+                    this.infiniteScroll();
+                }
+            });
         },
 
         refreshResults: function() {
@@ -248,9 +248,6 @@ define([
                 });
             }
 
-            // Do not bind here since the same function must be passed to the off method
-            $('.main-content').scroll(this.checkScroll);
-
             if (this.documentsCollection.isEmpty()) {
                 this.refreshResults();
             }
@@ -326,13 +323,13 @@ define([
             });
 
             if (!infiniteScroll && this.showPromotions) {
-
                 this.promotionsFinished = false;
+
                 var promotionsRequestData =  _.extend({
-                        start: this.start,
-                        max_results: this.maxResults,
-                        sort: this.queryModel.get('sort')
-                    }, this.fetchStrategy.promotionsRequestParams(this.queryModel, infiniteScroll));
+                    start: this.start,
+                    max_results: this.maxResults,
+                    sort: this.queryModel.get('sort')
+                }, this.fetchStrategy.promotionsRequestParams(this.queryModel, infiniteScroll));
 
                 this.promotionsCollection.fetch({
                     data: promotionsRequestData,
@@ -349,7 +346,6 @@ define([
         },
 
         remove: function() {
-            $('.main-content').off('scroll', this.checkScroll);
             this.sortView.remove();
             this.resultsNumberView.remove();
             Backbone.View.prototype.remove.call(this);

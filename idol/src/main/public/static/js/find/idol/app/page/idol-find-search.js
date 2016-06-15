@@ -77,6 +77,7 @@ define([
                     this.comparisonView = new ComparisonView({
                         model: model,
                         searchModels: searchModels,
+                        scrollModel: this.windowScrollModel,
                         escapeCallback: function() {
                             this.removeComparisonView();
                             this.$('.service-view-container').addClass('hide');

@@ -9,15 +9,14 @@ define([
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
     'text!find/idol/templates/comparison/comparison-view.html',
-    'text!find/idol/templates/comparison/comparison-list-container.html',
-    'find/app/util/search-data-util',
     'i18n!find/nls/bundle'
-], function(Backbone, ComparisonDocumentsCollection, ResultsView, ResultsLists, ComparisonMap, ComparisonTopicMap,  stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
-            template, comparisonListContainer, searchDataUtil, i18n) {
+], function(Backbone, ComparisonDocumentsCollection, ResultsView, ResultsLists, ComparisonMap, ComparisonTopicMap,
+            stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, template, i18n) {
+
+    var html = _.template(template)({i18n: i18n});
 
     return Backbone.View.extend({
         className: 'service-view-container',
-        template: _.template(template),
 
         events: {
             'click .comparison-view-back-button': function() {
@@ -37,7 +36,8 @@ define([
                     constructorArguments: {
                         searchModels: options.searchModels,
                         escapeCallback: options.escapeCallback,
-                        model: this.model
+                        model: this.model,
+                        scrollModel: options.scrollModel
                     },
                     selector: {
                         displayNameKey: 'list',
@@ -79,12 +79,10 @@ define([
                 selectedTab: resultsViews[0].id
             });
 
-            if (resultsViews.length > 1) {
-                this.resultsViewSelection = new ResultsViewSelection({
-                    views: resultsViews,
-                    model: resultsViewSelectionModel
-                });
-            }
+            this.resultsViewSelection = new ResultsViewSelection({
+                views: resultsViews,
+                model: resultsViewSelectionModel
+            });
 
             this.resultsViewContainer = new ResultsViewContainer({
                 views: resultsViews,
@@ -93,13 +91,16 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({i18n: i18n}));
+            this.$el.html(html);
 
-            if (this.resultsViewSelection) {
-                this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
-            }
-
+            this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
             this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
+        },
+
+        remove: function() {
+            this.resultsViewSelection.remove();
+            this.resultsViewContainer.remove();
+            Backbone.View.prototype.remove.call(this);
         }
     });
 

@@ -8,6 +8,7 @@ define([
     'backbone',
     'underscore',
     'find/app/util/test-browser',
+    'find/app/model/window-scroll-model',
     'find/app/model/indexes-collection',
     'find/app/model/saved-searches/saved-query-collection',
     './model-registry',
@@ -18,7 +19,8 @@ define([
     'find/app/vent',
     'find/app/router',
     'text!find/templates/app/app.html'
-], function($, Backbone, _, testBrowser, IndexesCollection, SavedQueryCollection, ModelRegistry, Navigation, configuration, Pages, logout, vent, router, template) {
+], function($, Backbone, _, testBrowser, WindowScrollModel, IndexesCollection, SavedQueryCollection, ModelRegistry,
+            Navigation, configuration, Pages, logout, vent, router, template) {
 
     return Backbone.View.extend({
         el: '.page',
@@ -86,6 +88,10 @@ define([
             var modelData = {
                 indexesCollection: {
                     Constructor: IndexesCollection
+                },
+                windowScrollModel: {
+                    Constructor: WindowScrollModel,
+                    fetch: false
                 }
             };
 
