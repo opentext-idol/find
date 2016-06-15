@@ -26,6 +26,10 @@ public class ComparisonModal extends ModalView {
         findElement(new Locator().havingClass("secondary-model-title").containingText(savedSearchName)).click();
     }
 
+    public String getSelected() {
+        return findElement(By.className("primary-model-title")).getText();
+    }
+
     public WebElement compareButton() {
         return findElement(By.className("button-primary"));
     }

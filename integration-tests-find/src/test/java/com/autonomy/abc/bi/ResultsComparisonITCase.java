@@ -137,20 +137,20 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         searchAndSave(new Query("\"bob's burgers\""), "bob", SearchType.SNAPSHOT);
         searchAndSave(new Query("\"charlie's angels\""), "charlie", SearchType.QUERY);
 
-        switchToTab("bob");
-        final Collection<String> bobOptions = getOptionsFromModal();
+        final Collection<String> bobOptions = getModalOptionsForTab("bob");
         verifyThat(bobOptions, hasItems("alice", "charlie"));
         verifyThat(bobOptions, not(hasItem("bob")));
 
-        switchToTab("alice");
-        final Collection<String> aliceOptions = getOptionsFromModal();
+        final Collection<String> aliceOptions = getModalOptionsForTab("alice");
         verifyThat(aliceOptions, hasItems("bob", "charlie"));
         verifyThat(aliceOptions, not(hasItem("alice")));
     }
 
-    private List<String> getOptionsFromModal() {
+    private List<String> getModalOptionsForTab(final String tabName) {
+        getElementFactory().getSearchTabBar().switchTo(tabName);
         assertThat(findPage.compareButton(), not(disabled()));
         ComparisonModal modal = findPage.openCompareModal();
+        verifyThat(modal.getSelected(), is(tabName));
         List<String> options = modal.getItems();
         modal.close();
         return options;
@@ -191,9 +191,5 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     private void searchAndSave(Query query, String saveAs, SearchType saveType) {
         findService.search(query);
         savedSearchService.saveCurrentAs(saveAs, saveType);
-    }
-
-    private void switchToTab(String tabName) {
-        getElementFactory().getSearchTabBar().switchTo(tabName);
     }
 }
