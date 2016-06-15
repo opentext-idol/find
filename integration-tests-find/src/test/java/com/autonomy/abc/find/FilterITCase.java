@@ -4,16 +4,14 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.filters.DateOption;
-import com.autonomy.abc.selenium.find.filters.FilterPanel;
-import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
-import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
+import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResult;
 import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -21,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.StaleElementReferenceException;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -124,16 +123,40 @@ public class FilterITCase extends FindTestBase {
         findService.search("cats");
         findPage.waitForParametricValuesToLoad();
 
-        checkbox2().check();
+        ParametricFieldContainer container = filters().parametricField(2);
+        String filterCategory = container.getParentName();
 
-        //click on 'see all' button (under any category)
-        //test if modal is open
-        //test if the current parametric field is the active tab in the modal
-        //test if the currently selected values are ticked in the modal as well
+        List<String> selectedFilters = new ArrayList<>();
+        selectedFilters.addAll(selectEvenFilters(1));
+        selectedFilters.addAll(selectEvenFilters(2));
+
+        container.seeAll();
+        ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
+
+        verifyThat("Correct tab is active",filterModal.activeTabName(),equalToIgnoringCase(filterCategory));
+        //slow-> could make it open the specific tabs rather than all but the won't catch if ones that shouldn't be ticked
+        //are
+        //should check correct number -> everywhere
+        //then just check the names in the 2 
+        verifyThat("Same fields selected in modal as panel",filterModal.checkedFieldsAllPanes(),is(selectedFilters));
+
 
         //tick another value inside the modal
         //click apply in the modal
         //check if the value is ticked inside a parametric field container on the filters panel
+    }
+
+    private List<String> selectEvenFilters(int filterCategory){
+        List<String> filterNames = new ArrayList<>();
+        int i=1;
+        for(FindParametricCheckbox box:filters().checkBoxesForParametricFieldContainer(filterCategory)){
+            if((i % 2) == 0){
+                filterNames.add(box.getName());
+                box.check();
+            }
+            i++;
+        }
+        return filterNames;
     }
 
     @Test
@@ -141,14 +164,14 @@ public class FilterITCase extends FindTestBase {
         findService.search("confusion");
         findPage.waitForParametricValuesToLoad();
 
-        String parametricFilterType = filters().getParametricFieldContainer(0).getParentName();
+        String parametricFilterType = filters().parametricField(0).getParentName();
         List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
 
         for(FindParametricCheckbox checkbox:boxes){
             checkbox.uncheck();
             verifyThat("Unchecking not removing filter from list",filters().checkBoxesForParametricFieldContainer(0),hasSize(boxes.size()));
         }
-        verifyThat("Removing all has not removed group", filters().getParametricFieldContainer(0).getParentName(),is(parametricFilterType));
+        verifyThat("Removing all has not removed group", filters().parametricField(0).getParentName(),is(parametricFilterType));
     }
 
     @Test

@@ -23,7 +23,7 @@ public class FilterContainer implements Collapsible {
        return getParent().getText();
     }
 
-    private WebElement getParent(){
+    protected WebElement getParent(){
         WebElement filterElement = container.findElement(By.xpath(".//ancestor::div[contains(@class,'collapse')]"));
         return ElementUtil.getFirstChild(filterElement.findElement(By.xpath(".//preceding-sibling::div")));
     }

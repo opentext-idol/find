@@ -88,8 +88,6 @@ public class FilterPanel {
         return containers;
     }
 
-    public ParametricFieldContainer getParametricFieldContainer(int i){return parametricFieldContainers().get(i);}
-
     private List<WebElement> getParametricFilters() {
         List<WebElement> ancestors = new ArrayList<>();
         for (WebElement element : panel.findElements(By.className("parametric-fields-table"))) {
@@ -99,8 +97,13 @@ public class FilterPanel {
     }
 
     public List<FindParametricCheckbox> checkBoxesForParametricFieldContainer(int i ){
-        return parametricFieldContainers().get(i).values();
+        return parametricField(i).values();
     }
+
+    public ParametricFieldContainer parametricField(int i) {
+        return parametricFieldContainers().get(i);
+    }
+
 
     public void filterResults(String term) {
         FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Search filters...']")), getDriver());
@@ -151,9 +154,7 @@ public class FilterPanel {
     //toggling see more
     public void showFilters() {
         for (WebElement element : panel.findElements(By.className("toggle-more-text"))) {
-            if (!element.getText().equals("See Less")) {
                 element.click();
-            }
         }
     }
 
@@ -171,7 +172,5 @@ public class FilterPanel {
         }
     }
 
-    public ParametricFieldContainer parametricField(int i) {
-        return parametricFieldContainers().get(i);
-    }
+
 }
