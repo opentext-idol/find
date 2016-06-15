@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.QueryResult;
 import com.hp.autonomy.frontend.selenium.config.Browser;
@@ -30,7 +30,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class DocumentPreviewITCase extends FindTestBase {
     private FindPage findPage;
-    private FindResultsPage results;
+    private ResultsView results;
     private FindService findService;
 
     public DocumentPreviewITCase(final TestConfig config) {

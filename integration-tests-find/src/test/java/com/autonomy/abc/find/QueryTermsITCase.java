@@ -3,7 +3,7 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.shared.QueryTestHelper;
@@ -30,7 +30,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 public class QueryTermsITCase extends FindTestBase {
     private FindPage findPage;
     private FindTopNavBar navBar;
-    private FindResultsPage results;
+    private ResultsView results;
     private FindService findService;
 
     public QueryTermsITCase(final TestConfig config) {

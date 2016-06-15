@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.results.FindResult;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -39,7 +39,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 @RelatedTo("CSA-2090")
 //TODO have this extend FindITCase but change the setUp()?
 public class SimilarDocumentsITCase extends FindTestBase {
-    private FindResultsPage results;
+    private ResultsView results;
     private FindService findService;
     private SimilarDocumentsView similarDocuments;
 

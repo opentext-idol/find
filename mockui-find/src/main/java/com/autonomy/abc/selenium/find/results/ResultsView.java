@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FindResultsPage extends AppElement implements QueryResultsPage {
-    public FindResultsPage(final WebElement element, WebDriver driver) {
+public class ResultsView extends AppElement implements QueryResultsPage {
+    public ResultsView(final WebElement element, WebDriver driver) {
         super(element, driver);
     }
 
-    public FindResultsPage(final WebDriver driver) {
+    public ResultsView(final WebDriver driver) {
         this(Container.currentTabContents(driver).findElement(By.className("middle-container")), driver);
     }
 

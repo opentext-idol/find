@@ -2,7 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.*;
 
 public class ResultsITCase extends FindTestBase {
     private FindPage findPage;
-    private FindResultsPage results;
+    private ResultsView results;
     private FindService findService;
 
     public ResultsITCase(final TestConfig config) {

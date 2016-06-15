@@ -4,7 +4,7 @@ import com.autonomy.abc.base.HsodFindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.results.FindResult;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -31,7 +31,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class HodDocumentPreviewITCase extends HsodFindTestBase {
     private FindPage findPage;
-    private FindResultsPage results;
+    private ResultsView results;
     private FindService findService;
 
     public HodDocumentPreviewITCase(final TestConfig config) {

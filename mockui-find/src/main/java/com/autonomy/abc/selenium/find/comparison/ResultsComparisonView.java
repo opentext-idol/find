@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.find.comparison;
 
 import com.autonomy.abc.selenium.find.results.FindResult;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -9,7 +9,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 public class ResultsComparisonView {
@@ -38,19 +37,19 @@ public class ResultsComparisonView {
         return exclusiveToOther().getResults();
     }
 
-    public FindResultsPage exclusiveToThis() {
+    public ResultsView exclusiveToThis() {
         WebElement leftContainer = wholeContainer.findElement(By.className("comparison-results-view-container-left"));
-        return new FindResultsPage(leftContainer, driver);
+        return new ResultsView(leftContainer, driver);
     }
 
-    public FindResultsPage commonToBoth() {
+    public ResultsView commonToBoth() {
         WebElement middleContainer = wholeContainer.findElement(By.className("comparison-results-view-container-middle"));
-        return new FindResultsPage(middleContainer, driver);
+        return new ResultsView(middleContainer, driver);
     }
 
-    public FindResultsPage exclusiveToOther() {
+    public ResultsView exclusiveToOther() {
         WebElement rightContainer = wholeContainer.findElement(By.className("comparison-results-view-container-right"));
-        return new FindResultsPage(rightContainer, driver);
+        return new ResultsView(rightContainer, driver);
     }
 
     private static void waitForLoad(WebDriver driver) {

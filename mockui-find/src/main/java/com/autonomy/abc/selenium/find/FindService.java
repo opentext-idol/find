@@ -2,13 +2,13 @@ package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.find.application.FindApplication;
 import com.autonomy.abc.selenium.find.application.FindElementFactory;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.query.AggregateQueryFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryService;
 
-public class FindService implements QueryService<FindResultsPage> {
+public class FindService implements QueryService<ResultsView> {
     private final FindElementFactory elementFactory;
     private final FindPage findPage;
 
@@ -18,12 +18,12 @@ public class FindService implements QueryService<FindResultsPage> {
     }
 
     @Override
-    public FindResultsPage search(final String query){
+    public ResultsView search(final String query){
         return search(new Query(query));
     }
 
     @Override
-    public FindResultsPage search(final Query query) {
+    public ResultsView search(final Query query) {
         elementFactory.getTopNavBar().search(query.getTerm());
         elementFactory.getFilterPanel().waitForIndexes();
         findPage.filterBy(new AggregateQueryFilter(query.getFilters()));
@@ -31,7 +31,7 @@ public class FindService implements QueryService<FindResultsPage> {
     }
 
     public SimilarDocumentsView goToSimilarDocuments(final int resultNumber) {
-        final FindResultsPage resultsPage = elementFactory.getResultsPage();
+        final ResultsView resultsPage = elementFactory.getResultsPage();
         resultsPage.getResult(resultNumber).similarDocuments().click();
         resultsPage.waitForResultsToLoad();
         return elementFactory.getSimilarDocumentsView();
