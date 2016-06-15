@@ -4,11 +4,12 @@
  */
 
 define([
+    'underscore',
     'find/app/page/search/abstract-query-left-side-view',
     'backbone',
     'i18n!find/nls/bundle',
     'js-testing/backbone-mock-factory'
-], function (AbstractQueryLeftSideView, Backbone, i18n, backboneMockFactory) {
+], function (_, AbstractQueryLeftSideView, Backbone, i18n, backboneMockFactory) {
     "use strict";
 
     var MATCH_NOTHING = 'y54u65u4w5uy654u5eureuy654yht754wy54euy45';
@@ -23,7 +24,8 @@ define([
                     initialize: function (options) {
                         this.visibleIndexesCallback = options.visibleIndexesCallback;
                     }
-                })
+                }),
+                NumericParametricView: Backbone.View
             }))({
                 queryState: {},
                 numericParametricFieldsCollection: new (backboneMockFactory.getCollection())(),

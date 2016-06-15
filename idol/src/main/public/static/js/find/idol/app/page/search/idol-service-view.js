@@ -62,6 +62,17 @@ define([
                     }
                 }, this)
             });
+        },
+
+        fetchParametricValues: function (fieldsCollection, valuesCollection) {
+            valuesCollection.reset();
+
+            var fieldNames = fieldsCollection.pluck('id');
+            if (fieldNames.length > 0) {
+                valuesCollection.fetch({data: {
+                    fieldNames: fieldNames
+                }});
+            }
         }
     });
 

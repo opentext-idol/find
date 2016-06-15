@@ -52,6 +52,20 @@ define([
                     }, this)
                 });
             }
+        },
+
+        fetchParametricValues: function (fieldsCollection, valuesCollection) {
+            valuesCollection.reset();
+
+            if (this.queryModel.get('indexes').length !== 0) {
+                var fieldNames = fieldsCollection.pluck('id');
+                if (fieldNames.length > 0) {
+                    valuesCollection.fetch({data: {
+                        databases: this.queryModel.get('indexes'),
+                        fieldNames: fieldNames
+                    }});
+                }
+            }
         }
     });
 });
