@@ -2,6 +2,7 @@ package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
@@ -14,12 +15,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.Collection;
+import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
-import static org.openqa.selenium.lift.Matchers.displayed;
 
 /**
  * Because comparisons are so slow, these rely on quite specific data
@@ -31,6 +35,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     private SavedSearchService savedSearchService;
 
     private ResultsComparisonView resultsComparison;
+    private IdolFindPage findPage;
 
     public ResultsComparisonITCase(TestConfig config) {
         super(config);
@@ -40,6 +45,8 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     public void setUp() {
         findService = getApplication().findService();
         savedSearchService = getApplication().savedSearchService();
+
+        findPage = getElementFactory().getFindPage();
     }
 
     @After
@@ -55,11 +62,9 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         final Query polar = new Query("\"polar bear\"").withFilter(new IndexFilter("Wikipedia"));
         final Query opposites = new Query("\"opposable thumbs\"").withFilter(new IndexFilter("Wookiepedia"));
 
-        findService.search(polar);
-        savedSearchService.saveCurrentAs("polar", SearchType.QUERY);
+        searchAndSave(polar, "polar");
         savedSearchService.openNewTab();
-        findService.search(opposites);
-        savedSearchService.saveCurrentAs("opposites", SearchType.QUERY);
+        searchAndSave(opposites, "opposites");
         savedSearchService.compareCurrentWith("polar");
 
         resultsComparison = getElementFactory().getResultsComparison();
@@ -74,7 +79,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService.openNewTab();
         findService.search("\"to speed up comparison\"");
 
-        ComparisonModal modal = getElementFactory().getFindPage().openCompareModal();
+        ComparisonModal modal = findPage.openCompareModal();
         modal.select("New Search");
         modal.compareButton().click();
 
@@ -86,5 +91,45 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
             thrown = e;
         }
         assertThat(thrown, nullValue());
+    }
+
+    @Test
+    @ActiveBug("FIND-232")
+    public void testAllSavedSearchesAreComparable() {
+        searchAndSave(new Query("\"alice in wonderland\""), "alice", SearchType.QUERY);
+        savedSearchService.openNewTab();
+        searchAndSave(new Query("\"bob's burgers\""), "bob", SearchType.SNAPSHOT);
+        searchAndSave(new Query("\"charlie's angels\""), "charlie", SearchType.QUERY);
+
+        switchToTab("bob");
+        final Collection<String> bobOptions = getOptionsFromModal();
+        verifyThat(bobOptions, hasItems("alice", "charlie"));
+        verifyThat(bobOptions, not(hasItem("bob")));
+
+        switchToTab("alice");
+        final Collection<String> aliceOptions = getOptionsFromModal();
+        verifyThat(aliceOptions, hasItems("bob", "charlie"));
+        verifyThat(aliceOptions, not(hasItem("alice")));
+    }
+
+    private List<String> getOptionsFromModal() {
+        assertThat(findPage.compareButton(), not(disabled()));
+        ComparisonModal modal = findPage.openCompareModal();
+        List<String> options = modal.getItems();
+        modal.close();
+        return options;
+    }
+
+    private void searchAndSave(Query query, String saveAs) {
+        searchAndSave(query, saveAs, SearchType.QUERY);
+    }
+
+    private void searchAndSave(Query query, String saveAs, SearchType saveType) {
+        findService.search(query);
+        savedSearchService.saveCurrentAs(saveAs, saveType);
+    }
+
+    private void switchToTab(String tabName) {
+        getElementFactory().getSearchTabBar().tab(tabName).activate();
     }
 }

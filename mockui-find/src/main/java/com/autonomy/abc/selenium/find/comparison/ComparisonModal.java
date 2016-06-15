@@ -2,18 +2,24 @@ package com.autonomy.abc.selenium.find.comparison;
 
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.predicates.HasCssValuePredicate;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Locator;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.List;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.stalenessOf;
 
 public class ComparisonModal extends ModalView {
     private ComparisonModal(WebElement $el, WebDriver driver) {
         super($el, driver);
+    }
+
+    public List<String> getItems() {
+        return ElementUtil.getTexts(findElements(By.className("secondary-model-title")));
     }
 
     public void select(String savedSearchName) {
