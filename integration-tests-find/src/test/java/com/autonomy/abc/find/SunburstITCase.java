@@ -51,7 +51,7 @@ public class SunburstITCase extends IdolFindTestBase {
         results.goToSunburst();
 
         final String firstParametric = filters().parametricField(0).getParentName();
-        verifyThat("Default parametric selection is 1st parametric type",firstParametric,equalToIgnoringCase(results.getSelectedFieldName(1)));
+        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(results.getSelectedFieldName(1)));
 
         results.parametricSelectionDropdown(2).open();
         verifyThat("1st selected parametric does not appear as choice in 2nd",results.getParametricDropdownItems(2),not(contains(firstParametric)));
