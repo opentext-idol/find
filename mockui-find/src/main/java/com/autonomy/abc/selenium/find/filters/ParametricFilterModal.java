@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.find.filters;
 
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import com.hp.autonomy.frontend.selenium.predicates.HasCssValuePredicate;
 import com.hp.autonomy.frontend.selenium.util.CssUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Locator;
@@ -47,16 +46,16 @@ public class ParametricFilterModal extends ModalView{
         findElement(By.cssSelector(".category-title:nth-child("+ CssUtil.cssifyIndex(tabNumber)+")"));
     }
 
-    public String tabName(WebElement tab){
-        return tab.findElement(By.cssSelector("a > span")).getText();
-    }
-
     public WebElement activePane(){return findElement(By.cssSelector(".tab-pane.active"));
     }
 
-    public List<WebElement> activeFieldList(){return activePane().findElements(By.cssSelector(".field-value"));}
+    public List<WebElement> activeFieldList(){return activePane().findElements(By.cssSelector(".checkbox.parametric-field-label"));}
 
-    public List<WebElement> checkedFieldsThisPane(){return activePane().findElements(By.cssSelector(".icheckbox-hp.checked + span"));}
+    public String checkCheckBoxInActivePane(int i){
+        ParametricModalCheckbox box = new ParametricModalCheckbox(activeFieldList().get(i),getDriver());
+        box.check();
+        return box.getName();
+    }
 
     public List<String> checkedFieldsAllPanes() {
         List<String> allCheckedFields = new ArrayList<>();
@@ -66,9 +65,4 @@ public class ParametricFilterModal extends ModalView{
         }
         return allCheckedFields;
         }
-
-        //can't see it
-        //public List<String> checkedFieldNames(){return ElementUtil.getTexts(checkedFieldsAllPanes());}
-
-
 }

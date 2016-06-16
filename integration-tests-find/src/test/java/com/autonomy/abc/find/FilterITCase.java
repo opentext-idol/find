@@ -11,7 +11,6 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResult;
 import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -65,51 +64,6 @@ public class FilterITCase extends FindTestBase {
         verifyThat("original results number changed", newNumberOfResults, lessThanOrEqualTo(originalNumberOfResults));
     }
 
-    //correctly broken BUT not sure what behaviour
-    @Test
-    public void testFilteringByParametricValues() {
-        findService.search("Alexis");
-        findPage.waitForParametricValuesToLoad();
-        int expectedResults = checkbox2().getResultsCount();
-        checkbox2().check();
-        results.waitForResultsToLoad();
-        verifyParametricFields(checkbox2(), expectedResults);
-        verifyTicks(true, false);
-
-        expectedResults = checkbox1().getResultsCount();
-        checkbox1().check();
-        results.waitForResultsToLoad();
-        verifyParametricFields(checkbox1(), expectedResults);
-        verifyTicks(true, true);
-
-        checkbox2().uncheck();
-        results.waitForResultsToLoad();
-        expectedResults = checkbox1().getResultsCount();
-        verifyParametricFields(checkbox1(), expectedResults);
-        verifyTicks(false, true);
-    }
-
-    private void verifyParametricFields(FindParametricCheckbox checked, int expectedResults) {
-        Waits.loadOrFadeWait();
-        int resultsTotal = results.getResultTitles().size();
-        int checkboxResults = checked.getResultsCount();
-        verifyThat(resultsTotal, is(Math.min(expectedResults, 30)));
-        verifyThat(checkboxResults, is(expectedResults));
-    }
-
-    private void verifyTicks(boolean checkbox2, boolean checkbox1) {
-        verifyThat(checkbox1().isChecked(), is(checkbox1));
-        verifyThat(checkbox2().isChecked(), is(checkbox2));
-    }
-
-    private FindParametricCheckbox checkbox1() {
-        if (isHosted()) {
-            return filters().checkboxForParametricValue("source connector", "SIMPSONSARCHIVE");
-        } else {
-            return filters().checkboxForParametricValue("SOURCE", "GOOGLE");
-        }
-    }
-
     private FindParametricCheckbox checkbox2() {
         if (isHosted()) {
             return filters().checkboxForParametricValue("content type", "TEXT/PLAIN");
@@ -134,16 +88,14 @@ public class FilterITCase extends FindTestBase {
         ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
 
         verifyThat("Correct tab is active",filterModal.activeTabName(),equalToIgnoringCase(filterCategory));
-        //slow-> could make it open the specific tabs rather than all but the won't catch if ones that shouldn't be ticked
-        //are
-        //should check correct number -> everywhere
-        //then just check the names in the 2 
         verifyThat("Same fields selected in modal as panel",filterModal.checkedFieldsAllPanes(),is(selectedFilters));
 
+        String filterType = filterModal.activeTabName();
+        String checkedFilterName = filterModal.checkCheckBoxInActivePane(0);
+        filterModal.applyButton().click();
 
-        //tick another value inside the modal
-        //click apply in the modal
-        //check if the value is ticked inside a parametric field container on the filters panel
+        FindParametricCheckbox panelBox = filters().checkboxForParametricValue(filterType,checkedFilterName);
+        verifyThat("Filter: "+checkedFilterName+" is now checked on panel",panelBox.isChecked());
     }
 
     private List<String> selectEvenFilters(int filterCategory){
