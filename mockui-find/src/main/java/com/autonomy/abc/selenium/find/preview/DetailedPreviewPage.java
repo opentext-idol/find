@@ -31,10 +31,6 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     public void goBackToSearch(){findElement(By.className("detail-view-back-button")).click();}
 
     //elements
-    public boolean serverLoadingIndicatorPresent(){
-        return findElements(By.className("view-server-loading-indicator")).size()>0;
-    }
-
     public WebElement loadingIndicator(){
         return findElement(By.className("loading-spinner"));
     }
