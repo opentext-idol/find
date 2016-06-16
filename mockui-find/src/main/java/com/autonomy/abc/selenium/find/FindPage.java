@@ -98,11 +98,7 @@ public class FindPage extends AppElement implements AppPage,
         WebElement firstParametric = findElement(By.cssSelector("[data-field]"));
         return ElementUtil.ancestor(firstParametric, 2);
     }
-
-    public boolean parametricModalDisplayed(){
-        return findElements(By.cssSelector(".parametric-modal")).size()>0;
-    }
-
+    
     @Override
     public void waitForParametricValuesToLoad() {
         filters().waitForParametricFields();
