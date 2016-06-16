@@ -37,7 +37,7 @@ define([
         describe('with an empty parametric collection', function() {
             it('should not display a loading spinner, content or field selections', function() {
                 expect(this.view.$loadingSpinner).toHaveClass('hide');
-                expect(this.view.$content).toHaveClass('hide');
+                expect(this.view.$content).toHaveClass('invisible');
                 expect(this.view.$parametricSelections).toHaveClass('hide');
             });
 
@@ -49,7 +49,7 @@ define([
 
                 it('should not display a message, content view or field selections', function() {
                     expect(this.view.$message).toHaveText('');
-                    expect(this.view.$content).toHaveClass('hide');
+                    expect(this.view.$content).toHaveClass('invisible');
                     expect(this.view.$parametricSelections).toHaveClass('hide');
                 });
 
@@ -65,7 +65,7 @@ define([
 
                     it('should not display a loading spinner, content view or field selections', function() {
                         expect(this.view.$loadingSpinner).toHaveClass('hide');
-                        expect(this.view.$content).toHaveClass('hide');
+                        expect(this.view.$content).toHaveClass('invisible');
                         expect(this.view.$parametricSelections).toHaveClass('hide');
                     });
 
@@ -83,7 +83,7 @@ define([
 
                     it('should not display a loading spinner, content view or field selections', function () {
                         expect(this.view.$loadingSpinner).toHaveClass('hide');
-                        expect(this.view.$content).toHaveClass('hide');
+                        expect(this.view.$content).toHaveClass('invisible');
                         expect(this.view.$parametricSelections).toHaveClass('hide');
                     });
 
@@ -142,7 +142,7 @@ define([
 
                     it('should display the dropdowns and the content view', function() {
                         expect(this.view.$parametricSelections).not.toHaveClass('hide');
-                        expect(this.view.$content).not.toHaveClass('hide');
+                        expect(this.view.$content).not.toHaveClass('invisible');
                     });
                 })
             });

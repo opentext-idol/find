@@ -26,13 +26,13 @@ define([
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
+    'find/app/page/search/results/table/table-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, ParametricFieldsCollection,
-            queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, Collapsible,
-            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, configuration, i18n, templateString) {
+            queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, Collapsible,
+            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, TableView, configuration, i18n, templateString) {
     'use strict';
 
     var template = _.template(templateString);
@@ -42,7 +42,7 @@ define([
 
         // Can be overridden
         headerControlsHtml: '',
-        displaySunburst: true,
+        displayDependentParametricViews: true,
 
         // Abstract
         ResultsView: null,
@@ -218,7 +218,7 @@ define([
                 Constructor: SunburstView,
                 constructorArguments: subViewArguments,
                 id: 'sunburst',
-                shown: hasBiRole && this.displaySunburst,
+                shown: hasBiRole && this.displayDependentParametricViews,
                 uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
                     displayNameKey: 'sunburst',
@@ -236,6 +236,16 @@ define([
                 selector: {
                     displayNameKey: 'map',
                     icon: 'hp-map-view'
+                }
+            }, {
+                Constructor: TableView,
+                constructorArguments: subViewArguments,
+                id: 'table',
+                shown: hasBiRole && this.displayDependentParametricViews,
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'table',
+                    icon: 'hp-table'
                 }
             }], {shown: true});
 
