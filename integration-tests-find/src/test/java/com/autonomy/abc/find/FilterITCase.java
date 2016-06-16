@@ -151,6 +151,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-247")
     public void testSelectDifferentCategoryFiltersAndResultsLoad(){
         findService.search("face");
 
