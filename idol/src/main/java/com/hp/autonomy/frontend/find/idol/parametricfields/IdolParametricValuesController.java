@@ -18,6 +18,7 @@ import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,6 +58,22 @@ class IdolParametricValuesController extends ParametricValuesController<IdolQuer
     ) throws AciErrorException {
         final IdolParametricRequest parametricRequest = buildRequest(fieldNames, null, SortParam.NumberIncreasing);
         return getNumericParametricValuesInBuckets(parametricRequest, targetNumberOfBuckets, bucketMin, bucketMax);
+    }
+
+    @RequestMapping(value = BUCKET_PARAMETRIC_PATH + "/{field}", method = RequestMethod.GET)
+    @ResponseBody
+    public RangeInfo getNumericParametricValuesInBucketsForField(
+            @PathVariable("field") final String field,
+            @RequestParam(TARGET_NUMBER_OF_BUCKETS_PARAM) final Integer targetNumberOfBuckets,
+            @RequestParam(value = BUCKET_MIN_PARAM, required = false) final Double bucketMin,
+            @RequestParam(value = BUCKET_MAX_PARAM, required = false) final Double bucketMax
+    ) throws AciErrorException {
+        return getNumericParametricValuesInBuckets(
+                buildRequest(Collections.singletonList(field), null, SortParam.NumberIncreasing),
+                Collections.singletonList(targetNumberOfBuckets),
+                Collections.singletonList(bucketMin),
+                Collections.singletonList(bucketMax)
+        ).get(0);
     }
 
     private IdolParametricRequest buildRequest(final List<String> fieldNames, final Integer maxValues, final SortParam sort) {
