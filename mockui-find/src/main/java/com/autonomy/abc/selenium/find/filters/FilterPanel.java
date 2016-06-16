@@ -104,6 +104,9 @@ public class FilterPanel {
         return parametricFieldContainers().get(i);
     }
 
+    public int numberParametricFieldContainers(){
+        return parametricFieldContainers().size();
+    }
 
     public void filterResults(String term) {
         FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Search filters...']")), getDriver());

@@ -49,27 +49,28 @@ public class FilterITCase extends FindTestBase {
     public void testParametricFiltersResults() {
         findService.search("cats");
         findPage.waitForParametricValuesToLoad();
-
         int originalNumberOfResults = findPage.totalResultsNum();
-        ParametricFieldContainer parametricFieldContainer = filters().parametricField(1);
 
-        checkbox2().check();
+        ParametricFieldContainer parametricFieldContainer = filters().parametricField(1);
+        List<FindParametricCheckbox> firstParametricContainerCheckboxes = parametricFieldContainer.values();
+        firstParametricContainerCheckboxes.get(0).check();
 
         try{parametricFieldContainer.getParentName();}
-        catch (StaleElementReferenceException e){fail("parametric fields reloaded");}
+        catch (StaleElementReferenceException e){fail("Parametric fields reloaded");}
         results.waitForResultsToLoad();
 
-        int newNumberOfResults = findPage.totalResultsNum();
+        verifyThat("Added 1 filter: fewer or equal results", findPage.totalResultsNum(), lessThanOrEqualTo(originalNumberOfResults));
+        int previousNumberOfResults = findPage.totalResultsNum();
 
-        verifyThat("original results number changed", newNumberOfResults, lessThanOrEqualTo(originalNumberOfResults));
-    }
+        //within the same filter type
+        firstParametricContainerCheckboxes.get(1).check();
+        verifyThat("Added filter from same type: more or equal results", findPage.totalResultsNum(), greaterThanOrEqualTo(previousNumberOfResults));
+        previousNumberOfResults = findPage.totalResultsNum();
 
-    private FindParametricCheckbox checkbox2() {
-        if (isHosted()) {
-            return filters().checkboxForParametricValue("content type", "TEXT/PLAIN");
-        } else {
-            return filters().checkboxForParametricValue("CATEGORY", "ENTERTAINMENT");
-        }
+        //different filter type
+        filters().checkBoxesForParametricFieldContainer(2).get(1).check();
+        verifyThat("Added filter from different type: fewer or equal results", findPage.totalResultsNum(), lessThanOrEqualTo(previousNumberOfResults));
+
     }
 
     @Test
@@ -112,6 +113,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-231")
     public void testDeselectingFiltersDoesNotRemove(){
         findService.search("confusion");
         findPage.waitForParametricValuesToLoad();
@@ -127,6 +129,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-231")
     public void testDeselectingFiltersNoFloatingTooltips(){
         findService.search("boris");
         findPage.waitForParametricValuesToLoad();
@@ -145,6 +148,17 @@ public class FilterITCase extends FindTestBase {
             checkBox.check();
         }
         return boxes;
+    }
+
+    @Test
+    public void testSelectDifferentCategoryFiltersAndResultsLoad(){
+        findService.search("face");
+
+        for(int i = 0 ; i<filters().numberParametricFieldContainers()-1;i++){
+            filters().checkBoxesForParametricFieldContainer(i).get(0).check();
+        }
+        Waits.loadOrFadeWait();
+        verifyThat("Loading indicator not present",!results.loadingIndicatorPresent());
     }
 
     @Test
