@@ -74,6 +74,10 @@ public class DocumentViewer extends AppElement implements AppPage {
         return new Index(getField("Index"));
     }
 
+    public String getIndexAsString(){return getField("Index");}
+
+    public String getDatabase(){return getField("Database");}
+
     public String getReference() {
         return getField("Reference");
     }

@@ -17,6 +17,12 @@ public class ParametricFieldContainer extends FilterContainer implements Iterabl
         driver = webDriver;
     }
 
+    @Override
+    //check where this is used....
+    public String getParentName(){
+        return getParent().getText().split(" \\(")[0];
+    }
+
     public List<WebElement> getChildren(){
         return getContainer().findElements(By.className("parametric-value-name"));
     }
@@ -26,8 +32,9 @@ public class ParametricFieldContainer extends FilterContainer implements Iterabl
         return ElementUtil.getTexts(getChildren());
     }
 
+    //visible only
     private List<WebElement> getFullChildrenElements(){
-        return getContainer().findElements(By.className("parametric-value-element"));
+        return getContainer().findElements(By.cssSelector(".parametric-value-element:not(.hide)"));
     }
 
     @Override
@@ -43,4 +50,10 @@ public class ParametricFieldContainer extends FilterContainer implements Iterabl
         return boxes;
     }
 
+    public void seeAll(){
+        //HSOD?!
+        getContainer().findElement(By.cssSelector(".show-all")).click();
+    }
+
+    public WebElement numberSelectedSubtitle(){return getContainer().findElement(By.cssSelector("collapsible-subtitle"));}
 }

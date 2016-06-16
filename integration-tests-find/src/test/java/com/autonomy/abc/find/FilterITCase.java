@@ -3,13 +3,9 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.filters.DateOption;
-import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
-import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.filters.FilterPanel;
-import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.find.filters.*;
+import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResult;
@@ -22,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.StaleElementReferenceException;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -52,88 +49,117 @@ public class FilterITCase extends FindTestBase {
     public void testParametricFiltersResults() {
         findService.search("cats");
         findPage.waitForParametricValuesToLoad();
-
         int originalNumberOfResults = findPage.totalResultsNum();
-        ParametricFieldContainer parametricFieldContainer = filters().parametricField(1);
 
-        checkbox2().check();
+        ParametricFieldContainer parametricFieldContainer = filters().parametricField(1);
+        List<FindParametricCheckbox> firstParametricContainerCheckboxes = parametricFieldContainer.values();
+        firstParametricContainerCheckboxes.get(0).check();
 
         try{parametricFieldContainer.getParentName();}
-        catch (StaleElementReferenceException e){fail("parametric fields reloaded");}
+        catch (StaleElementReferenceException e){fail("Parametric fields reloaded");}
         results.waitForResultsToLoad();
 
-        int newNumberOfResults = findPage.totalResultsNum();
+        verifyThat("Added 1 filter: fewer or equal results", findPage.totalResultsNum(), lessThanOrEqualTo(originalNumberOfResults));
+        int previousNumberOfResults = findPage.totalResultsNum();
 
-        verifyThat("original results number changed", newNumberOfResults, lessThanOrEqualTo(originalNumberOfResults));
+        //within the same filter type
+        firstParametricContainerCheckboxes.get(1).check();
+        verifyThat("Added filter from same type: more or equal results", findPage.totalResultsNum(), greaterThanOrEqualTo(previousNumberOfResults));
+        previousNumberOfResults = findPage.totalResultsNum();
+
+        //different filter type
+        filters().checkBoxesForParametricFieldContainer(2).get(1).check();
+        verifyThat("Added filter from different type: fewer or equal results", findPage.totalResultsNum(), lessThanOrEqualTo(previousNumberOfResults));
+
     }
 
     @Test
-    public void testFilteringByParametricValues() {
-        findService.search("Alexis");
+    public void testParametricFiltersModal() {
+        findService.search("cats");
         findPage.waitForParametricValuesToLoad();
-        int expectedResults = checkbox2().getResultsCount();
-        checkbox2().check();
-        results.waitForResultsToLoad();
-        verifyParametricFields(checkbox2(), expectedResults);
-        verifyTicks(true, false);
 
-        expectedResults = checkbox1().getResultsCount();
-        checkbox1().check();
-        results.waitForResultsToLoad();
-        verifyParametricFields(checkbox1(), expectedResults);    //TODO Maybe change plainTextCheckbox to whichever has the higher value??
-        verifyTicks(true, true);
+        ParametricFieldContainer container = filters().parametricField(2);
+        String filterCategory = container.getParentName();
 
-        checkbox2().uncheck();
-        results.waitForResultsToLoad();
-        expectedResults = checkbox1().getResultsCount();
-        verifyParametricFields(checkbox1(), expectedResults);
-        verifyTicks(false, true);
+        List<String> selectedFilters = new ArrayList<>();
+        selectedFilters.addAll(selectEvenFilters(1));
+        selectedFilters.addAll(selectEvenFilters(2));
+
+        container.seeAll();
+        ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
+
+        verifyThat("Correct tab is active",filterModal.activeTabName(),equalToIgnoringCase(filterCategory));
+        verifyThat("Same fields selected in modal as panel",filterModal.checkedFieldsAllPanes(),is(selectedFilters));
+
+        String filterType = filterModal.activeTabName();
+        String checkedFilterName = filterModal.checkCheckBoxInActivePane(0);
+        filterModal.applyButton().click();
+
+        FindParametricCheckbox panelBox = filters().checkboxForParametricValue(filterType,checkedFilterName);
+        verifyThat("Filter: "+checkedFilterName+" is now checked on panel",panelBox.isChecked());
     }
 
-     @Test
-     public void testParametricFiltersModal() {
-         findService.search("cats");
-         findPage.waitForParametricValuesToLoad();
-
-         checkbox2().check();
-
-         //click on 'see all' button (under any category)
-         //test if modal is open
-         //test if the current parametric field is the active tab in the modal
-         //test if the currently selected values are ticked in the modal as well
-
-         //tick another value inside the modal
-         //click apply in the modal
-         //check if the value is ticked inside a parametric field container on the filters panel
+    private List<String> selectEvenFilters(int filterCategory){
+        List<String> filterNames = new ArrayList<>();
+        int i=1;
+        for(FindParametricCheckbox box:filters().checkBoxesForParametricFieldContainer(filterCategory)){
+            if((i % 2) == 0){
+                filterNames.add(box.getName());
+                box.check();
+            }
+            i++;
+        }
+        return filterNames;
     }
 
-    private void verifyParametricFields(FindParametricCheckbox checked, int expectedResults) {
+    @Test
+    @ActiveBug("FIND-231")
+    public void testDeselectingFiltersDoesNotRemove(){
+        findService.search("confusion");
+        findPage.waitForParametricValuesToLoad();
+
+        String parametricFilterType = filters().parametricField(0).getParentName();
+        List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
+
+        for(FindParametricCheckbox checkbox:boxes){
+            checkbox.uncheck();
+            verifyThat("Unchecking not removing filter from list",filters().checkBoxesForParametricFieldContainer(0),hasSize(boxes.size()));
+        }
+        verifyThat("Removing all has not removed group", filters().parametricField(0).getParentName(),is(parametricFilterType));
+    }
+
+    @Test
+    @ActiveBug("FIND-231")
+    public void testDeselectingFiltersNoFloatingTooltips(){
+        findService.search("boris");
+        findPage.waitForParametricValuesToLoad();
+
+        List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
+        for(FindParametricCheckbox checkbox:boxes){
+            checkbox.name().click();
+        }
+
+        verifyThat("Tooltips aren't floating everywhere",getElementFactory().getToolTips().toolTips(),not(hasSize((boxes.size()))));
+    }
+
+    private List<FindParametricCheckbox> checkAllVisibleFiltersInFirstParametrics(){
+        List<FindParametricCheckbox> boxes = filters().checkBoxesForParametricFieldContainer(0);
+        for(FindParametricCheckbox checkBox:boxes){
+            checkBox.check();
+        }
+        return boxes;
+    }
+
+    @Test
+    @ActiveBug("FIND-247")
+    public void testSelectDifferentCategoryFiltersAndResultsLoad(){
+        findService.search("face");
+
+        for(int i = 0 ; i<filters().numberParametricFieldContainers()-1;i++){
+            filters().checkBoxesForParametricFieldContainer(i).get(0).check();
+        }
         Waits.loadOrFadeWait();
-        int resultsTotal = results.getResultTitles().size();
-        int checkboxResults = checked.getResultsCount();
-        verifyThat(resultsTotal, is(Math.min(expectedResults, 30)));
-        verifyThat(checkboxResults, is(expectedResults));
-    }
-
-    private void verifyTicks(boolean checkbox2, boolean checkbox1) {
-        verifyThat(checkbox1().isChecked(), is(checkbox1));
-        verifyThat(checkbox2().isChecked(), is(checkbox2));
-    }
-
-    private FindParametricCheckbox checkbox1() {
-        if (isHosted()) {
-            return filters().checkboxForParametricValue("source connector", "SIMPSONSARCHIVE");
-        } else {
-            return filters().checkboxForParametricValue("SOURCE", "GOOGLE");
-        }
-    }
-
-    private FindParametricCheckbox checkbox2() {
-        if (isHosted()) {
-            return filters().checkboxForParametricValue("content type", "TEXT/PLAIN");
-        } else {
-            return filters().checkboxForParametricValue("CATEGORY", "ENTERTAINMENT");
-        }
+        verifyThat("Loading indicator not present",!results.loadingIndicatorPresent());
     }
 
     @Test
@@ -145,7 +171,7 @@ public class FilterITCase extends FindTestBase {
         panel.clickFirstIndex();
 
         results.waitForResultsToLoad();
-        assertThat(results.getText().toLowerCase(), not(containsString("error")));
+        assertThat("No error message",!results.errorContainer().isDisplayed());
     }
 
     @Test
@@ -153,10 +179,9 @@ public class FilterITCase extends FindTestBase {
         findService.search("face");
         QueryResult queryResult = results.searchResult(1);
         String titleString = queryResult.getTitleString();
+
         DocumentViewer docPreview = queryResult.openDocumentPreview();
-
-        Index index = docPreview.getIndex();
-
+        String index = databaseOrIndex(docPreview);
         docPreview.close();
 
         findPage.filterBy(new IndexFilter(index));
@@ -185,21 +210,27 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testFilteredByIndexOnlyHasFilesFromIndex() {
-        findService.search("Sad");
+        findService.search("Better");
 
         DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
-        String chosenIndex = docPreview.getIndex().getDisplayName();
+        String chosenIndex = databaseOrIndex(docPreview);
         docPreview.close();
 
         findPage.filterBy(new IndexFilter(chosenIndex));
         //weirdly failing to open the 2nd result (subsequent okay)
         for (int i = 1; i < 6; i++) {
             DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
-            assertThat(docViewer.getIndex().getDisplayName(), is(chosenIndex));
+            assertThat(databaseOrIndex(docPreview), is(chosenIndex));
             docViewer.close();
         }
     }
 
+    private String databaseOrIndex(DocumentViewer docPreview){
+        if(isHosted()){
+            return docPreview.getIndexAsString();
+        }
+        else{return docPreview.getDatabase();}
+    }
     @Test
     public void testQuickDoubleClickOnDateFilterNotCauseError() {
         findService.search("wookie");

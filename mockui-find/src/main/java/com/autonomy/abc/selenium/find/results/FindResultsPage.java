@@ -35,6 +35,10 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
         return getDriver().findElement(By.className("results"));
     }
 
+    public boolean loadingIndicatorPresent(){
+        return findElements(By.cssSelector(".main-results-content .loading-spinner")).size()>0;
+    }
+
     public List<FindResult> getResults() {
         final List<FindResult> results = new ArrayList<>();
         for (final WebElement result : findElements(By.xpath("//*[starts-with(@class,'main-results-container')]"))) {
