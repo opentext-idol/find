@@ -10,10 +10,10 @@ import org.openqa.selenium.WebElement;
 
 import java.util.Date;
 
-public class SchedulePromotionService<T extends IdolIsoElementFactory> extends ServiceBase<T> {
+public class SchedulePromotionService extends ServiceBase<IdolIsoElementFactory> {
     private SchedulePage schedulePage;
 
-    public SchedulePromotionService(final IsoApplication<? extends T> application) {
+    public SchedulePromotionService(final IsoApplication<? extends IdolIsoElementFactory> application) {
         super(application);
     }
 

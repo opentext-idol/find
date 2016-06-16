@@ -89,7 +89,9 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 	@Test
 	public void testAllSettingsPanelsPresent() {
 		for (final IsoSettingsPage.Panel panel : IsoSettingsPage.Panel.values()) {
-			if (panel.equals(IsoSettingsPage.Panel.LOCALE)) continue;
+			if (panel == IsoSettingsPage.Panel.LOCALE) {
+				continue;
+			}
 
 			assertThat(settingsPage.getPanelWithName(panel.getTitle()), displayed());
 		}

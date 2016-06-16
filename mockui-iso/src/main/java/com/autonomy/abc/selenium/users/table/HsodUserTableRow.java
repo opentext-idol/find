@@ -22,7 +22,7 @@ public class HsodUserTableRow extends UserTableRow {
     @Override
     public void changeRoleTo(final Role newRole) {
         final Dropdown dropdown = roleDropdown();
-        if (newRole.equals(getRole())) {
+        if (newRole == getRole()) {
             dropdown.open();
             dropdown.close();
         } else {
