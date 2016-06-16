@@ -11,7 +11,7 @@ public class HybridTestSetupStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(HybridTestSetupStrategy.class);
     private final Application<?> app;
     private final User initialUser;
-    private boolean hasSetUp = false;
+    private boolean hasSetUp;
 
     public HybridTestSetupStrategy(final Application<?> app, final User initialUser) {
         this.app = app;

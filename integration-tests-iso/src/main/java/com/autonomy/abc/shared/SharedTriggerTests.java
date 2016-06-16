@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.*;
 
 public class SharedTriggerTests {
     private int numberOfTriggers;
-    private boolean noQuotesFlag = false;
+    private boolean noQuotesFlag;
     private final TriggerForm triggerForm;
 
     private final String[] duplicateTriggers = {

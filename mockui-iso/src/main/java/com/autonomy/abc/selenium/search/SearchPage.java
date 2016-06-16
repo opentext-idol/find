@@ -196,7 +196,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 	}
 
 	public WebElement promotedResult(final int number) {
-		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + String.valueOf(number) + ')')));
+		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + number + ')')));
 	}
 
 	public boolean isPromotionsBoxVisible() {

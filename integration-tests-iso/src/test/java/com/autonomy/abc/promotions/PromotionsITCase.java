@@ -131,12 +131,12 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	public void testEditPromotionName() throws InterruptedException {
 		setUpCarsPromotion(1);
 		final Editable title = promotionsDetailPage.promotionTitle();
-		verifyThat(title.getValue(), (is("Spotlight for: wheels")));
+		verifyThat(title.getValue(), is("Spotlight for: wheels"));
 
 		final String[] newTitles = {"Fuzz", "<script> alert(\"hi\") </script>"};
 		for (final String newTitle : newTitles) {
 			title.setValueAndWait(newTitle);
-			verifyThat(title.getValue(), (is(newTitle)));
+			verifyThat(title.getValue(), is(newTitle));
 		}
 	}
 

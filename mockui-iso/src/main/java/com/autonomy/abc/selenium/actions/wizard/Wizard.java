@@ -3,11 +3,12 @@ package com.autonomy.abc.selenium.actions.wizard;
 import com.autonomy.abc.selenium.actions.Action;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class Wizard implements Action {
     private List<WizardStep> steps;
-    private int currentStep = 0;
+    private int currentStep;
 
     public Wizard() {
         steps = new ArrayList<>();
@@ -18,7 +19,7 @@ public abstract class Wizard implements Action {
     }
 
     public List<WizardStep> getSteps() {
-        return steps;
+        return Collections.unmodifiableList(steps);
     }
 
     protected void setSteps(final List<WizardStep> steps) {

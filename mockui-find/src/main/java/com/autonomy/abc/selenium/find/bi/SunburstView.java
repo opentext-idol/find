@@ -87,7 +87,7 @@ public class SunburstView extends ParametricFieldView {
 
         hoveringOffSide(segment,(dimensions.getWidth()/4)*3, dimensions.getHeight()/2);
         if(!sunburstCentreHasText()|| (sunburstCentreHasText() && getSunburstCentreName().equals("Parametric Distribution"))){
-            hoveringOffSide(segment,(dimensions.getWidth()/4), dimensions.getHeight()/2);
+            hoveringOffSide(segment, dimensions.getWidth()/4, dimensions.getHeight()/2);
         }
     }
 
@@ -124,7 +124,7 @@ public class SunburstView extends ParametricFieldView {
     }
 
     private static boolean isBigEnough(final int thisCount, final int totalResults) {
-        return ((double) thisCount)/totalResults >= 0.05;
+        return (double) thisCount /totalResults >= 0.05;
     }
 
 }

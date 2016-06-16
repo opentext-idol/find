@@ -146,7 +146,7 @@ public class FilterITCase extends FindTestBase {
             checkbox.name().click();
         }
 
-        verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()),not(hasSize((boxes.size()))));
+        verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()),not(hasSize(boxes.size())));
     }
 
     private List<FindParametricCheckbox> checkAllVisibleFiltersInFirstParametrics(){

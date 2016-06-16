@@ -19,7 +19,7 @@ public class ParametricFilterModal extends ModalView {
     }
 
     public static ParametricFilterModal getParametricModal(final WebDriver driver) {
-        final WebElement $el = (new WebDriverWait(driver, 30)).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".parametric-modal")));
+        final WebElement $el = new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".parametric-modal")));
         return new ParametricFilterModal($el, driver);
     }
 

@@ -55,7 +55,7 @@ public class IsoOverviewPage extends DashboardBase {
 	}
 
 	public WebElement getWidget(final Widget widgetHeadingText) {
-		return findElement(By.xpath(".//h3[contains(text(), \"" + widgetHeadingText.toString() + "\")]/../.."));
+		return findElement(By.xpath(".//h3[contains(text(), \"" + widgetHeadingText + "\")]/../.."));
 	}
 
 	public WebElement zeroHitLastWeekButton() {
@@ -87,7 +87,7 @@ public class IsoOverviewPage extends DashboardBase {
 
 		@Override
         public IsoOverviewPage create(final WebDriver context) {
-			IsoOverviewPage.waitForLoad(context);
+			waitForLoad(context);
 			return new IsoOverviewPage(context);
 		}
 	}

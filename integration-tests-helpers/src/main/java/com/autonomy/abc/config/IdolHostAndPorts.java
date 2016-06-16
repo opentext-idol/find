@@ -14,7 +14,7 @@ public class IdolHostAndPorts {
 	private final String name;
 
 	private IdolHostAndPorts(final Builder builder) {
-		this.protocol = (builder.protocol) == null ? "http" : builder.protocol;
+		this.protocol = builder.protocol == null ? "http" : builder.protocol;
 		this.host = builder.host;
 		this.port = builder.port;
 		this.name = builder.name;

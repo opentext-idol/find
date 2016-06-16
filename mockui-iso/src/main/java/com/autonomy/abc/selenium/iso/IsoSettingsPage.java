@@ -152,7 +152,7 @@ public class IsoSettingsPage extends SOPageBase {
 
 		@Override
         public IsoSettingsPage create(final WebDriver context) {
-			IsoSettingsPage.waitForLoad(context);
+			waitForLoad(context);
 			return new IsoSettingsPage(context);
 		}
 	}

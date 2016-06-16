@@ -128,7 +128,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     }
 
     private void checkHasMetaDataFields(final DetailedPreviewPage detailedPreviewPage){
-        verifyThat("Tab loads",!(detailedPreviewPage.loadingIndicator().isDisplayed()));
+        verifyThat("Tab loads",!detailedPreviewPage.loadingIndicator().isDisplayed());
         verifyThat("Detailed Preview has reference",detailedPreviewPage.getReference(),not(nullValue()));
         if(isHosted()){
         verifyThat("Detailed Preview has index",detailedPreviewPage.getIndex(),not(nullValue()));}
@@ -140,12 +140,12 @@ public class DocumentPreviewITCase extends FindTestBase {
 
     private void checkSimilarDocuments(final DetailedPreviewPage detailedPreviewPage){
         detailedPreviewPage.similarDocsTab().click();
-        verifyThat("Tab loads",!(detailedPreviewPage.loadingIndicator().isDisplayed()));
+        verifyThat("Tab loads",!detailedPreviewPage.loadingIndicator().isDisplayed());
     }
 
     private void checkSimilarDates(final DetailedPreviewPage detailedPreviewPage){
         detailedPreviewPage.similarDatesTab().click();
-        verifyThat("Tab loads",!(detailedPreviewPage.loadingIndicator().isDisplayed()));
+        verifyThat("Tab loads",!detailedPreviewPage.loadingIndicator().isDisplayed());
         changeDateSliderToYearBefore(detailedPreviewPage);
         verifyThat("Can change to similar docs from year before", detailedPreviewPage.getSimilarDatesSummary(), containsString("Between 1 year"));
     }

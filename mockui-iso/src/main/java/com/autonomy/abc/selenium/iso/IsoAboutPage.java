@@ -38,7 +38,7 @@ public class IsoAboutPage extends SOPageBase {
 	}
 
 	public WebElement pageinateNumber(final int pageinateNumber) {
-		return findElement(By.xpath(".//a[text()='" + String.valueOf(pageinateNumber) + "']"));
+		return findElement(By.xpath(".//a[text()='" + pageinateNumber + "']"));
 	}
 
 	public void searchInSearchBox(final String searchTerm) {
@@ -67,7 +67,7 @@ public class IsoAboutPage extends SOPageBase {
 
 		@Override
         public IsoAboutPage create(final WebDriver context) {
-			IsoAboutPage.waitForLoad(context);
+			waitForLoad(context);
 			return new IsoAboutPage(context);
 		}
 	}

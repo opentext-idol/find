@@ -44,7 +44,7 @@ public class ResultsView extends AppElement implements QueryResultsPage {
     }
 
     public boolean loadingIndicatorPresent(){
-        return findElements(By.cssSelector(".main-results-content .loading-spinner")).size()>0;
+        return !findElements(By.cssSelector(".main-results-content .loading-spinner")).isEmpty();
     }
 
     public List<FindResult> getResults() {
