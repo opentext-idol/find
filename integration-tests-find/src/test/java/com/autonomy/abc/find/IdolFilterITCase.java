@@ -76,21 +76,6 @@ public class IdolFilterITCase extends IdolFindTestBase {
         assertThat(filters().getErrorMessage(), isEmptyOrNullString());
     }
 
-    //Expanding & Collapsing
-    @Test
-    public void testExpandFilters(){
-        findService.search("face");
-
-        final String filter = filters().getFirstHiddenFieldValue();
-        LOGGER.info("using filter " + filter);
-
-        assertThat(filters().parametricValue(filter), not(displayed()));
-        filters().expandFiltersFully();
-        assertThat(filters().parametricValue(filter), displayed());
-        filters().collapseAll();
-        assertThat(filters().parametricValue(filter), not(displayed()));
-    }
-
     private FilterPanel filters() {
         return getElementFactory().getFilterPanel();
     }
