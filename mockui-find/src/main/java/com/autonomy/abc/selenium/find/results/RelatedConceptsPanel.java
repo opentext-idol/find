@@ -50,21 +50,18 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
 
     public WebElement hoverOverRelatedConcept(final int i) {
         final WebElement concept = relatedConcepts().get(i);
-        DriverUtil.hover(getDriver(), concept);
+        DriverUtil.hover(driver, concept);
         final WebElement popover = panel.findElement(By.className("popover"));
         waitForPopoverToLoad(popover);
         return popover;
     }
 
     private void waitForPopoverToLoad(final WebElement popover) {
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
+        new WebDriverWait(driver,10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
     }
 
     private void waitForRelatedConceptsToLoad() {
         Container.RIGHT.waitForLoad(driver);
     }
 
-    private WebDriver getDriver() {
-        return driver;
-    }
 }

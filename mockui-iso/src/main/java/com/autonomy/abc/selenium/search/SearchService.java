@@ -23,7 +23,7 @@ public class SearchService extends ServiceBase<IsoElementFactory> implements Que
     @Override
     public SearchPage search(final Query query) {
         getElementFactory().getTopNavBar().search(query.getTerm());
-        setSearchPage(getElementFactory().getSearchPage());
+        this.searchPage = getElementFactory().getSearchPage();
         // TODO: get rid of this once IDOL test VM fixed
         new LanguageFilter(Language.ENGLISH).apply(searchPage);
         searchPage.filterBy(new AggregateQueryFilter(query.getFilters()));
@@ -40,9 +40,5 @@ public class SearchService extends ServiceBase<IsoElementFactory> implements Que
         ElementUtil.ancestor(searchPage.findElement(By.linkText(documentTitle)), 2).findElement(By.className("delete")).click();
         new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining("was deleted"));
         searchPage.waitForSearchLoadIndicatorToDisappear();
-    }
-
-    private void setSearchPage(final SearchPage searchPage){
-        this.searchPage = searchPage;
     }
 }

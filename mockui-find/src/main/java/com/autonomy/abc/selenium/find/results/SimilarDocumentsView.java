@@ -73,7 +73,7 @@ public class SimilarDocumentsView implements AppPage {
     public List<FindResult> getResults(){
         final List<FindResult> results = new ArrayList<>();
         for(final WebElement result : findElements(By.className("main-results-container"))){
-            results.add(new FindResult(result, getDriver()));
+            results.add(new FindResult(result, driver));
         }
         return results;
     }
@@ -84,12 +84,12 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     public FindResult getResult(final int i) {
-        return new FindResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ')')), getDriver());
+        return new FindResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ')')), driver);
     }
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(), 20)
+        new WebDriverWait(driver, 20)
                 .withMessage("loading similar results view")
                 .until(ExpectedConditions.visibilityOf(backButton()));
     }
@@ -100,10 +100,6 @@ public class SimilarDocumentsView implements AppPage {
 
     private List<WebElement> findElements(final By locator) {
         return container.findElements(locator);
-    }
-
-    private WebDriver getDriver() {
-        return driver;
     }
 
     public WebElement mainResultsContent() {

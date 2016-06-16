@@ -20,7 +20,7 @@ public class TopicMapView {
     }
     public void goToTopicMap(){
          findElement(By.cssSelector("[data-tab-id='topic-map']")).click();
-         new WebDriverWait(getDriver(),15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".entity-topic-map"))));
+        new WebDriverWait(driver,15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".entity-topic-map"))));
     }
 
     public boolean topicMapVisible(){
@@ -63,16 +63,12 @@ public class TopicMapView {
          return addedConcepts;}
 
     public void waitForMapLoaded(){
-         new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfAllElements(mapEntityTextElements()));
+        new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfAllElements(mapEntityTextElements()));
     }
 
     public void waitForReload(){
-         new WebDriverWait(getDriver(),50).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
+        new WebDriverWait(driver,50).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
      }
-
-    private WebDriver getDriver() {
-        return driver;
-    }
 
     private WebElement findElement(final By locator) {
         return container.findElement(locator);

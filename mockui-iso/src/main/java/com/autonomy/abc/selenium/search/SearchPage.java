@@ -166,7 +166,6 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 
 	public List<String> getPromotedDocumentTitles(final boolean fullList) {
 		waitForPromotionsLoadIndicatorToDisappear();
-		final List<String> promotionsList = new ArrayList<>();
 
 		if (showMorePromotionsButton().isDisplayed()) {
 			showMorePromotions();
@@ -176,7 +175,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 			DriverUtil.scrollIntoViewAndClick(getDriver(), promotionPaginationButton(Pagination.FIRST));
 		}
 
-		promotionsList.addAll(getVisiblePromotedDocumentTitles());
+		final List<String> promotionsList = getVisiblePromotedDocumentTitles();
 
 		if (fullList) {
 			while (ElementUtil.isEnabled(promotionPaginationButton(Pagination.NEXT))) {

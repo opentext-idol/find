@@ -93,7 +93,6 @@ public class SimilarDocumentsITCase extends FindTestBase {
             Waits.loadOrFadeWait();
             similarDocuments = findService.goToSimilarDocuments(i);
             final WebElement seedLink  = similarDocuments.seedLink();
-            final String seedTitle = seedLink.getText();
 
             previewSeed(seedLink);
             similarDocuments.backButton().click();

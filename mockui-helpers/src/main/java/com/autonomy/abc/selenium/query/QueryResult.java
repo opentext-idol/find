@@ -51,7 +51,7 @@ public abstract class QueryResult {
     @Override
     public String toString() {
         try {
-            return this.getClass().getSimpleName() + "<" + getTitleString() + '>';
+            return this.getClass().getSimpleName() + '<' + getTitleString() + '>';
         } catch (final Exception e) {
             return this.getClass().getSimpleName() + "<unknown contents>";
         }

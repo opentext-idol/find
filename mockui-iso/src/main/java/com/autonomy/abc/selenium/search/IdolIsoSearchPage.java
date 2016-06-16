@@ -38,12 +38,10 @@ public class IdolIsoSearchPage extends SearchPage {
 
     public List<String> getPromotionLabels() {
         waitForPromotionsLoadIndicatorToDisappear();
-        final List<String> labelList = new ArrayList<>();
-
         if (showMorePromotionsButton().isDisplayed()) {
             showMorePromotions();
         }
-        labelList.addAll(getPromotionTypeLabels());
+        final List<String> labelList = getPromotionTypeLabels();
 
         while (ElementUtil.isEnabled(promotionPaginationButton(Pagination.NEXT))) {
             switchPromotionPage(Pagination.NEXT);
