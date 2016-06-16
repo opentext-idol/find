@@ -46,7 +46,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     private ResultsComparisonView resultsComparison;
     private IdolFindPage findPage;
 
-    public ResultsComparisonITCase(TestConfig config) {
+    public ResultsComparisonITCase(final TestConfig config) {
         super(config);
     }
 
@@ -115,7 +115,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService.openNewTab();
         findService.search("\"to speed up comparison\"");
 
-        ComparisonModal modal = findPage.openCompareModal();
+        final ComparisonModal modal = findPage.openCompareModal();
         modal.select("New Search");
         modal.compareButton().click();
 
@@ -149,9 +149,9 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     private List<String> getModalOptionsForTab(final String tabName) {
         getElementFactory().getSearchTabBar().switchTo(tabName);
         assertThat(findPage.compareButton(), not(disabled()));
-        ComparisonModal modal = findPage.openCompareModal();
+        final ComparisonModal modal = findPage.openCompareModal();
         verifyThat(modal.getSelected(), is(tabName));
-        List<String> options = modal.getItems();
+        final List<String> options = modal.getItems();
         modal.close();
         return options;
     }
@@ -184,11 +184,11 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         assertThat(getElementFactory().getSearchTabBar().getCurrentTabTitle(), is(expectedTabName));
     }
 
-    private void searchAndSave(Query query, String saveAs) {
+    private void searchAndSave(final Query query, final String saveAs) {
         searchAndSave(query, saveAs, SearchType.QUERY);
     }
 
-    private void searchAndSave(Query query, String saveAs, SearchType saveType) {
+    private void searchAndSave(final Query query, final String saveAs, final SearchType saveType) {
         findService.search(query);
         savedSearchService.saveCurrentAs(saveAs, saveType);
     }

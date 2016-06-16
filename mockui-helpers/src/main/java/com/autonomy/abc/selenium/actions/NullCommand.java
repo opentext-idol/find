@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.actions;
 
 public final class NullCommand implements Command {
-    private final static NullCommand INSTANCE = new NullCommand();
+    private static final NullCommand INSTANCE = new NullCommand();
 
     private NullCommand() {}
 

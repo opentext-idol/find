@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class KeywordService extends ServiceBase<IsoElementFactory> {
-    private final static Logger LOGGER = LoggerFactory.getLogger(KeywordService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeywordService.class);
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage newKeywordsPage;
 

@@ -10,10 +10,10 @@ import java.util.Set;
 public class IndexFilter implements QueryFilter{
 
     private final Set<String> indexes;
-    public final static IndexFilter ALL = new AllIndexFilter();
-    public final static IndexFilter NONE = new EmptyIndexFilter();
-    public final static IndexFilter PUBLIC = new PublicIndexFilter();
-    public final static IndexFilter PRIVATE = new PrivateIndexFilter();
+    public static final IndexFilter ALL = new AllIndexFilter();
+    public static final IndexFilter NONE = new EmptyIndexFilter();
+    public static final IndexFilter PUBLIC = new PublicIndexFilter();
+    public static final IndexFilter PRIVATE = new PrivateIndexFilter();
 
     public IndexFilter(final String index) {
         indexes = new HashSet<>();

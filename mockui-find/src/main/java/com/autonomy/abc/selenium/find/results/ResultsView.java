@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ResultsView extends AppElement implements QueryResultsPage {
-    public ResultsView(final WebElement element, WebDriver driver) {
+    public ResultsView(final WebElement element, final WebDriver driver) {
         super(element, driver);
     }
 

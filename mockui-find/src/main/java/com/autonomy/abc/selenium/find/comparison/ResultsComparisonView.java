@@ -15,29 +15,29 @@ public class ResultsComparisonView {
     private final WebElement wholeContainer;
     private final WebDriver driver;
 
-    private ResultsComparisonView(WebElement serviceViewContainer, WebDriver driver) {
+    private ResultsComparisonView(final WebElement serviceViewContainer, final WebDriver driver) {
         this.wholeContainer = serviceViewContainer;
         this.driver = driver;
         waitForLoad(driver);
     }
 
-    public ResultsComparisonView(WebDriver driver) {
+    public ResultsComparisonView(final WebDriver driver) {
         this(driver.findElement(By.cssSelector(".service-view-container:not(.hide)")), driver);
     }
 
-    public List<FindResult> getResults(AppearsIn appearsIn) {
+    public List<FindResult> getResults(final AppearsIn appearsIn) {
         return resultsView(appearsIn).getResults();
     }
 
-    public int getResultsCountFor(AppearsIn appearsIn) {
+    public int getResultsCountFor(final AppearsIn appearsIn) {
         return resultsView(appearsIn).getResultsCount();
     }
 
-    public ResultsView resultsView(AppearsIn appearsIn) {
+    public ResultsView resultsView(final AppearsIn appearsIn) {
         return new ResultsView(wholeContainer.findElement(appearsIn.getResultsListLocator()), driver);
     }
 
-    private static void waitForLoad(WebDriver driver) {
+    private static void waitForLoad(final WebDriver driver) {
         new WebDriverWait(driver, 20)
                 .withMessage("waiting for comparison view")
                 .until(visibilityOfElementLocated(By.cssSelector(".service-view-container:not(.hide) .comparison-view")));

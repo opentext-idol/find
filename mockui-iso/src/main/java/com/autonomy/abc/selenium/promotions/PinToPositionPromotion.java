@@ -4,7 +4,7 @@ import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 
 public class PinToPositionPromotion extends Promotion {
-    private final static Type TYPE = Type.PIN_TO_POSITION;
+    private static final Type TYPE = Type.PIN_TO_POSITION;
     private final int position;
 
     public PinToPositionPromotion(final int position, final String trigger) {

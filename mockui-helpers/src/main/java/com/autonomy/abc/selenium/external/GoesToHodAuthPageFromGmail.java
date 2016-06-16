@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
-    private final static String GMAIL_URL = "https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier";
+    private static final String GMAIL_URL = "https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier";
     private final GoogleAuth googleAuth;
     private WebDriver driver;
 

@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WarningLanguageDropdown implements LanguageDropdown {
-    private final static Logger LOGGER = LoggerFactory.getLogger(WarningLanguageDropdown.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WarningLanguageDropdown.class);
 
     @Override
     public void open() {

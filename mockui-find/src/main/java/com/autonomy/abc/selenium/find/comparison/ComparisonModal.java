@@ -14,7 +14,7 @@ import java.util.List;
 import static org.openqa.selenium.support.ui.ExpectedConditions.stalenessOf;
 
 public class ComparisonModal extends ModalView {
-    private ComparisonModal(WebElement $el, WebDriver driver) {
+    private ComparisonModal(final WebElement $el, final WebDriver driver) {
         super($el, driver);
     }
 
@@ -22,7 +22,7 @@ public class ComparisonModal extends ModalView {
         return ElementUtil.getTexts(findElements(By.className("secondary-model-title")));
     }
 
-    public void select(String savedSearchName) {
+    public void select(final String savedSearchName) {
         findElement(new Locator().havingClass("secondary-model-title").containingText(savedSearchName)).click();
     }
 
@@ -38,14 +38,14 @@ public class ComparisonModal extends ModalView {
         waitForComparisonToLoad(60);
     }
 
-    public void waitForComparisonToLoad(int timeout) {
+    public void waitForComparisonToLoad(final int timeout) {
         new WebDriverWait(getDriver(), timeout)
                 .withMessage("waiting for comparison to be fetched")
                 .until(stalenessOf(this));
     }
 
-    public static ComparisonModal make(WebDriver driver) {
-        ComparisonModal modal = new ComparisonModal(driver.findElement(By.className("modal")), driver);
+    public static ComparisonModal make(final WebDriver driver) {
+        final ComparisonModal modal = new ComparisonModal(driver.findElement(By.className("modal")), driver);
         new WebDriverWait(driver, 10).until(new HasCssValuePredicate(modal, "opacity", "1"));
         return modal;
     }

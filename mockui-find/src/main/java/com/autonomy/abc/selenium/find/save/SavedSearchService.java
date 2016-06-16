@@ -37,8 +37,8 @@ public class SavedSearchService {
         options.confirmDelete();
     }
 
-    public void compareCurrentWith(String savedSearchName) {
-        ComparisonModal modal = elementFactory.getFindPage().openCompareModal();
+    public void compareCurrentWith(final String savedSearchName) {
+        final ComparisonModal modal = elementFactory.getFindPage().openCompareModal();
         modal.select(savedSearchName);
         modal.compareButton().click();
         modal.waitForComparisonToLoad();

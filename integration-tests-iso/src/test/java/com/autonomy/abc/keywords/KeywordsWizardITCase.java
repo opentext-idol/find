@@ -43,7 +43,7 @@ import static org.junit.Assert.assertEquals;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class KeywordsWizardITCase extends HybridIsoTestBase {
-    private final static Logger LOGGER = LoggerFactory.getLogger(KeywordsWizardITCase.class); 
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeywordsWizardITCase.class);
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage createKeywordsPage;
     private KeywordService keywordService;

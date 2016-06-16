@@ -24,8 +24,8 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 
 public class SettingsPageITCase extends IdolIsoTestBase {
-	private final static Map<IsoSettingsPage.Panel, IdolHostAndPorts> HOSTS_AND_PORTS;
-	private final static EnumSet<IsoSettingsPage.Panel> SERVER_PANELS = EnumSet.of(IsoSettingsPage.Panel.COMMUNITY, IsoSettingsPage.Panel.CONTENT, IsoSettingsPage.Panel.QMS, IsoSettingsPage.Panel.QMS_AGENTSTORE, IsoSettingsPage.Panel.STATSSERVER, IsoSettingsPage.Panel.VIEW);
+	private static final Map<IsoSettingsPage.Panel, IdolHostAndPorts> HOSTS_AND_PORTS;
+	private static final EnumSet<IsoSettingsPage.Panel> SERVER_PANELS = EnumSet.of(IsoSettingsPage.Panel.COMMUNITY, IsoSettingsPage.Panel.CONTENT, IsoSettingsPage.Panel.QMS, IsoSettingsPage.Panel.QMS_AGENTSTORE, IsoSettingsPage.Panel.STATSSERVER, IsoSettingsPage.Panel.VIEW);
 
 	private IsoSettingsPage settingsPage;
 

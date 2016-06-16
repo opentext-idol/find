@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class SearchPage extends SearchBase implements LanguageFilter.Filterable {
-	public final static int RESULTS_PER_PAGE = 6;
-	public final static int MAX_RESULTS = 2500;
+	public static final int RESULTS_PER_PAGE = 6;
+	public static final int MAX_RESULTS = 2500;
 
 	public SearchPage(final WebDriver driver) {
 		// specify data-pagename to avoid invisible elements from other pages showing up
