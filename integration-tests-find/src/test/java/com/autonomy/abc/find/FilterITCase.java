@@ -4,6 +4,7 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.ToolTips;
 import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -34,7 +35,7 @@ public class FilterITCase extends FindTestBase {
     private FindResultsPage results;
     private FindService findService;
 
-    public FilterITCase(final TestConfig config) {
+    public FilterITCase(TestConfig config) {
         super(config);
     }
 
@@ -49,19 +50,14 @@ public class FilterITCase extends FindTestBase {
     public void testParametricFiltersResults() {
         findService.search("cats");
         findPage.waitForParametricValuesToLoad();
-        final int originalNumberOfResults = findPage.totalResultsNum();
+        int originalNumberOfResults = findPage.totalResultsNum();
 
-        final ParametricFieldContainer parametricFieldContainer = filters().parametricField(1);
-        final List<FindParametricCheckbox> firstParametricContainerCheckboxes = parametricFieldContainer.values();
+        ParametricFieldContainer parametricFieldContainer = filters().parametricField(1);
+        List<FindParametricCheckbox> firstParametricContainerCheckboxes = parametricFieldContainer.values();
         firstParametricContainerCheckboxes.get(0).check();
 
-        try{
-            parametricFieldContainer.getParentName();
-        }
-        catch (final StaleElementReferenceException e){
-            fail("Parametric fields reloaded");
-        }
-
+        try{parametricFieldContainer.getParentName();}
+        catch (StaleElementReferenceException e){fail("Parametric fields reloaded");}
         results.waitForResultsToLoad();
 
         verifyThat("Added 1 filter: fewer or equal results", findPage.totalResultsNum(), lessThanOrEqualTo(originalNumberOfResults));
@@ -83,31 +79,31 @@ public class FilterITCase extends FindTestBase {
         findService.search("cats");
         findPage.waitForParametricValuesToLoad();
 
-        final ParametricFieldContainer container = filters().parametricField(2);
-        final String filterCategory = container.getParentName();
+        ParametricFieldContainer container = filters().parametricField(2);
+        String filterCategory = container.getParentName();
 
-        final List<String> selectedFilters = new ArrayList<>();
+        List<String> selectedFilters = new ArrayList<>();
         selectedFilters.addAll(selectEvenFilters(1));
         selectedFilters.addAll(selectEvenFilters(2));
 
         container.seeAll();
-        final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
+        ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
 
         verifyThat("Correct tab is active",filterModal.activeTabName(),equalToIgnoringCase(filterCategory));
         verifyThat("Same fields selected in modal as panel",filterModal.checkedFieldsAllPanes(),is(selectedFilters));
 
-        final String filterType = filterModal.activeTabName();
-        final String checkedFilterName = filterModal.checkCheckBoxInActivePane(0);
+        String filterType = filterModal.activeTabName();
+        String checkedFilterName = filterModal.checkCheckBoxInActivePane(0);
         filterModal.applyButton().click();
 
-        final FindParametricCheckbox panelBox = filters().checkboxForParametricValue(filterType,checkedFilterName);
+        FindParametricCheckbox panelBox = filters().checkboxForParametricValue(filterType,checkedFilterName);
         verifyThat("Filter: "+checkedFilterName+" is now checked on panel",panelBox.isChecked());
     }
 
-    private List<String> selectEvenFilters(final int filterCategory){
-        final List<String> filterNames = new ArrayList<>();
+    private List<String> selectEvenFilters(int filterCategory){
+        List<String> filterNames = new ArrayList<>();
         int i=1;
-        for(final FindParametricCheckbox box:filters().checkBoxesForParametricFieldContainer(filterCategory)){
+        for(FindParametricCheckbox box:filters().checkBoxesForParametricFieldContainer(filterCategory)){
             if((i % 2) == 0){
                 filterNames.add(box.getName());
                 box.check();
@@ -123,10 +119,10 @@ public class FilterITCase extends FindTestBase {
         findService.search("confusion");
         findPage.waitForParametricValuesToLoad();
 
-        final String parametricFilterType = filters().parametricField(0).getParentName();
-        final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
+        String parametricFilterType = filters().parametricField(0).getParentName();
+        List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
 
-        for(final FindParametricCheckbox checkbox:boxes){
+        for(FindParametricCheckbox checkbox:boxes){
             checkbox.uncheck();
             verifyThat("Unchecking not removing filter from list",filters().checkBoxesForParametricFieldContainer(0),hasSize(boxes.size()));
         }
@@ -139,17 +135,16 @@ public class FilterITCase extends FindTestBase {
         findService.search("boris");
         findPage.waitForParametricValuesToLoad();
 
-        final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
-        for(final FindParametricCheckbox checkbox:boxes){
+        List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
+        for(FindParametricCheckbox checkbox:boxes){
             checkbox.name().click();
         }
-
-        verifyThat("Tooltips aren't floating everywhere",getElementFactory().getToolTips().toolTips(),not(hasSize((boxes.size()))));
+        verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()),not(hasSize((boxes.size()))));
     }
 
     private List<FindParametricCheckbox> checkAllVisibleFiltersInFirstParametrics(){
-        final List<FindParametricCheckbox> boxes = filters().checkBoxesForParametricFieldContainer(0);
-        for(final FindParametricCheckbox checkBox:boxes){
+        List<FindParametricCheckbox> boxes = filters().checkBoxesForParametricFieldContainer(0);
+        for(FindParametricCheckbox checkBox:boxes){
             checkBox.check();
         }
         return boxes;
@@ -171,7 +166,7 @@ public class FilterITCase extends FindTestBase {
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
         findService.search("wolf");
 
-        final FilterPanel panel = filters();
+        FilterPanel panel = filters();
         panel.clickFirstIndex();
         panel.clickFirstIndex();
 
@@ -182,11 +177,11 @@ public class FilterITCase extends FindTestBase {
     @Test
     public void testFilterByIndex() {
         findService.search("face");
-        final QueryResult queryResult = results.searchResult(1);
-        final String titleString = queryResult.getTitleString();
-        final DocumentViewer docPreview = queryResult.openDocumentPreview();
+        QueryResult queryResult = results.searchResult(1);
+        String titleString = queryResult.getTitleString();
 
-        final String index = databaseOrIndex(docPreview);
+        DocumentViewer docPreview = queryResult.openDocumentPreview();
+        String index = databaseOrIndex(docPreview);
         docPreview.close();
 
         findPage.filterBy(new IndexFilter(index));
@@ -197,18 +192,18 @@ public class FilterITCase extends FindTestBase {
     public void testFilterByMultipleIndexes() {
         findService.search("unbelievable");
 
-        final IndexFilter filter = new IndexFilter(filters().getIndex(2));
+        IndexFilter filter = new IndexFilter(filters().getIndex(2));
         findPage.filterBy(filter);
         Waits.loadOrFadeWait();
-        final int firstFilterResults = findPage.totalResultsNum();
+        int firstFilterResults = findPage.totalResultsNum();
 
         filter.add(filters().getIndex(3));
         findPage.filterBy(filter);
         Waits.loadOrFadeWait();
-        final int bothFilterResults = findPage.totalResultsNum();
+        int bothFilterResults = findPage.totalResultsNum();
 
         findPage.filterBy(new IndexFilter(filters().getIndex(3)));
-        final int secondFilterResults = findPage.totalResultsNum();
+        int secondFilterResults = findPage.totalResultsNum();
 
         assertThat("Both filter indexes thus both results", firstFilterResults + secondFilterResults, is(bothFilterResults));
     }
@@ -217,26 +212,24 @@ public class FilterITCase extends FindTestBase {
     public void testFilteredByIndexOnlyHasFilesFromIndex() {
         findService.search("Better");
 
-        final DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
-        final String chosenIndex = databaseOrIndex(docPreview);
+        DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
+        String chosenIndex = databaseOrIndex(docPreview);
         docPreview.close();
 
         findPage.filterBy(new IndexFilter(chosenIndex));
         //weirdly failing to open the 2nd result (subsequent okay)
         for (int i = 1; i < 6; i++) {
-            final DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
+            DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
             assertThat(databaseOrIndex(docPreview), is(chosenIndex));
             docViewer.close();
         }
     }
 
-    private String databaseOrIndex(final DocumentViewer docPreview){
+    private String databaseOrIndex(DocumentViewer docPreview){
         if(isHosted()){
             return docPreview.getIndexAsString();
         }
-        else{
-            return docPreview.getDatabase();
-        }
+        else{return docPreview.getDatabase();}
     }
     @Test
     public void testQuickDoubleClickOnDateFilterNotCauseError() {
@@ -265,19 +258,19 @@ public class FilterITCase extends FindTestBase {
         preDefinedDateFiltersVersusCustomDateFilters(DateOption.YEAR);
     }
 
-    private void preDefinedDateFiltersVersusCustomDateFilters(final DateOption period) {
+    private void preDefinedDateFiltersVersusCustomDateFilters(DateOption period) {
         findService.search("*");
 
         toggleDateSelection(period);
-        final List<String> preDefinedResults = results.getResultTitles();
+        List<String> preDefinedResults = results.getResultTitles();
         findPage.filterBy(new StringDateFilter().from(getDate(period)).until(new Date()));
-        final List<String> customResults = results.getResultTitles();
+        List<String> customResults = results.getResultTitles();
 
         assertThat(preDefinedResults, is(customResults));
     }
 
-    private Date getDate(final DateOption period) {
-        final Calendar cal = Calendar.getInstance();
+    private Date getDate(DateOption period) {
+        Calendar cal = Calendar.getInstance();
 
         if (period != null) {
             switch (period) {
@@ -298,8 +291,8 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ActiveBug("FIND-152")
     public void testDateRemainsWhenClosingAndReopeningDateFilters() {
-        final Date start = getDate(DateOption.MONTH);
-        final Date end = getDate(DateOption.WEEK);
+        Date start = getDate(DateOption.MONTH);
+        Date end = getDate(DateOption.WEEK);
 
         findService.search(new Query("Corbyn")
                 .withFilter(new StringDateFilter().from(start).until(end)));
@@ -328,7 +321,7 @@ public class FilterITCase extends FindTestBase {
         return getElementFactory().getFilterPanel();
     }
 
-    private void toggleDateSelection(final DateOption date) {
+    private void toggleDateSelection(DateOption date) {
         filters().toggleFilter(date);
         results.waitForResultsToLoad();
     }
