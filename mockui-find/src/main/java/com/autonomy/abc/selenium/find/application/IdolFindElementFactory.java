@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.find.application;
 
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
+import com.autonomy.abc.selenium.find.bi.TableView;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.login.IdolFindLoginPage;
@@ -45,5 +46,9 @@ public class IdolFindElementFactory extends FindElementFactory {
 
     public TopicMapView getTopicMap() {
         return new TopicMapView(getDriver());
+    }
+
+    public TableView getTableView() {
+        return new TableView(getDriver());
     }
 }
