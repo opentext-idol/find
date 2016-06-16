@@ -60,7 +60,7 @@ public class IsoAboutPage extends SOPageBase {
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h3[text()='FOSS Acknowledgements']")));
     }
 
-	public static class Factory extends SOPageFactory<IsoAboutPage> {
+	public static class Factory extends SOPageBase.SOPageFactory<IsoAboutPage> {
 		public Factory() {
 			super(IsoAboutPage.class);
 		}

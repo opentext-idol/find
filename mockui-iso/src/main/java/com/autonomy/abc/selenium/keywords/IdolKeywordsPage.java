@@ -1,5 +1,6 @@
  package com.autonomy.abc.selenium.keywords;
 
+ import com.autonomy.abc.selenium.application.SOPageBase;
  import com.autonomy.abc.selenium.language.IdolLanguageDropdown;
  import com.autonomy.abc.selenium.language.LanguageDropdown;
  import org.openqa.selenium.By;
@@ -15,7 +16,7 @@ public class IdolKeywordsPage extends KeywordsPage {
         return new IdolLanguageDropdown(findElement(By.cssSelector(".languages-select-view-container .dropdown:nth-of-type(2)")), getDriver());
     }
 
-    public static class Factory extends SOPageFactory<IdolKeywordsPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<IdolKeywordsPage> {
         public Factory() {
             super(IdolKeywordsPage.class);
         }

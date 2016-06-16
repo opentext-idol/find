@@ -197,7 +197,7 @@ public class SchedulePage extends SOPageBase {
 		return ElementUtil.getTexts(findElements(By.cssSelector(".help-block")));
 	}
 
-	public static class Factory extends SOPageFactory<SchedulePage> {
+	public static class Factory extends SOPageBase.SOPageFactory<SchedulePage> {
 		public Factory() {
 			super(SchedulePage.class);
 		}

@@ -145,7 +145,7 @@ public class IsoSettingsPage extends SOPageBase {
         new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".settings-control")));
     }
 
-	public static class Factory extends SOPageFactory<IsoSettingsPage> {
+	public static class Factory extends SOPageBase.SOPageFactory<IsoSettingsPage> {
 		public Factory() {
 			super(IsoSettingsPage.class);
 		}

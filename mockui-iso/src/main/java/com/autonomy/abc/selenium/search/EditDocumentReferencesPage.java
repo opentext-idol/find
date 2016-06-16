@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.search;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -31,7 +32,7 @@ public class EditDocumentReferencesPage extends SearchBase {
         return findElement(By.xpath(".//*[contains(text(), 'Cancel')]"));
     }
 
-    public static class Factory extends SOPageFactory<EditDocumentReferencesPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<EditDocumentReferencesPage> {
         public Factory() {
             super(EditDocumentReferencesPage.class);
         }

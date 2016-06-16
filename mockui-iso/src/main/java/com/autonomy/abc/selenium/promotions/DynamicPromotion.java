@@ -41,7 +41,7 @@ public class DynamicPromotion extends Promotion {
         return new DynamicPromotionsWizard(createNewPromotionsBase);
     }
 
-    private class DynamicPromotionsWizard extends PromotionWizard {
+    private class DynamicPromotionsWizard extends Promotion.PromotionWizard {
         public DynamicPromotionsWizard(final CreateNewPromotionsBase page) {
             super(page);
             // steps are app-specific, so are set using the dynamic type of the page

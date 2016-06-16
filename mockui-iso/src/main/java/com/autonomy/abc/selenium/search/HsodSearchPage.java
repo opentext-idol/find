@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.search;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +16,7 @@ public class HsodSearchPage extends SearchPage {
         return new WarningLanguageDropdown();
     }
 
-    public static class Factory extends SOPageFactory<HsodSearchPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<HsodSearchPage> {
         public Factory() {
             super(HsodSearchPage.class);
         }

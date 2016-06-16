@@ -13,11 +13,13 @@ public class ParametricModalCheckbox extends Checkbox {
         super(element, element.findElement(By.cssSelector(".icheckbox-hp")), driver);
     }
 
+    @Override
     public String getName(){return findElement(By.cssSelector(".field-value")).getText();}
 
     public int getResultsCount() {
         return getResultCount(count);
 }
 
+    @Override
     public boolean isChecked(){return ElementUtil.hasClass("checked", getOuterBoxElement());}
 }

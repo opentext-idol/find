@@ -25,7 +25,7 @@ public class StaticPromotion extends Promotion {
         return new StaticPromotionWizard((HsodCreateNewPromotionsPage) newPromotionsBase);
     }
 
-    private class StaticPromotionWizard extends PromotionWizard {
+    private class StaticPromotionWizard extends Promotion.PromotionWizard {
         public StaticPromotionWizard(final HsodCreateNewPromotionsPage page) {
             super(page);
             add(new NewDocumentDetailsStep(page, title, content));

@@ -22,7 +22,7 @@ public class PinToPositionPromotion extends Promotion {
         return new PinToPositionWizard((CreateNewPromotionsPage) createNewPromotionsBase);
     }
 
-    private class PinToPositionWizard extends PromotionWizard {
+    private class PinToPositionWizard extends Promotion.PromotionWizard {
         public PinToPositionWizard(final CreateNewPromotionsPage page) {
             super(page);
             add(new OptionWizardStep(page, "Promotion type", TYPE.getOption()));

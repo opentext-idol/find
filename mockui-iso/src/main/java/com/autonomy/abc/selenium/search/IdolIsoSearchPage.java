@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.search;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.IdolLanguageDropdown;
@@ -55,7 +56,7 @@ public class IdolIsoSearchPage extends SearchPage {
         return ElementUtil.getTexts(findElements(By.className("promotion-name")));
     }
 
-    public static class Factory extends SOPageFactory<IdolIsoSearchPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<IdolIsoSearchPage> {
         public Factory() {
             super(IdolIsoSearchPage.class);
         }

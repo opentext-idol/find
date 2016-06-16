@@ -11,7 +11,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static com.autonomy.abc.selenium.find.bi.TableView.EntryCount.TWENTY_FIVE;

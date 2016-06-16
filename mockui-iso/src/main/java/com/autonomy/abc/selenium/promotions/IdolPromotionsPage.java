@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.promotions;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import org.openqa.selenium.WebDriver;
 
 public class IdolPromotionsPage extends PromotionsPage {
@@ -7,7 +8,7 @@ public class IdolPromotionsPage extends PromotionsPage {
         super(driver);
     }
 
-    public static class Factory extends SOPageFactory<IdolPromotionsPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<IdolPromotionsPage> {
         public Factory() {
             super(IdolPromotionsPage.class);
         }

@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.keywords;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +16,7 @@ public class HsodCreateNewKeywordsPage extends CreateNewKeywordsPage {
         return new WarningLanguageDropdown();
     }
     
-    public static class Factory extends SOPageFactory<HsodCreateNewKeywordsPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<HsodCreateNewKeywordsPage> {
         public Factory() {
             super(HsodCreateNewKeywordsPage.class);
         }

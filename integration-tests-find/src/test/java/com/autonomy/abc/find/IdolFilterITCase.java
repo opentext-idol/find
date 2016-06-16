@@ -13,7 +13,6 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
-import static org.openqa.selenium.lift.Matchers.displayed;
 
 
 //WARNING: These tests are extremely slow when the sidebar has 1000s of filters
