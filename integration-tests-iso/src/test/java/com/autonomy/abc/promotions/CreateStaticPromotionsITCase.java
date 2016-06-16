@@ -25,12 +25,12 @@ public class CreateStaticPromotionsITCase extends IsoHsodTestBase {
     private HsodPromotionService promotionService;
     private Wizard wizard;
 
-    public CreateStaticPromotionsITCase(TestConfig config) {
+    public CreateStaticPromotionsITCase(final TestConfig config) {
         super(config);
     }
 
     public void goToTriggerStep() {
-        StaticPromotion promotion = new StaticPromotion("dog", "woof woof", "");
+        final StaticPromotion promotion = new StaticPromotion("dog", "woof woof", "");
         wizard = promotion.makeWizard(createPromotionsPage);
         wizard.getCurrentStep().apply();
         wizard.next();
@@ -56,9 +56,9 @@ public class CreateStaticPromotionsITCase extends IsoHsodTestBase {
         final String title = "static promotion";
         final String content = "This is the body of my static promotion.";
         final String trigger = "horse";
-        Wizard wizard = new StaticPromotion(title, content, trigger).makeWizard(createPromotionsPage);
+        final Wizard wizard = new StaticPromotion(title, content, trigger).makeWizard(createPromotionsPage);
 
-        WebElement continueButton = createPromotionsPage.continueButton();
+        final WebElement continueButton = createPromotionsPage.continueButton();
         verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
         verifyThat(continueButton, disabled());
         createPromotionsPage.documentTitle().setValue("removed");
@@ -95,7 +95,7 @@ public class CreateStaticPromotionsITCase extends IsoHsodTestBase {
     public void testAddRemoveTriggers() {
         goToTriggerStep();
 
-        TriggerForm triggerForm = createPromotionsPage.getTriggerForm();
+        final TriggerForm triggerForm = createPromotionsPage.getTriggerForm();
 
         assertThat(createPromotionsPage.getCurrentStepTitle(), is(SearchTriggerStep.TITLE));
         verifyThat(triggerForm.getTriggers(), empty());
@@ -108,10 +108,10 @@ public class CreateStaticPromotionsITCase extends IsoHsodTestBase {
         wizard.next();
         getElementFactory().getSearchPage();
 
-        PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(wizardTriggers.get(0));
+        final PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(wizardTriggers.get(0));
         assertThat("loaded details page", promotionsDetailPage.promotionTitle().getValue(), containsString(wizardTriggers.get(0)));
 
-        List<String> createdTriggers = promotionsDetailPage.getTriggerForm().getTriggersAsStrings();
+        final List<String> createdTriggers = promotionsDetailPage.getTriggerForm().getTriggersAsStrings();
         verifyThat(createdTriggers, hasSize(wizardTriggers.size()));
         verifyThat(createdTriggers, everyItem(isIn(wizardTriggers)));
     }

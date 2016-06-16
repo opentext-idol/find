@@ -41,7 +41,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
 
     private IdolUsersPage usersPage;
 
-    public UsersPageOnPremITCase(TestConfig config) {
+    public UsersPageOnPremITCase(final TestConfig config) {
         super(config);
         aNewUser = config.getNewUser("james");
     }
@@ -49,7 +49,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
     @Before
     public void setUp() {
         helper = new UserTestHelper(getApplication(), getConfig());
-        IdolIsoUserService userService = getApplication().userService();
+        final IdolIsoUserService userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
         new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationsDisappear());
@@ -62,8 +62,8 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
 
     @Test
     public void testChangeOfPasswordWorksOnLogin() {
-        User initialUser = helper.singleSignUp(aNewUser);
-        User updatedUser = usersPage.replaceAuthFor(initialUser, new IdolIsoReplacementAuth("bob"));
+        final User initialUser = helper.singleSignUp(aNewUser);
+        final User updatedUser = usersPage.replaceAuthFor(initialUser, new IdolIsoReplacementAuth("bob"));
 
         this.helper.logoutAndNavigateToWebApp(getWindow());
         getApplication().loginService().login(initialUser);
@@ -78,9 +78,9 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
     @Test
     public void testEditUserPassword() {
         assumeThat(getConfig().getType(), is(ApplicationType.ON_PREM));
-        User user = helper.singleSignUp(aNewUser);
+        final User user = helper.singleSignUp(aNewUser);
 
-        Editable passwordBox = usersPage.getUserRow(user).passwordBox();
+        final Editable passwordBox = usersPage.getUserRow(user).passwordBox();
         passwordBox.setValueAsync("");
         assertThat(passwordBox.getElement(), containsText("Password must not be blank"));
         assertThat(passwordBox.editButton(), not(displayed()));
@@ -115,7 +115,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
         newUserModal.passwordConfirmInput().setValue("qwerty");
         newUserModal.selectRole(Role.ADMIN);
         newUserModal.createUser();
-        WebElement notification = new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationAppears());
+        final WebElement notification = new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationAppears());
         verifyThat(notification, hasTextThat(containsString("Created user Andrew")));
 
         newUserModal.close();
@@ -124,7 +124,7 @@ public class UsersPageOnPremITCase extends IdolIsoTestBase {
 
     @Test
     public void testWontDeleteSelf() {
-        User self = getApplication().loginService().getCurrentUser();
+        final User self = getApplication().loginService().getCurrentUser();
         assertThat(usersPage.getUserRow(self).canDeleteUser(),is(false));
     }
 

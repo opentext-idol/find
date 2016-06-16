@@ -4,7 +4,7 @@ import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.openqa.selenium.WebDriver;
 
 public class IdolFindLoginPage extends LoginPage {
-    public IdolFindLoginPage(WebDriver driver) {
+    public IdolFindLoginPage(final WebDriver driver) {
         super(driver, new FindHasLoggedIn(driver));
     }
 

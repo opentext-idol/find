@@ -12,12 +12,12 @@ import org.openqa.selenium.WebElement;
  */
 public class DocumentPreviewer extends DocumentViewer {
 
-    private DocumentPreviewer(WebDriver driver){
+    private DocumentPreviewer(final WebDriver driver){
         super(driver,driver.findElement(By.cssSelector(".preview-mode-wrapper:not(.hide) .preview-mode-container")));
     }
 
-    public static DocumentPreviewer make(WebDriver driver){
-        DocumentPreviewer docPreviewer = new DocumentPreviewer(driver);
+    public static DocumentPreviewer make(final WebDriver driver){
+        final DocumentPreviewer docPreviewer = new DocumentPreviewer(driver);
         docPreviewer.waitForLoad();
         return docPreviewer;
     }
@@ -47,6 +47,6 @@ public class DocumentPreviewer extends DocumentViewer {
     public int getTotalDocumentsNumber() {throw new UnsupportedOperationException("Idol-Find DocPreview doesn't have number of docs");}
 
     @Override
-    public boolean previewPresent(){return findElements(By.className("preview-mode-contents")).size()>0;}
+    public boolean previewPresent(){return !findElements(By.className("preview-mode-contents")).isEmpty();}
 
 }

@@ -8,7 +8,7 @@ public abstract class ServiceBase<T extends IsoElementFactory> {
     private final IsoApplication<? extends T> application;
     private final T elementFactory;
 
-    protected ServiceBase(IsoApplication<? extends T> application) {
+    protected ServiceBase(final IsoApplication<? extends T> application) {
         this.application = application;
         this.elementFactory = application.elementFactory();
     }

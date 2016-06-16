@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 class HsodTopNavBar extends TopNavBar {
 
-    HsodTopNavBar(WebDriver driver) {
+    HsodTopNavBar(final WebDriver driver) {
         super(driver);
     }
 

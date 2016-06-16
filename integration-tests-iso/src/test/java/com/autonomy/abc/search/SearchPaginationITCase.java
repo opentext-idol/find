@@ -25,7 +25,7 @@ public class SearchPaginationITCase extends HybridIsoTestBase {
     private SearchPage searchPage;
     private SearchService searchService;
 
-    public SearchPaginationITCase(TestConfig config) {
+    public SearchPaginationITCase(final TestConfig config) {
         super(config);
     }
 
@@ -114,7 +114,7 @@ public class SearchPaginationITCase extends HybridIsoTestBase {
     @Test
     @ResolvedBug("CSA-1629")
     public void testPinToPositionPagination(){
-        PromotionService promotionService = getApplication().promotionService();
+        final PromotionService promotionService = getApplication().promotionService();
 
         try {
             promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), "face", SearchPage.RESULTS_PER_PAGE + 2);
@@ -130,29 +130,29 @@ public class SearchPaginationITCase extends HybridIsoTestBase {
         }
     }
 
-    private void checkPageButtonDisabled(Pagination button) {
+    private void checkPageButtonDisabled(final Pagination button) {
         assertThat(searchPage.resultsPaginationButton(button), disabled());
     }
 
-    private void checkPageButtonEnabled(Pagination button) {
+    private void checkPageButtonEnabled(final Pagination button) {
         assertThat(searchPage.resultsPaginationButton(button), not(disabled()));
     }
 
-    private void checkOnPage(int i) {
+    private void checkOnPage(final int i) {
         assertThat("on page " + i, searchPage.getCurrentPageNumber(), is(i));
         assertThat(getWindow(), url(endsWith(String.valueOf(i))));
     }
 
     @Test
     public void testMultiDocPromotionDrawerExpandAndPagination() {
-        Promotion promotion = new SpotlightPromotion("boat");
+        final Promotion promotion = new SpotlightPromotion("boat");
 
-        PromotionService promotionService = getApplication().promotionService();
+        final PromotionService promotionService = getApplication().promotionService();
         promotionService.deleteAll();
         promotionService.setUpPromotion(promotion, "freeze", 18);
 
         try {
-            PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(promotion);
+            final PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(promotion);
 
             promotionsDetailPage.getTriggerForm().clickTrigger("boat");
             searchPage = getElementFactory().getSearchPage();
@@ -197,14 +197,14 @@ public class SearchPaginationITCase extends HybridIsoTestBase {
         }
     }
 
-    private void verifyPromotionPagination(boolean previousEnabled, boolean nextEnabled) {
+    private void verifyPromotionPagination(final boolean previousEnabled, final boolean nextEnabled) {
         verifyButtonEnabled("back to start", searchPage.promotionPaginationButton(Pagination.FIRST), previousEnabled);
         verifyButtonEnabled("back", searchPage.promotionPaginationButton(Pagination.PREVIOUS), previousEnabled);
         verifyButtonEnabled("forward", searchPage.promotionPaginationButton(Pagination.NEXT), nextEnabled);
         verifyButtonEnabled("forward to end", searchPage.promotionPaginationButton(Pagination.LAST), nextEnabled);
     }
 
-    private void verifyButtonEnabled(String name, WebElement element, boolean enabled) {
+    private void verifyButtonEnabled(final String name, final WebElement element, final boolean enabled) {
         if (enabled) {
             verifyThat(name + " button enabled", element, not(hasClass("disabled")));
         } else {

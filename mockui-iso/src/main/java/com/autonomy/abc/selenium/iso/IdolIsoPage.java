@@ -39,18 +39,18 @@ enum IdolIsoPage implements PageMapper.Page, PageMapper.SwitchStrategy<IsoElemen
     SETTINGS(IdolIsoTopNavBar.TabId.SETTINGS, new IsoSettingsPage.Factory());
 
     private PageMapper.SwitchStrategy<IsoElementFactory> switchStrategy;
-    private AppPageFactory<?> factory;
+    private final AppPageFactory<?> factory;
 
-    <T extends AppPage> IdolIsoPage(AppPageFactory<T> factory) {
+    <T extends AppPage> IdolIsoPage(final AppPageFactory<T> factory) {
         this.factory = factory;
     }
 
-    <T extends AppPage> IdolIsoPage(NavBarTabId tab, AppPageFactory<T> factory) {
+    <T extends AppPage> IdolIsoPage(final NavBarTabId tab, final AppPageFactory<T> factory) {
         this(factory);
         switchStrategy = new IdolIsoElementFactory.SideNavStrategy(tab);
     }
 
-    <T extends AppPage> IdolIsoPage(IdolIsoTopNavBar.TabId tab, AppPageFactory<T> factory) {
+    <T extends AppPage> IdolIsoPage(final IdolIsoTopNavBar.TabId tab, final AppPageFactory<T> factory) {
         this(factory);
         switchStrategy = new IdolIsoElementFactory.TopNavStrategy(tab);
     }
@@ -60,13 +60,14 @@ enum IdolIsoPage implements PageMapper.Page, PageMapper.SwitchStrategy<IsoElemen
         return factory.getPageType();
     }
 
-    public Object loadAsObject(WebDriver driver) {
+    @Override
+    public Object loadAsObject(final WebDriver driver) {
         return this.factory.create(driver);
     }
 
 
     @Override
-    public void switchUsing(IsoElementFactory context) {
+    public void switchUsing(final IsoElementFactory context) {
         switchStrategy.switchUsing(context);
     }
 }

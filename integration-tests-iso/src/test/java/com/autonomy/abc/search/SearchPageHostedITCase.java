@@ -19,7 +19,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -39,7 +38,7 @@ public class SearchPageHostedITCase extends IsoHsodTestBase {
 	}
 
 	@Before
-	public void setUp() throws MalformedURLException {
+	public void setUp() {
 		searchService = getApplication().searchService();
 		searchPage = searchService.search("example");
 	}
@@ -66,7 +65,7 @@ public class SearchPageHostedITCase extends IsoHsodTestBase {
 		assertThat("edit button visible", searchPage.fieldTextEditButton(), displayed());
 		assertThat("remove button visible", searchPage.fieldTextRemoveButton(), displayed());
 
-		List<String> fieldTextResults = searchPage.getSearchResultTitles(SearchPage.RESULTS_PER_PAGE);
+		final List<String> fieldTextResults = searchPage.getSearchResultTitles(SearchPage.RESULTS_PER_PAGE);
 
 		searchPage.fieldTextRemoveButton().click();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
@@ -90,11 +89,11 @@ public class SearchPageHostedITCase extends IsoHsodTestBase {
 		verifyResults("transport");
 	}
 
-	private void verifyResults(String index){
+	private void verifyResults(final String index){
 		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
 		assertThat(searchPage.getText(), not(containsString(Errors.Search.NO_RESULTS)));
 		searchPage.getSearchResult(1).title().click();
-		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+		final DocumentViewer documentViewer = DocumentViewer.make(getDriver());
 		for(int i = 0; i < SearchPage.RESULTS_PER_PAGE; i++){
 			verifyThat(documentViewer.getIndex().getDisplayName(), containsString(index));
 			documentViewer.next();
@@ -105,11 +104,11 @@ public class SearchPageHostedITCase extends IsoHsodTestBase {
 
 	@Test
 	public void testAuthor(){
-		String author = "FIFA.com";
+		final String author = "FIFA.com";
 		searchPage = searchService.search(new Query("blatter").withFilter(new ParametricFilter("Author", author)));
 
 		searchPage.getSearchResult(1).title().click();
-		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+		final DocumentViewer documentViewer = DocumentViewer.make(getDriver());
 
 		for(int i = 0; i < SearchPage.RESULTS_PER_PAGE; i++){
 			verifyThat(documentViewer.getAuthor(), equalToIgnoringCase(author));
@@ -122,7 +121,7 @@ public class SearchPageHostedITCase extends IsoHsodTestBase {
 	@Test
 	@RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
 	public void testDocumentPreview(){
-		Index index = new Index("fifa");
+		final Index index = new Index("fifa");
 		searchService.search(new Query("document preview").withFilter(new IndexFilter(index)));
 
 		SharedPreviewTests.testDocumentPreviews(getMainSession(), searchPage.getSearchResults().subList(0, 5), index);

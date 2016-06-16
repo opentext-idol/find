@@ -10,38 +10,38 @@ public class StringDateFilter implements QueryFilter {
     private final StringDateHandler fromHandler = new StringDateHandler();
     private final StringDateHandler untilHandler = new StringDateHandler();
 
-    public StringDateFilter from(Date date) {
+    public StringDateFilter from(final Date date) {
         fromHandler.date = date;
         return this;
     }
 
-    public StringDateFilter until(Date date) {
+    public StringDateFilter until(final Date date) {
         untilHandler.date = date;
         return this;
     }
 
     @Override
-    public void apply(QueryFilter.Filterable searchBase) {
+    public void apply(final QueryFilter.Filterable searchBase) {
         if (searchBase instanceof Filterable) {
             apply((Filterable) searchBase);
         }
     }
 
-    protected void apply(Filterable dateFilterable) {
+    protected void apply(final Filterable dateFilterable) {
         fromHandler.applyTo(dateFilterable, dateFilterable.fromDateInput());
         untilHandler.applyTo(dateFilterable, dateFilterable.untilDateInput());
         loseFocus(dateFilterable);
     }
 
     // filter is only applied when element loses focus
-    private void loseFocus(Filterable dateFilterable) {
+    private void loseFocus(final Filterable dateFilterable) {
         dateFilterable.fromDateInput().getElement().click();
         dateFilterable.untilDateInput().getElement().click();
     }
 
     @Override
     public String toString() {
-        return "DatePickerFilter:" + fromHandler + "-" + untilHandler;
+        return "DatePickerFilter:" + fromHandler + '-' + untilHandler;
     }
 
     public interface Filterable {
@@ -53,7 +53,7 @@ public class StringDateFilter implements QueryFilter {
     private static class StringDateHandler {
         private Date date;
 
-        private void applyTo(Filterable formatter, FormInput dateInput) {
+        private void applyTo(final Filterable formatter, final FormInput dateInput) {
             if (date != null) {
                 dateInput.setValue(formatter.formatInputDate(date));
             }

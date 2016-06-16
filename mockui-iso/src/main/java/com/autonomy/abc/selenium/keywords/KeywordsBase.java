@@ -53,8 +53,8 @@ public abstract class KeywordsBase extends SOPageBase {
 		deleteSynonym(synonym, synonymGroupContaining(synonymGroupLead));
 	}
 
-	public void deleteSynonym(String synonym, SynonymGroup synonymGroup){
-		logger.info("Deleting '" + synonym + "'");
+	public void deleteSynonym(final String synonym, final SynonymGroup synonymGroup){
+		logger.info("Deleting '" + synonym + '\'');
 		synonymGroup.remove(synonym);
 	}
 
@@ -84,22 +84,22 @@ public abstract class KeywordsBase extends SOPageBase {
 	}
 
 	public void waitForRefreshIconToDisappear() {
-		WebDriverWait wait = new WebDriverWait(getDriver(),60);
+		final WebDriverWait wait = new WebDriverWait(getDriver(),60);
 		wait.withMessage("Waiting for refresh icons to disappear");
 		wait.until(new ExpectedCondition<Boolean>() {
 			@Override
-			public Boolean apply(WebDriver webDriver) {
-				List<WebElement> refreshIcons = webDriver.findElements(By.className("fa-refresh"));
+			public Boolean apply(final WebDriver webDriver) {
+				final List<WebElement> refreshIcons = webDriver.findElements(By.className("fa-refresh"));
 
 				int visibleRefreshIcons = 0;
 
 				try {
-					for (WebElement icon : refreshIcons) {
+					for (final WebElement icon : refreshIcons) {
 						if (icon.isDisplayed()) {
 							visibleRefreshIcons++;
 						}
 					}
-				} catch (StaleElementReferenceException e) {
+				} catch (final StaleElementReferenceException e) {
 					//NOOP
 				}
 
@@ -112,19 +112,19 @@ public abstract class KeywordsBase extends SOPageBase {
 		try {
             int visibleIcons = 0;
 
-            for(WebElement refresh : findElements(By.cssSelector(".keywords-list .fa-spin"))){
+            for(final WebElement refresh : findElements(By.cssSelector(".keywords-list .fa-spin"))){
                 if (refresh.isDisplayed()){
                     visibleIcons++;
                 }
             }
 
             return visibleIcons;
-        } catch (Exception e){
+        } catch (final Exception e){
             return 0;
         }
 	}
 
-	public SynonymGroup synonymGroupContaining(String synonym) {
+	public SynonymGroup synonymGroupContaining(final String synonym) {
 		return keywordsContainer().synonymGroupContaining(synonym);
 	}
 

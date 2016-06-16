@@ -37,21 +37,22 @@ public abstract class SearchBase extends SOPageBase implements
 		super(element, driver);
 	}
 
-	public WebElement errorContainer() {
+	@Override
+    public WebElement errorContainer() {
 		return findElement(By.cssSelector(".search-results-view .search-information"));
 	}
 
 	/* search results */
 	public List<IsoSearchResult> getSearchResults() {
-		List<IsoSearchResult> results = new ArrayList<>();
-		for(WebElement result : findElements(By.cssSelector(".search-results li"))){
+		final List<IsoSearchResult> results = new ArrayList<>();
+		for(final WebElement result : findElements(By.cssSelector(".search-results li"))){
 			results.add(new IsoSearchResult(result, getDriver()));
 		}
 		return results;
 	}
 
 	public IsoSearchResult getSearchResult(final int searchResult) {
-		return new IsoSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
+		return new IsoSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ')')), getDriver());
 	}
 
 	public Checkbox searchResultCheckbox(final int resultNumber) {
@@ -86,7 +87,7 @@ public abstract class SearchBase extends SOPageBase implements
 	}
 
 	/* promotions bucket */
-	public List<String> addDocsToBucket(int finalNumberOfDocs) {
+	public List<String> addDocsToBucket(final int finalNumberOfDocs) {
 		final List<String> promotedDocTitles = new ArrayList<>();
 		for (int i = 0; i < finalNumberOfDocs; i++) {
 			final int checkboxIndex = i % SearchPage.RESULTS_PER_PAGE + 1;
@@ -101,12 +102,12 @@ public abstract class SearchBase extends SOPageBase implements
 		return promotedDocTitles;
 	}
 
-	public void addDocToBucket(int docNumber) {
+	public void addDocToBucket(final int docNumber) {
 		DriverUtil.scrollIntoView(getDriver(), searchResultCheckbox(docNumber));
 		searchResultCheckbox(docNumber).check();
 	}
 
-	public void removeDocFromBucket(int docNumber) {
+	public void removeDocFromBucket(final int docNumber) {
 		DriverUtil.scrollIntoView(getDriver(), searchResultCheckbox(docNumber));
 		searchResultCheckbox(docNumber).uncheck();
 	}
@@ -129,7 +130,7 @@ public abstract class SearchBase extends SOPageBase implements
 
 	public void deleteDocFromWithinBucket(final String docTitle) {
 		DriverUtil.scrollIntoView(getDriver(), promotionsBucket());
-		for (WebElement document : promotionsBucketWebElements()) {
+		for (final WebElement document : promotionsBucketWebElements()) {
 			if (document.getText().compareToIgnoreCase(docTitle) == 0) {
 				document.findElement(By.cssSelector(".fa-close")).click();
 				new WebDriverWait(getDriver(), 10).until(ExpectedConditions.stalenessOf(document));
@@ -161,12 +162,12 @@ public abstract class SearchBase extends SOPageBase implements
 		return Integer.parseInt(findElement(By.cssSelector(".btn-nav.active")).getText());
 	}
 
-	public void switchResultsPage(Pagination pagination) {
+	public void switchResultsPage(final Pagination pagination) {
 		DriverUtil.scrollIntoViewAndClick(getDriver(), resultsPaginationButton(pagination));
 		waitForSearchLoadIndicatorToDisappear();
 	}
 
-	public WebElement resultsPaginationButton(Pagination pagination) {
+	public WebElement resultsPaginationButton(final Pagination pagination) {
 		return pagination.findInside(resultsPagination());
 	}
 
@@ -175,7 +176,8 @@ public abstract class SearchBase extends SOPageBase implements
 	}
 
 	/* indexes/databases */
-	public IndexesTree indexesTree() {
+	@Override
+    public IndexesTree indexesTree() {
 		return new IndexesTree.Factory().create(allIndexes());
 	}
 
@@ -184,37 +186,41 @@ public abstract class SearchBase extends SOPageBase implements
 	}
 
 	/* date filter */
-	public FormInput fromDateInput() {
+	@Override
+    public FormInput fromDateInput() {
 		return dateInput(By.cssSelector("[data-filter-name=\"minDate\"] input"));
 	}
 
-	public FormInput untilDateInput() {
+	@Override
+    public FormInput untilDateInput() {
 		return dateInput(By.cssSelector("[data-filter-name=\"maxDate\"] input"));
 	}
 
-	private FormInput dateInput(By locator) {
+	private FormInput dateInput(final By locator) {
 		expand(Facet.FILTER_BY);
 		expand(Facet.DATES);
-		WebElement textBox = findElement(locator);
+		final WebElement textBox = findElement(locator);
 		return new FormInput(textBox, getDriver());
 	}
 
-	public DatePicker fromDatePicker() {
+	@Override
+    public DatePicker fromDatePicker() {
 		return datePicker(By.cssSelector("[data-filter-name='minDate']"));
 	}
 
-	public DatePicker untilDatePicker() {
+	@Override
+    public DatePicker untilDatePicker() {
 		return datePicker(By.cssSelector("[data-filter-name='maxDate']"));
 	}
 
-	private DatePicker datePicker(By locator) {
+	private DatePicker datePicker(final By locator) {
 		expand(Facet.FILTER_BY);
 		expand(Facet.DATES);
 		return new DatePicker(findElement(locator), getDriver());
 	}
 
 	@Override
-	public String formatInputDate(Date date) {
+	public String formatInputDate(final Date date) {
 		return INPUT_DATE_FORMAT.format(date);
 	}
 
@@ -233,7 +239,7 @@ public abstract class SearchBase extends SOPageBase implements
 
 	/* field text */
 	public WebElement fieldTextAddButton() {
-		WebElement addButton = findElement(By.xpath(".//button[contains(text(), 'FieldText Restriction')]"));
+		final WebElement addButton = findElement(By.xpath(".//button[contains(text(), 'FieldText Restriction')]"));
 		DriverUtil.scrollIntoView(getDriver(), addButton);
 		return addButton;
 	}
@@ -261,11 +267,11 @@ public abstract class SearchBase extends SOPageBase implements
 		}
 	}
 
-	public void expand(FacetFilter section) {
+	public void expand(final FacetFilter section) {
 		section.findInside(this, getDriver()).expand();
 	}
 
-	public void collapse(FacetFilter section) {
+	public void collapse(final FacetFilter section) {
 		section.findInside(this, getDriver()).collapse();
 	}
 
@@ -284,16 +290,16 @@ public abstract class SearchBase extends SOPageBase implements
 
 		private final By locator;
 
-		Facet(String tagName, String content) {
+		Facet(final String tagName, final String content) {
 			this(getFacetLocator(tagName, content));
 		}
 
-		Facet(By by) {
+		Facet(final By by) {
 			locator = by;
 		}
 
 		@Override
-		public Collapsible findInside(WebElement container, WebDriver driver) {
+		public Collapsible findInside(final WebElement container, final WebDriver driver) {
 			return new ChevronContainer(container.findElement(locator), driver);
 		}
 	}
@@ -307,7 +313,7 @@ public abstract class SearchBase extends SOPageBase implements
 		waitForSearchLoadIndicatorToDisappear(30);
 	}
 
-	public void waitForSearchLoadIndicatorToDisappear(int seconds) {
+	public void waitForSearchLoadIndicatorToDisappear(final int seconds) {
 		new WebDriverWait(getDriver(), seconds)
 				.withMessage("loading search results")
 				.until(Predicates.invisibilityOfAllElementsLocated(By.className("fa-spin")));
@@ -326,15 +332,15 @@ public abstract class SearchBase extends SOPageBase implements
 		final WebElement promotionsBox = new WebDriverWait(getDriver(), 20).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".promotions")));
         new WebDriverWait(getDriver(), 60).until(new ExpectedCondition<Boolean>() {
 			@Override
-			public Boolean apply(WebDriver input) {
+			public Boolean apply(final WebDriver input) {
 				return !promotionsBox.isDisplayed() || resultsAreLoaded(promotionsBox);
 			}
 		});
 		Waits.loadOrFadeWait();
     }
 
-	private boolean resultsAreLoaded(WebElement promotionsBox) {
-		return promotionsBox.findElements(By.cssSelector(".search-result-title")).size() > 0;
+	private boolean resultsAreLoaded(final WebElement promotionsBox) {
+		return !promotionsBox.findElements(By.cssSelector(".search-result-title")).isEmpty();
 	}
 
 	public void waitForRelatedConceptsLoadIndicatorToDisappear() {
@@ -349,12 +355,13 @@ public abstract class SearchBase extends SOPageBase implements
 
 	// TODO: move all these waits into an enum
 	// e.g. waitUntilLoaded(SearchBase.Section.PARAMETRIC_VALUES)
-	public void waitForParametricValuesToLoad() {
+	@Override
+    public void waitForParametricValuesToLoad() {
 		new WebDriverWait(getDriver(), 30)
 				.withMessage("loading parametric values list")
 				.until(new ExpectedCondition<Boolean>() {
 					@Override
-					public Boolean apply(WebDriver driver) {
+					public Boolean apply(final WebDriver driver) {
 						return !parametricValueLoadIndicator().isDisplayed();
 					}
 				});
@@ -373,7 +380,8 @@ public abstract class SearchBase extends SOPageBase implements
 		return ElementUtil.getTexts(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
 	}
 
-	public void filterBy(QueryFilter filter) {
+	@Override
+    public void filterBy(final QueryFilter filter) {
 		filter.apply(this);
 		Waits.loadOrFadeWait();
 		waitForSearchLoadIndicatorToDisappear();

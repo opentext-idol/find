@@ -24,7 +24,7 @@ public class PromotionsCoreITCase extends HybridIsoTestBase {
     private PromotionService<?> promotionService;
     private SearchService searchService;
 
-    public PromotionsCoreITCase(TestConfig config) {
+    public PromotionsCoreITCase(final TestConfig config) {
         super(config);
     }
 
@@ -57,14 +57,14 @@ public class PromotionsCoreITCase extends HybridIsoTestBase {
         assertThat(searchPage.getPromotedDocumentTitles(false), not(empty()));
     }
 
-    private void create(Promotion promotion) {
+    private void create(final Promotion promotion) {
         promotionService.setUpPromotion(promotion, new Query("car"), 1);
         searchPage = searchService.search(promotion.getTrigger());
     }
 
     @Test
     public void testDeletePromotion() {
-        Promotion promotion = new SpotlightPromotion("qwlmdbsk");
+        final Promotion promotion = new SpotlightPromotion("qwlmdbsk");
         create(promotion);
         promotionService.delete(promotion);
         assertThat(promotionService.goToPromotions(), not(containsText(promotion.getTrigger())));
@@ -72,7 +72,7 @@ public class PromotionsCoreITCase extends HybridIsoTestBase {
 
     @Test
     public void testViewDetails() {
-        Promotion promotion = new SpotlightPromotion("vegetables");
+        final Promotion promotion = new SpotlightPromotion("vegetables");
         create(promotion);
         promotionService.goToDetails(promotion);
         assertThat(getElementFactory().getPromotionsDetailPage(), containsText(promotion.getTrigger()));

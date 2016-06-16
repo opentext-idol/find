@@ -141,7 +141,7 @@ public class IsoSettingsPage extends SOPageBase {
         waitForLoad(getDriver());
     }
 
-    private static void waitForLoad(WebDriver driver) {
+    private static void waitForLoad(final WebDriver driver) {
         new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".settings-control")));
     }
 
@@ -150,7 +150,8 @@ public class IsoSettingsPage extends SOPageBase {
 			super(IsoSettingsPage.class);
 		}
 
-		public IsoSettingsPage create(WebDriver context) {
+		@Override
+        public IsoSettingsPage create(final WebDriver context) {
 			IsoSettingsPage.waitForLoad(context);
 			return new IsoSettingsPage(context);
 		}

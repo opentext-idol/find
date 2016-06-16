@@ -48,7 +48,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
     private HsodUserService userService;
     private HsodUsersPage usersPage;
 
-    public UserManagementHostedITCase(TestConfig config) {
+    public UserManagementHostedITCase(final TestConfig config) {
         super(config);
         aNewUser = config.getNewUser("james");
         helper = new UserTestHelper(getApplication(), config);
@@ -75,7 +75,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
     @ResolvedBug("CSA-1775")
     @ActiveBug("CSA-1800")
     public void testCannotAddInvalidEmail(){
-        HsodNewUser newUser = new HsodNewUser("jeremy","jeremy");
+        final HsodNewUser newUser = new HsodNewUser("jeremy","jeremy");
 
         verifyAddingInvalidUser(newUser);
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
@@ -91,7 +91,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
     // unlike on-prem, duplicate usernames (display names) are allowed
     @Test
     public void testDuplicateUsername() {
-        User user = userService.createNewUser(aNewUser, Role.ADMIN);
+        final User user = userService.createNewUser(aNewUser, Role.ADMIN);
         assertThat(usersPage.getUsernames(), hasSize(1));
         verifyAddingValidUser(new HsodNewUser(user.getUsername(), gmailString("isValid")));
     }
@@ -106,8 +106,8 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
         verifyAddingValidUser(new HsodNewUser(username, gmailString("alsoValid")));
     }
 
-    private void verifyAddingInvalidUser(HsodNewUser invalidUser) {
-        int existingUsers = usersPage.getUsernames().size();
+    private void verifyAddingInvalidUser(final HsodNewUser invalidUser) {
+        final int existingUsers = usersPage.getUsernames().size();
         usersPage.createUserButton().click();
 
         try {
@@ -127,11 +127,11 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
         verifyThat("number of users has not increased after refresh", usersPage.getUsernames(), hasSize(existingUsers));
     }
 
-    private HsodUser verifyAddingValidUser(HsodNewUser validUser) {
-        int existingUsers = usersPage.getUsernames().size();
+    private HsodUser verifyAddingValidUser(final HsodNewUser validUser) {
+        final int existingUsers = usersPage.getUsernames().size();
         usersPage.createUserButton().click();
 
-        HsodUser user = usersPage.addNewUser(validUser, Role.ADMIN);
+        final HsodUser user = usersPage.addNewUser(validUser, Role.ADMIN);
 
         verifyModalElements();
         verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), not(containsString(Errors.User.CREATING)));
@@ -145,20 +145,20 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
     }
 
     private void verifyModalElements() {
-        HsodUserCreationModal modal = usersPage.userCreationModal();
+        final HsodUserCreationModal modal = usersPage.userCreationModal();
         verifyModalElement(modal.usernameInput().getElement());
         verifyModalElement(modal.emailInput().getElement());
         verifyModalElement(modal.roleDropdown());
         verifyModalElement(modal.createButton());
     }
 
-    private void verifyModalElement(WebElement input) {
+    private void verifyModalElement(final WebElement input) {
         verifyThat(getContainingDiv(input), not(hasClass("has-error")));
     }
 
     @Test
     public void testResettingAuthentication(){
-        NewUser newUser = getConfig().generateNewUser();
+        final NewUser newUser = getConfig().generateNewUser();
 
         final User user = userService.createNewUser(newUser,Role.USER);
         getConfig().getAuthenticationStrategy().authenticate(user);
@@ -185,7 +185,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
 
     @Test
     public void testEditingUsername(){
-        User user = userService.createNewUser(new HsodNewUser("editUsername", gmailString("editUsername")), Role.ADMIN);
+        final User user = userService.createNewUser(new HsodNewUser("editUsername", gmailString("editUsername")), Role.ADMIN);
 
         verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
 
@@ -195,9 +195,9 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
 
         try {
             userService.editUsername(user, "");
-        } catch (TimeoutException e) { /* Should fail here as you're giving it an invalid username */ }
+        } catch (final TimeoutException e) { /* Should fail here as you're giving it an invalid username */ }
 
-        WebElement formGroup = usersPage.getUserRow(user).usernameEditBox();
+        final WebElement formGroup = usersPage.getUserRow(user).usernameEditBox();
         verifyThat(formGroup, displayed());
         verifyThat(formGroup, hasClass("has-error"));
     }
@@ -223,7 +223,7 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
         newUserModal.createButton().click();
         verifyThat(newUserModal, containsText(Errors.User.BLANK_EMAIL));
 
-        String username = "Andrew";
+        final String username = "Andrew";
 
         newUserModal.usernameInput().setValue(username);
         newUserModal.emailInput().clear();
@@ -255,25 +255,25 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
 
         new WebDriverWait(getDriver(), 30).pollingEvery(5,TimeUnit.SECONDS).until(new ExpectedCondition<Boolean>() {
             @Override
-            public Boolean apply(WebDriver driver) {
+            public Boolean apply(final WebDriver driver) {
                 return usersPage.getUserRow(user).isConfirmed();
             }
         });
     }
 
-    private void waitForUserConfirmed(User user){
+    private void waitForUserConfirmed(final User user){
         new WebDriverWait(getDriver(),30).pollingEvery(10, TimeUnit.SECONDS).withMessage("User not showing as confirmed").until(new WaitForUserToBeConfirmed(user));
     }
 
     private class WaitForUserToBeConfirmed implements ExpectedCondition<Boolean>{
         private final User user;
 
-        WaitForUserToBeConfirmed(User user){
+        WaitForUserToBeConfirmed(final User user){
             this.user = user;
         }
 
         @Override
-        public Boolean apply(WebDriver driver) {
+        public Boolean apply(final WebDriver driver) {
             getWindow().refresh();
             usersPage = getElementFactory().getUsersPage();
             Waits.loadOrFadeWait();
@@ -281,11 +281,11 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
         }
     }
 
-    private WebElement getContainingDiv(WebElement webElement){
+    private WebElement getContainingDiv(final WebElement webElement){
         return ElementUtil.ancestor(webElement, 2);
     }
 
-    public static String gmailString(String plus){
+    public static String gmailString(final String plus){
         return "hodtestqa401+" + plus + "@gmail.com";
     }
 }

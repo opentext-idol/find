@@ -78,8 +78,8 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		final int initialNumberOfUsers = usersPage.countNumberOfUsers();
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
-		User user = usersPage.addNewUser(aNewUser, Role.USER);
-		User admin = usersPage.addNewUser(newUser2, Role.ADMIN);
+		final User user = usersPage.addNewUser(aNewUser, Role.USER);
+		final User admin = usersPage.addNewUser(newUser2, Role.ADMIN);
 		usersPage.userCreationModal().close();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
@@ -104,7 +104,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 	public void testAddDuplicateUser() {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
-		User original = usersPage.addNewUser(aNewUser, Role.USER);
+		final User original = usersPage.addNewUser(aNewUser, Role.USER);
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 		this.helper.verifyUserAdded(original);
 
@@ -123,8 +123,8 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		verifyThat(usersPage.countNumberOfUsers(), is(1 + defaultNumberOfUsers));
 	}
 
-	private void verifyDuplicateError(ModalView newUserModal) {
-		Serializable expectedError;
+	private void verifyDuplicateError(final ModalView newUserModal) {
+		final Serializable expectedError;
 		if (isHosted()) {
 			expectedError = Errors.User.DUPLICATE_EMAIL;
 		} else {
@@ -138,17 +138,17 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
 
-		User admin = usersPage.addNewUser(aNewUser, Role.ADMIN);
+		final User admin = usersPage.addNewUser(aNewUser, Role.ADMIN);
 		this.helper.verifyUserAdded(admin);
 		new WebDriverWait(getDriver(), 10)
 				.withMessage("waiting for notifications to clear")
 				.until(GritterNotice.notificationsDisappear());
 
-		User user = usersPage.addNewUser(newUser2, Role.USER);
+		final User user = usersPage.addNewUser(newUser2, Role.USER);
 		this.helper.verifyUserAdded(user);
 
 		usersPage.userCreationModal().close();
-		List<String> usernames = usersPage.getUsernames();
+		final List<String> usernames = usersPage.getUsernames();
 		assertThat(usernames, hasItem(admin.getUsername()));
 		assertThat(usersPage.getRoleOf(admin), is(Role.ADMIN));
 
@@ -158,7 +158,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testEditUserType() {
-		User user = helper.singleSignUp(aNewUser);
+		final User user = helper.singleSignUp(aNewUser);
 
 		userService.changeRole(user, Role.ADMIN);
 		Waits.loadOrFadeWait();
@@ -174,8 +174,8 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		assertThat(usersPage.getRoleOf(user), is(Role.NONE));
 	}
 
-	private void selectSameRole(User user){
-		Role role = user.getRole();
+	private void selectSameRole(final User user){
+		final Role role = user.getRole();
 		userService.changeRole(user, role);
 
 		assertThat(usersPage.getRoleOf(user), is(role));
@@ -184,7 +184,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 	@Test
 	@ActiveBug("ISO-37")
 	public void testCreateUserPermissionNoneAndTestLogin() throws InterruptedException {
-		User user = helper.singleSignUp(aNewUser);
+		final User user = helper.singleSignUp(aNewUser);
 
 		assertThat(usersPage.getRoleOf(user), is(user.getRole()));
 
@@ -197,12 +197,12 @@ public class UsersPageITCase extends HybridIsoTestBase {
 
 		try {
 			getApplication().loginService().login(user);
-		} catch (NoSuchElementException e) {
+		} catch (final NoSuchElementException e) {
 			try {
 				if (getDriver().findElement(By.linkText("Google")).isDisplayed()) {
 					fail("Still on login page");
 				}
-			} catch (NoSuchElementException f){
+			} catch (final NoSuchElementException f){
 				/* There shouldn't be Google on the page, so it SHOULD fail */
 			}
 		}
@@ -211,7 +211,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testDisablingAndDeletingUser(){
-		User user = userService.createNewUser(aNewUser, Role.USER);
+		final User user = userService.createNewUser(aNewUser, Role.USER);
 
 		userService.changeRole(user, Role.NONE);
 		verifyThat(usersPage.getRoleOf(user), is(Role.NONE));
@@ -227,7 +227,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		final User john = createAdminFromConfig("john");
 		final User bob = createAdminFromConfig("bob");
 
-		FormInput searchFilter = usersPage.userSearchFilter();
+		final FormInput searchFilter = usersPage.userSearchFilter();
 		searchFilter.setValue("j");
 		checkUserVisible(james);
 		checkUserVisible(john);
@@ -241,7 +241,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		searchFilter.clear();
 	}
 
-	private User createAdminFromConfig(String configId) {
+	private User createAdminFromConfig(final String configId) {
 		return userService.createNewUser(getConfig().getNewUser(configId), Role.ADMIN);
 	}
 
@@ -253,7 +253,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		checkUserVisible(admin);
 		checkUserVisible(endUser);
 
-		Dropdown dropdown = usersPage.userRoleFilter();
+		final Dropdown dropdown = usersPage.userRoleFilter();
 		dropdown.select("Admin");
 		checkUserVisible(admin);
 		checkUserHidden(endUser);
@@ -265,11 +265,11 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		dropdown.select("All");
 	}
 
-	private void checkUserVisible(User user) {
+	private void checkUserVisible(final User user) {
 		verifyThat(user + " is visible", usersPage.getUsernames(), hasItem(user.getUsername()));
 	}
 
-	private void checkUserHidden(User user) {
+	private void checkUserHidden(final User user) {
 		verifyThat(user + " is hidden", usersPage.getUsernames(), not(hasItem(user.getUsername())));
 	}
 
@@ -278,10 +278,10 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		int userCount = defaultNumberOfUsers;
 		checkUserCountIs(userCount);
 
-		User user1 = userService.createNewUser(aNewUser, Role.ADMIN);
+		final User user1 = userService.createNewUser(aNewUser, Role.ADMIN);
 		checkUserCountIs(++userCount);
 
-		User user2 = userService.createNewUser(newUser2, Role.ADMIN);
+		final User user2 = userService.createNewUser(newUser2, Role.ADMIN);
 		checkUserCountIs(++userCount);
 
 		try {
@@ -300,7 +300,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		checkUserCountIs(--userCount);
 	}
 
-	private void checkUserCountIs(int userCount) {
+	private void checkUserCountIs(final int userCount) {
 		verifyThat(userCount + " users", usersPage.getUserCountInTitle(), is(userCount));
 	}
 }

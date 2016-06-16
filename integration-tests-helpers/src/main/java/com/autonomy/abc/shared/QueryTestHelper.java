@@ -76,12 +76,12 @@ public class QueryTestHelper<T extends QueryResultsPage> {
 
     private final QueryService<T> service;
 
-    public QueryTestHelper(QueryService<T> queryService) {
+    public QueryTestHelper(final QueryService<T> queryService) {
         service = queryService;
     }
 
     public void hiddenQueryOperatorText() {
-        for (Result result : resultsFor(HIDDEN_BOOLEANS)) {
+        for (final Result result : resultsFor(HIDDEN_BOOLEANS)) {
             verifyThat("able to search for " + result.term, result.errorContainer(), anyOf(
                     not(displayed()),
                     containsText(Errors.Search.NO_RESULTS)
@@ -90,7 +90,7 @@ public class QueryTestHelper<T extends QueryResultsPage> {
     }
 
     public void mismatchedBracketQueryText() {
-        for (Result result : resultsFor(MISMATCHED_BRACKETS)) {
+        for (final Result result : resultsFor(MISMATCHED_BRACKETS)) {
             verifyThat("query term '" + result.term + "' is invalid",
                     result.errorContainer(), displayed());
             verifyThat("query term '" + result.term + "' has sensible error message",
@@ -116,8 +116,8 @@ public class QueryTestHelper<T extends QueryResultsPage> {
         checkQueries(NO_TERMS, sensibleErrors);
     }
 
-    private void checkQueries(List<String> terms, final Serializable... sensibleErrors) {
-        for (Result result : resultsFor(terms)) {
+    private void checkQueries(final List<String> terms, final Serializable... sensibleErrors) {
+        for (final Result result : resultsFor(terms)) {
             assertThat("query term '" + result.term + "' produces an error", result.errorContainer(), displayed());
             verifyThat("query term '" + result.term + "' has sensible error message", result.getErrorMessage(), stringContainingAnyOf(sensibleErrors));
         }
@@ -148,10 +148,10 @@ public class QueryTestHelper<T extends QueryResultsPage> {
         };
     }
 
-    private Result resultFor(String queryTerm) {
-        Query query = new Query(queryTerm)
+    private Result resultFor(final String queryTerm) {
+        final Query query = new Query(queryTerm)
                 .withFilter(new LanguageFilter(Language.ENGLISH));
-        T page = service.search(query);
+        final T page = service.search(query);
         return new Result(queryTerm, page);
     }
     
@@ -160,7 +160,7 @@ public class QueryTestHelper<T extends QueryResultsPage> {
         final T page;
         private String text;
 
-        Result(String term, T page) {
+        Result(final String term, final T page) {
             this.term = term;
             this.page = page;
         }

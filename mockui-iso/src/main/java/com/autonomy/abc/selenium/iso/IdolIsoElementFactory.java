@@ -73,7 +73,7 @@ public class IdolIsoElementFactory extends IsoElementFactory {
     }
 
     protected static class SideNavStrategy extends IsoElementFactory.SideNavStrategy {
-        protected SideNavStrategy(NavBarTabId tabId) {
+        protected SideNavStrategy(final NavBarTabId tabId) {
             super(tabId);
         }
     }
@@ -81,12 +81,12 @@ public class IdolIsoElementFactory extends IsoElementFactory {
     static class TopNavStrategy implements PageMapper.SwitchStrategy<IsoElementFactory> {
         private final IdolIsoTopNavBar.TabId tab;
 
-        TopNavStrategy(IdolIsoTopNavBar.TabId tabId) {
+        TopNavStrategy(final IdolIsoTopNavBar.TabId tabId) {
             tab = tabId;
         }
 
         @Override
-        public void switchUsing(IsoElementFactory context) {
+        public void switchUsing(final IsoElementFactory context) {
             new WebDriverWait(context.getDriver(), 10)
                     .withMessage("waiting for notifications to clear")
                     .until(GritterNotice.notificationsDisappear());

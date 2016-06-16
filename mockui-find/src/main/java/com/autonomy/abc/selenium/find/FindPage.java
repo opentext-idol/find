@@ -25,7 +25,7 @@ public class FindPage extends AppElement implements AppPage,
 
     private final FindResultsPage results;
 
-    FindPage(WebDriver driver){
+    FindPage(final WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
@@ -53,17 +53,17 @@ public class FindPage extends AppElement implements AppPage,
         return filters().indexesTree();
     }
 
-    public void sortBy(SortBy sortBy) {
+    public void sortBy(final SortBy sortBy) {
         sortDropdown().select(sortBy.toString());
     }
 
     private Dropdown sortDropdown() {
-        WebElement dropdownContainer = findElement(By.cssSelector(".sort-container"));
+        final WebElement dropdownContainer = findElement(By.cssSelector(".sort-container"));
         return new Dropdown(dropdownContainer, getDriver());
     }
 
     @Override
-    public void filterBy(QueryFilter filter) {
+    public void filterBy(final QueryFilter filter) {
         filter.apply(this);
         results.waitForResultsToLoad();
     }
@@ -89,13 +89,13 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     @Override
-    public String formatInputDate(Date date) {
+    public String formatInputDate(final Date date) {
         return filters().stringDateFilterable().formatInputDate(date);
     }
 
     @Override
     public WebElement parametricContainer() {
-        WebElement firstParametric = findElement(By.cssSelector("[data-field]"));
+        final WebElement firstParametric = findElement(By.cssSelector("[data-field]"));
         return ElementUtil.ancestor(firstParametric, 2);
     }
     
@@ -123,7 +123,8 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {
-        public FindPage create(WebDriver context) {
+        @Override
+        public FindPage create(final WebDriver context) {
             return new FindPage(context);
         }
     }

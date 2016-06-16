@@ -34,7 +34,7 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
     private SearchService searchService;
     private SearchPage searchPage;
 
-    public SearchLanguageITCase(TestConfig config) {
+    public SearchLanguageITCase(final TestConfig config) {
         super(config);
     }
 
@@ -44,7 +44,7 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
         search("anything");
     }
 
-    private void search(String term) {
+    private void search(final String term) {
         searchPage = searchService.search(term);
     }
 
@@ -54,7 +54,7 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
         search("1");
         String docTitle = searchPage.getSearchResult(1).getTitleString();
 
-        List<Language> languages = Arrays.asList(Language.ENGLISH, Language.AFRIKAANS, Language.FRENCH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE, Language.SWAHILI);
+        final List<Language> languages = Arrays.asList(Language.ENGLISH, Language.AFRIKAANS, Language.FRENCH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE, Language.SWAHILI);
         for (final Language language : languages) {
             searchPage.selectLanguage(language);
 
@@ -107,7 +107,7 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
 
     @Test
     public void testSearchAlternateScriptToSelectedLanguage() {
-        List<Language> languages = Arrays.asList(Language.FRENCH, Language.ENGLISH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE);
+        final List<Language> languages = Arrays.asList(Language.FRENCH, Language.ENGLISH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE);
         for (final Language language : languages) {
             searchPage.selectLanguage(language);
 
@@ -143,7 +143,7 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
     @ResolvedBug("CCUK-2882")
     @ActiveBug("ISO-29")
     public void testNonLatinUrlEncoding() {
-        Query nonLatin = new Query("جيمس")
+        final Query nonLatin = new Query("جيمس")
                 .withFilter(new LanguageFilter(Language.ARABIC));
         searchPage = searchService.search(nonLatin);
         searchPage.openPromotionsBucket();
@@ -159,10 +159,10 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
     }
 
     @RelatedTo("CCUK-3728")
-    private void checkViewResult(String docTitle) {
+    private void checkViewResult(final String docTitle) {
         DriverUtil.scrollIntoViewAndClick(getDriver(), searchPage.promotionBucketElementByTitle(docTitle));
-        DocumentViewer viewer = DocumentViewer.make(getDriver());
-        Frame frame = new Frame(getWindow(), viewer.frame());
+        final DocumentViewer viewer = DocumentViewer.make(getDriver());
+        final Frame frame = new Frame(getWindow(), viewer.frame());
         verifyThat("view frame displays", frame.getText(), containsString(docTitle));
         viewer.close();
     }

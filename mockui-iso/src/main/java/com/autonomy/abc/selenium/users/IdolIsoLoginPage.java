@@ -39,7 +39,8 @@ public class IdolIsoLoginPage extends LoginPage {
             return IdolIsoLoginPage.class;
         }
 
-        public IdolIsoLoginPage create(WebDriver context) {
+        @Override
+        public IdolIsoLoginPage create(final WebDriver context) {
             return new IdolIsoLoginPage(context);
         }
     }

@@ -13,7 +13,7 @@ import org.openqa.selenium.WebDriver;
 
 public class DetailedPreviewPage extends AppElement implements AppPage {
 
-    private DetailedPreviewPage(WebDriver driver){
+    private DetailedPreviewPage(final WebDriver driver){
         super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
     }
 
@@ -45,8 +45,8 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
         return findElement(By.xpath("//span[contains(text(),'Similar documents')]"));
     }
 
-    public WebElement ithTick(int i){
-        String tickPercent = String.valueOf((i-1)*10);
+    public WebElement ithTick(final int i){
+        final String tickPercent = String.valueOf((i-1)*10);
         return findElement(By.xpath("//div[contains(@class,'slider-tick') and contains(@style,'left: "+tickPercent+"%')]"));
     }
 
@@ -55,7 +55,7 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     }
 
     public int numberOfHeadersWithDocTitle(){
-        String title = getTitle();
+        final String title = getTitle();
         return findElements(By.xpath("//h1[contains(text(),'"+title+"')]")).size();
     }
 
@@ -67,16 +67,17 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     public String getSummary(){ return getField("Summary");}
     public String getDate(){ return getField("Date");}
 
-    private String getField(String name) {
+    private String getField(final String name) {
         try {
             return findElement(By.xpath(".//td[contains(text(), '" + name + "')]/following::td")).getText();
-        } catch (NoSuchElementException e) {
+        } catch (final NoSuchElementException e) {
             return null;
         }
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, DetailedPreviewPage> {
-        public DetailedPreviewPage create(WebDriver context) {
+        @Override
+        public DetailedPreviewPage create(final WebDriver context) {
             return new DetailedPreviewPage(context);
         }
     }

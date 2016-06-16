@@ -12,7 +12,7 @@ public class EditDocumentReferencesPage extends SearchBase {
         super(driver.findElement(By.className("wrapper-content")), driver);
     }
 
-    private static void waitForLoad(WebDriver driver) {
+    private static void waitForLoad(final WebDriver driver) {
         new WebDriverWait(driver, 30)
                 .withMessage("loading edit document references page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("promotions-bucket-well")));
@@ -37,7 +37,7 @@ public class EditDocumentReferencesPage extends SearchBase {
         }
 
         @Override
-        public EditDocumentReferencesPage create(WebDriver context) {
+        public EditDocumentReferencesPage create(final WebDriver context) {
             waitForLoad(context);
             return new EditDocumentReferencesPage(context);
         }

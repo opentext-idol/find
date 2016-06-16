@@ -4,7 +4,6 @@ import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.util.Locator;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,7 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public abstract class UserCreationModal extends ModalView {
-    UserCreationModal(WebDriver driver) {
+    UserCreationModal(final WebDriver driver) {
         super(ModalView.getVisibleModalView(driver), driver);
     }
 
@@ -31,7 +30,7 @@ public abstract class UserCreationModal extends ModalView {
         return findElement(By.id("create-users-role"));
     }
 
-    public void selectRole(Role role) {
+    public void selectRole(final Role role) {
         findElement(new Locator()
                 .withTagName("option")
                 .containingText(role.toString())

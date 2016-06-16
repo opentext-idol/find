@@ -4,10 +4,10 @@ public enum KeywordWizardType {
     BLACKLIST("BLACKLISTED", "Select terms to blacklist"),
     SYNONYMS("SYNONYMS", "Select synonyms");
 
-    private String option;
-    private String inputTitle;
+    private final String option;
+    private final String inputTitle;
 
-    KeywordWizardType(String option, String inputTitle) {
+    KeywordWizardType(final String option, final String inputTitle) {
         this.option = option;
         this.inputTitle = inputTitle;
     }

@@ -17,7 +17,7 @@ import java.util.List;
 
 public abstract class PromotionsPage extends SOPageBase {
 
-	public PromotionsPage(WebDriver driver) {
+	public PromotionsPage(final WebDriver driver) {
 		super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))),driver);
 		waitForLoad();
 	}
@@ -51,8 +51,8 @@ public abstract class PromotionsPage extends SOPageBase {
 	}
 
 	public List<String> getPromotionTitles() {
-		List<String> promotionTitles = new ArrayList<>();
-		for (WebElement promotion : promotionsList()) {
+		final List<String> promotionTitles = new ArrayList<>();
+		for (final WebElement promotion : promotionsList()) {
 			promotionTitles.add(promotion.findElement(By.tagName("h3")).getText());
 		}
 		return promotionTitles;
@@ -90,8 +90,8 @@ public abstract class PromotionsPage extends SOPageBase {
 
 		new WebDriverWait(getDriver(),30).withMessage("Waiting for promotions to load").until(new ExpectedCondition<Boolean>() {
 			@Override
-			public Boolean apply(WebDriver driver) {
-				for (WebElement indicator : driver.findElements(By.className("loading-indicator"))) {
+			public Boolean apply(final WebDriver driver) {
+				for (final WebElement indicator : driver.findElements(By.className("loading-indicator"))) {
 					if (indicator.isDisplayed()) {
 						return false;
 					}

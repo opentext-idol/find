@@ -11,7 +11,7 @@ import java.util.List;
 
 public class NotificationsDropDown extends AppElement {
 
-    public NotificationsDropDown(WebDriver driver) {
+    public NotificationsDropDown(final WebDriver driver) {
         super(driver.findElement(By.cssSelector("nav.affix-element .notification-list")), driver);
     }
 
@@ -22,8 +22,8 @@ public class NotificationsDropDown extends AppElement {
     }
 
     public List<Notification> getAllNotifications(){
-        List<Notification> notifications = new ArrayList<>();
-        for(WebElement notification : findElements(By.cssSelector("li:not(.no-notifications) a"))){
+        final List<Notification> notifications = new ArrayList<>();
+        for(final WebElement notification : findElements(By.cssSelector("li:not(.no-notifications) a"))){
             if(notification.isDisplayed()) {
                 notifications.add(new Notification(notification));
             }
@@ -31,13 +31,13 @@ public class NotificationsDropDown extends AppElement {
         return notifications;
     }
 
-    public Notification getNotification(int index){
+    public Notification getNotification(final int index){
         return new Notification(findElement(By.cssSelector("li:nth-child(" + (index * 2 - 1) + ") a")));
     }
 
     public List<String> getAllNotificationMessages(){
-        List<String> messages = new ArrayList<>();
-        for(WebElement notification : findElements(By.cssSelector("li a .notification-message"))){
+        final List<String> messages = new ArrayList<>();
+        for(final WebElement notification : findElements(By.cssSelector("li a .notification-message"))){
             messages.add(notification.getText());
         }
         return messages;

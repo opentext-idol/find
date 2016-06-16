@@ -6,7 +6,7 @@ import org.openqa.selenium.WebDriver;
 
 public class HsodCreateNewKeywordsPage extends CreateNewKeywordsPage {
 
-    private HsodCreateNewKeywordsPage(WebDriver driver) {
+    private HsodCreateNewKeywordsPage(final WebDriver driver) {
         super(driver);
     }
 
@@ -21,7 +21,7 @@ public class HsodCreateNewKeywordsPage extends CreateNewKeywordsPage {
         }
 
         @Override
-        public HsodCreateNewKeywordsPage create(WebDriver context) {
+        public HsodCreateNewKeywordsPage create(final WebDriver context) {
             return new HsodCreateNewKeywordsPage(context);
         }
     }

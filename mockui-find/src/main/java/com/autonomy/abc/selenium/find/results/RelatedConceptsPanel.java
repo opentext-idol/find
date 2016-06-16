@@ -17,7 +17,7 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
     private final WebElement panel;
     private final WebDriver driver;
 
-    public RelatedConceptsPanel(WebDriver driver) {
+    public RelatedConceptsPanel(final WebDriver driver) {
         this.driver = driver;
         this.panel = Container.RIGHT.findUsing(driver);
     }
@@ -35,7 +35,7 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
         return relatedConcepts().iterator();
     }
 
-    public WebElement concept(int i) {
+    public WebElement concept(final int i) {
         return relatedConcepts().get(i);
     }
 
@@ -48,15 +48,15 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
         return ElementUtil.getTexts(relatedConcepts());
     }
 
-    public WebElement hoverOverRelatedConcept(int i) {
-        WebElement concept = relatedConcepts().get(i);
+    public WebElement hoverOverRelatedConcept(final int i) {
+        final WebElement concept = relatedConcepts().get(i);
         DriverUtil.hover(getDriver(), concept);
-        WebElement popover = panel.findElement(By.className("popover"));
+        final WebElement popover = panel.findElement(By.className("popover"));
         waitForPopoverToLoad(popover);
         return popover;
     }
 
-    private void waitForPopoverToLoad(WebElement popover) {
+    private void waitForPopoverToLoad(final WebElement popover) {
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
     }
 

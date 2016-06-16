@@ -1,7 +1,6 @@
 package com.autonomy.abc.search;
 
 import com.autonomy.abc.base.HybridIsoTestBase;
-import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.IsoSearchResult;
 import com.autonomy.abc.selenium.search.SearchPage;
@@ -12,7 +11,6 @@ import com.hp.autonomy.frontend.selenium.element.Pagination;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.http.util.LangUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +29,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
     private SearchPage searchPage;
     private SearchService searchService;
     
-    public SearchDateITCase(TestConfig config) {
+    public SearchDateITCase(final TestConfig config) {
         super(config);
     }
     
@@ -66,8 +64,8 @@ public class SearchDateITCase extends HybridIsoTestBase {
     @Test
     @ActiveBug(value = "HOD-1116", type = ApplicationType.HOSTED)
     public void testWideFromDate() throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
-        Date june = simpleDateFormat.parse("01/01/2012 00:00");
+        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
+        final Date june = simpleDateFormat.parse("01/01/2012 00:00");
 
         searchService.search(new Query("ridiculous"));
         Waits.loadOrFadeWait();
@@ -75,7 +73,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
         assumeThat(searchPage.getSearchResults().size(), not(0));
 
         for(int i = 0; i < 2; i++) {
-            for (IsoSearchResult searchResult : searchPage.getSearchResults()) {
+            for (final IsoSearchResult searchResult : searchPage.getSearchResults()) {
                 verifyThat(searchResult.getDate(), greaterThanOrEqualTo(june));
             }
 
@@ -109,8 +107,8 @@ public class SearchDateITCase extends HybridIsoTestBase {
     @Test
     @ActiveBug(value = "HOD-1116", type = ApplicationType.HOSTED)
     public void testWideUntilDate() throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
-        Date june = simpleDateFormat.parse("06/12/2015 00:00");
+        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm");
+        final Date june = simpleDateFormat.parse("06/12/2015 00:00");
 
         searchService.search(new Query("Pertussis"));
         Waits.loadOrFadeWait();
@@ -119,7 +117,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
         assumeThat(searchPage.getSearchResults().size(), not(0));
 
         for(int i = 0; i < 2; i++) {
-            for (IsoSearchResult searchResult : searchPage.getSearchResults()) {
+            for (final IsoSearchResult searchResult : searchPage.getSearchResults()) {
                 verifyThat(searchResult.getDate(), lessThanOrEqualTo(june));
             }
 
@@ -132,13 +130,13 @@ public class SearchDateITCase extends HybridIsoTestBase {
     private Date beginDateFilterTest() {
         // not all indexes have times configured
         searchPage = searchService.search(new Query("Dog"));
-        Date date = searchPage.getSearchResult(1).getDate();
+        final Date date = searchPage.getSearchResult(1).getDate();
         assumeThat("test requires first search result to have a date", date, notNullValue());
-        LOGGER.info("First Result: " + searchPage.getSearchResult(1).getTitleString() + " " + date);
+        LOGGER.info("First Result: " + searchPage.getSearchResult(1).getTitleString() + ' ' + date);
         return date;
     }
 
-    private void verifyValidDate(String firstResult) {
+    private void verifyValidDate(final String firstResult) {
         LOGGER.info("from: " + searchPage.fromDateInput().getValue());
         LOGGER.info("until: " + searchPage.untilDateInput().getValue());
         if (verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0))) {
@@ -146,7 +144,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
         }
     }
 
-    private void verifyInvalidDate(String firstResult) {
+    private void verifyInvalidDate(final String firstResult) {
         LOGGER.info("from: " + searchPage.fromDateInput().getValue());
         LOGGER.info("until: " + searchPage.untilDateInput().getValue());
         if (searchPage.getHeadingResultsCount() > 0) {
@@ -156,7 +154,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
 
     @Test
     public void testFromDateAlwaysBeforeUntilDate() {
-        Calendar calendar = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance();
         calendar.set(2000, Calendar.MAY, 4, 12, 0);
         final Date date = calendar.getTime();
 
@@ -174,7 +172,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
 
     @Test
     public void testFromDateEqualsUntilDate() throws ParseException {
-        Calendar calendar = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance();
         calendar.set(2012, Calendar.DECEMBER, 12, 12, 12);
         final Date date = calendar.getTime();
 

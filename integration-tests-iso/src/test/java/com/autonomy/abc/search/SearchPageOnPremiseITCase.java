@@ -34,7 +34,7 @@ public class SearchPageOnPremiseITCase extends IdolIsoTestBase {
     private SearchService searchService;
     private SearchPage searchPage;
 
-    public SearchPageOnPremiseITCase(TestConfig config) {
+    public SearchPageOnPremiseITCase(final TestConfig config) {
         super(config);
     }
 
@@ -79,13 +79,13 @@ public class SearchPageOnPremiseITCase extends IdolIsoTestBase {
         assertThat(searchPage.getSearchResult(1).getTitleString(), is(searchResultTitle));
     }
 
-    private String getFirstWord(String string) {
+    private String getFirstWord(final String string) {
         return string.substring(0, string.indexOf(' '));
     }
 
-    private int searchResultNotStarting(String prefix) {
+    private int searchResultNotStarting(final String prefix) {
         for (int result = 1; result <= SearchPage.RESULTS_PER_PAGE; result++) {
-            String comparisonString = searchPage.getSearchResult(result).getTitleString();
+            final String comparisonString = searchPage.getSearchResult(result).getTitleString();
             if (!comparisonString.startsWith(prefix)) {
                 return result;
             }
@@ -119,7 +119,7 @@ public class SearchPageOnPremiseITCase extends IdolIsoTestBase {
     //TODO
     @Test
     public void testFieldTextRestrictionOnPromotions(){
-        PromotionService promotionService = getApplication().promotionService();
+        final PromotionService promotionService = getApplication().promotionService();
         promotionService.deleteAll();
 
         promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "boat"), "darth", 2);
@@ -143,9 +143,9 @@ public class SearchPageOnPremiseITCase extends IdolIsoTestBase {
 
     @Test
     public void testFieldTextRestrictionOnPinToPositionPromotions(){
-        PromotionService<?> promotionService = getApplication().promotionService();
+        final PromotionService<?> promotionService = getApplication().promotionService();
         promotionService.deleteAll();
-        List<String> promotedDocs = promotionService.setUpPromotion(new PinToPositionPromotion(1,"duck"), new Query("desolous").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
+        final List<String> promotedDocs = promotionService.setUpPromotion(new PinToPositionPromotion(1,"duck"), new Query("desolous").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
 
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
 

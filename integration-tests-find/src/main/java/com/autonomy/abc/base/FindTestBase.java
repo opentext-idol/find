@@ -9,7 +9,7 @@ import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public abstract class FindTestBase extends HybridAppTestBase<FindApplication<? extends FindElementFactory>, FindElementFactory> {
-    protected FindTestBase(TestConfig config) {
+    protected FindTestBase(final TestConfig config) {
         super(config, FindApplication.ofType(config.getType()));
     }
 

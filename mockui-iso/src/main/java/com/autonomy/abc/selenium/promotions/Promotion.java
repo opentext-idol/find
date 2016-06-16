@@ -4,9 +4,9 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 
 public abstract class Promotion {
-    private String trigger;
+    private final String trigger;
 
-    public Promotion(String trigger) {
+    public Promotion(final String trigger) {
         this.trigger = trigger;
     }
 
@@ -32,9 +32,9 @@ public abstract class Promotion {
         SPOTLIGHT("SPOTLIGHT"),
         PIN_TO_POSITION("PIN_TO_POSITION");
 
-        private String option;
+        private final String option;
 
-        Type(String option) {
+        Type(final String option) {
             this.option = option;
         }
 
@@ -48,9 +48,9 @@ public abstract class Promotion {
         HOTWIRE("Hotwire"),
         TOP_PROMOTIONS("Top Promotions");
 
-        private String option;
+        private final String option;
 
-        SpotlightType(String option) {
+        SpotlightType(final String option) {
             this.option = option;
         }
 
@@ -61,10 +61,10 @@ public abstract class Promotion {
 
     public abstract Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase);
 
-    protected class PromotionWizard extends Wizard {
-        private CreateNewPromotionsBase page;
+    protected static class PromotionWizard extends Wizard {
+        private final CreateNewPromotionsBase page;
 
-        public PromotionWizard(CreateNewPromotionsBase createNewPromotionsBase) {
+        public PromotionWizard(final CreateNewPromotionsBase createNewPromotionsBase) {
             page = createNewPromotionsBase;
         }
 

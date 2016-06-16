@@ -6,7 +6,7 @@ import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 
 // decorate an IndexesTree - on-prem all indexes (databases) are private
 public class IdolDatabaseTree extends IndexesTree {
-    private IdolDatabaseTree(IndexCategoryNode node) {
+    private IdolDatabaseTree(final IndexCategoryNode node) {
         super(node);
     }
 
@@ -27,7 +27,7 @@ public class IdolDatabaseTree extends IndexesTree {
 
     public static class Factory implements ParametrizedFactory<IndexCategoryNode, IndexesTree> {
         @Override
-        public IndexesTree create(IndexCategoryNode context) {
+        public IndexesTree create(final IndexCategoryNode context) {
             return new IdolDatabaseTree(context);
         }
     }

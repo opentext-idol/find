@@ -47,7 +47,7 @@ public class IsoAboutPage extends SOPageBase {
 	}
 
     // 1-based index
-    public WebElement libraryName(int index) {
+    public WebElement libraryName(final int index) {
         return findElement(By.cssSelector(".dataTables_wrapper tbody tr:nth-of-type(" + index + ") a"));
     }
 
@@ -65,7 +65,8 @@ public class IsoAboutPage extends SOPageBase {
 			super(IsoAboutPage.class);
 		}
 
-		public IsoAboutPage create(WebDriver context) {
+		@Override
+        public IsoAboutPage create(final WebDriver context) {
 			IsoAboutPage.waitForLoad(context);
 			return new IsoAboutPage(context);
 		}

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PromotionsDetailPage extends SOPageBase {
-    protected PromotionsDetailPage(WebDriver driver) {
+    protected PromotionsDetailPage(final WebDriver driver) {
         super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
         waitForLoad();
     }
@@ -56,17 +56,17 @@ public class PromotionsDetailPage extends SOPageBase {
             }
 
             @Override
-            public void setValueAsync(String value) {
-                int initialValue = Integer.valueOf(getValue());
+            public void setValueAsync(final String value) {
+                final int initialValue = Integer.valueOf(getValue());
                 editButton().click();
-                int desiredValue = Integer.valueOf(value);
+                final int desiredValue = Integer.valueOf(value);
                 changeValue(initialValue, desiredValue);
                 findElement(By.cssSelector(".hp-check")).click();
             }
 
-            private void changeValue(int initialValue, int desiredValue) {
-                WebElement button;
-                int repeats;
+            private void changeValue(final int initialValue, final int desiredValue) {
+                final WebElement button;
+                final int repeats;
                 if (desiredValue > initialValue) {
                     button = group.findElement(By.cssSelector(".plus"));
                     repeats = desiredValue - initialValue;
@@ -80,7 +80,7 @@ public class PromotionsDetailPage extends SOPageBase {
             }
 
             @Override
-            public void setValueAndWait(String value) {
+            public void setValueAndWait(final String value) {
                 setValueAsync(value);
                 waitForUpdate();
             }
@@ -140,7 +140,7 @@ public class PromotionsDetailPage extends SOPageBase {
     public List<String> getPromotedTitles() {
         try {
             waitForPromotedTitlesToLoad();
-        } catch (TimeoutException e) {
+        } catch (final TimeoutException e) {
             e.printStackTrace();
         }
         return ElementUtil.getTexts(promotedList());
@@ -155,14 +155,14 @@ public class PromotionsDetailPage extends SOPageBase {
                 .withMessage("loading documents in a promotion")
                 .until(ExpectedConditions.refreshed(new ExpectedCondition<Boolean>() {
             @Override
-            public Boolean apply(WebDriver input) {
-                List<WebElement> docs = input.findElements(By.cssSelector(".promoted-documents-list h3"));
+            public Boolean apply(final WebDriver input) {
+                final List<WebElement> docs = input.findElements(By.cssSelector(".promoted-documents-list h3"));
                 return !(docs.isEmpty() || docs.get(0).getText().contains("Unknown Document"));
             }
         }));
     }
 
-    private WebElement promotedQueryPaginationButton(Pagination pagination) {
+    private WebElement promotedQueryPaginationButton(final Pagination pagination) {
         return pagination.findInside(promotedQueryPagination());
     }
 
@@ -170,7 +170,7 @@ public class PromotionsDetailPage extends SOPageBase {
         return findElement(By.cssSelector(".query-search-results .pagination-nav"));
     }
 
-    private void switchPromotedQueryPage(Pagination pagination) {
+    private void switchPromotedQueryPage(final Pagination pagination) {
         promotedQueryPaginationButton(pagination).click();
         waitForDynamicLoadIndicatorToDisappear();
     }
@@ -213,8 +213,8 @@ public class PromotionsDetailPage extends SOPageBase {
         return new InlineEdit(findElement(By.className("promotion-query-edit")), getDriver());
     }
 
-    public void viewDocument(String title) {
-        for(WebElement document : promotedList()){
+    public void viewDocument(final String title) {
+        for(final WebElement document : promotedList()){
             if(document.getText().equals(title)){
                 document.click();
             }
@@ -231,7 +231,7 @@ public class PromotionsDetailPage extends SOPageBase {
         }
 
         @Override
-        public PromotionsDetailPage create(WebDriver context) {
+        public PromotionsDetailPage create(final WebDriver context) {
             return new PromotionsDetailPage(context);
         }
     }

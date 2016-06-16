@@ -45,7 +45,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 	private TriggerForm triggerForm;
 
 	@Before
-	public void setUp() throws InterruptedException {
+	public void setUp() {
         promotionService = getApplication().promotionService();
         searchService = getApplication().searchService();
 
@@ -90,7 +90,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 		dynamicPromotionsPage.continueButton().click();
 		Waits.loadOrFadeWait();
 
-        TriggerForm triggerForm = dynamicPromotionsPage.getTriggerForm();
+        final TriggerForm triggerForm = dynamicPromotionsPage.getTriggerForm();
 
         assertThat("Right wizard step", triggerForm.addButton(), is(displayed()));
         assertThat("Finish button should be disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
@@ -120,10 +120,10 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 	@Test
 	@ResolvedBug("CCUK-3636")
 	public void testTwoPromotionTypesForSameTrigger() {
-		DynamicPromotion promotion1 = new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "cat");
-		DynamicPromotion promotion2 = new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "cat");
-		Query query1 = new Query("paris");
-		Query query2 = new Query("rome");
+		final DynamicPromotion promotion1 = new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "cat");
+		final DynamicPromotion promotion2 = new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "cat");
+		final Query query1 = new Query("paris");
+		final Query query2 = new Query("rome");
 
         searchPage = searchService.search(query1);
 		int expected = searchPage.getHeadingResultsCount();
@@ -143,7 +143,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 	@Test
 	@ActiveBug("ISO-44")
 	public void testDuplicateQueryAndTriggerDifferentSpotlightType() {
-        Query query = new Query("berlin");
+        final Query query = new Query("berlin");
         searchPage = searchService.search(query);
         int promotionResultsCount = searchPage.getHeadingResultsCount();
 		searchPage.promoteThisQueryButton().click();
@@ -173,7 +173,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 
 	@Test
 	public void testPromotionLanguage() {
-        Query query = new Query("میں").withFilter(new LanguageFilter(Language.URDU));
+        final Query query = new Query("میں").withFilter(new LanguageFilter(Language.URDU));
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "phrase"), query, 1);
         searchPage = getElementFactory().getSearchPage();
 
@@ -183,7 +183,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 			fail("Promotions summary has not appeared");
         }
 
-		PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails("phrase");
+		final PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails("phrase");
 		assertThat("Promotion created in the correct language", promotionsDetailPage.getLanguage(), is(Language.URDU.toString()));
 	}
 
@@ -230,11 +230,11 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstDocTitle));
 	}
 
-	private void checkAddTrigger(String trigger) {
-		List<String> beforeTriggers = triggerForm.getTriggersAsStrings();
+	private void checkAddTrigger(final String trigger) {
+		final List<String> beforeTriggers = triggerForm.getTriggersAsStrings();
 
 		triggerForm.addTrigger(trigger);
-		List<String> afterTriggers = triggerForm.getTriggersAsStrings();
+		final List<String> afterTriggers = triggerForm.getTriggersAsStrings();
 
 		assertThat(afterTriggers, hasSize(beforeTriggers.size() + 1));
 		assertThat(afterTriggers, hasItem(trigger));

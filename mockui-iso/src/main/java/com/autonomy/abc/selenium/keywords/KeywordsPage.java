@@ -16,7 +16,7 @@ import java.util.List;
 
 public abstract class KeywordsPage extends KeywordsBase {
 
-    public KeywordsPage(WebDriver driver) {
+    public KeywordsPage(final WebDriver driver) {
         super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
         waitForLoad();
     }
@@ -48,15 +48,15 @@ public abstract class KeywordsPage extends KeywordsBase {
         return keywordsContainer().getFirstKeywords();
     }
 
-    public List<WebElement> removeButtons(WebElement keywordGroup) {
+    public List<WebElement> removeButtons(final WebElement keywordGroup) {
         return keywordGroup.findElements(By.cssSelector("li .remove-keyword"));
     }
 
-    public WebElement synonymInGroup(String synonym){
+    public WebElement synonymInGroup(final String synonym){
         return findElement(By.xpath(".//div[contains(@class, 'keywords-list')]//li[@data-term='" + synonym + "']"));
     }
 
-    public WebElement synonymGroup(String synonym){
+    public WebElement synonymGroup(final String synonym){
         return ElementUtil.ancestor(synonymInGroup(synonym), 2);
     }
 
@@ -65,7 +65,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
     
     public void filterView(final KeywordFilter filter) {
-        WebDriverWait wait = new WebDriverWait(getDriver(),5);
+        final WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
         findElement(By.xpath("//*[contains(@class,'keywords-filters')]//a[text()='"+ filter.toString() +"']")).click();
         Waits.loadOrFadeWait();

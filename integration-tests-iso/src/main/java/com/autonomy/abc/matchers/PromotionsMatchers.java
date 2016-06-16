@@ -10,17 +10,17 @@ public class PromotionsMatchers {
     public static Matcher<? super PromotionsDetailPage> triggerList(final Matcher matcher) {
         return new TypeSafeMatcher<PromotionsDetailPage>() {
             @Override
-            protected boolean matchesSafely(PromotionsDetailPage promotionsDetailPage) {
+            protected boolean matchesSafely(final PromotionsDetailPage promotionsDetailPage) {
                 return matcher.matches(promotionsDetailPage.getTriggerForm().getTriggersAsStrings());
             }
 
             @Override
-            public void describeTo(Description description) {
+            public void describeTo(final Description description) {
                 description.appendText("trigger list is ").appendDescriptionOf(matcher);
             }
 
             @Override
-            public void describeMismatchSafely(PromotionsDetailPage item, Description description) {
+            public void describeMismatchSafely(final PromotionsDetailPage item, final Description description) {
                 matcher.describeMismatch(item.getTriggerForm().getTriggersAsStrings(), description);
             }
         };
@@ -29,17 +29,17 @@ public class PromotionsMatchers {
     public static Matcher<? super PromotionsPage> promotionsList(final Matcher matcher) {
         return new TypeSafeMatcher<PromotionsPage>() {
             @Override
-            protected boolean matchesSafely(PromotionsPage promotionsPage) {
+            protected boolean matchesSafely(final PromotionsPage promotionsPage) {
                 return matcher.matches(promotionsPage.promotionsList());
             }
 
             @Override
-            public void describeTo(Description description) {
+            public void describeTo(final Description description) {
                 description.appendText("promotions list is ").appendDescriptionOf(matcher);
             }
 
             @Override
-            public void describeMismatchSafely(PromotionsPage item, Description description) {
+            public void describeMismatchSafely(final PromotionsPage item, final Description description) {
                 matcher.describeMismatch(item.promotionsList(), description);
             }
         };

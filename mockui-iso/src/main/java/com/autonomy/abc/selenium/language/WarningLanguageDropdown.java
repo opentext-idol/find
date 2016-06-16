@@ -6,21 +6,26 @@ import org.slf4j.LoggerFactory;
 public class WarningLanguageDropdown implements LanguageDropdown {
     private final static Logger LOGGER = LoggerFactory.getLogger(WarningLanguageDropdown.class);
 
+    @Override
     public void open() {
         LOGGER.warn("cannot open language dropdown");
     }
 
+    @Override
     public void close() {}
 
+    @Override
     public boolean isOpen() {
         return false;
     }
 
+    @Override
     public Language getSelected() {
         return Language.ENGLISH;
     }
 
-    public void select(Language language) {
+    @Override
+    public void select(final Language language) {
         LOGGER.warn("cannot select language");
     }
 

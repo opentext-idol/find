@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ToolTips extends AppElement{
 
-    public ToolTips(WebDriver driver){
+    public ToolTips(final WebDriver driver){
         super(driver.findElement(By.tagName("body")),driver);
     }
 

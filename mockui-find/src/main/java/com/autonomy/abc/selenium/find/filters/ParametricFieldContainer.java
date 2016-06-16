@@ -12,7 +12,7 @@ import java.util.List;
 public class ParametricFieldContainer extends FilterContainer implements Iterable<FindParametricCheckbox> {
     private final WebDriver driver;
 
-    ParametricFieldContainer(WebElement element, WebDriver webDriver) {
+    ParametricFieldContainer(final WebElement element, final WebDriver webDriver) {
         super(element, webDriver);
         driver = webDriver;
     }
@@ -43,8 +43,8 @@ public class ParametricFieldContainer extends FilterContainer implements Iterabl
     }
 
     public List<FindParametricCheckbox> values() {
-        List<FindParametricCheckbox> boxes = new ArrayList<>();
-        for (WebElement el : getFullChildrenElements()) {
+        final List<FindParametricCheckbox> boxes = new ArrayList<>();
+        for (final WebElement el : getFullChildrenElements()) {
             boxes.add(new FindParametricCheckbox(el, driver));
         }
         return boxes;

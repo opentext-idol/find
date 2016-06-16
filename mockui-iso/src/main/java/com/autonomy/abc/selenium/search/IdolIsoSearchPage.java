@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IdolIsoSearchPage extends SearchPage {
-    private IdolIsoSearchPage(WebDriver driver) {
+    private IdolIsoSearchPage(final WebDriver driver) {
         super(driver);
     }
 
@@ -28,7 +28,7 @@ public class IdolIsoSearchPage extends SearchPage {
     }
 
     public boolean promotionsLabelsExist(){
-        return findElements(By.cssSelector(".promotions .promotion-name")).size()>0;
+        return !findElements(By.cssSelector(".promotions .promotion-name")).isEmpty();
     }
     @Override
     public IndexesTree indexesTree() {
@@ -60,7 +60,8 @@ public class IdolIsoSearchPage extends SearchPage {
             super(IdolIsoSearchPage.class);
         }
 
-        public IdolIsoSearchPage create(WebDriver context) {
+        @Override
+        public IdolIsoSearchPage create(final WebDriver context) {
             return new IdolIsoSearchPage(context);
         }
     }

@@ -27,16 +27,15 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.modalIs
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
-import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UserTestHelper {
-    private IsoApplication<?> app;
-    private AuthenticationStrategy authStrategy;
-    private UserService userService;
-    private TestConfig config;
-    private IsoElementFactory factory;
+    private final IsoApplication<?> app;
+    private final AuthenticationStrategy authStrategy;
+    private final UserService userService;
+    private final TestConfig config;
+    private final IsoElementFactory factory;
 
-    public UserTestHelper(IsoApplication<?> app, TestConfig config) {
+    public UserTestHelper(final IsoApplication<?> app, final TestConfig config) {
         this.app = app;
         this.authStrategy = config.getAuthenticationStrategy();
         this.userService = app.userService();
@@ -44,13 +43,13 @@ public class UserTestHelper {
         this.factory = app.elementFactory();
     }
 
-    public User singleSignUp(NewUser toCreate) {
-        UsersPage usersPage = factory.getUsersPage();
+    public User singleSignUp(final NewUser toCreate) {
+        final UsersPage usersPage = factory.getUsersPage();
 
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
         final ModalView newUserModal = usersPage.userCreationModal();
-        User user = usersPage.addNewUser(toCreate, Role.USER);
+        final User user = usersPage.addNewUser(toCreate, Role.USER);
         authStrategy.authenticate(user);
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
         verifyUserAdded(user);
@@ -59,19 +58,19 @@ public class UserTestHelper {
     }
 
 
-    public void signUpAndLoginAs(NewUser newUser, Window window) {
-        UsersPage usersPage = factory.getUsersPage();
+    public void signUpAndLoginAs(final NewUser newUser, final Window window) {
+        final UsersPage usersPage = factory.getUsersPage();
 
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
 
-        User user = usersPage.addNewUser(newUser, Role.USER);
+        final User user = usersPage.addNewUser(newUser, Role.USER);
         authStrategy.authenticate(user);
         usersPage.userCreationModal().close();
 
         try {
             Waits.waitForGritterToClear();
-        } catch (InterruptedException e) { /**/ }
+        } catch (final InterruptedException e) { /**/ }
 
         logoutAndNavigateToWebApp(window);
 
@@ -83,8 +82,8 @@ public class UserTestHelper {
         assertThat(window, url(not(containsString("login"))));
     }
 
-    public void deleteAndVerify(User user) {
-        UsersPage usersPage = factory.getUsersPage();
+    public void deleteAndVerify(final User user) {
+        final UsersPage usersPage = factory.getUsersPage();
         userService.deleteUser(user);
 
         if (!app.isHosted()) {
@@ -96,25 +95,25 @@ public class UserTestHelper {
         }
     }
 
-    public void verifyUserAdded(User user){
-        WebElement mostRecentNotification = new WebDriverWait(factory.getDriver(), 20)
+    public void verifyUserAdded(final User user){
+        final WebElement mostRecentNotification = new WebDriverWait(factory.getDriver(), 20)
                 .withMessage("waiting for user creation notification")
                 .until(GritterNotice.notificationAppears());
         verifyThat(mostRecentNotification, containsText("Created user " + user.getUsername()));
     }
 
-    public void logoutAndNavigateToWebApp(Window window) {
+    public void logoutAndNavigateToWebApp(final Window window) {
         if (app.loginService().getCurrentUser() != null) {
             app.loginService().logout();
         }
         window.goTo(config.getAppUrl(app));
     }
 
-    public void verifyCreateDeleteInTable(NewUser newUser) {
-        User user = userService.createNewUser(newUser, Role.USER);
-        String username = user.getUsername();
+    public void verifyCreateDeleteInTable(final NewUser newUser) {
+        final User user = userService.createNewUser(newUser, Role.USER);
+        final String username = user.getUsername();
 
-        UsersPage<?> usersPage = factory.getUsersPage();
+        final UsersPage<?> usersPage = factory.getUsersPage();
         verifyThat(usersPage.getUsernames(), hasItem(username));
 
         deleteAndVerify(user);

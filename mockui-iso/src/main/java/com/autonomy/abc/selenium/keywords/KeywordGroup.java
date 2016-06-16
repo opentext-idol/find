@@ -8,24 +8,24 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 
 public class KeywordGroup {
-    private String keywordString;
-    private KeywordWizardType type;
-    private Language language;
+    private final String keywordString;
+    private final KeywordWizardType type;
+    private final Language language;
 
-    public KeywordGroup(KeywordWizardType type, Language language, Iterable<String> keywords) {
+    public KeywordGroup(final KeywordWizardType type, final Language language, final Iterable<String> keywords) {
         this.keywordString = StringUtils.join(keywords, " ");
         this.type = type;
         this.language = language;
     }
 
-    public Wizard makeWizard(CreateNewKeywordsPage newKeywordsPage) {
+    public Wizard makeWizard(final CreateNewKeywordsPage newKeywordsPage) {
         return new KeywordWizard(newKeywordsPage);
     }
 
     private class KeywordWizard extends Wizard {
-        private CreateNewKeywordsPage page;
+        private final CreateNewKeywordsPage page;
 
-        private KeywordWizard(CreateNewKeywordsPage newKeywordsPage) {
+        private KeywordWizard(final CreateNewKeywordsPage newKeywordsPage) {
             page = newKeywordsPage;
             buildSteps();
         }
@@ -53,9 +53,9 @@ public class KeywordGroup {
     }
 
     private class TypeStep extends OptionWizardStep {
-        private CreateNewKeywordsPage page;
+        private final CreateNewKeywordsPage page;
 
-        public TypeStep(CreateNewKeywordsPage container) {
+        public TypeStep(final CreateNewKeywordsPage container) {
             super(container, "Select Type of Keywords", type.getOption());
             this.page = container;
         }
@@ -69,9 +69,9 @@ public class KeywordGroup {
     }
 
     private class InputStep implements WizardStep {
-        private CreateNewKeywordsPage page;
+        private final CreateNewKeywordsPage page;
 
-        public InputStep(CreateNewKeywordsPage container) {
+        public InputStep(final CreateNewKeywordsPage container) {
             this.page = container;
         }
 

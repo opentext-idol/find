@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HsodUserCreationModal extends UserCreationModal {
-    public HsodUserCreationModal(WebDriver driver) {
+    public HsodUserCreationModal(final WebDriver driver) {
         super(driver);
     }
 
@@ -16,6 +16,7 @@ public class HsodUserCreationModal extends UserCreationModal {
         return new FormInput(findElement(By.className("create-user-email-input")), getDriver());
     }
 
+    @Override
     public void createUser() {
         createButton().click();
         new WebDriverWait(getDriver(), 15)
@@ -25,7 +26,7 @@ public class HsodUserCreationModal extends UserCreationModal {
             .withMessage("clearing user input")
             .until(new ExpectedCondition<Boolean>() {
                 @Override
-                public Boolean apply(WebDriver driver) {
+                public Boolean apply(final WebDriver driver) {
                     return usernameInput().getValue().isEmpty();
                 }
             });

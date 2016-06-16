@@ -25,22 +25,22 @@ public enum Language {
     UNKNOWN("???");
 
     private final static Map<String, Language> inverse;
-    private String name;
+    private final String name;
 
     static {
         inverse = new HashMap<>();
-        for (Language language : Language.values()) {
+        for (final Language language : Language.values()) {
             inverse.put(language.toString().toLowerCase(), language);
         }
     }
 
-    Language(String name) {
+    Language(final String name) {
         this.name = name;
     }
 
     // TODO: restrict to default access
-    public static Language fromString(String language) {
-        Language found = inverse.get(language.toLowerCase());
+    public static Language fromString(final String language) {
+        final Language found = inverse.get(language.toLowerCase());
         return found == null ? UNKNOWN : found;
     }
 

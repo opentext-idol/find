@@ -5,15 +5,15 @@ import java.util.Collections;
 import java.util.List;
 
 public class Query {
-    private String term;
-    private List<QueryFilter> filters;
+    private final String term;
+    private final List<QueryFilter> filters;
 
-    public Query(String searchTerm) {
+    public Query(final String searchTerm) {
         term = searchTerm;
         filters = new ArrayList<>();
     }
 
-    public Query withFilter(QueryFilter filter) {
+    public Query withFilter(final QueryFilter filter) {
         filters.add(filter);
         return this;
     }
@@ -28,6 +28,6 @@ public class Query {
 
     @Override
     public String toString() {
-        return "Query<" + getTerm() + "|" + getFilters() + ">";
+        return "Query<" + getTerm() + '|' + getFilters() + '>';
     }
 }

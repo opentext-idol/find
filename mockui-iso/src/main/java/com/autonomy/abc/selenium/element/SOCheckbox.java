@@ -7,14 +7,16 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class SOCheckbox extends Checkbox {
-    public SOCheckbox(WebElement element, WebDriver driver) {
+    public SOCheckbox(final WebElement element, final WebDriver driver) {
         super(element, element.findElement(By.className("icheckbox_square-green")), driver);
     }
 
+    @Override
     public String getName() {
         return findElement(By.tagName("label")).getText();
     }
 
+    @Override
     public boolean isChecked() {
         return ElementUtil.hasClass("checked", getOuterBoxElement());
     }

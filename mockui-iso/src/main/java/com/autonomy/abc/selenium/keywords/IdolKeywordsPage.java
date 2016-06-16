@@ -6,7 +6,7 @@
  import org.openqa.selenium.WebDriver;
 
 public class IdolKeywordsPage extends KeywordsPage {
-    private IdolKeywordsPage(WebDriver driver) {
+    private IdolKeywordsPage(final WebDriver driver) {
         super(driver);
     }
 
@@ -20,7 +20,8 @@ public class IdolKeywordsPage extends KeywordsPage {
             super(IdolKeywordsPage.class);
         }
 
-        public IdolKeywordsPage create(WebDriver context) {
+        @Override
+        public IdolKeywordsPage create(final WebDriver context) {
             return new IdolKeywordsPage(context);
         }
     }

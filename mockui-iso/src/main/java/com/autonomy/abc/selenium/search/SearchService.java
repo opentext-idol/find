@@ -16,7 +16,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class SearchService extends ServiceBase<IsoElementFactory> implements QueryService<SearchPage> {
     SearchPage searchPage;
 
-    public SearchService(IsoApplication<?> application) {
+    public SearchService(final IsoApplication<?> application) {
         super(application);
     }
 
@@ -31,18 +31,18 @@ public class SearchService extends ServiceBase<IsoElementFactory> implements Que
     }
 
     @Override
-    public SearchPage search(String term) {
+    public SearchPage search(final String term) {
         return search(new Query(term));
     }
 
     //Is this service for the search page or for searching?
-    public void deleteDocument(String documentTitle){
+    public void deleteDocument(final String documentTitle){
         ElementUtil.ancestor(searchPage.findElement(By.linkText(documentTitle)), 2).findElement(By.className("delete")).click();
         new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining("was deleted"));
         searchPage.waitForSearchLoadIndicatorToDisappear();
     }
 
-    private void setSearchPage(SearchPage searchPage){
+    private void setSearchPage(final SearchPage searchPage){
         this.searchPage = searchPage;
     }
 }

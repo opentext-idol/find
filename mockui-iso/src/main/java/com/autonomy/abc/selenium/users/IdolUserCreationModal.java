@@ -6,7 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class IdolUserCreationModal extends UserCreationModal {
-    public IdolUserCreationModal(WebDriver driver) {
+    public IdolUserCreationModal(final WebDriver driver) {
         super(driver);
     }
 

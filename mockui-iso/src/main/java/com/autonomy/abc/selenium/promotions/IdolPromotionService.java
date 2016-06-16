@@ -4,7 +4,7 @@ import com.autonomy.abc.selenium.application.IsoApplication;
 import com.autonomy.abc.selenium.iso.IdolIsoElementFactory;
 
 public class IdolPromotionService extends PromotionService<IdolIsoElementFactory> {
-    public IdolPromotionService(IsoApplication<? extends IdolIsoElementFactory> application) {
+    public IdolPromotionService(final IsoApplication<? extends IdolIsoElementFactory> application) {
         super(application);
     }
 
@@ -20,12 +20,12 @@ public class IdolPromotionService extends PromotionService<IdolIsoElementFactory
     }
 
     @Override
-    public IdolPromotionsDetailPage goToDetails(String title) {
+    public IdolPromotionsDetailPage goToDetails(final String title) {
         return (IdolPromotionsDetailPage) super.goToDetails(title);
     }
 
     @Override
-    public IdolPromotionsDetailPage goToDetails(Promotion promotion) {
+    public IdolPromotionsDetailPage goToDetails(final Promotion promotion) {
         return (IdolPromotionsDetailPage) super.goToDetails(promotion);
     }
 }

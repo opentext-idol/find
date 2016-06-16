@@ -6,7 +6,7 @@ import org.openqa.selenium.WebDriver;
 
 public class SideNavBar extends AppElement {
 
-    public SideNavBar(WebDriver driver){
+    public SideNavBar(final WebDriver driver){
         super(driver.findElement(By.cssSelector(".navbar-static-side")), driver);
     }
 

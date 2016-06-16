@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.notNullValue;
  */
 public class HsodLoginPageITCase extends IsoHsodTestBase {
 
-    public HsodLoginPageITCase(TestConfig config) {
+    public HsodLoginPageITCase(final TestConfig config) {
         super(config);
         setInitialUser(User.NULL);
     }
@@ -61,11 +61,11 @@ public class HsodLoginPageITCase extends IsoHsodTestBase {
         testLogin("hp_passport");
     }
 
-    private void testLogin(String account) {
+    private void testLogin(final String account) {
         try {
             getApplication().loginService().login(getConfig().getUser(account));
             verifyThat("on promotions page", getElementFactory().getPromotionsPage(), notNullValue());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new AssertionError("unable to log in as " + account, e);
         }
     }

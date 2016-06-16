@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
 import org.openqa.selenium.WebDriver;
 
 public class HsodKeywordsPage extends KeywordsPage {
-    private HsodKeywordsPage(WebDriver driver) {
+    private HsodKeywordsPage(final WebDriver driver) {
         super(driver);
     }
 
@@ -21,7 +21,7 @@ public class HsodKeywordsPage extends KeywordsPage {
         }
 
         @Override
-        public HsodKeywordsPage create(WebDriver context) {
+        public HsodKeywordsPage create(final WebDriver context) {
             return new HsodKeywordsPage(context);
         }
     }

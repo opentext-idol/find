@@ -20,7 +20,7 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
     private final WebElement inputContainer;
     private final FormInput input;
 
-    public FindTopNavBar(WebDriver driver) {
+    public FindTopNavBar(final WebDriver driver) {
         this.driver = driver;
         this.header = driver.findElement(By.className("header"));
         this.inputContainer = driver.findElement(By.className("input-view-container"));
@@ -34,7 +34,7 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
         Waits.loadOrFadeWait();
     }
 
-    void search(String term) {
+    void search(final String term) {
         input.clear();
         input.setAndSubmit(term);
     }
@@ -48,29 +48,29 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
     }
 
     public List<Removable> additionalConcepts() {
-        List<Removable> removables = new ArrayList<>();
-        for (WebElement concept : additionalConceptElements()) {
+        final List<Removable> removables = new ArrayList<>();
+        for (final WebElement concept : additionalConceptElements()) {
             removables.add(new HPRemovable(concept, driver));
         }
         return removables;
     }
 
-    public Removable additionalConcept(String conceptText) {
-        WebElement concept = ElementUtil.ancestor(inputContainer.findElement(new Locator()
+    public Removable additionalConcept(final String conceptText) {
+        final WebElement concept = ElementUtil.ancestor(inputContainer.findElement(new Locator()
                 .havingClass("selected-related-concept")
                 .containingCaseInsensitive(conceptText)), 1);
         return new HPRemovable(concept, driver);
     }
 
     public void closeFirstConcept(){
-        WebElement firstConcept = inputContainer.findElement(By.cssSelector(".additional-concepts div:first-child"));
+        final WebElement firstConcept = inputContainer.findElement(By.cssSelector(".additional-concepts div:first-child"));
         firstConcept.findElement(By.className("hp-close")).click();
     }
 
     public List<String> getAlsoSearchingForTerms() {
-        List<String> badFormatText = ElementUtil.getTexts(additionalConceptElements());
-        List<String> goodFormatText = new ArrayList<>();
-        for(String entry: badFormatText){goodFormatText.add(entry.toLowerCase());}
+        final List<String> badFormatText = ElementUtil.getTexts(additionalConceptElements());
+        final List<String> goodFormatText = new ArrayList<>();
+        for(final String entry: badFormatText){goodFormatText.add(entry.toLowerCase());}
         return goodFormatText;
     }
 

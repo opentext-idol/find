@@ -4,12 +4,12 @@ import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 
 class NewDocumentDetailsStep implements WizardStep {
     private static final String TITLE = "Document details";
-    private String docTitle;
-    private String docContent;
+    private final String docTitle;
+    private final String docContent;
 
-    private HsodCreateNewPromotionsPage page;
+    private final HsodCreateNewPromotionsPage page;
 
-    NewDocumentDetailsStep(HsodCreateNewPromotionsPage createNewPromotionsPage, String title, String content) {
+    NewDocumentDetailsStep(final HsodCreateNewPromotionsPage createNewPromotionsPage, final String title, final String content) {
         docTitle = title;
         docContent = content;
         page = createNewPromotionsPage;

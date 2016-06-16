@@ -8,12 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class IdolCreateNewPromotionsPage extends CreateNewPromotionsPage {
-    private IdolCreateNewPromotionsPage(WebDriver driver) {
+    private IdolCreateNewPromotionsPage(final WebDriver driver) {
         super(driver);
     }
 
     @Override
-    public List<WizardStep> getWizardSteps(SpotlightPromotion promotion) {
+    public List<WizardStep> getWizardSteps(final SpotlightPromotion promotion) {
         return Arrays.asList(
             new OptionWizardStep(this, "Promotion type", promotion.getTypeOption()),
             new OptionWizardStep(this, "Promotion details", promotion.getSpotlightTypeOption()),
@@ -26,7 +26,8 @@ public class IdolCreateNewPromotionsPage extends CreateNewPromotionsPage {
             super(IdolCreateNewPromotionsPage.class);
         }
 
-        public IdolCreateNewPromotionsPage create(WebDriver context) {
+        @Override
+        public IdolCreateNewPromotionsPage create(final WebDriver context) {
             return new IdolCreateNewPromotionsPage(context);
         }
     }

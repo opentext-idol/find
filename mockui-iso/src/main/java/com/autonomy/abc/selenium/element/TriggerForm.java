@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TriggerForm extends AppElement {
-    public TriggerForm(WebElement element, WebDriver driver) {
+    public TriggerForm(final WebElement element, final WebDriver driver) {
         super(element, driver);
     }
 
@@ -21,7 +21,7 @@ public class TriggerForm extends AppElement {
         return new FormInput(findElement(By.name("words")), getDriver());
     }
 
-    public void addTrigger(String trigger) {
+    public void addTrigger(final String trigger) {
         triggerAddBox().setAndSubmit(trigger);
         Waits.loadOrFadeWait();
     }
@@ -30,11 +30,11 @@ public class TriggerForm extends AppElement {
         return findElement(By.tagName("button"));
     }
 
-    public void typeTriggerWithoutSubmit(String trigger){
+    public void typeTriggerWithoutSubmit(final String trigger){
         triggerAddBox().setValue(trigger);
     }
 
-    public void typeTriggerWithoutSubmit(Keys... keys){
+    public void typeTriggerWithoutSubmit(final Keys... keys){
         triggerAddBox().getElement().sendKeys(keys);
     }
 
@@ -47,11 +47,11 @@ public class TriggerForm extends AppElement {
     }
 
     /* Removing triggers */
-    public void removeTrigger(String trigger) {
+    public void removeTrigger(final String trigger) {
         trigger(trigger).removeAndWait();
     }
 
-    public void removeTriggerAsync(String trigger) {
+    public void removeTriggerAsync(final String trigger) {
         trigger(trigger).removeAsync();
     }
 
@@ -60,7 +60,7 @@ public class TriggerForm extends AppElement {
         return new LabelBox(findElement(By.cssSelector("[data-id='" + triggerName.toLowerCase().replace("\"","") + "']")), getDriver());
     }
 
-    public void clickTrigger(String trigger) {
+    public void clickTrigger(final String trigger) {
         trigger(trigger).click();
     }
 
@@ -87,12 +87,12 @@ public class TriggerForm extends AppElement {
     public String getTriggerError() {
         try {
             return findElement(By.cssSelector(".help-block")).getText();
-        } catch (NoSuchElementException e) {
+        } catch (final NoSuchElementException e) {
             return null;
         }
     }
 
-    public String getTriggerStringOnPage(String trigger) {
+    public String getTriggerStringOnPage(final String trigger) {
         return trigger(trigger).getText();
     }
 }

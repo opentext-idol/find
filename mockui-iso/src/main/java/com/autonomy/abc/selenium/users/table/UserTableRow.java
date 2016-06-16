@@ -10,7 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public abstract class UserTableRow extends AppElement {
-    public UserTableRow(WebElement element, WebDriver driver) {
+    public UserTableRow(final WebElement element, final WebDriver driver) {
         super(element, driver);
     }
 
@@ -18,7 +18,7 @@ public abstract class UserTableRow extends AppElement {
         return editableUsername().getValue().trim();
     }
 
-    public void changeUsernameTo(String newUsername) {
+    public void changeUsernameTo(final String newUsername) {
         editableUsername().setValueAndWait(newUsername);
     }
 
@@ -39,7 +39,7 @@ public abstract class UserTableRow extends AppElement {
     }
 
     public boolean isConfirmed() {
-        String statusString = findElement(By.className("account-status")).getText();
+        final String statusString = findElement(By.className("account-status")).getText();
         return Status.fromString(statusString).equals(Status.CONFIRMED);
     }
 

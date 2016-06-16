@@ -30,7 +30,7 @@ public class KeywordLanguageITCase extends IdolIsoTestBase {
     private KeywordsPage keywordsPage;
     private SearchPage searchPage;
 
-    public KeywordLanguageITCase(TestConfig config) {
+    public KeywordLanguageITCase(final TestConfig config) {
         super(config);
     }
 
@@ -48,7 +48,7 @@ public class KeywordLanguageITCase extends IdolIsoTestBase {
     public void testOnlyLanguagesWithDocumentsAvailableOnSearchPage() {
         keywordService.addBlacklistTerms(Language.AZERI, "Baku");
 
-        SearchPage searchPage = getApplication().searchService().search("Baku");
+        final SearchPage searchPage = getApplication().searchService().search("Baku");
         assertThat(searchPage.getLanguageList(), not(hasItem("Azeri")));
     }
 
@@ -84,7 +84,7 @@ public class KeywordLanguageITCase extends IdolIsoTestBase {
         searchPage.createSynonymsLink().click();
         Waits.loadOrFadeWait();
         assertThat(getWindow(), urlContains("keywords/create"));
-        CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+        final CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
         createKeywordsPage.getTriggerForm().addTrigger("韩国");
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(createKeywordsPage.enabledFinishWizardButton())).click();
@@ -101,8 +101,8 @@ public class KeywordLanguageITCase extends IdolIsoTestBase {
         verifyThat("synonym assigned to correct language", keywordsPage, containsText("韩国"));
     }
 
-    private void search(String searchTerm, Language language) {
-        Query query = new Query(searchTerm).withFilter(new LanguageFilter(language));
+    private void search(final String searchTerm, final Language language) {
+        final Query query = new Query(searchTerm).withFilter(new LanguageFilter(language));
         searchPage = getApplication().searchService().search(query);
     }
 }

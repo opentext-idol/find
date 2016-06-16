@@ -29,7 +29,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
     private FindService findService;
     private SavedSearchService saveService;
 
-    public SavedSearchITCase(TestConfig config) {
+    public SavedSearchITCase(final TestConfig config) {
         super(config);
     }
 
@@ -55,7 +55,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         saveService.saveCurrentAs("save me", SearchType.QUERY);
 
-        SearchTab currentTab = searchTabBar.currentTab();
+        final SearchTab currentTab = searchTabBar.currentTab();
         assertThat(currentTab.getTitle(), is("save me"));
         assertThat(currentTab.getTitle(), not(containsString("New Search")));
         assertThat(currentTab, not(modified()));
@@ -67,7 +67,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         saveService.saveCurrentAs("snap", SearchType.SNAPSHOT);
 
-        List<SearchTab> tabs = searchTabBar.tabs();
+        final List<SearchTab> tabs = searchTabBar.tabs();
         assertThat(tabs, hasSize(2));
         assertThat(tabs.get(0), is(modified()));
         assertThat(tabs.get(0).getType(), is(SearchType.QUERY));
@@ -94,7 +94,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
     public void testDuplicateNamesPrevented() {
         saveService.saveCurrentAs("duplicate", SearchType.QUERY);
         saveService.openNewTab();
-        SearchOptionsBar options = getElementFactory().getSearchOptionsBar();
+        final SearchOptionsBar options = getElementFactory().getSearchOptionsBar();
 
         options.saveAsButton().click();
         options.searchTitleInput().setValue("duplicate");
@@ -111,12 +111,12 @@ public class SavedSearchITCase extends IdolFindTestBase {
         findService.search(new Query("live forever").withFilter(new ParametricFilter("OVERALL VIBE", "POSITIVE")));
         saveService.saveCurrentAs("oasis", SearchType.QUERY);
 
-        IdolFind other = new IdolFind();
+        final IdolFind other = new IdolFind();
         launchInNewSession(other);
         other.loginService().login(getConfig().getDefaultUser());
         other.findService().search("blur");
 
-        IdolFindElementFactory factory = other.elementFactory();
+        final IdolFindElementFactory factory = other.elementFactory();
         factory.getSearchTabBar().tab("oasis").activate();
         factory.getFilterPanel().waitForParametricFields();
         assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
@@ -126,12 +126,12 @@ public class SavedSearchITCase extends IdolFindTestBase {
     private static Matcher<SearchTab> modified() {
         return new TypeSafeMatcher<SearchTab>() {
             @Override
-            protected boolean matchesSafely(SearchTab searchTab) {
+            protected boolean matchesSafely(final SearchTab searchTab) {
                 return searchTab.isNew();
             }
 
             @Override
-            public void describeTo(Description description) {
+            public void describeTo(final Description description) {
                 description.appendText("a modified tab");
             }
         };

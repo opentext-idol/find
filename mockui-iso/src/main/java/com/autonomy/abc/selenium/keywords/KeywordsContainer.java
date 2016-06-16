@@ -12,19 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KeywordsContainer extends AppElement {
-    public KeywordsContainer(WebElement element, WebDriver driver) {
+    public KeywordsContainer(final WebElement element, final WebDriver driver) {
         super(element, driver);
     }
 
-    public SynonymGroup synonymGroupContaining(String synonym) {
-        WebElement termBox = findElement(By.cssSelector("[data-term='" + synonym.toLowerCase() + "']"));
+    public SynonymGroup synonymGroupContaining(final String synonym) {
+        final WebElement termBox = findElement(By.cssSelector("[data-term='" + synonym.toLowerCase() + "']"));
         return new SynonymGroup(ElementUtil.ancestor(termBox, 2), getDriver());
     }
 
     public List<SynonymGroup> synonymGroups() {
-        List<SynonymGroup> groups = new ArrayList<>();
-        for (WebElement child : findElements(By.cssSelector("li .add-synonym-wrapper"))) {
-            WebElement group = ElementUtil.ancestor(child, 1);
+        final List<SynonymGroup> groups = new ArrayList<>();
+        for (final WebElement child : findElements(By.cssSelector("li .add-synonym-wrapper"))) {
+            final WebElement group = ElementUtil.ancestor(child, 1);
             groups.add(new SynonymGroup(group, getDriver()));
         }
         return groups;
@@ -39,8 +39,8 @@ public class KeywordsContainer extends AppElement {
     }
 
     public List<Removable> keywords() {
-        List<Removable> keywords = new ArrayList<>();
-        for (WebElement element : keywordElements()) {
+        final List<Removable> keywords = new ArrayList<>();
+        for (final WebElement element : keywordElements()) {
             keywords.add(new LabelBox(element, getDriver()));
         }
         return keywords;

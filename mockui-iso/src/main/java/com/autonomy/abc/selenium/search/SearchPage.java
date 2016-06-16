@@ -30,7 +30,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 		super(waitForLoad(driver), driver);
 	}
 
-	private static WebElement waitForLoad(WebDriver driver) {
+	private static WebElement waitForLoad(final WebDriver driver) {
 		return new WebDriverWait(driver, 30)
 				.withMessage("loading search page")
 				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".wrapper-content [data-pagename='search']")));
@@ -44,7 +44,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 	/* title */
 	// "Results for _____ (123)"
 	public String getHeadingSearchTerm() {
-		WebElement heading = getDriver().findElement(By.cssSelector(".heading > b"));
+		final WebElement heading = getDriver().findElement(By.cssSelector(".heading > b"));
 		DriverUtil.scrollIntoView(getDriver(), heading);
 		return heading.getText();
 	}
@@ -81,13 +81,14 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 	}
 
 	private Dropdown sortDropdown() {
-		WebElement dropdownContainer = new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results-sort")));
+		final WebElement dropdownContainer = new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results-sort")));
 		return new Dropdown(dropdownContainer, getDriver());
 	}
 
 	protected abstract LanguageDropdown languageDropdown();
 
-	public void selectLanguage(final Language language) {
+	@Override
+    public void selectLanguage(final Language language) {
 		languageDropdown().select(language);
 		waitForSearchLoadIndicatorToDisappear();
 	}
@@ -135,8 +136,8 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 	/* promoted results */
 	public List<IsoSearchResult> getPromotedResults() {
 		waitForPromotionsLoadIndicatorToDisappear();
-		List<IsoSearchResult> results = new ArrayList<>();
-		for(WebElement result : findElements(By.cssSelector(".promotions-list li"))){
+		final List<IsoSearchResult> results = new ArrayList<>();
+		for(final WebElement result : findElements(By.cssSelector(".promotions-list li"))){
 			results.add(new IsoSearchResult(result, getDriver()));
 		}
 		return results;
@@ -144,7 +145,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 
 	public IsoSearchResult getPromotedResult(final int resultNumber) {
 		waitForPromotionsLoadIndicatorToDisappear();
-		return new IsoSearchResult(findElement(By.cssSelector(".promotions-list li:nth-child(" + resultNumber + ")")), getDriver());
+		return new IsoSearchResult(findElement(By.cssSelector(".promotions-list li:nth-child(" + resultNumber + ')')), getDriver());
 	}
 
 	public WebElement promotionsSummary() {
@@ -190,12 +191,12 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 		return ElementUtil.getTexts(findElements(By.cssSelector(".promotions-list h3 a")));
 	}
 
-	public WebElement promotedDocumentTitle(int number) {
+	public WebElement promotedDocumentTitle(final int number) {
 		return promotedResult(number).findElement(By.tagName("h3"));
 	}
 
-	public WebElement promotedResult(int number) {
-		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + String.valueOf(number) + ")")));
+	public WebElement promotedResult(final int number) {
+		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + String.valueOf(number) + ')')));
 	}
 
 	public boolean isPromotionsBoxVisible() {
@@ -220,12 +221,12 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 		return findElement(By.className("show-less"));
 	}
 
-	public void switchPromotionPage(Pagination pagination) {
+	public void switchPromotionPage(final Pagination pagination) {
 		DriverUtil.scrollIntoViewAndClick(getDriver(), promotionPaginationButton(pagination));
 		waitForPromotionsLoadIndicatorToDisappear();
 	}
 
-	public WebElement promotionPaginationButton(Pagination pagination) {
+	public WebElement promotionPaginationButton(final Pagination pagination) {
 		return pagination.findInside(promotionsPagination());
 	}
 
@@ -234,8 +235,8 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 	}
 
 	/* search results */
-	public List<String> getSearchResultTitles(int numberOfResults){
-        List<String> titles = new ArrayList<>();
+	public List<String> getSearchResultTitles(final int numberOfResults){
+        final List<String> titles = new ArrayList<>();
 
         for(int i = 0; i < numberOfResults; i++){
             titles.add(getSearchResult((i % 6) + 1).getTitleString());
@@ -249,7 +250,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 	}
 
 	@Override
-	protected WebElement searchResultCheckboxElement(int resultNumber) {
+	protected WebElement searchResultCheckboxElement(final int resultNumber) {
 		// TODO: find others like this, avoid repetition
 		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-results li:nth-child(" + resultNumber + ") label")));
 	}
@@ -260,7 +261,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 
 	/* keywords */
 	public List<String> youSearchedFor() {
-		WebElement searchTermsList = findElement(By.className("search-terms-list"));
+		final WebElement searchTermsList = findElement(By.className("search-terms-list"));
 		DriverUtil.scrollIntoView(getDriver(), searchTermsList);
 		return ElementUtil.getTexts(searchTermsList.findElements(By.tagName("span")));
 	}
@@ -273,11 +274,11 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 		return findElement(By.xpath(".//a[text() = 'create synonyms']"));
 	}
 
-	public List<String> getSynonymGroupSynonyms(String synonym) {
+	public List<String> getSynonymGroupSynonyms(final String synonym) {
 		return synonymGroupContaining(synonym).getSynonyms();
 	}
 
-	public SynonymGroup synonymGroupContaining(String term) {
+	public SynonymGroup synonymGroupContaining(final String term) {
 		return keywordsContainer().synonymGroupContaining(term);
 	}
 
@@ -291,21 +292,21 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 
 	public List<String> getFirstSynonymInGroup() {
 		final List<String> leadSynonyms = new ArrayList<>();
-		for(SynonymGroup group : keywordsContainer().synonymGroups()){
+		for(final SynonymGroup group : keywordsContainer().synonymGroups()){
 			leadSynonyms.add(group.getSynonyms().get(0));
 		}
 		return leadSynonyms;
 	}
 
-	public void addSynonymToGroup(String newSynonym, SynonymGroup group) {
+	public void addSynonymToGroup(final String newSynonym, final SynonymGroup group) {
 		group.add(newSynonym);
 	}
 
-	public void deleteSynonym(String toDelete, SynonymGroup group) {
+	public void deleteSynonym(final String toDelete, final SynonymGroup group) {
 		group.remove(toDelete);
 	}
 
-	public void deleteSynonym(String toDelete) {
+	public void deleteSynonym(final String toDelete) {
 		deleteSynonym(toDelete, synonymGroupContaining(toDelete));
 	}
 
@@ -318,19 +319,19 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 	}
 
 	public String getKeywordError() {
-		WebElement firstError = findElement(By.className("keywords-invalid"));
+		final WebElement firstError = findElement(By.className("keywords-invalid"));
 		if (firstError.isDisplayed()) {
 			return firstError.getText();
 		}
 		try {
 			return findElement(By.className("search-synonyms-error")).getText();
-		} catch (NoSuchElementException e) {
+		} catch (final NoSuchElementException e) {
 			return null;
 		}
 	}
 
 	//filters
-	private WebElement getFilterSausage(String dataID){
+	private WebElement getFilterSausage(final String dataID){
 		return findElement(By.cssSelector(".filter-display-view [data-id='"+dataID+"']"));
 	}
 
@@ -339,8 +340,8 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 	}
 
 	/* parametric values */
-	public SOCheckbox parametricTypeCheckbox(String category, String field) {
-		WebElement checkbox = findElement(By.cssSelector("[data-field='" + category.toLowerCase().replace(" ","_") + "'] [data-value='" + field.toUpperCase() + "']"));
+	public SOCheckbox parametricTypeCheckbox(final String category, final String field) {
+		final WebElement checkbox = findElement(By.cssSelector("[data-field='" + category.toLowerCase().replace(" ","_") + "'] [data-value='" + field.toUpperCase() + "']"));
 		return new SOCheckbox(checkbox, getDriver());
 	}
 

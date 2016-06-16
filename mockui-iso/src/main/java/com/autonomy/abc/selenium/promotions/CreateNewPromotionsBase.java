@@ -45,7 +45,7 @@ public abstract class CreateNewPromotionsBase extends SOPageBase {
 	}
 
 	// "visited" by the promotion
-	public List<WizardStep> getWizardSteps(DynamicPromotion promotion) {
+	public List<WizardStep> getWizardSteps(final DynamicPromotion promotion) {
 		return Arrays.asList(
 				new OptionWizardStep(this, "Spotlight type", promotion.getSpotlightType().getOption()),
 				new SearchTriggerStep(this, promotion.getTrigger())

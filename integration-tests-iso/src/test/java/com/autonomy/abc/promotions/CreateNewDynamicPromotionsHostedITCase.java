@@ -27,7 +27,7 @@ public class CreateNewDynamicPromotionsHostedITCase extends IsoHsodTestBase {
 
     private SearchService searchService;
 
-    public CreateNewDynamicPromotionsHostedITCase(TestConfig config) {
+    public CreateNewDynamicPromotionsHostedITCase(final TestConfig config) {
         super(config);
     }
 
@@ -45,12 +45,12 @@ public class CreateNewDynamicPromotionsHostedITCase extends IsoHsodTestBase {
     // sharing the whole test?
     @Test
     public void testDynamicPromotionCreation() {
-        SearchPage searchPage = searchService.search(new Query("bugs"));
+        final SearchPage searchPage = searchService.search(new Query("bugs"));
 
         final String firstDocTitle = searchPage.getSearchResult(1).getTitleString();
         searchPage.promoteThisQueryButton().click();
 
-        HsodCreateNewPromotionsPage dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        final HsodCreateNewPromotionsPage dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         Waits.loadOrFadeWait();
 
         assertThat(getWindow(), urlContains("promotions/create-dynamic/"));
@@ -85,11 +85,11 @@ public class CreateNewDynamicPromotionsHostedITCase extends IsoHsodTestBase {
         assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstDocTitle));
     }
 
-    private void checkAddTrigger(String trigger) {
-        List<String> beforeTriggers = triggerForm.getTriggersAsStrings();
+    private void checkAddTrigger(final String trigger) {
+        final List<String> beforeTriggers = triggerForm.getTriggersAsStrings();
 
         triggerForm.addTrigger(trigger);
-        List<String> afterTriggers = triggerForm.getTriggersAsStrings();
+        final List<String> afterTriggers = triggerForm.getTriggersAsStrings();
 
         assertThat(afterTriggers, hasSize(beforeTriggers.size() + 1));
         assertThat(afterTriggers, hasItem(trigger));

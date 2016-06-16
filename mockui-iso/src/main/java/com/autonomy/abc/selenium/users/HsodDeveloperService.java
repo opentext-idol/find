@@ -6,23 +6,18 @@ import com.autonomy.abc.selenium.auth.HsodUserBuilder;
 import com.autonomy.abc.selenium.hsod.IsoHsodElementFactory;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HsodDeveloperService extends ServiceBase<IsoHsodElementFactory> {
-    private HsodDevelopersPage devsPage;
 
-    public HsodDeveloperService(IsoApplication<? extends IsoHsodElementFactory> application){
+    public HsodDeveloperService(final IsoApplication<? extends IsoHsodElementFactory> application){
         super(application);
     }
 
     public HsodDevelopersPage goToDevs(){
-        devsPage = getApplication().switchTo(HsodDevelopersPage.class);
-        return devsPage;
+        return getApplication().switchTo(HsodDevelopersPage.class);
     }
 
-    public User editUsername(User user, String newUsername) {
+    public User editUsername(final User user, final String newUsername) {
         goToDevs().getUserRow(user).changeUsernameTo(newUsername);
         Waits.loadOrFadeWait();
         return new HsodUserBuilder(user)

@@ -15,7 +15,7 @@ public class SearchOptionsBar {
     private final WebDriver driver;
     private final WebElement bar;
 
-    public SearchOptionsBar(WebDriver driver) {
+    public SearchOptionsBar(final WebDriver driver) {
         this.driver = driver;
         this.bar = driver.findElement(By.cssSelector(".full-height-viewport:not(.hide) .search-options-container"));
     }
@@ -29,7 +29,7 @@ public class SearchOptionsBar {
     }
 
     void confirmSave() {
-        WebElement confirmButton = saveConfirmButton();
+        final WebElement confirmButton = saveConfirmButton();
         confirmButton.click();
         new WebDriverWait(driver, 20)
                 .withMessage("saving a search")
@@ -44,7 +44,7 @@ public class SearchOptionsBar {
         return findElement(By.className("search-title-error-message")).getText();
     }
 
-    public WebElement searchTypeButton(SearchType type) {
+    public WebElement searchTypeButton(final SearchType type) {
         return ElementUtil.ancestor(findElement(By.cssSelector("input[type='radio'][value='" + type + "']")), 2);
     }
 
@@ -57,18 +57,18 @@ public class SearchOptionsBar {
     }
 
     private Dropdown extraOptions() {
-        WebElement dropdown = findElement(By.cssSelector("[data-toggle=dropdown]"));
+        final WebElement dropdown = findElement(By.cssSelector("[data-toggle=dropdown]"));
         return new Dropdown(ElementUtil.getParent(dropdown), driver);
     }
 
     void confirmDelete() {
-        WebElement deleteModal = new WebDriverWait(driver, 10)
+        final WebElement deleteModal = new WebDriverWait(driver, 10)
                 .until(visibilityOfElementLocated(By.className("modal-content")));
         deleteModal.findElement(By.className("okButton")).click();
         new WebDriverWait(driver, 10).until(stalenessOf(deleteModal));
     }
 
-    private WebElement findElement(By locator) {
+    private WebElement findElement(final By locator) {
         return bar.findElement(locator);
     }
 }

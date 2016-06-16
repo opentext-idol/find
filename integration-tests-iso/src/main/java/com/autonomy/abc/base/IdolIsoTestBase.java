@@ -15,7 +15,7 @@ import java.util.Collections;
 @Ignore
 @RunWith(Parameterized.class)
 public abstract class IdolIsoTestBase extends HybridAppTestBase<IdolIsoApplication, IdolIsoElementFactory> {
-    public IdolIsoTestBase(TestConfig config) {
+    public IdolIsoTestBase(final TestConfig config) {
         super(config, new IdolIsoApplication());
         setPostLoginHook(new IsoPostLoginHook(getApplication()));
     }

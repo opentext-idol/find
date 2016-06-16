@@ -25,7 +25,7 @@ public abstract class CreateNewKeywordsPage extends SOPageBase {
 		waitForLoad(getDriver());
 	}
 
-	protected static WebElement waitForLoad(WebDriver driver) {
+	protected static WebElement waitForLoad(final WebDriver driver) {
 		return new WebDriverWait(driver,30)
 				.withMessage("waiting for keywords wizard to load")
 				.until(ExpectedConditions.visibilityOf(containerElement(driver)));
@@ -36,10 +36,10 @@ public abstract class CreateNewKeywordsPage extends SOPageBase {
 	}
 
 	public List<List<String>> getExistingSynonymGroups() {
-		List<List<String>> groups = new ArrayList<>();
-		for(WebElement group : findElements(By.cssSelector(".keywords-existing-synonyms-list .keywords-sub-list"))){
-			List<String> terms = new ArrayList<>();
-			for(WebElement term : group.findElements(By.tagName("li"))){
+		final List<List<String>> groups = new ArrayList<>();
+		for(final WebElement group : findElements(By.cssSelector(".keywords-existing-synonyms-list .keywords-sub-list"))){
+			final List<String> terms = new ArrayList<>();
+			for(final WebElement term : group.findElements(By.tagName("li"))){
 				terms.add(term.getText());
 			}
 
@@ -94,10 +94,10 @@ public abstract class CreateNewKeywordsPage extends SOPageBase {
 
 	protected abstract LanguageDropdown languageDropdown();
 
-	private static WebElement containerElement(WebDriver driver) {
+	private static WebElement containerElement(final WebDriver driver) {
 		// this ensures that we get the keywords wizard, not any other (promotions) wizard
-		WebElement keywordsContainer = driver.findElement(By.className("keywords-container"));
-		WebElement parent = ElementUtil.ancestor(keywordsContainer, 1);
+		final WebElement keywordsContainer = driver.findElement(By.className("keywords-container"));
+		final WebElement parent = ElementUtil.ancestor(keywordsContainer, 1);
 		return parent.findElement(By.className("pd-wizard"));
 	}
 

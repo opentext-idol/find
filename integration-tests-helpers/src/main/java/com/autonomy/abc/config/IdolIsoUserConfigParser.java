@@ -9,27 +9,27 @@ import org.openqa.selenium.WebDriver;
 
 public class IdolIsoUserConfigParser implements UserConfigParser<JsonNode> {
     @Override
-    public User parseUser(JsonNode userNode) {
-        String username = userNode.path("username").asText();
-        IdolIsoAccount auth = new IdolIsoAccount(username, userNode.path("password").asText());
-        Role role = Role.fromString(userNode.path("role").asText());
+    public User parseUser(final JsonNode userNode) {
+        final String username = userNode.path("username").asText();
+        final IdolIsoAccount auth = new IdolIsoAccount(username, userNode.path("password").asText());
+        final Role role = Role.fromString(userNode.path("role").asText());
         return new User(auth, username, role);
     }
 
     @Override
-    public NewUser parseNewUser(JsonNode newUserNode) {
-        String username = newUserNode.path("username").asText();
-        String password = newUserNode.path("password").asText();
+    public NewUser parseNewUser(final JsonNode newUserNode) {
+        final String username = newUserNode.path("username").asText();
+        final String password = newUserNode.path("password").asText();
         return new IdolIsoNewUser(username, password);
     }
 
     @Override
-    public NewUser generateNewUser(String identifier) {
+    public NewUser generateNewUser(final String identifier) {
         return new IdolIsoNewUser(identifier, "pw");
     }
 
     @Override
-    public AuthenticationStrategy getAuthenticationStrategy(Factory<WebDriver> driverFactory) {
+    public AuthenticationStrategy getAuthenticationStrategy(final Factory<WebDriver> driverFactory) {
         return NullAuthenticationStrategy.getInstance();
     }
 }

@@ -13,13 +13,13 @@ import java.util.Date;
 public class SchedulePromotionService<T extends IdolIsoElementFactory> extends ServiceBase<T> {
     private SchedulePage schedulePage;
 
-    public SchedulePromotionService(IsoApplication<? extends T> application) {
+    public SchedulePromotionService(final IsoApplication<? extends T> application) {
         super(application);
     }
 
     //starting from promotion details
     public SchedulePage goToSchedule(){
-        IdolPromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+        final IdolPromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
         promotionsDetailPage.schedulePromotion();
         return getElementFactory().getSchedulePage();
     }
@@ -68,30 +68,30 @@ public class SchedulePromotionService<T extends IdolIsoElementFactory> extends S
         Waits.loadOrFadeWait();
     }
 
-    public void scheduleDurationSelector(WebElement calendarButton, Date date){
-        DatePicker datePicker = openDatePicker(calendarButton);
+    public void scheduleDurationSelector(final WebElement calendarButton, final Date date){
+        final DatePicker datePicker = openDatePicker(calendarButton);
         datePicker.calendarDateSelect(date);
         calendarButton.click();
     }
 
-    public DatePicker openDatePicker(WebElement calendarButton){
+    public DatePicker openDatePicker(final WebElement calendarButton){
         schedulePage = schedulePage();
         calendarButton.click();
         return new DatePicker(schedulePage,getDriver());
     }
 
-    public void resetDateToToday(WebElement calendarButton){
-        DatePicker datePicker = new DatePicker(schedulePage,getDriver());
+    public void resetDateToToday(final WebElement calendarButton){
+        final DatePicker datePicker = new DatePicker(schedulePage,getDriver());
         datePicker.open();
         datePicker.resetDateToToday();
     }
 
-    public void setStartDate(int daysFromNow){
+    public void setStartDate(final int daysFromNow){
         scheduleDurationSelector(schedulePage.startDateCalendar(), DateUtils.addDays(schedulePage.getTodayDate(), daysFromNow));
         //what is the point?!
         //schedulePage.startDateCalendar().click();
     }
-    public void setEndDate(int daysFromNow){
+    public void setEndDate(final int daysFromNow){
         scheduleDurationSelector(schedulePage.endDateCalendar(),DateUtils.addDays(schedulePage.getTodayDate(),daysFromNow));
         //schedulePage.endDateCalendar().click();
     }

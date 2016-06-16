@@ -16,7 +16,7 @@ public abstract class IndexCategoryNode implements IndexNodeElement, Collapsible
     private final Collapsible collapsible;
     private final IndexNodeElement delegate;
 
-    protected IndexCategoryNode(IndexNodeElement inside, WebElement element, WebDriver webDriver) {
+    protected IndexCategoryNode(final IndexNodeElement inside, final WebElement element, final WebDriver webDriver) {
         delegate = inside;
         container = element;
         driver = webDriver;
@@ -59,8 +59,8 @@ public abstract class IndexCategoryNode implements IndexNodeElement, Collapsible
     }
 
     public List<String> getSelectedNames() {
-        List<String> selected = new ArrayList<>();
-        for (IndexNodeElement child : this) {
+        final List<String> selected = new ArrayList<>();
+        for (final IndexNodeElement child : this) {
             if (child.isSelected()) {
                 selected.add(child.getName());
             }
@@ -68,7 +68,7 @@ public abstract class IndexCategoryNode implements IndexNodeElement, Collapsible
         return selected;
     }
 
-    public Index getIndex(int i) {
+    public Index getIndex(final int i) {
         return new Index(getIndexNodes().get(i).getName());
     }
 

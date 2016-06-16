@@ -9,12 +9,12 @@ import java.util.List;
 public class InlinePreview {
     private final WebElement container;
 
-    private InlinePreview(WebElement container, WebDriver driver) {
+    private InlinePreview(final WebElement container, final WebDriver driver) {
         this.container = container;
     }
 
     public boolean loadingIndicatorExists() {
-        return findElements(By.className("view-server-loading-indicator")).size()>0;
+        return !findElements(By.className("view-server-loading-indicator")).isEmpty();
     }
 
     public WebElement loadingIndicator(){
@@ -33,15 +33,15 @@ public class InlinePreview {
         findElement(By.className("preview-mode-open-detail-button")).click();
     }
 
-    private WebElement findElement(By locator) {
+    private WebElement findElement(final By locator) {
         return container.findElement(locator);
     }
 
-    private List<WebElement> findElements(By locator) {
+    private List<WebElement> findElements(final By locator) {
         return container.findElements(locator);
     }
 
-    public static InlinePreview make(WebDriver driver) {
+    public static InlinePreview make(final WebDriver driver) {
         return new InlinePreview(driver.findElement(By.cssSelector(".preview-mode-wrapper:not(.hide)")), driver);
     }
 }

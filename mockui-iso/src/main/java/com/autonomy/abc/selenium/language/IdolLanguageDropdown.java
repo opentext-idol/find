@@ -6,13 +6,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class IdolLanguageDropdown implements LanguageDropdown {
-    private Dropdown dropdown;
+    private final Dropdown dropdown;
 
-    public IdolLanguageDropdown(AppElement element) {
+    public IdolLanguageDropdown(final AppElement element) {
         dropdown = new Dropdown(element);
     }
 
-    public IdolLanguageDropdown(WebElement element, WebDriver driver) {
+    public IdolLanguageDropdown(final WebElement element, final WebDriver driver) {
         this(new AppElement(element, driver));
     }
 
@@ -37,7 +37,7 @@ public class IdolLanguageDropdown implements LanguageDropdown {
     }
 
     @Override
-    public void select(Language language) {
+    public void select(final Language language) {
         if (getSelected() != language) {
             dropdown.select(language.toString());
         }

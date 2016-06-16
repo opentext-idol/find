@@ -10,24 +10,24 @@ import java.util.List;
 public class IndexesTree implements Iterable<IndexNodeElement> {
     private final IndexCategoryNode allIndexesNode;
 
-    protected IndexesTree(IndexCategoryNode node) {
+    protected IndexesTree(final IndexCategoryNode node) {
         allIndexesNode = node;
     }
 
-    public void select(Index index) {
+    public void select(final Index index) {
         select(index.getName());
     }
 
-    public void select(String indexName) {
+    public void select(final String indexName) {
         expandAll();
         allIndexes().find(indexName).select();
     }
 
-    public void deselect(Index index) {
+    public void deselect(final Index index) {
         deselect(index.getName());
     }
 
-    public void deselect(String indexName) {
+    public void deselect(final String indexName) {
         expandAll();
         allIndexes().find(indexName).deselect();
     }
@@ -39,17 +39,17 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
         privateIndexes().expand();
     }
 
-    public boolean isSelected(Index index) {
+    public boolean isSelected(final Index index) {
         return isSelected(index.getName());
     }
 
-    public boolean isSelected(String indexName) {
+    public boolean isSelected(final String indexName) {
         return allIndexes().find(indexName).isSelected();
     }
 
     public List<Index> getSelected() {
-        List<Index> selected = new ArrayList<>();
-        for (IndexNodeElement node : this) {
+        final List<Index> selected = new ArrayList<>();
+        for (final IndexNodeElement node : this) {
             if (node.isSelected()) {
                 selected.add(new Index(node.getName()));
             }
@@ -76,7 +76,7 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
 
     public static class Factory implements ParametrizedFactory<IndexCategoryNode, IndexesTree> {
         @Override
-        public IndexesTree create(IndexCategoryNode context) {
+        public IndexesTree create(final IndexCategoryNode context) {
             return new IndexesTree(context);
         }
     }

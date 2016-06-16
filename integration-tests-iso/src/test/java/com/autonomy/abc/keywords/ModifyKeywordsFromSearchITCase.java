@@ -12,7 +12,6 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
@@ -40,7 +39,7 @@ public class ModifyKeywordsFromSearchITCase extends HybridIsoTestBase {
     private KeywordsPage keywordsPage;
     private SearchPage searchPage;
 
-    public ModifyKeywordsFromSearchITCase(TestConfig config) {
+    public ModifyKeywordsFromSearchITCase(final TestConfig config) {
         super(config);
     }
 
@@ -123,7 +122,7 @@ public class ModifyKeywordsFromSearchITCase extends HybridIsoTestBase {
 
     @Test
     public void testAddTwoSynonymsToSynonymGroupFromSearchPage() throws InterruptedException {
-        List<String> houses = new ArrayList<>(Arrays.asList("house", "home", "dwelling", "abode"));
+        final List<String> houses = new ArrayList<>(Arrays.asList("house", "home", "dwelling", "abode"));
 
         keywordService.addSynonymGroup(houses);
         search("house", Language.ENGLISH);
@@ -186,7 +185,7 @@ public class ModifyKeywordsFromSearchITCase extends HybridIsoTestBase {
         verifyThat(keywordsPage.countSynonymLists(), is(0));
     }
 
-    private void search(String searchTerm, Language language) {
+    private void search(final String searchTerm, final Language language) {
         Query query = new Query(searchTerm).withFilter(new LanguageFilter(language));
         if (isHosted()) {
             query = query.withFilter(new IndexFilter("news_eng"));

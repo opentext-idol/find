@@ -14,7 +14,6 @@ import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.shared.SharedTriggerTests;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
-import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -50,7 +49,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
     private KeywordService keywordService;
     private TriggerForm triggerForm;
 
-    public KeywordsWizardITCase(TestConfig config) {
+    public KeywordsWizardITCase(final TestConfig config) {
         super(config);
     }
 
@@ -129,7 +128,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
 
         createKeywordsPage.enabledFinishWizardButton().click();
         Waits.loadOrFadeWait();
-        SearchPage searchPage = getElementFactory().getSearchPage();
+        final SearchPage searchPage = getElementFactory().getSearchPage();
 
         searchPage.selectLanguage(Language.FRENCH);
 
@@ -229,7 +228,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
 
         createKeywordsPage.enabledFinishWizardButton().click();
 
-        FluentWait<WebDriver> wait = new WebDriverWait(getDriver(), 30).withMessage("creating blacklist terms");
+        final FluentWait<WebDriver> wait = new WebDriverWait(getDriver(), 30).withMessage("creating blacklist terms");
         wait.until(GritterNotice.notificationAppears());
         wait.until(GritterNotice.notificationsDisappear());
         final List<String> blacklistTerms = keywordsPage.getBlacklistedTerms();
@@ -265,11 +264,11 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
 
         try {
             createKeywordsPage.finishWizardButton().click();
-            WebElement notification = new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
+            final WebElement notification = new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
             verifyThat(notification, containsText(Errors.Keywords.CREATING));
             triggerForm.removeTrigger(term);
             verifyThat(createKeywordsPage.finishWizardButton(), disabled());
-        } catch (WebDriverException e) {
+        } catch (final WebDriverException e) {
             LOGGER.info("cannot click finish wizard button, or timed out");
             assertThat(getWindow(), url(not(endsWith("keywords"))));
         }
@@ -287,7 +286,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
         assertThat(keywordsPage.getBlacklistedTerms(), hasSize(1));
     }
 
-    private void verifyKeywordCount(int count) {
+    private void verifyKeywordCount(final int count) {
         verifyThat(count + " keywords ready to be added", triggerForm.getNumberOfTriggers(), is(count));
         if (count > 0) {
             verifyThat(createKeywordsPage.finishWizardButton(), not(disabled()));
@@ -306,19 +305,19 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
         testTriggers(CreateNewKeywordsPage.KeywordType.BLACKLIST);
     }
 
-    private void testTriggers(CreateNewKeywordsPage.KeywordType type) {
+    private void testTriggers(final CreateNewKeywordsPage.KeywordType type) {
         createKeywordsPage.keywordsType(type).click();
         createKeywordsPage.continueWizardButton().click();
         triggerForm = createKeywordsPage.getTriggerForm();
         testBadTriggers(type);
-        for (String trigger : triggerForm.getTriggersAsStrings()) {
+        for (final String trigger : triggerForm.getTriggersAsStrings()) {
             triggerForm.removeTrigger(trigger);
         }
         triggerForm.addTrigger("test");
         testBadTriggers(type);
     }
 
-    private void testBadTriggers(CreateNewKeywordsPage.KeywordType type) {
+    private void testBadTriggers(final CreateNewKeywordsPage.KeywordType type) {
         if (type == CreateNewKeywordsPage.KeywordType.BLACKLIST) {
             SharedTriggerTests.badUnquotedTriggersTest(triggerForm);
         } else {
@@ -423,7 +422,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
 
             new WebDriverWait(getDriver(),120).until(new ExpectedCondition<Boolean>() {     //This is too long but after sending lots of requests it slows down a loto
                 @Override
-                public Boolean apply(WebDriver webDriver) {
+                public Boolean apply(final WebDriver webDriver) {
                     return keywordsPage.synonymGroupTextBox("holder").isEnabled();
                 }
             });
@@ -433,7 +432,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
         }
     }
 
-    private void tryAddingHiddenSearchOperators(List<String> hiddenSearchOperators) {
+    private void tryAddingHiddenSearchOperators(final List<String> hiddenSearchOperators) {
         for (int i = 0; i < hiddenSearchOperators.size(); i++) {
             triggerForm.addTrigger(hiddenSearchOperators.get(i));
             assertThat(triggerForm.getNumberOfTriggers(), is(2 + i));
@@ -459,9 +458,9 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
     @Test
     @ResolvedBug("CSA-1812")
     public void testExistingSynonymsShowInWizard(){
-        String[] existingSynonyms = {"pentimento", "mayday", "parade"};
-        String duplicate = existingSynonyms[0];
-        String unrelated = "unrelated";
+        final String[] existingSynonyms = {"pentimento", "mayday", "parade"};
+        final String duplicate = existingSynonyms[0];
+        final String unrelated = "unrelated";
 
         keywordService.addSynonymGroup(existingSynonyms);
         keywordsPage = keywordService.goToKeywords();
@@ -498,11 +497,11 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
         triggerForm = createKeywordsPage.getTriggerForm();
     }
 
-    private void verifyExistingGroups(String existingSynonym, int size){
-        List<List<String>> existingGroups = createKeywordsPage.getExistingSynonymGroups();
+    private void verifyExistingGroups(final String existingSynonym, final int size){
+        final List<List<String>> existingGroups = createKeywordsPage.getExistingSynonymGroups();
 
         verifyThat(existingGroups.size(), is(size));
-        for(List<String> group : existingGroups){
+        for(final List<String> group : existingGroups){
             verifyThat(group, hasItem(existingSynonym));
         }
     }

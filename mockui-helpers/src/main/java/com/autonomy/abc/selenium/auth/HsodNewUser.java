@@ -10,17 +10,18 @@ public class HsodNewUser implements NewUser {
     private final String email;
     private AuthProvider provider;
 
-    public HsodNewUser(String username, String email) {
+    public HsodNewUser(final String username, final String email) {
         this.username = username;
         this.email = email;
     }
 
-    public HsodNewUser(String username, String email, AuthProvider provider){
+    public HsodNewUser(final String username, final String email, final AuthProvider provider){
         this(username, email);
         this.provider = provider;
     }
 
-    public HsodUser createWithRole(Role role) {
+    @Override
+    public HsodUser createWithRole(final Role role) {
         return new HsodUserBuilder(username)
                 .setEmail(email)
                 .setRole(role)
@@ -38,6 +39,6 @@ public class HsodNewUser implements NewUser {
 
     @Override
     public String toString() {
-        return "NewUser<" + username + ":" + email + "|" + provider + ">";
+        return "NewUser<" + username + ':' + email + '|' + provider + '>';
     }
 }

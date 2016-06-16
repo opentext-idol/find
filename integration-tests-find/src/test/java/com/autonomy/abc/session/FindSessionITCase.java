@@ -29,7 +29,7 @@ public class FindSessionITCase extends FindTestBase {
     private FindResultsPage results;
     private FindService findService;
 
-    public FindSessionITCase(TestConfig config) {
+    public FindSessionITCase(final TestConfig config) {
         super(config);
     }
 
@@ -54,12 +54,12 @@ public class FindSessionITCase extends FindTestBase {
         assumeThat(((RemoteWebDriver) getDriver()).getCapabilities().getBrowserName(), is("firefox"));
 
         results = findService.search("The Season");
-        FindResult searchResult = results.searchResult(1);
+        final FindResult searchResult = results.searchResult(1);
 
         deleteCookies();
 
-        DocumentViewer docViewer = searchResult.openDocumentPreview();
-        Frame frame = new Frame(getWindow(), docViewer.frame());
+        final DocumentViewer docViewer = searchResult.openDocumentPreview();
+        final Frame frame = new Frame(getWindow(), docViewer.frame());
         frame.activate();
 
         verifyThat("Authentication Fail frame displayed correctly", frame.content(), allOf(

@@ -12,7 +12,7 @@ import java.util.Collections;
 
 @RunWith(Parameterized.class)
 public class IdolFindTestBase extends HybridAppTestBase<IdolFind, IdolFindElementFactory> {
-    protected IdolFindTestBase(TestConfig config) {
+    protected IdolFindTestBase(final TestConfig config) {
         super(config, new IdolFind());
     }
 

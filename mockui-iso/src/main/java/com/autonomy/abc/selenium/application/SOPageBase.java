@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public abstract class SOPageBase extends AppElement implements AppPage {
-    protected SOPageBase(WebElement element, WebDriver driver) {
+    protected SOPageBase(final WebElement element, final WebDriver driver) {
         super(element, driver);
     }
 
@@ -18,10 +18,11 @@ public abstract class SOPageBase extends AppElement implements AppPage {
     public abstract static class SOPageFactory<T extends SOPageBase> implements AppPageFactory<T> {
         private final Class<T> returnType;
 
-        protected SOPageFactory(Class<T> returnType) {
+        protected SOPageFactory(final Class<T> returnType) {
             this.returnType = returnType;
         }
 
+        @Override
         public Class<T> getPageType() {
             return returnType;
         }

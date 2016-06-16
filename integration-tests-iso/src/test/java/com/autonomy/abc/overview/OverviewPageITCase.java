@@ -51,7 +51,7 @@ public class OverviewPageITCase extends IdolIsoTestBase {
 
     @Test
 	public void testTopSearchTermsToggleButtons() {
-        List<String> buttons = Arrays.asList("week", "day", "hour");
+        final List<String> buttons = Arrays.asList("week", "day", "hour");
 
 		overviewPage.topSearchTermsLastTimePeriodButton(buttons.get(0)).click();
 		assertToggleButtons(buttons, buttons.get(0), "last week");
@@ -63,8 +63,8 @@ public class OverviewPageITCase extends IdolIsoTestBase {
 		assertToggleButtons(buttons, buttons.get(2), "in the last hour");
 	}
 
-    private void assertToggleButtons(List<String> toggleButtons, String active, String widgetText) {
-        for(String button : toggleButtons){
+    private void assertToggleButtons(final List<String> toggleButtons, final String active, final String widgetText) {
+        for(final String button : toggleButtons){
             if(button.equals(active)) {
                 assertThat(overviewPage.topSearchTermsLastTimePeriodButton(button), hasClass("active"));
             } else {
@@ -86,7 +86,7 @@ public class OverviewPageITCase extends IdolIsoTestBase {
 					if (tableRowLink.isDisplayed()) {
 						final String searchTerm = tableRowLink.getText();
 						tableRowLink.click();
-						SearchPage searchPage = getElementFactory().getSearchPage();
+						final SearchPage searchPage = getElementFactory().getSearchPage();
 						assertThat(getWindow(), urlContains("search/modified/" + searchTerm));
 						assertThat(searchTerm + " Title incorrect", searchPage.getPageTitle(), containsString("Results for " + searchTerm));
 
@@ -110,7 +110,7 @@ public class OverviewPageITCase extends IdolIsoTestBase {
 				final List<Integer> searchCounts = new ArrayList<>(Collections.nCopies(10, 0));
 
 				for (final WebElement tableRowLink : tableRowLinks) {
-					if (!tableRowLink.getText().equals("")) {
+					if (!tableRowLink.getText().isEmpty()) {
 						final int rowIndex = tableRowLinks.indexOf(tableRowLink);
 						final int searchCount = overviewPage.searchTermSearchCount(tableRowLink.getText());
 						searchCounts.add(rowIndex, searchCount);
@@ -138,7 +138,7 @@ public class OverviewPageITCase extends IdolIsoTestBase {
 
             final CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
-            TriggerForm triggerForm = createNewKeywordsPage.getTriggerForm();
+            final TriggerForm triggerForm = createNewKeywordsPage.getTriggerForm();
 
 			assertThat("Have not linked to synonyms wizard", createNewKeywordsPage.getText(), containsString("Select synonyms"));
 			assertThat(triggerForm.getNumberOfTriggers(), is(1));
@@ -181,10 +181,10 @@ public class OverviewPageITCase extends IdolIsoTestBase {
 		}
 	}
 
-    private boolean percentageIsNumber(IsoOverviewPage.Widget widgetElement) {
+    private boolean percentageIsNumber(final IsoOverviewPage.Widget widgetElement) {
         try {
             overviewPage.getZeroHitPercentageParseInt(widgetElement);
-        } catch(NumberFormatException e) {
+        } catch(final NumberFormatException e) {
             return false;
         }
 

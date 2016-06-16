@@ -21,7 +21,6 @@ import com.hp.autonomy.frontend.selenium.framework.categories.SlowTest;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -29,7 +28,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,29 +56,29 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	private PromotionService<?> promotionService;
 
 	@Before
-	public void setUp() throws MalformedURLException {
+	public void setUp() {
 		searchService = getApplication().searchService();
 		promotionService = getApplication().promotionService();
 		promotionsPage = promotionService.deleteAll();
 	}
 
-	private List<String> setUpPromotion(Query search, int numberOfDocs, Promotion promotion) {
-		List<String> promotedDocTitles = promotionService.setUpPromotion(promotion, search, numberOfDocs);
+	private List<String> setUpPromotion(final Query search, final int numberOfDocs, final Promotion promotion) {
+		final List<String> promotedDocTitles = promotionService.setUpPromotion(promotion, search, numberOfDocs);
 		// wait for search page to load before navigating away
 		getElementFactory().getSearchPage();
 		promotionsDetailPage = promotionService.goToDetails(promotion);
 		return promotedDocTitles;
 	}
 
-	private List<String> setUpPromotion(Query search, Promotion promotion) {
+	private List<String> setUpPromotion(final Query search, final Promotion promotion) {
 		return setUpPromotion(search, 1, promotion);
 	}
 
-	private List<String> setUpCarsPromotion(int numberOfDocs) {
+	private List<String> setUpCarsPromotion(final int numberOfDocs) {
 		return setUpPromotion(new Query("cars").withFilter(new LanguageFilter("English")), numberOfDocs, new SpotlightPromotion("wheels"));
 	}
 
-	private Query getQuery(String searchTerm, Language language) {
+	private Query getQuery(final String searchTerm, final Language language) {
 		return new Query(searchTerm).withFilter(new LanguageFilter(language));
 	}
 
@@ -94,8 +92,8 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	@Test
 	@ResolvedBug({"CCUK-3394", "CCUK-3649"})
 	public void testCorrectDocumentsInPromotion() {
-		List<String> promotedDocTitles = setUpCarsPromotion(16);
-		List<String> promotedList = promotionsDetailPage.getPromotedTitles();
+		final List<String> promotedDocTitles = setUpCarsPromotion(16);
+		final List<String> promotedList = promotionsDetailPage.getPromotedTitles();
 		verifyThat(promotedList, containsItems(promotedDocTitles));
 	}
 
@@ -132,11 +130,11 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	@Test
 	public void testEditPromotionName() throws InterruptedException {
 		setUpCarsPromotion(1);
-		Editable title = promotionsDetailPage.promotionTitle();
+		final Editable title = promotionsDetailPage.promotionTitle();
 		verifyThat(title.getValue(), (is("Spotlight for: wheels")));
 
-		String[] newTitles = {"Fuzz", "<script> alert(\"hi\") </script>"};
-		for (String newTitle : newTitles) {
+		final String[] newTitles = {"Fuzz", "<script> alert(\"hi\") </script>"};
+		for (final String newTitle : newTitles) {
 			title.setValueAndWait(newTitle);
 			verifyThat(title.getValue(), (is(newTitle)));
 		}
@@ -149,7 +147,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 		setUpCarsPromotion(1);
 		verifyThat(promotionsDetailPage.getPromotionType(), is("Sponsored"));
 
-		Dropdown dropdown = promotionsDetailPage.spotlightTypeDropdown();
+		final Dropdown dropdown = promotionsDetailPage.spotlightTypeDropdown();
 		dropdown.select("Hotwire");
 		promotionsDetailPage.waitForSpotLightType();
 		verifyThat(dropdown.getValue(), is("Hotwire"));
@@ -165,16 +163,16 @@ public class PromotionsITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testDeletePromotions() throws InterruptedException {
-		String[] searchTerms = {"rabbit", "horse", "script"};
-		String[] triggers = {"bunny", "pony", "<script>"};
+		final String[] searchTerms = {"rabbit", "horse", "script"};
+		final String[] triggers = {"bunny", "pony", "<script>"};
 		for (int i=0; i<searchTerms.length; i++) {
 			setUpPromotion(new Query(searchTerms[i]), new SpotlightPromotion(triggers[i]));
 			promotionsPage = promotionService.goToPromotions();
 		}
 
 		// "script" gets mangled
-		String[] searchableTriggers = {"bunny", "pony", "script"};
-		for (String trigger : searchableTriggers) {
+		final String[] searchableTriggers = {"bunny", "pony", "script"};
+		for (final String trigger : searchableTriggers) {
 			verifyThat(promotionsPage, promotionsList(hasItem(containsText(trigger))));
 		}
 		verifyThat(promotionsPage, promotionsList(hasSize(3)));
@@ -199,12 +197,12 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	@Category(SlowTest.class)
 	@ActiveBug("CSA-2022")
 	public void testAddingLotsOfDocsToAPromotion() {
-		int size = 100;
+		final int size = 100;
 		boolean setUp = false;
 		try {
 			setUpPromotion(new Query("dog"), size, new SpotlightPromotion("golden retriever"));
 			setUp = true;
-		} catch (TimeoutException e) {
+		} catch (final TimeoutException e) {
 			/* failed to set up promotion */
 			e.printStackTrace();
 		}
@@ -212,7 +210,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 		assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(size));
 	}
 
-	private void renamePromotionContaining(String oldTitle, String newTitle) {
+	private void renamePromotionContaining(final String oldTitle, final String newTitle) {
 		promotionsDetailPage = promotionService.goToDetails(oldTitle);
 		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
 		promotionsPage = promotionService.goToPromotions();
@@ -222,7 +220,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	@ActiveBug("CCUK-2671")
 	public void testPromotionFilter() throws InterruptedException {
 		// hosted does not have foreign content indexed
-		Query[] searches;
+		final Query[] searches;
 		if (isOnPrem()) {
 			searches = new Query[]{
 					getQuery("chien", Language.FRENCH),
@@ -244,7 +242,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 					getQuery("lisa", Language.ENGLISH)
 			};
 		}
-		Promotion[] promotions = {
+		final Promotion[] promotions = {
 				new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"),
 				new SpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "dog chien"),
 				new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "hound pooch"),
@@ -275,7 +273,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 		renamePromotionContaining(promotionTitles.get(3), promotionTitles.get(3));
 
 		int results = 1;
-		for(String search : Arrays.asList("dog", "wolf", "pooch")){
+		for(final String search : Arrays.asList("dog", "wolf", "pooch")){
 			promotionsPage.clearPromotionsSearchFilter();
 			promotionsPage.promotionsSearchFilter().sendKeys(search);
 			verifyThat(promotionsPage, promotionsList(hasSize(results)));
@@ -363,10 +361,10 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	@RelatedTo("IOD-4827")
 	public void testPromotionLanguages() {
 		assumeThat(getConfig().getType(), equalTo(ApplicationType.ON_PREM));
-		Language[] languages = {Language.FRENCH, Language.SWAHILI, Language.AFRIKAANS};
+		final Language[] languages = {Language.FRENCH, Language.SWAHILI, Language.AFRIKAANS};
 		//Afrikaans dog thing isn't actually a dog but it wasn't working so yolo
-		String[] searchTerms = {"chien", "mbwa", "bergaalwyn"};
-		Promotion[] promotions = {
+		final String[] searchTerms = {"chien", "mbwa", "bergaalwyn"};
+		final Promotion[] promotions = {
 				new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"),
 				new PinToPositionPromotion(3, "swahili woof"),
 				new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "hond wolf")
@@ -412,7 +410,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	public void testCountSearchResultsWithPinToPositionInjected() {
 		setUpPromotion(getQuery("donut", Language.ENGLISH), new PinToPositionPromotion(13, "round tasty snack"));
 
-		String[] queries = {"round", "tasty", "snack"};
+		final String[] queries = {"round", "tasty", "snack"};
 		SearchPage searchPage;
 		for (final String query : queries) {
 			searchService.search(getQuery(query, Language.ENGLISH));
@@ -431,11 +429,11 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	// fails on Chrome - seems to be an issue with ChromeDriver
 	@Test
 	public void testSpotlightViewable() {
-		List<String> promotedDocs = setUpCarsPromotion(3);
-		SearchPage searchPage = searchService.search("wheels");
+		final List<String> promotedDocs = setUpCarsPromotion(3);
+		final SearchPage searchPage = searchService.search("wheels");
 		WebElement promotedResult = searchPage.promotedDocumentTitle(1);
-		String firstTitle = promotedResult.getText();
-		String secondTitle = searchPage.promotedDocumentTitle(2).getText();
+		final String firstTitle = promotedResult.getText();
+		final String secondTitle = searchPage.promotedDocumentTitle(2).getText();
 		verifyThat(firstTitle, isIn(promotedDocs));
 
 		promotedResult.click();
@@ -457,7 +455,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 		documentViewer.close();
 		searchPage.showMorePromotions();
 		promotedResult = searchPage.promotedDocumentTitle(3);
-		String thirdTitle = promotedResult.getText();
+		final String thirdTitle = promotedResult.getText();
 		verifyThat(thirdTitle, isIn(promotedDocs));
 
 		promotedResult.click();
@@ -466,7 +464,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 		verifyFrame(documentViewer.getReference(), frame);
 	}
 
-	private void verifyFrame(String reference, Frame frame) {
+	private void verifyFrame(final String reference, final Frame frame) {
 		verifyThat("Document has a reference", reference, not(isEmptyOrNullString()));
 		verifyThat("Document loads", frame.getText(), not(isEmptyOrNullString()));
 	}
@@ -474,19 +472,19 @@ public class PromotionsITCase extends HybridIsoTestBase {
 	@Test
 	@ResolvedBug({"CCUK-3457", "CCUK-3649"})
 	public void testPromotingItemsWithBrackets(){
-		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "imagine dragons");
+		final SpotlightPromotion spotlightPromotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "imagine dragons");
 
 		SearchPage searchPage = searchService.search("pointless");
 		searchPage.filterBy(new LanguageFilter(Language.ENGLISH));
-		Query query = new Query("\"Lens (optics)\"").withFilter(new IndexFilter("WikiEnglish"));
+		final Query query = new Query("\"Lens (optics)\"").withFilter(new IndexFilter("WikiEnglish"));
 
 		searchPage = searchService.search(query);
 		assumeThat("Was expecting Lens (optics) to be the first result", searchPage.getSearchResult(1).getTitleString(), containsString("Lens (optics)"));
 
 		promotionService.setUpPromotion(spotlightPromotion, query, 1);
-		PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(spotlightPromotion);
+		final PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(spotlightPromotion);
 
-		List<String> promotedDocuments = promotionsDetailPage.getPromotedTitles();
+		final List<String> promotedDocuments = promotionsDetailPage.getPromotedTitles();
 
 		verifyThat(promotedDocuments.size(), is(1));
 		verifyThat(promotedDocuments.get(0), containsString("Lens (optics)"));

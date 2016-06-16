@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.promotions;
 import org.openqa.selenium.WebDriver;
 
 public class IdolPromotionsPage extends PromotionsPage {
-    private IdolPromotionsPage(WebDriver driver) {
+    private IdolPromotionsPage(final WebDriver driver) {
         super(driver);
     }
 
@@ -12,7 +12,8 @@ public class IdolPromotionsPage extends PromotionsPage {
             super(IdolPromotionsPage.class);
         }
 
-        public IdolPromotionsPage create(WebDriver context) {
+        @Override
+        public IdolPromotionsPage create(final WebDriver context) {
             return new IdolPromotionsPage(context);
         }
     }

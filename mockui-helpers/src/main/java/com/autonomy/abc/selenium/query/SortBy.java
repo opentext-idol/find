@@ -6,7 +6,7 @@ public enum SortBy {
 
     private final String name;
 
-    SortBy(String content) {
+    SortBy(final String content) {
         name = content;
     }
 

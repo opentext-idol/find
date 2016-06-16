@@ -8,10 +8,10 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 
 public abstract class QueryResult {
-    private WebElement result;
-    private WebDriver driver;
+    private final WebElement result;
+    private final WebDriver driver;
 
-    protected QueryResult(WebElement result, WebDriver driver) {
+    protected QueryResult(final WebElement result, final WebDriver driver) {
         this.result = result;
         this.driver = driver;
     }
@@ -29,18 +29,18 @@ public abstract class QueryResult {
     }
 
     public boolean isPromoted() {
-        return findElements(By.className("promoted-label")).size() > 0;
+        return !findElements(By.className("promoted-label")).isEmpty();
     }
 
     public WebElement star() {
         return findElement(By.className("hp-favorite"));
     }
 
-    protected WebElement findElement(By locator) {
+    protected WebElement findElement(final By locator) {
         return result.findElement(locator);
     }
 
-    protected List<WebElement> findElements(By locator) {
+    protected List<WebElement> findElements(final By locator) {
         return result.findElements(locator);
     }
 

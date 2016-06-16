@@ -11,9 +11,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class IdolPromotionsDetailPage extends PromotionsDetailPage {
-    private AppElement fieldTextContainer;
+    private final AppElement fieldTextContainer;
 
-    private IdolPromotionsDetailPage(WebDriver driver) {
+    private IdolPromotionsDetailPage(final WebDriver driver) {
         super(driver);
         fieldTextContainer = new AppElement(findElement(By.cssSelector(".promotion-field-text")), driver);
     }
@@ -62,7 +62,7 @@ public class IdolPromotionsDetailPage extends PromotionsDetailPage {
         // finished sending, not once actually loaded
         try {
             Thread.sleep(3000);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -70,7 +70,7 @@ public class IdolPromotionsDetailPage extends PromotionsDetailPage {
     public String getFieldTextError() {
         try {
             return fieldTextContainer.findElement(By.cssSelector(".field-text-error")).getText();
-        } catch (NoSuchElementException e) {
+        } catch (final NoSuchElementException e) {
             return null;
         }
     }
@@ -84,7 +84,8 @@ public class IdolPromotionsDetailPage extends PromotionsDetailPage {
             super(IdolPromotionsDetailPage.class);
         }
 
-        public IdolPromotionsDetailPage create(WebDriver context) {
+        @Override
+        public IdolPromotionsDetailPage create(final WebDriver context) {
             return new IdolPromotionsDetailPage(context);
         }
     }

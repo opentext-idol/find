@@ -11,7 +11,7 @@ class FindIndexLeafNode implements IndexNodeElement {
     private final Checkbox checkbox;
     private final WebElement container;
 
-    FindIndexLeafNode(WebElement element, WebDriver driver) {
+    FindIndexLeafNode(final WebElement element, final WebDriver driver) {
         container = element;
         checkbox = new FindIndexCheckbox(element, driver);
     }

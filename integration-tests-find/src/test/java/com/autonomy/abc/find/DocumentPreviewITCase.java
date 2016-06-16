@@ -33,7 +33,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     private FindResultsPage results;
     private FindService findService;
 
-    public DocumentPreviewITCase(TestConfig config) {
+    public DocumentPreviewITCase(final TestConfig config) {
         super(config);}
 
     @Before
@@ -48,8 +48,8 @@ public class DocumentPreviewITCase extends FindTestBase {
         findService.search("cake");
         findPage.filterBy(new IndexFilter(filters().getIndex(1).getName()));
 
-        DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
-        InlinePreview inlinePreview = getElementFactory().getInlinePreview();
+        final DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
+        final InlinePreview inlinePreview = getElementFactory().getInlinePreview();
 
         if (inlinePreview.loadingIndicatorExists()) {
             assertThat("Preview not stuck loading", inlinePreview.loadingIndicator(), not(displayed()));
@@ -58,8 +58,8 @@ public class DocumentPreviewITCase extends FindTestBase {
         assertThat("Index displayed", docPreview.getIndex(),not(nullValue()));
         assertThat("Reference displayed",docPreview.getReference(),not(nullValue()));
 
-        Frame previewFrame = new Frame(getWindow(), docPreview.frame());
-        String frameText=previewFrame.getText();
+        final Frame previewFrame = new Frame(getWindow(), docPreview.frame());
+        final String frameText=previewFrame.getText();
 
         verifyThat("Preview document has content",frameText,not(isEmptyOrNullString()));
         assertThat("Preview document has no error",previewFrame.getText(),not(containsString("encountered an error")));
@@ -69,7 +69,7 @@ public class DocumentPreviewITCase extends FindTestBase {
 
     @Test
     public void testOpenOriginalDocInNewTab(){
-        Session session = getMainSession();
+        final Session session = getMainSession();
 
         findService.search("flail");
         if (isHosted()) {
@@ -77,16 +77,16 @@ public class DocumentPreviewITCase extends FindTestBase {
             findPage.filterBy(new IndexFilter("simpsonsarchive"));
         }
 
-        for (QueryResult queryResult : results.getResults(4)) {
-            DocumentViewer docViewer = queryResult.openDocumentPreview();
-            String reference = docViewer.getReference();
+        for (final QueryResult queryResult : results.getResults(4)) {
+            final DocumentViewer docViewer = queryResult.openDocumentPreview();
+            final String reference = docViewer.getReference();
 
             getElementFactory().getInlinePreview().openDetailedPreview();
-            DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+            final DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
 
-            Window original = session.getActiveWindow();
+            final Window original = session.getActiveWindow();
             detailedPreviewPage.openOriginalDoc();
-            Window newWindow = session.switchWindow(session.countWindows() - 1);
+            final Window newWindow = session.switchWindow(session.countWindows() - 1);
             newWindow.activate();
             Waits.loadOrFadeWait();
             verifyThat(session.getDriver().getCurrentUrl(), is(reformatReference(reference)));
@@ -98,7 +98,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         }
     }
 
-    private String reformatReference(String badFormatReference){
+    private String reformatReference(final String badFormatReference){
         return badFormatReference.replace(" ","_");
     }
 
@@ -110,10 +110,10 @@ public class DocumentPreviewITCase extends FindTestBase {
         results.getResult(1).openDocumentPreview();
         getElementFactory().getInlinePreview().openDetailedPreview();
 
-        DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
 
         //loading
-        String frameText = new Frame(getMainSession().getActiveWindow(), detailedPreviewPage.frame()).getText();
+        final String frameText = new Frame(getMainSession().getActiveWindow(), detailedPreviewPage.frame()).getText();
         verifyThat("Frame has content", frameText, not(isEmptyOrNullString()));
         verifyThat("Preview frame has no error",frameText,not(containsString("encountered an error")));
 
@@ -127,7 +127,7 @@ public class DocumentPreviewITCase extends FindTestBase {
 
     }
 
-    private void checkHasMetaDataFields(DetailedPreviewPage detailedPreviewPage){
+    private void checkHasMetaDataFields(final DetailedPreviewPage detailedPreviewPage){
         verifyThat("Tab loads",!(detailedPreviewPage.loadingIndicator().isDisplayed()));
         verifyThat("Detailed Preview has reference",detailedPreviewPage.getReference(),not(nullValue()));
         if(isHosted()){
@@ -138,19 +138,19 @@ public class DocumentPreviewITCase extends FindTestBase {
 //        verifyThat("Detailed Preview has date",detailedPreviewPage.getDate(),not(nullValue()));
     }
 
-    private void checkSimilarDocuments(DetailedPreviewPage detailedPreviewPage){
+    private void checkSimilarDocuments(final DetailedPreviewPage detailedPreviewPage){
         detailedPreviewPage.similarDocsTab().click();
         verifyThat("Tab loads",!(detailedPreviewPage.loadingIndicator().isDisplayed()));
     }
 
-    private void checkSimilarDates(DetailedPreviewPage detailedPreviewPage){
+    private void checkSimilarDates(final DetailedPreviewPage detailedPreviewPage){
         detailedPreviewPage.similarDatesTab().click();
         verifyThat("Tab loads",!(detailedPreviewPage.loadingIndicator().isDisplayed()));
         changeDateSliderToYearBefore(detailedPreviewPage);
         verifyThat("Can change to similar docs from year before", detailedPreviewPage.getSimilarDatesSummary(), containsString("Between 1 year"));
     }
 
-    private void changeDateSliderToYearBefore(DetailedPreviewPage detailedPreviewPage){
+    private void changeDateSliderToYearBefore(final DetailedPreviewPage detailedPreviewPage){
         detailedPreviewPage.ithTick(1).click();
     }
 
@@ -161,7 +161,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         results.getResult(1).openDocumentPreview();
 
         getElementFactory().getInlinePreview().openDetailedPreview();
-        DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
 
         verifyThat("Only 1 copy of that document in detailed preview",detailedPreviewPage.numberOfHeadersWithDocTitle(),lessThanOrEqualTo(1));
 

@@ -23,7 +23,7 @@ public class HybridAppTestBase<A extends Application<? extends F>, F extends Ele
     private HybridTestSetupStrategy setup;
     private Command postSetUpHook = NullCommand.getInstance();
 
-    protected HybridAppTestBase(TestConfig config, A appUnderTest) {
+    protected HybridAppTestBase(final TestConfig config, final A appUnderTest) {
         super(config, appUnderTest);
         setInitialUser(config.getDefaultUser());
     }
@@ -43,7 +43,7 @@ public class HybridAppTestBase<A extends Application<? extends F>, F extends Ele
         setup.setUp(postSetUpHook);
     }
 
-    protected final void setInitialUser(User user) {
+    protected final void setInitialUser(final User user) {
         setup = new HybridTestSetupStrategy(getApplication(), user);
     }
 
@@ -51,7 +51,7 @@ public class HybridAppTestBase<A extends Application<? extends F>, F extends Ele
         return setup.getInitialUser();
     }
 
-    protected void setPostLoginHook(Command hook) {
+    protected void setPostLoginHook(final Command hook) {
         postSetUpHook = hook;
     }
 

@@ -36,7 +36,7 @@ public class CreateNewDynamicPromotionsITCase extends HybridIsoTestBase {
     }
 
     @Before
-    public void setUp() throws InterruptedException {
+    public void setUp() {
         promotionService = getApplication().promotionService();
         searchService = getApplication().searchService();
 
@@ -100,14 +100,14 @@ public class CreateNewDynamicPromotionsITCase extends HybridIsoTestBase {
 
         assertThat(searchPage.getPromotedDocumentTitles(true), hasSize(promotionResultsCount));
 
-        PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails("sausage");
+        final PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails("sausage");
         assertThat("query results are displayed on details page", promotionsDetailPage.dynamicPromotedList(), not(hasItem(containsText("Search for something"))));
         assertThat(promotionsDetailPage.getDynamicPromotedTitles(), hasSize(promotionResultsCount));
     }
 
     @Test
     public void testDeletedPromotionIsDeleted() {
-        String trigger = "home";
+        final String trigger = "home";
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, 10, trigger), "France", 10);
         Waits.loadOrFadeWait();
         assertThat("No promoted items displayed", searchPage.getPromotionSummarySize(), not(0));

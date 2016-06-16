@@ -4,9 +4,9 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 
 public class SpotlightPromotion extends Promotion {
     private final static Type TYPE = Type.SPOTLIGHT;
-    private SpotlightType spotlightType;
+    private final SpotlightType spotlightType;
 
-    public SpotlightPromotion(String trigger) {
+    public SpotlightPromotion(final String trigger) {
         this(SpotlightType.SPONSORED, trigger);
     }
 
@@ -15,7 +15,7 @@ public class SpotlightPromotion extends Promotion {
         return "spotlight";
     }
 
-    public SpotlightPromotion(SpotlightType type, String trigger) {
+    public SpotlightPromotion(final SpotlightType type, final String trigger) {
         super(trigger);
         spotlightType = type;
     }
@@ -28,12 +28,13 @@ public class SpotlightPromotion extends Promotion {
         return spotlightType.getOption();
     }
 
-    public Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase) {
+    @Override
+    public Wizard makeWizard(final CreateNewPromotionsBase createNewPromotionsBase) {
         return new SpotlightPromotionWizard(createNewPromotionsBase);
     }
 
     private class SpotlightPromotionWizard extends PromotionWizard {
-        public SpotlightPromotionWizard(CreateNewPromotionsBase page) {
+        public SpotlightPromotionWizard(final CreateNewPromotionsBase page) {
             super(page);
             setSteps(page.getWizardSteps(SpotlightPromotion.this));
         }

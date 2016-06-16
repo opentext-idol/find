@@ -68,7 +68,7 @@ public class IsoHsodElementFactory extends IsoElementFactory {
     }
 
     protected static class SideNavStrategy extends IsoElementFactory.SideNavStrategy {
-        protected SideNavStrategy(NavBarTabId tabId) {
+        protected SideNavStrategy(final NavBarTabId tabId) {
             super(tabId);
         }
     }

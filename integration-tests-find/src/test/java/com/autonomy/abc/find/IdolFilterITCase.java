@@ -21,7 +21,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 public class IdolFilterITCase extends IdolFindTestBase {
     private FindService findService;
 
-    public IdolFilterITCase(TestConfig config) {
+    public IdolFilterITCase(final TestConfig config) {
         super(config);}
 
     @Before

@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 public class SearchTab {
     private final WebElement tab;
 
-    SearchTab(WebElement tab) {
+    SearchTab(final WebElement tab) {
         this.tab = tab;
     }
 

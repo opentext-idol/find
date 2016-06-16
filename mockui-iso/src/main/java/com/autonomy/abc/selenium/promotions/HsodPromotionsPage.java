@@ -5,7 +5,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class HsodPromotionsPage extends PromotionsPage {
-    private HsodPromotionsPage(WebDriver driver) {
+    private HsodPromotionsPage(final WebDriver driver) {
         super(driver);
     }
 
@@ -19,7 +19,7 @@ public class HsodPromotionsPage extends PromotionsPage {
         }
 
         @Override
-        public HsodPromotionsPage create(WebDriver context) {
+        public HsodPromotionsPage create(final WebDriver context) {
             return new HsodPromotionsPage(context);
         }
     }

@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.hsod.IsoHsodElementFactory;
 import com.autonomy.abc.selenium.search.SearchPage;
 
 public class HsodPromotionService extends PromotionService<IsoHsodElementFactory> {
-    public HsodPromotionService(IsoApplication<? extends IsoHsodElementFactory> application) {
+    public HsodPromotionService(final IsoApplication<? extends IsoHsodElementFactory> application) {
         super(application);
     }
 
@@ -14,10 +14,10 @@ public class HsodPromotionService extends PromotionService<IsoHsodElementFactory
         return (HsodPromotionsPage) super.goToPromotions();
     }
 
-    public SearchPage setUpStaticPromotion(StaticPromotion promotion) {
-        HsodPromotionsPage promotionsPage = goToPromotions();
+    public SearchPage setUpStaticPromotion(final StaticPromotion promotion) {
+        final HsodPromotionsPage promotionsPage = goToPromotions();
         promotionsPage.staticPromotionButton().click();
-        HsodCreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        final HsodCreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         promotion.makeWizard(createNewPromotionsPage).apply();
         return getElementFactory().getSearchPage();
     }

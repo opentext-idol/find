@@ -27,7 +27,7 @@ enum IsoHsodPage implements PageMapper.Page, PageMapper.SwitchStrategy<IsoElemen
         }
 
         @Override
-        public HSOLoginPage create(WebDriver context) {
+        public HSOLoginPage create(final WebDriver context) {
             return new HSOLoginPage(context, new SOHasLoggedIn(context));
         }
     }),
@@ -48,19 +48,19 @@ enum IsoHsodPage implements PageMapper.Page, PageMapper.SwitchStrategy<IsoElemen
     USERS(NavBarTabId.USERS, new HsodUsersPage.Factory());
 
     private PageMapper.SwitchStrategy<IsoElementFactory> switchStrategy;
-    private AppPageFactory<?> factory;
+    private final AppPageFactory<?> factory;
 
-    <T extends AppPage> IsoHsodPage(AppPageFactory<T> factory) {
+    <T extends AppPage> IsoHsodPage(final AppPageFactory<T> factory) {
         this.factory = factory;
     }
 
-    <T extends AppPage> IsoHsodPage(NavBarTabId tab, AppPageFactory<T> factory) {
+    <T extends AppPage> IsoHsodPage(final NavBarTabId tab, final AppPageFactory<T> factory) {
         this(factory);
         this.switchStrategy = new IsoHsodElementFactory.SideNavStrategy(tab);
     }
 
     @Override
-    public Object loadAsObject(WebDriver driver) {
+    public Object loadAsObject(final WebDriver driver) {
         return this.factory.create(driver);
     }
 
@@ -70,7 +70,7 @@ enum IsoHsodPage implements PageMapper.Page, PageMapper.SwitchStrategy<IsoElemen
     }
 
     @Override
-    public void switchUsing(IsoElementFactory context) {
+    public void switchUsing(final IsoElementFactory context) {
         switchStrategy.switchUsing(context);
     }
 }

@@ -9,7 +9,7 @@ public final class UnknownAuth implements AuthProvider {
     private UnknownAuth() {}
 
     @Override
-    public void login(WebDriver driver) {
+    public void login(final WebDriver driver) {
         throw new UnsupportedOperationException("cannot log in as this user");
     }
 

@@ -18,20 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SunburstView {
+public class SunburstView extends ParametricFieldView {
     private static final int VISIBLE_SEGMENTS = 20;
 
-    private final WebDriver driver;
-    private final WebElement container;
-
-    public SunburstView(WebDriver driver) {
-        this.driver = driver;
-        this.container = driver.findElement(By.className("service-view-container"));
+    public SunburstView(final WebDriver driver) {
+        super(driver);
     }
 
     //Navigation
     public void goToSunburst(){
-       findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
+        findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
         new WebDriverWait(getDriver(),15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".sunburst"))));
     }
 
@@ -49,18 +45,20 @@ public class SunburstView {
     }
 
     public void waitForSunburst(){
+        // TODO: view-server?
         new WebDriverWait(getDriver(),15).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
-        }
-
-    public String getSunburstCentreName(){
-        return findElement(By.className("sunburst-sector-name")).getText();}
-
-    private boolean sunburstCentreHasText(){
-        return findElements(By.className("sunburst-sector-name")).size()>0;
     }
 
-    public WebElement getIthSunburstSegment(int i){
-        List<WebElement> actualSegments = findSunburstSegments();
+    public String getSunburstCentreName(){
+        return findElement(By.className("sunburst-sector-name")).getText();
+    }
+
+    private boolean sunburstCentreHasText(){
+        return !findElements(By.className("sunburst-sector-name")).isEmpty();
+    }
+
+    public WebElement getIthSunburstSegment(final int i){
+        final List<WebElement> actualSegments = findSunburstSegments();
         return actualSegments.get(i);
     }
 
@@ -69,23 +67,23 @@ public class SunburstView {
     }
 
     public boolean greySunburstAreaExists(){
-        return findElements(By.cssSelector("svg > path[fill='#f0f0f0']")).size()>0;
+        return !findElements(By.cssSelector("svg > path[fill='#f0f0f0']")).isEmpty();
     }
 
-    public String hoverOnSegmentGetCentre(int i){
+    public String hoverOnSegmentGetCentre(final int i){
         DriverUtil.hover(getDriver(),getIthSunburstSegment(i));
         return getSunburstCentreName();
     }
 
-    public void segmentHover(WebElement segment){
+    public void segmentHover(final WebElement segment){
         DriverUtil.hover(getDriver(),segment);
         if(!sunburstCentreHasText()|| (sunburstCentreHasText() && getSunburstCentreName().equals("Parametric Distribution"))){
             specialHover(segment);
         }
     }
 
-    private void specialHover(WebElement segment){
-        Dimension dimensions = segment.getSize();
+    private void specialHover(final WebElement segment){
+        final Dimension dimensions = segment.getSize();
 
         hoveringOffSide(segment,(dimensions.getWidth()/4)*3, dimensions.getHeight()/2);
         if(!sunburstCentreHasText()|| (sunburstCentreHasText() && getSunburstCentreName().equals("Parametric Distribution"))){
@@ -93,31 +91,11 @@ public class SunburstView {
         }
     }
 
-    private void hoveringOffSide(WebElement element, int xOffSet,int yOffSet){
-        Actions builder = new Actions(getDriver());
+    private void hoveringOffSide(final WebElement element, final int xOffSet, final int yOffSet){
+        final Actions builder = new Actions(getDriver());
         builder.moveToElement(element,xOffSet,yOffSet);
-        Action hover = builder.build();
+        final Action hover = builder.build();
         hover.perform();
-    }
-
-    //Parametric Filtering
-    public String getSelectedFieldName(int i){
-        return nthParametricFilter(i).getText();
-    }
-
-    private WebElement nthParametricFilter(int i){
-        return findElement(By.cssSelector(".parametric-selections span:nth-child("+i+")"));
-    }
-
-    public boolean parametricSelectionDropdownsExist(){return findElement(By.cssSelector(".parametric-selections span")).isDisplayed();}
-
-    public ChosenDrop parametricSelectionDropdown(int i){
-        return new ChosenDrop(nthParametricFilter(i),getDriver());
-    }
-
-    public List<String> getParametricDropdownItems(int i){
-        ChosenDrop dropdown = parametricSelectionDropdown(i);
-        return ElementUtil.getTexts(dropdown.getItems());
     }
 
     /**
@@ -126,16 +104,16 @@ public class SunburstView {
      * @param checkboxes some iterable of parametric values
      * @return the significant values
      */
-    public static List<String> expectedParametricValues(Iterable<FindParametricCheckbox> checkboxes) {
+    public static List<String> expectedParametricValues(final Iterable<FindParametricCheckbox> checkboxes) {
         final List<String> expected = new ArrayList<>();
 
         int totalResults = 0;
-        for (FindParametricCheckbox checkbox : checkboxes) {
+        for (final FindParametricCheckbox checkbox : checkboxes) {
             totalResults += checkbox.getResultsCount();
         }
 
-        for (FindParametricCheckbox checkbox : checkboxes) {
-            int thisCount = checkbox.getResultsCount();
+        for (final FindParametricCheckbox checkbox : checkboxes) {
+            final int thisCount = checkbox.getResultsCount();
             if (expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) {
                 expected.add(checkbox.getName());
             } else {
@@ -145,19 +123,8 @@ public class SunburstView {
         return expected;
     }
 
-    private static boolean isBigEnough(int thisCount, int totalResults) {
+    private static boolean isBigEnough(final int thisCount, final int totalResults) {
         return ((double) thisCount)/totalResults >= 0.05;
     }
 
-    private WebDriver getDriver() {
-        return driver;
-    }
-
-    private WebElement findElement(By locator) {
-        return container.findElement(locator);
-    }
-
-    private List<WebElement> findElements(By locator) {
-        return container.findElements(locator);
-    }
 }

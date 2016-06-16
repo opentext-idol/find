@@ -15,7 +15,7 @@ import java.util.Collections;
 @Ignore
 @RunWith(Parameterized.class)
 public abstract class IsoHsodTestBase extends HybridAppTestBase<IsoHsodApplication, IsoHsodElementFactory> {
-    protected IsoHsodTestBase(TestConfig config) {
+    protected IsoHsodTestBase(final TestConfig config) {
         super(config, new IsoHsodApplication());
         setPostLoginHook(new IsoPostLoginHook(getApplication()));
     }

@@ -9,7 +9,7 @@ public class IndexLeafNode implements IndexNodeElement {
     private final Checkbox checkbox;
     private final WebElement container;
 
-    public IndexLeafNode(WebElement element, WebDriver driver) {
+    public IndexLeafNode(final WebElement element, final WebDriver driver) {
         checkbox = new SOCheckbox(element, driver);
         container = element;
     }
