@@ -4,6 +4,7 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.ToolTips;
 import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -63,17 +64,18 @@ public class FilterITCase extends FindTestBase {
         }
 
         results.waitForResultsToLoad();
-
         verifyThat("Added 1 filter: fewer or equal results", findPage.totalResultsNum(), lessThanOrEqualTo(originalNumberOfResults));
         int previousNumberOfResults = findPage.totalResultsNum();
 
         //within the same filter type
         firstParametricContainerCheckboxes.get(1).check();
+        results.waitForResultsToLoad();
         verifyThat("Added filter from same type: more or equal results", findPage.totalResultsNum(), greaterThanOrEqualTo(previousNumberOfResults));
         previousNumberOfResults = findPage.totalResultsNum();
 
         //different filter type
         filters().checkBoxesForParametricFieldContainer(2).get(1).check();
+        results.waitForResultsToLoad();
         verifyThat("Added filter from different type: fewer or equal results", findPage.totalResultsNum(), lessThanOrEqualTo(previousNumberOfResults));
 
     }
@@ -144,7 +146,7 @@ public class FilterITCase extends FindTestBase {
             checkbox.name().click();
         }
 
-        verifyThat("Tooltips aren't floating everywhere",getElementFactory().getToolTips().toolTips(),not(hasSize((boxes.size()))));
+        verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()),not(hasSize((boxes.size()))));
     }
 
     private List<FindParametricCheckbox> checkAllVisibleFiltersInFirstParametrics(){

@@ -1,19 +1,21 @@
 package com.autonomy.abc.selenium.find;
 
-import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ToolTips extends AppElement{
+public class ToolTips {
+    private List<WebElement> toolTips = new ArrayList<>();
 
-    public ToolTips(final WebDriver driver){
-        super(driver.findElement(By.tagName("body")),driver);
+
+    private ToolTips(WebDriver driver){
+        this.toolTips = driver.findElements(By.cssSelector(".tooltip"));
     }
-
-    public List<WebElement> toolTips(){
-        return findElements(By.cssSelector(".tooltip"));
+    
+    public static List<WebElement> toolTips(WebDriver driver){
+        return new ToolTips(driver).toolTips;
     }
 }
