@@ -116,6 +116,16 @@ define([
                         return options.tooltip(formattingFn(d.min), formattingFn(d.max), d.count);
                     });
 
+                if (options.coordinatesEnabled) {
+                    chart.on("mousemove", function () {
+                        options.mouseMoveCallback(data.minValue + scale.barWidth.invert(d3.mouse(this)[0]));
+                    });
+                    
+                    chart.on("mouseleave", function () {
+                        options.mouseLeaveCallback();
+                    });
+                }
+
                 if (options.dragEnabled) {
                     const dragBehaviour = d3.behavior.drag()
                         .on("drag", dragMove(scale.barWidth, data.minValue, options.updateCallback))

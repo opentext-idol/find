@@ -117,6 +117,7 @@ define([
             this.selectionEnabled = options.selectionEnabled;
             this.zoomEnabled = options.zoomEnabled;
             this.buttonsEnabled = options.selectionEnabled && options.buttonsEnabled;
+            this.coordinatesEnabled = options.coordinatesEnabled === undefined ? true : options.coordinatesEnabled;
             this.fieldName = this.model.id;
             this.numericRestriction = options.numericRestriction;
             //noinspection JSUnresolvedVariable
@@ -143,7 +144,8 @@ define([
                 fieldName: prettifyFieldName(this.model.get('name')),
                 id: _.uniqueId('numeric-parametric-field'),
                 selectionEnabled: this.selectionEnabled,
-                buttonsEnabled: this.buttonsEnabled
+                buttonsEnabled: this.buttonsEnabled,
+                coordinatesEnabled: this.coordinatesEnabled
             }));
 
             if (this.selectionEnabled) {
@@ -175,6 +177,14 @@ define([
             const zoomCallback = function (newMin, newMax) {
                 this.updateModel(newMin, newMax);
             }.bind(this);
+            const mouseMoveCallback = function (x) {
+                //noinspection JSPotentiallyInvalidUsageOfThis
+                this.$('.numeric-parametric-co-ordinates').text(this.formatValue(Math.min(roundInputNumber(x), this.model.get('max'))));
+            }.bind(this);
+            const mouseLeaveCallback = function () {
+                //noinspection JSPotentiallyInvalidUsageOfThis
+                this.$('.numeric-parametric-co-ordinates').text('');
+            }.bind(this);
             //noinspection JSUnresolvedFunction
             const buckets = calibrateBuckets(this.model.get('values'), this.model.get('min'), this.model.get('max'), this.model.get('bucketSize'));
             //noinspection JSUnresolvedFunction
@@ -190,12 +200,15 @@ define([
                 updateCallback: updateCallback,
                 selectionCallback: selectionCallback,
                 deselectionCallback: deselectionCallback,
+                mouseMoveCallback: mouseMoveCallback,
+                mouseLeaveCallback: mouseLeaveCallback,
                 zoomCallback: zoomCallback,
                 xRange: this.viewWidth,
                 yRange: GRAPH_HEIGHT,
                 tooltip: i18n['search.numericParametricFields.tooltip'],
                 dragEnabled: this.selectionEnabled,
-                zoomEnabled: this.zoomEnabled
+                zoomEnabled: this.zoomEnabled,
+                coordinatesEnabled: this.coordinatesEnabled
             });
 
             this.drawSelection();

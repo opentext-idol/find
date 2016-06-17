@@ -61,7 +61,8 @@ define([
                     stringFormatting: options.stringFormatting,
                     selectionEnabled: options.selectionEnabled,
                     zoomEnabled: options.zoomEnabled,
-                    buttonsEnabled: options.buttonsEnabled
+                    buttonsEnabled: options.buttonsEnabled,
+                    coordinatesEnabled: options.coordinatesEnabled
                 }
             });
 
