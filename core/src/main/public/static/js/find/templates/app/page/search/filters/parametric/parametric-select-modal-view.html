@@ -3,8 +3,8 @@
         <ul class="nav nav-tabs minimal-tab" role="tablist">
             <% parametricDisplayCollection.each(function(field) { %>
                 <li class="category-title <%- currentFieldGroup === field.id ? 'active' : ''%> full-width">
-                    <a href role="tab" data-toggle="tab" data-target="#<%-field.id%>" class="tab-title full-width" >
-                        <span class="shorten inline-block full-width"> <%-field.id%></span>
+                    <a href role="tab" data-toggle="tab" data-target="#<%-field.id.replace(/[/]/g, '_')%>" class="tab-title full-width" >
+                        <span class="shorten inline-block full-width"> <%-field.get('displayName')%></span>
                     </a>
                 </li>
             <% }); %>

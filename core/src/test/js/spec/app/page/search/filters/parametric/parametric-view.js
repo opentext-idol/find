@@ -13,8 +13,8 @@ define([
     describe('Parametric view', function() {
         beforeEach(function() {
             this.parametricCollection = new Backbone.Collection([
-                {name: 'WIKIPEDIA_CATEGORY', values: [{value: 'food', count: 3}, {value: 'person', count: 5}]},
-                {name: 'PERSON_SEX', values: [{value: 'female', count: 2}]}
+                {id: '/DOCUMENT/WIKIPEDIA_CATEGORY', name: 'WIKIPEDIA_CATEGORY', values: [{value: 'food', count: 3}, {value: 'person', count: 5}]},
+                {id: '/DOCUMENT/PERSON_SEX', name: 'PERSON_SEX', values: [{value: 'female', count: 2}]}
             ]);
 
             this.selectedParametricValues = new SelectedValuesCollection();
@@ -39,14 +39,14 @@ define([
             it('displays every parametric value grouped by field', function() {
                 expect(this.view.$('[data-field]')).toHaveLength(2);
 
-                expect(this.view.$('[data-field="WIKIPEDIA_CATEGORY"]')).toHaveLength(1);
-                expect(this.view.$('[data-field="WIKIPEDIA_CATEGORY"] [data-value]')).toHaveLength(2);
-                expect(this.view.$('[data-field="WIKIPEDIA_CATEGORY"] [data-value="food"]')).toHaveLength(1);
-                expect(this.view.$('[data-field="WIKIPEDIA_CATEGORY"] [data-value="person"]')).toHaveLength(1);
+                expect(this.view.$('[data-field="/DOCUMENT/WIKIPEDIA_CATEGORY"]')).toHaveLength(1);
+                expect(this.view.$('[data-field="/DOCUMENT/WIKIPEDIA_CATEGORY"] [data-value]')).toHaveLength(2);
+                expect(this.view.$('[data-field="/DOCUMENT/WIKIPEDIA_CATEGORY"] [data-value="food"]')).toHaveLength(1);
+                expect(this.view.$('[data-field="/DOCUMENT/WIKIPEDIA_CATEGORY"] [data-value="person"]')).toHaveLength(1);
 
-                expect(this.view.$('[data-field="PERSON_SEX"]')).toHaveLength(1);
-                expect(this.view.$('[data-field="PERSON_SEX"] [data-value]')).toHaveLength(1);
-                expect(this.view.$('[data-field="PERSON_SEX"] [data-value="female"]')).toHaveLength(1);
+                expect(this.view.$('[data-field="/DOCUMENT/PERSON_SEX"]')).toHaveLength(1);
+                expect(this.view.$('[data-field="/DOCUMENT/PERSON_SEX"] [data-value]')).toHaveLength(1);
+                expect(this.view.$('[data-field="/DOCUMENT/PERSON_SEX"] [data-value="female"]')).toHaveLength(1);
             });
 
             it('hides the loading spinner', function() {
@@ -115,7 +115,7 @@ define([
 
                 describe('then the request succeeds', function() {
                     beforeEach(function() {
-                        this.parametricCollection.reset([{name: 'PERSON_SEX', values: [{value: 'male', count: 1}]}]);
+                        this.parametricCollection.reset([{id: '/DOCUMENT/PERSON_SEX', name: 'PERSON_SEX', values: [{value: 'male', count: 1}]}]);
                         this.parametricCollection.trigger('sync');
                     });
 
