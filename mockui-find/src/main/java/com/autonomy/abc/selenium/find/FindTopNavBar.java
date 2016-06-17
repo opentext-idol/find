@@ -68,13 +68,39 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
     }
 
     public List<String> getAlsoSearchingForTerms() {
-        final List<String> badFormatText = ElementUtil.getTexts(additionalConceptElements());
+        if(scrollButtonsExists()) {
+            additionalConceptsScrollAllTheWayLeft();
+        }
+        List<String> badFormatText = new ArrayList<>();
+        for(WebElement concept:additionalConceptElements()){
+            if(!concept.isDisplayed()){
+                additionalConceptsScrollRight(concept);
+            }
+            badFormatText.add(concept.getText());
+        }
         final List<String> goodFormatText = new ArrayList<>();
         for(final String entry: badFormatText){goodFormatText.add(entry.toLowerCase());}
         return goodFormatText;
     }
 
+    private void additionalConceptsScrollRight(WebElement concept) {
+        int i = 0;
+        while (concept.getText().equals("") && i<20) {
+            inputContainer.findElement(By.cssSelector("button.right-scroll")).click();
+            i++;
+        }
+    }
+    private void additionalConceptsScrollAllTheWayLeft(){
+        for(int i=0;i<additionalConceptElements().size()*2;i++) {
+            inputContainer.findElement(By.cssSelector("button.left-scroll")).click();
+        }
+    }
+
     private List<WebElement> additionalConceptElements() {
         return inputContainer.findElements(By.className("selected-related-concept"));
+    }
+
+    private boolean scrollButtonsExists(){
+        return !inputContainer.findElements(By.className("scrolling-buttons")).isEmpty();
     }
 }
