@@ -64,17 +64,18 @@ public class FilterITCase extends FindTestBase {
         }
 
         results.waitForResultsToLoad();
-
         verifyThat("Added 1 filter: fewer or equal results", findPage.totalResultsNum(), lessThanOrEqualTo(originalNumberOfResults));
         int previousNumberOfResults = findPage.totalResultsNum();
 
         //within the same filter type
         firstParametricContainerCheckboxes.get(1).check();
+        results.waitForResultsToLoad();
         verifyThat("Added filter from same type: more or equal results", findPage.totalResultsNum(), greaterThanOrEqualTo(previousNumberOfResults));
         previousNumberOfResults = findPage.totalResultsNum();
 
         //different filter type
         filters().checkBoxesForParametricFieldContainer(2).get(1).check();
+        results.waitForResultsToLoad();
         verifyThat("Added filter from different type: fewer or equal results", findPage.totalResultsNum(), lessThanOrEqualTo(previousNumberOfResults));
 
     }
