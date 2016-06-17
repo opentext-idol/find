@@ -7,20 +7,25 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'moment',
     'find/app/model/find-base-collection',
     'find/app/page/search/filters/parametric/numeric-widget',
     'parametric-refinement/prettify-field-name',
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle'
-], function (Backbone, $, _, FindBaseCollection, numericWidget, prettifyFieldName, SelectedParametricValuesCollection, i18n) {
-    "use strict";
+], function(Backbone, $, _, moment, FindBaseCollection, numericWidget, prettifyFieldName, SelectedParametricValuesCollection, i18n) {
+
+    'use strict';
+
     const GRAPH_HEIGHT = 110;
+    const DATE_WIDGET_FORMAT = 'YYYY-MM-DD HH:mm';
 
     function resetSelectedParametricValues(selectedParametricValues, fieldName) {
-        const existingRestrictions = selectedParametricValues.where({field: fieldName});
-        existingRestrictions.forEach(function (model) {
-            selectedParametricValues.remove(model);
-        });
+        selectedParametricValues
+            .where({field: fieldName})
+            .forEach(function(model) {
+                selectedParametricValues.remove(model);
+            });
     }
 
     function updateRestrictions(selectedParametricValues, fieldName, numericRestriction, min, max) {
@@ -40,7 +45,7 @@ define([
         if (buckets.length > 0) {
             // Remove buckets not in range when zooming in
             //noinspection JSUnresolvedFunction
-            calibratedBuckets = _.filter(buckets, function (value) {
+            calibratedBuckets = _.filter(buckets, function(value) {
                 return value.min >= min && value.max <= max;
             });
 
@@ -64,7 +69,7 @@ define([
                 });
             }
         }
-        
+
         return calibratedBuckets;
     }
 
@@ -72,43 +77,43 @@ define([
         className: 'animated fadeIn',
 
         events: {
-            'click .numeric-parametric-no-min': function () {
+            'click .numeric-parametric-no-min': function() {
                 //noinspection JSUnresolvedFunction,JSUnresolvedVariable
                 this.updateMinInput(this.absoluteMinValue, true);
             },
-            'click .numeric-parametric-no-max': function () {
+            'click .numeric-parametric-no-max': function() {
                 //noinspection JSUnresolvedFunction,JSUnresolvedVariable
                 this.updateMaxInput(this.absoluteMaxValue, true);
             },
-            'click .numeric-parametric-reset': function () {
+            'click .numeric-parametric-reset': function() {
                 //noinspection JSUnresolvedVariable
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
                 //noinspection JSUnresolvedVariable,JSUnresolvedFunction
                 this.updateModel(this.absoluteMinValue, this.absoluteMaxValue);
             },
-            'change .numeric-parametric-min-input': function () {
+            'change .numeric-parametric-min-input': function() {
                 //noinspection JSUnresolvedVariable,JSUnresolvedFunction
                 updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput());
                 //noinspection JSUnresolvedFunction
                 this.drawSelection();
             },
-            'change .numeric-parametric-max-input': function () {
+            'change .numeric-parametric-max-input': function() {
                 //noinspection JSUnresolvedVariable,JSUnresolvedFunction
                 updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput());
                 //noinspection JSUnresolvedFunction
                 this.drawSelection();
             },
-            'dp.change .results-filter-date[data-date-attribute="min-date"]': function (event) {
+            'dp.change .results-filter-date[data-date-attribute="min-date"]': function(event) {
                 //noinspection JSUnresolvedFunction,JSUnresolvedVariable
                 this.updateMinInput(event.date.unix(), true);
             },
-            'dp.change .results-filter-date[data-date-attribute="max-date"]': function (event) {
+            'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
                 //noinspection JSUnresolvedFunction,JSUnresolvedVariable
                 this.updateMaxInput(event.date.unix(), true);
             }
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.template = _.template(options.template);
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.selectedParametricValues;
@@ -125,18 +130,15 @@ define([
             this.parseValue = options.stringFormatting && options.stringFormatting.parse || _.identity;
             //noinspection JSUnresolvedVariable
             this.renderCustomFormatting = options.stringFormatting && options.stringFormatting.render || _.noop;
-            this.widget = numericWidget({
-                formattingFn: this.formatValue
-            });
-            this.localBucketingCollection = new (FindBaseCollection.extend({
-                url: '../api/public/parametric/buckets'
-            }))();
+
+            this.widget = numericWidget({formattingFn: this.formatValue});
+            this.localBucketingCollection = new (FindBaseCollection.extend({url: '../api/public/parametric/buckets'}))();
 
             this.absoluteMinValue = this.model.get('min');
             this.absoluteMaxValue = this.model.get('max');
         },
 
-        render: function () {
+        render: function() {
             //noinspection JSUnresolvedVariable,JSUnresolvedFunction
             this.$el.empty().append(this.template({
                 i18n: i18n,
@@ -159,24 +161,29 @@ define([
                 this.updateMaxInput(this.absoluteMaxValue);
             }
 
-            const updateCallback = function (x1, x2) {
+            const updateCallback = function(x1, x2) {
                 // rounding to one decimal place
                 this.updateMinInput(Math.max(roundInputNumber(x1), this.model.get('min')));
                 this.updateMaxInput(Math.min(roundInputNumber(x2), this.model.get('max')));
             }.bind(this);
-            const selectionCallback = function (x1, x2) {
+
+            const selectionCallback = function(x1, x2) {
                 updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, Math.max(x1, this.model.get('min')), Math.min(x2, this.model.get('max')));
             }.bind(this);
-            const deselectionCallback = function () {
+
+            const deselectionCallback = function() {
                 this.updateMinInput(this.absoluteMinValue);
                 this.updateMaxInput(this.absoluteMaxValue);
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
             }.bind(this);
-            const zoomCallback = function (newMin, newMax) {
+
+            const zoomCallback = function(newMin, newMax) {
                 this.updateModel(newMin, newMax);
             }.bind(this);
+
             //noinspection JSUnresolvedFunction
             const buckets = calibrateBuckets(this.model.get('values'), this.model.get('min'), this.model.get('max'), this.model.get('bucketSize'));
+
             //noinspection JSUnresolvedFunction
             this.graph = this.widget.drawGraph({
                 chart: this.$('.chart')[0],
@@ -200,32 +207,32 @@ define([
 
             this.drawSelection();
         },
-        
-        drawSelection: function () {
-            const graph = this.graph;
-            
-            this.selectedParametricValues.where({
-                field: this.fieldName
-            }).forEach(function (restriction) {
-                const range = restriction.get('range');
-                if (range) {
-                    this.updateMinInput(roundInputNumber(range[0]));
-                    this.updateMaxInput(roundInputNumber(range[1]));
 
-                    graph.selectionRect.init(graph.chart, GRAPH_HEIGHT, graph.scale.barWidth(range[0]));
-                    graph.selectionRect.update(graph.scale.barWidth(range[1]));
-                    graph.selectionRect.focus();
-                }
-            }, this);
+        drawSelection: function() {
+            const graph = this.graph;
+
+            this.selectedParametricValues
+                .where({field: this.fieldName})
+                .forEach(function(restriction) {
+                    const range = restriction.get('range');
+                    if (range) {
+                        this.updateMinInput(roundInputNumber(range[0]));
+                        this.updateMaxInput(roundInputNumber(range[1]));
+    
+                        graph.selectionRect.init(graph.chart, GRAPH_HEIGHT, graph.scale.barWidth(range[0]));
+                        graph.selectionRect.update(graph.scale.barWidth(range[1]));
+                        graph.selectionRect.focus();
+                    }
+                }, this);
         },
 
-        updateModel: function (newMin, newMax) {
+        updateModel: function(newMin, newMax) {
             // immediate update, just rescaling the existing buckets
             this.model.set({
                 min: newMin,
                 max: newMax
             });
-    
+
             // proper update, regenerating the buckets from the given bounds
             //noinspection JSUnresolvedVariable
             this.localBucketingCollection.fetch({
@@ -252,36 +259,63 @@ define([
             });
         },
 
-        readMinInput: function () {
+        readMinInput: function() {
             return this.parseValue(this.$minInput.val());
         },
 
-        readMaxInput: function () {
+        readMaxInput: function() {
             return this.parseValue(this.$maxInput.val());
         },
 
-        updateMinInput: function (newValue, triggerChange) {
-            if (triggerChange) {
-                const $minInput = this.$minInput;
-                if (newValue !== this.readMinInput()) {
+        updateMinInput: function(newValue, triggerChange) {
+            if (this.selectionEnabled) {
+                if (triggerChange) {
+                    if (newValue !== this.readMinInput()) {
+                        this.$minInput
+                            .val(this.formatValue(newValue))
+                            .trigger('change');
+                    }
+                } else {
                     this.$minInput.val(this.formatValue(newValue));
-                    $minInput.trigger('change');
                 }
-            } else {
-                this.$minInput.val(this.formatValue(newValue));
             }
         },
 
-        updateMaxInput: function (newValue, triggerChange) {
-            if (triggerChange) {
-                const $maxInput = this.$maxInput;
-                if (newValue !== this.readMaxInput()) {
+        updateMaxInput: function(newValue, triggerChange) {
+            if (this.selectionEnabled) {
+                if (triggerChange) {
+                    if (newValue !== this.readMaxInput()) {
+                        this.$maxInput
+                            .val(this.formatValue(newValue))
+                            .trigger('change');
+                    }
+                } else {
                     this.$maxInput.val(this.formatValue(newValue));
-                    $maxInput.trigger('change');
                 }
-            } else {
-                this.$maxInput.val(this.formatValue(newValue));
+            }
+        }
+    }, {
+        dateFormatting: {
+            format: function (unformattedString) {
+                return moment(unformattedString * 1000).format(DATE_WIDGET_FORMAT);
+            },
+            parse: function (formattedString) {
+                return moment(formattedString, DATE_WIDGET_FORMAT).unix();
+            },
+            render: function ($el) {
+                $el.find('.results-filter-date').datetimepicker({
+                    format: DATE_WIDGET_FORMAT,
+                    icons: {
+                        time: 'hp-icon hp-fw hp-clock',
+                        date: 'hp-icon hp-fw hp-calendar',
+                        up: 'hp-icon hp-fw hp-chevron-up',
+                        down: 'hp-icon hp-fw hp-chevron-down',
+                        next: 'hp-icon hp-fw hp-chevron-right',
+                        previous: 'hp-icon hp-fw hp-chevron-left'
+                    }
+                });
             }
         }
     });
+
 });

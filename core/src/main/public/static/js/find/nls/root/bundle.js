@@ -213,6 +213,7 @@ define([
         'search.similarDocuments.none': 'No similar documents found',
         'search.spellCheck.showingResults': 'Showing results for',
         'search.spellCheck.searchFor': 'Search for',
+        'search.timeBar.error': 'An error occurred loading document dates',
         'settings.cancel': 'Cancel',
         'settings.cancel.message': 'All unsaved changes will be lost.',
         'settings.cancel.title': 'Revert settings?',

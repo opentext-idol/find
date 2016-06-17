@@ -286,6 +286,7 @@ define([
                     icon: 'hp-search',
                     isMutable: true,
                     relatedConceptsClickHandler: relatedConceptsClickHandlers.updateQuery,
+                    showTimeBar: true,
                     LeftSideFooterView: this.QueryLeftSideView,
                     DocumentsCollection: DocumentsCollection,
                     MiddleColumnHeaderView: this.QueryMiddleColumnHeaderView,

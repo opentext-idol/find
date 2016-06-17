@@ -39,6 +39,7 @@ define([
                         icon: 'hp-camera',
                         isMutable: false,
                         fetchStrategy: stateTokenStrategy,
+                        showTimeBar: false,
                         DocumentsCollection: ComparisonDocumentsCollection,
                         LeftSideFooterView: SnapshotDataView,
                         MiddleColumnHeaderView: null,

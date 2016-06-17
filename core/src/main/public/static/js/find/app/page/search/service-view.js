@@ -26,25 +26,28 @@ define([
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
     'find/app/page/search/results/table/table-view',
+    'find/app/page/search/time-bar-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, ParametricFieldsCollection,
-            queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, Collapsible,
-            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, TableView, configuration, i18n, templateString) {
+], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, 
+            ParametricFieldsCollection, queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, 
+            RelatedConceptsView, Collapsible, addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, 
+            MapResultsView, TableView, TimeBarView, configuration, i18n, templateString) {
+
     'use strict';
 
     var $window = $(window);
     var template = _.template(templateString);
 
     function updateScrollParameters() {
-        if (this.$middleContainer) {
+        if (this.$middleContainerContents) {
             this.middleColumnScrollModel.set({
-                innerHeight: this.$middleContainer.innerHeight(),
-                scrollTop: this.$middleContainer.scrollTop(),
-                scrollHeight: this.$middleContainer.prop('scrollHeight'),
-                top: this.$middleContainer.get(0).getBoundingClientRect().top,
-                bottom: this.$middleContainer.get(0).getBoundingClientRect().bottom
+                innerHeight: this.$middleContainerContents.innerHeight(),
+                scrollTop: this.$middleContainerContents.scrollTop(),
+                scrollHeight: this.$middleContainerContents.prop('scrollHeight'),
+                top: this.$middleContainerContents.get(0).getBoundingClientRect().top,
+                bottom: this.$middleContainerContents.get(0).getBoundingClientRect().bottom
             });
         }
     }
@@ -61,6 +64,8 @@ define([
         fetchParametricValues: null,
 
         initialize: function(options) {
+            var hasBiRole = configuration().hasBiRole;
+
             this.indexesCollection = options.indexesCollection;
             this.selectedTabModel = options.selectedTabModel;
             this.savedSearchCollection = options.savedSearchCollection;
@@ -124,21 +129,11 @@ define([
                 }
             });
 
-            this.parametricFieldsCollection = new ParametricFieldsCollection([], {
-                url: '../api/public/fields/parametric'
-            });
-            this.restrictedParametricCollection = new ParametricCollection([], {
-                url: '../api/public/parametric/restricted'
-            });
-            this.numericParametricFieldsCollection = new ParametricFieldsCollection([], {
-                url: '../api/public/fields/parametric-numeric'
-            });
-            this.dateParametricFieldsCollection = new ParametricFieldsCollection([], {
-                url: '../api/public/fields/parametric-date'
-            });
-            this.parametricCollection = new ParametricCollection([], {
-                url: '../api/public/parametric'
-            });
+            this.parametricFieldsCollection = new ParametricFieldsCollection([], {url: '../api/public/fields/parametric'});
+            this.restrictedParametricCollection = new ParametricCollection([], {url: '../api/public/parametric/restricted'});
+            this.numericParametricFieldsCollection = new ParametricFieldsCollection([], {url: '../api/public/fields/parametric-numeric'});
+            this.dateParametricFieldsCollection = new ParametricFieldsCollection([], {url: '../api/public/fields/parametric-date'});
+            this.parametricCollection = new ParametricCollection([], {url: '../api/public/parametric'});
 
             var subViewArguments = {
                 indexesCollection: this.indexesCollection,
@@ -166,8 +161,12 @@ define([
                 selectedTabModel: this.selectedTabModel
             };
 
-            if (configuration().hasBiRole) {
+            if (hasBiRole) {
                 this.savedSearchControlView = new SavedSearchControlView(subViewArguments);
+
+                if (this.searchTypes[searchType].showTimeBar) {
+                    this.timeBarView = new TimeBarView(subViewArguments);
+                }
             }
 
             this.leftSideFooterView = new this.searchTypes[searchType].LeftSideFooterView(subViewArguments);
@@ -197,8 +196,6 @@ define([
                 highlightModel: this.highlightModel,
                 scrollModel: this.middleColumnScrollModel
             }, subViewArguments));
-
-            var hasBiRole = configuration().hasBiRole;
 
             this.resultsViews = _.where([{
                 Constructor: this.ResultsViewAugmentation,
@@ -299,13 +296,17 @@ define([
         },
 
         render: function() {
+            var hasBiRole = configuration().hasBiRole;
+
             this.$el.html(template({
                 i18n: i18n,
-                headerControlsHtml: this.headerControlsHtml
+                headerControlsHtml: this.headerControlsHtml,
+                hasBiRole: hasBiRole,
+                showTimeBar: Boolean(this.timeBarView)
             }));
 
-            if (configuration().hasBiRole) {
-                this.$('.query-service-view').addClass('bi-query-service-view');
+            if (this.timeBarView) {
+                this.timeBarView.setElement(this.$('.middle-container-time-bar')).render();
             }
 
             if (this.savedSearchControlView) {
@@ -333,7 +334,7 @@ define([
 
             this.$('.container-toggle').on('click', this.containerToggle);
 
-            this.$middleContainer = this.$('.middle-container').scroll(this.updateScrollParameters);
+            this.$middleContainerContents = this.$('.middle-container-contents').scroll(this.updateScrollParameters);
             this.updateScrollParameters();
         },
 
@@ -342,7 +343,7 @@ define([
             this.fetchParametricValues(this.parametricFieldsCollection, this.parametricCollection);
         },
 
-        fetchEntities: function () {
+        fetchEntities: function() {
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
                     databases: this.queryModel.get('indexes'),
@@ -380,7 +381,7 @@ define([
                     minScore: this.queryModel.get('minScore'),
                     stateTokens: this.queryModel.get('stateMatchIds')
                 }
-            })
+            });
         },
 
         rightSideContainerHideToggle: function(toggle) {
@@ -400,7 +401,8 @@ define([
                 this.resultsViewSelection,
                 this.relatedConceptsViewWrapper,
                 this.leftSideFooterView,
-                this.middleColumnHeaderView
+                this.middleColumnHeaderView,
+                this.timeBarView
             ])
                 .compact()
                 .invoke('remove');
