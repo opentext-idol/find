@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.ToolTips;
 import com.autonomy.abc.selenium.find.filters.*;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResult;
@@ -32,7 +32,7 @@ import static org.junit.Assert.fail;
 
 public class FilterITCase extends FindTestBase {
     private FindPage findPage;
-    private FindResultsPage results;
+    private ResultsView results;
     private FindService findService;
 
     public FilterITCase(final TestConfig config) {
@@ -146,7 +146,7 @@ public class FilterITCase extends FindTestBase {
             checkbox.name().click();
         }
 
-        verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()),not(hasSize((boxes.size()))));
+        verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()),not(hasSize(boxes.size())));
     }
 
     private List<FindParametricCheckbox> checkAllVisibleFiltersInFirstParametrics(){

@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.promotions;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.hp.autonomy.frontend.selenium.element.*;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -79,7 +80,7 @@ public class IdolPromotionsDetailPage extends PromotionsDetailPage {
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.elementToBeClickable(findElement(By.className("promotion-view-schedule")))).click();
     }
 
-    public static class Factory extends SOPageFactory<IdolPromotionsDetailPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<IdolPromotionsDetailPage> {
         public Factory() {
             super(IdolPromotionsDetailPage.class);
         }

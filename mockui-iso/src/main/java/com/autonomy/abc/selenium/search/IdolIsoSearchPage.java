@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.search;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.IdolLanguageDropdown;
@@ -37,12 +38,10 @@ public class IdolIsoSearchPage extends SearchPage {
 
     public List<String> getPromotionLabels() {
         waitForPromotionsLoadIndicatorToDisappear();
-        final List<String> labelList = new ArrayList<>();
-
         if (showMorePromotionsButton().isDisplayed()) {
             showMorePromotions();
         }
-        labelList.addAll(getPromotionTypeLabels());
+        final List<String> labelList = getPromotionTypeLabels();
 
         while (ElementUtil.isEnabled(promotionPaginationButton(Pagination.NEXT))) {
             switchPromotionPage(Pagination.NEXT);
@@ -55,7 +54,7 @@ public class IdolIsoSearchPage extends SearchPage {
         return ElementUtil.getTexts(findElements(By.className("promotion-name")));
     }
 
-    public static class Factory extends SOPageFactory<IdolIsoSearchPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<IdolIsoSearchPage> {
         public Factory() {
             super(IdolIsoSearchPage.class);
         }

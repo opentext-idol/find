@@ -94,7 +94,7 @@ public class CreateNewPromotionsITCase extends HybridIsoTestBase {
 
         createPromotionsPage.selectPositionPlusButton().click();
         verifyThat(createPromotionsPage.positionInputValue(), is(2));
-        verifyThat(createPromotionsPage.continueButton(), not(hasAttribute(("disabled"))));
+        verifyThat(createPromotionsPage.continueButton(), not(hasAttribute("disabled")));
         verifyThat(createPromotionsPage.selectPositionMinusButton(), not(hasAttribute("disabled")));
 
         for (int i=0; i<4; i++) {

@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class QueryTestHelper<T extends QueryResultsPage> {
-    public final static List<String> NO_TERMS = Arrays.asList(
+    public static final List<String> NO_TERMS = Arrays.asList(
             "a",
             "the",
             "of",
@@ -32,7 +32,7 @@ public class QueryTestHelper<T extends QueryResultsPage> {
                operator without brackets */
             "SOUNDEX"
     );
-    private final static List<String> HIDDEN_BOOLEANS = Arrays.asList(
+    private static final List<String> HIDDEN_BOOLEANS = Arrays.asList(
             "NOTed",
             "ANDREW",
             "ORder",
@@ -53,7 +53,7 @@ public class QueryTestHelper<T extends QueryResultsPage> {
             "BEFOREHAND",
             "NOTWHENERED"
     );
-    private final static List<String> MISMATCHED_BRACKETS = Arrays.asList(
+    private static final List<String> MISMATCHED_BRACKETS = Arrays.asList(
             "(",
             ")",
             // TODO: these are not "mismatched" brackets in the same sense, but should probably be tested somewhere
@@ -61,13 +61,13 @@ public class QueryTestHelper<T extends QueryResultsPage> {
 //            ") (",
             ")war"
     );
-    private final static List<String> MISMATCHED_QUOTES = Arrays.asList(
+    private static final List<String> MISMATCHED_QUOTES = Arrays.asList(
             "\"",
             "\"word",
             "\" word",
             "\" wo\"rd\""
     );
-    private final static List<String> OPERATORS = Arrays.asList(
+    private static final List<String> OPERATORS = Arrays.asList(
             "OR",
             "WHEN",
             "SENTENCE",

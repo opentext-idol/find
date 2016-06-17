@@ -65,11 +65,11 @@ public class SchedulePage extends SOPageBase {
 	public String todayDateString(){return dateAsString(getTodayDate());}
 
 	public String dateAndTimeAsString(final Date date) {
-		return (new SimpleDateFormat("dd/MM/yyyy HH:mm")).format(date);
+		return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
 	}
 
 	public int getDay(final int plusDays) {
-		return Integer.parseInt((new SimpleDateFormat("dd")).format(todayIncrementedByDays(plusDays)));
+		return Integer.parseInt(new SimpleDateFormat("dd").format(todayIncrementedByDays(plusDays)));
 	}
 
 	public Date todayIncrementedByDays(final int plusDays){
@@ -77,11 +77,11 @@ public class SchedulePage extends SOPageBase {
 	}
 
 	public String getMonth(final int plusDays) {
-		return (new SimpleDateFormat("MMMMMMMMM")).format(DateUtils.addDays(getTodayDate(), plusDays));
+		return new SimpleDateFormat("MMMMMMMMM").format(DateUtils.addDays(getTodayDate(), plusDays));
 	}
 
 	public String dateAsString(final Date date) {
-		return (new SimpleDateFormat("dd/MM/yyyy")).format(date);
+		return new SimpleDateFormat("dd/MM/yyyy").format(date);
 	}
 
 	public String parseDateObjectToPromotions(final String date) {
@@ -197,14 +197,14 @@ public class SchedulePage extends SOPageBase {
 		return ElementUtil.getTexts(findElements(By.cssSelector(".help-block")));
 	}
 
-	public static class Factory extends SOPageFactory<SchedulePage> {
+	public static class Factory extends SOPageBase.SOPageFactory<SchedulePage> {
 		public Factory() {
 			super(SchedulePage.class);
 		}
 
 		@Override
         public SchedulePage create(final WebDriver context) {
-			SchedulePage.waitForLoad(context);
+			waitForLoad(context);
 			return new SchedulePage(context);
 		}
 	}

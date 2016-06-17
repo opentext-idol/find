@@ -40,7 +40,7 @@ public abstract class UserTableRow extends AppElement {
 
     public boolean isConfirmed() {
         final String statusString = findElement(By.className("account-status")).getText();
-        return Status.fromString(statusString).equals(Status.CONFIRMED);
+        return Status.fromString(statusString) == Status.CONFIRMED;
     }
 
     public abstract void changeRoleTo(Role role);

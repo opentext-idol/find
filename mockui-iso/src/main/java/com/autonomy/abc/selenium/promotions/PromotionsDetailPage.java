@@ -225,7 +225,7 @@ public class PromotionsDetailPage extends SOPageBase {
         return new PromotionsDetailTriggerForm(findElement(By.className("promotion-match-terms-wrapper")), getDriver());
     }
 
-    public static class Factory extends SOPageFactory<PromotionsDetailPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<PromotionsDetailPage> {
         public Factory() {
             super(PromotionsDetailPage.class);
         }

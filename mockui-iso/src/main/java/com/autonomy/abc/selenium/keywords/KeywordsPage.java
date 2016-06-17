@@ -67,7 +67,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     public void filterView(final KeywordFilter filter) {
         final WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
-        findElement(By.xpath("//*[contains(@class,'keywords-filters')]//a[text()='"+ filter.toString() +"']")).click();
+        findElement(By.xpath("//*[contains(@class,'keywords-filters')]//a[text()='"+ filter +"']")).click();
         Waits.loadOrFadeWait();
     }
 

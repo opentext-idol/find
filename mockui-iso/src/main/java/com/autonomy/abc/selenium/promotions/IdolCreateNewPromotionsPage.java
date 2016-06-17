@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
+import com.autonomy.abc.selenium.application.SOPageBase;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ public class IdolCreateNewPromotionsPage extends CreateNewPromotionsPage {
         );
     }
 
-    public static class Factory extends SOPageFactory<IdolCreateNewPromotionsPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<IdolCreateNewPromotionsPage> {
         public Factory() {
             super(IdolCreateNewPromotionsPage.class);
         }

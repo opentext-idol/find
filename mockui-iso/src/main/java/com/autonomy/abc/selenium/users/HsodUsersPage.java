@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.auth.HsodNewUser;
 import com.autonomy.abc.selenium.auth.HsodUser;
 import com.autonomy.abc.selenium.users.table.HsodUserTable;
@@ -47,7 +48,7 @@ public class HsodUsersPage extends UsersPage<HsodUserTableRow> {
         return new HsodUserTable(findElement(By.cssSelector("#users-current-admins")), getDriver());
     }
 
-    public static class Factory extends SOPageFactory<HsodUsersPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<HsodUsersPage> {
         public Factory() {
             super(HsodUsersPage.class);
         }

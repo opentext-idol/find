@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class SearchPage extends SearchBase implements LanguageFilter.Filterable {
-	public final static int RESULTS_PER_PAGE = 6;
-	public final static int MAX_RESULTS = 2500;
+	public static final int RESULTS_PER_PAGE = 6;
+	public static final int MAX_RESULTS = 2500;
 
 	public SearchPage(final WebDriver driver) {
 		// specify data-pagename to avoid invisible elements from other pages showing up
@@ -166,7 +166,6 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 
 	public List<String> getPromotedDocumentTitles(final boolean fullList) {
 		waitForPromotionsLoadIndicatorToDisappear();
-		final List<String> promotionsList = new ArrayList<>();
 
 		if (showMorePromotionsButton().isDisplayed()) {
 			showMorePromotions();
@@ -176,7 +175,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 			DriverUtil.scrollIntoViewAndClick(getDriver(), promotionPaginationButton(Pagination.FIRST));
 		}
 
-		promotionsList.addAll(getVisiblePromotedDocumentTitles());
+		final List<String> promotionsList = getVisiblePromotedDocumentTitles();
 
 		if (fullList) {
 			while (ElementUtil.isEnabled(promotionPaginationButton(Pagination.NEXT))) {
@@ -196,7 +195,7 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 	}
 
 	public WebElement promotedResult(final int number) {
-		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + String.valueOf(number) + ')')));
+		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + number + ')')));
 	}
 
 	public boolean isPromotionsBoxVisible() {

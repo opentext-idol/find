@@ -18,7 +18,7 @@ public class IsoOverviewPage extends DashboardBase {
 		return Integer.parseInt(getWidget(Widget.TOP_SEARCH_TERMS).findElement(By.cssSelector(ACTIVE_TABLE_SELECTOR)).findElement(By.xpath(".//a[text()='" + searchTerm + "']/../../td[3]")).getText());
 	}
 
-	public final static String ACTIVE_TABLE_SELECTOR = ":not([style='display: none;']) > table";
+	public static final String ACTIVE_TABLE_SELECTOR = ":not([style='display: none;']) > table";
 
 	public int getTotalSearches(final Widget widget) {
 		return Integer.parseInt(getWidget(widget).findElement(By.xpath(".//*[contains(text(), 'Total searches')]/..")).findElement(By.cssSelector(".query-count")).getText().replace(",", ""));
@@ -55,7 +55,7 @@ public class IsoOverviewPage extends DashboardBase {
 	}
 
 	public WebElement getWidget(final Widget widgetHeadingText) {
-		return findElement(By.xpath(".//h3[contains(text(), \"" + widgetHeadingText.toString() + "\")]/../.."));
+		return findElement(By.xpath(".//h3[contains(text(), \"" + widgetHeadingText + "\")]/../.."));
 	}
 
 	public WebElement zeroHitLastWeekButton() {
@@ -87,7 +87,7 @@ public class IsoOverviewPage extends DashboardBase {
 
 		@Override
         public IsoOverviewPage create(final WebDriver context) {
-			IsoOverviewPage.waitForLoad(context);
+			waitForLoad(context);
 			return new IsoOverviewPage(context);
 		}
 	}

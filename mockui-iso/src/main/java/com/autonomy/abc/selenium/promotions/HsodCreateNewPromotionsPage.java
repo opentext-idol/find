@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -54,7 +55,7 @@ public class HsodCreateNewPromotionsPage extends CreateNewPromotionsPage {
         return dataInput("staticContent");
     }
 
-    public static class Factory extends SOPageFactory<HsodCreateNewPromotionsPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<HsodCreateNewPromotionsPage> {
         public Factory() {
             super(HsodCreateNewPromotionsPage.class);
         }

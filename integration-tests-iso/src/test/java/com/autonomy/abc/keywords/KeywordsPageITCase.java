@@ -566,7 +566,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		final String synonymTwo = "Meat";
 		final String synonymThree = "Skin";
 
-		final String[] synonyms = new String[]{synonymOne, synonymTwo, synonymThree};
+		final String[] synonyms = {synonymOne, synonymTwo, synonymThree};
 		keywordService.addSynonymGroup(synonyms);
 		Arrays.sort(synonyms);
 		getElementFactory().getTopNavBar().notificationsDropdown();
@@ -624,7 +624,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	public void testOverlappingBlacklistSynonym() {
 		final String blacklist = "blacklist";
 		final String synonym = "synonym";
-		final String[] synonymGroup = new String[]{blacklist, synonym};
+		final String[] synonymGroup = {blacklist, synonym};
 
 		keywordService.addSynonymGroup(synonymGroup);
 		keywordService.addBlacklistTerms(blacklist);

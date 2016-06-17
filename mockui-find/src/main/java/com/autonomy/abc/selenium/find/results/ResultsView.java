@@ -13,9 +13,17 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FindResultsPage extends AppElement implements QueryResultsPage {
-    public FindResultsPage(final WebDriver driver) {
-        super(driver.findElement(By.className("service-view-container")), driver);
+public class ResultsView extends AppElement implements QueryResultsPage {
+    public ResultsView(final WebElement element, final WebDriver driver) {
+        super(element, driver);
+    }
+
+    public ResultsView(final WebDriver driver) {
+        this(Container.currentTabContents(driver).findElement(By.className("middle-container")), driver);
+    }
+
+    public int getResultsCount() {
+        return Integer.valueOf(findElement(By.className("total-results-number")).getText());
     }
 
     @Override
@@ -36,12 +44,12 @@ public class FindResultsPage extends AppElement implements QueryResultsPage {
     }
 
     public boolean loadingIndicatorPresent(){
-        return findElements(By.cssSelector(".main-results-content .loading-spinner")).size()>0;
+        return !findElements(By.cssSelector(".main-results-content .loading-spinner")).isEmpty();
     }
 
     public List<FindResult> getResults() {
         final List<FindResult> results = new ArrayList<>();
-        for (final WebElement result : findElements(By.xpath("//*[starts-with(@class,'main-results-container')]"))) {
+        for (final WebElement result : findElements(By.className("main-results-container"))) {
             results.add(new FindResult(result, getDriver()));
         }
         return results;

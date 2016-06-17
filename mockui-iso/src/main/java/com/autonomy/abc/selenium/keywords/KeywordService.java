@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class KeywordService extends ServiceBase<IsoElementFactory> {
-    private final static Logger LOGGER = LoggerFactory.getLogger(KeywordService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeywordService.class);
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage newKeywordsPage;
 
@@ -81,7 +81,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     // this does not wait at the end, generally not the one you want
     public void addKeywords(final KeywordWizardType type, Language language, final Iterable<String> keywords) {
         goToKeywordsWizard();
-        if (getApplication().isHosted() && !language.equals(Language.ENGLISH)) {
+        if (getApplication().isHosted() && language != Language.ENGLISH) {
             LOGGER.warn("hosted mode does not support foreign keywords, using English instead");
             language = Language.ENGLISH;
         }

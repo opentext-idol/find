@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.auth.IdolIsoNewUser;
 import com.autonomy.abc.selenium.auth.IdolIsoReplacementAuth;
 import com.autonomy.abc.selenium.users.table.IdolUserTable;
@@ -56,7 +57,7 @@ public class IdolUsersPage extends UsersPage<IdolUserTableRow> {
         return newAuth.replaceAuth(user);
     }
 
-    public static class Factory extends SOPageFactory<IdolUsersPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<IdolUsersPage> {
         public Factory() {
             super(IdolUsersPage.class);
         }

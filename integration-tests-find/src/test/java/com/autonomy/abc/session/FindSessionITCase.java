@@ -3,7 +3,7 @@ package com.autonomy.abc.session;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.results.FindResult;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
@@ -26,7 +26,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 @RelatedTo("CSA-1567")
 public class FindSessionITCase extends FindTestBase {
-    private FindResultsPage results;
+    private ResultsView results;
     private FindService findService;
 
     public FindSessionITCase(final TestConfig config) {

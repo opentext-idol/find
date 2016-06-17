@@ -57,7 +57,7 @@ enum HsodAuthFactory {
     };
 
     private static HsodAuthFactory getFactory(final String string) {
-        return HsodAuthFactory.valueOf(string.toUpperCase().replace(' ', '_'));
+        return valueOf(string.toUpperCase().replace(' ', '_'));
     }
 
     abstract AuthProvider getProvider(Map<String, Object> map);

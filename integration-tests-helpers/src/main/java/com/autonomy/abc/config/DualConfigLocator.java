@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.net.URL;
 
 public class DualConfigLocator {
-    private final static String BASE_CONFIG_LOCATION = System.getProperty("com.autonomy.baseConfig");
-    private final static String OVERRIDE_CONFIG_LOCATION = System.getProperty("com.autonomy.configFile");
-    private final static Logger LOGGER = LoggerFactory.getLogger(TestConfig.class);
+    private static final String BASE_CONFIG_LOCATION = System.getProperty("com.autonomy.baseConfig");
+    private static final String OVERRIDE_CONFIG_LOCATION = System.getProperty("com.autonomy.configFile");
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestConfig.class);
 
     private final ResourceJsonConfigReader reader;
 

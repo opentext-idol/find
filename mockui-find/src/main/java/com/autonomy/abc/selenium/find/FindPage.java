@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
-import com.autonomy.abc.selenium.find.results.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
@@ -23,13 +22,10 @@ public class FindPage extends AppElement implements AppPage,
         StringDateFilter.Filterable,
         ParametricFilter.Filterable {
 
-    private final FindResultsPage results;
-
     FindPage(final WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
-        results = new FindResultsPage(driver);
     }
 
     protected FilterPanel filters() {
@@ -65,7 +61,7 @@ public class FindPage extends AppElement implements AppPage,
     @Override
     public void filterBy(final QueryFilter filter) {
         filter.apply(this);
-        results.waitForResultsToLoad();
+        waitForResultsToLoad();
     }
 
     @Override
@@ -119,7 +115,15 @@ public class FindPage extends AppElement implements AppPage,
     public void scrollToBottom() {
         findElement(By.className("results-number")).click();
         DriverUtil.scrollToBottom(getDriver());
-        results.waitForResultsToLoad();
+        waitForResultsToLoad();
+    }
+
+    protected WebElement mainContainer() {
+        return Container.currentTabContents(getDriver());
+    }
+
+    private void waitForResultsToLoad() {
+        Container.MIDDLE.waitForLoad(getDriver());
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {

@@ -2,9 +2,7 @@ package com.autonomy.abc.selenium.find.bi;
 
 
 import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
-import com.hp.autonomy.frontend.selenium.element.ChosenDrop;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
@@ -87,7 +85,7 @@ public class SunburstView extends ParametricFieldView {
 
         hoveringOffSide(segment,(dimensions.getWidth()/4)*3, dimensions.getHeight()/2);
         if(!sunburstCentreHasText()|| (sunburstCentreHasText() && getSunburstCentreName().equals("Parametric Distribution"))){
-            hoveringOffSide(segment,(dimensions.getWidth()/4), dimensions.getHeight()/2);
+            hoveringOffSide(segment, dimensions.getWidth()/4, dimensions.getHeight()/2);
         }
     }
 
@@ -124,7 +122,7 @@ public class SunburstView extends ParametricFieldView {
     }
 
     private static boolean isBigEnough(final int thisCount, final int totalResults) {
-        return ((double) thisCount)/totalResults >= 0.05;
+        return (double) thisCount /totalResults >= 0.05;
     }
 
 }

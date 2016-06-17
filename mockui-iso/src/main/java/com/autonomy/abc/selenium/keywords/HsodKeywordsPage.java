@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.keywords;
 
+import com.autonomy.abc.selenium.application.SOPageBase;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +16,7 @@ public class HsodKeywordsPage extends KeywordsPage {
     }
 
 
-    public static class Factory extends SOPageFactory<HsodKeywordsPage> {
+    public static class Factory extends SOPageBase.SOPageFactory<HsodKeywordsPage> {
         public Factory() {
             super(HsodKeywordsPage.class);
         }

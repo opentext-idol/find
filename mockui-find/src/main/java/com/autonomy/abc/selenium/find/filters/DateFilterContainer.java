@@ -58,7 +58,7 @@ class DateFilterContainer extends FilterContainer implements DatePickerFilter.Fi
     private DatePicker datePicker(final int nthOfType) {
         showCustomDateBoxes();
         final WebElement formGroup = getContainer().findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ')'));
-        return new DatePicker(formGroup, getDriver());
+        return new DatePicker(formGroup, driver);
     }
 
     @Override
@@ -79,16 +79,12 @@ class DateFilterContainer extends FilterContainer implements DatePickerFilter.Fi
     private FormInput dateInput(final int nthOfType) {
         showCustomDateBoxes();
         final WebElement inputBox = getContainer().findElement(By.cssSelector(".search-dates-wrapper .form-group:nth-of-type(" + nthOfType + ") input"));
-        return new FormInput(inputBox, getDriver());
+        return new FormInput(inputBox, driver);
     }
 
     private void showCustomDateBoxes() {
         if (!isFilteringBy(DateOption.CUSTOM)) {
             toggleFilter(DateOption.CUSTOM);
         }
-    }
-
-    private WebDriver getDriver() {
-        return driver;
     }
 }

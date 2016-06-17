@@ -24,7 +24,7 @@ public enum Language {
     DEFAULT("Select Language"),
     UNKNOWN("???");
 
-    private final static Map<String, Language> inverse;
+    private static final Map<String, Language> inverse;
     private final String name;
 
     static {

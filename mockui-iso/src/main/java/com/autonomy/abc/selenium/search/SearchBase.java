@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class SearchBase extends SOPageBase implements
-		QueryFilter.Filterable,
 		IndexFilter.Filterable,
 		DatePickerFilter.Filterable,
 		StringDateFilter.Filterable,

@@ -38,7 +38,7 @@ public class IsoAboutPage extends SOPageBase {
 	}
 
 	public WebElement pageinateNumber(final int pageinateNumber) {
-		return findElement(By.xpath(".//a[text()='" + String.valueOf(pageinateNumber) + "']"));
+		return findElement(By.xpath(".//a[text()='" + pageinateNumber + "']"));
 	}
 
 	public void searchInSearchBox(final String searchTerm) {
@@ -60,14 +60,14 @@ public class IsoAboutPage extends SOPageBase {
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h3[text()='FOSS Acknowledgements']")));
     }
 
-	public static class Factory extends SOPageFactory<IsoAboutPage> {
+	public static class Factory extends SOPageBase.SOPageFactory<IsoAboutPage> {
 		public Factory() {
 			super(IsoAboutPage.class);
 		}
 
 		@Override
         public IsoAboutPage create(final WebDriver context) {
-			IsoAboutPage.waitForLoad(context);
+			waitForLoad(context);
 			return new IsoAboutPage(context);
 		}
 	}
