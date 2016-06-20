@@ -40,7 +40,7 @@ public class FindPage extends AppElement implements AppPage,
     public void unhover() {
         /* click somewhere not important to remove hover -
         * clicking the user's username seems safe... */
-        getDriver().findElement(By.className("user-username")).click();
+        getDriver().findElement(By.className("navbar-username")).click();
         new WebDriverWait(getDriver(), 2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
     }
 

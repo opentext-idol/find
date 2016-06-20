@@ -43,6 +43,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     @Before
     public void setUp() {
         findService = getApplication().findService();
+        findService.search("get away from splash");
         results = getElementFactory().getResultsPage();
         navBar = getElementFactory().getTopNavBar();
     }
