@@ -58,9 +58,8 @@ define([
                         template: numericDateTemplate,
                         zoomEnabled: true,
                         model: this.bucketModel,
-                        stringFormatting: NumericParametricFieldView.dateFormatting,
-                        // 20px for padding
-                        viewWidth: this.$el.width() - 20
+                        formatting: NumericParametricFieldView.dateFormatting,
+                        viewWidth: this.$el.width()
                     });
 
                     this.$el.append(this.graphView.$el);

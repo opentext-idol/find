@@ -73,7 +73,7 @@ define([
         return calibratedBuckets;
     }
 
-    return Backbone.View.extend({
+    const NumericParametricFieldView = Backbone.View.extend({
         className: 'animated fadeIn',
 
         events: {
@@ -125,12 +125,12 @@ define([
             this.coordinatesEnabled = options.coordinatesEnabled === undefined ? true : options.coordinatesEnabled;
             this.fieldName = this.model.id;
             this.numericRestriction = options.numericRestriction;
-            //noinspection JSUnresolvedVariable
-            this.formatValue = options.stringFormatting && options.stringFormatting.format || _.identity;
-            //noinspection JSUnresolvedVariable
-            this.parseValue = options.stringFormatting && options.stringFormatting.parse || _.identity;
-            //noinspection JSUnresolvedVariable
-            this.renderCustomFormatting = options.stringFormatting && options.stringFormatting.render || _.noop;
+
+            const formatting = options.formatting  || NumericParametricFieldView.defaultFormatting;
+            this.formatValue = formatting.format;
+            this.parseValue = formatting.parse;
+            this.renderCustomFormatting = formatting.render;
+            this.parseBoundarySelection = formatting.parseBoundarySelection;
 
             this.widget = numericWidget({formattingFn: this.formatValue});
             this.localBucketingCollection = new (FindBaseCollection.extend({url: '../api/public/parametric/buckets'}))();
@@ -174,7 +174,9 @@ define([
             }.bind(this);
 
             const selectionCallback = function(x1, x2) {
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, Math.max(x1, this.model.get('min')), Math.min(x2, this.model.get('max')));
+                var newMin = this.parseBoundarySelection(Math.max(x1, this.model.get('min')));
+                var newMax = this.parseBoundarySelection(Math.min(x2, this.model.get('max')));
+                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, newMin, newMax);
             }.bind(this);
 
             const deselectionCallback = function() {
@@ -183,16 +185,12 @@ define([
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
             }.bind(this);
 
-            const zoomCallback = function(newMin, newMax) {
-                this.updateModel(newMin, newMax);
-            }.bind(this);
-
-            const mouseMoveCallback = function (x) {
+            const mouseMoveCallback = function(x) {
                 //noinspection JSPotentiallyInvalidUsageOfThis
                 this.$('.numeric-parametric-co-ordinates').text(this.formatValue(Math.min(roundInputNumber(x), this.model.get('max'))));
             }.bind(this);
 
-            const mouseLeaveCallback = function () {
+            const mouseLeaveCallback = function() {
                 //noinspection JSPotentiallyInvalidUsageOfThis
                 this.$('.numeric-parametric-co-ordinates').text('');
             }.bind(this);
@@ -215,7 +213,7 @@ define([
                 deselectionCallback: deselectionCallback,
                 mouseMoveCallback: mouseMoveCallback,
                 mouseLeaveCallback: mouseLeaveCallback,
-                zoomCallback: zoomCallback,
+                zoomCallback: this.updateModel.bind(this),
                 xRange: this.viewWidth,
                 yRange: GRAPH_HEIGHT,
                 tooltip: i18n['search.numericParametricFields.tooltip'],
@@ -228,21 +226,20 @@ define([
         },
 
         drawSelection: function() {
-            const graph = this.graph;
-
             this.selectedParametricValues
                 .where({field: this.fieldName})
                 .forEach(function(restriction) {
                     const range = restriction.get('range');
+
                     if (range) {
                         this.updateMinInput(roundInputNumber(range[0]));
                         this.updateMaxInput(roundInputNumber(range[1]));
-    
-                        graph.selectionRect.init(graph.chart, GRAPH_HEIGHT, graph.scale.barWidth(range[0]));
-                        graph.selectionRect.update(graph.scale.barWidth(range[1]));
-                        graph.selectionRect.focus();
+
+                        this.graph.selectionRect.init(this.graph.chart, GRAPH_HEIGHT, this.graph.scale.barWidth(range[0]));
+                        this.graph.selectionRect.update(this.graph.scale.barWidth(range[1]));
+                        this.graph.selectionRect.focus();
                     }
-                }, this);
+                }.bind(this));
         },
 
         updateModel: function(newMin, newMax) {
@@ -314,14 +311,24 @@ define([
             }
         }
     }, {
+        defaultFormatting: {
+            format: _.identity,
+            parse: _.identity,
+            parseBoundarySelection: _.identity,
+            render: _.noop
+        },
         dateFormatting: {
-            format: function (unformattedString) {
+            format: function(unformattedString) {
                 return moment(unformattedString * 1000).format(DATE_WIDGET_FORMAT);
             },
-            parse: function (formattedString) {
+            parse: function(formattedString) {
                 return moment(formattedString, DATE_WIDGET_FORMAT).unix();
             },
-            render: function ($el) {
+            parseBoundarySelection: function(input) {
+                // Epoch seconds are not decimal
+                return Math.round(input);
+            },
+            render: function($el) {
                 $el.find('.results-filter-date').datetimepicker({
                     format: DATE_WIDGET_FORMAT,
                     icons: {
@@ -336,5 +343,7 @@ define([
             }
         }
     });
+
+    return NumericParametricFieldView;
 
 });

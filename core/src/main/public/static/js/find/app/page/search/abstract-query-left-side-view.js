@@ -105,7 +105,7 @@ define([
                 queryState: options.queryState,
                 fieldsCollection: this.dateParametricFieldsCollection,
                 fieldTemplate: numericParametricDateFieldTemplate,
-                stringFormatting: NumericParametricFieldView.dateFormatting
+                formatting: NumericParametricFieldView.dateFormatting
             });
             
             //noinspection JSUnresolvedFunction
