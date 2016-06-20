@@ -22,7 +22,7 @@ define([
             this.documentsCollection = options.documentsCollection;
             this.queryModel = options.queryModel;
 
-            this.listenTo(this.documentsCollection, 'update', function() {
+            this.listenTo(this.documentsCollection, 'error update', function() {
                 var autoCorrection = this.documentsCollection.getAutoCorrection();
 
                 if (autoCorrection) {

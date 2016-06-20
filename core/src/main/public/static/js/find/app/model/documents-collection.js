@@ -22,7 +22,17 @@ define([
             this.totalResults = null;
             this.warnings = null;
 
-            return FindBaseCollection.prototype.fetch.call(this, options);
+            var originalErrorHandler = options.error || _.noop;
+
+            var errorHandler = function(collection, errorResponse) {
+                if (errorResponse.responseJSON) {
+                    this.autoCorrection = errorResponse.responseJSON.autoCorrection;
+                }
+
+                originalErrorHandler.apply(options, arguments);
+            }.bind(this);
+
+            return FindBaseCollection.prototype.fetch.call(this, _.extend(options, {error: errorHandler}));
         },
 
         parse: function(response) {

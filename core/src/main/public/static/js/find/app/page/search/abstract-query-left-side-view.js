@@ -8,7 +8,6 @@ define([
     'jquery',
     'underscore',
     'find/app/page/search/filters/date/dates-filter-view',
-    'find/app/page/search/filters/parametric/numeric-parametric-view',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/util/text-input',
     'find/app/page/search/filters/precision-recall/precision-recall-slider-view',
@@ -21,7 +20,7 @@ define([
     'moment',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-date-parametric-field-view.html'
-], function(Backbone, $, _, DateView, NumericParametricView, ParametricView, TextInput, PrecisionRecallView, Collapsible,
+], function(Backbone, $, _, DateView, ParametricView, TextInput, PrecisionRecallView, Collapsible,
             vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes, moment, numericParametricFieldTemplate, numericParametricDateFieldTemplate) {
     "use strict";
 
@@ -36,6 +35,7 @@ define([
     return Backbone.View.extend({
         // Abstract
         IndexesView: null,
+        NumericParametricView: null,
 
         initialize: function(options) {
             this.filterModel = new Backbone.Model();
@@ -90,7 +90,7 @@ define([
                 this.updateEmptyMessage();
             });
 
-            this.numericParametricView = new NumericParametricView({
+            this.numericParametricView = new this.NumericParametricView({
                 queryModel: options.queryModel,
                 queryState: options.queryState,
                 fieldsCollection: this.numericParametricFieldsCollection,
@@ -101,7 +101,7 @@ define([
                 buttonsEnabled: true
             });
 
-            this.dateParametricView = new NumericParametricView({
+            this.dateParametricView = new this.NumericParametricView({
                 queryModel: options.queryModel,
                 queryState: options.queryState,
                 fieldsCollection: this.dateParametricFieldsCollection,

@@ -5,11 +5,13 @@
 
 define([
     'find/app/page/search/abstract-query-left-side-view',
-    'find/idol/app/page/search/filters/indexes/idol-indexes-view'
-], function(AbstractQueryLeftSideView, IdolIndexesView) {
+    'find/idol/app/page/search/filters/indexes/idol-indexes-view',
+    'find/idol/app/page/search/filters/parametric/idol-numeric-parametric-view'
+], function(AbstractQueryLeftSideView, IdolIndexesView, IdolNumericParametricView) {
 
     return AbstractQueryLeftSideView.extend({
-        IndexesView: IdolIndexesView
+        IndexesView: IdolIndexesView,
+        NumericParametricView: IdolNumericParametricView
     });
 
 });

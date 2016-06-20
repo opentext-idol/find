@@ -8,10 +8,15 @@ package com.hp.autonomy.frontend.find.idol.web;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.web.ErrorResponse;
 import com.hp.autonomy.frontend.find.core.web.GlobalExceptionHandler;
+import com.hp.autonomy.searchcomponents.core.search.AutoCorrectException;
+import com.hp.autonomy.types.requests.Spelling;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,5 +35,22 @@ public class IdolGlobalExceptionHandler extends GlobalExceptionHandler {
 
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         return handler(exception);
+    }
+
+    @ExceptionHandler(AutoCorrectException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public SpellingErrorResponse invalidSpellingCorrection(final AutoCorrectException e) {
+        return new SpellingErrorResponse(e.getMessage(), e.getSpelling());
+    }
+
+    @Getter
+    private final class SpellingErrorResponse extends ErrorResponse{
+        private Spelling autoCorrection;
+
+        public SpellingErrorResponse(final String message, final Spelling autoCorrection) {
+            super(message);
+            this.autoCorrection = autoCorrection;
+        }
     }
 }

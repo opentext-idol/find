@@ -1,7 +1,7 @@
 <% _.each(['index', 'reference'], function(field) { %>
   <% if(model.has(field)) { %>
     <tr>
-      <th class="font-bold"><%-i18n['search.document.' + field]%></th>
+      <th class="font-bold"><%-i18n['search.document.' + field] || i18nIndexes['search.document.' + field]%></th>
       <td class="break-all"><%-model.get(field)%></td>
     </tr>
   <% } %>

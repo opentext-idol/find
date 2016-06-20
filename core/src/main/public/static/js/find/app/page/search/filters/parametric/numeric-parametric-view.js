@@ -15,7 +15,7 @@ define([
 ], function ($, _, BucketedParametricCollection, AbstractView, FieldView, ListView, i18n, template) {
     "use strict";
 
-    const DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
+    var DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
 
     var PreInitialisedListView = ListView.extend({
         createItemView: function (model) {
@@ -38,6 +38,8 @@ define([
     });
 
     return AbstractView.extend({
+        getBucketingRequestData: null,
+        
         template: _.template(template)({i18n: i18n}),
 
         initialize: function (options) {
@@ -59,7 +61,8 @@ define([
                     stringFormatting: options.stringFormatting,
                     selectionEnabled: options.selectionEnabled,
                     zoomEnabled: options.zoomEnabled,
-                    buttonsEnabled: options.buttonsEnabled
+                    buttonsEnabled: options.buttonsEnabled,
+                    coordinatesEnabled: options.coordinatesEnabled
                 }
             });
 
@@ -68,18 +71,13 @@ define([
         },
 
         refreshFields: function () {
-            const fieldNames = this.fieldsCollection.pluck('id');
+            var fieldNames = this.fieldsCollection.pluck('id');
             if (fieldNames.length > 0) {
                 //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                const targetNumberOfBuckets = _.times(this.fieldsCollection.length, _.constant(Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)));
+                var targetNumberOfBuckets = _.times(this.fieldsCollection.length, _.constant(Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)));
 
                 this.collection.fetch({
-                    data: {
-                        fieldNames: fieldNames,
-                        databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('queryText'),
-                        targetNumberOfBuckets: targetNumberOfBuckets
-                    }
+                    data: this.getBucketingRequestData(fieldNames, targetNumberOfBuckets)
                 });
             }
         },

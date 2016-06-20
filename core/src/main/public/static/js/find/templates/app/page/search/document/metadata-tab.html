@@ -18,7 +18,7 @@
     ]), function(value, key) { %>
         <% if(value) { %>
             <tr>
-                <td class="font-bold"><%-i18n['search.document.' + key]%></td>
+                <td class="font-bold"><%-i18n['search.document.' + key] || i18nIndexes['search.document.' + key]%></td>
                 <td class="break-all p-l-sm"><%-value%></td>
             </tr>
         <% } %>

@@ -1,4 +1,10 @@
-find-ansible (0.0.3) precise; urgency=low
+find-ansible (0.0.4) precise; urgency=low
+
+  * Fixed permissions for PID file.
+
+ -- Rosie Taylor <rosie.taylor@hpe.com>  Tue, 15 Jun 2016 16:37:13 +0100
+
+ find-ansible (0.0.3) precise; urgency=low
 
   * Fixed typo in defaults yaml file.
 

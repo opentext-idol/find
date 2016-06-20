@@ -306,7 +306,7 @@ define([
                 error: function(collection) {
                     // if returns an error remove previous models from documentsCollection
                     if (collection) {
-                        collection.reset({documents: []}, {parse: true});
+                        collection.reset();
                     }
                 },
                 success: function() {

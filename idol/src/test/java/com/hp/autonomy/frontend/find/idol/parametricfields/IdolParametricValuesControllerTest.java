@@ -7,17 +7,77 @@ package com.hp.autonomy.frontend.find.idol.parametricfields;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesControllerTest;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Matchers;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class IdolParametricValuesControllerTest extends AbstractParametricValuesControllerTest<IdolQueryRestrictions, IdolParametricRequest, String, AciErrorException> {
+public class IdolParametricValuesControllerTest extends AbstractParametricValuesControllerTest<IdolParametricValuesController, IdolQueryRestrictions, IdolParametricRequest, String, AciErrorException> {
+
+    @Override
+    protected IdolParametricValuesController newControllerInstance() {
+        return new IdolParametricValuesController(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
+    }
+
     @Before
     public void setUp() {
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
         when(parametricRequestBuilderFactory.getObject()).thenReturn(new IdolParametricRequest.Builder());
-        parametricValuesController = new IdolParametricValuesController(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
+        super.setUp();
+    }
+
+    @Test
+    public void getParametricValues() throws AciErrorException {
+        parametricValuesController.getParametricValues(Collections.singletonList("SomeParametricField"));
+        verify(parametricValuesService).getAllParametricValues(Matchers.<IdolParametricRequest>any());
+    }
+
+    @Test
+    public void getNumericParametricValuesInBuckets() throws AciErrorException {
+        callGetNumericParametricValuesInBuckets(null, null);
+
+        final HashMap<String, BucketingParams> expectedBucketingParamsPerField = new HashMap<>();
+        expectedBucketingParamsPerField.put(PARAMETRIC_FIELD, new BucketingParams(TARGET_NUMBER_OF_BUCKETS, null, null));
+
+        verify(parametricValuesService).getNumericParametricValuesInBuckets(Matchers.<IdolParametricRequest>any(), eq(expectedBucketingParamsPerField));
+    }
+
+    @Test
+    public void getNumericParametricValuesInBucketsWithoutMin() throws AciErrorException {
+        callGetNumericParametricValuesInBuckets(null, Collections.singletonList(2.5));
+
+        final HashMap<String, BucketingParams> expectedBucketingParamsPerField = new HashMap<>();
+        expectedBucketingParamsPerField.put(PARAMETRIC_FIELD, new BucketingParams(TARGET_NUMBER_OF_BUCKETS, null, 2.5));
+
+        verify(parametricValuesService).getNumericParametricValuesInBuckets(Matchers.<IdolParametricRequest>any(), eq(expectedBucketingParamsPerField));
+    }
+
+    @Test
+    public void getNumericParametricValuesInBucketsWithoutMax() throws AciErrorException {
+        callGetNumericParametricValuesInBuckets(Collections.singletonList(1.5), null);
+
+        final HashMap<String, BucketingParams> expectedBucketingParamsPerField = new HashMap<>();
+        expectedBucketingParamsPerField.put(PARAMETRIC_FIELD, new BucketingParams(TARGET_NUMBER_OF_BUCKETS, 1.5, null));
+
+        verify(parametricValuesService).getNumericParametricValuesInBuckets(Matchers.<IdolParametricRequest>any(), eq(expectedBucketingParamsPerField));
+    }
+
+    private void callGetNumericParametricValuesInBuckets(final List<Double> bucketMin, final List<Double> bucketMax) throws AciErrorException {
+        parametricValuesController.getNumericParametricValuesInBuckets(
+                Collections.singletonList("SomeNumericParametricField"),
+                Collections.singletonList(35),
+                bucketMin,
+                bucketMax
+        );
     }
 }

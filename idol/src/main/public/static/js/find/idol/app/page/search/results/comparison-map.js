@@ -27,9 +27,9 @@ define([
 
             this.mapView = new MapView({addControl: true});
 
-            var bothQueryModel = this.createQueryModels(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
-            var firstQueryModel = this.createQueryModels(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
-            var secondQueryModel = this.createQueryModels(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
+            var bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
+            var firstQueryModel = this.createQueryModel(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
+            var secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
 
             this.bothSelectionView = new FieldSelectionView({
                 model: bothQueryModel,
@@ -124,7 +124,7 @@ define([
             this.toggleLoading();
         },
 
-        createQueryModels: function (queryText, stateTokens, searchModels) {
+        createQueryModel: function (queryText, stateTokens, searchModels) {
             var indexes = _.chain(searchModels)
                 .map(function (model) {
                     return searchDataUtil.buildIndexes(model.get('indexes'));

@@ -26,13 +26,13 @@ define([
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
+    'find/app/page/search/results/table/table-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, ParametricFieldsCollection,
-            queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, Collapsible,
-            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, configuration, i18n, templateString) {
+            queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, Collapsible,
+            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, TableView, configuration, i18n, templateString) {
     'use strict';
 
     var template = _.template(templateString);
@@ -42,12 +42,13 @@ define([
 
         // Can be overridden
         headerControlsHtml: '',
-        displaySunburst: true,
+        displayDependentParametricViews: true,
 
         // Abstract
         ResultsView: null,
         ResultsViewAugmentation: null,
         fetchParametricFields: null,
+        fetchParametricValues: null,
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
@@ -61,7 +62,9 @@ define([
 
             this.highlightModel = new Backbone.Model({highlightEntities: false});
             this.entityCollection = new EntityCollection([], {
-                queryState: this.queryState
+                getSelectedRelatedConcepts: function() {
+                    return _.flatten(this.queryState.queryTextModel.get('relatedConcepts')).concat([this.queryState.queryTextModel.get('inputText')])
+                }.bind(this)
             });
 
             var searchType = this.savedSearchModel.get('type');
@@ -112,6 +115,9 @@ define([
             this.parametricFieldsCollection = new ParametricFieldsCollection([], {
                 url: '../api/public/fields/parametric'
             });
+            this.restrictedParametricCollection = new ParametricCollection([], {
+                url: '../api/public/parametric/restricted'
+            });
             this.numericParametricFieldsCollection = new ParametricFieldsCollection([], {
                 url: '../api/public/fields/parametric-numeric'
             });
@@ -130,6 +136,8 @@ define([
                 documentsCollection: this.documentsCollection,
                 selectedTabModel: this.selectedTabModel,
                 parametricCollection: this.parametricCollection,
+                restrictedParametricCollection: this.restrictedParametricCollection,                
+                parametricFieldsCollection: this.parametricFieldsCollection,
                 numericParametricFieldsCollection: this.numericParametricFieldsCollection,
                 dateParametricFieldsCollection: this.dateParametricFieldsCollection,
                 queryModel: this.queryModel,
@@ -210,7 +218,7 @@ define([
                 Constructor: SunburstView,
                 constructorArguments: subViewArguments,
                 id: 'sunburst',
-                shown: hasBiRole && this.displaySunburst,
+                shown: hasBiRole && this.displayDependentParametricViews,
                 uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
                     displayNameKey: 'sunburst',
@@ -228,6 +236,16 @@ define([
                 selector: {
                     displayNameKey: 'map',
                     icon: 'hp-map-view'
+                }
+            }, {
+                Constructor: TableView,
+                constructorArguments: subViewArguments,
+                id: 'table',
+                shown: hasBiRole && this.displayDependentParametricViews,
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'table',
+                    icon: 'hp-table'
                 }
             }], {shown: true});
 
@@ -250,10 +268,12 @@ define([
             });
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
+            this.listenTo(this.queryModel, 'change', this.fetchRestrictedParametricCollection);
             this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
             this.fetchParametricFields(this.numericParametricFieldsCollection);
             this.fetchParametricFields(this.dateParametricFieldsCollection);
             this.fetchEntities();
+            this.fetchRestrictedParametricCollection();
         },
 
         render: function() {
@@ -292,21 +312,7 @@ define([
             this.fetchEntities();
             this.fetchParametricValues(this.parametricFieldsCollection, this.parametricCollection);
         },
-        
-        fetchParametricValues: function (fieldsCollection, valuesCollection) {
-            valuesCollection.reset();
 
-            if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
-                var fieldNames = fieldsCollection.pluck('id');
-                if (fieldNames.length > 0) {
-                    valuesCollection.fetch({data: {
-                        databases: this.queryModel.get('indexes'),
-                        fieldNames: fieldNames
-                    }});
-                }
-            }
-        },
-        
         fetchEntities: function () {
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
@@ -331,6 +337,21 @@ define([
             $sideContainer.find('.side-panel-content').toggleClass('hide', hide);
             $sideContainer.toggleClass('small-container', hide);
             $containerToggle.toggleClass('fa-rotate-180', hide);
+        },
+
+        fetchRestrictedParametricCollection: function() {
+            this.restrictedParametricCollection.fetch({
+                data: {
+                    fieldNames: this.parametricFieldsCollection.pluck('id'),
+                    databases: this.queryModel.get('indexes'),
+                    queryText: this.queryModel.get('queryText'),
+                    fieldText: this.queryModel.get('fieldText'),
+                    minDate: this.queryModel.getIsoDate('minDate'),
+                    maxDate: this.queryModel.getIsoDate('maxDate'),
+                    minScore: this.queryModel.get('minScore'),
+                    stateTokens: this.queryModel.get('stateMatchIds')
+                }
+            })
         },
 
         rightSideContainerHideToggle: function(toggle) {

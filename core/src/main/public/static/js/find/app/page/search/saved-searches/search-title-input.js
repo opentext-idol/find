@@ -34,17 +34,10 @@ define([
                     title: $(event.target).val()
                 });
             },
-            'ifChecked .i-check': function(event) {
-                this.model.set({
-                    error: null,
-                    type: $(event.target).val()
-                });
-            },
             'submit': function(event) {
                 event.preventDefault();
 
                 var title = this.model.get('title').trim();
-                var type = this.model.get('type');
 
                 var isDuplicateName = Boolean(this.savedSearchCollection.findWhere({title: title}));
 
@@ -60,7 +53,7 @@ define([
                     });
 
                     this.saveCallback(
-                        {title: title, type: type},
+                        {title: title},
                         _.bind(function() {
                             this.trigger('remove');
                         }, this),
@@ -79,9 +72,7 @@ define([
 
         initialize: function(options) {
             this.savedSearchModel = options.savedSearchModel;
-            this.showSearchTypes = options.showSearchTypes;
             this.savedSearchCollection = options.savedSearchCollection;
-            this.searchTypeNames = options.searchTypeNames;
 
             // Called with the new title, search type, and a success callback and an error callback
             this.saveCallback = options.saveCallback;
@@ -101,9 +92,7 @@ define([
 
         render: function() {
             this.$el.html(this.template({
-                i18n: i18n,
-                showSearchTypes: this.showSearchTypes && _.size(this.searchTypeNames) > 1,
-                searchTypeNames: this.searchTypeNames
+                i18n: i18n
             }));
 
             this.$confirmButton = this.$('.save-title-confirm-button');
