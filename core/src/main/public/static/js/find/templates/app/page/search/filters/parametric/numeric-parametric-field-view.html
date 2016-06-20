@@ -1,29 +1,20 @@
 <h4><%-fieldName%></h4>
 <div>
     <form>
-        <svg class="chart">
-        </svg>
-        <% if (selectionEnabled || coordinatesEnabled) { %>
-            <div class="row numeric-parametric-inputs">
-                <div class="col-sm-4">
-                    <% if (selectionEnabled) { %>
-                        <input class="numeric-parametric-min-input" type="text" title="min-value" size="5"/>
-                    <% } %>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <% if (coordinatesEnabled) { %>
-                        <span class="numeric-parametric-co-ordinates"></span>
-                    <% } %>
-                </div>
-                <div class="col-sm-4">
-                    <% if (selectionEnabled) { %>
-                        <div class="pull-right">
-                            <input class="numeric-parametric-max-input" type="text" title="max-value" size="5"/>
-                        </div>
-                    <% } %>
+    <svg class="chart"></svg>
+        <div class="row numeric-parametric-inputs <%- inputsRowClass %>">
+            <div class="<%- inputColumnClass %>">
+                <input class="numeric-parametric-min-input" type="text" title="min-value" size="5"/>
+            </div>
+            <div class="text-center <%- coordinatesColumnClass %>">
+                <span class="numeric-parametric-co-ordinates"></span>
+            </div>
+            <div class="<%- inputColumnClass %>">
+                <div class="pull-right">
+                    <input class="numeric-parametric-max-input" type="text" title="max-value" size="5"/>
                 </div>
             </div>
-        <% } %>
+        </div>
         <% if (buttonsEnabled) { %>
             <div class="row numeric-parametric-buttons">
                 <div class="col-xs-4">

@@ -1,37 +1,28 @@
 <h4><%-fieldName%></h4>
 <div>
     <form>
-        <svg class="chart">
-        </svg>
-        <% if (selectionEnabled || coordinatesEnabled) { %>
-            <div class="row numeric-parametric-inputs">
-                <div class="col-sm-4">
-                    <% if (selectionEnabled) { %>
-                        <div class="input-group date results-filter-date" data-date-attribute="min-date">
-                            <input type="text" class="numeric-parametric-min-input form-control" title="min-value" size="20" value=""/>
-                            <span class="input-group-addon date-select">
-                                <i class="hp-icon hp-fw hp-calendar"></i>
-                            </span>
-                        </div>
-                    <% } %>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <% if (coordinatesEnabled) { %>
-                        <span class="numeric-parametric-co-ordinates"></span>
-                    <% } %>
-                </div>
-                <div class="col-sm-4">
-                    <% if (selectionEnabled) { %>
-                        <div class="input-group date results-filter-date pull-right" data-date-attribute="max-date">
-                            <input type="text" class="numeric-parametric-max-input form-control" title="max-value" size="20" value=""/>
-                            <span class="input-group-addon date-select">
-                                <i class="hp-icon hp-fw hp-calendar"></i>
-                            </span>
-                        </div>
-                    <% } %>
+        <svg class="chart"></svg>
+        <div class="row numeric-parametric-inputs">
+            <div class="<%- inputColumnClass %>">
+                <div class="input-group date results-filter-date" data-date-attribute="min-date">
+                    <input type="text" class="numeric-parametric-min-input form-control" title="min-value" size="20" value=""/>
+                    <span class="input-group-addon date-select">
+                        <i class="hp-icon hp-fw hp-calendar"></i>
+                    </span>
                 </div>
             </div>
-        <% } %>
+            <div class="text-center <%- coordinatesColumnClass %>">
+                <span class="numeric-parametric-co-ordinates"></span>
+            </div>
+            <div class="<%- inputColumnClass %>">
+                <div class="input-group date results-filter-date pull-right" data-date-attribute="max-date">
+                    <input type="text" class="numeric-parametric-max-input form-control" title="max-value" size="20" value=""/>
+                    <span class="input-group-addon date-select">
+                        <i class="hp-icon hp-fw hp-calendar"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
         <% if (buttonsEnabled) { %>
             <div class="row numeric-parametric-buttons">
                 <div class="col-xs-4">

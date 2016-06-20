@@ -140,15 +140,19 @@ define([
         },
 
         render: function() {
-            //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-            this.$el.empty().append(this.template({
-                i18n: i18n,
-                fieldName: prettifyFieldName(this.model.get('name')),
-                id: _.uniqueId('numeric-parametric-field'),
-                selectionEnabled: this.selectionEnabled,
-                buttonsEnabled: this.buttonsEnabled,
-                coordinatesEnabled: this.coordinatesEnabled
-            }));
+            const inputColumnClass = this.selectionEnabled ? (this.coordinatesEnabled ? 'col-xs-4' : 'col-xs-6') : 'hide';
+            const coordinatesColumnClass = this.coordinatesEnabled ? (this.selectionEnabled ? 'col-xs-4' : 'col-xs-12') : 'hide';
+
+            this.$el
+                .empty()
+                .append(this.template({
+                    i18n: i18n,
+                    fieldName: prettifyFieldName(this.model.get('name')),
+                    buttonsEnabled: this.buttonsEnabled,
+                    inputsRowClass: this.selectionEnabled || this.coordinatesEnabled ? '' : 'hide',
+                    inputColumnClass: inputColumnClass,
+                    coordinatesColumnClass: coordinatesColumnClass
+                }));
 
             if (this.selectionEnabled) {
                 //noinspection JSUnresolvedVariable
