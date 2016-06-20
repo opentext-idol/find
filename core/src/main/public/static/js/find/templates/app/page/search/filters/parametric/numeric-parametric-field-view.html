@@ -3,15 +3,24 @@
     <form>
         <svg class="chart">
         </svg>
-        <% if (selectionEnabled) { %>
+        <% if (selectionEnabled || coordinatesEnabled) { %>
             <div class="row numeric-parametric-inputs">
-                <div class="col-xs-6">
-                    <input class="numeric-parametric-min-input" type="text" title="min-value" size="5"/>
+                <div class="col-sm-4">
+                    <% if (selectionEnabled) { %>
+                        <input class="numeric-parametric-min-input" type="text" title="min-value" size="5"/>
+                    <% } %>
                 </div>
-                <div class="col-xs-6">
-                    <div class="pull-right">
-                        <input class="numeric-parametric-max-input" type="text" title="max-value" size="5"/>
-                    </div>
+                <div class="col-sm-4 text-center">
+                    <% if (coordinatesEnabled) { %>
+                        <span class="numeric-parametric-co-ordinates"></span>
+                    <% } %>
+                </div>
+                <div class="col-sm-4">
+                    <% if (selectionEnabled) { %>
+                        <div class="pull-right">
+                            <input class="numeric-parametric-max-input" type="text" title="max-value" size="5"/>
+                        </div>
+                    <% } %>
                 </div>
             </div>
         <% } %>

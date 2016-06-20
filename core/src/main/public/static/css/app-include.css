@@ -18,6 +18,10 @@ html, body {
     fill: rgba(1,169,130,0.2);
 }
 
+.numeric-parametric-inputs {
+    min-height: 18px;
+}
+
 .date input {
     padding-right: 0 !important;
 }

@@ -25,13 +25,14 @@ define([
             var originalErrorHandler = options.error || _.noop;
 
             var errorHandler = function(collection, errorResponse) {
-                this.autoCorrection = errorResponse.responseJSON.autoCorrection;
-                originalErrorHandler.apply(options, arguments)
+                if (errorResponse.responseJSON) {
+                    this.autoCorrection = errorResponse.responseJSON.autoCorrection;
+                }
+
+                originalErrorHandler.apply(options, arguments);
             }.bind(this);
 
-            _.extend(options, {error: errorHandler});
-
-            return FindBaseCollection.prototype.fetch.call(this, options);
+            return FindBaseCollection.prototype.fetch.call(this, _.extend(options, {error: errorHandler}));
         },
 
         parse: function(response) {
