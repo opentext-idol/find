@@ -9,6 +9,8 @@
 @import "../bower_components/hp-autonomy-settings-page/src/css/settings.css";
 @import "../bower_components/hp-autonomy-js-whatever/src/css/javascript-utils.css";
 @import "../bower_components/datatables.net-bs/css/dataTables.bootstrap.css";
+@import "../bower_components/datatables-vendor-plugins/integration/font-awesome/dataTables.fontAwesome.css";
+@import "../bower_components/datatables.net-fixedcolumns-bs/css/fixedColumns.bootstrap.css";
 @import "../bower_components/hp-autonomy-about-page/src/css/about-page.css";
 @import "../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css";
 @import "../bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css";

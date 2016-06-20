@@ -6,7 +6,7 @@ define([
     'iCheck'
 ], function(Backbone, $, _, template) {
 
-    var fieldTemplate = _.template('<div id="<%-field.id%>" class="tab-pane <%- currentFieldGroup === field.id ? \'active\' : \'\'%>" role="tabpanel"></div>');
+    var fieldTemplate = _.template('<div id="<%-field.id.replace(/[/]/g, \'_\')%>" class="tab-pane <%- currentFieldGroup === field.id ? \'active\' : \'\'%>" role="tabpanel"></div>');
     var valueTemplate = _.template('<div class="i-check checkbox parametric-field-label clickable shorten" data-field-id="<%-field.id%>"><label><input type="checkbox" <%-model.get(\'selected\') ? \'checked\' : \'\'%>> <span class="field-value"><%-model.id%></span> <% if(model.get(\'count\')) { %>(<%-model.get(\'count\')%>)<% } %></label></div>');
 
     return Backbone.View.extend({

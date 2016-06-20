@@ -3,13 +3,22 @@
     <form>
         <svg class="chart">
         </svg>
-        <% if (selectionEnabled) { %>
+        <% if (selectionEnabled || coordinatesEnabled) { %>
             <div class="row numeric-parametric-inputs">
-                <div class="col-sm-9">
-                    <input class="numeric-parametric-min-input" type="text" title="min-value" size="5"/>
+                <div class="col-sm-4">
+                    <% if (selectionEnabled) { %>
+                        <input class="numeric-parametric-min-input" type="text" title="min-value" size="5"/>
+                    <% } %>
                 </div>
-                <div class="col-sm-3">
-                    <input class="pull-right numeric-parametric-max-input" type="text" title="max-value" size="5"/>
+                <div class="col-sm-3 col-sm-offset-1">
+                    <% if (coordinatesEnabled) { %>
+                        <span class="numeric-parametric-co-ordinates"></span>
+                    <% } %>
+                </div>
+                <div class="col-sm-4">
+                    <% if (selectionEnabled) { %>
+                        <input class="pull-right numeric-parametric-max-input" type="text" title="max-value" size="5"/>
+                    <% } %>
                 </div>
             </div>
         <% } %>

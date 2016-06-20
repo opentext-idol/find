@@ -33,14 +33,14 @@ define([
 
         initialize: function (options) {
             this.queryModel = options.queryModel;
-            this.parametricCollection = options.parametricCollection;
+            this.parametricCollection = options.restrictedParametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
             this.emptyDependentMessage = options.emptyDependentMessage;
             this.emptyMessage = options.emptyMessage;
             this.errorMessage = options.errorMessage;
 
-            this.dependentParametricCollection = new DependentParametricCollection();
+            this.dependentParametricCollection = options.dependentParametricCollection || new DependentParametricCollection();
             this.fieldsCollection = new Backbone.Collection([{text: ''}, {text: ''}]);
 
             this.model = new Backbone.Model({
@@ -60,7 +60,7 @@ define([
 
             this.$loadingSpinner = this.$('.parametric-loading').addClass('hide');
 
-            this.$content = this.$('.parametric-content').addClass('hide');
+            this.$content = this.$('.parametric-content').addClass('invisible');
 
             this.$message = this.$('.parametric-view-message');
 
@@ -89,7 +89,7 @@ define([
 
         toggleLoading: function () {
             this.$loadingSpinner.toggleClass('hide', !this.model.get('loading'));
-            this.$content.toggleClass('hide', this.model.get('loading'));
+            this.$content.toggleClass('invisible', this.model.get('loading'));
             this.$parametricSelections.toggleClass('hide', this.noMoreParametricFields());
             this.updateMessage();
         },
@@ -229,7 +229,7 @@ define([
 
         updateMessage: function (message) {
             if (message) {
-                this.$content.addClass('hide');
+                this.$content.addClass('invisible');
                 this.$message.text(message);
             } else {
                 this.$message.empty();
@@ -238,7 +238,7 @@ define([
         },
 
         toggleContentDisplay: function () {
-            this.$content.toggleClass('hide', this.parametricCollection.isEmpty() || this.dependentParametricCollection.isEmpty() || this.noMoreParametricFields());
+            this.$content.toggleClass('invisible', this.parametricCollection.isEmpty() || this.dependentParametricCollection.isEmpty() || this.noMoreParametricFields());
         },
 
         noMoreParametricFields: function () {

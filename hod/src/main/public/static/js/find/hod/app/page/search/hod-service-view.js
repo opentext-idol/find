@@ -19,7 +19,7 @@ define([
         ResultsViewAugmentation: ResultsViewAugmentation,
 
         // TODO: Enable sunburst in HOD when IOD-9173 is complete
-        displaySunburst: false,
+        displayDependentParametricViews: false,
         mapViewResultsStep: 2500,
         mapViewAllowIncrement: false,
 
@@ -51,6 +51,20 @@ define([
                         }
                     }, this)
                 });
+            }
+        },
+
+        fetchParametricValues: function (fieldsCollection, valuesCollection) {
+            valuesCollection.reset();
+
+            if (this.queryModel.get('indexes').length !== 0) {
+                var fieldNames = fieldsCollection.pluck('id');
+                if (fieldNames.length > 0) {
+                    valuesCollection.fetch({data: {
+                        databases: this.queryModel.get('indexes'),
+                        fieldNames: fieldNames
+                    }});
+                }
             }
         }
     });
