@@ -32,7 +32,6 @@ import static org.junit.Assert.fail;
 
 public class FilterITCase extends FindTestBase {
     private FindPage findPage;
-    private ResultsView results;
     private FindService findService;
 
     public FilterITCase(final TestConfig config) {
@@ -42,13 +41,12 @@ public class FilterITCase extends FindTestBase {
     @Before
     public void setUp() {
         findPage = getElementFactory().getFindPage();
-        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 
     @Test
     public void testParametricFiltersResults() {
-        findService.search("cats");
+        ResultsView results = findService.search("cats");
         findPage.waitForParametricValuesToLoad();
         final int originalNumberOfResults = findPage.totalResultsNum();
 
@@ -160,7 +158,7 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ActiveBug("FIND-247")
     public void testSelectDifferentCategoryFiltersAndResultsLoad(){
-        findService.search("face");
+        ResultsView results = findService.search("face");
 
         for(int i = 0 ; i<filters().numberParametricFieldContainers()-1;i++){
             filters().checkBoxesForParametricFieldContainer(i).get(0).check();
@@ -171,7 +169,7 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
-        findService.search("wolf");
+        ResultsView results = findService.search("wolf");
 
         final FilterPanel panel = filters();
         panel.clickFirstIndex();
@@ -183,7 +181,7 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testFilterByIndex() {
-        findService.search("face");
+        ResultsView results = findService.search("face");
         final QueryResult queryResult = results.searchResult(1);
         final String titleString = queryResult.getTitleString();
         final DocumentViewer docPreview = queryResult.openDocumentPreview();
@@ -217,7 +215,7 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testFilteredByIndexOnlyHasFilesFromIndex() {
-        findService.search("Better");
+        ResultsView results = findService.search("Better");
 
         final DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
         final String chosenIndex = databaseOrIndex(docPreview);
@@ -242,7 +240,7 @@ public class FilterITCase extends FindTestBase {
     }
     @Test
     public void testQuickDoubleClickOnDateFilterNotCauseError() {
-        findService.search("wookie");
+        ResultsView results = findService.search("wookie");
 
         toggleDateSelection(DateOption.MONTH);
         toggleDateSelection(DateOption.MONTH);
@@ -268,7 +266,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     private void preDefinedDateFiltersVersusCustomDateFilters(final DateOption period) {
-        findService.search("*");
+        ResultsView results = findService.search("*");
 
         toggleDateSelection(period);
         final List<String> preDefinedResults = results.getResultTitles();
@@ -318,7 +316,7 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ResolvedBug("CSA-1577")
     public void testClickingCustomDateFilterDoesNotRefreshResults() {
-        findService.search("O Captain! My Captain!");
+        ResultsView results = findService.search("O Captain! My Captain!");
         // may not happen the first time
         for (int unused = 0; unused < 5; unused++) {
             toggleDateSelection(DateOption.CUSTOM);
@@ -332,6 +330,6 @@ public class FilterITCase extends FindTestBase {
 
     private void toggleDateSelection(final DateOption date) {
         filters().toggleFilter(date);
-        results.waitForResultsToLoad();
+        getElementFactory().getResultsPage().waitForResultsToLoad();
     }
 }

@@ -32,7 +32,6 @@ import static org.hamcrest.core.Is.is;
 @RelatedTo("CSA-2091")
 public class RelatedConceptsITCase extends FindTestBase {
     private FindService findService;
-    private ResultsView results;
     private FindTopNavBar navBar;
 
 
@@ -43,8 +42,6 @@ public class RelatedConceptsITCase extends FindTestBase {
     @Before
     public void setUp() {
         findService = getApplication().findService();
-        findService.search("get away from splash");
-        results = getElementFactory().getResultsPage();
         navBar = getElementFactory().getTopNavBar();
     }
 
@@ -83,7 +80,7 @@ public class RelatedConceptsITCase extends FindTestBase {
 
     @Test
     public void testRelatedConceptsInResults() {
-        findService.search("Preposterous");
+        ResultsView results = findService.search("Preposterous");
         conceptsPanel().toggleHighlight();
 
         for (final WebElement relatedConceptLink : conceptsPanel()) {
@@ -101,7 +98,8 @@ public class RelatedConceptsITCase extends FindTestBase {
     @Test
     @RelatedTo("CCUK-3599")
     public void testRelatedConceptsHighlightButton() {
-        findService.search("pancakes");
+        ResultsView results = findService.search("pancakes");
+
         final WebElement button = conceptsPanel().highlightButton();
 
         verifyThat(results.scrollForHighlightedSausages(), empty());
@@ -189,7 +187,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     @Test
     @ActiveBug("FIND-164")
     public void testAddSausageToQuery() {
-        findService.search("sausage");
+        ResultsView results = findService.search("sausage");
         conceptsPanel().toggleHighlight();
 
         final Collection<String> addedConcepts = new ArrayList<>();

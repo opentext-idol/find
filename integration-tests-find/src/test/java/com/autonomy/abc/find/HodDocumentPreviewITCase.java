@@ -31,7 +31,6 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class HodDocumentPreviewITCase extends HsodFindTestBase {
     private FindPage findPage;
-    private ResultsView results;
     private FindService findService;
 
     public HodDocumentPreviewITCase(final TestConfig config) {
@@ -41,14 +40,13 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     @Before
     public void setUp(){
         findPage = getElementFactory().getFindPage();
-        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 
     @Test
     @ResolvedBug("CSA-1767 - footer not hidden properly")
     public void testViewDocumentsOpenFromFind(){
-        findService.search("Review");
+        ResultsView results = findService.search("Review");
 
         for(final FindResult result : results.getResults(5)){
             try {
@@ -83,7 +81,7 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
 
     @Test
     public void testViewportSearchResultNumbers(){
-        findService.search("Messi");
+        ResultsView results = findService.search("Messi");
 
         results.getResult(1).openDocumentPreview();
         verifyDocViewerTotalDocuments(30);
@@ -99,7 +97,7 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
 
     @Test
     public void testBetween30And60Results(){
-        findService.search(new Query("connectors"));
+        ResultsView results = findService.search(new Query("connectors"));
         findPage.filterBy(new IndexFilter("sitesearch"));
 
         findPage.scrollToBottom();
@@ -126,14 +124,14 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
     public void testDocumentPreview(){
         final Index index = new Index("fifa");
-        findService.search(new Query("document preview").withFilter(new IndexFilter(index)));
+        ResultsView results = findService.search(new Query("document preview").withFilter(new IndexFilter(index)));
 
         SharedPreviewTests.testDocumentPreviews(getMainSession(), results.getResults(5), index);
     }
 
     @Test
     public void testOpenDocumentFromSearch(){
-        findService.search("Refuse to Feel");
+        ResultsView results = findService.search("Refuse to Feel");
 
         for(int i = 1; i <= 5; i++){
             final Window original = getWindow();
@@ -152,7 +150,7 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
 
     @Test
     public void testViewDocumentsOpenWithArrows(){
-        findService.search("Review");
+        ResultsView results = findService.search("Review");
 
         final DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
         for(int i = 0; i < 5; i++) {

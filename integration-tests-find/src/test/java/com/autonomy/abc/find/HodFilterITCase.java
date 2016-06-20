@@ -28,7 +28,6 @@ import static org.hamcrest.Matchers.*;
 
 public class HodFilterITCase extends HsodFindTestBase {
     private FindPage findPage;
-    private ResultsView results;
     private FindService findService;
 
     public HodFilterITCase(final TestConfig config) {
@@ -38,7 +37,6 @@ public class HodFilterITCase extends HsodFindTestBase {
     @Before
     public void setUp(){
         findPage = getElementFactory().getFindPage();
-        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 
@@ -55,7 +53,7 @@ public class HodFilterITCase extends HsodFindTestBase {
     private void checkContentTypeFilter(final String filterType, final String extension) {
         final Query query = new Query("red star")
                 .withFilter(new ParametricFilter("Content Type", filterType));
-        findService.search(query);
+        ResultsView results = findService.search(query);
         for(final String type : results.getDisplayedDocumentsDocumentTypes()){
             assertThat(type, containsString(extension));
         }
@@ -63,7 +61,7 @@ public class HodFilterITCase extends HsodFindTestBase {
 
     @Test
     public void testFileTypes(){
-        findService.search("love ");
+        ResultsView results = findService.search("love ");
 
         for(final FileType f : FileType.values()) {
             findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
@@ -81,7 +79,7 @@ public class HodFilterITCase extends HsodFindTestBase {
     public void testAuthor(){
         final String author = "FIFA.COM";
 
-        findService.search(new Query("football")
+        ResultsView results = findService.search(new Query("football")
                 .withFilter(new IndexFilter("fifa"))
                 .withFilter(new ParametricFilter("Author", author)));
 

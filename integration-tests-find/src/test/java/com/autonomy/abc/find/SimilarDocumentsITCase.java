@@ -39,7 +39,6 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 @RelatedTo("CSA-2090")
 //TODO have this extend FindITCase but change the setUp()?
 public class SimilarDocumentsITCase extends FindTestBase {
-    private ResultsView results;
     private FindService findService;
     private SimilarDocumentsView similarDocuments;
 
@@ -49,13 +48,12 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Before
     public void setUp(){
-        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 
     @Test
     public void testSimilarDocumentsShowUp() throws InterruptedException {
-        findService.search(new Query("Doe"));
+        ResultsView results = findService.search(new Query("Doe"));
 
         for (int i = 1; i <= 5; i++) {
             final String title = results.getResult(i).getTitleString();
@@ -152,7 +150,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testInfiniteScroll(){
-        results = findService.search(new Query("blast").withFilter(IndexFilter.ALL));
+        ResultsView results = findService.search(new Query("blast").withFilter(IndexFilter.ALL));
 
         similarDocuments = findService.goToSimilarDocuments(1);
         assumeThat(similarDocuments.getResults().size(), is(30));
