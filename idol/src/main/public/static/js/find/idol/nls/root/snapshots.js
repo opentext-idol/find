@@ -15,7 +15,9 @@ define([
         'restrictions.minDate': 'From Date',
         'restrictions.queryText': 'Query Text',
         'restrictions.relatedConcepts': 'Also searching for',
-        'restrictionsTitle': 'Query Restrictions'
+        'restrictionsTitle': 'Query Restrictions',
+        'openEdit.create': 'Save as snapshot',
+        'openEdit.edit': 'Save as snapshot'
     });
 
 });
