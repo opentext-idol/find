@@ -30,7 +30,6 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 public class QueryTermsITCase extends FindTestBase {
     private FindPage findPage;
     private FindTopNavBar navBar;
-    private ResultsView results;
     private FindService findService;
 
     public QueryTermsITCase(final TestConfig config) {
@@ -41,7 +40,6 @@ public class QueryTermsITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         navBar = getElementFactory().getTopNavBar();
-        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 
@@ -49,7 +47,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Category(CoreFeature.class)
     public void testSendKeys() throws InterruptedException {
         final String searchTerm = "Fred is a chimpanzee";
-        findService.search(searchTerm);
+        ResultsView results = findService.search(searchTerm);
         assertThat(navBar.getSearchBoxTerm(), is(searchTerm));
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
@@ -59,7 +57,7 @@ public class QueryTermsITCase extends FindTestBase {
         final String termOne = "musketeers";
         final String termTwo = "\"dearly departed\"";
 
-        findService.search(termOne);
+        ResultsView results = findService.search(termOne);
         final List<String> musketeersSearchResults = results.getResultTitles();
         final int numberOfMusketeersResults = musketeersSearchResults.size();
 
@@ -137,7 +135,7 @@ public class QueryTermsITCase extends FindTestBase {
 
         assertThat(findPage.footerLogo(), displayed());
 
-        findService.search("Kevin Costner");
+        ResultsView results = findService.search("Kevin Costner");
 
         final List<String> resultTitles = results.getResultTitles();
 

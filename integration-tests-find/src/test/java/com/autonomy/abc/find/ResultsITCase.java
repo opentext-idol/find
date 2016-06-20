@@ -26,7 +26,6 @@ import static org.hamcrest.Matchers.*;
 
 public class ResultsITCase extends FindTestBase {
     private FindPage findPage;
-    private ResultsView results;
     private FindService findService;
 
     public ResultsITCase(final TestConfig config) {
@@ -36,7 +35,6 @@ public class ResultsITCase extends FindTestBase {
     @Before
     public void setUp() {
         findPage = getElementFactory().getFindPage();
-        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 
@@ -59,7 +57,7 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ActiveBug("CSA-2082")
     public void testAutoScroll() {
-        findService.search("nightmare");
+        ResultsView results = findService.search("nightmare");
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
@@ -78,7 +76,7 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("CCUK-3647")
     public void testNoMoreResultsFoundAtEnd() {
-        findService.search(new Query("oesophageal"));
+        ResultsView results = findService.search(new Query("oesophageal"));
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
@@ -89,7 +87,7 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ActiveBug("FIND-93")
     public void testNoResults() {
-        findService.search("thissearchwillalmostcertainlyreturnnoresults");
+        ResultsView results = findService.search("thissearchwillalmostcertainlyreturnnoresults");
 
         verifyThat(results.resultsDiv(), either(containsText("No results found")).or(containsText("No more results found")));
 

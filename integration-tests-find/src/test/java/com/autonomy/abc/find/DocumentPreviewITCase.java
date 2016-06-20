@@ -30,7 +30,6 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class DocumentPreviewITCase extends FindTestBase {
     private FindPage findPage;
-    private ResultsView results;
     private FindService findService;
 
     public DocumentPreviewITCase(final TestConfig config) {
@@ -39,13 +38,12 @@ public class DocumentPreviewITCase extends FindTestBase {
     @Before
     public void setUp(){
         findPage = getElementFactory().getFindPage();
-        results = getElementFactory().getResultsPage();
         findService = getApplication().findService();
     }
 
     @Test
     public void testShowDocumentPreview(){
-        findService.search("cake");
+        ResultsView results = findService.search("cake");
         findPage.filterBy(new IndexFilter(filters().getIndex(1).getName()));
 
         final DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
@@ -71,7 +69,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     public void testOpenOriginalDocInNewTab(){
         final Session session = getMainSession();
 
-        findService.search("flail");
+        ResultsView results = findService.search("flail");
         if (isHosted()) {
             // e.g. FIFA contains links that redirect to new pages
             findPage.filterBy(new IndexFilter("simpsonsarchive"));
@@ -104,7 +102,7 @@ public class DocumentPreviewITCase extends FindTestBase {
 
     @Test
     public void testDetailedPreview() {
-        findService.search("tragic");
+        ResultsView results = findService.search("tragic");
         findPage.filterBy(new IndexFilter(filters().getIndex(1).getName()));
 
         results.getResult(1).openDocumentPreview();
@@ -157,7 +155,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     @Test
     @ActiveBug(value = "FIND-86", browsers = Browser.FIREFOX)
     public void testOneCopyOfDocInDetailedPreview(){
-        findService.search("face");
+        ResultsView results = findService.search("face");
         results.getResult(1).openDocumentPreview();
 
         getElementFactory().getInlinePreview().openDetailedPreview();
