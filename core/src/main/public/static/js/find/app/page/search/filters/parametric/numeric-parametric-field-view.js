@@ -36,19 +36,18 @@ define([
         });
     }
 
-    function roundInputNumber(x1) {
-        return Math.round(x1 * 10) / 10;
+    function roundInputNumber(input) {
+        return Math.round(input * 10) / 10;
     }
 
     function calibrateBuckets(buckets, min, max, bucketSize) {
-        let calibratedBuckets = buckets;
-        if (buckets.length > 0) {
-            // Remove buckets not in range when zooming in
-            //noinspection JSUnresolvedFunction
-            calibratedBuckets = _.filter(buckets, function(value) {
-                return value.min >= min && value.max <= max;
-            });
+        // Remove buckets not in range when zooming in
+        //noinspection JSUnresolvedFunction
+        let calibratedBuckets = _.filter(buckets, function(value) {
+            return value.min >= min && value.max <= max;
+        });
 
+        if (calibratedBuckets.length > 0) {
             // Add empty buckets to the beginning if zooming out
             while (calibratedBuckets[0].min > min) {
                 calibratedBuckets.unshift({
@@ -68,6 +67,15 @@ define([
                     count: 0
                 });
             }
+        } else {
+            // Zooming where there are no buckets
+            calibratedBuckets = _.range(min, max, bucketSize).map(function(bucketMin) {
+                return {
+                    min: bucketMin,
+                    max: bucketMin + bucketSize,
+                    count: 0
+                };
+            });
         }
 
         return calibratedBuckets;
