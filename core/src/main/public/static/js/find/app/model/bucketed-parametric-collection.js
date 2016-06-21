@@ -4,15 +4,14 @@
  */
 
 define([
-    'backbone',
     'find/app/model/find-base-collection'
-], function(Backbone, FindBaseCollection) {
+], function(FindBaseCollection) {
 
     'use strict';
 
     var URL_ROOT = '../api/public/parametric/buckets';
 
-    var Model = Backbone.Model.extend({
+    var Model = FindBaseCollection.Model.extend({
         urlRoot: URL_ROOT,
 
         defaults: {

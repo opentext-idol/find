@@ -8,17 +8,9 @@ define([
     'underscore'
 ], function(Backbone, _) {
 
-    return Backbone.Collection.extend({
-        currentRequest: null,
-        error: false,
-        fetching: false,
-
-        /**
-         * Fetch tracks in-flight requests and cancels them when a new one is run
-         * @param options
-         * @returns {*|null}
-         */
-        fetch: function(options) {
+    function createFetch(prototype) {
+        // Fetch tracks in-flight requests and cancels them when a new one is run
+        return function(options) {
             if (this.currentRequest) {
                 this.currentRequest.abort();
             }
@@ -29,7 +21,8 @@ define([
             var error = options.error;
             var success = options.success;
 
-            this.currentRequest = Backbone.Collection.prototype.fetch.call(this, _.extend(options || {}, {
+            this.currentRequest = prototype.fetch.call(this, _.extend(options || {}, {
+                reset: _.isUndefined(options.reset) ? true : options.reset,
                 error: _.bind(function() {
                     this.currentRequest = null;
                     this.error = true;
@@ -39,7 +32,6 @@ define([
                         error.apply(options, arguments);
                     }
                 }, this),
-                reset: _.isUndefined(options.reset) ? true : options.reset,
                 success: _.bind(function() {
                     this.currentRequest = null;
                     this.error = false;
@@ -52,21 +44,31 @@ define([
             }));
 
             return this.currentRequest;
-        },
+        };
+    }
 
-        /**
-         * Sync uses "traditional" options serialization
-         * @param method
-         * @param model
-         * @param options
-         * @returns {*}
-         */
+    var baseProperties = {
+        currentRequest: null,
+        error: false,
+        fetching: false,
+
         sync: function(method, model, options) {
-            options = options || {};
-            options.traditional = true; // Force "traditional" serialization of query parameters, e.g. index=foo&index=bar, for IOD multi-index support.
-
-            return Backbone.Collection.prototype.sync.call(this, method, model, options);
+            // Force "traditional" serialization of query parameters, e.g. index=foo&index=bar, for IOD multi-index support.
+            return Backbone.sync.call(this, method, model, _.extend(options, {
+                traditional: true
+            }));
         }
+    };
+
+    var Model = Backbone.Model.extend(_.extend({
+        fetch: createFetch(Backbone.Model.prototype)
+    }, baseProperties));
+
+    return Backbone.Collection.extend(_.extend({
+        fetch: createFetch(Backbone.Collection.prototype),
+        model: Model
+    }, baseProperties), {
+        Model: Model
     });
 
 });

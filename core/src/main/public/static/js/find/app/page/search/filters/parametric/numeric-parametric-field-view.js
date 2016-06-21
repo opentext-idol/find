@@ -10,10 +10,11 @@ define([
     'moment',
     'find/app/model/find-base-collection',
     'find/app/page/search/filters/parametric/numeric-widget',
+    'find/app/model/bucketed-parametric-collection',
     'parametric-refinement/prettify-field-name',
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle'
-], function(Backbone, $, _, moment, FindBaseCollection, numericWidget, prettifyFieldName, SelectedParametricValuesCollection, i18n) {
+], function(Backbone, $, _, moment, FindBaseCollection, numericWidget, BucketedParametricCollection, prettifyFieldName, SelectedParametricValuesCollection, i18n) {
 
     'use strict';
 
@@ -141,7 +142,11 @@ define([
             this.parseBoundarySelection = formatting.parseBoundarySelection;
 
             this.widget = numericWidget({formattingFn: this.formatValue});
-            this.localBucketingCollection = new (FindBaseCollection.extend({url: '../api/public/parametric/buckets'}))();
+
+            this.bucketModel = new BucketedParametricCollection.Model({
+                id: this.model.get('id'),
+                name: this.model.get('id')
+            });
 
             this.absoluteMinValue = this.model.get('min');
             this.absoluteMaxValue = this.model.get('max');
@@ -258,27 +263,17 @@ define([
             });
 
             // proper update, regenerating the buckets from the given bounds
-            //noinspection JSUnresolvedVariable
-            this.localBucketingCollection.fetch({
+            this.bucketModel.fetch({
                 data: {
-                    fieldNames: [this.model.get('id')],
                     databases: this.queryModel.get('indexes'),
-                    queryText: this.queryModel.get('queryText'),
-                    targetNumberOfBuckets: [Math.floor(this.$el.width() / this.pixelsPerBucket)],
-                    bucketMin: [newMin],
-                    bucketMax: [newMax]
+                    targetNumberOfBuckets: Math.floor(this.$el.width() / this.pixelsPerBucket),
+                    bucketMin: newMin,
+                    bucketMax: newMax
                 },
                 reset: true,
                 remove: true,
                 success: function() {
-                    const result = this.localBucketingCollection.models[0];
-                    this.model.set({
-                        count: result.get('count'),
-                        min: result.get('min'),
-                        max: result.get('max'),
-                        bucketSize: result.get('bucketSize'),
-                        values: result.get('values')
-                    });
+                    this.model.set(this.bucketModel.attributes);
                 }.bind(this)
             });
         },
