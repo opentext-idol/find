@@ -57,12 +57,16 @@ define([
             'show.bs.collapse': function(e) {
                 e.stopPropagation();
 
-                $(e.target).parent().find('> span > i[data-target]').removeClass('collapsed');
+                var $parent = $(e.target).parent();
+                $parent.find('> span > i[data-target]').removeClass('collapsed');
+                $parent.find('> span[data-target]').removeClass('collapsed');
             },
             'hide.bs.collapse': function(e) {
                 e.stopPropagation();
 
-                $(e.target).parent().find('> span > i[data-target]').addClass('collapsed');
+                var $parent = $(e.target).parent();
+                $parent.find('> span > i[data-target]').addClass('collapsed');
+                $parent.find('> span[data-target]').addClass('collapsed');
             },
             'click .toggle-more': function(e) {
                 e.stopPropagation();
