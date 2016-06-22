@@ -1307,7 +1307,15 @@ input:-moz-placeholder::before {
 
 .fields-list {
     border-left: 1px solid #e5e5e5;
-    min-height: 100%;
+    height: 100%;
+}
+
+.fields-list .tab-pane .full-height {
+    overflow-y: auto;
+}
+
+.fields-list, .tab-content, .tab-pane, .full-height, .full-height > div{
+    height: 100%;
 }
 
 .parametric-fields-table {
