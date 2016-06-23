@@ -1640,14 +1640,6 @@ h4.similar-dates-message {
     }
 }
 
-.precision-slider-block {
-    width: 100%;
-}
-
-.precision-slider-block  > div > .slider{
-    width: 100%;
-}
-
 .numeric-parametric-slider-block {
     width: 100%;
 }
