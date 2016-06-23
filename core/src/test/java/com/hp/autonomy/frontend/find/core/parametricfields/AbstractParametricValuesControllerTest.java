@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
@@ -28,8 +29,10 @@ public abstract class AbstractParametricValuesControllerTest<C extends Parametri
 
     @Mock
     protected ParametricValuesService<R, S, E> parametricValuesService;
+
     @Mock
-    protected ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
+    protected QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
+
     @Mock
     protected ObjectFactory<ParametricRequest.Builder<R, S>> parametricRequestBuilderFactory;
 

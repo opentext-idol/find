@@ -6,11 +6,11 @@
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
 import com.hp.autonomy.frontend.find.core.parametricfields.ParametricValuesController;
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
@@ -32,7 +32,7 @@ import java.util.Set;
 class HodParametricValuesController extends ParametricValuesController<HodQueryRestrictions, HodParametricRequest, ResourceIdentifier, HodErrorException> {
     @Autowired
     public HodParametricValuesController(final ParametricValuesService<HodParametricRequest, ResourceIdentifier, HodErrorException> parametricValuesService,
-                                         final ObjectFactory<QueryRestrictions.Builder<HodQueryRestrictions, ResourceIdentifier>> queryRestrictionsBuilderFactory,
+                                         final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory,
                                          final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory) {
         super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
     }

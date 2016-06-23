@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
@@ -18,11 +19,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.ObjectFactory;
 
 import java.io.Serializable;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -39,7 +39,7 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
     @Mock
     private Documents<D> searchResults;
     @Mock
-    protected ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
+    protected QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
 
     private SavedQueryController<S, Q, D, E> savedQueryController;
 

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 public class IdolSavedSearchQueryControllerTest extends SavedQueryControllerTest<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
     @Override
     protected SavedQueryController<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> constructController() {
-        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new IdolQueryRestrictions.Builder());
         return new IdolSavedQueryController(savedQueryService, documentsService, fieldTextParser, queryRestrictionsBuilderFactory);
     }
 }

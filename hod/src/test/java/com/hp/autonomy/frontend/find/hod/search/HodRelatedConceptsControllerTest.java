@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 public class HodRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<Entity, HodQueryRestrictions, ResourceIdentifier, HodErrorException> {
     @Before
     public void setUp() {
-        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new HodQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new HodQueryRestrictions.Builder());
         relatedConceptsController = new HodRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory);
     }
 }
