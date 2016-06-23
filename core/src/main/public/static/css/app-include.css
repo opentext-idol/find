@@ -13,10 +13,10 @@ html, body {
 }
 
 .chart rect {
-    fill: rgba(1,169,130,0.1);
+    fill: #01A982;
 }
 .chart rect:hover {
-    fill: rgba(1,169,130,0.2);
+    fill: rgba(1,169,130,0.50);
 }
 
 .numeric-parametric-inputs {
