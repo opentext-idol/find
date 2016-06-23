@@ -154,7 +154,13 @@ define([
                 }
             });
 
-            this.inputView = new InputView({model: this.searchModel});
+            this.inputView = new InputView({
+                model: this.searchModel,
+                queryStates: this.queryStates,
+                selectedTabModel: this.selectedTabModel,
+                hasBiRole: config().hasBiRole,
+                indexesCollection: this.indexesCollection
+            });
 
             if (config().hasBiRole) {
                 this.tabView = new TabbedSearchView({
@@ -438,7 +444,10 @@ define([
             this.$('.query-service-view-container').removeClass('hide');
             this.$('.app-logo').addClass('hide');
             this.$('.hp-logo-footer').addClass('hide');
-            this.$('.see-all-documents').addClass('hide');
+
+            if(config.hasBiRole) {
+                this.$('.see-all-documents').addClass('hide');
+            }
 
             this.removeDocumentDetailView();
             this.removeSuggestView();
