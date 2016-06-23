@@ -5,59 +5,75 @@
 
 package com.hp.autonomy.frontend.find.idol.comparison;
 
+import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
 @Service
-public class ComparisonServiceImpl<S extends Serializable, Q extends QueryRestrictions<S>, R extends SearchResult, E extends Exception> implements ComparisonService<R, E> {
-    private final DocumentsService<S, R, E> documentsService;
-    private final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder;
+public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult, AciErrorException> {
+    private final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
+    private final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory;
 
     @Autowired
-    public ComparisonServiceImpl(final DocumentsService<S, R, E> documentsService, @SuppressWarnings("SpringJavaAutowiringInspection") final QueryRestrictions.Builder<Q, S> queryRestrictionsBuilder) {
+    public ComparisonServiceImpl(
+            final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService,
+            final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory
+    ) {
         this.documentsService = documentsService;
-        this.queryRestrictionsBuilder = queryRestrictionsBuilder;
+        this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
     }
 
-    private Documents<R> getEmptyResults() {
-        return new Documents<>(Collections.<R>emptyList(), 0, "", null, null, null);
+    private Documents<IdolSearchResult> getEmptyResults() {
+        return new Documents<>(Collections.<IdolSearchResult>emptyList(), 0, "", null, null, null);
     }
 
-    private String generateDifferenceStateToken(final String firstQueryStateToken, final String secondQueryStateToken) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
+    private String generateDifferenceStateToken(final String firstQueryStateToken, final String secondQueryStateToken) throws AciErrorException {
+        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
                 .setQueryText("*")
                 .setFieldText("")
                 .setMinScore(0)
                 .setStateMatchId(Collections.singletonList(firstQueryStateToken))
                 .setStateDontMatchId(Collections.singletonList(secondQueryStateToken))
                 .build();
+
         return documentsService.getStateToken(queryRestrictions, ComparisonController.STATE_TOKEN_MAX_RESULTS, false);
     }
 
     @Override
-    public Documents<R> getResults(final List<String> stateMatchIds, final List<String> stateDontMatchIds, final String text, final int resultsStart, final int maxResults, final String summary, final String sort, final boolean highlight) throws E {
+    public Documents<IdolSearchResult> getResults(
+            final List<String> stateMatchIds,
+            final List<String> stateDontMatchIds,
+            final String text,
+            final int resultsStart,
+            final int maxResults,
+            final String summary,
+            final String sort,
+            final boolean highlight
+    ) throws AciErrorException {
         if (stateMatchIds.isEmpty()) {
             return getEmptyResults();
         }
 
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder
+        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
                 .setQueryText(text)
                 .setFieldText("")
                 .setMinScore(0)
                 .setStateMatchId(stateMatchIds)
                 .setStateDontMatchId(stateDontMatchIds)
                 .build();
-        final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
+
+        final SearchRequest<String> searchRequest = new SearchRequest.Builder<String>()
                 .setQueryRestrictions(queryRestrictions)
                 .setStart(resultsStart)
                 .setMaxResults(maxResults)
@@ -68,11 +84,12 @@ public class ComparisonServiceImpl<S extends Serializable, Q extends QueryRestri
                 .setAutoCorrect(false)
                 .setQueryType(SearchRequest.QueryType.RAW)
                 .build();
+
         return documentsService.queryTextIndex(searchRequest);
     }
 
     @Override
-    public ComparisonStateTokens getCompareStateTokens(final String firstStateToken, final String secondStateToken) throws E {
+    public ComparisonStateTokens getCompareStateTokens(final String firstStateToken, final String secondStateToken) throws AciErrorException {
         // First generate the relative complement state tokens, i.e. A \ B and B \ A
         // - where A is the set of documents in our "firstStateToken" and B is the set of
         // documents in our "secondStateToken".

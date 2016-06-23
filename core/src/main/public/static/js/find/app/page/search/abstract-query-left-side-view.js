@@ -10,7 +10,6 @@ define([
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/util/text-input',
-    'find/app/page/search/filters/precision-recall/precision-recall-slider-view',
     'find/app/util/collapsible',
     'find/app/vent',
     'parametric-refinement/display-collection',
@@ -20,7 +19,7 @@ define([
     'moment',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-date-parametric-field-view.html'
-], function(Backbone, $, _, DateView, ParametricView, TextInput, PrecisionRecallView, Collapsible,
+], function(Backbone, $, _, DateView, ParametricView, TextInput, Collapsible,
             vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes, moment, numericParametricFieldTemplate, numericParametricDateFieldTemplate) {
     "use strict";
 
@@ -67,13 +66,6 @@ define([
                 datesFilterModel: options.queryState.datesFilterModel,
                 savedSearchModel: options.savedSearchModel
             });
-
-            if (configuration().hasBiRole) {
-                this.precisionSlider = new PrecisionRecallView({
-                    queryModel: options.queryModel,
-                    queryState: options.queryState
-                });
-            }
 
             this.numericParametricFieldsCollection = options.numericParametricFieldsCollection;
             this.dateParametricFieldsCollection = options.dateParametricFieldsCollection;
@@ -185,12 +177,6 @@ define([
             this.dateParametricView.render();
             this.parametricView.render();
             this.dateViewWrapper.render();
-
-            if (this.precisionSlider) {
-                //noinspection JSUnresolvedVariable
-                this.$el.prepend(this.precisionSlider.$el);
-                this.precisionSlider.render();
-            }
 
             this.updateParametricVisibility();
             this.updateDatesVisibility();

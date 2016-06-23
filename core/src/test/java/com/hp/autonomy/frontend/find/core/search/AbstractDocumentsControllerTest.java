@@ -17,7 +17,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.ObjectFactory;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -30,8 +29,9 @@ import static org.mockito.Mockito.when;
 public abstract class AbstractDocumentsControllerTest<S extends Serializable, Q extends QueryRestrictions<S>, R extends SearchResult, E extends Exception> {
     @Mock
     protected DocumentsService<S, R, E> documentsService;
+
     @Mock
-    protected ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
+    protected QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
 
     protected DocumentsController<S, Q, R, E> documentsController;
     protected Class<S> databaseType;
