@@ -192,7 +192,7 @@ define([
         'search.topicMap.error': 'An error occurred retrieving topics for this search',
         'search.topicMap.occurrences': 'Occurrences of phrase',
         'search.topicMap.documents': 'Documents with phrase',
-        'search.topicMap.relevance': 'Relevance',
+        'search.topicMap.speed': 'Speed / Accuracy',
         'search.topicMap.topics': 'Number of topics',
         'search.sunburst.title': 'Parametric Distribution',
         'search.sunburst.fieldPlaceholder.first': 'Select a field',

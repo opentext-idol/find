@@ -34,6 +34,7 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
     private static final String MAX_DATE_PARAM = "maxDate";
     private static final String MIN_SCORE_PARAM = "minScore";
     public static final String STATE_TOKEN_PARAM = "stateTokens";
+    private static final String MAX_RESULTS = "maxResults";
 
     private final RelatedConceptsService<Q, S, E> relatedConceptsService;
     private final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory;
@@ -56,7 +57,8 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final Integer minScore,
-            @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
+            @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens,
+            @RequestParam(value = MAX_RESULTS, required = false) final Integer maxResults
     ) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
                 .setQueryText(queryText)
@@ -66,9 +68,11 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
                 .setMaxDate(maxDate)
                 .setMinScore(minScore)
                 .setStateMatchId(ListUtils.emptyIfNull(stateTokens))
+                .setMaxResults(maxResults)
                 .build();
 
         final RelatedConceptsRequest<S> relatedConceptsRequest = buildRelatedConceptsRequest(queryRestrictions);
         return relatedConceptsService.findRelatedConcepts(relatedConceptsRequest);
     }
 }
+
