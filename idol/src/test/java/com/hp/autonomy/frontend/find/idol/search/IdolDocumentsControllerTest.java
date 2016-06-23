@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
     @Before
     public void setUp() {
-        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new IdolQueryRestrictions.Builder());
         documentsController = new IdolDocumentsController(documentsService, queryRestrictionsBuilderFactory);
         databaseType = String.class;
     }

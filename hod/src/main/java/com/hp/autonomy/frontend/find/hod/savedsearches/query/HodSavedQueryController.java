@@ -10,14 +10,13 @@ import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +26,7 @@ class HodSavedQueryController extends SavedQueryController<ResourceIdentifier, H
     public HodSavedQueryController(final SavedSearchService<SavedQuery> service,
                                    final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService,
                                    final FieldTextParser fieldTextParser,
-                                   final ObjectFactory<QueryRestrictions.Builder<HodQueryRestrictions, ResourceIdentifier>> queryRestrictionsBuilderFactory) {
+                                   final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory) {
         super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory);
     }
 
