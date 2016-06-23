@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 public class IdolRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<QsElement, IdolQueryRestrictions, String, AciErrorException> {
     @Before
     public void setUp() {
-        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new IdolQueryRestrictions.Builder());
         relatedConceptsController = new IdolRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory);
     }
 }

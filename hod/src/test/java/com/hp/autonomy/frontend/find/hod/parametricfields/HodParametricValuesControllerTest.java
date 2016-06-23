@@ -33,9 +33,10 @@ public class HodParametricValuesControllerTest extends AbstractParametricValuesC
         return new HodParametricValuesController(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
     }
 
+    @Override
     @Before
     public void setUp() {
-        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new HodQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new HodQueryRestrictions.Builder());
         when(parametricRequestBuilderFactory.getObject()).thenReturn(new HodParametricRequest.Builder());
         super.setUp();
     }
