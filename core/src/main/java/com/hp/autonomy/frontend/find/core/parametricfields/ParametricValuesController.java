@@ -34,7 +34,7 @@ import java.util.Set;
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
 public abstract class ParametricValuesController<Q extends QueryRestrictions<S>, R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
-    protected static final int MAX_VALUES_DEFAULT = 10;
+    protected static final int MAX_VALUES_DEFAULT = Integer.MAX_VALUE;
 
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_VALUES_PATH = "/api/public/parametric";
