@@ -154,7 +154,13 @@ define([
                 }
             });
 
-            this.inputView = new InputView({model: this.searchModel});
+            this.inputView = new InputView({
+                model: this.searchModel,
+                queryStates: this.queryStates,
+                selectedTabModel: this.selectedTabModel,
+                hasBiRole: config().hasBiRole,
+                indexesCollection: this.indexesCollection
+            });
 
             if (config().hasBiRole) {
                 this.tabView = new TabbedSearchView({

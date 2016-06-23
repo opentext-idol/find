@@ -43,6 +43,12 @@ define([
                 this.toggleRelatedConceptClusterDropdown(true, $(e.currentTarget), $(e.relatedTarget));
             },
             'click .see-all-documents': function() {
+                var queryState = this.queryStates.get(this.selectedTabModel.get('selectedSearchCid'));
+
+                queryState.datesFilterModel.clear().set(queryState.datesFilterModel.defaults);
+                queryState.selectedParametricValues.reset();
+                queryState.selectedIndexes.set(this.indexesCollection.toResourceIdentifiers());
+
                 this.search('*');
             },
             'click .right-scroll': function(e) {
@@ -59,11 +65,42 @@ define([
             }
         },
 
-        initialize: function() {
+        initialize: function(options) {
+            this.queryStates = options.queryStates;
+            this.selectedTabModel = options.selectedTabModel;
+            this.indexesCollection = options.indexesCollection;
+
             this.listenTo(this.model, 'change:inputText', this.updateText);
             this.listenTo(this.model, 'change:relatedConcepts', this.updateRelatedConcepts);
 
             this.listenTo(vent, 'vent:resize', this.updateScrollingButtons);
+
+            if (!options.hasBiRole) {
+                this.listenTo(this.queryStates, 'change', function() {
+                    // listen to the new query state(s)
+                    var changed = this.queryStates.changed[this.selectedTabModel.get('selectedSearchCid')];
+
+                    if(changed){
+                        var update = _.bind(function() {
+                            // all selected indexes is the default
+                            var hasSelectedIndexes = changed.selectedIndexes.length < this.indexesCollection.length;
+                            var hasSelectedParametricValues = changed.selectedParametricValues.length > 0;
+
+                            // if a date range is not selected the query model attributes will only contain null values
+                            var hasSelectedDates = _.chain(changed.datesFilterModel.toQueryModelAttributes())
+                                .values()
+                                .any()
+                                .value();
+
+                            this.updateSeeAllDocumentsLink(hasSelectedIndexes || hasSelectedParametricValues || hasSelectedDates);
+                        }, this);
+
+                        this.listenTo(changed.selectedIndexes, 'add remove', update);
+                        this.listenTo(changed.selectedParametricValues, 'add remove', update);
+                        this.listenTo(changed.datesFilterModel, 'change', update);
+                    }
+                });
+            }
 
             _.bindAll(this, 'updateScrollingButtons');
         },
@@ -125,12 +162,9 @@ define([
             }
         },
 
-        updateSeeAllDocumentsLink: function() {
-            if(this.model.get('inputText') === '*' && !this.model.get('relatedConcepts').length) {
-                this.$('.see-all-documents').addClass('disabled-clicks cursor-not-allowed');
-            } else {
-                this.$('.see-all-documents').removeClass('disabled-clicks cursor-not-allowed');
-            }
+        updateSeeAllDocumentsLink: function(queryStateChanged) {
+            var disableLink = this.model.get('inputText') === '*' && !this.model.get('relatedConcepts').length && !queryStateChanged;
+            this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', disableLink);
         },
 
         updateRelatedConcepts: function() {
