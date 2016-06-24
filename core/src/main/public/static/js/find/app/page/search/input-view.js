@@ -45,9 +45,11 @@ define([
             'click .see-all-documents': function() {
                 var queryState = this.queryStates.get(this.selectedTabModel.get('selectedSearchCid'));
 
-                queryState.datesFilterModel.clear().set(queryState.datesFilterModel.defaults);
-                queryState.selectedParametricValues.reset();
-                queryState.selectedIndexes.set(this.indexesCollection.toResourceIdentifiers());
+                if(queryState) {
+                    queryState.datesFilterModel.clear().set(queryState.datesFilterModel.defaults);
+                    queryState.selectedParametricValues.reset();
+                    queryState.selectedIndexes.set(this.indexesCollection.toResourceIdentifiers());
+                }
 
                 this.search('*');
             },
