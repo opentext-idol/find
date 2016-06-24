@@ -387,6 +387,8 @@ fieldset.radio-fieldset > label {
 .middle-container-time-bar {
     height: 230px;
     padding: 10px;
+    background-color: rgba(242, 240, 240, 0.46);
+    border-top: 1px solid #dfdfdf;
 }
 
 .middle-container h4 {
