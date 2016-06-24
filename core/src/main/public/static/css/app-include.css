@@ -18,6 +18,9 @@ html, body {
 .chart rect:hover {
     fill: rgba(1,169,130,0.50);
 }
+.chart rect.selection {
+    fill: rgba(97,71,103,0.3);
+}
 
 .numeric-parametric-inputs {
     min-height: 18px;
