@@ -51,10 +51,11 @@ define([
 
             //noinspection JSUnresolvedFunction
             var indexesView = new this.IndexesView({
-                queryModel: options.queryModel,
-                indexesCollection: options.indexesCollection,
-                selectedDatabasesCollection: options.queryState.selectedIndexes,
+                delayedSelection: options.delayedIndexesSelection,
                 filterModel: this.filterModel,
+                indexesCollection: options.indexesCollection,
+                queryModel: options.queryModel,
+                selectedDatabasesCollection: options.queryState.selectedIndexes,
                 visibleIndexesCallback: _.bind(function(indexes) {
                     this.indexesEmpty = indexes.length === 0;
                     this.updateIndexesVisibility();

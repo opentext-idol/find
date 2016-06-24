@@ -129,22 +129,23 @@ define([
             });
 
             var subViewArguments = {
-                indexesCollection: this.indexesCollection,
-                entityCollection: this.entityCollection,
-                savedSearchModel: this.savedSearchModel,
-                savedSearchCollection: this.savedSearchCollection,
-                documentsCollection: this.documentsCollection,
-                selectedTabModel: this.selectedTabModel,
-                parametricCollection: this.parametricCollection,
-                restrictedParametricCollection: this.restrictedParametricCollection,                
-                parametricFieldsCollection: this.parametricFieldsCollection,
-                numericParametricFieldsCollection: this.numericParametricFieldsCollection,
                 dateParametricFieldsCollection: this.dateParametricFieldsCollection,
+                delayedIndexesSelection: options.delayedIndexesSelection,
+                documentsCollection: this.documentsCollection,
+                entityCollection: this.entityCollection,
+                indexesCollection: this.indexesCollection,
+                highlightModel: this.highlightModel,
+                numericParametricFieldsCollection: this.numericParametricFieldsCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
-                highlightModel: this.highlightModel,
+                parametricCollection: this.parametricCollection,
+                parametricFieldsCollection: this.parametricFieldsCollection,
+                restrictedParametricCollection: this.restrictedParametricCollection,
+                savedSearchCollection: this.savedSearchCollection,
+                savedSearchModel: this.savedSearchModel,
                 searchCollections: this.searchCollections,
-                searchTypes: this.searchTypes
+                searchTypes: this.searchTypes,
+                selectedTabModel: this.selectedTabModel
             };
 
             var clickHandlerArguments = {

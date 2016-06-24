@@ -77,12 +77,9 @@ define([
         },
 
         initialize: function(options) {
-            DatabasesView.prototype.initialize.call(this, {
+            DatabasesView.prototype.initialize.call(this, _.extend({
                 databasesCollection: options.indexesCollection,
                 emptyMessage: i18n['search.indexes.empty'],
-                selectedDatabasesCollection: options.selectedDatabasesCollection,
-                filterModel: options.filterModel,
-                visibleIndexesCallback: options.visibleIndexesCallback,
                 topLevelDisplayName: i18n['search.indexes.all'],
                 childCategories: this.getIndexCategories(),
                 listViewOptions: {
@@ -91,7 +88,7 @@ define([
                         deleted: 'updateDeleted'
                     }
                 }
-            });
+            }, options));
         },
 
         render: function() {
