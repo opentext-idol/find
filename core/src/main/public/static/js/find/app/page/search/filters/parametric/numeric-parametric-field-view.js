@@ -22,19 +22,25 @@ define([
     const DATE_WIDGET_FORMAT = 'YYYY-MM-DD HH:mm';
 
     function resetSelectedParametricValues(selectedParametricValues, fieldName) {
-        selectedParametricValues
-            .where({field: fieldName})
-            .forEach(function(model) {
-                selectedParametricValues.remove(model);
-            });
+        selectedParametricValues.remove(selectedParametricValues.where({field: fieldName}));
     }
 
     function updateRestrictions(selectedParametricValues, fieldName, numericRestriction, min, max) {
-        selectedParametricValues.add({
+        const existing = selectedParametricValues.find(function(model) {
+            return model.get('field') === fieldName && model.get('range') && model.get('numeric') === numericRestriction;
+        });
+
+        const newAttributes = {
             field: fieldName,
             range: [min, max],
             numeric: numericRestriction
-        });
+        };
+
+        if (existing) {
+            existing.set(newAttributes);
+        } else {
+            selectedParametricValues.add(newAttributes);
+        }
     }
 
     function roundInputNumber(input) {
@@ -87,12 +93,14 @@ define([
 
         events: {
             'click .numeric-parametric-no-min': function() {
-                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
-                this.updateMinInput(this.absoluteMinValue, true);
+                this.updateMinInput(this.absoluteMinValue);
+                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput());
+                this.drawSelection();
             },
             'click .numeric-parametric-no-max': function() {
-                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
-                this.updateMaxInput(this.absoluteMaxValue, true);
+                this.updateMaxInput(this.absoluteMaxValue);
+                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput());
+                this.drawSelection();
             },
             'click .numeric-parametric-reset': function() {
                 //noinspection JSUnresolvedVariable
@@ -113,12 +121,12 @@ define([
                 this.drawSelection();
             },
             'dp.change .results-filter-date[data-date-attribute="min-date"]': function(event) {
-                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
-                this.updateMinInput(event.date.unix(), true);
+                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, event.date.unix(), this.readMaxInput());
+                this.drawSelection();
             },
             'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
-                //noinspection JSUnresolvedFunction,JSUnresolvedVariable
-                this.updateMaxInput(event.date.unix(), true);
+                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), event.date.unix());
+                this.drawSelection();
             }
         },
 
@@ -286,31 +294,15 @@ define([
             return this.parseValue(this.$maxInput.val());
         },
 
-        updateMinInput: function(newValue, triggerChange) {
+        updateMinInput: function(newValue) {
             if (this.selectionEnabled) {
-                if (triggerChange) {
-                    if (newValue !== this.readMinInput()) {
-                        this.$minInput
-                            .val(this.formatValue(newValue))
-                            .trigger('change');
-                    }
-                } else {
-                    this.$minInput.val(this.formatValue(newValue));
-                }
+                this.$minInput.val(this.formatValue(newValue));
             }
         },
 
-        updateMaxInput: function(newValue, triggerChange) {
+        updateMaxInput: function(newValue) {
             if (this.selectionEnabled) {
-                if (triggerChange) {
-                    if (newValue !== this.readMaxInput()) {
-                        this.$maxInput
-                            .val(this.formatValue(newValue))
-                            .trigger('change');
-                    }
-                } else {
-                    this.$maxInput.val(this.formatValue(newValue));
-                }
+                this.$maxInput.val(this.formatValue(newValue));
             }
         }
     }, {
