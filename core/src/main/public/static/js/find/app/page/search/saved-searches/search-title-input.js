@@ -39,11 +39,17 @@ define([
 
                 var title = this.model.get('title').trim();
 
+                var isEmptyOrWhitespace = !Boolean(title);
                 var isDuplicateName = Boolean(this.savedSearchCollection.findWhere({title: title}));
 
                 if(isDuplicateName) {
                     this.model.set({
                         error: i18n['search.savedSearchControl.nameAlreadyExists'],
+                        loading: false
+                    });
+                } else if(isEmptyOrWhitespace) {
+                    this.model.set({
+                        error: i18n['search.savedSearchControl.nameEmptyOrWhitespace'],
                         loading: false
                     });
                 } else {

@@ -186,6 +186,7 @@ define([
         'search.savedSearchControl.openAsSearch': 'Open as Query',
         'search.savedSearchControl.titleBlank': 'Title must not be blank',
         'search.savedSearchControl.nameAlreadyExists': 'Search with this name already exists',
+        'search.savedSearchControl.nameEmptyOrWhitespace': 'Name must contain at least one printable character',
         'search.suggest.title': 'Similar results to "{0}"',
         'search.topicMap.clustering': 'Clustering Mode',
         'search.topicMap.empty': 'No topics found for this query',
