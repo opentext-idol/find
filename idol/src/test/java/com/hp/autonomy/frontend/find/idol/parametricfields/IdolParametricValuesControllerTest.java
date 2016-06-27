@@ -32,7 +32,7 @@ public class IdolParametricValuesControllerTest extends AbstractParametricValues
     @Override
     @Before
     public void setUp() {
-        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new IdolQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new IdolQueryRestrictions.Builder());
         when(parametricRequestBuilderFactory.getObject()).thenReturn(new IdolParametricRequest.Builder());
         super.setUp();
     }

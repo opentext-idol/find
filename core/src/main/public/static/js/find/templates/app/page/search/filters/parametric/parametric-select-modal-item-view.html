@@ -1,0 +1,9 @@
+<div class="i-check checkbox parametric-field-label clickable shorten" data-field-id="<%- field.id %>">
+    <label>
+        <input type="checkbox" <%- model.get('selected') ? 'checked' : '' %>>
+        <span class="field-value"><%- model.id %></span>
+        <% if (model.get('count')) {   %>
+            (<%- model.get('count') %>)
+        <% } %>
+    </label>
+</div>

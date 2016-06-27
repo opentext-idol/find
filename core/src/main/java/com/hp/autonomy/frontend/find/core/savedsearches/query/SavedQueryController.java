@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches.query;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
@@ -15,7 +16,6 @@ import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.apache.commons.collections4.CollectionUtils;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,11 +34,11 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
     private final SavedSearchService<SavedQuery> service;
     private final DocumentsService<S, D, E> documentsService;
     private final FieldTextParser fieldTextParser;
-    private final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
+    private final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
 
     protected SavedQueryController(final SavedSearchService<SavedQuery> service,
                                    final DocumentsService<S, D, E> documentsService,
-                                   final FieldTextParser fieldTextParser, final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory) {
+                                   final FieldTextParser fieldTextParser, final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory) {
         this.service = service;
         this.documentsService = documentsService;
         this.fieldTextParser = fieldTextParser;
@@ -83,7 +83,7 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
         final SavedQuery savedQuery = service.get(id);
         final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
         if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
-            final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.getObject()
+            final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
                     .setQueryText(savedQuery.getQueryText())
                     .setFieldText(fieldTextParser.toFieldText(savedQuery))
                     .setDatabases(convertEmbeddableIndexes(savedQuery.getIndexes()))

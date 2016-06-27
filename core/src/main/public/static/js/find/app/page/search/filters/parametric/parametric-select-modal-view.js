@@ -2,63 +2,58 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/page/search/filters/parametric/parametric-select-modal-list-view',
     'text!find/templates/app/page/search/filters/parametric/parametric-select-modal-view.html',
+    'text!find/templates/app/page/loading-spinner.html',
+    'i18n!find/nls/bundle',
     'iCheck'
-], function(Backbone, $, _, template) {
+], function(Backbone, $, _, ParametricSelectModalListView, template, loadingSpinnerTemplate, i18n) {
 
     var fieldTemplate = _.template('<div id="<%-field.id.replace(/[/]/g, \'_\')%>" class="tab-pane <%- currentFieldGroup === field.id ? \'active\' : \'\'%>" role="tabpanel"></div>');
-    var valueTemplate = _.template('<div class="i-check checkbox parametric-field-label clickable shorten" data-field-id="<%-field.id%>"><label><input type="checkbox" <%-model.get(\'selected\') ? \'checked\' : \'\'%>> <span class="field-value"><%-model.id%></span> <% if(model.get(\'count\')) { %>(<%-model.get(\'count\')%>)<% } %></label></div>');
 
     return Backbone.View.extend({
         template: _.template(template),
+        loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
         className: 'full-height',
 
-        events: {
-            'ifClicked .parametric-field-label': function(e) {
-                var $currentTarget = $(e.currentTarget);
-                var fieldName = $currentTarget.data('field-id');
-                var fieldValue = $currentTarget.find('.field-value').text();
-
-                var parametricDisplayModel = this.parametricDisplayCollection.get(fieldName);
-
-                // checked is the old value
-                var selected = !$(e.target).prop('checked');
-
-                this.selectCollection.add(_.defaults({
-                    field: fieldName,
-                    selected: selected,
-                    value: fieldValue
-                }, parametricDisplayModel.omit('id')), {merge: true});
-            }
-        },
-
         initialize: function(options) {
-            this.parametricDisplayCollection = options.parametricDisplayCollection;
+            _.bindAll(this, 'renderFields');
+            this.parametricDisplayCollection = options.parametricDisplayCollection;              
             this.selectCollection = options.selectCollection;
             this.currentFieldGroup = options.currentFieldGroup;
         },
 
-        render: function() {
-            this.$el.html(this.template({
+        renderFields: function () {
+            var viewhtml = $(this.template({
                 parametricDisplayCollection: this.parametricDisplayCollection,
                 currentFieldGroup: this.currentFieldGroup
             }));
 
+
             var $fragment = $(document.createDocumentFragment());
 
-            this.parametricDisplayCollection.each(function(field) {
+            this.parametricDisplayCollection.each(function (field) {
                 var $field = $(fieldTemplate({currentFieldGroup: this.currentFieldGroup, field: field}));
 
-                _.each(field.fieldValues.models, function (model) {
-                    var $value = $(valueTemplate({field: field, model: model}));
-                    $field.append($value);
-                    $value.iCheck({checkboxClass: 'icheckbox-hp'});
+                var listView = new ParametricSelectModalListView({
+                    parametricDisplayCollection: this.parametricDisplayCollection,
+                    field: field,
+                    collection: field.fieldValues,
+                    selectCollection: this.selectCollection
                 });
+
+                $field.append(listView.render().$el);
 
                 $fragment.append($field);
             }, this);
 
+            this.$el.html(viewhtml);
+
             this.$('.tab-content').html($fragment);
+        },
+
+        render: function() {
+            this.$el.html(this.loadingTemplate);
         }
     });
 });

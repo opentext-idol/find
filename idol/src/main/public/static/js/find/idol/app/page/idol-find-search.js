@@ -7,6 +7,7 @@ define([
     'find/app/page/find-search',
     'underscore',
     'i18n!find/nls/bundle',
+    'find/idol/nls/root/snapshots',
     'find/app/model/saved-searches/saved-search-model',
     'find/idol/app/page/search/idol-service-view',
     'find/idol/app/page/search/suggest/idol-suggest-view',
@@ -17,7 +18,7 @@ define([
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/idol/app/page/search/idol-query-left-side-view',
     'find/app/configuration'
-], function(FindSearch, _, i18n, SavedSearchModel, ServiceView, SuggestView, SnapshotDataView, ComparisonView, stateTokenStrategy,
+], function(FindSearch, _, i18n, snapshotsI18n, SavedSearchModel, ServiceView, SuggestView, SnapshotDataView, ComparisonView, stateTokenStrategy,
             ComparisonDocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView, configuration) {
 
     'use strict';
@@ -33,6 +34,7 @@ define([
             if (configuration().hasBiRole) {
                 searchTypes = _.extend({
                     SNAPSHOT: {
+                        cssClass: 'snapshot',
                         autoCorrect: false,
                         queryTextModelChange: _.constant(_.noop),
                         collection: 'savedSnapshotCollection',
@@ -44,6 +46,10 @@ define([
                         LeftSideFooterView: SnapshotDataView,
                         MiddleColumnHeaderView: null,
                         relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                        openEditText: {
+                            create: snapshotsI18n['openEdit.create'],
+                            edit: snapshotsI18n['openEdit.edit']
+                        },
                         createSearchModelAttributes: function() {
                             return {inputText: '', relatedConcepts: []};
                         },

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class HodDocumentsControllerTest extends AbstractDocumentsControllerTest<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
     @Before
     public void setUp() {
-        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(new HodQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new HodQueryRestrictions.Builder());
         documentsController = new HodDocumentsController(documentsService, queryRestrictionsBuilderFactory);
         databaseType = ResourceIdentifier.class;
     }

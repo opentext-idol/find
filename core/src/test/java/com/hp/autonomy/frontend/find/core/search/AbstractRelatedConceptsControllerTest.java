@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.ObjectFactory;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -25,14 +24,15 @@ import static org.mockito.Mockito.verify;
 public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySummaryElement, R extends QueryRestrictions<S>, S extends Serializable, E extends Exception> {
     @Mock
     protected RelatedConceptsService<Q, S, E> relatedConceptsService;
+
     @Mock
-    protected ObjectFactory<QueryRestrictions.Builder<R, S>> queryRestrictionsBuilderFactory;
+    protected QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory;
 
     protected RelatedConceptsController<Q, R, S, E> relatedConceptsController;
 
     @Test
     public void query() throws E {
-        relatedConceptsController.findRelatedConcepts("Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
+        relatedConceptsController.findRelatedConcepts("Some query text", null, Collections.<S>emptyList(), null, null, 0, null, null);
         verify(relatedConceptsService).findRelatedConcepts(Matchers.<RelatedConceptsRequest<S>>any());
     }
 }

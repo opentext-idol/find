@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
@@ -33,7 +34,7 @@ import java.util.Set;
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
 public abstract class ParametricValuesController<Q extends QueryRestrictions<S>, R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
-    protected static final int MAX_VALUES_DEFAULT = 10;
+    protected static final int MAX_VALUES_DEFAULT = Integer.MAX_VALUE;
 
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_VALUES_PATH = "/api/public/parametric";
@@ -54,11 +55,11 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     protected static final String BUCKET_MAX_PARAM = "bucketMax";
 
     protected final ParametricValuesService<R, S, E> parametricValuesService;
-    protected final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory;
+    protected final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
     private final ObjectFactory<ParametricRequest.Builder<R, S>> parametricRequestBuilderFactory;
 
     protected ParametricValuesController(final ParametricValuesService<R, S, E> parametricValuesService,
-                                         final ObjectFactory<QueryRestrictions.Builder<Q, S>> queryRestrictionsBuilderFactory,
+                                         final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory,
                                          final ObjectFactory<ParametricRequest.Builder<R, S>> parametricRequestBuilderFactory) {
         this.parametricValuesService = parametricValuesService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
@@ -134,7 +135,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
 
     @SuppressWarnings("MethodWithTooManyParameters")
     private R buildRequest(final List<String> fieldNames, final String queryText, final String fieldText, final List<S> databases, final DateTime minDate, final DateTime maxDate, final Integer minScore, final List<String> stateTokens, final Integer maxValues, final SortParam sort) {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.getObject()
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
                 .setQueryText(queryText)
                 .setFieldText(fieldText)
                 .setDatabases(databases)

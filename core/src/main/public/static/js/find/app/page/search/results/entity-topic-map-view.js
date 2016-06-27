@@ -36,29 +36,18 @@ define([
     }
 
     // The maximum topic count is the number of entities which match the current relevance
-    function resolveMaxCount(entityCollection, clusteringMode, relevance) {
+    function resolveMaxCount(entityCollection) {
         return entityCollection
-            .filter(function(model) {
-                return model.get(clusteringMode) >= relevance;
-            }, this)
             .length;
     }
 
     // Update the clustering model after the entity collection or cluster mode has changed
     function updateClusteringModelForEntities(entityCollection, clusteringModel) {
         if (!entityCollection.isEmpty()) {
-            var clusteringMode = clusteringModel.get('mode');
-
-            var minRelevance = entityCollection.min(clusteringMode).get(clusteringMode);
-            var maxRelevance = entityCollection.max(clusteringMode).get(clusteringMode);
-            var relevance = ensureRange(minRelevance, maxRelevance, clusteringModel.get('relevance'));
-            var maxCount = resolveMaxCount(entityCollection, clusteringMode, relevance);
+            var maxCount = resolveMaxCount(entityCollection);
 
             clusteringModel.set({
-                minRelevance: minRelevance,
-                maxRelevance: maxRelevance,
                 maxCount: maxCount,
-                relevance: relevance,
                 count: ensureRange(1, maxCount, clusteringModel.get('count'))
             });
         }
@@ -68,27 +57,22 @@ define([
         template: _.template(template),
 
         events: {
-            'change .relevance-slider': function(event) {
-                var relevance = event.value.newValue;
-                var attributes = {relevance: relevance};
+            'slideStop .speed-slider': function(event) {
+                var maxResults = event.value;
 
-                if (this.entityCollection.length) {
-                    attributes.maxCount = resolveMaxCount(this.entityCollection, this.clusteringModel.get('mode'), relevance);
-                    attributes.count = ensureRange(1, attributes.maxCount, this.clusteringModel.get('count'));
-                }
-
-                this.clusteringModel.set(attributes);
+                this.model.set('maxResults', maxResults);
             },
             'change .count-slider': function(event) {
-                this.clusteringModel.set('count', event.value.newValue);
+                this.model.set('count', event.value.newValue);
             },
             'ifChecked .clustering-mode-i-check': function(event) {
-                this.clusteringModel.set('mode', event.target.value);
+                this.model.set('mode', event.target.value);
             }
         },
 
         initialize: function(options) {
             this.entityCollection = options.entityCollection;
+            this.queryModel = options.queryModel;
 
             this.topicMap = new TopicMapView({
                 clickHandler: options.clickHandler
@@ -106,20 +90,19 @@ define([
                 state: viewState
             });
 
-            this.clusteringModel = new Backbone.Model({
+            this.model = new Backbone.Model({
                 mode: clusteringModes[0].value,
-                relevance: 1,
                 count: 10,
-                minRelevance: 1,
-                maxRelevance: 10,
                 maxCount: 10
             });
 
-            updateClusteringModelForEntities(this.entityCollection, this.clusteringModel);
+            this.listenTo(this.model, 'change:maxResults', this.fetchRelatedConcepts);
+
+            updateClusteringModelForEntities(this.entityCollection, this.model);
 
             this.listenTo(this.entityCollection, 'sync', function() {
                 this.viewModel.set('state', this.entityCollection.isEmpty() ? ViewState.EMPTY : ViewState.MAP);
-                updateClusteringModelForEntities(this.entityCollection, this.clusteringModel);
+                updateClusteringModelForEntities(this.entityCollection, this.model);
                 this.updateTopicMapData();
                 this.update();
             });
@@ -135,17 +118,16 @@ define([
 
             this.listenTo(this.viewModel, 'change', this.updateViewState);
 
-            this.listenTo(this.clusteringModel, 'change:mode', function() {
-                updateClusteringModelForEntities(this.entityCollection, this.clusteringModel);
+            this.listenTo(this.model, 'change:mode', function() {
+                updateClusteringModelForEntities(this.entityCollection, this.model);
             });
 
-            addChangeListener(this, this.clusteringModel, ['count', 'relevance', 'mode'], function() {
+            addChangeListener(this, this.model, ['count', 'mode'], function() {
                 this.updateTopicMapData();
                 this.update();
             });
 
-            addChangeListener(this, this.clusteringModel, ['count', 'maxCount'], this.updateCountSlider);
-            addChangeListener(this, this.clusteringModel, ['relevance', 'minRelevance', 'maxRelevance'], this.updateRelevanceSlider);
+            addChangeListener(this, this.model, ['count', 'maxCount'], this.updateCountSlider);
 
             this.updateTopicMapData();
         },
@@ -158,17 +140,13 @@ define([
         },
 
         updateTopicMapData: function() {
-            var relevance = this.clusteringModel.get('relevance');
-            var mode = this.clusteringModel.get('mode');
+            var mode = this.model.get('mode');
 
             var data = this.entityCollection.chain()
-                .filter(function(entity) {
-                    return entity.get(mode) >= relevance;
-                }, this)
                 .sortBy(function(entity) {
                     return - entity.get(mode);
                 })
-                .first(this.clusteringModel.get('count'))
+                .first(this.model.get('count'))
                 .map(function(entity) {
                     return {name: entity.get('text'), size: entity.get(mode)};
                 }, this)
@@ -177,20 +155,11 @@ define([
             this.topicMap.setData(data);
         },
 
-        updateRelevanceSlider: function() {
-            if (this.$relevanceSlider) {
-                this.$relevanceSlider
-                    .slider('setAttribute', 'min', this.clusteringModel.get('minRelevance'))
-                    .slider('setAttribute', 'max', this.clusteringModel.get('maxRelevance'))
-                    .slider('setValue', this.clusteringModel.get('relevance'));
-            }
-        },
-
         updateCountSlider: function() {
             if (this.$countSlider) {
                 this.$countSlider
-                    .slider('setAttribute', 'max', this.clusteringModel.get('maxCount'))
-                    .slider('setValue', this.clusteringModel.get('count'));
+                    .slider('setAttribute', 'max', this.model.get('maxCount'))
+                    .slider('setValue', this.model.get('count'));
             }
         },
 
@@ -202,12 +171,29 @@ define([
             this.$('.entity-topic-map-loading').toggleClass('hide', state !== ViewState.LOADING);
         },
 
+        fetchRelatedConcepts: function() {
+            if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+                var data = {
+                    databases: this.queryModel.get('indexes'),
+                    queryText: this.queryModel.get('queryText'),
+                    fieldText: this.queryModel.get('fieldText'),
+                    minDate: this.queryModel.getIsoDate('minDate'),
+                    maxDate: this.queryModel.getIsoDate('maxDate'),
+                    minScore: this.queryModel.get('minScore'),
+                    stateTokens: this.queryModel.get('stateMatchIds'),
+                    maxResults: this.model.get('maxResults')
+                };
+
+                this.entityCollection.fetch({data: data});
+            }
+        },
+
         render: function() {
             this.$el.html(this.template({
                 i18n: i18n,
                 loadingHtml: loadingHtml,
                 clusteringModes: clusteringModes,
-                selectedMode: this.clusteringModel.get('mode'),
+                selectedMode: this.model.get('mode'),
                 cid: this.cid
             }));
 
@@ -218,16 +204,17 @@ define([
                 .slider({
                     id: this.cid + '-count-slider',
                     min: 1,
-                    max: this.clusteringModel.get('maxCount'),
-                    value: this.clusteringModel.get('count')
+                    max: this.model.get('maxCount'),
+                    value: this.model.get('count'),
+                    tooltip_position: 'bottom'
                 });
 
-            this.$relevanceSlider = this.$('.relevance-slider')
+            this.$('.speed-slider')
                 .slider({
-                    id: this.cid + '-relevance-slider',
-                    min: this.clusteringModel.get('minRelevance'),
-                    max: this.clusteringModel.get('maxRelevance'),
-                    value: this.clusteringModel.get('relevance')
+                    id: this.cid + '-speed-slider',
+                    min: 50,
+                    max: 200,
+                    value: 50
                 });
 
             this.topicMap.setElement(this.$('.entity-topic-map')).render();

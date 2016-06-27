@@ -6,13 +6,13 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolRelatedConceptsRequest;
 import com.hp.autonomy.types.idol.QsElement;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +24,7 @@ public class IdolRelatedConceptsController extends RelatedConceptsController<QsE
 
     @Autowired
     public IdolRelatedConceptsController(final RelatedConceptsService<QsElement, String, AciErrorException> relatedConceptsService,
-                                         final ObjectFactory<QueryRestrictions.Builder<IdolQueryRestrictions, String>> queryRestrictionsBuilderFactory) {
+                                         final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory) {
         super(relatedConceptsService, queryRestrictionsBuilderFactory);
     }
 

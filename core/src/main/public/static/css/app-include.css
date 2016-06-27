@@ -12,10 +12,13 @@ html, body {
 }
 
 .chart rect {
-    fill: rgba(1,169,130,0.1);
+    fill: #01A982;
 }
 .chart rect:hover {
-    fill: rgba(1,169,130,0.2);
+    fill: rgba(1,169,130,0.50);
+}
+.chart rect.selection {
+    fill: rgba(97,71,103,0.3);
 }
 
 .numeric-parametric-inputs {
@@ -912,8 +915,9 @@ input.find-input {
     margin-left: 5px;
 }
 
-.selected-related-concept-text {
-    max-width: 100px;
+.selected-related-concept-text,
+.database-name {
+    max-width: 110px;
 }
 
 .concept-remove-icon {
@@ -1304,7 +1308,15 @@ input:-moz-placeholder::before {
 
 .fields-list {
     border-left: 1px solid #e5e5e5;
-    min-height: 100%;
+    height: 100%;
+}
+
+.fields-list .tab-pane .full-height {
+    overflow-y: auto;
+}
+
+.fields-list, .tab-content, .tab-pane, .full-height, .full-height > div{
+    height: 100%;
 }
 
 .parametric-fields-table {
@@ -1409,6 +1421,10 @@ input:-moz-placeholder::before {
 
 .child-categories li:first-child {
     border-top: 1px solid #C9C9C9;
+}
+
+.child-categories li:last-child {
+    border-bottom: none;
 }
 
 /* View server */
@@ -1632,13 +1648,6 @@ h4.similar-dates-message {
     opacity: 1;
 }
 
-.precision-slider-block {
-    width: 100%;
-}
-
-.precision-slider-block  > div > .slider{
-    width: 100%;
-}
 
 .numeric-parametric-slider-block {
     width: 100%;
