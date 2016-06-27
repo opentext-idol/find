@@ -101,6 +101,7 @@ public class HodFilterITCase extends HsodFindTestBase {
         final IndexCategoryNode publicIndexes = filters().indexesTree().publicIndexes();
 
         verifyThat("public indexes are visible", publicIndexes, not(emptyIterable()));
+        verifyThat("public indexes are collapsed", publicIndexes.isCollapsed(), is(true));
         verifyThat(publicIndexes.getSelectedNames(), empty());
     }
 
