@@ -373,10 +373,6 @@ define([
                     if (savedSelectedIndexes.length === 0) {
                         if (this.indexesCollection.isEmpty()) {
                             initialSelectedIndexes = [];
-
-                            this.listenToOnce(this.indexesCollection, 'sync', function () {
-                                queryState.selectedIndexes.set(selectInitialIndexes(this.indexesCollection));
-                            });
                         } else {
                             initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
                         }
@@ -392,14 +388,15 @@ define([
                         queryTextModel: queryTextModel,
                         documentsCollection: documentsCollection,
                         view: new this.ServiceView(_.extend({
-                            indexesCollection: this.indexesCollection,
+                            delayedIndexesSelection: selectInitialIndexes,
                             documentsCollection: documentsCollection,
-                            selectedTabModel: this.selectedTabModel,
+                            indexesCollection: this.indexesCollection,
+                            queryState: queryState,
                             savedSearchCollection: this.savedSearchCollection,
+                            savedSearchModel: savedSearchModel,
                             searchCollections: this.searchCollections,
                             searchTypes: this.searchTypes,
-                            queryState: queryState,
-                            savedSearchModel: savedSearchModel
+                            selectedTabModel: this.selectedTabModel
                         }, this.serviceViewOptions()))
                     };
 
