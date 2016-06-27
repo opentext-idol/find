@@ -357,7 +357,7 @@ define([
                     viewData = this.serviceViews[cid];
                 } else {
                     var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
-                    var minScore = new MinScoreModel(savedSearchModel.toMinScoreModelAttributes());
+                    var minScore = new MinScoreModel({minScore: 0});
                     var documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
 
                     var queryState = {
