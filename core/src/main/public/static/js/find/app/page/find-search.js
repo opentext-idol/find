@@ -284,6 +284,7 @@ define([
         getSearchTypes: function () {
             return {
                 QUERY: {
+                    cssClass: 'query',
                     autoCorrect: true,
                     collection: 'savedQueryCollection',
                     fetchStrategy: queryStrategy,
@@ -293,6 +294,10 @@ define([
                     LeftSideFooterView: this.QueryLeftSideView,
                     DocumentsCollection: DocumentsCollection,
                     MiddleColumnHeaderView: this.QueryMiddleColumnHeaderView,
+                    openEditText: {
+                        create: i18n['search.savedSearchControl.openEdit.create'],
+                        edit: i18n['search.savedSearchControl.openEdit.edit']
+                    },
                     createSearchModelAttributes: function (queryTextModel) {
                         return queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES);
                     },

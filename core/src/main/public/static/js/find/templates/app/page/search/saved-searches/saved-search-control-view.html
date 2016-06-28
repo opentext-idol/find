@@ -5,7 +5,9 @@
     <%- i18n['search.savedSearchControl.rename'] %>
 </button>
     <% if (showSaveAs) { %>
-        <button type="button" class="btn button-primary popover-control show-save-as-button save-button" aria-pressed="false"></button>
+        <% _.each(searchTypes, function(type, typeName){%>
+            <button type="button" class="btn button-primary popover-control show-save-as save-button" data-search-type="<%-typeName%>" aria-pressed="false"></button>
+        <% }) %>
     <% } %>
 <div class="btn-group m-r-sm">
     <button data-toggle="dropdown" class="btn btn-icon btn-circular button-primary btn-lg dropdown-toggle" aria-expanded="false" id="btnDropDown">

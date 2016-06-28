@@ -16,6 +16,9 @@ define([
     'i18n!find/nls/bundle'
 ], function(Backbone, $, SavedSearchControlView, SavedSearchModel, DatesFilterModel, MinScoreModel, MockConfirmView, DatabasesCollection, moment, i18n) {
 
+    var CREATE_TEXT = 'Make a new one!';
+    var EDIT_TEXT = 'Change an old one!';
+
     function checkPopoverExists(view) {
         return Boolean(view.$('.popover').length);
     }
@@ -26,18 +29,18 @@ define([
 
     function saveDisabled(view) {
         return view.$('.save-search-button').hasClass('disabled not-clickable') &&
-            view.$('.show-save-as-button').hasClass('disabled not-clickable');
+            view.$('.show-save-as').hasClass('disabled not-clickable');
     }
 
     function testDeactivatesTheSaveSearchButton() {
         it('deactivates the "Save Search" button', function() {
-            expect(this.view.$('.show-save-as-button')).not.toHaveClass('active');
+            expect(this.view.$('.show-save-as')).not.toHaveClass('active');
         });
     }
 
     function testDeactivatesTheSaveAsButton() {
         it('deactivates the "Save As" button', function() {
-            expect(this.view.$('.show-save-as-button')).not.toHaveClass('active');
+            expect(this.view.$('.show-save-as')).not.toHaveClass('active');
         });
     }
 
@@ -115,8 +118,12 @@ define([
         });
     }
 
-    function clickSaveAsButton() {
-        this.view.$('.show-save-as-button').click();
+    function clickSaveAsQueryButton() {
+        this.view.$('.show-save-as[data-search-type="QUERY"]').click();
+    }
+
+    function clickSaveAsSnapshotButton() {
+        this.view.$('.show-save-as[data-search-type="SNAPSHOT"]').click();
     }
 
     function clickShowRename() {
@@ -196,8 +203,20 @@ define([
                     SNAPSHOT: this.savedSnapshotCollection
                 },
                 searchTypes: {
-                    QUERY: {isMutable: true},
-                    SNAPSHOT: {isMutable: false}
+                    QUERY: {
+                        isMutable: true,
+                        openEditText: {
+                            create: CREATE_TEXT,
+                            edit: EDIT_TEXT
+                        }
+                    },
+                    SNAPSHOT: {
+                        isMutable: false,
+                        openEditText: {
+                            create: CREATE_TEXT,
+                            edit: EDIT_TEXT
+                        }
+                    }
                 }
             };
         });
@@ -284,11 +303,11 @@ define([
             });
 
             it('sets the text of the show save as button to "Save Search"', function() {
-                expect(this.view.$('.show-save-as-button')).toHaveText(i18n['search.savedSearchControl.openEdit.create']);
+                expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveText(CREATE_TEXT);
             });
 
             it('shows the "Save As" button', function() {
-                expect(this.view.$('.show-save-as-button')).toHaveLength(1);
+                expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveLength(1);
             });
 
             it('does not show the "Open as Query" button', function() {
@@ -296,12 +315,12 @@ define([
             });
 
             describe('then the "Save Search" button is clicked', function() {
-                beforeEach(clickSaveAsButton);
+                beforeEach(clickSaveAsQueryButton);
 
                 testShowsTheSetTitleInput();
 
-                it('activates the "Save Search" button', function() {
-                    expect(this.view.$('.show-save-as-button')).toHaveClass('active');
+                it('activates the "Save Query" button', function() {
+                   expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveClass('active');
                 });
 
                 describe('then the user enters and saves a title', function() {
@@ -321,14 +340,14 @@ define([
                 });
 
                 describe('then the "Save Search" button is clicked again', function() {
-                    beforeEach(clickSaveAsButton);
+                    beforeEach(clickSaveAsQueryButton);
 
                     testRemovesTheSetTitleInput();
                     testDeactivatesTheSaveSearchButton();
 
                     // Test we can add, remove and add the search title input correctly (previously broken functionality)
                     describe('then the "Save As" button is clicked a third time', function() {
-                        beforeEach(clickSaveAsButton);
+                        beforeEach(clickSaveAsQueryButton);
 
                         testShowsTheSetTitleInput();
                     });
@@ -358,8 +377,9 @@ define([
 
             testShowsTheRenameButton();
 
-            it('does not show the "Save As" button', function() {
-                expect(this.view.$('.show-save-as-button')).toHaveLength(0);
+            it('does not show the "Save as query" or "Save as snapshot" button', function() {
+                expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveLength(0);
+                expect(this.view.$('.show-save-as[data-search-type="SNAPSHOT"]')).toHaveLength(0);
             });
 
             it('displays the "Open as Query" button', function() {
@@ -433,26 +453,30 @@ define([
                 expect(this.view.$('.open-as-query-option')).toHaveLength(0);
             });
 
-            it('shows the "Save As" button', function() {
-                expect(this.view.$('.show-save-as-button')).toHaveLength(1);
+            it('shows the "Save Query" button', function() {
+                expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveLength(1);
             });
 
-            it('sets the text of the show save as button to "Save As"', function() {
-                expect(this.view.$('.show-save-as-button')).toHaveText(i18n['search.savedSearchControl.openEdit.edit']);
+            it('shows the "Save As Snapshot" button', function() {
+                expect(this.view.$('.show-save-as[data-search-type="SNAPSHOT"]')).toHaveLength(1);
             });
 
-            describe('then the "Save As" button is clicked', function() {
-                beforeEach(clickSaveAsButton);
+            it('sets the text of the show save as button to the edit text', function() {
+                expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveText(EDIT_TEXT);
+            });
+
+            describe('then the "Save as query" button is clicked', function() {
+                beforeEach(clickSaveAsQueryButton);
 
                 testShowsTheSetTitleInput();
 
-                it('activates the "Save As" button and disabled rename button', function() {
-                    expect(this.view.$('.show-save-as-button')).toHaveClass('active');
+                it('activates the "Save as query" button and disabled rename button', function() {
+                    expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveClass('active');
                     testDisablesOptionButton('.show-rename-button', 'rename button');
                 });
 
-                describe('then the "Save As" button is clicked again', function() {
-                    beforeEach(clickSaveAsButton);
+                describe('then the "Save as query" button is clicked again', function() {
+                    beforeEach(clickSaveAsQueryButton);
 
                     testRemovesTheSetTitleInput();
                     testDeactivatesTheSaveAsButton();
@@ -470,13 +494,13 @@ define([
                         expect(this.view.$('.popover-content .search-title-input-container .search-title-input')).toHaveValue('Quantum Cats');
                     });
 
-                    it('activates the "Rename" button and disables "Save as" button', function() {
+                    it('activates the "Rename" button and disables "Save as query" button', function() {
                         expect(this.view.$('.show-rename-button')).toHaveClass('active');
-                        testDisablesOptionButton('.show-save-as-button', 'save as button');
+                        testDisablesOptionButton('.show-save-as[data-search-type="QUERY"]', 'save as query button');
                     });
                 });
 
-                describe('then the user enters a title, selects "Query" and clicks "Save"', function() {
+                describe('then the user enters a title and clicks "Save"', function() {
                     var NEW_TITLE = 'Star Wars';
 
                     beforeEach(function() {
@@ -508,7 +532,53 @@ define([
                     });
                 });
 
-                describe('then the user enters a title, selects "Snapshot" and clicks "Save"', function() {
+                describe('then the user clicks the cancel button', function() {
+                    beforeEach(function() {
+                        this.view.$('.popover-content .search-title-input-container .save-title-cancel-button').click();
+                    });
+
+                    testRemovesTheSetTitleInput();
+                    testDeactivatesTheSaveAsButton();
+                    testEnablesOptionButton('.show-save-as[data-search-type="QUERY"]', 'save as query button');
+                });
+            });
+
+            describe('then the "Save as Snapshot" button is clicked', function() {
+                beforeEach(clickSaveAsSnapshotButton);
+
+                testShowsTheSetTitleInput();
+
+                it('activates the "Save as snapshot" button and disabled rename button', function() {
+                    expect(this.view.$('.show-save-as[data-search-type="SNAPSHOT"]')).toHaveClass('active');
+                    testDisablesOptionButton('.show-rename-button', 'rename button');
+                });
+
+                describe('then the "Save as snapshot" button is clicked again', function() {
+                    beforeEach(clickSaveAsSnapshotButton);
+
+                    testRemovesTheSetTitleInput();
+                    testDeactivatesTheSaveAsButton();
+                    testEnablesOptionButton('.show-rename-button', 'rename button');
+                });
+
+                describe('then a new title is input, then cancel is clicked, then "Rename" button is clicked', function() {
+                    beforeEach(function() {
+                        this.view.$('.popover-content .search-title-input-container .search-title-input').val('Star Wars').trigger('input');
+                        this.view.$('.save-title-cancel-button').click();
+                        clickShowRename.call(this);
+                    });
+
+                    it('the user input is reset to original value', function() {
+                        expect(this.view.$('.popover-content .search-title-input-container .search-title-input')).toHaveValue('Quantum Cats');
+                    });
+
+                    it('activates the "Rename" button and disables "Save as snapshot" button', function() {
+                        expect(this.view.$('.show-rename-button')).toHaveClass('active');
+                        testDisablesOptionButton('.show-save-as[data-search-type="SNAPSHOT"]', 'save as snapshot button');
+                    });
+                });
+
+                describe('then the user presses "Save snapshot" and clicks "Save"', function() {
                     var NEW_TITLE = 'Star Wars';
 
                     beforeEach(function() {
@@ -521,7 +591,6 @@ define([
                         });
 
                         this.view.$('.popover-content .search-title-input-container .search-title-input').val(NEW_TITLE).trigger('input');
-                        this.view.$('.popover-content .search-title-input-container [name="saved-search-type"][value="SNAPSHOT"]').iCheck('check');
                         this.view.$('.popover-content .search-title-input-container .save-title-confirm-button').click();
                     });
 
@@ -548,7 +617,7 @@ define([
 
                     testRemovesTheSetTitleInput();
                     testDeactivatesTheSaveAsButton();
-                    testEnablesOptionButton('.show-save-as-button', 'save as button');
+                    testEnablesOptionButton('.show-save-as[data-search-type="SNAPSHOT"]', 'save as snapshot button');
                 });
             });
 
@@ -559,7 +628,7 @@ define([
 
                 it('activates the "Rename" button', function() {
                     expect(this.view.$('.show-rename-button')).toHaveClass('active');
-                    testDisablesOptionButton('.show-save-as-button', 'save as button');
+                    testDisablesOptionButton('.show-save-as[data-search-type="QUERY"]', 'save as query button');
                 });
 
                 describe('then the "Rename" button is clicked again', function() {
@@ -569,7 +638,7 @@ define([
 
                     it('deactivates the "Rename" button', function() {
                         expect(this.view.$('.show-rename-button')).not.toHaveClass('active');
-                        testEnablesOptionButton('.show-save-as-button', 'save as button');
+                        testEnablesOptionButton('.show-save-as[data-search-type="QUERY"]', 'save as query button');
                     });
                 });
 
@@ -577,7 +646,7 @@ define([
                     beforeEach(function() {
                         this.view.$('.popover-content .search-title-input-container .search-title-input').val('Star Wars').trigger('input');
                         this.view.$('.save-title-cancel-button').click();
-                        clickSaveAsButton.call(this);
+                        clickSaveAsQueryButton.call(this);
                     });
 
                     it('the user input is reset to original value', function() {
@@ -588,8 +657,8 @@ define([
                         expect(this.view.$('.show-rename-button')).not.toHaveClass('active');
                     });
 
-                    it('activates the "Save As" button', function() {
-                        expect(this.view.$('.show-save-as-button')).toHaveClass('active');
+                    it('activates the "Save as query" button', function() {
+                        expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveClass('active');
                         testDisablesOptionButton('.show-rename-button', 'rename button');
                     });
                 });
@@ -654,7 +723,7 @@ define([
                         });
 
                         describe('then the "Save As" button is clicked', function() {
-                            beforeEach(clickSaveAsButton);
+                            beforeEach(clickSaveAsQueryButton);
 
                             it('removes the error message', function() {
                                 expect(this.view.$('.search-controls-error-message')).toHaveText('');
@@ -680,8 +749,8 @@ define([
 
                 testShowsTheRenameButton();
 
-                it('sets the text of the show save as button to "Save As"', function() {
-                    expect(this.view.$('.show-save-as-button')).toHaveText(i18n['search.savedSearchControl.openEdit.edit']);
+                it('sets the text of the show save as button to "Save as query"', function() {
+                    expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveText(EDIT_TEXT);
                 });
 
                 describe('then the save button is clicked', function() {
@@ -752,15 +821,14 @@ define([
                     });
                 });
 
-                describe('then the "Save As" button is clicked and a Snapshot is saved', function() {
-                    beforeEach(clickSaveAsButton);
+                describe('then the "Save As Snapshot" button is clicked and a Snapshot is saved', function() {
+                    beforeEach(clickSaveAsQueryButton);
 
                     describe('and a Snapshot is saved', function() {
                         beforeEach(function() {
                             spyOn(this.savedSnapshotCollection, 'create');
 
                             this.view.$('.popover-content .search-title-input-container .search-title-input').val("My New Search").trigger('input');
-                            this.view.$('.popover-content .search-title-input-container [name="saved-search-type"][value="SNAPSHOT"]').iCheck('check');
                             this.view.$('.popover-content .search-title-input-container .save-title-confirm-button').click();
                         });
 
