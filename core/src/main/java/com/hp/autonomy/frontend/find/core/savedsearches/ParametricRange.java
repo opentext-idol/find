@@ -20,8 +20,8 @@ import javax.persistence.Enumerated;
 @NoArgsConstructor
 public class ParametricRange {
     private String field;
-    private long min;
-    private long max;
+    private double min;
+    private double max;
     @Enumerated(EnumType.ORDINAL)
     private Type type;
 
@@ -34,8 +34,8 @@ public class ParametricRange {
     @JsonCreator
     public ParametricRange(
             @JsonProperty("field") final String field,
-            @JsonProperty("min") final long min,
-            @JsonProperty("max") final long max,
+            @JsonProperty("min") final double min,
+            @JsonProperty("max") final double max,
             @JsonProperty("type") final Type type
     ) {
         this.field = field;
