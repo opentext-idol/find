@@ -90,6 +90,8 @@ define([
             this.updateSelections();           
 
             this.onClick = this.savedSearchModel.get('type') !== SNAPSHOT ? this.onSavedSearchClick : _.noop;
+
+            this.updateParametricCollection();
         },
 
         toggleLoading: function () {
