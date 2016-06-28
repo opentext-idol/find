@@ -19,7 +19,7 @@ define([
 
     var SIZE = '90%';
     var $window = $(window);
-    var isUrlRegex = /^https?:\/\//;
+    var isUrlRegex = /^https?:\/\/|^file:\/\//;
 
     var documentContentTemplate = _.template(documentContentTemplateString);
     var audioPlayerTemplate = _.template(audioPlayerTemplateString);
