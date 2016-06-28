@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'underscore',
@@ -21,7 +26,6 @@ define([
         initialize: function(options) {
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
-            this.dateParametricFieldsCollection = options.dateParametricFieldsCollection;
 
             this.listenTo(vent, 'vent:resize', this.render);
         },
@@ -71,7 +75,7 @@ define([
                 }.bind(this));
         },
 
-        abortActiveRequest() {
+        abortActiveRequest: function() {
             if (this.activeRequest) {
                 this.activeRequest.abort();
             }
