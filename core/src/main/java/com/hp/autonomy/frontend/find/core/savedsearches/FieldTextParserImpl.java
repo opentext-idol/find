@@ -88,7 +88,8 @@ public class FieldTextParserImpl implements FieldTextParser {
         FieldText fieldText = null;
         switch (range.getType()) {
             case Date:
-                fieldText = new RANGE(range.getField(), range.getMin(), range.getMax(), RANGE.Type.EPOCH);
+                // cast to long as they should be timestamps
+                fieldText = new RANGE(range.getField(), (long) range.getMin(), (long) range.getMax(), RANGE.Type.EPOCH);
                 break;
             case Numeric:
                 fieldText = new NRANGE(range.getField(), range.getMin(), range.getMax());
