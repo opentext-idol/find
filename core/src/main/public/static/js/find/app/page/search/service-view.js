@@ -269,12 +269,12 @@ define([
             });
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
-            this.listenTo(this.queryModel, 'change', this.fetchRestrictedParametricCollection);
+            this.listenTo(this.queryModel, 'change', this.fetchRestrictedParametricFields);
             this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
             this.fetchParametricFields(this.numericParametricFieldsCollection);
             this.fetchParametricFields(this.dateParametricFieldsCollection);
+            this.fetchRestrictedParametricFields();
             this.fetchEntities();
-            this.fetchRestrictedParametricCollection();
         },
 
         render: function() {
@@ -340,19 +340,30 @@ define([
             $containerToggle.toggleClass('fa-rotate-180', hide);
         },
 
+        fetchRestrictedParametricFields: function () {
+            this.parametricFieldsCollection.fetch({
+                success: _.bind(this.fetchRestrictedParametricCollection, this)
+            });
+        },
+
         fetchRestrictedParametricCollection: function() {
-            this.restrictedParametricCollection.fetch({
-                data: {
-                    fieldNames: this.parametricFieldsCollection.pluck('id'),
-                    databases: this.queryModel.get('indexes'),
-                    queryText: this.queryModel.get('queryText'),
-                    fieldText: this.queryModel.get('fieldText'),
-                    minDate: this.queryModel.getIsoDate('minDate'),
-                    maxDate: this.queryModel.getIsoDate('maxDate'),
-                    minScore: this.queryModel.get('minScore'),
-                    stateTokens: this.queryModel.get('stateMatchIds')
-                }
-            })
+            this.restrictedParametricCollection.reset();
+
+            var fieldNames = this.parametricFieldsCollection.pluck('id');
+            if (fieldNames.length > 0) {
+                this.restrictedParametricCollection.fetch({
+                    data: {
+                        fieldNames: fieldNames,
+                        databases: this.queryModel.get('indexes'),
+                        queryText: this.queryModel.get('queryText'),
+                        fieldText: this.queryModel.get('fieldText'),
+                        minDate: this.queryModel.getIsoDate('minDate'),
+                        maxDate: this.queryModel.getIsoDate('maxDate'),
+                        minScore: this.queryModel.get('minScore'),
+                        stateTokens: this.queryModel.get('stateMatchIds')
+                    }
+                })
+            }
         },
 
         rightSideContainerHideToggle: function(toggle) {
