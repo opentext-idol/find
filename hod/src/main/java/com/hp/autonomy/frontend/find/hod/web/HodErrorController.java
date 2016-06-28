@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.CustomErrorController;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 import java.net.URI;
 
 /**
@@ -28,6 +30,8 @@ public class HodErrorController extends CustomErrorController {
     static final String STATUS_CODE_PARAM = "statusCode";
     static final String MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_MAIN = "error.clientAuthenticationErrorMain";
     static final String MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_SUB = "error.clientAuthenticationErrorSub";
+    static final String MESSAGE_CODE_COOKIE_AUTHENTICATION_ERROR_MAIN = "error.authenticationCookieErrorMain";
+    static final String MESSAGE_CODE_COOKIE_AUTHENTICATION_ERROR_SUB = "error.authenticationCookieErrorSub";
 
     private final ConfigService<HodFindConfig> configService;
 
@@ -58,6 +62,20 @@ public class HodErrorController extends CustomErrorController {
                 .setSubMessageCode(MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_SUB)
                 .setStatusCode(statusCode)
                 .setButtonHref(getAuthenticationErrorUrl(request))
+                .build());
+    }
+
+    @RequestMapping(DispatcherServletConfiguration.COOKIE_AUTHENTICATION_ERROR_PATH)
+    public ModelAndView cookieAuthenticationErrorPage(
+            final HttpServletRequest request
+    ) {
+        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
+                .setRequest(request)
+                .setMainMessageCode(MESSAGE_CODE_COOKIE_AUTHENTICATION_ERROR_MAIN)
+                .setSubMessageCode(MESSAGE_CODE_COOKIE_AUTHENTICATION_ERROR_SUB)
+                .setStatusCode(HttpStatus.SC_UNAUTHORIZED)
+                .setButtonHref(getAuthenticationErrorUrl(request))
+                .setContactSupport(true)
                 .build());
     }
 }
