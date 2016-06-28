@@ -202,8 +202,7 @@ define([
                 primaryModel.set('field', fields.sort()[0]);
                 secondaryModel.set('field', '');
             }
-
-            if (fieldInvalid(secondaryModel.get('field'))) {
+            else if (fieldInvalid(secondaryModel.get('field'))) {
                 secondaryModel.set('field', '');
             }
         },
