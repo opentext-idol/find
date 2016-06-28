@@ -85,6 +85,8 @@ define([
             this.makeSelectionsIfData();
 
             this.updateSelections();
+
+            this.updateParametricCollection();
         },
 
         toggleLoading: function () {
