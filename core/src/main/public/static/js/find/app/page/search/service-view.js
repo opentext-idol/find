@@ -269,11 +269,10 @@ define([
             });
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
-            this.listenTo(this.queryModel, 'change', this.fetchRestrictedParametricFields);
+            this.listenTo(this.queryModel, 'change', this.fetchRestrictedParametricCollection);
             this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
             this.fetchParametricFields(this.numericParametricFieldsCollection);
             this.fetchParametricFields(this.dateParametricFieldsCollection);
-            this.fetchRestrictedParametricFields();
             this.fetchEntities();
         },
 
@@ -340,17 +339,11 @@ define([
             $containerToggle.toggleClass('fa-rotate-180', hide);
         },
 
-        fetchRestrictedParametricFields: function () {
-            this.parametricFieldsCollection.fetch({
-                success: _.bind(this.fetchRestrictedParametricCollection, this)
-            });
-        },
-
         fetchRestrictedParametricCollection: function() {
             this.restrictedParametricCollection.reset();
 
             var fieldNames = this.parametricFieldsCollection.pluck('id');
-            if (fieldNames.length > 0) {
+            if (fieldNames.length > 0 && this.queryModel.get('indexes').length !== 0) {
                 this.restrictedParametricCollection.fetch({
                     data: {
                         fieldNames: fieldNames,

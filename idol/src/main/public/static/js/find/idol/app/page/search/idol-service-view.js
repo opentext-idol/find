@@ -59,6 +59,7 @@ define([
                 success: _.bind(function() {
                     if (valuesCollection) {
                         this.fetchParametricValues(fieldsCollection, valuesCollection);
+                        this.fetchRestrictedParametricCollection();
                     }
                 }, this)
             });
