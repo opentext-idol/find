@@ -21,14 +21,18 @@ define([
     var GRAPH_HEIGHT = 110;
     var DATE_WIDGET_FORMAT = 'YYYY-MM-DD HH:mm';
 
-    function resetSelectedParametricValues(selectedParametricValues, fieldName) {
-        selectedParametricValues.remove(selectedParametricValues.where({field: fieldName}));
+    function rangeModelMatching(fieldName, numericRestriction) {
+        return function(model) {
+            return model.get('field') === fieldName && model.get('range') && model.get('numeric') === numericRestriction;
+        };
+    }
+
+    function resetSelectedParametricValues(selectedParametricValues, fieldName, numericRestriction) {
+        selectedParametricValues.remove(selectedParametricValues.filter(rangeModelMatching(fieldName, numericRestriction)));
     }
 
     function updateRestrictions(selectedParametricValues, fieldName, numericRestriction, min, max) {
-        var existing = selectedParametricValues.find(function(model) {
-            return model.get('field') === fieldName && model.get('range') && model.get('numeric') === numericRestriction;
-        });
+        var existing = selectedParametricValues.find(rangeModelMatching(fieldName, numericRestriction));
 
         var newAttributes = {
             field: fieldName,
@@ -103,9 +107,8 @@ define([
                 this.drawSelection();
             },
             'click .numeric-parametric-reset': function() {
-                //noinspection JSUnresolvedVariable
-                resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
-                //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+                resetSelectedParametricValues(this.selectedParametricValues, this.fieldName, this.numericRestriction);
+                this.drawSelection();
                 this.updateModel(this.absoluteMinValue, this.absoluteMaxValue);
             },
             'change .numeric-parametric-min-input': function() {
@@ -203,7 +206,7 @@ define([
             var deselectionCallback = function() {
                 this.updateMinInput(this.absoluteMinValue);
                 this.updateMaxInput(this.absoluteMaxValue);
-                resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
+                resetSelectedParametricValues(this.selectedParametricValues, this.fieldName, this.numericRestriction);
             }.bind(this);
 
             var mouseMoveCallback = function(x) {
@@ -247,20 +250,22 @@ define([
         },
 
         drawSelection: function() {
-            this.selectedParametricValues
-                .where({field: this.fieldName})
-                .forEach(function(restriction) {
-                    var range = restriction.get('range');
+            this.graph.selectionRect.remove();
 
-                    if (range) {
-                        this.updateMinInput(roundInputNumber(range[0]));
-                        this.updateMaxInput(roundInputNumber(range[1]));
+            var rangeModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.numericRestriction));
 
-                        this.graph.selectionRect.init(this.graph.chart, GRAPH_HEIGHT, this.graph.scale.barWidth(range[0]));
-                        this.graph.selectionRect.update(this.graph.scale.barWidth(range[1]));
-                        this.graph.selectionRect.focus();
-                    }
-                }.bind(this));
+            if (rangeModel) {
+                var range = rangeModel.get('range');
+
+                if (range) {
+                    this.updateMinInput(roundInputNumber(range[0]));
+                    this.updateMaxInput(roundInputNumber(range[1]));
+
+                    this.graph.selectionRect.init(this.graph.chart, GRAPH_HEIGHT, this.graph.scale.barWidth(range[0]));
+                    this.graph.selectionRect.update(this.graph.scale.barWidth(range[1]));
+                    this.graph.selectionRect.focus();
+                }
+            }
         },
 
         updateModel: function(newMin, newMax) {
