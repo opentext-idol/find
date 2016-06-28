@@ -18,19 +18,19 @@ define([
 
     'use strict';
 
-    const GRAPH_HEIGHT = 110;
-    const DATE_WIDGET_FORMAT = 'YYYY-MM-DD HH:mm';
+    var GRAPH_HEIGHT = 110;
+    var DATE_WIDGET_FORMAT = 'YYYY-MM-DD HH:mm';
 
     function resetSelectedParametricValues(selectedParametricValues, fieldName) {
         selectedParametricValues.remove(selectedParametricValues.where({field: fieldName}));
     }
 
     function updateRestrictions(selectedParametricValues, fieldName, numericRestriction, min, max) {
-        const existing = selectedParametricValues.find(function(model) {
+        var existing = selectedParametricValues.find(function(model) {
             return model.get('field') === fieldName && model.get('range') && model.get('numeric') === numericRestriction;
         });
 
-        const newAttributes = {
+        var newAttributes = {
             field: fieldName,
             range: [min, max],
             numeric: numericRestriction
@@ -50,7 +50,7 @@ define([
     function calibrateBuckets(buckets, min, max, bucketSize) {
         // Remove buckets not in range when zooming in
         //noinspection JSUnresolvedFunction
-        let calibratedBuckets = _.filter(buckets, function(value) {
+        var calibratedBuckets = _.filter(buckets, function(value) {
             return value.min >= min && value.max <= max;
         });
 
@@ -88,7 +88,7 @@ define([
         return calibratedBuckets;
     }
 
-    const NumericParametricFieldView = Backbone.View.extend({
+    var NumericParametricFieldView = Backbone.View.extend({
         className: 'animated fadeIn',
 
         events: {
@@ -143,7 +143,7 @@ define([
             this.fieldName = this.model.id;
             this.numericRestriction = options.numericRestriction;
 
-            const formatting = options.formatting  || NumericParametricFieldView.defaultFormatting;
+            var formatting = options.formatting  || NumericParametricFieldView.defaultFormatting;
             this.formatValue = formatting.format;
             this.parseValue = formatting.parse;
             this.renderCustomFormatting = formatting.render;
@@ -161,8 +161,8 @@ define([
         },
 
         render: function() {
-            const inputColumnClass = this.selectionEnabled ? (this.coordinatesEnabled ? 'col-xs-4' : 'col-xs-6') : 'hide';
-            const coordinatesColumnClass = this.coordinatesEnabled ? (this.selectionEnabled ? 'col-xs-4' : 'col-xs-12') : 'hide';
+            var inputColumnClass = this.selectionEnabled ? (this.coordinatesEnabled ? 'col-xs-4' : 'col-xs-6') : 'hide';
+            var coordinatesColumnClass = this.coordinatesEnabled ? (this.selectionEnabled ? 'col-xs-4' : 'col-xs-12') : 'hide';
 
             this.$el
                 .empty()
@@ -188,36 +188,36 @@ define([
                 this.updateMaxInput(this.absoluteMaxValue);
             }
 
-            const updateCallback = function(x1, x2) {
+            var updateCallback = function(x1, x2) {
                 // rounding to one decimal place
                 this.updateMinInput(Math.max(roundInputNumber(x1), this.model.get('min')));
                 this.updateMaxInput(Math.min(roundInputNumber(x2), this.model.get('max')));
             }.bind(this);
 
-            const selectionCallback = function(x1, x2) {
+            var selectionCallback = function(x1, x2) {
                 var newMin = this.parseBoundarySelection(Math.max(x1, this.model.get('min')));
                 var newMax = this.parseBoundarySelection(Math.min(x2, this.model.get('max')));
                 updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, newMin, newMax);
             }.bind(this);
 
-            const deselectionCallback = function() {
+            var deselectionCallback = function() {
                 this.updateMinInput(this.absoluteMinValue);
                 this.updateMaxInput(this.absoluteMaxValue);
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName);
             }.bind(this);
 
-            const mouseMoveCallback = function(x) {
+            var mouseMoveCallback = function(x) {
                 //noinspection JSPotentiallyInvalidUsageOfThis
                 this.$('.numeric-parametric-co-ordinates').text(this.formatValue(Math.min(roundInputNumber(x), this.model.get('max'))));
             }.bind(this);
 
-            const mouseLeaveCallback = function() {
+            var mouseLeaveCallback = function() {
                 //noinspection JSPotentiallyInvalidUsageOfThis
                 this.$('.numeric-parametric-co-ordinates').text('');
             }.bind(this);
 
             //noinspection JSUnresolvedFunction
-            const buckets = calibrateBuckets(this.model.get('values'), this.model.get('min'), this.model.get('max'), this.model.get('bucketSize'));
+            var buckets = calibrateBuckets(this.model.get('values'), this.model.get('min'), this.model.get('max'), this.model.get('bucketSize'));
 
             //noinspection JSUnresolvedFunction
             this.graph = this.widget.drawGraph({
@@ -250,7 +250,7 @@ define([
             this.selectedParametricValues
                 .where({field: this.fieldName})
                 .forEach(function(restriction) {
-                    const range = restriction.get('range');
+                    var range = restriction.get('range');
 
                     if (range) {
                         this.updateMinInput(roundInputNumber(range[0]));

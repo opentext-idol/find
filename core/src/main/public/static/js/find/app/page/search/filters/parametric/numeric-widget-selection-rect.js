@@ -29,7 +29,7 @@ define([
         },
 
         getCurrentAttributes: function() {
-            const x = Number(this.element.attr('x'));
+            var x = Number(this.element.attr('x'));
 
             return {
                 x1: x,
@@ -38,7 +38,7 @@ define([
         },
 
         init: function(chart, height, newX) {
-            const rectElement = chart.append('rect')
+            var rectElement = chart.append('rect')
                 .attr({
                     rx: 4,
                     ry: 4,

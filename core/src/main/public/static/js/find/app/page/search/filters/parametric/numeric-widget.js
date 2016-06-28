@@ -10,30 +10,30 @@ define([
 ], function (_, SelectionRect, d3) {
     'use strict';
 
-    const BAR_GAP_SIZE = 1;
-    const EMPTY_BAR_HEIGHT = 1;
-    const ZOOM_EXTENT = [0.1, 10];
+    var BAR_GAP_SIZE = 1;
+    var EMPTY_BAR_HEIGHT = 1;
+    var ZOOM_EXTENT = [0.1, 10];
 
     function dragStart(chart, height, selectionRect) {
         return function () {
             d3.event.sourceEvent.stopPropagation();
-            const p = d3.mouse(this);
+            var p = d3.mouse(this);
             selectionRect.init(chart, height, p[0]);
         };
     }
 
     function dragMove(scale, min, updateCallback, selectionRect) {
         return function () {
-            const p = d3.mouse(this);
+            var p = d3.mouse(this);
             selectionRect.update(p[0]);
-            const currentAttributes = selectionRect.getCurrentAttributes();
+            var currentAttributes = selectionRect.getCurrentAttributes();
             updateCallback(min + scale.invert(currentAttributes.x1), min + scale.invert(currentAttributes.x2));
         };
     }
 
     function dragEnd(scale, min, selectionCallback, deselectionCallback, selectionRect) {
         return function () {
-            const finalAttributes = selectionRect.getCurrentAttributes();
+            var finalAttributes = selectionRect.getCurrentAttributes();
             if (finalAttributes.x2 - finalAttributes.x1 > 1) {
                 // range selected
                 d3.event.sourceEvent.preventDefault();
@@ -49,13 +49,13 @@ define([
 
     function zoom(barScale, min, max, zoomCallback) {
         return function () {
-            const p = d3.mouse(this);
-            const mouseValue = min + barScale.invert(p[0]);
+            var p = d3.mouse(this);
+            var mouseValue = min + barScale.invert(p[0]);
             if (mouseValue <= max) {
-                const zoomScale = d3.event.scale;
-                const totalXDiff = (max - min) / zoomScale - (max - min);
-                const minValueDiff = totalXDiff * (mouseValue - min) / (max - min);
-                const maxValueDiff = totalXDiff * (max - mouseValue) / (max - min);
+                var zoomScale = d3.event.scale;
+                var totalXDiff = (max - min) / zoomScale - (max - min);
+                var minValueDiff = totalXDiff * (mouseValue - min) / (max - min);
+                var maxValueDiff = totalXDiff * (max - mouseValue) / (max - min);
 
                 zoomCallback(min - minValueDiff, max + maxValueDiff);
             }
@@ -64,35 +64,35 @@ define([
 
     return function (options) {
         //noinspection JSUnresolvedVariable
-        const barGapSize = options.barGapSize || BAR_GAP_SIZE;
+        var barGapSize = options.barGapSize || BAR_GAP_SIZE;
         //noinspection JSUnresolvedVariable
-        const emptyBarHeight = options.emptyBarHeight || EMPTY_BAR_HEIGHT;
+        var emptyBarHeight = options.emptyBarHeight || EMPTY_BAR_HEIGHT;
         //noinspection JSUnresolvedVariable
-        const zoomExtent = options.zoomExtent || ZOOM_EXTENT;
+        var zoomExtent = options.zoomExtent || ZOOM_EXTENT;
         //noinspection JSUnresolvedVariable
-        const formattingFn = options.formattingFn || _.identity;
+        var formattingFn = options.formattingFn || _.identity;
 
         return {
             drawGraph: function (options) {
-                const scale = {
+                var scale = {
                     barWidth: d3.scale.linear(),
                     y: d3.scale.linear()
                 };
 
-                const data = options.data;
+                var data = options.data;
                 scale.barWidth.domain([0, data.bucketSize]);
                 scale.barWidth.range([0, options.xRange / data.buckets.length - barGapSize]);
                 scale.y.domain([0, data.maxCount]);
                 scale.y.range([options.yRange, 0]);
 
                 //noinspection JSUnresolvedFunction
-                const chart = d3.select(options.chart)
+                var chart = d3.select(options.chart)
                     .attr({
                         width: options.xRange,
                         height: options.yRange
                     });
 
-                const bars = chart
+                var bars = chart
                     .selectAll('g')
                     .data(data.buckets)
                     .enter()
@@ -128,10 +128,10 @@ define([
                     });
                 }
 
-                const selectionRect = new SelectionRect();
+                var selectionRect = new SelectionRect();
 
                 if (options.dragEnabled) {
-                    const dragBehaviour = d3.behavior.drag()
+                    var dragBehaviour = d3.behavior.drag()
                         .on('drag', dragMove(scale.barWidth, data.minValue, options.updateCallback, selectionRect))
                         .on('dragstart', dragStart(chart, options.yRange, selectionRect))
                         .on('dragend', dragEnd(scale.barWidth, data.minValue, options.selectionCallback, options.deselectionCallback, selectionRect));
@@ -140,7 +140,7 @@ define([
                 }
 
                 if (options.zoomEnabled) {
-                    const zoomBehaviour = d3.behavior.zoom()
+                    var zoomBehaviour = d3.behavior.zoom()
                         .on('zoom', zoom(scale.barWidth, data.minValue, data.maxValue, options.zoomCallback))
                         .scaleExtent(zoomExtent);
 
