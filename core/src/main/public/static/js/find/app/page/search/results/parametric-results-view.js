@@ -44,7 +44,7 @@ define([
             this.errorMessage = options.errorMessage;
 
             this.dependentParametricCollection = options.dependentParametricCollection || new DependentParametricCollection();
-            this.fieldsCollection = new Backbone.Collection([{text: ''}, {text: ''}]);
+            this.fieldsCollection = new Backbone.Collection([{field: ''}, {field: ''}]);
 
             this.model = new Backbone.Model({
                 loading: this.parametricCollection.fetching
