@@ -43,18 +43,22 @@ define([
                 indexes: this.getIndexes(options.indexesCollection, this.documentModel)
             });
 
+            var previewModeModel = new Backbone.Model({document: null});
+
             this.resultsView = new this.ResultsView({
                 fetchStrategy: suggestStrategy,
                 documentsCollection: new SimilarDocumentsCollection(),
                 queryModel: this.queryModel,
                 enablePreview: true,
-                scrollModel: this.scrollModel
+                scrollModel: this.scrollModel,
+                previewModeModel: previewModeModel
             });
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({
                 queryModel: this.queryModel,
                 resultsView: this.resultsView,
-                scrollModel: this.scrollModel
+                scrollModel: this.scrollModel,
+                previewModeModel: previewModeModel
             });
 
             this.listenTo(options.indexesCollection, 'update reset', function() {

@@ -17,30 +17,30 @@ define([
             this.queryModel = options.queryModel;
             this.scrollModel = options.scrollModel;
 
-            this.listenTo(this.scrollModel, 'change', this.scrollFollow);
+            // Tracks document currently being previewed in the "documents" attribute
+            this.previewModeModel = options.previewModeModel;
 
-            this.listenTo(this.resultsView, 'preview', function(model) {
-                this.removePreviewModeView();
+            this.listenTo(this.previewModeModel, 'change:document', function(model, documentModel) {
+                if (documentModel) {
+                    this.removePreviewModeView();
 
-                this.previewModeView = new this.PreviewModeView({
-                    model: model,
-                    queryText: this.queryModel.get('queryText')
-                });
+                    this.previewModeView = new this.PreviewModeView({
+                        model: documentModel,
+                        previewModeModel: this.previewModeModel,
+                        queryText: this.queryModel.get('queryText')
+                    });
 
-                this.listenTo(this.previewModeView, 'close-preview', function() {
+                    this.$previewModeContainer.append(this.previewModeView.$el);
+                    this.previewModeView.render();
+                    this.scrollFollow();
+
+                    this.togglePreviewMode(true);
+                } else {
                     this.togglePreviewMode(false);
-                });
-
-                this.$previewModeContainer.append(this.previewModeView.$el);
-                this.previewModeView.render();
-                this.scrollFollow();
-
-                this.togglePreviewMode(true);
-            }, this);
-
-            this.listenTo(this.resultsView, 'close-preview', function() {
-                this.togglePreviewMode(false);
+                }
             });
+
+            this.listenTo(this.scrollModel, 'change', this.scrollFollow);
         },
 
         render: function() {
@@ -53,10 +53,6 @@ define([
         },
 
         togglePreviewMode: function(previewMode) {
-            if(!previewMode) {
-                this.resultsView.removeHighlighting();
-            }
-
             this.trigger('rightSideContainerHideToggle', !previewMode);
 
             this.$('.preview-mode-wrapper').toggleClass('hide', !previewMode);

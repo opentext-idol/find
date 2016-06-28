@@ -43,6 +43,7 @@ define([
         },
 
         initialize: function(options) {
+            this.previewModeModel = options.previewModeModel;
             this.highlightingModel = new Backbone.Model({highlighting: false});
 
             var queryText = options.queryText;
@@ -56,7 +57,7 @@ define([
 
         triggerClose: function() {
             this.pauseMedia();
-            this.trigger('close-preview');
+            this.previewModeModel.set({document: null});
         },
 
         render: function() {

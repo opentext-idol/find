@@ -135,6 +135,9 @@ define([
             this.dateParametricFieldsCollection = new ParametricFieldsCollection([], {url: '../api/public/fields/parametric-date'});
             this.parametricCollection = new ParametricCollection([], {url: '../api/public/parametric'});
 
+            // Tracks the document model which is currently shown in the preview
+            this.previewModeModel = new Backbone.Model({document: null});
+            
             var subViewArguments = {
                 indexesCollection: this.indexesCollection,
                 entityCollection: this.entityCollection,
@@ -149,6 +152,7 @@ define([
                 dateParametricFieldsCollection: this.dateParametricFieldsCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
+                previewModeModel: this.previewModeModel,
                 highlightModel: this.highlightModel,
                 searchCollections: this.searchCollections,
                 searchTypes: this.searchTypes
@@ -205,6 +209,7 @@ define([
                 constructorArguments: {
                     resultsView: resultsView,
                     queryModel: this.queryModel,
+                    previewModeModel: this.previewModeModel,
                     scrollModel: this.middleColumnScrollModel
                 },
                 events: {

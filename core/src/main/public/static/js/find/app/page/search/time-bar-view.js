@@ -28,6 +28,7 @@ define([
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
             this.listenTo(vent, 'vent:resize', this.render);
+            this.listenTo(options.previewModeModel, 'change:document', this.render);
         },
 
         render: function() {

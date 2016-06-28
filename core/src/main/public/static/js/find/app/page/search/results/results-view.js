@@ -60,27 +60,19 @@ define([
                 var $target = $(e.currentTarget);
 
                 if ($target.hasClass('selected-document')) {
-                    //disable preview mode
-                    this.trigger('close-preview');
-
-                    //resetting selected-document class
-                    this.$('.main-results-container').removeClass('selected-document');
+                    // disable preview mode
+                    this.previewModeModel.set({document: null});
                 } else {
                     //enable/choose another preview view
                     var cid = $target.data('cid');
-                    var model = this.documentsCollection.get(cid);
+                    var isPromotion = $target.closest('.main-results-list').hasClass('promotion');
+                    var collection = isPromotion ? this.promotionsCollections : this.documentsCollection;
+                    var model = collection.get(cid);
+                    this.previewModeModel.set({document: model});
 
-                    if(model) {
-                        this.trigger('preview', model);
-
-                        events().preview(this.documentsCollection.indexOf(model) + 1);
-                    } else {
-                        this.trigger('preview', this.promotionsCollection.get(cid));
+                    if (!isPromotion) {
+                        events().preview(collection.indexOf(model) + 1);
                     }
-
-                    //resetting selected-document class and adding it to the target
-                    this.$('.main-results-container').removeClass('selected-document');
-                    $target.addClass('selected-document');
                 }
             },
             'click .similar-documents-trigger': function(event) {
@@ -104,6 +96,7 @@ define([
 
             this.indexesCollection = options.indexesCollection;
             this.scrollModel = options.scrollModel;
+            this.previewModeModel = options.previewModeModel;
 
             if (this.indexesCollection) {
                 this.selectedIndexesCollection = options.queryState.selectedIndexes;
@@ -145,6 +138,8 @@ define([
                     this.infiniteScroll();
                 }
             });
+
+            this.listenTo(this.previewModeModel, 'change:document', this.updateSelectedDocument);
         },
 
         refreshResults: function() {
@@ -255,10 +250,21 @@ define([
             if (this.entityCollection) {
                 this.updateEntityHighlighting();
             }
+
+            this.updateSelectedDocument();
         },
 
         updateEntityHighlighting: function() {
             this.$el.toggleClass('highlight-entities', this.highlightModel.get('highlightEntities'));
+        },
+
+        updateSelectedDocument: function() {
+            var documentModel = this.previewModeModel.get('document');
+            this.$('.main-results-container').removeClass('selected-document');
+
+            if (documentModel !== null) {
+                this.$('.main-results-container[data-cid="' + documentModel.cid + '"]').addClass('selected-document');
+            }
         },
 
         formatResult: function(model, isPromotion) {
@@ -339,10 +345,6 @@ define([
                 // we're not scrolling, so should be a new search
                 events().reset(requestData.text);
             }
-        },
-
-        removeHighlighting: function() {
-            this.$('.main-results-container').removeClass('selected-document');
         },
 
         remove: function() {
