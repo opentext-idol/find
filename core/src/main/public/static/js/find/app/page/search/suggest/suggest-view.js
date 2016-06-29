@@ -16,13 +16,13 @@ define([
     'use strict';
 
     return Backbone.View.extend({
-        className: 'flex-container',
+        className: 'service-view-flex-container',
         template: _.template(template),
 
         // Abstract
         ResultsView: null,
         ResultsViewAugmentation: null,
-        getIndexes: $.noop,
+        getIndexes: null,
 
         events: {
             'click .suggest-view-button': function() {
@@ -36,22 +36,33 @@ define([
         initialize: function(options) {
             this.backUrl = options.backUrl;
             this.documentModel = options.documentModel;
+            this.scrollModel = options.scrollModel;
+
             this.queryModel = new Backbone.Model({
-                    reference: this.documentModel.get('reference'),
-                    indexes: this.getIndexes(options.indexesCollection, this.documentModel)
-                });
-            this.resultsView = new this.ResultsViewAugmentation({
+                reference: this.documentModel.get('reference'),
+                indexes: this.getIndexes(options.indexesCollection, this.documentModel)
+            });
+
+            var previewModeModel = new Backbone.Model({document: null});
+
+            this.resultsView = new this.ResultsView({
+                fetchStrategy: suggestStrategy,
+                documentsCollection: new SimilarDocumentsCollection(),
                 queryModel: this.queryModel,
-                resultsView: new this.ResultsView({
-                    fetchStrategy: suggestStrategy,
-                    documentsCollection: new SimilarDocumentsCollection(),
-                    queryModel: this.queryModel,
-                    enablePreview: true
-                })
+                enablePreview: true,
+                scrollModel: this.scrollModel,
+                previewModeModel: previewModeModel
+            });
+
+            this.resultsViewAugmentation = new this.ResultsViewAugmentation({
+                queryModel: this.queryModel,
+                resultsView: this.resultsView,
+                scrollModel: this.scrollModel,
+                previewModeModel: previewModeModel
             });
 
             this.listenTo(options.indexesCollection, 'update reset', function() {
-                this.resultsView.queryModel.set('indexes', this.getIndexes(options.indexesCollection, this.documentModel));
+                this.queryModel.set('indexes', this.getIndexes(options.indexesCollection, this.documentModel));
             });
         },
 
@@ -61,8 +72,12 @@ define([
                 title: this.documentModel.get('title')
             }));
 
-            this.$('.suggest-view-results').append(this.resultsView.$el);
-            this.resultsView.render();
+            this.resultsViewAugmentation.setElement(this.$('.suggest-view-results')).render();
+        },
+
+        remove: function() {
+            this.resultsViewAugmentation.remove();
+            Backbone.View.prototype.remove.call(this);
         }
     });
 

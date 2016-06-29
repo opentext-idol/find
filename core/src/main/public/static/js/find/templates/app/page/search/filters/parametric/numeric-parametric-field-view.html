@@ -1,39 +1,38 @@
 <h4><%-fieldName%></h4>
 <div>
     <form>
-        <svg class="chart">
-        </svg>
-        <% if (selectionEnabled || coordinatesEnabled) { %>
-            <div class="row numeric-parametric-inputs">
-                <div class="col-sm-4">
-                    <% if (selectionEnabled) { %>
-                        <input class="numeric-parametric-min-input" type="text" title="min-value" size="5"/>
-                    <% } %>
-                </div>
-                <div class="col-sm-3 col-sm-offset-1">
-                    <% if (coordinatesEnabled) { %>
-                        <span class="numeric-parametric-co-ordinates"></span>
-                    <% } %>
-                </div>
-                <div class="col-sm-4">
-                    <% if (selectionEnabled) { %>
-                        <input class="pull-right numeric-parametric-max-input" type="text" title="max-value" size="5"/>
-                    <% } %>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12">
+                    <svg class="chart full-width"></svg>
                 </div>
             </div>
-        <% } %>
-        <% if (buttonsEnabled) { %>
-            <div class="row numeric-parametric-buttons">
-                <div class="col-sm-5">
-                    <a class="numeric-parametric-no-min numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.noMin']%></a>
+            <div class="row numeric-parametric-inputs <%- inputsRowClass %>">
+                <div class="<%- inputColumnClass %>">
+                    <input class="numeric-parametric-min-input" type="text" title="min-value" size="5"/>
                 </div>
-                <div class="col-sm-4">
-                    <a class="numeric-parametric-reset numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.reset']%></a>
+                <div class="text-center <%- coordinatesColumnClass %>">
+                    <span class="numeric-parametric-co-ordinates"></span>
                 </div>
-                <div class="col-sm-3">
-                    <a class="pull-right numeric-parametric-no-max numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.noMax']%></a>
+                <div class="<%- inputColumnClass %>">
+                    <div class="pull-right">
+                        <input class="numeric-parametric-max-input" type="text" title="max-value" size="5"/>
+                    </div>
                 </div>
             </div>
-        <% } %>
+            <% if (buttonsEnabled) { %>
+                <div class="row numeric-parametric-buttons">
+                    <div class="col-xs-4">
+                        <a class="numeric-parametric-no-min numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.noMin']%></a>
+                    </div>
+                    <div class="col-xs-4 text-center">
+                        <a class="numeric-parametric-reset numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.reset']%></a>
+                    </div>
+                    <div class="col-xs-4 text-right">
+                        <a class="numeric-parametric-no-max numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.noMax']%></a>
+                    </div>
+                </div>
+            <% } %>
+        </div>
     </form>
 </div>

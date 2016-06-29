@@ -58,7 +58,7 @@ define([
                     selectedParametricValues: options.queryState.selectedParametricValues,
                     pixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
                     numericRestriction: options.numericRestriction,
-                    stringFormatting: options.stringFormatting,
+                    formatting: options.formatting,
                     selectionEnabled: options.selectionEnabled,
                     zoomEnabled: options.zoomEnabled,
                     buttonsEnabled: options.buttonsEnabled,

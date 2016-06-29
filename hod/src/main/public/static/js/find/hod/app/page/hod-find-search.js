@@ -20,6 +20,15 @@ define([
         QueryMiddleColumnHeaderView: HodQueryMiddleColumnHeaderView,
         QueryLeftSideView: HodQueryLeftSideView,
 
+        getSearchTypes: function() {
+            return {
+                QUERY: _.defaults({
+                    // HOD doesn't support parametric numeric date ranges yet
+                    showTimeBar: false
+                }, FindSearch.prototype.getSearchTypes.call(this).QUERY)
+            };
+        },
+
         documentDetailOptions: function (domain, index, reference) {
             return {
                 reference: reference,

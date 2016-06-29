@@ -48,7 +48,7 @@
     "moment": "2.10.3",
     "eonasdan-bootstrap-datetimepicker": "4.14.30",
     "hp-autonomy-hod-sso-js": "0.5.0",
-    "hp-autonomy-js-databases-view": "0.7.0",
+    "hp-autonomy-js-databases-view": "0.7.1",
     "datatables.net-fixedcolumns": "3.2.2",
     "datatables.net-fixedcolumns-bs": "3.2.2",
     "hp-autonomy-about-page": "0.3.0"

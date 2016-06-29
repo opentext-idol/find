@@ -3,9 +3,8 @@ define([
     'underscore',
     'jquery',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/util/results-view-container.html',
     'text!find/templates/app/util/selector.html'
-], function (Backbone, _, $, i18n, viewHtml, selectorTemplate) {
+], function (Backbone, _, $, i18n, selectorTemplate) {
 
     return Backbone.View.extend({
         selectorTemplate: _.template(selectorTemplate, {variable: 'data'}),
@@ -23,7 +22,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(viewHtml);
+            this.$el.html('<ul class="nav nav-tabs minimal-tab selector-list" role="tablist"></ul>');
 
             var $selectorList = this.$('.selector-list');
             var selectedTab = this.model.get('selectedTab');

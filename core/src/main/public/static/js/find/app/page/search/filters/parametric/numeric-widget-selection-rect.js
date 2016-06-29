@@ -3,36 +3,42 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-define([], function () {
-    "use strict";
-    
-    return {
-        element: null,
-        previousElement: null,
-        currentX: 0,
-        originX: 0,
-        setElement: function (ele) {
+define([
+    'underscore'
+], function(_) {
+    'use strict';
+
+    function SelectionRect() {
+        this.element = null;
+        this.previousElement = null;
+        this.currentX = 0;
+        this.originX = 0;
+    }
+
+    function getNewAttributes(currentX, originX) {
+        return {
+            x: currentX < originX ? currentX : originX,
+            width: Math.abs(currentX - originX)
+        };
+    }
+
+    _.extend(SelectionRect.prototype, {
+        setElement: function(element) {
             this.previousElement = this.element;
-            this.element = ele;
+            this.element = element;
         },
-        getNewAttributes: function () {
-            let x = this.currentX < this.originX ? this.currentX : this.originX;
-            let width = Math.abs(this.currentX - this.originX);
-            return {
-                x: x,
-                width: width
-            };
-        },
-        getCurrentAttributes: function () {
-            let x = +this.element.attr("x");
-            let width = +this.element.attr("width");
+
+        getCurrentAttributes: function() {
+            var x = Number(this.element.attr('x'));
+
             return {
                 x1: x,
-                x2: x + width
+                x2: x + Number(this.element.attr('width'))
             };
         },
-        init: function (chart, height, newX) {
-            let rectElement = chart.append("rect")
+
+        init: function(chart, height, newX) {
+            var rectElement = chart.append('rect')
                 .attr({
                     rx: 4,
                     ry: 4,
@@ -41,29 +47,39 @@ define([], function () {
                     width: 0,
                     height: height
                 })
-                .classed("selection", true);
+                .classed('selection', true);
+
             this.setElement(rectElement);
             this.originX = newX;
             this.update(newX);
             this.removePrevious();
         },
-        update: function (newX) {
+
+        update: function(newX) {
             this.currentX = newX;
-            this.element.attr(this.getNewAttributes());
+            this.element.attr(getNewAttributes(this.currentX, this.originX));
         },
-        focus: function () {
+
+        focus: function() {
             this.element
-                .style("stroke", "#01a982")
-                .style("stroke-width", "2.5");
+                .style('stroke', '#01a982')
+                .style('stroke', 'rgba(97, 71, 103, 0.6)');
         },
-        remove: function () {
-            this.element.remove();
-            this.element = null;
+
+        remove: function() {
+            if (this.element) {
+                this.element.remove();
+                this.element = null;
+            }
         },
-        removePrevious: function () {
+
+        removePrevious: function() {
             if (this.previousElement) {
                 this.previousElement.remove();
             }
         }
-    }
+    });
+
+    return SelectionRect;
+
 });

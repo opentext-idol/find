@@ -17,6 +17,7 @@ define([
     var urlRoot = /\bconfig$/.test(window.location.pathname) ? '../api/config/config/' : '../api/admin/config/';
 
     return SettingsPage.extend({
+        className: 'container-fluid',
         SaveModalConstructor: ValidateOnSaveModal,
         configModel: configModel,
         groupClass: 'col-md-4',
@@ -28,6 +29,7 @@ define([
         vent: vent,
         validateUrl: urlRoot + 'config-validation',
         widgetGroupParent: 'form .row',
+
         strings: {
             cancelButton: i18n['settings.cancel'],
             cancelCancel: i18n['app.cancel'],

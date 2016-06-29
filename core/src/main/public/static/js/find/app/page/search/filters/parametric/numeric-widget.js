@@ -7,33 +7,33 @@ define([
     'underscore',
     'find/app/page/search/filters/parametric/numeric-widget-selection-rect',
     'd3'
-], function (_, selectionRect, d3) {
-    "use strict";
+], function (_, SelectionRect, d3) {
+    'use strict';
 
-    const BAR_GAP_SIZE = 1;
-    const EMPTY_BAR_HEIGHT = 1;
-    const ZOOM_EXTENT = [0.1, 10];
+    var BAR_GAP_SIZE = 1;
+    var EMPTY_BAR_HEIGHT = 1;
+    var ZOOM_EXTENT = [0.1, 10];
 
-    function dragStart(chart, height) {
+    function dragStart(chart, height, selectionRect) {
         return function () {
             d3.event.sourceEvent.stopPropagation();
-            const p = d3.mouse(this);
+            var p = d3.mouse(this);
             selectionRect.init(chart, height, p[0]);
-        }
+        };
     }
 
-    function dragMove(scale, min, updateCallback) {
+    function dragMove(scale, min, updateCallback, selectionRect) {
         return function () {
-            const p = d3.mouse(this);
+            var p = d3.mouse(this);
             selectionRect.update(p[0]);
-            const currentAttributes = selectionRect.getCurrentAttributes();
+            var currentAttributes = selectionRect.getCurrentAttributes();
             updateCallback(min + scale.invert(currentAttributes.x1), min + scale.invert(currentAttributes.x2));
         };
     }
 
-    function dragEnd(scale, min, selectionCallback, deselectionCallback) {
+    function dragEnd(scale, min, selectionCallback, deselectionCallback, selectionRect) {
         return function () {
-            const finalAttributes = selectionRect.getCurrentAttributes();
+            var finalAttributes = selectionRect.getCurrentAttributes();
             if (finalAttributes.x2 - finalAttributes.x1 > 1) {
                 // range selected
                 d3.event.sourceEvent.preventDefault();
@@ -44,58 +44,60 @@ define([
                 selectionRect.remove();
                 deselectionCallback();
             }
-        }
+        };
     }
 
     function zoom(barScale, min, max, zoomCallback) {
         return function () {
-            const p = d3.mouse(this);
-            const mouseValue = min + barScale.invert(p[0]);
+            var p = d3.mouse(this);
+            var mouseValue = min + barScale.invert(p[0]);
             if (mouseValue <= max) {
-                const zoomScale = d3.event.scale;
-                const totalXDiff = (max - min) / zoomScale - (max - min);
-                const minValueDiff = totalXDiff * (mouseValue - min) / (max - min);
-                const maxValueDiff = totalXDiff * (max - mouseValue) / (max - min);
+                var zoomScale = d3.event.scale;
+                var totalXDiff = (max - min) / zoomScale - (max - min);
+                var minValueDiff = totalXDiff * (mouseValue - min) / (max - min);
+                var maxValueDiff = totalXDiff * (max - mouseValue) / (max - min);
 
                 zoomCallback(min - minValueDiff, max + maxValueDiff);
             }
-        }
+        };
     }
 
     return function (options) {
         //noinspection JSUnresolvedVariable
-        const barGapSize = options.barGapSize || BAR_GAP_SIZE;
+        var barGapSize = options.barGapSize || BAR_GAP_SIZE;
         //noinspection JSUnresolvedVariable
-        const emptyBarHeight = options.emptyBarHeight || EMPTY_BAR_HEIGHT;
+        var emptyBarHeight = options.emptyBarHeight || EMPTY_BAR_HEIGHT;
         //noinspection JSUnresolvedVariable
-        const zoomExtent = options.zoomExtent || ZOOM_EXTENT;
+        var zoomExtent = options.zoomExtent || ZOOM_EXTENT;
         //noinspection JSUnresolvedVariable
-        const formattingFn = options.formattingFn || _.identity;
+        var formattingFn = options.formattingFn || _.identity;
 
         return {
             drawGraph: function (options) {
-                const scale = {
+                var scale = {
                     barWidth: d3.scale.linear(),
                     y: d3.scale.linear()
                 };
 
-                const data = options.data;
+                var data = options.data;
                 scale.barWidth.domain([0, data.bucketSize]);
                 scale.barWidth.range([0, options.xRange / data.buckets.length - barGapSize]);
                 scale.y.domain([0, data.maxCount]);
                 scale.y.range([options.yRange, 0]);
 
                 //noinspection JSUnresolvedFunction
-                const chart = d3.select(options.chart)
+                var chart = d3.select(options.chart)
                     .attr({
                         width: options.xRange,
                         height: options.yRange
                     });
-                const bars = chart
+
+                var bars = chart
                     .selectAll('g')
                     .data(data.buckets)
                     .enter()
                     .append('g');
+
                 bars.append('rect')
                     .attr({
                         x: function (d, i) {
@@ -111,39 +113,43 @@ define([
                             return Math.max(scale.barWidth(d.max - d.min), barGapSize) - barGapSize;
                         }
                     })
-                    .append("title")
+                    .append('title')
                     .text(function (d) {
                         return options.tooltip(formattingFn(d.min), formattingFn(d.max), d.count);
                     });
 
                 if (options.coordinatesEnabled) {
-                    chart.on("mousemove", function () {
+                    chart.on('mousemove', function () {
                         options.mouseMoveCallback(data.minValue + scale.barWidth.invert(d3.mouse(this)[0]));
                     });
                     
-                    chart.on("mouseleave", function () {
+                    chart.on('mouseleave', function () {
                         options.mouseLeaveCallback();
                     });
                 }
 
+                var selectionRect = new SelectionRect();
+
                 if (options.dragEnabled) {
-                    const dragBehaviour = d3.behavior.drag()
-                        .on("drag", dragMove(scale.barWidth, data.minValue, options.updateCallback))
-                        .on("dragstart", dragStart(chart, options.yRange))
-                        .on("dragend", dragEnd(scale.barWidth, data.minValue, options.selectionCallback, options.deselectionCallback));
+                    var dragBehaviour = d3.behavior.drag()
+                        .on('drag', dragMove(scale.barWidth, data.minValue, options.updateCallback, selectionRect))
+                        .on('dragstart', dragStart(chart, options.yRange, selectionRect))
+                        .on('dragend', dragEnd(scale.barWidth, data.minValue, options.selectionCallback, options.deselectionCallback, selectionRect));
+
                     chart.call(dragBehaviour);
                 }
 
                 if (options.zoomEnabled) {
-                    const zoomBehaviour = d3.behavior.zoom()
-                        .on("zoom", zoom(scale.barWidth, data.minValue, data.maxValue, options.zoomCallback))
+                    var zoomBehaviour = d3.behavior.zoom()
+                        .on('zoom', zoom(scale.barWidth, data.minValue, data.maxValue, options.zoomCallback))
                         .scaleExtent(zoomExtent);
+
                     chart
                         .call(zoomBehaviour)
-                        .on("mousedown.zoom", null)
-                        .on("touchstart.zoom", null)
-                        .on("touchmove.zoom", null)
-                        .on("touchend.zoom", null);
+                        .on('mousedown.zoom', null)
+                        .on('touchstart.zoom', null)
+                        .on('touchmove.zoom', null)
+                        .on('touchend.zoom', null);
                 }
 
                 return {
@@ -152,6 +158,6 @@ define([
                     selectionRect: selectionRect
                 };
             }
-        }
-    }
+        };
+    };
 });

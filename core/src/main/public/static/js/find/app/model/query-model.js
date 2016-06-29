@@ -67,7 +67,7 @@ define([
                 this.set('indexes', collectionBuildIndexes(this.queryState.selectedIndexes));
             }, this), DEBOUNCE_WAIT_MILLISECONDS));
 
-            this.listenTo(this.queryState.selectedParametricValues, 'add remove reset', _.debounce(_.bind(function() {
+            this.listenTo(this.queryState.selectedParametricValues, 'add remove reset change', _.debounce(_.bind(function() {
                 var fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
                 this.set('fieldText', fieldTextNode ? fieldTextNode : null);
             }, this), DEBOUNCE_WAIT_MILLISECONDS));

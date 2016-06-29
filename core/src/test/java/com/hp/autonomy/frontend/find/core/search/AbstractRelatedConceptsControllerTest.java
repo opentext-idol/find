@@ -32,7 +32,7 @@ public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySumma
 
     @Test
     public void query() throws E {
-        relatedConceptsController.findRelatedConcepts("Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
+        relatedConceptsController.findRelatedConcepts("Some query text", null, Collections.<S>emptyList(), null, null, 0, null, null);
         verify(relatedConceptsService).findRelatedConcepts(Matchers.<RelatedConceptsRequest<S>>any());
     }
 }

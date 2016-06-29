@@ -19,11 +19,13 @@ import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -60,5 +62,22 @@ class HodParametricValuesController extends ParametricValuesController<HodQueryR
     ) throws HodErrorException {
         final HodParametricRequest parametricRequest = buildRequest(fieldNames, databases, null, SortParam.NumberIncreasing);
         return getNumericParametricValuesInBuckets(parametricRequest, targetNumberOfBuckets, bucketMin, bucketMax);
+    }
+
+    @RequestMapping(value = BUCKET_PARAMETRIC_PATH + "/{field}", method = RequestMethod.GET)
+    @ResponseBody
+    public RangeInfo getNumericParametricValuesInBucketsForField(
+            @PathVariable("field") final String field,
+            @RequestParam(DATABASES_PARAM) final List<ResourceIdentifier> databases,
+            @RequestParam(TARGET_NUMBER_OF_BUCKETS_PARAM) final Integer targetNumberOfBuckets,
+            @RequestParam(value = BUCKET_MIN_PARAM, required = false) final Double bucketMin,
+            @RequestParam(value = BUCKET_MAX_PARAM, required = false) final Double bucketMax
+    ) throws HodErrorException {
+        return getNumericParametricValuesInBuckets(
+                buildRequest(Collections.singletonList(field), databases, null, SortParam.NumberIncreasing),
+                Collections.singletonList(targetNumberOfBuckets),
+                Collections.singletonList(bucketMin),
+                Collections.singletonList(bucketMax)
+        ).get(0);
     }
 }

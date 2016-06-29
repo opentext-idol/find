@@ -9,8 +9,8 @@ define([
     'underscore',
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/filters/parametric/parametric-view',
+    'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'find/app/util/text-input',
-    'find/app/page/search/filters/precision-recall/precision-recall-slider-view',
     'find/app/util/collapsible',
     'find/app/vent',
     'parametric-refinement/display-collection',
@@ -20,11 +20,9 @@ define([
     'moment',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-date-parametric-field-view.html'
-], function(Backbone, $, _, DateView, ParametricView, TextInput, PrecisionRecallView, Collapsible,
+], function(Backbone, $, _, DateView, ParametricView, NumericParametricFieldView, TextInput, Collapsible,
             vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes, moment, numericParametricFieldTemplate, numericParametricDateFieldTemplate) {
     "use strict";
-
-    var DATE_WIDGET_FORMAT = "YYYY-MM-DD HH:mm";
 
     var datesTitle = i18n['search.dates'];
 
@@ -68,13 +66,6 @@ define([
                 savedSearchModel: options.savedSearchModel
             });
 
-            if (configuration().hasBiRole) {
-                this.precisionSlider = new PrecisionRecallView({
-                    queryModel: options.queryModel,
-                    queryState: options.queryState
-                });
-            }
-
             this.numericParametricFieldsCollection = options.numericParametricFieldsCollection;
             this.dateParametricFieldsCollection = options.dateParametricFieldsCollection;
 
@@ -106,27 +97,7 @@ define([
                 queryState: options.queryState,
                 fieldsCollection: this.dateParametricFieldsCollection,
                 fieldTemplate: numericParametricDateFieldTemplate,
-                stringFormatting: {
-                    format: function (unformattedString) {
-                        return moment(unformattedString * 1000).format(DATE_WIDGET_FORMAT);
-                    },
-                    parse: function (formattedString) {
-                        return moment(formattedString, DATE_WIDGET_FORMAT).unix();
-                    },
-                    render: function ($el) {
-                        $el.find('.results-filter-date').datetimepicker({
-                            format: DATE_WIDGET_FORMAT,
-                            icons: {
-                                time: 'hp-icon hp-fw hp-clock',
-                                date: 'hp-icon hp-fw hp-calendar',
-                                up: 'hp-icon hp-fw hp-chevron-up',
-                                down: 'hp-icon hp-fw hp-chevron-down',
-                                next: 'hp-icon hp-fw hp-chevron-right',
-                                previous: 'hp-icon hp-fw hp-chevron-left'
-                            }
-                        });
-                    }
-                }
+                formatting: NumericParametricFieldView.dateFormatting
             });
             
             //noinspection JSUnresolvedFunction
@@ -185,12 +156,6 @@ define([
             this.dateParametricView.render();
             this.parametricView.render();
             this.dateViewWrapper.render();
-
-            if (this.precisionSlider) {
-                //noinspection JSUnresolvedVariable
-                this.$el.prepend(this.precisionSlider.$el);
-                this.precisionSlider.render();
-            }
 
             this.updateParametricVisibility();
             this.updateDatesVisibility();

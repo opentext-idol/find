@@ -24,7 +24,8 @@ require.config({
             'find/lib/backbone/backbone-extensions': 'backbone',
             'find/app/util/confirm-view': 'mock/util/confirm-view',
             'find/app/page/search/document/location-tab': 'mock/page/search/document/location-tab',
-            'find/app/util/topic-map-view': 'mock/util/topic-map-view'
+            'find/app/util/topic-map-view': 'mock/util/topic-map-view',
+            'find/app/model/bucketed-parametric-collection': 'mock/model/bucketed-parametric-collection'
         },
         'find/app/page/search/service-view': {
             'find/app/model/indexes-collection': 'mock/model/indexes-collection'

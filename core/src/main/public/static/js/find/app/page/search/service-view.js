@@ -16,7 +16,6 @@ define([
     'find/app/model/parametric-fields-collection',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
-    'find/app/page/search/results/results-view-augmentation',
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
@@ -27,19 +26,33 @@ define([
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
     'find/app/page/search/results/table/table-view',
+    'find/app/page/search/time-bar-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, ParametricFieldsCollection,
-            queryStrategy, stateTokenStrategy, ResultsViewAugmentation, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, Collapsible,
-            addChangeListener,  SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, TableView, configuration, i18n, templateString) {
+], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, 
+            ParametricFieldsCollection, queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, 
+            RelatedConceptsView, Collapsible, addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, 
+            MapResultsView, TableView, TimeBarView, configuration, i18n, templateString) {
+
     'use strict';
 
+    var $window = $(window);
     var template = _.template(templateString);
 
-    return Backbone.View.extend({
-        className: 'full-height-viewport',
+    function updateScrollParameters() {
+        if (this.$middleContainerContents) {
+            this.middleColumnScrollModel.set({
+                innerHeight: this.$middleContainerContents.innerHeight(),
+                scrollTop: this.$middleContainerContents.scrollTop(),
+                scrollHeight: this.$middleContainerContents.prop('scrollHeight'),
+                top: this.$middleContainerContents.get(0).getBoundingClientRect().top,
+                bottom: this.$middleContainerContents.get(0).getBoundingClientRect().bottom
+            });
+        }
+    }
 
+    return Backbone.View.extend({
         // Can be overridden
         headerControlsHtml: '',
         displayDependentParametricViews: true,
@@ -51,6 +64,8 @@ define([
         fetchParametricValues: null,
 
         initialize: function(options) {
+            var hasBiRole = configuration().hasBiRole;
+
             this.indexesCollection = options.indexesCollection;
             this.selectedTabModel = options.selectedTabModel;
             this.savedSearchCollection = options.savedSearchCollection;
@@ -61,9 +76,10 @@ define([
             this.searchCollections = options.searchCollections;
 
             this.highlightModel = new Backbone.Model({highlightEntities: false});
+
             this.entityCollection = new EntityCollection([], {
                 getSelectedRelatedConcepts: function() {
-                    return _.flatten(this.queryState.queryTextModel.get('relatedConcepts')).concat([this.queryState.queryTextModel.get('inputText')])
+                    return _.flatten(this.queryState.queryTextModel.get('relatedConcepts')).concat([this.queryState.queryTextModel.get('inputText')]);
                 }.bind(this)
             });
 
@@ -107,27 +123,21 @@ define([
             // If the saved search is unmodified and not new, update the last fetched date
             this.listenTo(this.documentsCollection, 'sync', function() {
                 var changed = this.queryState ? !this.savedSearchModel.equalsQueryState(this.queryState) : false;
-                if(!changed && !this.savedSearchModel.isNew()) {
+
+                if (!changed && !this.savedSearchModel.isNew()) {
                     this.savedSearchModel.save({dateDocsLastFetched: moment()});
                 }
             });
 
-            this.parametricFieldsCollection = new ParametricFieldsCollection([], {
-                url: '../api/public/fields/parametric'
-            });
-            this.restrictedParametricCollection = new ParametricCollection([], {
-                url: '../api/public/parametric/restricted'
-            });
-            this.numericParametricFieldsCollection = new ParametricFieldsCollection([], {
-                url: '../api/public/fields/parametric-numeric'
-            });
-            this.dateParametricFieldsCollection = new ParametricFieldsCollection([], {
-                url: '../api/public/fields/parametric-date'
-            });
-            this.parametricCollection = new ParametricCollection([], {
-                url: '../api/public/parametric'
-            });
+            this.parametricFieldsCollection = new ParametricFieldsCollection([], {url: '../api/public/fields/parametric'});
+            this.restrictedParametricCollection = new ParametricCollection([], {url: '../api/public/parametric/restricted'});
+            this.numericParametricFieldsCollection = new ParametricFieldsCollection([], {url: '../api/public/fields/parametric-numeric'});
+            this.dateParametricFieldsCollection = new ParametricFieldsCollection([], {url: '../api/public/fields/parametric-date'});
+            this.parametricCollection = new ParametricCollection([], {url: '../api/public/parametric'});
 
+            // Tracks the document model which is currently shown in the preview
+            this.previewModeModel = new Backbone.Model({document: null});
+            
             var subViewArguments = {
                 indexesCollection: this.indexesCollection,
                 entityCollection: this.entityCollection,
@@ -142,6 +152,7 @@ define([
                 dateParametricFieldsCollection: this.dateParametricFieldsCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
+                previewModeModel: this.previewModeModel,
                 highlightModel: this.highlightModel,
                 searchCollections: this.searchCollections,
                 searchTypes: this.searchTypes
@@ -154,8 +165,12 @@ define([
                 selectedTabModel: this.selectedTabModel
             };
 
-            if (configuration().hasBiRole) {
+            if (hasBiRole) {
                 this.savedSearchControlView = new SavedSearchControlView(subViewArguments);
+
+                if (this.searchTypes[searchType].showTimeBar) {
+                    this.timeBarView = new TimeBarView(subViewArguments);
+                }
             }
 
             this.leftSideFooterView = new this.searchTypes[searchType].LeftSideFooterView(subViewArguments);
@@ -176,14 +191,15 @@ define([
                 title: i18n['search.relatedConcepts']
             });
 
+            this.middleColumnScrollModel = new Backbone.Model();
+
             var resultsView = new this.ResultsView(_.defaults({
                 enablePreview: true,
                 relatedConceptsClickHandler: relatedConceptsClickHandler,
                 fetchStrategy: this.searchTypes[searchType].fetchStrategy,
-                highlightModel: this.highlightModel
+                highlightModel: this.highlightModel,
+                scrollModel: this.middleColumnScrollModel
             }, subViewArguments));
-
-            var hasBiRole = configuration().hasBiRole;
 
             this.resultsViews = _.where([{
                 Constructor: this.ResultsViewAugmentation,
@@ -192,7 +208,9 @@ define([
                 uniqueId: _.uniqueId('results-view-item-'),
                 constructorArguments: {
                     resultsView: resultsView,
-                    queryModel: this.queryModel
+                    queryModel: this.queryModel,
+                    previewModeModel: this.previewModeModel,
+                    scrollModel: this.middleColumnScrollModel
                 },
                 events: {
                     // needs binding as the view container will be the eventual listener
@@ -274,13 +292,27 @@ define([
             this.fetchParametricFields(this.dateParametricFieldsCollection);
             this.fetchEntities();
             this.fetchRestrictedParametricCollection();
+
+            this.updateScrollParameters = updateScrollParameters.bind(this);
+
+            $window
+                .scroll(this.updateScrollParameters)
+                .resize(this.updateScrollParameters);
         },
 
         render: function() {
+            var hasBiRole = configuration().hasBiRole;
+
             this.$el.html(template({
                 i18n: i18n,
-                headerControlsHtml: this.headerControlsHtml
+                headerControlsHtml: this.headerControlsHtml,
+                hasBiRole: hasBiRole,
+                showTimeBar: Boolean(this.timeBarView)
             }));
+
+            if (this.timeBarView) {
+                this.timeBarView.setElement(this.$('.middle-container-time-bar')).render();
+            }
 
             if (this.savedSearchControlView) {
                 // the padding looks silly if we don't have the view so add it here
@@ -306,6 +338,9 @@ define([
             }
 
             this.$('.container-toggle').on('click', this.containerToggle);
+
+            this.$middleContainerContents = this.$('.middle-container-contents').scroll(this.updateScrollParameters);
+            this.updateScrollParameters();
         },
 
         fetchData: function() {
@@ -313,7 +348,7 @@ define([
             this.fetchParametricValues(this.parametricFieldsCollection, this.parametricCollection);
         },
 
-        fetchEntities: function () {
+        fetchEntities: function() {
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
                     databases: this.queryModel.get('indexes'),
@@ -351,7 +386,7 @@ define([
                     minScore: this.queryModel.get('minScore'),
                     stateTokens: this.queryModel.get('stateMatchIds')
                 }
-            })
+            });
         },
 
         rightSideContainerHideToggle: function(toggle) {
@@ -359,6 +394,10 @@ define([
         },
 
         remove: function() {
+            $window
+                .off('resize', this.updateScrollParameters)
+                .off('scroll', this.updateScrollParameters);
+
             this.queryModel.stopListening();
 
             _.chain([
@@ -367,7 +406,8 @@ define([
                 this.resultsViewSelection,
                 this.relatedConceptsViewWrapper,
                 this.leftSideFooterView,
-                this.middleColumnHeaderView
+                this.middleColumnHeaderView,
+                this.timeBarView
             ])
                 .compact()
                 .invoke('remove');
