@@ -155,6 +155,7 @@ define([
         'search.resultsView.sunburst.error.noParametricValues': 'There are no parametric values to display for your current search',
         'search.resultsView.sunburst.error.query': 'An error occurred displaying sunburst view',
         'search.resultsView.sunburst.error.noDependentParametricValues': 'There are too many parametric fields to display in sunburst view',
+        'search.resultsView.sunburst.error.noSecondFieldValues': 'There are no documents with values for both fields. Showing results for only first field.',
         'search.resultsView.map': 'Map',
         'search.resultsView.map.show.more': 'Show More',
         'search.resultsView.table': 'Table',
