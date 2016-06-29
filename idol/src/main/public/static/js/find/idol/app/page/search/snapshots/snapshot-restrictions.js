@@ -8,8 +8,9 @@ define([
     'i18n!find/nls/indexes',
     'i18n!find/idol/nls/snapshots',
     'parametric-refinement/prettify-field-name',
-    'underscore'
-], function(i18n, indexesI18n, snapshotsI18n, prettifyFieldName, _) {
+    'underscore',
+    'moment'
+], function(i18n, indexesI18n, snapshotsI18n, prettifyFieldName, _, moment) {
 
     var DATE_FORMAT = 'YYYY/MM/DD HH:mm';
 
@@ -17,8 +18,16 @@ define([
         return date ? {title: title, content: date.format(DATE_FORMAT)} : null;
     }
 
+    function formatEpoch(x) {
+        return moment(x).format(DATE_FORMAT);
+    }
+
     function relatedConcepts(concepts) {
         return concepts.length ? {title: snapshotsI18n['restrictions.relatedConcepts'], content: concepts.join(', ')} : null;
+    }
+
+    function roundNumericBoundary(x) {
+        return Math.round(x * 10) / 10;
     }
 
     /**
@@ -31,7 +40,8 @@ define([
             'indexes',
             'parametricValues',
             'minDate',
-            'maxDate'
+            'maxDate',
+            'parametricRanges'
         ],
 
         /**
@@ -47,6 +57,15 @@ define([
                 };
             });
 
+            var numericRestrictions = _.map(attributes.parametricRanges, function(range) {
+                var formatFunction = range.type === 'DATE' ? formatEpoch : roundNumericBoundary;
+
+                return {
+                    title: prettifyFieldName(range.field),
+                    content:  formatFunction(range.min) + ' - ' + formatFunction(range.max)
+                };
+            });
+
             return [
                 {
                     title: snapshotsI18n['restrictions.queryText'],
@@ -59,7 +78,9 @@ define([
                 },
                 dateRestriction(snapshotsI18n['restrictions.minDate'], attributes.minDate),
                 dateRestriction(snapshotsI18n['restrictions.maxDate'], attributes.maxDate)
-            ].concat(parametricRestrictions);
+            ].concat(
+                parametricRestrictions,
+                numericRestrictions);
         }
     };
 
