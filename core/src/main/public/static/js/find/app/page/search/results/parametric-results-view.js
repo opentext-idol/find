@@ -128,7 +128,6 @@ define([
         updateParametricCollection: function() {
             if (!this.parametricCollection.isEmpty() && !this.noMoreParametricFields()) {
                 this.$parametricSelections.removeClass('hide');
-                this.updateSelections();
                 this.makeSelectionsIfData();
             } else {
                 this.model.set('loading', false);
@@ -190,6 +189,7 @@ define([
         makeSelectionsIfData: function() {
             if (!this.parametricCollection.isEmpty()) {
                 this.resolveFieldSelections();
+                this.updateSelections();
                 this.fetchDependentFields();
             }
         },
