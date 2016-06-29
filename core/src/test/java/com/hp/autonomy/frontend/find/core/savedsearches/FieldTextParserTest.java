@@ -65,7 +65,7 @@ public class FieldTextParserTest {
         final FieldAndValue fieldAndValue3 = new FieldAndValue("COLOUR", "white");
 
         final ParametricRange range1 = new ParametricRange("YEAR", 1066, 1485, ParametricRange.Type.Numeric);
-        final ParametricRange range2 = new ParametricRange("DATE", 123456789000L, 123456791000L, ParametricRange.Type.Date);
+        final ParametricRange range2 = new ParametricRange("DATE", 123456789L, 123456791L, ParametricRange.Type.Date);
 
         when(savedSearch.getParametricValues()).thenReturn(ImmutableSet.of(fieldAndValue1, fieldAndValue2, fieldAndValue3));
         when(savedSearch.getParametricRanges()).thenReturn(ImmutableSet.of(range1, range2));
