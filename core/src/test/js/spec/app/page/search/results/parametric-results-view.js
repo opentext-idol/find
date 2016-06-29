@@ -20,6 +20,7 @@ define([
             this.queryModel = new Backbone.Model();
             this.queryModel.getIsoDate = jasmine.createSpy('getIsoDate');
             this.queryState = {selectedParametricValues: this.selectedParametricValues};
+            this.savedSearchModel = new Backbone.Model();
 
             var viewConstructorArguments = {
                 emptyDependentMessage: DEPENDENT_EMPTY_MESSAGE,
@@ -27,7 +28,9 @@ define([
                 errorMessage: ERROR_MESSAGE,
                 restrictedParametricCollection: this.parametricCollection,
                 queryModel: this.queryModel,
-                queryState: this.queryState
+                queryState: this.queryState,
+                savedSearchModel: this.savedSearchModel
+
             };
 
             this.view = new ParametricResultsView(viewConstructorArguments);
