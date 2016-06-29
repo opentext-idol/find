@@ -143,8 +143,9 @@ define([
             this.zoomEnabled = options.zoomEnabled;
             this.buttonsEnabled = options.selectionEnabled && options.buttonsEnabled;
             this.coordinatesEnabled = options.coordinatesEnabled === undefined ? true : options.coordinatesEnabled;
+            this.numericRestriction = options.numericRestriction || false;
+
             this.fieldName = this.model.id;
-            this.numericRestriction = options.numericRestriction;
 
             var formatting = options.formatting  || NumericParametricFieldView.defaultFormatting;
             this.formatValue = formatting.format;
@@ -246,7 +247,9 @@ define([
                 coordinatesEnabled: this.coordinatesEnabled
             });
 
-            this.drawSelection();
+            if (this.selectionEnabled) {
+                this.drawSelection();
+            }
         },
 
         drawSelection: function() {
