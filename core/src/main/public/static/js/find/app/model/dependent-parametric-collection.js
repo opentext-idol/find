@@ -18,7 +18,10 @@ define([
     function parseResult(array, total) {
         var minimumSize = Math.round(total / 100 * 5); // this is the smallest area of the chart an element will be visible at.
 
-        var sunburstData = _.chain(array)
+        var initialSunburstData = _.chain(array)
+            .filter(function(element) {
+                return element.value !== '';
+            })
             .map(function (entry) {
                 var entryHash = {
                     hidden: false,
@@ -32,22 +35,22 @@ define([
             .value();
 
         // Always show the highest 20 results
-        var alwaysShownValues = _.first(sunburstData, 20);
+        var alwaysShownValues = _.first(initialSunburstData, 20);
 
         //filter out any with document counts smaller than minimumSize
-        var filteredSunburstData = _.chain(sunburstData)
+        var filteredSunburstData = _.chain(initialSunburstData)
             .filter(function(child) {
                 return child.count > minimumSize;
             })
             .sortBy('count')
             .value();
 
-        sunburstData = _.union(alwaysShownValues, filteredSunburstData);
+        var sunburstData = _.union(alwaysShownValues, filteredSunburstData);
 
         if (!_.isEmpty(sunburstData)) { //if there are items being displayed
             var childCount = getArrayTotal(sunburstData); // get total displayed document count
             var remaining = total - childCount; // get the total hidden document count
-            var hiddenFilterCount = array.length - sunburstData.length;  // get the number of hidden values
+            var hiddenFilterCount = initialSunburstData.length - sunburstData.length;  // get the number of hidden values
             if(remaining > 0){
                 sunburstData.push({
                     text: '',
