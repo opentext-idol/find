@@ -16,8 +16,9 @@ define([
         initialize: function() {
             this.listView = new ListView({
                 collection: this.collection,
-                tagName: 'tbody',
                 ItemView: ValueView,
+                maxSize: 5,
+                tagName: 'tbody',
                 collectionChangeEvents: {
                     count: 'updateCount',
                     selected: 'updateSelected'
@@ -72,21 +73,11 @@ define([
             this.$el.empty().append(this.collapsible.$el);
             this.collapsible.render();
 
-            if(this.collapsible.$('tbody tr').length > 5) {
-                this.toggleFacets(true);
-            }
             this.collapsible.$('tbody').append(this.seeAllButtonTemplate({i18n:i18n}));
         },
 
         getFieldSelectedValuesLength: function() {
             return this.selectedParametricValues.where({field: this.model.id}).length;
-        },
-
-        toggleFacets: function(toggle) {
-            var lastFacets = this.collapsible.$('tbody tr').slice(5);
-            lastFacets.toggleClass('hide', toggle);
-
-            this.$('.toggle-more').removeClass('hide');
         },
 
         remove: function() {
