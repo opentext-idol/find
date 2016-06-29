@@ -1,18 +1,23 @@
 <div class="search-options-container"></div>
-<div class="query-service-view service-view-sub-container">
+<div class="query-service-view <%= hasBiRole ? 'bi-query-service-view' : ''%>">
     <div class="left-side-container side-container">
         <i class="hp-icon hp-previous-chapter hp-lg container-toggle clickable"></i>
         <div class="side-panel-content">
             <div class="left-side-footer"></div>
         </div>
     </div>
-    <div class="middle-container">
-        <div class="middle-column-header"></div>
-        <% if (headerControlsHtml) { %>
-            <div><%= headerControlsHtml %></div>
+    <div class="middle-container <%= showTimeBar ? 'middle-container-with-time-bar' : '' %>">
+        <div class="middle-container-contents">
+            <div class="middle-column-header"></div>
+            <% if (headerControlsHtml) { %>
+                <div><%= headerControlsHtml %></div>
+            <% } %>
+            <div class="results-view-selection"></div>
+            <div class="results-view-container"></div>
+        </div>
+        <% if (showTimeBar) { %>
+            <div class="middle-container-time-bar"></div>
         <% } %>
-        <div class="results-view-selection"></div>
-        <div class="results-view-container"></div>
     </div>
     <div class="right-side-container side-container">
         <div class="right-container-icon">

@@ -41,6 +41,7 @@ define([
                         icon: 'hp-camera',
                         isMutable: false,
                         fetchStrategy: stateTokenStrategy,
+                        showTimeBar: false,
                         DocumentsCollection: ComparisonDocumentsCollection,
                         LeftSideFooterView: SnapshotDataView,
                         MiddleColumnHeaderView: null,
@@ -83,6 +84,7 @@ define([
                     this.comparisonView = new ComparisonView({
                         model: model,
                         searchModels: searchModels,
+                        scrollModel: this.windowScrollModel,
                         escapeCallback: function() {
                             this.removeComparisonView();
                             this.$('.service-view-container').addClass('hide');

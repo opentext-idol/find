@@ -94,6 +94,7 @@ define([
         initialize: function (options) {
             this.savedQueryCollection = options.savedQueryCollection;
             this.indexesCollection = options.indexesCollection;
+            this.windowScrollModel = options.windowScrollModel;
 
             this.searchTypes = this.getSearchTypes();
 
@@ -248,7 +249,8 @@ define([
                     this.suggestView = new this.SuggestView({
                         backUrl: this.generateURL(),
                         documentModel: documentModel,
-                        indexesCollection: this.indexesCollection
+                        indexesCollection: this.indexesCollection,
+                        scrollModel: this.windowScrollModel
                     });
 
                     this.$('.suggest-service-view-container').append(this.suggestView.$el);
@@ -291,6 +293,7 @@ define([
                     icon: 'hp-search',
                     isMutable: true,
                     relatedConceptsClickHandler: relatedConceptsClickHandlers.updateQuery,
+                    showTimeBar: true,
                     LeftSideFooterView: this.QueryLeftSideView,
                     DocumentsCollection: DocumentsCollection,
                     MiddleColumnHeaderView: this.QueryMiddleColumnHeaderView,

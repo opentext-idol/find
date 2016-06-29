@@ -12,7 +12,6 @@ define([
         getBucketingRequestData: function(fieldNames, targetNumberOfBuckets) {
             return {
                 fieldNames: fieldNames,
-                queryText: '*',
                 databases: this.queryModel.get('indexes'),
                 targetNumberOfBuckets: targetNumberOfBuckets
             };

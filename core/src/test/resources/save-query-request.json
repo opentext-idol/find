@@ -9,7 +9,7 @@
         {"field": "CATEGORY", "value": "COMPUTING"}
     ],
     "parametricRanges": [
-        {"field": "SOME_DATE", "min": 123456789000, "max": 123456791000, "type": "Date"}
+        {"field": "SOME_DATE", "min": 123456789, "max": 123456791, "type": "Date"}
     ],
     "conceptClusterPhrases": [
         {"phrase": "characters", "primary": true, "clusterId": 1},

@@ -11,6 +11,7 @@ import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import com.hp.autonomy.types.requests.idol.actions.tags.RangeInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,8 +21,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -75,6 +78,15 @@ public class HodParametricValuesControllerTest extends AbstractParametricValuesC
         expectedBucketingParamsPerField.put(PARAMETRIC_FIELD, new BucketingParams(TARGET_NUMBER_OF_BUCKETS, 1.5, null));
 
         verify(parametricValuesService).getNumericParametricValuesInBuckets(Matchers.<HodParametricRequest>any(), eq(expectedBucketingParamsPerField));
+    }
+
+    @Test
+    public void getNumericParametricValuesInBucketsForField() throws HodErrorException {
+        when(parametricValuesService.getNumericParametricValuesInBuckets(Matchers.<HodParametricRequest>any(), Matchers.<Map<String, BucketingParams>>any()))
+                .thenReturn(Collections.singletonList(mock(RangeInfo.class)));
+
+        parametricValuesController.getNumericParametricValuesInBucketsForField("SomeField", Collections.<ResourceIdentifier>emptyList(), 30, 10.0, 40.0);
+        verify(parametricValuesService).getNumericParametricValuesInBuckets(Matchers.<HodParametricRequest>any(), Matchers.<Map<String, BucketingParams>>any());
     }
 
     private void callGetNumericParametricValuesInBuckets(final List<Double> bucketMin, final List<Double> bucketMax) throws HodErrorException {
