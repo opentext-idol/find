@@ -27,12 +27,15 @@ define([
         return selectedParameters;
     }
 
+    var SNAPSHOT = 'SNAPSHOT';
+
     return Backbone.View.extend({
         template: _.template(template),
         loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
 
         initialize: function (options) {
             this.queryModel = options.queryModel;
+            this.savedSearchModel = options.savedSearchModel;
             this.parametricCollection = options.restrictedParametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
@@ -87,6 +90,8 @@ define([
             this.updateSelections();
 
             this.updateParametricCollection();
+
+            this.onClick = this.savedSearchModel.get('type') !== SNAPSHOT ? this.onSavedSearchClick : _.noop;
         },
 
         toggleLoading: function () {
@@ -111,7 +116,7 @@ define([
             }, this)
         },
 
-        onClick: function(data) {
+        onSavedSearchClick: function(data) {
             var selectedParameters = getClickedParameters(data, this.fieldsCollection.pluck('field'), []);
 
             // empty value means padding element was clicked on
