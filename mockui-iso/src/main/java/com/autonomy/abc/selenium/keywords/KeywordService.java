@@ -108,24 +108,17 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     }
 
     private void tryDeleteAll(final Language language) throws StaleElementReferenceException {
-        try {
-            keywordsPage.selectLanguage(language);
-        } catch (final WebDriverException e) {
-            /* language dropdown disabled */
-        }
-        final List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
-        for(final WebElement group : keywordGroups){
-            removeKeywordGroupAsync(group);
-        }
-    }
+        final int limit = 20;
+        keywordsPage.selectLanguage(language);
 
-    //Problem with deletion not solved - sometimes fails
-    private void removeKeywordGroupAsync(final WebElement group) {
-        final List<WebElement> removeButtons = keywordsPage.removeButtons(group);
-        if(removeButtons.size() > 1){removeButtons.remove(0);}
-        for(final WebElement removeButton:removeButtons){
-            new WebDriverWait(getDriver(),20).until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-spin")));
-            removeButton.click();
+        List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
+        int i=0;
+        while(keywordGroups.size()>0 && i<limit) {
+            for (WebElement group : keywordGroups) {
+                keywordsPage.firstRemoveButtonOfGroup(group).click();
+            }
+            i++;
+            keywordGroups = keywordsPage.allKeywordGroups();
         }
     }
 
@@ -136,7 +129,12 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     }
 
     public void removeKeywordGroup(final WebElement group) {
-        removeKeywordGroupAsync(group);
+        final int loopLimit = 20;
+        int i=0;
+        while(keywordsPage.removeButtons(group).size()>0 && i<loopLimit){
+            keywordsPage.firstRemoveButtonOfGroup(group);
+            i++;
+        }
         keywordsPage.waitForRefreshIconToDisappear();
     }
 

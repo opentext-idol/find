@@ -52,6 +52,10 @@ public abstract class KeywordsPage extends KeywordsBase {
         return keywordGroup.findElements(By.cssSelector("li .remove-keyword"));
     }
 
+    public WebElement firstRemoveButtonOfGroup(final WebElement keywordGroup){
+        return keywordGroup.findElement(By.cssSelector("li:first-child i.remove-keyword"));
+    }
+
     public WebElement synonymInGroup(final String synonym){
         return findElement(By.xpath(".//div[contains(@class, 'keywords-list')]//li[@data-term='" + synonym + "']"));
     }
