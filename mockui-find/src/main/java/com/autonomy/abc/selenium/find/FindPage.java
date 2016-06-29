@@ -25,7 +25,7 @@ public class FindPage extends AppElement implements AppPage,
     FindPage(final WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container"))),driver);
     }
 
     protected FilterPanel filters() {
@@ -34,7 +34,7 @@ public class FindPage extends AppElement implements AppPage,
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid")));
+        new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container")));
     }
 
     public void unhover() {

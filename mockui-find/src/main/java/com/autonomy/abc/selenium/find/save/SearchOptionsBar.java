@@ -17,7 +17,7 @@ public class SearchOptionsBar {
 
     public SearchOptionsBar(final WebDriver driver) {
         this.driver = driver;
-        this.bar = driver.findElement(By.cssSelector(".full-height-viewport:not(.hide) .search-options-container"));
+        this.bar = driver.findElement(By.cssSelector(".query-service-view-container > :not(.hide):not(.search-tabs-container) .search-options-container"));
     }
 
     public WebElement saveAsButton() {

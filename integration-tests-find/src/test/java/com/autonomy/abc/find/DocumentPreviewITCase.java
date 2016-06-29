@@ -52,9 +52,9 @@ public class DocumentPreviewITCase extends FindTestBase {
         if (inlinePreview.loadingIndicatorExists()) {
             assertThat("Preview not stuck loading", inlinePreview.loadingIndicator(), not(displayed()));
         }
-        assertThat("There is content in preview", inlinePreview.getContents(), not(isEmptyOrNullString()));
-        assertThat("Index displayed", docPreview.getIndex(),not(nullValue()));
-        assertThat("Reference displayed",docPreview.getReference(),not(nullValue()));
+
+        assertThat("Index displayed", docPreview.getIndex().getName(), not(isEmptyOrNullString()));
+        assertThat("Reference displayed", docPreview.getReference(),not(isEmptyOrNullString()));
 
         final Frame previewFrame = new Frame(getWindow(), docPreview.frame());
         final String frameText=previewFrame.getText();
