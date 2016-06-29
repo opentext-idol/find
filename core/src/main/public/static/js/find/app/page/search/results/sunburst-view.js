@@ -103,6 +103,18 @@ define([
 
         update: function () {
             drawSunburst.call(this, this.$content, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
+
+            var noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
+                .compact()
+                .flatten()
+                .isEmpty()
+                .value();
+
+            if(this.fieldsCollection.at(1).get('field') !== '' && noValidChildren) {
+                this.$message.text(i18n['search.resultsView.sunburst.error.noSecondFieldValues']);
+            } else {
+                this.$message.empty();
+            }
         },
 
         render: function () {
