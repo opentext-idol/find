@@ -218,8 +218,8 @@ define([
         'settings.close': 'Close',
         'settings.unload.confirm': 'You have unsaved settings!',
         'settings.adminUser': 'Admin User',
-        'settings.adminUser.description': 'Configure the admin username and password for BI for Human Information.',
-        'settings.community.description': "Community handles authentication for BI for Human Information. We recommend using a dedicated Community server for BI for Human Information and not using it for any other parts of your IDOL installation.  Your Community server will need an Agentstore server for data storage.",
+        'settings.adminUser.description': 'Configure the admin username and password for Find.',
+        'settings.community.description': "Community handles authentication for Find. We recommend using a dedicated Community server for Find and not using it for any other parts of your IDOL installation.  Your Community server will need an Agentstore server for data storage.",
         'settings.community.login.type': 'Login Type',
         'settings.community.login.fetchTypes': 'Test connection to retrieve available login types.',
         'settings.community.login.invalidType': 'You must test connection and choose a valid login type.',
@@ -229,7 +229,7 @@ define([
         'settings.content.title': 'Content',
         'settings.database': 'Database',
         'settings.databaseCheckbox': 'Use username for database name',
-        'settings.description': "This page is for editing the BI for Human Information config file.  The config file location is stored in the Java system property {0}.  The current location is {1}.",
+        'settings.description': "This page is for editing the Find config file.  The config file location is stored in the Java system property {0}.  The current location is {1}.",
         'settings.iod.apiKey': 'API key',
         'settings.iod.application': 'Application',
         'settings.iod.domain': 'Domain',
@@ -363,10 +363,10 @@ define([
         'wizard.step.settings': 'Settings',
         'wizard.step.users': 'Users',
         'wizard.step.welcome': 'Welcome',
-        'wizard.welcome': "Welcome to the BI for Human Information configuration wizard",
-        'wizard.welcome.helper': "This wizard will help you set up BI for Human Information in two quick steps:",
+        'wizard.welcome': "Welcome to the Find configuration wizard",
+        'wizard.welcome.helper': "This wizard will help you set up Find in two quick steps:",
         'wizard.welcome.step1': 'On the Settings page, configure your connection settings, then click Save',
         'wizard.welcome.step2': "On the Users page, create initial user accounts, then click Logout",
-        'wizard.welcome.finish': 'After you complete the configuration wizard, you can start using BI for Human Information'
+        'wizard.welcome.finish': 'After you complete the configuration wizard, you can start using Find'
     });
 });
