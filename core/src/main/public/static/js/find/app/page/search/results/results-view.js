@@ -88,7 +88,6 @@ define([
 
         initialize: function(options) {
             this.fetchStrategy = options.fetchStrategy;
-            this.enablePreview = options.enablePreview || false;
 
             this.queryModel = options.queryModel;
             this.showPromotions = this.fetchStrategy.promotions(this.queryModel) && !options.hidePromotions;
@@ -96,6 +95,8 @@ define([
 
             this.indexesCollection = options.indexesCollection;
             this.scrollModel = options.scrollModel;
+
+            // Preview mode is enabled when a preview mode model is provided
             this.previewModeModel = options.previewModeModel;
 
             if (this.indexesCollection) {
@@ -139,7 +140,9 @@ define([
                 }
             });
 
-            this.listenTo(this.previewModeModel, 'change:document', this.updateSelectedDocument);
+            if (this.previewModeModel) {
+                this.listenTo(this.previewModeModel, 'change:document', this.updateSelectedDocument);
+            }
         },
 
         refreshResults: function() {
@@ -170,10 +173,6 @@ define([
 
         render: function() {
             this.$el.html(this.template({i18n: i18n}));
-
-            if (this.enablePreview) {
-                this.$('.main-results-content').addClass('preview-mode');
-            }
 
             this.$loadingSpinner = $(this.loadingTemplate);
 
@@ -251,7 +250,10 @@ define([
                 this.updateEntityHighlighting();
             }
 
-            this.updateSelectedDocument();
+            if (this.previewModeModel) {
+                this.$('.main-results-content').addClass('preview-mode');
+                this.updateSelectedDocument();
+            }
         },
 
         updateEntityHighlighting: function() {

@@ -49,7 +49,6 @@ define([
                 fetchStrategy: suggestStrategy,
                 documentsCollection: new SimilarDocumentsCollection(),
                 queryModel: this.queryModel,
-                enablePreview: true,
                 scrollModel: this.scrollModel,
                 previewModeModel: previewModeModel
             });
