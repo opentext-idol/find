@@ -108,8 +108,6 @@ define([
             },
             'click .numeric-parametric-reset': function() {
                 resetSelectedParametricValues(this.selectedParametricValues, this.fieldName, this.numericRestriction);
-                this.drawSelection();
-                this.updateModel(this.absoluteMinValue, this.absoluteMaxValue);
             },
             'change .numeric-parametric-min-input': function() {
                 //noinspection JSUnresolvedVariable,JSUnresolvedFunction
@@ -250,6 +248,13 @@ define([
             if (this.selectionEnabled) {
                 this.drawSelection();
             }
+
+            this.listenTo(this.selectedParametricValues, 'remove', function(model) {
+                if (model.get('field') == this.fieldName) {
+                    this.drawSelection();
+                    this.updateModel(this.absoluteMinValue, this.absoluteMaxValue);
+                }
+            });
         },
 
         drawSelection: function() {
