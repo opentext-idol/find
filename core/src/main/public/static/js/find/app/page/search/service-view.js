@@ -194,7 +194,6 @@ define([
             this.middleColumnScrollModel = new Backbone.Model();
 
             var resultsView = new this.ResultsView(_.defaults({
-                enablePreview: true,
                 relatedConceptsClickHandler: relatedConceptsClickHandler,
                 fetchStrategy: this.searchTypes[searchType].fetchStrategy,
                 highlightModel: this.highlightModel,
