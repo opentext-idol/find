@@ -1,0 +1,18 @@
+{
+  "app": {
+    "type": "On Premise",
+    "deployment": "staging",
+    "find": "http://cbg-find-releases-11-1.hpeswlab.net:8080"
+  },
+  "selenium": {
+    "browsers": ["chrome"],
+    "url": "http://localhost:4444/wd/hub"
+  },
+  "users": {
+    "default": {
+      "role": "Admin",
+      "username": "selenium",
+      "password": "q"
+    }
+  }
+}
