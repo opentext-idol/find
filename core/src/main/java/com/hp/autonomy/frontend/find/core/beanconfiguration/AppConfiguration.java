@@ -107,15 +107,6 @@ public class AppConfiguration<C extends Config<C>> {
     }
 
     @Bean
-    public ConfigEnvironmentVariableFilter configEnvironmentVariableFilter() {
-        final ConfigEnvironmentVariableFilter configEnvironmentVariableFilter = new ConfigEnvironmentVariableFilter();
-        configEnvironmentVariableFilter.setConfigPage("/configError");
-        configEnvironmentVariableFilter.setConfigService(configService);
-
-        return configEnvironmentVariableFilter;
-    }
-
-    @Bean
     @Autowired
     public ValidationService<C> validationService() {
         final ValidationServiceImpl<C> validationService = new ValidationServiceImpl<>();
