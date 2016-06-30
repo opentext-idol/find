@@ -6,7 +6,9 @@ import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
-import org.openqa.selenium.*;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -48,6 +50,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     public SearchPage addSynonymGroup(final Language language, final String... synonyms) {
         return addSynonymGroup(language, Arrays.asList(synonyms));
     }
+
     //bad because assumes redirected to search page which not be if no docs in that language
     public SearchPage addSynonymGroup(final Language language, final Iterable<String> synonyms) {
         addKeywords(KeywordWizardType.SYNONYMS, language, synonyms);
@@ -96,11 +99,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
             final int current = keywordsPage.countKeywords();
             if (current > 0) {
                 count += current;
-                try {
-                    tryDeleteAll(language);
-                } catch (final StaleElementReferenceException e) {
-                    return deleteAll(type);
-                }
+                tryDeleteAll(language);
             }
         }
         waitUntilNoKeywords(10 * (count + 1));
@@ -108,20 +107,31 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     }
 
     private void tryDeleteAll(final Language language) throws StaleElementReferenceException {
-        final int limit = 20;
+        final int limit = 5;
         keywordsPage.selectLanguage(language);
 
         List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
         int i=0;
         while(keywordGroups.size()>0 && i<limit) {
-            for (WebElement group : keywordGroups) {
-                keywordsPage.firstRemoveButtonOfGroup(group).click();
+            for(WebElement group:keywordGroups) {
+                removeGroupFromLastElementToFirst(group);
             }
             i++;
+            new WebDriverWait(getDriver(),20).until(keywordsPage.keywordLoadingIndicatorsGone());
             keywordGroups = keywordsPage.allKeywordGroups();
+
         }
     }
 
+    private void removeGroupFromLastElementToFirst(WebElement group){
+        List<WebElement> buttons = keywordsPage.removeButtons(group);
+        if(buttons.size()>1){
+            for (int j=buttons.size()-1;j>0;j--){
+                buttons.get(j).click();
+            }
+        }
+        else{buttons.get(0).click();}
+    }
     private void waitUntilNoKeywords(final int timeout) {
         new WebDriverWait(getDriver(), timeout)
                 .withMessage("deleting keywords")
@@ -129,12 +139,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     }
 
     public void removeKeywordGroup(final WebElement group) {
-        final int loopLimit = 20;
-        int i=0;
-        while(keywordsPage.removeButtons(group).size()>0 && i<loopLimit){
-            keywordsPage.firstRemoveButtonOfGroup(group);
-            i++;
-        }
+        removeGroupFromLastElementToFirst(group);
         keywordsPage.waitForRefreshIconToDisappear();
     }
 
