@@ -6,7 +6,9 @@ import com.autonomy.abc.selenium.application.IsoElementFactory;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
-import org.openqa.selenium.*;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -48,6 +50,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     public SearchPage addSynonymGroup(final Language language, final String... synonyms) {
         return addSynonymGroup(language, Arrays.asList(synonyms));
     }
+
     //bad because assumes redirected to search page which not be if no docs in that language
     public SearchPage addSynonymGroup(final Language language, final Iterable<String> synonyms) {
         addKeywords(KeywordWizardType.SYNONYMS, language, synonyms);
@@ -96,11 +99,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
             final int current = keywordsPage.countKeywords();
             if (current > 0) {
                 count += current;
-                try {
-                    tryDeleteAll(language);
-                } catch (final StaleElementReferenceException e) {
-                    return deleteAll(type);
-                }
+                tryDeleteAll(language);
             }
         }
         waitUntilNoKeywords(10 * (count + 1));
@@ -108,27 +107,31 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     }
 
     private void tryDeleteAll(final Language language) throws StaleElementReferenceException {
-        try {
-            keywordsPage.selectLanguage(language);
-        } catch (final WebDriverException e) {
-            /* language dropdown disabled */
-        }
-        final List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
-        for(final WebElement group : keywordGroups){
-            removeKeywordGroupAsync(group);
+        final int limit = 5;
+        keywordsPage.selectLanguage(language);
+
+        List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
+        int i=0;
+        while(keywordGroups.size()>0 && i<limit) {
+            for(WebElement group:keywordGroups) {
+                removeGroupFromLastElementToFirst(group);
+            }
+            i++;
+            new WebDriverWait(getDriver(),20).until(keywordsPage.keywordLoadingIndicatorsGone());
+            keywordGroups = keywordsPage.allKeywordGroups();
+
         }
     }
 
-    //Problem with deletion not solved - sometimes fails
-    private void removeKeywordGroupAsync(final WebElement group) {
-        final List<WebElement> removeButtons = keywordsPage.removeButtons(group);
-        if(removeButtons.size() > 1){removeButtons.remove(0);}
-        for(final WebElement removeButton:removeButtons){
-            new WebDriverWait(getDriver(),20).until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-spin")));
-            removeButton.click();
+    private void removeGroupFromLastElementToFirst(WebElement group){
+        List<WebElement> buttons = keywordsPage.removeButtons(group);
+        if(buttons.size()>1){
+            for (int j=buttons.size()-1;j>0;j--){
+                buttons.get(j).click();
+            }
         }
+        else{buttons.get(0).click();}
     }
-
     private void waitUntilNoKeywords(final int timeout) {
         new WebDriverWait(getDriver(), timeout)
                 .withMessage("deleting keywords")
@@ -136,7 +139,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     }
 
     public void removeKeywordGroup(final WebElement group) {
-        removeKeywordGroupAsync(group);
+        removeGroupFromLastElementToFirst(group);
         keywordsPage.waitForRefreshIconToDisappear();
     }
 

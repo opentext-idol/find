@@ -8,6 +8,7 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -26,6 +27,15 @@ public abstract class KeywordsPage extends KeywordsBase {
         new WebDriverWait(getDriver(),30)
                 .withMessage("Keywords page failed to load")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("keywords-container")));
+    }
+
+    public ExpectedCondition<Boolean> keywordLoadingIndicatorsGone(){
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver webDriver) {
+                return findElements(By.cssSelector(".keywords-sub-list .keyword-processing-indicator.fa-spin")).size()<1;
+            }
+        };
     }
 
     public WebElement createNewKeywordsButton() {
