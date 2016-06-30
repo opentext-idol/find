@@ -27,7 +27,7 @@ public class SharedPreviewTests {
 
     public static void testDocumentPreview(final Session session, final DocumentViewer documentViewer, final Index index){
         if(index == null){
-            verifyThat("index is displayed", documentViewer.getIndex(), not(nullValue()));
+            verifyThat("index is displayed", documentViewer.getIndexName(), not(nullValue()));
         } else {
             verifyThat(documentViewer.getIndex(), is(index));
         }

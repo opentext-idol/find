@@ -17,9 +17,9 @@ public class FindHasLoggedIn implements HasLoggedIn {
     @Override
     public boolean hasLoggedIn() {
         try {
-            new WebDriverWait(driver,30)
+            new WebDriverWait(driver, 30)
                     .withMessage("logging in to Find")
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid")));
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container")));
             return true;
         } catch (final Exception e) {
             if (signedInTextVisible()) {

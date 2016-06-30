@@ -14,12 +14,12 @@ import org.openqa.selenium.WebDriver;
 public class DetailedPreviewPage extends AppElement implements AppPage {
 
     private DetailedPreviewPage(final WebDriver driver){
-        super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
+        super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container"))),driver);
     }
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid")));
+        new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container")));
     }
 
     //navigation

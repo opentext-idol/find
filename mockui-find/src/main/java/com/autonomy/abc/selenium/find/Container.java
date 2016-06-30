@@ -38,6 +38,6 @@ public enum Container {
     }
 
     public static WebElement currentTabContents(final WebDriver driver) {
-        return driver.findElement(By.cssSelector(".full-height-viewport:not(.hide), div[data-pagename=search]"));
+        return driver.findElement(By.cssSelector(".query-service-view-container > :not(.hide):not(.search-tabs-container), div[data-pagename=search]"));
     }
 }

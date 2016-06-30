@@ -33,17 +33,18 @@ public class DocumentPreviewITCase extends FindTestBase {
     private FindService findService;
 
     public DocumentPreviewITCase(final TestConfig config) {
-        super(config);}
+        super(config);
+    }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
     }
 
     @Test
-    public void testShowDocumentPreview(){
-        ResultsView results = findService.search("cake");
+    public void testShowDocumentPreview() {
+        final ResultsView results = findService.search("cake");
         findPage.filterBy(new IndexFilter(filters().getIndex(1).getName()));
 
         final DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
@@ -52,24 +53,24 @@ public class DocumentPreviewITCase extends FindTestBase {
         if (inlinePreview.loadingIndicatorExists()) {
             assertThat("Preview not stuck loading", inlinePreview.loadingIndicator(), not(displayed()));
         }
-        assertThat("There is content in preview", inlinePreview.getContents(), not(isEmptyOrNullString()));
-        assertThat("Index displayed", docPreview.getIndex(),not(nullValue()));
-        assertThat("Reference displayed",docPreview.getReference(),not(nullValue()));
+
+        assertThat("Index displayed", docPreview.getIndexName(), not(isEmptyOrNullString()));
+        assertThat("Reference displayed", docPreview.getReference(), not(isEmptyOrNullString()));
 
         final Frame previewFrame = new Frame(getWindow(), docPreview.frame());
-        final String frameText=previewFrame.getText();
+        final String frameText = previewFrame.getText();
 
-        verifyThat("Preview document has content",frameText,not(isEmptyOrNullString()));
-        assertThat("Preview document has no error",previewFrame.getText(),not(containsString("encountered an error")));
+        verifyThat("Preview document has content", frameText, not(isEmptyOrNullString()));
+        assertThat("Preview document has no error", previewFrame.getText(), not(containsString("encountered an error")));
 
         docPreview.close();
     }
 
     @Test
-    public void testOpenOriginalDocInNewTab(){
+    public void testOpenOriginalDocInNewTab() {
         final Session session = getMainSession();
 
-        ResultsView results = findService.search("flail");
+        final ResultsView results = findService.search("flail");
         if (isHosted()) {
             // e.g. FIFA contains links that redirect to new pages
             findPage.filterBy(new IndexFilter("simpsonsarchive"));
@@ -96,13 +97,13 @@ public class DocumentPreviewITCase extends FindTestBase {
         }
     }
 
-    private String reformatReference(final String badFormatReference){
-        return badFormatReference.replace(" ","_");
+    private String reformatReference(final String badFormatReference) {
+        return badFormatReference.replace(" ", "_");
     }
 
     @Test
     public void testDetailedPreview() {
-        ResultsView results = findService.search("tragic");
+        final ResultsView results = findService.search("tragic");
         findPage.filterBy(new IndexFilter(filters().getIndex(1).getName()));
 
         results.getResult(1).openDocumentPreview();
@@ -113,7 +114,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         //loading
         final String frameText = new Frame(getMainSession().getActiveWindow(), detailedPreviewPage.frame()).getText();
         verifyThat("Frame has content", frameText, not(isEmptyOrNullString()));
-        verifyThat("Preview frame has no error",frameText,not(containsString("encountered an error")));
+        verifyThat("Preview frame has no error", frameText, not(containsString("encountered an error")));
 
         checkHasMetaDataFields(detailedPreviewPage);
 
@@ -125,43 +126,45 @@ public class DocumentPreviewITCase extends FindTestBase {
 
     }
 
-    private void checkHasMetaDataFields(final DetailedPreviewPage detailedPreviewPage){
-        verifyThat("Tab loads",!detailedPreviewPage.loadingIndicator().isDisplayed());
-        verifyThat("Detailed Preview has reference",detailedPreviewPage.getReference(),not(nullValue()));
-        if(isHosted()){
-        verifyThat("Detailed Preview has index",detailedPreviewPage.getIndex(),not(nullValue()));}
-        else{verifyThat("Detailed Preview has database",detailedPreviewPage.getDatabase(),not(nullValue()));}
-        verifyThat("Detailed Preview has title",detailedPreviewPage.getTitle(),not(nullValue()));
+    private void checkHasMetaDataFields(final DetailedPreviewPage detailedPreviewPage) {
+        verifyThat("Tab loads", !detailedPreviewPage.loadingIndicator().isDisplayed());
+        verifyThat("Detailed Preview has reference", detailedPreviewPage.getReference(), not(nullValue()));
+        if (isHosted()) {
+            verifyThat("Detailed Preview has index", detailedPreviewPage.getIndex(), not(nullValue()));
+        } else {
+            verifyThat("Detailed Preview has database", detailedPreviewPage.getDatabase(), not(nullValue()));
+        }
+        verifyThat("Detailed Preview has title", detailedPreviewPage.getTitle(), not(nullValue()));
         verifyThat("Detailed Preview has summary", detailedPreviewPage.getSummary(), not(nullValue()));
 //        verifyThat("Detailed Preview has date",detailedPreviewPage.getDate(),not(nullValue()));
     }
 
-    private void checkSimilarDocuments(final DetailedPreviewPage detailedPreviewPage){
+    private void checkSimilarDocuments(final DetailedPreviewPage detailedPreviewPage) {
         detailedPreviewPage.similarDocsTab().click();
-        verifyThat("Tab loads",!detailedPreviewPage.loadingIndicator().isDisplayed());
+        verifyThat("Tab loads", !detailedPreviewPage.loadingIndicator().isDisplayed());
     }
 
-    private void checkSimilarDates(final DetailedPreviewPage detailedPreviewPage){
+    private void checkSimilarDates(final DetailedPreviewPage detailedPreviewPage) {
         detailedPreviewPage.similarDatesTab().click();
-        verifyThat("Tab loads",!detailedPreviewPage.loadingIndicator().isDisplayed());
+        verifyThat("Tab loads", !detailedPreviewPage.loadingIndicator().isDisplayed());
         changeDateSliderToYearBefore(detailedPreviewPage);
         verifyThat("Can change to similar docs from year before", detailedPreviewPage.getSimilarDatesSummary(), containsString("Between 1 year"));
     }
 
-    private void changeDateSliderToYearBefore(final DetailedPreviewPage detailedPreviewPage){
+    private void changeDateSliderToYearBefore(final DetailedPreviewPage detailedPreviewPage) {
         detailedPreviewPage.ithTick(1).click();
     }
 
     @Test
     @ActiveBug(value = "FIND-86", browsers = Browser.FIREFOX)
-    public void testOneCopyOfDocInDetailedPreview(){
-        ResultsView results = findService.search("face");
+    public void testOneCopyOfDocInDetailedPreview() {
+        final ResultsView results = findService.search("face");
         results.getResult(1).openDocumentPreview();
 
         getElementFactory().getInlinePreview().openDetailedPreview();
         final DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
 
-        verifyThat("Only 1 copy of that document in detailed preview",detailedPreviewPage.numberOfHeadersWithDocTitle(),lessThanOrEqualTo(1));
+        verifyThat("Only 1 copy of that document in detailed preview", detailedPreviewPage.numberOfHeadersWithDocTitle(), lessThanOrEqualTo(1));
 
         detailedPreviewPage.goBackToSearch();
 

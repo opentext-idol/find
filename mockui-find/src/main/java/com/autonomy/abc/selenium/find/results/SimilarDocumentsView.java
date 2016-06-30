@@ -53,7 +53,7 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     public WebElement previewContents(){
-        return findElement(By.className("preview-mode-contents"));
+        return findElement(By.className("preview-mode-container"));
     }
 
     /**
