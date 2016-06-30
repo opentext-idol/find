@@ -46,7 +46,7 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testParametricFiltersResults() {
-        ResultsView results = findService.search("cats");
+        final ResultsView results = findService.search("cats");
         findPage.waitForParametricValuesToLoad();
         final int originalNumberOfResults = findPage.totalResultsNum();
 
@@ -158,7 +158,7 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ActiveBug("FIND-247")
     public void testSelectDifferentCategoryFiltersAndResultsLoad(){
-        ResultsView results = findService.search("face");
+        final ResultsView results = findService.search("face");
 
         for(int i = 0 ; i<filters().numberParametricFieldContainers()-1;i++){
             filters().checkBoxesForParametricFieldContainer(i).get(0).check();
@@ -169,7 +169,7 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
-        ResultsView results = findService.search("wolf");
+        final ResultsView results = findService.search("wolf");
 
         final FilterPanel panel = filters();
         panel.clickFirstIndex();
@@ -181,12 +181,12 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testFilterByIndex() {
-        ResultsView results = findService.search("face");
+        final ResultsView results = findService.search("face");
         final QueryResult queryResult = results.searchResult(1);
         final String titleString = queryResult.getTitleString();
         final DocumentViewer docPreview = queryResult.openDocumentPreview();
 
-        final String index = databaseOrIndex(docPreview);
+        final String index = docPreview.getIndexName();
         docPreview.close();
 
         findPage.filterBy(new IndexFilter(index));
@@ -215,32 +215,24 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testFilteredByIndexOnlyHasFilesFromIndex() {
-        ResultsView results = findService.search("Better");
+        final ResultsView results = findService.search("Better");
 
         final DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
-        final String chosenIndex = databaseOrIndex(docPreview);
+        final String chosenIndex = docPreview.getIndexName();
         docPreview.close();
 
         findPage.filterBy(new IndexFilter(chosenIndex));
         //weirdly failing to open the 2nd result (subsequent okay)
         for (int i = 1; i < 6; i++) {
             final DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
-            assertThat(databaseOrIndex(docPreview), is(chosenIndex));
+            assertThat(docPreview.getIndexName(), is(chosenIndex));
             docViewer.close();
         }
     }
 
-    private String databaseOrIndex(final DocumentViewer docPreview){
-        if(isHosted()){
-            return docPreview.getIndexAsString();
-        }
-        else{
-            return docPreview.getDatabase();
-        }
-    }
     @Test
     public void testQuickDoubleClickOnDateFilterNotCauseError() {
-        ResultsView results = findService.search("wookie");
+        final ResultsView results = findService.search("wookie");
 
         toggleDateSelection(DateOption.MONTH);
         toggleDateSelection(DateOption.MONTH);
@@ -266,7 +258,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     private void preDefinedDateFiltersVersusCustomDateFilters(final DateOption period) {
-        ResultsView results = findService.search("*");
+        final ResultsView results = findService.search("*");
 
         toggleDateSelection(period);
         final List<String> preDefinedResults = results.getResultTitles();
@@ -316,7 +308,7 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ResolvedBug("CSA-1577")
     public void testClickingCustomDateFilterDoesNotRefreshResults() {
-        ResultsView results = findService.search("O Captain! My Captain!");
+        final ResultsView results = findService.search("O Captain! My Captain!");
         // may not happen the first time
         for (int unused = 0; unused < 5; unused++) {
             toggleDateSelection(DateOption.CUSTOM);

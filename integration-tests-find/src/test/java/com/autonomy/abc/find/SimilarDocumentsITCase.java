@@ -53,7 +53,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testSimilarDocumentsShowUp() throws InterruptedException {
-        ResultsView results = findService.search(new Query("Doe"));
+        final ResultsView results = findService.search(new Query("Doe"));
 
         for (int i = 1; i <= 5; i++) {
             final String title = results.getResult(i).getTitleString();
@@ -150,7 +150,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testInfiniteScroll(){
-        ResultsView results = findService.search(new Query("blast").withFilter(IndexFilter.ALL));
+        final ResultsView results = findService.search(new Query("blast").withFilter(IndexFilter.ALL));
 
         similarDocuments = findService.goToSimilarDocuments(1);
         assumeThat(similarDocuments.getResults().size(), is(30));
@@ -204,7 +204,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
             assertThat("Have opened preview container",docPreview.previewPresent());
             verifyThat("Preview not stuck loading", !similarDocuments.loadingIndicator().isDisplayed());
             verifyThat("There is content in preview", similarDocuments.previewContents().getText(), not(isEmptyOrNullString()));
-            verifyThat("Index displayed", docPreview.getIndex(), not(nullValue()));
+            verifyThat("Index displayed", docPreview.getIndexName(), not(nullValue()));
             verifyThat("Reference displayed", docPreview.getReference(), not(nullValue()));
 
             final Frame previewFrame = new Frame(getWindow(), docPreview.frame());
