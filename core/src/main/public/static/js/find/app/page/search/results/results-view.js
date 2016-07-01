@@ -65,8 +65,8 @@ define([
                 } else {
                     //enable/choose another preview view
                     var cid = $target.data('cid');
-                    var isPromotion = $target.closest('.main-results-list').hasClass('promotion');
-                    var collection = isPromotion ? this.promotionsCollections : this.documentsCollection;
+                    var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
+                    var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
                     var model = collection.get(cid);
                     this.previewModeModel.set({document: model});
 
