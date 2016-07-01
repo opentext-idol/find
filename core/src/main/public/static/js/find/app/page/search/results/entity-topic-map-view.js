@@ -142,14 +142,35 @@ define([
         updateTopicMapData: function() {
             var mode = this.model.get('mode');
 
-            var data = this.entityCollection.chain()
-                .sortBy(function(entity) {
-                    return - entity.get(mode);
+            var data = _.chain(this.entityCollection.groupBy('cluster'))
+                // Order the concepts in each cluster
+                .map(function (cluster) {
+                    return _.sortBy(cluster, function (model) {
+                        return -model.get(mode);
+                    });
                 })
-                .first(this.model.get('count'))
-                .map(function(entity) {
-                    return {name: entity.get('text'), size: entity.get(mode)};
-                }, this)
+                // For each related concept give the name and size
+                .map(function(cluster) {
+                    return cluster.map(function (model) {
+                        return {name: model.get('text'), size: model.get(mode)};
+                    })
+                })
+                // Give each cluster a name (first concept in list), total size and add all concepts to the children attribute to create the topic map double level
+                .map(function(cluster) {
+                    var size = _.chain(cluster)
+                        .pluck('size')
+                        .reduce(function(a,b) {return a + b;})
+                        .value();
+                    
+                    return {
+                        name: cluster[0].name,
+                        size: size,
+                        children: cluster
+                    };
+                })
+                .sortBy(function(clusterNode) {
+                    return -clusterNode.size;
+                })
                 .value();
 
             this.topicMap.setData(data);

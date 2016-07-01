@@ -89,9 +89,9 @@ define([
         describe('rendered with entities in the collection', function() {
             beforeEach(function() {
                 this.entityCollection.set([
-                    {text: 'gin', occurrences: 12, docsWithPhrase: 7},
-                    {text: 'siege', occurrences: 23, docsWithPhrase: 1},
-                    {text: 'pneumatic', occurrences: 2, docsWithPhrase: 2}
+                    {text: 'gin', occurrences: 12, docsWithPhrase: 7, cluster: 0},
+                    {text: 'siege', occurrences: 23, docsWithPhrase: 1, cluster: 0},
+                    {text: 'pneumatic', occurrences: 2, docsWithPhrase: 2, cluster: 1}
                 ]);
 
                 this.createView();
@@ -114,9 +114,13 @@ define([
                 expect(this.topicMap.draw).toHaveBeenCalled();
 
                 expect(this.topicMap.setData.calls.mostRecent().args[0]).toEqual([
-                    {name: 'siege', size: 23},
-                    {name: 'gin', size: 12},
-                    {name: 'pneumatic', size: 2}
+                    {name: 'siege', size: 35, children: [
+                        {name: 'siege', size: 23},
+                        {name: 'gin', size: 12}
+                    ]},
+                    {name: 'pneumatic', size: 2, children: [
+                        {name: 'pneumatic', size: 2}
+                    ]}
                 ]);
 
                 expect(this.view.$('.entity-topic-map')).not.toHaveClass('hide');
