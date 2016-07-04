@@ -57,7 +57,8 @@ public class SharedPreviewTests {
         final Window newWindow = session.switchWindow(session.countWindows() - 1);
         newWindow.activate();
 
-        verifyThat(reference,containsString(session.getDriver().getCurrentUrl()));
+        //need to split because newWindow URL could be "https..."
+        verifyThat(reference,containsString(session.getDriver().getCurrentUrl().split(":")[1]));
 
         newWindow.close();
         original.activate();
