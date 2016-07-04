@@ -119,6 +119,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 
 	@Test
 	@ResolvedBug("CCUK-3636")
+	//failing on test VM because QMS is old version (maybe?)
 	public void testTwoPromotionTypesForSameTrigger() {
 		final DynamicPromotion promotion1 = new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "cat");
 		final DynamicPromotion promotion2 = new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "cat");
