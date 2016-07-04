@@ -46,13 +46,15 @@ define([
     function parametricFilterText(values, ranges, numeric) {
         var round = function (x) {
             return Math.round(x * 10) / 10;
-        }; 
-        
-        var rangeText = ranges.map(function(range) {
-            return numeric ? round(range[0]) + ' - ' + round(range[1]) : formatDate(range[0]) + ' - ' + formatDate(range[1]);
-        }).join(', ');
-        
-        return rangeText + (rangeText && values.length > 0 ? ', ' : '') + values.join(', ');
+        };
+
+        if (!_.isEmpty(values)) {
+            return values.join(', ');
+        } else {
+            return ranges.map(function(range) {
+                return numeric ? round(range[0]) + ' - ' + round(range[1]) : formatDate(range[0]) + ' - ' + formatDate(range[1]);
+            }).join(', ');
+        }
     }
 
     // Get an array of filter model attributes from the selected parametric values collection
