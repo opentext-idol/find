@@ -5,11 +5,11 @@
 
 package com.hp.autonomy.frontend.find.hod.web;
 
-public enum SsoMvcConstants
-{
+enum SsoMvcConstants {
     AUTHENTICATE_PATH("authenticatePath"),
     COMBINED_REQUEST_API("combinedRequestApi"),
     ERROR_PAGE("errorPage"),
+    COOKIE_ERROR_PAGE("cookieErrorPage"),
     LIST_APPLICATION_REQUEST("listApplicationRequest"),
     LIST_APPLICATION_REQUEST_API("listApplicationRequestApi"),
     LOGOUT_ENDPOINT("endpoint"),

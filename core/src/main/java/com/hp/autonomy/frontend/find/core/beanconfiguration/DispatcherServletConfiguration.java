@@ -19,6 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
     public static final String AUTHENTICATION_ERROR_PATH = "/authentication-error";
     public static final String CLIENT_AUTHENTICATION_ERROR_PATH = "/client-authentication-error";
+    public static final String COOKIE_AUTHENTICATION_ERROR_PATH = "/cookie-authentication-error";
     public static final String NOT_FOUND_ERROR_PATH = "/not-found-error";
     public static final String SERVER_ERROR_PATH = "/server-error";
 
