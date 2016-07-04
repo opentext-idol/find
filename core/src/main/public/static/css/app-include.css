@@ -1234,13 +1234,9 @@ input:-moz-placeholder::before {
 }
 
 .filter-display-text {
-    max-width: 130px;
+    max-width: 300px;
     vertical-align: middle;
     line-height: 1.2em;
-}
-
-.filter-display-text.shorten {
-    max-width: 130px;
 }
 
 .filters-margin {

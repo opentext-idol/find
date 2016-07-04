@@ -9,12 +9,15 @@ define([
     'moment',
     'find/app/model/dates-filter-model',
     'find/app/util/model-any-changed-attribute-listener',
+    'parametric-refinement/prettify-field-name',
     'i18n!find/nls/bundle'
-], function(Backbone, _, moment, DatesFilterModel, addChangeListener, i18n) {
+], function(Backbone, _, moment, DatesFilterModel, addChangeListener, prettifyFieldName, i18n) {
     "use strict";
 
     var DATE_FORMAT = "YYYY-MM-DD HH:mm";
-    
+    var SHORT_DATE_FORMAT = "YYYY-MM-DD";
+    var DATE_SHORTEN_CUTOFF =  7 * 24 * 3600; // interval in seconds at which date format changes to short
+
     var FilterType = {
         INDEXES: 'INDEXES',
         MAX_DATE: 'MAX_DATE',
@@ -37,24 +40,36 @@ define([
     function parametricFilterId(fieldName) {
         return fieldName;
     }
-    
-    function formatDate(autnDate) {
-        return moment(autnDate * 1000).format(DATE_FORMAT);
+
+    function formatDate(autnDate, format) {
+        return moment(autnDate * 1000).format(format);
     }
 
     // Get the display text for the given parametric field name and array of selected parametric values
-    function parametricFilterText(values, ranges, numeric) {
+    function parametricFilterText(field, values, ranges, numeric) {
         var round = function (x) {
+            // TODO: implement significant figures---e.g. using toPrecision()---instead of simple rounding
             return Math.round(x * 10) / 10;
         };
 
+        var valueText;
+
         if (!_.isEmpty(values)) {
-            return values.join(', ');
+            valueText = values.join(', ');
         } else {
-            return ranges.map(function(range) {
-                return numeric ? round(range[0]) + ' - ' + round(range[1]) : formatDate(range[0]) + ' - ' + formatDate(range[1]);
+            valueText = ranges.map(function (range) {
+                //Discard time of day if range greater than 1 week
+                if (numeric) {
+                    return round(range[0]) + ' - ' + round(range[1]);
+                } else if (range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
+                    return formatDate(range[0], DATE_FORMAT) + ' - ' + formatDate(range[1], DATE_FORMAT);
+                } else {
+                    return formatDate(range[0], SHORT_DATE_FORMAT) + ' - ' + formatDate(range[1], SHORT_DATE_FORMAT);
+                }
             }).join(', ');
         }
+
+        return prettifyFieldName(field) + ': ' + valueText;
     }
 
     // Get an array of filter model attributes from the selected parametric values collection
@@ -63,7 +78,7 @@ define([
             return {
                 id: parametricFilterId(field),
                 field: field,
-                text: parametricFilterText(data.values, data.range ? [data.range] : [], data.numeric),
+                text: parametricFilterText(field, data.values, data.range ? [data.range] : [], data.numeric),
                 type: FilterType.PARAMETRIC
             };
         });
@@ -179,7 +194,7 @@ define([
                 this.add({
                     id: id,
                     field: field,
-                    text: parametricFilterText(values, ranges, selectionModel.get('numeric')),
+                    text: parametricFilterText(field, values, ranges, selectionModel.get('numeric')),
                     type: FilterType.PARAMETRIC
                 }, {
                     // Merge true to overwrite the text for any existing model for this field name
