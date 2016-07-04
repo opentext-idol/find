@@ -52,12 +52,8 @@ public class SchedulePromotionService extends ServiceBase<IdolIsoElementFactory>
     private void navigateToScheduleRecurrence(final Date startDate, final Date endDate, final SchedulePage.Frequency frequency){
         navigateToScheduleDuration();
 
-        //maybe the clicking should be inside the method? Check everywhere it's used
         scheduleDurationSelector(schedulePage.startDateCalendar(),startDate);
-        //schedulePage.startDateCalendar().click();
-
         scheduleDurationSelector(schedulePage.endDateCalendar(),endDate);
-        //schedulePage.endDateCalendar().click();
 
         schedulePage.continueButton().click();
         Waits.loadOrFadeWait();
@@ -88,19 +84,16 @@ public class SchedulePromotionService extends ServiceBase<IdolIsoElementFactory>
 
     public void setStartDate(final int daysFromNow){
         scheduleDurationSelector(schedulePage.startDateCalendar(), DateUtils.addDays(schedulePage.getTodayDate(), daysFromNow));
-        //what is the point?!
-        //schedulePage.startDateCalendar().click();
     }
+
     public void setEndDate(final int daysFromNow){
         scheduleDurationSelector(schedulePage.endDateCalendar(),DateUtils.addDays(schedulePage.getTodayDate(),daysFromNow));
-        //schedulePage.endDateCalendar().click();
     }
 
     public void navigateWizardAndSetEndDate(final Date endDate) {
         navigateToScheduleDuration();
 
         scheduleDurationSelector(schedulePage.endDateCalendar(),endDate);
-        //schedulePage.endDateCalendar().click();
 
         schedulePage.continueButton().click();
         Waits.loadOrFadeWait();
