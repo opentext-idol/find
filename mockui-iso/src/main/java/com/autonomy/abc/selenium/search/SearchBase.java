@@ -376,7 +376,7 @@ public abstract class SearchBase extends SOPageBase implements
 	}
 
 	public List<String> filterLabelList() {
-		return ElementUtil.getTexts(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
+		return ElementUtil.getTexts(findElements(By.cssSelector(".filter-display-view span.filter-display-text")));
 	}
 
 	@Override
