@@ -66,7 +66,7 @@ define([
                 var matchedRoute = Backbone.history.start();
 
                 if (!matchedRoute) {
-                    vent.navigate('find/search/splash');
+                    vent.navigate(configuration().hasBiRole ? 'find/search/query/*' : 'find/search/splash');
                 }
             }.bind(this));
         },
