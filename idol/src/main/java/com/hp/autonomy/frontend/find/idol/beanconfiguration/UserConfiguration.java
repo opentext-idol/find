@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.authentication.OneToOneOrZeroSimpleAuthorityMapper;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -20,14 +21,19 @@ public class UserConfiguration {
     public static final String IDOL_ADMIN_ROLE = "FindAdmin";
     public static final String IDOL_BI_ROLE = "FindBI";
 
+    @Value("${hp.find.enableBi}")
+    private boolean enableBi;
+
     @Bean
     public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
-        final Map<String, String> rolesMap = ImmutableMap.<String, String>builder()
+        final ImmutableMap.Builder<String, String> rolesMapBuilder = ImmutableMap.<String, String>builder()
             .put(IDOL_USER_ROLE, FindRole.USER.toString())
-            .put(IDOL_ADMIN_ROLE, FindRole.ADMIN.toString())
-            .put(IDOL_BI_ROLE, FindRole.BI.toString())
-            .build();
+            .put(IDOL_ADMIN_ROLE, FindRole.ADMIN.toString());
 
-        return new OneToOneOrZeroSimpleAuthorityMapper(rolesMap);
+        if (enableBi) {
+            rolesMapBuilder.put(IDOL_BI_ROLE, FindRole.BI.toString());
+        }
+
+        return new OneToOneOrZeroSimpleAuthorityMapper(rolesMapBuilder.build());
     }
 }

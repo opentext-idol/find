@@ -17,9 +17,11 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@ConditionalOnProperty("hp.find.enableBi")
 class IdolSavedQueryController extends SavedQueryController<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
     @Autowired
     public IdolSavedQueryController(final SavedSearchService<SavedQuery> service,

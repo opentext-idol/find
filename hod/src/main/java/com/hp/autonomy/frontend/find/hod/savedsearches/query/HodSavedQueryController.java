@@ -18,9 +18,11 @@ import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@ConditionalOnProperty("hp.find.enableBi")
 class HodSavedQueryController extends SavedQueryController<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
     @Autowired
     public HodSavedQueryController(final SavedSearchService<SavedQuery> service,

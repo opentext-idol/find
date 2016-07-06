@@ -26,6 +26,7 @@ import com.hp.autonomy.hod.sso.SsoAuthenticationEntryPoint;
 import com.hp.autonomy.hod.sso.SsoAuthenticationFilter;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -45,6 +46,9 @@ import java.util.Collection;
 @Order(99)
 public class HodSecurity extends WebSecurityConfigurerAdapter {
     private static final String HOD_BI_ROLE = "bi_user";
+
+    @Value("${hp.find.enableBi}")
+    private boolean enableBi;
 
     @Autowired
     private TokenRepository tokenRepository;
@@ -70,7 +74,7 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
                         grantedAuthorities.add(new SimpleGrantedAuthority(FindRole.USER.toString()));
 
                         for (final GroupInformation groupInformation : combinedTokenInformation.getUser().getGroups()) {
-                            if (groupInformation.getGroups().contains(HOD_BI_ROLE)) {
+                            if (enableBi && groupInformation.getGroups().contains(HOD_BI_ROLE)) {
                                 grantedAuthorities.add(new SimpleGrantedAuthority(FindRole.BI.toString()));
                                 break;
                             }

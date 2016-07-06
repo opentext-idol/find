@@ -22,7 +22,6 @@ import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.LocaleResolver;
@@ -36,7 +35,6 @@ import java.util.Set;
  * Contains beans useful in all configurations
  */
 @Configuration
-@EnableJpaAuditing
 @PropertySource("classpath:/version.properties")
 public class AppConfiguration<C extends Config<C>> {
     public static final String APPLICATION_RELEASE_VERSION_PROPERTY = "${application.releaseVersion}";

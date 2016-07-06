@@ -5,10 +5,13 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchRepository;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Service;
 
 @Service
+@ConditionalOnProperty("hp.find.enableBi")
 public class SavedSnapshotService extends AbstractSavedSearchService<SavedSnapshot> {
     @Autowired
     public SavedSnapshotService(final SavedSearchRepository<SavedSnapshot> savedSnapshotRepository, final AuditorAware<UserEntity> userEntityAuditorAware) {

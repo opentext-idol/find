@@ -12,6 +12,7 @@ import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping(SavedSnapshotController.PATH)
+@ConditionalOnProperty("hp.find.enableBi")
 class SavedSnapshotController {
     static final String PATH = "/api/bi/saved-snapshot";
 
