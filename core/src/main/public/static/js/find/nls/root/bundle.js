@@ -112,7 +112,7 @@ define([
         'search.error.relatedConcepts' : 'An error occurred retrieving related concepts',
         'search.error.parametric' : 'An error occurred retrieving additional filters',
         'search.filters': 'Filters',
-        'search.filters.filter': 'Search filters...',
+        'search.filters.filter': 'Filter...',
         'search.filters.empty': 'No filters matched',
         'search.indexes': 'Indexes',
         'search.indexes.all': 'All',
