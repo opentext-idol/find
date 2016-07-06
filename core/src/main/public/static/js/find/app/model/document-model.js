@@ -14,6 +14,11 @@ define([
 
     var MEDIA_TYPES = ['audio', 'image', 'video'];
     var WEB_TYPES = ['text/html', 'text/xhtml'];
+    var isUrlRegex = /^(?:https?|ftp):\/\/|\\\\\S+/;
+
+    function isURL(reference) {
+        return isUrlRegex.test(reference);
+    }
 
     var fieldTypeParsers = {
         STRING: _.identity,
@@ -73,13 +78,14 @@ define([
 
             response.thumbnail = getFieldValue(response.fieldMap.thumbnail);
             response.thumbnailUrl = getFieldValue(response.fieldMap.thumbnailUrl);
-            response.contentType = getFieldValue(response.fieldMap.contentType);
-            response.url = getFieldValue(response.fieldMap.url);
+            response.contentType = getFieldValue(response.fieldMap.contentType);            
             response.offset = getFieldValue(response.fieldMap.offset);
             response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);
             response.sourceType = getFieldValue(response.fieldMap.sourceType);
             response.transcript = getFieldValue(response.fieldMap.transcript);
 
+            response.url = getFieldValue(response.fieldMap.url) || (isURL(response.reference) ? response.reference : '');
+            
             if (configuration().map.enabled) {
                 response.locations = _.chain(configuration().map.locationFields)
                     .filter(function (field) {

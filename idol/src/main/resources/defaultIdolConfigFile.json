@@ -96,6 +96,7 @@
     "enabled": false,
     "baseUrl": ""
   },
+  "directAccessLink": false,
   "minScore": 0,
   "fieldsInfo": {
     "contentType": {

@@ -15,14 +15,14 @@ define([
     };
 
     _.extend(ResultRenderer.prototype, {
-        getResult: function(model, isPromotion) {
+        getResult: function(model, isPromotion, enablePreview, directAccessLink) {
             var templateData = _.find(this.config, function(templateData) {
-                return templateData.predicate.call(this, model, isPromotion);
+                return templateData.predicate.call(this, model, isPromotion, enablePreview, directAccessLink);
             });
 
             return templateData.template({
                 i18n: i18n,
-                data: templateData.data.call(this, model, isPromotion),
+                data: templateData.data.call(this, model, isPromotion, enablePreview, directAccessLink),
                 model: model
             });
         }

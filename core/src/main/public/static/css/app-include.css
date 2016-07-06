@@ -608,6 +608,22 @@ input.find-input {
     cursor: pointer;
 }
 
+.preview-mode .main-results-container.direct-access {
+    cursor: auto;
+}
+
+.results-small-links {
+    float: right
+}
+
+.preview-link {
+    margin-left: 10px;
+}
+
+.direct-access-title:hover {
+    color: #035b44;
+}
+
 .preview-mode .popover {
     cursor: default;
 }

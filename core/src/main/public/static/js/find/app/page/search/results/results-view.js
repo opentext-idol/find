@@ -12,6 +12,7 @@ define([
     'find/app/util/view-server-client',
     'find/app/util/events',
     'find/app/page/search/results/add-links-to-summary',
+    'find/app/configuration',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/search/results/results-container.html',
     'text!find/templates/app/page/loading-spinner.html',
@@ -19,8 +20,8 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, template, resultsTemplate,
-            loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
+            ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration, template, 
+            resultsTemplate, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     var SCROLL_INCREMENT = 30;
     var INFINITE_SCROLL_POSITION_PIXELS = 500;
@@ -48,42 +49,30 @@ define([
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
 
-        events: {
-            'click .highlighted-entity-text': function(e) {
-                e.stopPropagation();
+        events: function() {
+            var events = {
+                'click .highlighted-entity-text': function(e) {
+                    e.stopPropagation();
 
-                var $target = $(e.target);
-                var entity = $target.attr('data-entity-text');
-                this.relatedConceptsClickHandler([entity]);
-            },
-            'click .preview-mode [data-cid]': function(e) {
-                var $target = $(e.currentTarget);
-
-                if ($target.hasClass('selected-document')) {
-                    // disable preview mode
-                    this.previewModeModel.set({document: null});
-                } else {
-                    //enable/choose another preview view
-                    var cid = $target.data('cid');
-                    var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
-                    var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
-                    var model = collection.get(cid);
-                    this.previewModeModel.set({document: model});
-
-                    if (!isPromotion) {
-                        events().preview(collection.indexOf(model) + 1);
+                    var $target = $(e.target);
+                    var entity = $target.attr('data-entity-text');
+                    this.relatedConceptsClickHandler([entity]);
+                },
+                'click .similar-documents-trigger': function(event) {
+                    event.stopPropagation();
+                    var cid = $(event.target).closest('[data-cid]').data('cid');
+                    var documentModel = this.documentsCollection.get(cid);
+                    if (!documentModel){
+                        documentModel = this.promotionsCollection.get(cid);
                     }
+                    vent.navigateToSuggestRoute(documentModel);
                 }
-            },
-            'click .similar-documents-trigger': function(event) {
-                event.stopPropagation();
-                var cid = $(event.target).closest('[data-cid]').data('cid');
-                var documentModel = this.documentsCollection.get(cid);
-                if (!documentModel){
-                    documentModel = this.promotionsCollection.get(cid);
-                }
-                vent.navigateToSuggestRoute(documentModel);
-            }
+            };
+
+            var selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]';
+            events['click ' + selector] = 'openPreview';
+
+            return events;
         },
 
         initialize: function(options) {
@@ -270,7 +259,7 @@ define([
         },
 
         formatResult: function(model, isPromotion) {
-            var $newResult = this.resultRenderer.getResult(model, isPromotion);
+            var $newResult = this.resultRenderer.getResult(model, isPromotion, Boolean(this.previewModeModel), configuration().directAccessLink);
 
             if (isPromotion) {
                 this.$('.main-results-content .promotions').append($newResult);
@@ -347,6 +336,26 @@ define([
                 // we're not scrolling, so should be a new search
                 events().reset(requestData.text);
             }
+        },
+
+        openPreview: function(e) {
+            var $target = $(e.currentTarget).closest('.main-results-container');
+
+            if ($target.hasClass('selected-document')) {
+                // disable preview mode
+                this.previewModeModel.set({document: null});
+            } else {
+                //enable/choose another preview view
+                var cid = $target.data('cid');
+                var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
+                var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                var model = collection.get(cid);
+                this.previewModeModel.set({document: model});
+
+                if (!isPromotion) {
+                    events().preview(collection.indexOf(model) + 1);
+                }
+            }            
         },
 
         remove: function() {

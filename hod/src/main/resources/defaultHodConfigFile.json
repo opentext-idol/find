@@ -54,6 +54,7 @@
         ]
     },
     "minScore": 0,
+    "directAccessLink": true,
     "fieldsInfo": {
         "contentType": {
             "names": [

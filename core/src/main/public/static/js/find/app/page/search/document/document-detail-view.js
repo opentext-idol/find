@@ -19,11 +19,6 @@ define([
 ], function(Backbone, _, vent, i18n, viewClient, ListView, tabs, configuration, events, template, documentTemplate, mediaTemplate) {
     'use strict';
 
-    var isUrlRegex = /^https?:\/\//;
-    function isURL(reference) {
-        return isUrlRegex.test(reference);
-    }
-
     return Backbone.View.extend({
         template: _.template(template),
         mediaTemplate: _.template(mediaTemplate),
@@ -52,8 +47,7 @@ define([
 
             this.tabs = this.filterTabs(tabs);
 
-            var referenceUrl = isURL(this.model.get('reference')) ?  this.model.get('reference') : '';
-            this.documentHref = this.model.get('url') || referenceUrl;
+            this.documentHref = this.model.get('url') || '';
         },
 
         render: function() {

@@ -7,8 +7,9 @@ define([
     'underscore',
     'find/app/page/search/results/add-links-to-summary',
     'find/app/util/document-mime-types',
-    'text!find/templates/app/page/search/results/results-container.html'
-], function(_, addLinksToSummary, documentMimeTypes, resultsTemplate) {
+    'find/app/configuration',
+    'text!find/templates/app/page/search/results/results-container.html',
+], function(_, addLinksToSummary, documentMimeTypes, configuration, resultsTemplate) {
 
     function getContentTypeClass(model) {
         var contentType = model.get('contentType') || '';
@@ -23,13 +24,15 @@ define([
     }
 
     // Derived data for the default template is provided as a separate function for reuse.
-    var defaultData = function(model, isPromotion) {
+    var defaultData = function(model, isPromotion, enablePreview, directAccessLink) {
         return {
             contentType: getContentTypeClass(model),
             date: model.has('date') ? model.get('date').fromNow() : null,
             highlightedSummary: addLinksToSummary(this.entityCollection, model.get('summary')),
             isPromotion: isPromotion,
-            staticPromotion: model.get('promotionCategory') === 'STATIC_CONTENT_PROMOTION'
+            staticPromotion: model.get('promotionCategory') === 'STATIC_CONTENT_PROMOTION',
+            enablePreview: enablePreview,
+            directAccessLink: directAccessLink
         };
     };
 

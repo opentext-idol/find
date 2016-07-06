@@ -46,6 +46,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
     private final Integer minScore;
+    private final Boolean directAccessLink;
 
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
@@ -61,6 +62,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         map = builder.map;
         savedSearchConfig = builder.savedSearchConfig;
         minScore = builder.minScore;
+        directAccessLink = builder.directAccessLink;
     }
 
     @SuppressWarnings("OverlyComplexMethod")
@@ -77,6 +79,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
                 .setMap(map == null ? config.map : map.merge(config.map))
                 .setSavedSearchConfig(savedSearchConfig == null ? config.savedSearchConfig : savedSearchConfig.merge(config.savedSearchConfig))
                 .setMinScore(minScore == null ? config.minScore : minScore)
+                .setDirectAccessLink(directAccessLink == null ? config.directAccessLink : directAccessLink)
                 .build() : this;
     }
 
@@ -169,6 +172,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         @JsonProperty("savedSearches")
         private SavedSearchConfig savedSearchConfig;
         private Integer minScore;
+        private Boolean directAccessLink;
 
         public Builder(final HodFindConfig config) {
             login = config.login;
@@ -181,6 +185,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
             map = config.map;
             savedSearchConfig = config.savedSearchConfig;
             minScore = config.minScore;
+            directAccessLink = config.directAccessLink;
         }
 
         public HodFindConfig build() {

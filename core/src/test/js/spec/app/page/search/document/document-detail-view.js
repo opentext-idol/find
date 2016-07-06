@@ -195,7 +195,7 @@ define([
                 beforeEach(function() {
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
-                            reference: URL_LIKE_REFERENCE
+                            url: URL_LIKE_REFERENCE
                         }),
                         indexesCollection: new Backbone.Collection()
                     });
