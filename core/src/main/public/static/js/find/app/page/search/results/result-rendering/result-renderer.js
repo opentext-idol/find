@@ -11,7 +11,6 @@ define([
 
     var ResultRenderer = function (options) {
         this.config = options.config;
-        this.entityCollection = options.entityCollection;
     };
 
     _.extend(ResultRenderer.prototype, {

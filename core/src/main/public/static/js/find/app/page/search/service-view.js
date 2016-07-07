@@ -75,8 +75,6 @@ define([
             this.searchTypes = options.searchTypes;
             this.searchCollections = options.searchCollections;
 
-            this.highlightModel = new Backbone.Model({highlightEntities: false});
-
             this.entityCollection = new EntityCollection([], {
                 getSelectedRelatedConcepts: function() {
                     return _.flatten(this.queryState.queryTextModel.get('relatedConcepts')).concat([this.queryState.queryTextModel.get('inputText')]);
@@ -153,7 +151,6 @@ define([
                 queryModel: this.queryModel,
                 queryState: this.queryState,
                 previewModeModel: this.previewModeModel,
-                highlightModel: this.highlightModel,
                 searchCollections: this.searchCollections,
                 searchTypes: this.searchTypes
             };
@@ -181,8 +178,7 @@ define([
             var relatedConceptsClickHandler = this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments);
 
             var relatedConceptsView = new RelatedConceptsView(_.extend({
-                clickHandler: relatedConceptsClickHandler,
-                highlightModel: this.highlightModel
+                clickHandler: relatedConceptsClickHandler
             }, subViewArguments));
 
             this.relatedConceptsViewWrapper = new Collapsible({
@@ -196,7 +192,6 @@ define([
             var resultsView = new this.ResultsView(_.defaults({
                 relatedConceptsClickHandler: relatedConceptsClickHandler,
                 fetchStrategy: this.searchTypes[searchType].fetchStrategy,
-                highlightModel: this.highlightModel,
                 scrollModel: this.middleColumnScrollModel
             }, subViewArguments));
 

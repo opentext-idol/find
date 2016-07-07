@@ -27,7 +27,7 @@ define([
         return {
             contentType: getContentTypeClass(model),
             date: model.has('date') ? model.get('date').fromNow() : null,
-            highlightedSummary: addLinksToSummary(this.entityCollection, model.get('summary')),
+            highlightedSummary: addLinksToSummary(model.get('summary')),
             isPromotion: isPromotion,
             staticPromotion: model.get('promotionCategory') === 'STATIC_CONTENT_PROMOTION'
         };

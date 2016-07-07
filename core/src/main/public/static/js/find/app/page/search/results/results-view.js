@@ -11,7 +11,6 @@ define([
     'find/app/page/search/results/result-rendering/result-renderer-config',
     'find/app/util/view-server-client',
     'find/app/util/events',
-    'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/search/results/results-container.html',
     'text!find/templates/app/page/loading-spinner.html',
@@ -19,7 +18,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, template, resultsTemplate,
+            ResultRenderer, resultsRendererConfig, viewClient, events, template, resultsTemplate,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     var SCROLL_INCREMENT = 30;
@@ -102,22 +101,11 @@ define([
             if (this.indexesCollection) {
                 this.selectedIndexesCollection = options.queryState.selectedIndexes;
             }
-
-            this.entityCollection = options.entityCollection;
-
+            
             this.resultRenderer = new ResultRenderer({
-                config: resultsRendererConfig,
-                entityCollection: options.entityCollection
+                config: resultsRendererConfig
             });
-
-            if (this.entityCollection) {
-                // Only required if we are highlighting entities
-                this.queryTextModel = options.queryState.queryTextModel;
-                this.highlightModel = options.highlightModel;
-                this.listenTo(this.highlightModel, 'change:highlightEntities', this.updateEntityHighlighting);
-                this.relatedConceptsClickHandler = options.relatedConceptsClickHandler;
-            }
-
+            
             if (this.showPromotions) {
                 this.promotionsCollection = new PromotionsCollection();
             }
@@ -223,41 +211,15 @@ define([
                 this.$('.main-results-content .results').append(this.handleError(i18n['app.feature.search'], xhr));
             });
 
-            if (this.entityCollection) {
-                this.listenTo(this.entityCollection, 'reset', function() {
-                    if (!this.entityCollection.isEmpty()) {
-                        this.documentsCollection.each(function(document) {
-                            var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
-
-                            this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
-                        }, this);
-
-                        if (this.showPromotions) {
-                            this.promotionsCollection.each(function(document) {
-                                var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
-                                this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
-                            }, this);
-                        }
-                    }
-                });
-            }
 
             if (this.documentsCollection.isEmpty()) {
                 this.refreshResults();
             }
-
-            if (this.entityCollection) {
-                this.updateEntityHighlighting();
-            }
-
+            
             if (this.previewModeModel) {
                 this.$('.main-results-content').addClass('preview-mode');
                 this.updateSelectedDocument();
             }
-        },
-
-        updateEntityHighlighting: function() {
-            this.$el.toggleClass('highlight-entities', this.highlightModel.get('highlightEntities'));
         },
 
         updateSelectedDocument: function() {
