@@ -177,15 +177,9 @@ define([
 
             var relatedConceptsClickHandler = this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments);
 
-            var relatedConceptsView = new RelatedConceptsView(_.extend({
+            this.relatedConceptsView = new RelatedConceptsView(_.extend({
                 clickHandler: relatedConceptsClickHandler
             }, subViewArguments));
-
-            this.relatedConceptsViewWrapper = new Collapsible({
-                view: relatedConceptsView,
-                collapsed: false,
-                title: i18n['search.relatedConcepts']
-            });
 
             this.middleColumnScrollModel = new Backbone.Model();
 
@@ -315,9 +309,9 @@ define([
                 this.savedSearchControlView.setElement($searchOptionContainer).render();
             }
 
-            this.relatedConceptsViewWrapper.render();
+            this.relatedConceptsView.render();
 
-            this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
+            this.$('.related-concepts-container').append(this.relatedConceptsView.$el);
 
             if (this.resultsViewSelection) {
                 this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
@@ -398,7 +392,7 @@ define([
                 this.savedSearchControlView,
                 this.resultsViewContainer,
                 this.resultsViewSelection,
-                this.relatedConceptsViewWrapper,
+                this.relatedConceptsView,
                 this.leftSideFooterView,
                 this.middleColumnHeaderView,
                 this.timeBarView
