@@ -27,26 +27,6 @@ define([
         };
     }
 
-    function resetSelectedParametricValues(selectedParametricValues, fieldName, numericRestriction) {
-        selectedParametricValues.remove(selectedParametricValues.filter(rangeModelMatching(fieldName, numericRestriction)));
-    }
-
-    function updateRestrictions(selectedParametricValues, fieldName, numericRestriction, min, max) {
-        var existing = selectedParametricValues.find(rangeModelMatching(fieldName, numericRestriction));
-
-        var newAttributes = {
-            field: fieldName,
-            range: [min, max],
-            numeric: numericRestriction
-        };
-
-        if (existing) {
-            existing.set(newAttributes);
-        } else {
-            selectedParametricValues.add(newAttributes);
-        }
-    }
-
     function roundInputNumber(input) {
         return Math.round(input * 10) / 10;
     }
@@ -97,37 +77,26 @@ define([
 
         events: {
             'click .numeric-parametric-no-min': function() {
-                this.updateMinInput(this.absoluteMinValue);
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput());
-                this.drawSelection();
+                this.updateRestrictions([this.absoluteMinValue, null]);
             },
             'click .numeric-parametric-no-max': function() {
-                this.updateMaxInput(this.absoluteMaxValue);
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput());
-                this.drawSelection();
+                this.updateRestrictions([null, this.absoluteMaxValue]);
             },
             'click .numeric-parametric-reset': function() {
-                resetSelectedParametricValues(this.selectedParametricValues, this.fieldName, this.numericRestriction);
+                this.clearRestrictions();
+                this.updateModel(this.absoluteMinValue, this.absoluteMaxValue);
             },
             'change .numeric-parametric-min-input': function() {
-                //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput());
-                //noinspection JSUnresolvedFunction
-                this.drawSelection();
+                this.updateRestrictions([this.readMinInput(), null]);
             },
             'change .numeric-parametric-max-input': function() {
-                //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), this.readMaxInput());
-                //noinspection JSUnresolvedFunction
-                this.drawSelection();
+                this.updateRestrictions([null, this.readMaxInput()]);
             },
             'dp.change .results-filter-date[data-date-attribute="min-date"]': function(event) {
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, event.date.unix(), this.readMaxInput());
-                this.drawSelection();
+                this.updateRestrictions([event.date.unix(), null]);
             },
             'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, this.readMinInput(), event.date.unix());
-                this.drawSelection();
+                this.updateRestrictions([null, event.date.unix()]);
             }
         },
 
@@ -145,7 +114,7 @@ define([
 
             this.fieldName = this.model.id;
 
-            var formatting = options.formatting  || NumericParametricFieldView.defaultFormatting;
+            var formatting = options.formatting || NumericParametricFieldView.defaultFormatting;
             this.formatValue = formatting.format;
             this.parseValue = formatting.parse;
             this.renderCustomFormatting = formatting.render;
@@ -160,6 +129,13 @@ define([
 
             this.absoluteMinValue = this.model.get('min');
             this.absoluteMaxValue = this.model.get('max');
+
+            // Bind the selection rectangle to the selected parametric range
+            this.listenTo(this.selectedParametricValues, 'add remove change', function(model) {
+                if (rangeModelMatching(this.fieldName, this.numericRestriction)(model)) {
+                    this.updateSelection();
+                }
+            });
         },
 
         render: function() {
@@ -190,6 +166,8 @@ define([
                 this.updateMaxInput(this.absoluteMaxValue);
             }
 
+            // Update the inputs as the user drags a selection on the graph. Note that this means the value in the input
+            // does not depend on just the selected parametric range model.
             var updateCallback = function(x1, x2) {
                 // rounding to one decimal place
                 this.updateMinInput(Math.max(roundInputNumber(x1), this.model.get('min')));
@@ -199,13 +177,7 @@ define([
             var selectionCallback = function(x1, x2) {
                 var newMin = this.parseBoundarySelection(Math.max(x1, this.model.get('min')));
                 var newMax = this.parseBoundarySelection(Math.min(x2, this.model.get('max')));
-                updateRestrictions(this.selectedParametricValues, this.fieldName, this.numericRestriction, newMin, newMax);
-            }.bind(this);
-
-            var deselectionCallback = function() {
-                this.updateMinInput(this.absoluteMinValue);
-                this.updateMaxInput(this.absoluteMaxValue);
-                resetSelectedParametricValues(this.selectedParametricValues, this.fieldName, this.numericRestriction);
+                this.updateRestrictions([newMin, newMax]);
             }.bind(this);
 
             var mouseMoveCallback = function(x) {
@@ -233,7 +205,7 @@ define([
                 },
                 updateCallback: updateCallback,
                 selectionCallback: selectionCallback,
-                deselectionCallback: deselectionCallback,
+                deselectionCallback: this.clearRestrictions.bind(this),
                 mouseMoveCallback: mouseMoveCallback,
                 mouseLeaveCallback: mouseLeaveCallback,
                 zoomCallback: this.updateModel.bind(this),
@@ -245,35 +217,54 @@ define([
                 coordinatesEnabled: this.coordinatesEnabled
             });
 
-            if (this.selectionEnabled) {
-                this.drawSelection();
-            }
-
-            this.listenTo(this.selectedParametricValues, 'remove', function(model) {
-                if (model.get('field') == this.fieldName) {
-                    this.drawSelection();
-                    this.updateModel(this.absoluteMinValue, this.absoluteMaxValue);
-                }
-            });
+            this.updateSelection();
         },
 
-        drawSelection: function() {
-            this.graph.selectionRect.remove();
+        // Update the rendered selection rectangle and inputs to match the selected parametric range model
+        updateSelection: function() {
+            if (this.graph) {
+                this.graph.selectionRect.remove();
 
-            var rangeModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.numericRestriction));
+                var rangeModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.numericRestriction));
 
-            if (rangeModel) {
-                var range = rangeModel.get('range');
-
-                if (range) {
+                if (rangeModel) {
+                    var range = rangeModel.get('range');
                     this.updateMinInput(roundInputNumber(range[0]));
                     this.updateMaxInput(roundInputNumber(range[1]));
 
                     this.graph.selectionRect.init(this.graph.chart, GRAPH_HEIGHT, this.graph.scale.barWidth(range[0]));
                     this.graph.selectionRect.update(this.graph.scale.barWidth(range[1]));
                     this.graph.selectionRect.focus();
+                } else {
+                    this.updateMinInput(this.absoluteMinValue);
+                    this.updateMaxInput(this.absoluteMaxValue);
                 }
             }
+        },
+
+        // Apply a new range selection; a null boundary will not be updated
+        updateRestrictions: function(newRange) {
+            var existingModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.numericRestriction));
+            var existingRange = existingModel ? existingModel.get('range') : [this.absoluteMinValue, this.absoluteMaxValue];
+
+            var newAttributes = {
+                field: this.fieldName,
+                numeric: this.numericRestriction,
+                range: _.map(newRange, function(value, index) {
+                    // Explicitly check null since 0 is falsy
+                    return value === null ? existingRange[index] : value;
+                })
+            };
+
+            if (existingModel) {
+                existingModel.set(newAttributes);
+            } else {
+                this.selectedParametricValues.add(newAttributes);
+            }
+        },
+
+        clearRestrictions: function () {
+            this.selectedParametricValues.remove(this.selectedParametricValues.filter(rangeModelMatching(this.fieldName, this.numericRestriction)));
         },
 
         updateModel: function(newMin, newMax) {
