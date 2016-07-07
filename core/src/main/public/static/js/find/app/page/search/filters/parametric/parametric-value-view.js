@@ -55,6 +55,12 @@ define([
             if (this.$check) {
                 this.$check.toggleClass('hide', !this.model.get('selected'));
             }
+        },
+
+        remove: function() {
+            this.$text.tooltip('destroy');
+
+            Backbone.View.prototype.remove.apply(this, arguments);
         }
     });
 

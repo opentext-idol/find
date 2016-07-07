@@ -126,8 +126,9 @@ define([
         },
 
         remove: function() {
-            Backbone.View.prototype.remove.call(this);
             this.collapsible.remove();
+            
+            Backbone.View.prototype.remove.call(this);
         }
     });
 });
