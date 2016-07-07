@@ -14,12 +14,13 @@ define([
     var INITIAL_ZOOM = 3;
 
     return Backbone.View.extend({
-        clusterMarkers: leaflet.markerClusterGroup(),
-        markerLayerGroup: leaflet.featureGroup(),
-        markers: [],
-
         initialize: function (options) {
             this.addControl = options.addControl || false;
+
+            this.clusterMarkers = leaflet.markerClusterGroup();
+            this.markerLayerGroup = leaflet.featureGroup();
+            this.markers = [];
+
             this.listenTo(vent, 'vent:resize', function () {
                 if (this.map) {
                     this.map.invalidateSize();

@@ -44,13 +44,16 @@ define([
                 var longitude = location.longitude;
                 var latitude = location.latitude;
                 var title = this.model.get('title');
+
                 var popover = this.popoverTemplate({
                     i18n: i18n,
                     title: location.displayName,
                     latitude: latitude,
-                    longitude: longitude
+                    longitude: longitude,
+                    cidForClickRouting: null
                 });
-                return this.mapResultsView.getMarker(latitude, longitude, this.getIcon(location.displayName), location.displayName, popover);;
+
+                return this.mapResultsView.getMarker(latitude, longitude, this.getIcon(location.displayName), location.displayName, popover);
             }, this);
 
             this.mapResultsView.addMarkers(markers, false);

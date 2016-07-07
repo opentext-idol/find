@@ -11,14 +11,22 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/idol/templates/comparison/map-comparison-view.html',
     'text!find/templates/app/page/search/results/map-popover.html',
+    'find/app/vent',
     'iCheck'
-], function (Backbone, ComparisonDocumentsCollection, stateTokenStrategy, MapView, FieldSelectionView, configuration, i18n, comparisonsI18n, searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate) {
+], function (Backbone, ComparisonDocumentsCollection, stateTokenStrategy, MapView, FieldSelectionView, configuration, i18n, comparisonsI18n, searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate, vent) {
 
     return Backbone.View.extend({
         className: 'service-view-container',
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
         popoverTemplate: _.template(popoverTemplate),
+        
+        events: {
+            'click .map-popup-title': function (e) {
+                var allCollections = _.chain(this.comparisons).pluck('collection').pluck('models').flatten().value();
+                vent.navigateToDetailRoute(_.findWhere(allCollections, {cid: e.currentTarget.getAttribute('cid')}));
+            }
+        },
 
         initialize: function (options) {
             this.searchModels = options.searchModels;
@@ -149,7 +157,8 @@ define([
                             title: title,
                             i18n: i18n,
                             latitude: location.latitude,
-                            longitude: location.longitude
+                            longitude: location.longitude,
+                            cidForClickRouting: model.cid
                         });
                         var icon = this.mapView.getIcon('hp-record', 'white', comparison.color);
                         var marker = this.mapView.getMarker(location.latitude, location.longitude, icon, title, popover);
