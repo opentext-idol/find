@@ -26,7 +26,7 @@ define([
         MAP: 'MAP'
     };
 
-    const CLUSTER_MODE = 'docsWithPhrase';
+    var CLUSTER_MODE = 'docsWithPhrase';
 
     return Backbone.View.extend({
         template: _.template(template),
