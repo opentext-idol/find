@@ -31,29 +31,6 @@ define([
         MAP: 'MAP'
     };
 
-    // Return the given value if it is in the range [min, max], else return the number in the range which is closest to the value.
-    function ensureRange(min, max, value) {
-        return Math.max(min, Math.min(max, value));
-    }
-
-    // The maximum topic count is the number of entities which match the current relevance
-    function resolveMaxCount(entityCollection) {
-        return entityCollection
-            .length;
-    }
-
-    // Update the clustering model after the entity collection or cluster mode has changed
-    function updateClusteringModelForEntities(entityCollection, clusteringModel) {
-        if (!entityCollection.isEmpty()) {
-            var maxCount = resolveMaxCount(entityCollection);
-
-            clusteringModel.set({
-                maxCount: maxCount,
-                count: ensureRange(1, maxCount, clusteringModel.get('count'))
-            });
-        }
-    }
-
     return Backbone.View.extend({
         template: _.template(template),
 
@@ -62,9 +39,6 @@ define([
                 var maxResults = event.value;
 
                 this.model.set('maxResults', maxResults);
-            },
-            'change .count-slider': function(event) {
-                this.model.set('count', event.value.newValue);
             },
             'ifChecked .clustering-mode-i-check': function(event) {
                 this.model.set('mode', event.target.value);
@@ -99,11 +73,8 @@ define([
 
             this.listenTo(this.model, 'change:maxResults', this.fetchRelatedConcepts);
 
-            updateClusteringModelForEntities(this.entityCollection, this.model);
-
             this.listenTo(this.entityCollection, 'sync', function() {
                 this.viewModel.set('state', this.entityCollection.isEmpty() ? ViewState.EMPTY : ViewState.MAP);
-                updateClusteringModelForEntities(this.entityCollection, this.model);
                 this.updateTopicMapData();
                 this.update();
             });
@@ -119,16 +90,10 @@ define([
 
             this.listenTo(this.viewModel, 'change', this.updateViewState);
 
-            this.listenTo(this.model, 'change:mode', function() {
-                updateClusteringModelForEntities(this.entityCollection, this.model);
-            });
-
-            addChangeListener(this, this.model, ['count', 'mode'], function() {
+            addChangeListener(this, this.model, ['mode'], function() {
                 this.updateTopicMapData();
                 this.update();
             });
-
-            addChangeListener(this, this.model, ['count', 'maxCount'], this.updateCountSlider);
 
             this.updateTopicMapData();
         },
@@ -177,14 +142,6 @@ define([
             this.topicMap.setData(data);
         },
 
-        updateCountSlider: function() {
-            if (this.$countSlider) {
-                this.$countSlider
-                    .slider('setAttribute', 'max', this.model.get('maxCount'))
-                    .slider('setValue', this.model.get('count'));
-            }
-        },
-
         updateViewState: function() {
             var state = this.viewModel.get('state');
             this.topicMap.$el.toggleClass('hide', state !== ViewState.MAP);
@@ -221,15 +178,6 @@ define([
 
             this.$el.find('.i-check')
                 .iCheck({radioClass: 'iradio-hp'});
-
-            this.$countSlider = this.$('.count-slider')
-                .slider({
-                    id: this.cid + '-count-slider',
-                    min: 1,
-                    max: this.model.get('maxCount'),
-                    value: this.model.get('count'),
-                    tooltip_position: 'bottom'
-                });
 
             this.$('.speed-slider')
                 .slider({
