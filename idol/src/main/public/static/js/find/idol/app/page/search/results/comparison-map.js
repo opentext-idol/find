@@ -27,21 +27,21 @@ define([
 
             this.mapView = new MapView({addControl: true});
 
-            var bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
             var firstQueryModel = this.createQueryModel(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
+            var bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
             var secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
 
-            this.bothSelectionView = new FieldSelectionView({
-                model: bothQueryModel,
-                name: 'BothFieldSelectionView',
+            this.firstSelectionView = new FieldSelectionView({
+                model: firstQueryModel,
+                name: 'FirstFieldSelectionView',
                 width: '100%',
                 fields: _.pluck(this.locationFields, 'displayName'),
                 allowEmpty: false
             });
 
-            this.firstSelectionView = new FieldSelectionView({
-                model: firstQueryModel,
-                name: 'FirstFieldSelectionView',
+            this.bothSelectionView = new FieldSelectionView({
+                model: bothQueryModel,
+                name: 'BothFieldSelectionView',
                 width: '100%',
                 fields: _.pluck(this.locationFields, 'displayName'),
                 allowEmpty: false
@@ -58,15 +58,6 @@ define([
 
             this.comparisons = [
                 {
-                    name: comparisonsI18n['list.title.both'],
-                    collection: new ComparisonDocumentsCollection(),
-                    layer: this.mapView.createLayer({
-                        iconCreateFunction: this.mapView.getDivIconCreateFunction('both-location-cluster')
-                    }),
-                    model: bothQueryModel,
-                    color: 'darkred'
-                },
-                {
                     name: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
                     collection: new ComparisonDocumentsCollection(),
                     layer: this.mapView.createLayer({
@@ -74,6 +65,15 @@ define([
                     }),
                     model: firstQueryModel,
                     color: 'darkpurple'
+                },
+                {
+                    name: comparisonsI18n['list.title.both'],
+                    collection: new ComparisonDocumentsCollection(),
+                    layer: this.mapView.createLayer({
+                        iconCreateFunction: this.mapView.getDivIconCreateFunction('both-location-cluster')
+                    }),
+                    model: bothQueryModel,
+                    color: 'darkred'
                 },
                 {
                     name: comparisonsI18n['list.title.second'](this.searchModels.second.get('title')),
@@ -106,8 +106,8 @@ define([
             this.$('.both-select-label').append(this.bothSelectionView.$el);
             this.$('.second-select-label').append(this.secondSelectionView.$el);
 
-            this.bothSelectionView.render();
             this.firstSelectionView.render();
+            this.bothSelectionView.render();
             this.secondSelectionView.render();
 
             this.mapView.setElement(this.$('.location-comparison-map')).render();

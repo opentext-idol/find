@@ -51,19 +51,6 @@ define([
             var resultsViews = [
                 {
                     Constructor: TopicMapView,
-                    id: 'both',
-                    uniqueId: _.uniqueId('results-view-item-'),
-                    constructorArguments: {
-                        clickHandler: _.noop,
-                        entityCollection: bothCollection
-                    },
-                    selector: {
-                        displayName: comparisonsI18n['list.title.both'],
-                        icon: 'hp-divide-in-center'
-                    }
-                },
-                {
-                    Constructor: TopicMapView,
                     id: 'first',
                     uniqueId: _.uniqueId('results-view-item-'),
                     constructorArguments: {
@@ -73,6 +60,19 @@ define([
                     selector: {
                         displayName: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
                         icon: 'hp-divide-in-right'
+                    }
+                },
+                {
+                    Constructor: TopicMapView,
+                    id: 'both',
+                    uniqueId: _.uniqueId('results-view-item-'),
+                    constructorArguments: {
+                        clickHandler: _.noop,
+                        entityCollection: bothCollection
+                    },
+                    selector: {
+                        displayName: comparisonsI18n['list.title.both'],
+                        icon: 'hp-divide-in-center'
                     }
                 },
                 {
