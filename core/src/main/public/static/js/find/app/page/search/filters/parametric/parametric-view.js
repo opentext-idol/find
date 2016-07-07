@@ -39,7 +39,7 @@ define([
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.displayCollection = options.displayCollection;
 
-            this.monitorCollection(options.parametricCollection);
+            this.monitorCollection(options.restrictedParametricCollection);
 
             this.fieldNamesListView = new ListView({
                 collection: this.displayCollection,

@@ -38,7 +38,7 @@ define([
 
             this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
 
-            addChangeListener(this, this.queryModel, ['queryText', 'fieldText', 'indexes', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchEntities);
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchData);
         },
 
         render: function() {
@@ -50,23 +50,22 @@ define([
             this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
         },
 
-        fetchParametricFields: function (fieldsCollection, valuesCollection) {
+        fetchParametricFields: function (fieldsCollection, callback) {
             fieldsCollection.fetch({
                 success: _.bind(function() {
-                    if (valuesCollection) {
-                        this.fetchParametricValues(fieldsCollection, valuesCollection);
-                        this.fetchRestrictedParametricCollection();
+                    if (callback) {
+                        callback();
                     }
                 }, this)
             });
         },
 
-        fetchParametricValues: function (fieldsCollection, valuesCollection) {
-            valuesCollection.reset();
+        fetchParametricValues: function () {
+            this.parametricCollection.reset();
 
-            var fieldNames = fieldsCollection.pluck('id');
+            var fieldNames = this.parametricFieldsCollection.pluck('id');
             if (fieldNames.length > 0) {
-                valuesCollection.fetch({data: {
+                this.parametricCollection.fetch({data: {
                     fieldNames: fieldNames
                 }});
             }
