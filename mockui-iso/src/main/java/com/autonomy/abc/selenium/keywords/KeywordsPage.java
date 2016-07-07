@@ -38,6 +38,15 @@ public abstract class KeywordsPage extends KeywordsBase {
         };
     }
 
+    public ExpectedCondition<Boolean> allKeywordsGone() {
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver webDriver) {
+                return findElements(By.cssSelector(".data-keywords")).size() < 1;
+            }
+        };
+    }
+
     public WebElement createNewKeywordsButton() {
         return findElement(By.xpath(".//div[contains(@class,'keywords-controls')]//a[contains(text(), 'New')]"));
     }
@@ -98,6 +107,11 @@ public abstract class KeywordsPage extends KeywordsBase {
 
     public FormInput searchFilterBox() {
         return new FormInput(searchFilterTextBox(), getDriver());
+    }
+
+    //should use LanguageDropdown class
+    public boolean languageMenuDisabled(){
+        return findElements(By.cssSelector(".languages-select-view-container .dropdown:nth-of-type(2) button[disabled]")).size()>0;
     }
 
     public final void selectLanguage(final Language language) {

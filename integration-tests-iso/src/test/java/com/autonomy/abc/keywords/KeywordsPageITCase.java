@@ -79,7 +79,6 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		verifySynonymGroup(synonyms);
 		verifyNoBlacklist();
-		verifyThat("synonym list on row 2 is not visible", keywordsPage.synonymList(1), not(displayed()));
 
 		keywordsPage.filterView(KeywordFilter.BLACKLIST);
 		verifyNoSynonyms();
@@ -432,7 +431,8 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		} catch (final WebDriverException w) {
 			throw new AssertionError("Unable to delete a synonym quickly", w);
 		}
-		Thread.sleep(15000);
+
+		new WebDriverWait(getDriver(),20).until(keywordsPage.keywordLoadingIndicatorsGone());
 		assertThat("Correct number of synonyms", keywordsPage.countSynonymLists(), is(1));
 		assertThat(keywordsPage.countKeywords(), is(3));
 	}
