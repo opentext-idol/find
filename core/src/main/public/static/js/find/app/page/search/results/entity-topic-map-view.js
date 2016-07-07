@@ -15,11 +15,6 @@ define([
 
     var loadingHtml = _.template(loadingTemplate)({i18n: i18n, large: true});
 
-    var clusteringModes = [
-        {value: 'occurrences', text: i18n['search.topicMap.occurrences']},
-        {value: 'docsWithPhrase', text: i18n['search.topicMap.documents']}
-    ];
-
     /**
      * @readonly
      * @enum {String}
@@ -31,6 +26,8 @@ define([
         MAP: 'MAP'
     };
 
+    const CLUSTER_MODE = 'docsWithPhrase';
+
     return Backbone.View.extend({
         template: _.template(template),
 
@@ -39,9 +36,6 @@ define([
                 var maxResults = event.value;
 
                 this.model.set('maxResults', maxResults);
-            },
-            'ifChecked .clustering-mode-i-check': function(event) {
-                this.model.set('mode', event.target.value);
             }
         },
 
@@ -66,8 +60,6 @@ define([
             });
 
             this.model = new Backbone.Model({
-                mode: clusteringModes[0].value,
-                count: 10,
                 maxCount: 10
             });
 
@@ -90,11 +82,6 @@ define([
 
             this.listenTo(this.viewModel, 'change', this.updateViewState);
 
-            addChangeListener(this, this.model, ['mode'], function() {
-                this.updateTopicMapData();
-                this.update();
-            });
-
             this.updateTopicMapData();
         },
 
@@ -106,19 +93,17 @@ define([
         },
 
         updateTopicMapData: function() {
-            var mode = this.model.get('mode');
-
             var data = _.chain(this.entityCollection.groupBy('cluster'))
                 // Order the concepts in each cluster
                 .map(function (cluster) {
                     return _.sortBy(cluster, function (model) {
-                        return -model.get(mode);
+                        return -model.get(CLUSTER_MODE);
                     });
                 })
                 // For each related concept give the name and size
                 .map(function(cluster) {
                     return cluster.map(function (model) {
-                        return {name: model.get('text'), size: model.get(mode)};
+                        return {name: model.get('text'), size: model.get(CLUSTER_MODE)};
                     })
                 })
                 // Give each cluster a name (first concept in list), total size and add all concepts to the children attribute to create the topic map double level
@@ -171,13 +156,8 @@ define([
             this.$el.html(this.template({
                 i18n: i18n,
                 loadingHtml: loadingHtml,
-                clusteringModes: clusteringModes,
-                selectedMode: this.model.get('mode'),
                 cid: this.cid
             }));
-
-            this.$el.find('.i-check')
-                .iCheck({radioClass: 'iradio-hp'});
 
             this.$('.speed-slider')
                 .slider({

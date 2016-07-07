@@ -8,17 +8,6 @@
                 <input id="<%=cid%>-speed-slider" class="speed-slider" type="text"/>
             </div>
         </div>
-        <div>
-            <fieldset class="radio-fieldset">
-                <legend><%-i18n['search.topicMap.clustering']%></legend>
-                <% _.each(clusteringModes, function(mode) { %>
-                    <label class="radio-inline i-check clustering-mode-i-check clickable">
-                        <input type="radio" <%= mode.value === selectedMode ? 'checked' : ''%> value="<%=mode.value%>" name="<%=cid%>-clustering-mode-input">
-                        <%-mode.text%>
-                    </label>
-                <% }); %>
-            </fieldset>
-        </div>
     </form>
     <div class="entity-topic-map-error">
         <p class="result-message"><%-i18n['search.topicMap.error']%></p>

@@ -5,12 +5,17 @@
 
 define([
     'backbone',
+    'find/app/configuration',
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/util/topic-map-view'
-], function(Backbone, EntityTopicMapView, TopicMapView) {
+], function(Backbone, configuration, EntityTopicMapView, TopicMapView) {
 
     describe('EntityTopicMapView', function() {
         beforeEach(function() {
+            configuration.and.returnValue({
+                topicMapMaxResults: 1000
+            });
+
             this.clickHandler = jasmine.createSpy('clickHandler');
             this.entityCollection = new Backbone.Collection();
 
@@ -31,6 +36,7 @@ define([
         });
 
         afterEach(function() {
+            configuration.and.stub();
             this.view.remove();
             TopicMapView.reset();
         });
@@ -114,9 +120,9 @@ define([
                 expect(this.topicMap.draw).toHaveBeenCalled();
 
                 expect(this.topicMap.setData.calls.mostRecent().args[0]).toEqual([
-                    {name: 'siege', size: 35, children: [
-                        {name: 'siege', size: 23},
-                        {name: 'gin', size: 12}
+                    {name: 'gin', size: 8, children: [
+                        {name: 'gin', size: 7},
+                        {name: 'siege', size: 1}
                     ]},
                     {name: 'pneumatic', size: 2, children: [
                         {name: 'pneumatic', size: 2}
