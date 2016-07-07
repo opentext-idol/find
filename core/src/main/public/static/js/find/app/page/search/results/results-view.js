@@ -48,13 +48,6 @@ define([
         errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
 
         events: {
-            'click .highlighted-entity-text': function(e) {
-                e.stopPropagation();
-
-                var $target = $(e.target);
-                var entity = $target.attr('data-entity-text');
-                this.relatedConceptsClickHandler([entity]);
-            },
             'click .preview-mode [data-cid]': function(e) {
                 var $target = $(e.currentTarget);
 

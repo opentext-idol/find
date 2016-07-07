@@ -1292,21 +1292,6 @@ input:-moz-placeholder::before {
     border: 1px solid #e7eaec;
 }
 
-/* Result entity highlighting */
-.highlighted-entity-text {
-    background-color: #6b7984;
-    padding: 0 8px;
-    display: none;
-}
-
-.highlight-entities .highlighted-entity-text {
-    display: inherit;
-}
-
-.highlight-entities .plain-entity-text {
-    display: none;
-}
-
 .parametric-field-label {
     display: list-item;
     list-style: none;
