@@ -47,6 +47,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final MapConfiguration map;
     private final Integer minScore;
     private final StatsServerConfig statsServer;
+    private final Integer topicMapMaxResults;
 
     @Override
     public IdolFindConfig merge(final IdolFindConfig other) {
@@ -65,6 +66,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .setMap(map == null ? other.map : map.merge(other.map))
                 .setMinScore(minScore == null ? other.minScore : minScore)
                 .setStatsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
+                .setTopicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
                 .build();
     }
 
@@ -143,6 +145,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         private MapConfiguration map;
         private Integer minScore;
         private StatsServerConfig statsServer;
+        private Integer topicMapMaxResults;
 
         public Builder(final IdolFindConfig config) {
             login = config.login;
@@ -155,10 +158,11 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             map = config.map;
             minScore = config.minScore;
             statsServer = config.statsServer;
+            topicMapMaxResults = config.topicMapMaxResults;
         }
 
         public IdolFindConfig build() {
-            return new IdolFindConfig(login, content, queryManipulation, view, savedSearchConfig, mmap, fieldsInfo, map, minScore, statsServer);
+            return new IdolFindConfig(login, content, queryManipulation, view, savedSearchConfig, mmap, fieldsInfo, map, minScore, statsServer, topicMapMaxResults);
         }
     }
 

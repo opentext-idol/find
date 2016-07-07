@@ -46,6 +46,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
     private final Integer minScore;
+    private final Integer topicMapMaxResults;
 
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
@@ -61,6 +62,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         map = builder.map;
         savedSearchConfig = builder.savedSearchConfig;
         minScore = builder.minScore;
+        topicMapMaxResults = builder.topicMapMaxResults;
     }
 
     @SuppressWarnings("OverlyComplexMethod")
@@ -77,6 +79,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
                 .setMap(map == null ? config.map : map.merge(config.map))
                 .setSavedSearchConfig(savedSearchConfig == null ? config.savedSearchConfig : savedSearchConfig.merge(config.savedSearchConfig))
                 .setMinScore(minScore == null ? config.minScore : minScore)
+                .setTopicMapMaxResults(topicMapMaxResults == null ? config.topicMapMaxResults : topicMapMaxResults)
                 .build() : this;
     }
 
@@ -169,6 +172,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         @JsonProperty("savedSearches")
         private SavedSearchConfig savedSearchConfig;
         private Integer minScore;
+        private Integer topicMapMaxResults;
 
         public Builder(final HodFindConfig config) {
             login = config.login;
@@ -181,6 +185,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
             map = config.map;
             savedSearchConfig = config.savedSearchConfig;
             minScore = config.minScore;
+            topicMapMaxResults = config.topicMapMaxResults;
         }
 
         public HodFindConfig build() {

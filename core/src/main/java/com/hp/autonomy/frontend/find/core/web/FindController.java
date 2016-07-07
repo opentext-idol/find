@@ -87,6 +87,7 @@ public abstract class FindController {
         config.put(MvcConstants.SAVED_SEARCH_CONFIG.value(), configService.getConfig().getSavedSearchConfig());
         config.put(MvcConstants.MIN_SCORE.value(), configService.getConfig().getMinScore());
         config.put(MvcConstants.FIELDS_INFO.value(), configService.getConfig().getFieldsInfo().getFieldConfig());
+        config.put(MvcConstants.TOPIC_MAP_MAX_RESULTS.value(), configService.getConfig().getTopicMapMaxResults());
         config.putAll(getPublicConfig());
 
         final Map<String, Object> attributes = new HashMap<>();

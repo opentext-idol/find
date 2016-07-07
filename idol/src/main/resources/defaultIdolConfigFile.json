@@ -97,6 +97,7 @@
     "baseUrl": ""
   },
   "minScore": 0,
+  "topicMapMaxResults": 1000,
   "fieldsInfo": {
     "contentType": {
       "names": [

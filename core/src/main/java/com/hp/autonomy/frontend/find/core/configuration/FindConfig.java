@@ -17,4 +17,6 @@ public interface FindConfig {
 
     FieldsInfo getFieldsInfo();
 
+    Integer getTopicMapMaxResults();
+
 }

@@ -4,11 +4,12 @@ define([
     'find/app/util/model-any-changed-attribute-listener',
     'find/app/util/topic-map-view',
     'i18n!find/nls/bundle',
+    'find/app/configuration',
     'text!find/templates/app/page/search/results/entity-topic-map-view.html',
     'text!find/templates/app/page/loading-spinner.html',
     'iCheck',
     'slider/bootstrap-slider'
-], function(Backbone, _, addChangeListener, TopicMapView, i18n, template, loadingTemplate) {
+], function(Backbone, _, addChangeListener, TopicMapView, i18n, configuration, template, loadingTemplate) {
 
     'use strict';
 
@@ -234,7 +235,7 @@ define([
                 .slider({
                     id: this.cid + '-speed-slider',
                     min: 50,
-                    max: 200,
+                    max: configuration().topicMapMaxResults,
                     value: 50
                 });
 
