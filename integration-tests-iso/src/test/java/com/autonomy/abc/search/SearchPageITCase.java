@@ -445,7 +445,6 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	//Failing because the VM doesn't have parametric values for some reason...
 	public void testFilteringByParametricValues(){
 		search("Alexis");
 
