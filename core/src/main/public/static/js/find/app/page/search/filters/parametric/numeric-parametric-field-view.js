@@ -111,6 +111,7 @@ define([
             this.buttonsEnabled = options.selectionEnabled && options.buttonsEnabled;
             this.coordinatesEnabled = options.coordinatesEnabled === undefined ? true : options.coordinatesEnabled;
             this.numericRestriction = options.numericRestriction || false;
+            this.hideTitle = options.hideTitle;
 
             this.fieldName = this.model.id;
 
@@ -146,7 +147,7 @@ define([
                 .empty()
                 .append(this.template({
                     i18n: i18n,
-                    fieldName: prettifyFieldName(this.model.get('name')),
+                    fieldName: this.hideTitle ? undefined : prettifyFieldName(this.model.get('name')),
                     buttonsEnabled: this.buttonsEnabled,
                     inputsRowClass: this.selectionEnabled || this.coordinatesEnabled ? '' : 'hide',
                     inputColumnClass: inputColumnClass,

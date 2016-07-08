@@ -46,6 +46,11 @@ define([
         updateHeaderState: function() {
             // The "collapsed" class controls the icons with class "rotating-chevron"
             this.$header.toggleClass('collapsed', this.collapsed);
+        },
+        
+        setSubTitle: function(subtitle) {
+            this.subtitle = subtitle;
+            this.$('.collapsible-subtitle').text(subtitle).removeClass('hide');
         }
     });
 });

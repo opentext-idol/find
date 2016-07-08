@@ -8,7 +8,7 @@ define([
     'underscore',
     'find/app/model/bucketed-parametric-collection',
     'find/app/page/search/filters/parametric/abstract-parametric-view',
-    'find/app/page/search/filters/parametric/numeric-parametric-field-view',
+    'find/app/page/search/filters/parametric/numeric-parametric-field-collapsible-view',
     'js-whatever/js/list-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-view.html'
