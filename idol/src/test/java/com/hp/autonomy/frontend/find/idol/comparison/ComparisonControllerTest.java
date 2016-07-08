@@ -95,13 +95,14 @@ public class ComparisonControllerTest {
         final List<String> stateMatchIds = Collections.singletonList(MOCK_STATE_TOKEN_1);
         final List<String> stateDontMatchIds = Collections.singletonList(MOCK_STATE_TOKEN_2);
         final String text = "*";
+        final String fieldText = "EXISTS{}:LATITUDE AND EXISTS{}:LONGITUDE";
         final int start = 3;
         final int maxResults = 6;
         final String summary = "context";
         final String sort = "relevance";
         final boolean highlight = true;
 
-        comparisonController.getResults(stateMatchIds, stateDontMatchIds, text, start, maxResults, summary, sort, highlight, false);
-        verify(comparisonService).getResults(eq(stateMatchIds), eq(stateDontMatchIds), eq(text), eq(start), eq(maxResults), eq(summary), eq(sort), eq(highlight));
+        comparisonController.getResults(stateMatchIds, stateDontMatchIds, text, fieldText, start, maxResults, summary, sort, highlight, false);
+        verify(comparisonService).getResults(eq(stateMatchIds), eq(stateDontMatchIds), eq(text), eq(fieldText), eq(start), eq(maxResults), eq(summary), eq(sort), eq(highlight));
     }
 }

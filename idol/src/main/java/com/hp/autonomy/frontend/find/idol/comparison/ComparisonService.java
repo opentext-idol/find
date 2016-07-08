@@ -12,12 +12,13 @@ import java.util.List;
 
 public interface ComparisonService<R extends SearchResult, E extends Exception> {
 
-    ComparisonStateTokens getCompareStateTokens(final String firstStateToken, final String secondStateToken) throws E;
+    ComparisonStateTokens getCompareStateTokens(String firstStateToken, String secondStateToken) throws E;
 
     Documents<R> getResults(
             List<String> stateMatchIds,
             List<String> stateDontMatchIds,
             String text,
+            String fieldText,
             int resultsStart,
             int maxResults,
             String summary,

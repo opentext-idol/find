@@ -55,6 +55,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
             final List<String> stateMatchIds,
             final List<String> stateDontMatchIds,
             final String text,
+            final String fieldText,
             final int resultsStart,
             final int maxResults,
             final String summary,
@@ -67,7 +68,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
 
         final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
                 .setQueryText(text)
-                .setFieldText("")
+                .setFieldText(fieldText)
                 .setMinScore(0)
                 .setStateMatchId(stateMatchIds)
                 .setStateDontMatchId(stateDontMatchIds)
