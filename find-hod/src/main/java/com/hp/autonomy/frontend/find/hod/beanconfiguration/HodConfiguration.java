@@ -47,7 +47,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
-@EnableCaching
 public class HodConfiguration extends CachingConfigurerSupport {
     public static final String SSO_PAGE_PROPERTY = "${find.hod.sso:https://www.idolondemand.com/sso.html}";
     public static final String HOD_API_URL_PROPERTY = "${find.iod.api:https://api.havenondemand.com}";
