@@ -12,35 +12,39 @@ import com.hp.autonomy.frontend.find.hod.authentication.HavenSearchUserMetadata;
 import com.hp.autonomy.frontend.find.hod.authentication.HsodUsernameResolver;
 import com.hp.autonomy.frontend.find.hod.web.SsoController;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
+import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
+import com.hp.autonomy.hod.client.api.authentication.tokeninformation.CombinedTokenInformation;
+import com.hp.autonomy.hod.client.api.authentication.tokeninformation.GroupInformation;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
+import com.hp.autonomy.hod.client.token.TokenProxy;
 import com.hp.autonomy.hod.client.token.TokenRepository;
-import com.hp.autonomy.hod.sso.ConstantAuthoritiesResolver;
+import com.hp.autonomy.hod.sso.GrantedAuthoritiesResolver;
 import com.hp.autonomy.hod.sso.HodAuthenticationProvider;
 import com.hp.autonomy.hod.sso.HodTokenLogoutSuccessHandler;
 import com.hp.autonomy.hod.sso.SsoAuthenticationEntryPoint;
 import com.hp.autonomy.hod.sso.SsoAuthenticationFilter;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 @Configuration
 @Order(99)
 public class HodSecurity extends WebSecurityConfigurerAdapter {
-    @Value("${hp.find.enableBi}")
-    private boolean enableBi;
+    private static final String HOD_BI_ROLE = "bi_user";
 
     @Autowired
     private TokenRepository tokenRepository;
@@ -57,17 +61,24 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        final Collection<String> roles = new LinkedList<>();
-        roles.add(FindRole.USER.toString());
-
-        // TODO: Remove when we can get group information from HOD (HOD-2420)
-        if (enableBi) {
-            roles.add(FindRole.BI.toString());
-        }
-
         auth.authenticationProvider(new HodAuthenticationProvider(
                 tokenRepository,
-                new ConstantAuthoritiesResolver(roles.toArray(new String[roles.size()])),
+                new GrantedAuthoritiesResolver() {
+                    @Override
+                    public Collection<GrantedAuthority> resolveAuthorities(final TokenProxy<EntityType.Combined, TokenType.Simple> tokenProxy, final CombinedTokenInformation combinedTokenInformation) {
+                        final Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>(2);
+                        grantedAuthorities.add(new SimpleGrantedAuthority(FindRole.USER.toString()));
+
+                        for (final GroupInformation groupInformation : combinedTokenInformation.getUser().getGroups()) {
+                            if (groupInformation.getGroups().contains(HOD_BI_ROLE)) {
+                                grantedAuthorities.add(new SimpleGrantedAuthority(FindRole.BI.toString()));
+                                break;
+                            }
+                        }
+
+                        return grantedAuthorities;
+                    }
+                },
                 authenticationService,
                 unboundTokenService,
                 userStoreUsersService,
