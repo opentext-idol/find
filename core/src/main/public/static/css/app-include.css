@@ -1499,6 +1499,18 @@ input:-moz-placeholder::before {
     padding-left: 3px;
 }
 
+.first-select-label .fa-map-marker {
+    color: #70AD25;
+}
+
+.both-select-label .fa-map-marker {
+    color: #F0932F;
+}
+
+.second-select-label .fa-map-marker {
+    color: #D33D2A;
+}
+
 .topic-map-comparison-selection, .topic-map-comparison-container {
     padding-left: 40px;
 }
@@ -1506,6 +1518,7 @@ input:-moz-placeholder::before {
 .both-location-cluster {
     background-color: rgba(255, 192, 35, 0.6);
 }
+
 .both-location-cluster div {
     background-color: #F0932F;
     color: white;
@@ -1514,6 +1527,7 @@ input:-moz-placeholder::before {
 .first-location-cluster {
     background-color: rgba(132, 197, 55, 0.6);
 }
+
 .first-location-cluster div {
     background-color: #70AD25;
     color: white;
@@ -1522,6 +1536,7 @@ input:-moz-placeholder::before {
 .second-location-cluster {
     background-color: rgba(225, 97, 85, 0.6);
 }
+
 .second-location-cluster div {
     background-color: #D33D2A;
     color: white;
