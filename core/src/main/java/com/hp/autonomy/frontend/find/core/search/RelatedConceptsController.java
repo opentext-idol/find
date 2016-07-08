@@ -11,6 +11,7 @@ import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
 import org.apache.commons.collections4.ListUtils;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +25,7 @@ import java.util.List;
 @Controller
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @RequestMapping(RelatedConceptsController.RELATED_CONCEPTS_PATH)
-public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R extends QueryRestrictions<S>, S extends Serializable, E extends Exception> {
+public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R extends QueryRestrictions<S>, L extends RelatedConceptsRequest<S>, S extends Serializable, E extends Exception> {
     public static final String RELATED_CONCEPTS_PATH = "/api/public/search/find-related-concepts";
 
     public static final String QUERY_TEXT_PARAM = "queryText";
@@ -36,16 +37,19 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
     public static final String STATE_TOKEN_PARAM = "stateTokens";
     private static final String MAX_RESULTS = "maxResults";
 
+    private static final int QUERY_SUMMARY_LENGTH = 50;
+
     private final RelatedConceptsService<Q, S, E> relatedConceptsService;
     private final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory;
+    private final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory;
 
     protected RelatedConceptsController(final RelatedConceptsService<Q, S, E> relatedConceptsService,
-                                        final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory) {
+                                        final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory,
+                                        final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory) {
         this.relatedConceptsService = relatedConceptsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
+        this.relatedConceptsRequestBuilderFactory = relatedConceptsRequestBuilderFactory;
     }
-
-    protected abstract RelatedConceptsRequest<S> buildRelatedConceptsRequest(final QueryRestrictions<S> queryRestrictions);
 
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(method = RequestMethod.GET)
@@ -68,10 +72,13 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
                 .setMaxDate(maxDate)
                 .setMinScore(minScore)
                 .setStateMatchId(ListUtils.emptyIfNull(stateTokens))
-                .setMaxResults(maxResults)
                 .build();
 
-        final RelatedConceptsRequest<S> relatedConceptsRequest = buildRelatedConceptsRequest(queryRestrictions);
+        final RelatedConceptsRequest<S> relatedConceptsRequest = relatedConceptsRequestBuilderFactory.getObject()
+                .setMaxResults(maxResults)
+                .setQuerySummaryLength(QUERY_SUMMARY_LENGTH)
+                .setQueryRestrictions(queryRestrictions)
+                .build();
         return relatedConceptsService.findRelatedConcepts(relatedConceptsRequest);
     }
 }
