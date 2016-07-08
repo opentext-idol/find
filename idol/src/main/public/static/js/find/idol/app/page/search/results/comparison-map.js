@@ -72,7 +72,7 @@ define([
                         iconCreateFunction: this.mapView.getDivIconCreateFunction('first-location-cluster')
                     }),
                     model: firstQueryModel,
-                    color: 'darkpurple'
+                    color: 'green'
                 },
                 {
                     name: comparisonsI18n['list.title.both'],
@@ -81,7 +81,7 @@ define([
                         iconCreateFunction: this.mapView.getDivIconCreateFunction('both-location-cluster')
                     }),
                     model: bothQueryModel,
-                    color: 'darkred'
+                    color: 'orange'
                 },
                 {
                     name: comparisonsI18n['list.title.second'](this.searchModels.second.get('title')),
@@ -90,7 +90,7 @@ define([
                         iconCreateFunction: this.mapView.getDivIconCreateFunction('second-location-cluster')
                     }),
                     model: secondQueryModel,
-                    color: 'cadetblue'
+                    color: 'red'
                 }
             ];
 

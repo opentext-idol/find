@@ -1499,31 +1499,46 @@ input:-moz-placeholder::before {
     padding-left: 3px;
 }
 
+.first-select-label .fa-map-marker {
+    color: #70AD25;
+}
+
+.both-select-label .fa-map-marker {
+    color: #F0932F;
+}
+
+.second-select-label .fa-map-marker {
+    color: #D33D2A;
+}
+
 .topic-map-comparison-selection, .topic-map-comparison-container {
     padding-left: 40px;
 }
 
 .both-location-cluster {
-    background-color: rgba(161, 51, 54, 0.6);
+    background-color: rgba(255, 192, 35, 0.6);
 }
+
 .both-location-cluster div {
-    background-color: rgb(161, 51, 54);
+    background-color: #F0932F;
     color: white;
 }
 
 .first-location-cluster {
-    background-color: rgba(91, 57, 107, 0.6);
+    background-color: rgba(132, 197, 55, 0.6);
 }
+
 .first-location-cluster div {
-    background-color: rgb(91, 57, 107);
+    background-color: #70AD25;
     color: white;
 }
 
 .second-location-cluster {
-    background-color: rgba(67, 105, 119, 0.6);
+    background-color: rgba(225, 97, 85, 0.6);
 }
+
 .second-location-cluster div {
-    background-color: rgb(67, 105, 119);
+    background-color: #D33D2A;
     color: white;
 }
 
