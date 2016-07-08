@@ -37,7 +37,8 @@ define([
                 title: prettifyFieldName(this.model.id),
                 subtitle: getSubtitle.call(this),
                 view: new NumericParametricFieldView(_.extend(options, {hideTitle: true})),
-                collapsed: false
+                collapsed: true,
+                renderOnOpen: true
             });
 
             this.listenTo(this.selectedParametricValues, 'update change:range', this.setFieldSelectedValues)

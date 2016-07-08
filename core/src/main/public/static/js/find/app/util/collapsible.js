@@ -1,17 +1,21 @@
 define([
     'backbone',
-    'text!find/templates/app/util/collapsible.html'
+    'text!find/templates/app/util/collapsible.html',
+    'bootstrap'
 ], function(Backbone, collapsibleTemplate) {
 
     return Backbone.View.extend({
         template: _.template(collapsibleTemplate, {variable: 'data'}),
 
         events: {
-            'show.bs.collapse .collapsible-header': function() {
+            'show.bs.collapse': function() {
                 this.collapsed = false;
                 this.updateHeaderState();
+                if (this.renderOnOpen) {
+                    this.view.render();
+                }
             },
-            'hide.bs.collapse .collapsible-header': function() {
+            'hide.bs.collapse': function() {
                 this.collapsed = true;
                 this.updateHeaderState();
             }
@@ -22,6 +26,7 @@ define([
             this.collapsed = options.collapsed || false;
             this.title = options.title;
             this.subtitle = options.subtitle;
+            this.renderOnOpen = options.renderOnOpen || false;
         },
 
         render: function() {

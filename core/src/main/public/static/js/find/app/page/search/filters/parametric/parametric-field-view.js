@@ -61,7 +61,7 @@ define([
                 title: this.model.get('displayName') + ' (' + this.model.fieldValues.length +')',
                 subtitle: this.getFieldSelectedValuesLength() + ' ' + i18n['app.selected'],
                 view: new ValuesView({collection: this.model.fieldValues}),
-                collapsed: false
+                collapsed: true
             });
 
             this.listenTo(this.selectedParametricValues, 'update', function() {
