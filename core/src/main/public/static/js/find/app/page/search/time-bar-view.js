@@ -15,7 +15,6 @@ define([
     'text!find/templates/app/page/search/filters/parametric/numeric-date-parametric-field-view.html'
 ], function(Backbone, _, $, vent, i18n, NumericParametricFieldView, BucketedParametricCollection, loadingSpinnerTemplate, numericDateTemplate) {
 
-    var FIELD_NAME = 'autn_date';
     var PIXELS_PER_BUCKET = 20;
 
     return Backbone.View.extend({
@@ -26,6 +25,7 @@ define([
         initialize: function(options) {
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
+            this.fieldName = options.fieldName;
 
             this.listenTo(vent, 'vent:resize', this.render);
             this.listenTo(options.previewModeModel, 'change:document', this.render);
@@ -42,7 +42,7 @@ define([
             var $loadingSpinner = $(this.loadingSpinnerHtml);
             this.$el.empty().append($loadingSpinner);
 
-            this.bucketModel = new BucketedParametricCollection.Model({id: FIELD_NAME, name: FIELD_NAME});
+            this.bucketModel = new BucketedParametricCollection.Model({id: this.fieldName, name: this.fieldName});
 
             this.activeRequest = this.bucketModel
                 .fetch({

@@ -16,7 +16,14 @@
             <div class="results-view-container"></div>
         </div>
         <% if (showTimeBar) { %>
-            <div class="middle-container-time-bar"></div>
+            <div class="middle-container-time-bar">
+                <div class="time-bar-container-toggle clickable">
+                    <h4 class="time-bar-header"><%-timeBarFieldName%></h4>
+                    <i class="hp-icon hp-chevron-up hp-lg time-bar-container-icon"></i>
+                    <div class="time-bar-advice">Click to expand</div>
+                </div>
+                <div class="middle-container-time-bar-content"></div>
+            </div>
         <% } %>
     </div>
     <div class="right-side-container side-container">
