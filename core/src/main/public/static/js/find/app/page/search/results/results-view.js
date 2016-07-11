@@ -67,6 +67,16 @@ define([
                     }
                 }
             },
+
+            // ToDo : Merge with changes made in FIND-229
+            'click .document-detail-mode [data-cid]': function(e) {
+                var $target = $(e.currentTarget);
+                var cid = $target.data('cid');
+                var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
+                var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                var model = collection.get(cid);
+                vent.navigateToDetailRoute(model);
+            },
             'click .similar-documents-trigger': function(event) {
                 event.stopPropagation();
                 var cid = $(event.target).closest('[data-cid]').data('cid');
@@ -212,6 +222,8 @@ define([
             if (this.previewModeModel) {
                 this.$('.main-results-content').addClass('preview-mode');
                 this.updateSelectedDocument();
+            } else {
+                this.$('.main-results-content').addClass('document-detail-mode');
             }
         },
 

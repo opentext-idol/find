@@ -608,6 +608,10 @@ input.find-input {
     cursor: pointer;
 }
 
+.document-detail-mode .main-results-container {
+    cursor: pointer;
+}
+
 .preview-mode .popover {
     cursor: default;
 }
