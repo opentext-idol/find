@@ -5,70 +5,160 @@
 
 define([
     'backbone',
-    'find/app/util/merge-collection'
-], function(Backbone, MergeCollection) {
+    'find/app/util/filtering-collection'
+], function(Backbone, FilteringCollection) {
 
-    var Animal = {CAT: 'CAT', DOG: 'DOG'};
+    var Animal = {CAT: 'CAT', DOG: 'DOG', TIGER: 'TIGER', UNICORN: 'UNICORN'};
 
-    describe('Merge collection', function() {
+    var MockCollection = Backbone.Collection.extend({
+        spy1: function() {},
+        spy2: function() {},
+        spy3: function() {}
+    });
+
+    describe('Filtering collection', function() {
         beforeEach(function() {
-            this.catCollection = new Backbone.Collection([
-                {id: 0, name: 'Oscar', animal: Animal.CAT},
-                {id: 1, name: 'Katy', animal: Animal.CAT}
+            spyOn(FilteringCollection.prototype, 'onAdd').and.callThrough();
+            spyOn(FilteringCollection.prototype, 'onRemove').and.callThrough();
+            spyOn(FilteringCollection.prototype, 'onChange').and.callThrough();
+            spyOn(FilteringCollection.prototype, 'onReset').and.callThrough();
+            spyOn(FilteringCollection.prototype, 'filterModels').and.callThrough();
+
+            this.petCollection = new MockCollection([
+                {id: 0, name: 'Rambo', animal: Animal.CAT},
+                {id: 1, name: 'Millie', animal: Animal.CAT},
+                {id: 2, name: 'Maisey', animal: Animal.DOG},
+                {id: 3, name: 'Hobbes', animal: Animal.TIGER}
+
             ]);
 
-            this.dogCollection = new Backbone.Collection([
-                {id: 0, name: 'Rover', animal: Animal.DOG}
-            ]);
+            this.filterModel = new Backbone.Model({text: '', filterOn: 'name'});
 
-            this.mergeCollection = new MergeCollection([], {
-                collections: [this.catCollection, this.dogCollection],
-                comparator: 'name',
-                typeAttribute: 'animal'
+            this.filteringCollection = new FilteringCollection([], {
+                collection: this.petCollection,
+                filterModel: this.filterModel,
+                predicate: function(filterModel, model) {
+                    var filterOn = filterModel.get('filterOn');
+                    return model.get(filterOn).toLowerCase().indexOf(filterModel.get('text').toLowerCase()) > -1;
+                },
+                resetOnFilter: false,
+                collectionFunctions: ['spy1', 'spy2', 'spy3']
+            });
+            spyOn(this.petCollection, 'spy1').and.callThrough();
+            spyOn(this.petCollection, 'spy2').and.callThrough();
+            spyOn(this.petCollection, 'spy3').and.callThrough();
+        });
+
+        it('should have 4 elements in the filtered collection', function() {
+            expect(this.filteringCollection.length).toBe(4);
+        });
+
+        describe('after filtering by the letter "M"', function() {
+            beforeEach(function() {
+                this.filterModel.set({text: 'm', filterOn: 'name'});
+            });
+
+            it('should show 3 models when the filter text is set to "m"', function(){
+                expect(this.filteringCollection.length).toBe(3);
+                expect(this.filteringCollection.at(0)).toBe(this.petCollection.at(0));
+                expect(this.filteringCollection.at(1)).toBe(this.petCollection.at(1));
+                expect(this.filteringCollection.at(2)).toBe(this.petCollection.at(2));
+            })
+        });
+
+        describe('after filtering by the letters "Hobbes"', function() {
+            beforeEach(function() {
+                this.filterModel.set({text: 'Hobbes', filterOn: 'name'});
+            });
+
+            it('should show 1 model when the filter text is set to "Hobbes"', function(){
+                expect(this.filteringCollection.length).toBe(1);
+                expect(this.filteringCollection.at(0)).toBe(this.petCollection.at(3));
+            })
+        });
+
+        describe('after filtering by the animal type "Tiger"', function() {
+            beforeEach(function() {
+                this.filterModel.set({text: 'TIGER', filterOn: 'animal'});
+            });
+
+            it('should show 1 model when the filter text is set to "Tiger"', function(){
+                expect(this.filteringCollection.length).toBe(1);
+                expect(this.filteringCollection.at(0)).toBe(this.petCollection.at(3));
+            })
+        });
+
+        describe('When calling the collection functions', function() {
+            beforeEach(function() {
+                this.filteringCollection.spy1();
+                this.filteringCollection.spy2();
+            });
+
+            it('should have called the original functions', function(){
+                expect(this.petCollection.spy1).toHaveBeenCalled();
+                expect(this.petCollection.spy2).toHaveBeenCalled();
+                expect(this.petCollection.spy3).not.toHaveBeenCalled();
+            })
+        });
+
+        describe('After adding a model to the original collection', function() {
+            beforeEach(function() {
+                this.petCollection.add(new Backbone.Model({name: 'Twilight', animal: Animal.UNICORN}));
+            });
+
+            it('should have 5 models', function(){
+                expect(this.filteringCollection.length).toBe(5);
+            });
+
+            it('should have called onAdd', function(){
+                expect(FilteringCollection.prototype.onAdd).toHaveBeenCalled();
             });
         });
 
-        it('adds all existing models on construction', function() {
-            expect(this.mergeCollection.length).toBe(3);
-            expect(this.mergeCollection.at(0)).toBe(this.catCollection.at(1));
-            expect(this.mergeCollection.at(1)).toBe(this.catCollection.at(0));
-            expect(this.mergeCollection.at(2)).toBe(this.dogCollection.at(0));
+        describe('After removing a model from the original collection', function() {
+            beforeEach(function() {
+                this.petCollection.remove(this.petCollection.at(0));
+            });
+
+            it('filtering collection should have 3 models', function(){
+                expect(this.filteringCollection.length).toBe(3);
+            });
+
+            it('should have called onRemove', function(){
+                expect(FilteringCollection.prototype.onRemove).toHaveBeenCalled();
+            });
         });
 
-        it('adds models added to the tracked collection from itself', function() {
-            var model = this.dogCollection.add({id: 1, name: 'Barky', animal: Animal.DOG});
+        describe('After changing a model in the original collection', function() {
+            beforeEach(function() {
+                this.petCollection.findWhere({name: 'Rambo'}).set({animal: Animal.TIGER});
+            });
 
-            expect(this.mergeCollection.length).toBe(4);
-            expect(this.mergeCollection.findWhere({name: 'Barky'})).toBe(model);
+            it('should update the model in the filtering collection', function(){
+                expect(this.filteringCollection.findWhere({name: 'Rambo'}).get('animal')).toBe(Animal.TIGER);
+            });
+
+            it('should have called onChange', function(){
+                expect(FilteringCollection.prototype.onChange).toHaveBeenCalled();
+            });
         });
 
-        it('removes models removed from the tracked collections from itself', function() {
-            this.catCollection.remove(0);
+        describe('After resetting the original collection', function() {
+            beforeEach(function() {
+                this.petCollection.reset([{name: 'Luna', animal: Animal.TIGER}]);
+            });
 
-            expect(this.mergeCollection.length).toBe(2);
-            expect(this.mergeCollection.findWhere({name: 'Oscar'})).toBeUndefined();
-        });
+            it('should have called onReset', function(){
+                expect(FilteringCollection.prototype.onReset).toHaveBeenCalled();
+            });
 
-        it('resets itself when one of the tracked collections is reset', function() {
-            this.catCollection.reset([
-                {id: 3, name: 'Tom', animal: Animal.CAT}
-            ]);
+            it('should update the filtering collection', function(){
+                expect(this.filteringCollection.length).toBe(1);
+            });
 
-            expect(this.mergeCollection.length).toBe(2);
-            expect(this.mergeCollection.at(0)).toBe(this.dogCollection.at(0));
-            expect(this.mergeCollection.at(1)).toBe(this.catCollection.at(0));
-        });
-
-        it('preserves the collection reference on the models', function() {
-            expect(this.mergeCollection.findWhere({animal: Animal.CAT}).collection).toBe(this.catCollection);
-        });
-
-        it('handles adding two new models to the tracked collection', function() {
-            // New models have no id
-            this.catCollection.add({name: 'Willow', animal: Animal.CAT});
-            this.catCollection.add({name: 'George', animal: Animal.CAT});
-
-            expect(this.mergeCollection.length).toBe(5);
+            it('should contain the new entry', function() {
+                expect(this.filteringCollection.at(0)).toBe(this.petCollection.at(0));
+            });
         });
     });
 });

@@ -15,8 +15,6 @@ define([
 ], function ($, _, BucketedParametricCollection, AbstractView, FieldView, ListView, i18n, template) {
     "use strict";
 
-    var DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
-
     var PreInitialisedListView = ListView.extend({
         createItemView: function (model) {
             //noinspection AssignmentResultUsedJS,JSUnresolvedFunction
@@ -42,11 +40,8 @@ define([
         
         template: _.template(template)({i18n: i18n}),
 
-        initialize: function (options) {
-            this.fieldsCollection = options.fieldsCollection;
+        initialize: function (options) {            
             this.queryModel = options.queryModel;
-            
-            this.collection = new BucketedParametricCollection();
             this.monitorCollection(this.collection);
 
             this.fieldNamesListView = new PreInitialisedListView({
@@ -56,7 +51,7 @@ define([
                     template: options.fieldTemplate,
                     queryModel: options.queryModel,
                     selectedParametricValues: options.queryState.selectedParametricValues,
-                    pixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
+                    pixelsPerBucket: options.defaultTargetNumberOfPixelsPerBucket,
                     numericRestriction: options.numericRestriction,
                     formatting: options.formatting,
                     selectionEnabled: options.selectionEnabled,
@@ -65,21 +60,6 @@ define([
                     coordinatesEnabled: options.coordinatesEnabled
                 }
             });
-
-            //noinspection JSUnresolvedFunction
-            this.listenTo(options.fieldsCollection, 'update reset',  this.refreshFields);
-        },
-
-        refreshFields: function () {
-            var fieldNames = this.fieldsCollection.pluck('id');
-            if (fieldNames.length > 0) {
-                //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                var targetNumberOfBuckets = _.times(this.fieldsCollection.length, _.constant(Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)));
-
-                this.collection.fetch({
-                    data: this.getBucketingRequestData(fieldNames, targetNumberOfBuckets)
-                });
-            }
         },
 
         remove: function () {

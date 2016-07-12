@@ -5,13 +5,16 @@
 
 define([
     'find/app/page/search/abstract-query-left-side-view',
-    'find/idol/app/page/search/filters/indexes/idol-indexes-view',
-    'find/idol/app/page/search/filters/parametric/idol-numeric-parametric-view'
-], function(AbstractQueryLeftSideView, IdolIndexesView, IdolNumericParametricView) {
+    'find/idol/app/page/search/filters/indexes/idol-indexes-view'
+], function(AbstractQueryLeftSideView, IdolIndexesView) {
 
     return AbstractQueryLeftSideView.extend({
         IndexesView: IdolIndexesView,
-        NumericParametricView: IdolNumericParametricView
+        getBucketingRequestData: function(fieldNames, targetNumberOfBuckets) {
+            return {
+                fieldNames: fieldNames,
+                targetNumberOfBuckets: targetNumberOfBuckets
+            };
+        }
     });
-
 });

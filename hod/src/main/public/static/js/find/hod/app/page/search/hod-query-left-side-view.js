@@ -5,13 +5,17 @@
 
 define([
     'find/app/page/search/abstract-query-left-side-view',
-    'find/hod/app/page/search/filters/indexes/hod-indexes-view',
-    'find/hod/app/page/search/filters/parametric/hod-numeric-parametric-view'
-], function(AbstractQueryLeftSideView, HodIndexesView, HodNumericParametricView) {
+    'find/hod/app/page/search/filters/indexes/hod-indexes-view'
+], function(AbstractQueryLeftSideView, HodIndexesView) {
 
     return AbstractQueryLeftSideView.extend({
         IndexesView: HodIndexesView,
-        NumericParametricView: HodNumericParametricView
+        getBucketingRequestData: function(fieldNames, targetNumberOfBuckets) {
+            return {
+                fieldNames: fieldNames,
+                databases: this.queryModel.get('indexes'),
+                targetNumberOfBuckets: targetNumberOfBuckets
+            };
+        }
     });
-
 });
