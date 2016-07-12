@@ -384,15 +384,47 @@ fieldset.radio-fieldset > label {
 }
 
 .middle-container.middle-container-with-time-bar .middle-container-contents {
-    /* Subtract size of time bar */
-    height: calc(100% - 230px);
+    /* Subtract size of time bar and collapse icon */
+    height: calc(100% - 240px);
+}
+
+.middle-container.middle-container-with-time-bar.small-time-bar .middle-container-contents {
+    /* Subtract size of collapsed time bar */
+    height: calc(100% - 50px);
+}
+
+.middle-container-time-bar-content {
+    height: 190px;
+    margin: 0;
+    padding: 5px 0;
+    background-color: rgba(242, 240, 240, 0.46);
+    border-top: 1px solid #dfdfdf;
+}
+
+.time-bar-container-toggle {
+    height: 50px;
+}
+
+.time-bar-advice {
+    display: inline-block;
+    margin: 15px 15px 0 0;
+    float: right;
 }
 
 .middle-container-time-bar {
-    height: 230px;
-    padding: 10px;
-    background-color: rgba(242, 240, 240, 0.46);
-    border-top: 1px solid #dfdfdf;
+    background-color: #E2E2E2;
+}
+
+.time-bar-container-icon {
+    display: inline-block;
+    margin: 15px 15px 0 0;
+    float: right;
+}
+
+.time-bar-container-toggle h4.time-bar-header {
+    display: inline-block;
+    width: auto;
+    margin: 15px 0 0 15px;
 }
 
 .middle-container h4 {

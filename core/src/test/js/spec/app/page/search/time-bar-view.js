@@ -13,6 +13,7 @@ define([
             
             this.view = new TimeBarView({
                 queryModel: this.queryModel,
+                fieldName: 'autn_date',
                 previewModeModel: this.previewModeModel,
                 queryState: {
                     selectedParametricValues: this.selectedParametricValues
@@ -28,7 +29,7 @@ define([
             this.view.remove();
         });
 
-        it('fetches the AUTN_DATE field', function() {
+        it('fetches the fieldName passed to constructor', function() {
             var bucketModel = BucketedParametricCollection.Model.instances[0];
             expect(bucketModel.get('id')).toBe('autn_date');
             expect(bucketModel.sync).toHaveBeenCalledWith('read', jasmine.any(Object), jasmine.any(Object));

@@ -9,6 +9,8 @@ define([
     'find/app/page/search/filters/parametric/parametric-value-view'
 ], function(Backbone, _, $, i18n, ListView, Collapsible, ParametricModal, ValueView) {
 
+    var MAX_SIZE = 5;
+
     var ValuesView = Backbone.View.extend({
         className: 'table parametric-fields-table',
         tagName: 'table',
@@ -17,7 +19,7 @@ define([
             this.listView = new ListView({
                 collection: this.collection,
                 ItemView: ValueView,
-                maxSize: 5,
+                maxSize: MAX_SIZE,
                 tagName: 'tbody',
                 collectionChangeEvents: {
                     count: 'updateCount',
@@ -39,6 +41,7 @@ define([
     return Backbone.View.extend({
         className: 'animated fadeIn',
         seeAllButtonTemplate: _.template('<tr class="show-all clickable"><td></td><td> <span class="toggle-more-text text-muted"><%-i18n["app.seeAll"]%></span></td></tr>'),
+        subtitleTemplate: _.template('<span class="selection-length"><%-length%></span> <%-i18n["app.selected"]%> <i class="hp-icon hp-warning selected-warning hidden"></i>'),
 
         events: {
             'click .show-all': function(e) {
@@ -59,13 +62,17 @@ define([
 
             this.collapsible = new Collapsible({
                 title: this.model.get('displayName') + ' (' + this.model.fieldValues.length +')',
-                subtitle: this.getFieldSelectedValuesLength() + ' ' + i18n['app.selected'],
                 view: new ValuesView({collection: this.model.fieldValues}),
-                collapsed: true
+                collapsed: true,
+                subtitle: this.subtitleTemplate({
+                    i18n: i18n,
+                    length: this.getFieldSelectedValuesLength()
+                })
             });
 
             this.listenTo(this.selectedParametricValues, 'update', function() {
-                this.collapsible.$('.collapsible-subtitle').text(this.getFieldSelectedValuesLength() + ' ' + i18n['app.selected'])
+                this.collapsible.$('.selection-length').text(this.getFieldSelectedValuesLength());
+                this.toggleWarning();
             })
         },
 
@@ -74,6 +81,32 @@ define([
             this.collapsible.render();
 
             this.collapsible.$('tbody').append(this.seeAllButtonTemplate({i18n:i18n}));
+
+            this.$warning = this.collapsible.$('.selected-warning');
+
+            this.$warning.tooltip({
+                title: i18n['search.parametric.selected.notAllVisible']
+            });
+
+            this.toggleWarning();
+        },
+
+        toggleWarning: function() {
+            var currentValues = this.selectedParametricValues.where({field: this.model.id});
+            var toggle = true;
+
+            if(currentValues.length > 0) {
+                var firstFiveValues = this.model.fieldValues.chain()
+                    .first(MAX_SIZE)
+                    .pluck('id')
+                    .value();
+
+                var fieldsArray = _.invoke(currentValues, 'get', 'value');
+
+                toggle = !_.difference(fieldsArray, firstFiveValues).length;
+            }
+
+            this.$warning.toggleClass('hidden', toggle);
         },
 
         getFieldSelectedValuesLength: function() {
