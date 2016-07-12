@@ -131,6 +131,7 @@ define([
         'search.parametricFilters.modal.loading.error': 'Error loading parametric fitlers',
         'search.parametricFields': 'Parametric Fields',
         'search.parametric.empty': 'No parametric fields found',
+        'search.parametric.selected.notAllVisible': 'Some values are not visible',
         'search.preview': 'Preview',
         'search.preview.previewMode': 'Preview Mode',
         'search.preview.mmap': 'Explore in MMAP',
