@@ -164,7 +164,7 @@ define([
                     id: this.cid + '-speed-slider',
                     min: 50,
                     max: configuration().topicMapMaxResults,
-                    value: 50
+                    value: 300
                 });
 
             this.topicMap.setElement(this.$('.entity-topic-map')).render();
