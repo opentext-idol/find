@@ -9,8 +9,9 @@ define([
     'underscore',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'parametric-refinement/prettify-field-name',
-    'find/app/util/collapsible'
-], function(Backbone, $, _, NumericParametricFieldView, prettifyFieldName, Collapsible) {
+    'find/app/util/collapsible',
+    'find/app/vent'
+], function(Backbone, $, _, NumericParametricFieldView, prettifyFieldName, Collapsible, vent) {
 
     'use strict';
 
@@ -41,7 +42,12 @@ define([
                 renderOnOpen: true
             });
 
-            this.listenTo(this.selectedParametricValues, 'update change:range', this.setFieldSelectedValues)
+            this.listenTo(this.selectedParametricValues, 'update change:range', this.setFieldSelectedValues);
+            
+            this.listenTo(vent, 'vent:resize', function() {
+                this.collapsible.view.viewWidth = this.$el.width();
+                this.collapsible.view.render();
+            });
         },
 
         setFieldSelectedValues: function() {

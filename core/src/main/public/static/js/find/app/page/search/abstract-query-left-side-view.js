@@ -129,13 +129,14 @@ define([
                 defaultTargetNumberOfPixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
                 formatting: NumericParametricFieldView.dateFormatting
             });
+
+            this.refreshNumericFields = _.bind(this.refreshFields, this, this.numericParametricFieldsCollection, this.numericBucketedCollection, this.numericParametricView);
+            this.refreshDateFields = _.bind(this.refreshFields, this, this.dateParametricFieldsCollection, this.dateBucketedCollection, this.dateParametricView);
             
             //noinspection JSUnresolvedFunction
             this.listenTo(vent, 'vent:resize', function () {
-                this.numericParametricView.render();
-                this.dateParametricView.render();
-                this.numericParametricView.refreshFields();
-                this.dateParametricView.refreshFields();
+                this.refreshNumericFields();
+                this.refreshDateFields();
             });
 
             this.parametricView = new ParametricView({
@@ -166,8 +167,8 @@ define([
                 this.updateEmptyMessage();
             });
 
-            this.listenTo(this.numericParametricFieldsCollection, 'update reset',  _.bind(this.refreshFields, this, this.numericParametricFieldsCollection, this.numericBucketedCollection, this.numericParametricView));
-            this.listenTo(this.dateParametricFieldsCollection, 'update reset',  _.bind(this.refreshFields, this, this.dateParametricFieldsCollection, this.dateBucketedCollection, this.dateParametricView));
+            this.listenTo(this.numericParametricFieldsCollection, 'update reset',  this.refreshNumericFields);
+            this.listenTo(this.dateParametricFieldsCollection, 'update reset',  this.refreshDateFields);
 
             this.$emptyMessage = $('<p class="hide">' + i18n['search.filters.empty'] + '</p>');
         },
@@ -241,7 +242,8 @@ define([
                 var targetNumberOfBuckets = _.times(fieldsCollection.length, _.constant(Math.floor(view.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)));
 
                 bucketedCollection.fetch({
-                    data: this.getBucketingRequestData(fieldNames, targetNumberOfBuckets)
+                    data: this.getBucketingRequestData(fieldNames, targetNumberOfBuckets),
+                    reset: false
                 });
             } else {
                 bucketedCollection.reset();
