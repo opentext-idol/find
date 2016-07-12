@@ -48,8 +48,7 @@ define([
                 var popover = this.popoverTemplate({
                     i18n: i18n,
                     title: location.displayName,
-                    latitude: latitude,
-                    longitude: longitude,
+                    summary: this.model.get('summary'),
                     cidForClickRouting: null
                 });
 

@@ -65,8 +65,7 @@ define([
                     var popover = this.popoverTemplate({
                         title: title,
                         i18n: i18n,
-                        latitude: latitude,
-                        longitude: longitude,
+                        summary: model.get('summary'),
                         cidForClickRouting: model.cid
                     });
                     var marker = this.mapResultsView.getMarker(latitude, longitude, this.getIcon(), title, popover);
@@ -164,7 +163,7 @@ define([
                     min_date: this.queryModel.get('minDate'),
                     max_date: this.queryModel.get('maxDate'),
                     sort: 'relevance',
-                    summary: 'off'
+                    summary: 'context'
                 },
                 remove: false,
                 reset: false

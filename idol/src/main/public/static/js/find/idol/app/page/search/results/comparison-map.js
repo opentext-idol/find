@@ -156,8 +156,7 @@ define([
                         var popover = this.popoverTemplate({
                             title: title,
                             i18n: i18n,
-                            latitude: location.latitude,
-                            longitude: location.longitude,
+                            summary: model.get('summary'),
                             cidForClickRouting: model.cid
                         });
                         var icon = this.mapView.getIcon('hp-record', 'white', comparison.color);
@@ -242,7 +241,7 @@ define([
                     max_results: length + this.resultsStep,
                     field_text: newFieldText,
                     sort: 'relevance',
-                    summary: 'off'
+                    summary: 'context'
                 }, stateTokenStrategy.requestParams(queryModel)),
                 remove: false,
                 reset: false
