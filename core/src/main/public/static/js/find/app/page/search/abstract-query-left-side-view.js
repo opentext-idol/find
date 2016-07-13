@@ -115,10 +115,7 @@ define([
                 collection: this.filteredNumericCollection,
                 fieldTemplate: numericParametricFieldTemplate,
                 defaultTargetNumberOfPixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
-                numericRestriction: true,
-                selectionEnabled: true,
-                zoomEnabled: true,
-                buttonsEnabled: true
+                numericRestriction: true
             });
 
             this.dateParametricView = new NumericParametricView({
