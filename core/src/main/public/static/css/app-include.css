@@ -25,6 +25,10 @@ html, body {
     min-height: 18px;
 }
 
+.chart-selection-enabled {
+    cursor: crosshair;
+}
+
 .date input {
     padding-right: 0 !important;
 }

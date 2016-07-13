@@ -218,6 +218,11 @@ define([
                 coordinatesEnabled: this.coordinatesEnabled
             });
 
+            if (this.selectionEnabled) {
+                // see http://stackoverflow.com/questions/8638621/jquery-svg-why-cant-i-addclass for why this is necessary
+                $(this.graph.chart[0]).attr('class', $(this.graph.chart[0]).attr('class') + ' chart-selection-enabled');
+            }
+
             this.updateSelection();
         },
 
