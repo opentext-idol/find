@@ -1,5 +1,6 @@
 define([
     'backbone',
+    'underscore',
     'find/idol/app/model/comparison/comparison-documents-collection',
     'find/idol/app/page/search/results/idol-results-view',
     'find/idol/app/page/search/results/comparison-lists',
@@ -8,10 +9,11 @@ define([
     'find/app/page/search/results/state-token-strategy',
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
+    'find/app/configuration',
     'text!find/idol/templates/comparison/comparison-view.html',
     'i18n!find/nls/bundle'
-], function(Backbone, ComparisonDocumentsCollection, ResultsView, ResultsLists, ComparisonMap, ComparisonTopicMap,
-            stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, template, i18n) {
+], function(Backbone, _, ComparisonDocumentsCollection, ResultsView, ResultsLists, ComparisonMap, ComparisonTopicMap,
+            stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, configuration, template, i18n) {
 
     var html = _.template(template)({i18n: i18n});
 
@@ -28,11 +30,12 @@ define([
             this.searchModels = options.searchModels;
             this.escapeCallback = options.escapeCallback;
 
-            var resultsViews = [
+            var resultsViews = _.where([
                 {
                     Constructor: ResultsLists,
                     id: 'list',
                     uniqueId: _.uniqueId('results-view-item-'),
+                    shown: true,
                     constructorArguments: {
                         searchModels: options.searchModels,
                         escapeCallback: options.escapeCallback,
@@ -48,6 +51,7 @@ define([
                     Constructor: ComparisonMap,
                     id: 'map',
                     uniqueId: _.uniqueId('results-view-item-'),
+                    shown: configuration().map.enabled,
                     constructorArguments: {
                         searchModels: options.searchModels,
                         escapeCallback: options.escapeCallback,
@@ -62,6 +66,7 @@ define([
                     Constructor: ComparisonTopicMap,
                     id: 'topic-map',
                     uniqueId: _.uniqueId('results-view-item-'),
+                    shown: true,
                     constructorArguments: {
                         searchModels: options.searchModels,
                         escapeCallback: options.escapeCallback,
@@ -72,7 +77,7 @@ define([
                         icon: 'hp-grid'
                     }
                 }
-            ];
+            ], {shown: true});
 
             var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
