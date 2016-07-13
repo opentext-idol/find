@@ -19,6 +19,7 @@ define([
         ResultsViewAugmentation: ResultsViewAugmentation,
 
         // TODO: Enable sunburst in HOD when IOD-9173 is complete
+        // TODO: When sunburst is enabled make this.fetchParametricFields also fetch the restrictedParametricCollection
         displayDependentParametricViews: false,
         mapViewResultsStep: 2500,
         mapViewAllowIncrement: false,
@@ -48,6 +49,8 @@ define([
                     success: _.bind(function () {
                         if (valuesCollection) {
                             this.fetchParametricValues(fieldsCollection, valuesCollection);
+                            // disabled until we support sunburst on HOD 
+                            //this.fetchRestrictedParametricCollection();
                         }
                     }, this)
                 });

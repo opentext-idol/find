@@ -44,7 +44,7 @@ define([
             this.errorMessage = options.errorMessage;
 
             this.dependentParametricCollection = options.dependentParametricCollection || new DependentParametricCollection();
-            this.fieldsCollection = new Backbone.Collection([{text: ''}, {text: ''}]);
+            this.fieldsCollection = new Backbone.Collection([{field: ''}, {field: ''}]);
 
             this.model = new Backbone.Model({
                 loading: this.parametricCollection.fetching
@@ -90,6 +90,8 @@ define([
             this.updateSelections();           
 
             this.onClick = this.savedSearchModel.get('type') !== SNAPSHOT ? this.onSavedSearchClick : _.noop;
+
+            this.updateParametricCollection();
         },
 
         toggleLoading: function () {
@@ -202,8 +204,7 @@ define([
                 primaryModel.set('field', fields.sort()[0]);
                 secondaryModel.set('field', '');
             }
-
-            if (fieldInvalid(secondaryModel.get('field'))) {
+            else if (fieldInvalid(secondaryModel.get('field'))) {
                 secondaryModel.set('field', '');
             }
         },

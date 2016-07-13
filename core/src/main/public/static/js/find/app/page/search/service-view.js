@@ -296,7 +296,6 @@ define([
             this.fetchParametricFields(this.numericParametricFieldsCollection);
             this.fetchParametricFields(this.dateParametricFieldsCollection);
             this.fetchEntities();
-            this.fetchRestrictedParametricCollection();
 
             this.updateScrollParameters = updateScrollParameters.bind(this);
 
@@ -396,18 +395,23 @@ define([
         },
 
         fetchRestrictedParametricCollection: function() {
-            this.restrictedParametricCollection.fetch({
-                data: {
-                    fieldNames: this.parametricFieldsCollection.pluck('id'),
-                    databases: this.queryModel.get('indexes'),
-                    queryText: this.queryModel.get('queryText'),
-                    fieldText: this.queryModel.get('fieldText'),
-                    minDate: this.queryModel.getIsoDate('minDate'),
-                    maxDate: this.queryModel.getIsoDate('maxDate'),
-                    minScore: this.queryModel.get('minScore'),
-                    stateTokens: this.queryModel.get('stateMatchIds')
-                }
-            });
+            this.restrictedParametricCollection.reset();
+            
+            var fieldNames = this.parametricFieldsCollection.pluck('id');
+            if (fieldNames.length > 0 && this.queryModel.get('indexes').length !== 0) {
+                this.restrictedParametricCollection.fetch({
+                    data: {
+                        fieldNames: this.parametricFieldsCollection.pluck('id'),
+                        databases: this.queryModel.get('indexes'),
+                        queryText: this.queryModel.get('queryText'),
+                        fieldText: this.queryModel.get('fieldText'),
+                        minDate: this.queryModel.getIsoDate('minDate'),
+                        maxDate: this.queryModel.getIsoDate('maxDate'),
+                        minScore: this.queryModel.get('minScore'),
+                        stateTokens: this.queryModel.get('stateMatchIds')
+                    }
+                });
+            }
         },
 
         rightSideContainerHideToggle: function(toggle) {
