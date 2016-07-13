@@ -222,7 +222,7 @@ define([
 
             if (this.selectionEnabled) {
                 // see http://stackoverflow.com/questions/8638621/jquery-svg-why-cant-i-addclass for why this is necessary
-                $(this.graph.chart[0]).attr('class', $(this.graph.chart[0]).attr('class') + ' chart-selection-enabled');
+                $chart.attr('class', $chart.attr('class') + ' chart-selection-enabled');
             }
 
             this.updateSelection();
@@ -231,21 +231,19 @@ define([
         // Update the rendered selection rectangle and inputs to match the selected parametric range model
         updateSelection: function() {
             if (this.graph) {
-                this.graph.selectionRect.remove();
-
                 var rangeModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.numericRestriction));
 
                 if (rangeModel) {
                     var range = rangeModel.get('range');
+
                     this.updateMinInput(roundInputNumber(range[0]));
                     this.updateMaxInput(roundInputNumber(range[1]));
 
-                    this.graph.selectionRect.init(this.graph.chart, GRAPH_HEIGHT, this.graph.scale.barWidth(range[0]));
-                    this.graph.selectionRect.update(this.graph.scale.barWidth(range[1]));
-                    this.graph.selectionRect.focus();
+                    this.graph.setSelection(range);
                 } else {
                     this.updateMinInput(this.absoluteMinValue);
                     this.updateMaxInput(this.absoluteMaxValue);
+                    this.graph.clearSelection();
                 }
             }
         },

@@ -34,6 +34,7 @@ define([
     function dragEnd(scale, min, selectionCallback, deselectionCallback, selectionRect) {
         return function () {
             var finalAttributes = selectionRect.getCurrentAttributes();
+
             if (finalAttributes.x2 - finalAttributes.x1 > 1) {
                 // range selected
                 d3.event.sourceEvent.preventDefault();
@@ -155,7 +156,15 @@ define([
                 return {
                     chart: chart,
                     scale: scale,
-                    selectionRect: selectionRect
+                    clearSelection: function() {
+                        selectionRect.remove();
+                    },
+                    setSelection: function(range) {
+                        selectionRect.remove();
+                        selectionRect.init(chart, options.yRange, scale.barWidth(range[0] - data.minValue));
+                        selectionRect.update(scale.barWidth(range[1] - data.minValue));
+                        selectionRect.focus();
+                    }
                 };
             }
         };
