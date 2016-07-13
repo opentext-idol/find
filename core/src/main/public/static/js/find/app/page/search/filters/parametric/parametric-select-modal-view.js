@@ -8,6 +8,7 @@ define([
     'i18n!find/nls/bundle',
     'iCheck'
 ], function(Backbone, $, _, ParametricSelectModalListView, template, loadingSpinnerTemplate, i18n) {
+    'use strict';
 
     var fieldTemplate = _.template('<div id="<%-field.id.replace(/[/]/g, \'_\')%>" class="tab-pane <%- currentFieldGroup === field.id ? \'active\' : \'\'%>" role="tabpanel"></div>');
 
@@ -21,10 +22,11 @@ define([
             this.parametricDisplayCollection = options.parametricDisplayCollection;              
             this.selectCollection = options.selectCollection;
             this.currentFieldGroup = options.currentFieldGroup;
+            this.parametricCollection = options.parametricCollection;
         },
 
         renderFields: function () {
-            var viewhtml = $(this.template({
+            var viewHtml = $(this.template({
                 parametricDisplayCollection: this.parametricDisplayCollection,
                 currentFieldGroup: this.currentFieldGroup
             }));
@@ -36,10 +38,15 @@ define([
                 var $field = $(fieldTemplate({currentFieldGroup: this.currentFieldGroup, field: field}));
 
                 var listView = new ParametricSelectModalListView({
-                    parametricDisplayCollection: this.parametricDisplayCollection,
                     field: field,
-                    collection: field.fieldValues,
-                    selectCollection: this.selectCollection
+                    parametricDisplayCollection: this.parametricDisplayCollection,
+                    selectCollection: this.selectCollection,
+                    allValues: _.map(this.parametricCollection.get(field.id).get('values'), function(attributes) {
+                        return {
+                            count: 0, // we're using this list for zero count fields
+                            id: attributes.value
+                        }
+                    })
                 });
 
                 $field.append(listView.render().$el);
@@ -47,7 +54,7 @@ define([
                 $fragment.append($field);
             }, this);
 
-            this.$el.html(viewhtml);
+            this.$el.html(viewHtml);
 
             this.$('.tab-content').html($fragment);
         },
