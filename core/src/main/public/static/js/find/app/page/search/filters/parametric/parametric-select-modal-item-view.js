@@ -15,7 +15,7 @@ define([
                 template: this.template,
                 templateOptions: {
                     field: field,
-                    model: this.model                    
+                    model: this.model
                 }
             }, options));
         },
