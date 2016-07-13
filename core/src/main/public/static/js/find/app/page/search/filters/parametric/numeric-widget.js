@@ -105,10 +105,14 @@ define([
                             return i * scale.barWidth(data.bucketSize);
                         },
                         y: function (d) {
-                            return d.count ? scale.y(d.count) : options.yRange - emptyBarHeight;
+                            // If the computed bar height would be less than the emptyBarHeight, use the emptyBarHeight instead
+                            var scaledOffset = scale.y(d.count);
+                            return options.yRange - scaledOffset > emptyBarHeight ? scaledOffset : options.yRange - emptyBarHeight;
                         },
                         height: function (d) {
-                            return d.count ? options.yRange - scale.y(d.count) : emptyBarHeight;
+                            // If the computed bar height would be less than the emptyBarHeight, use the emptyBarHeight instead
+                            var scaledHeight = options.yRange - scale.y(d.count);
+                            return scaledHeight > emptyBarHeight ? scaledHeight : emptyBarHeight;
                         },
                         width: function (d) {
                             return Math.max(scale.barWidth(d.max - d.min), barGapSize) - barGapSize;
