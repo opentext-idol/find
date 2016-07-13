@@ -20,12 +20,9 @@ define([
     'parametric-refinement/display-collection',
     'find/app/configuration',
     'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes',
-    'moment',
-    'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
-    'text!find/templates/app/page/search/filters/parametric/numeric-date-parametric-field-view.html'
-], function(Backbone, $, _, DateView, ParametricView, NumericParametricView, NumericParametricFieldView, BucketedParametricCollection, TextInput, Collapsible, FilteringCollection, prettifyFieldName,
-            vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes, moment, numericParametricFieldTemplate, numericParametricDateFieldTemplate) {
+    'i18n!find/nls/indexes'
+], function(Backbone, $, _, DateView, ParametricView, NumericParametricView, NumericParametricFieldView, BucketedParametricCollection,
+            TextInput, Collapsible, FilteringCollection, prettifyFieldName, vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
     "use strict";
 
     var datesTitle = i18n['search.dates'];
@@ -113,7 +110,6 @@ define([
                 queryModel: options.queryModel,
                 queryState: options.queryState,
                 collection: this.filteredNumericCollection,
-                fieldTemplate: numericParametricFieldTemplate,
                 defaultTargetNumberOfPixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
                 numericRestriction: true
             });
@@ -122,7 +118,7 @@ define([
                 queryModel: options.queryModel,
                 queryState: options.queryState,
                 collection: this.filteredDateCollection,
-                fieldTemplate: numericParametricDateFieldTemplate,
+                inputTemplate: NumericParametricFieldView.dateInputTemplate,
                 defaultTargetNumberOfPixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
                 formatting: NumericParametricFieldView.dateFormatting
             });

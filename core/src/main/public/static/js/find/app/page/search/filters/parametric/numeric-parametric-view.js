@@ -29,7 +29,7 @@ define([
                 collection: this.collection,
                 ItemView: FieldView,
                 itemOptions: {
-                    template: options.fieldTemplate,
+                    inputTemplate: options.inputTemplate,
                     queryModel: options.queryModel,
                     selectedParametricValues: options.queryState.selectedParametricValues,
                     pixelsPerBucket: options.defaultTargetNumberOfPixelsPerBucket,

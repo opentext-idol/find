@@ -13,8 +13,12 @@ define([
     'find/app/model/bucketed-parametric-collection',
     'parametric-refinement/prettify-field-name',
     'parametric-refinement/selected-values-collection',
+    'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
+    'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-numeric-input.html',
+    'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html',
     'i18n!find/nls/bundle'
-], function(Backbone, $, _, moment, FindBaseCollection, numericWidget, BucketedParametricCollection, prettifyFieldName, SelectedParametricValuesCollection, i18n) {
+], function(Backbone, $, _, moment, FindBaseCollection, numericWidget, BucketedParametricCollection, prettifyFieldName,
+            SelectedParametricValuesCollection, template, numericInputTemplate, dateInputTemplate, i18n) {
 
     'use strict';
 
@@ -75,6 +79,7 @@ define([
     // This view must be visible before it is rendered
     var NumericParametricFieldView = Backbone.View.extend({
         className: 'animated fadeIn',
+        template: _.template(template),
 
         events: {
             'click .numeric-parametric-no-min': function() {
@@ -102,7 +107,7 @@ define([
         },
 
         initialize: function(options) {
-            this.template = _.template(options.template);
+            this.inputTemplate = options.inputTemplate || NumericParametricFieldView.numericInputTemplate;
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.selectedParametricValues;
             this.pixelsPerBucket = options.pixelsPerBucket;
@@ -151,6 +156,7 @@ define([
                     buttonsEnabled: this.buttonsEnabled,
                     inputsRowClass: this.selectionEnabled || this.coordinatesEnabled ? '' : 'hide',
                     inputColumnClass: inputColumnClass,
+                    inputTemplate: this.inputTemplate,
                     coordinatesColumnClass: coordinatesColumnClass
                 }));
 
@@ -316,6 +322,8 @@ define([
             }
         }
     }, {
+        dateInputTemplate: _.template(dateInputTemplate),
+        numericInputTemplate: _.template(numericInputTemplate),
         defaultFormatting: {
             format: _.identity,
             parse: _.identity,

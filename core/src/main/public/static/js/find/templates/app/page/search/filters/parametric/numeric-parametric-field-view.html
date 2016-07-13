@@ -8,14 +8,14 @@
             </div>
             <div class="row numeric-parametric-inputs <%- inputsRowClass %>">
                 <div class="<%- inputColumnClass %>">
-                    <input class="numeric-parametric-min-input" type="text" title="min-value" size="5"/>
+                    <%= inputTemplate({minOrMax: 'min'}) %>
                 </div>
                 <div class="text-center <%- coordinatesColumnClass %>">
                     <span class="numeric-parametric-co-ordinates"></span>
                 </div>
                 <div class="<%- inputColumnClass %>">
                     <div class="pull-right">
-                        <input class="numeric-parametric-max-input" type="text" title="max-value" size="5"/>
+                        <%= inputTemplate({minOrMax: 'max'}) %>
                     </div>
                 </div>
             </div>

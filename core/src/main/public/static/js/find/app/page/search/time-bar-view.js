@@ -11,8 +11,7 @@ define([
     'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'find/app/model/bucketed-parametric-collection',
-    'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/search/filters/parametric/numeric-date-parametric-field-view.html'
+    'text!find/templates/app/page/loading-spinner.html'
 ], function(Backbone, _, $, vent, i18n, NumericParametricFieldView, BucketedParametricCollection, loadingSpinnerTemplate, numericDateTemplate) {
 
     var PIXELS_PER_BUCKET = 20;
@@ -63,7 +62,8 @@ define([
                         template: numericDateTemplate,
                         zoomEnabled: true,
                         model: this.bucketModel,
-                        formatting: NumericParametricFieldView.dateFormatting
+                        formatting: NumericParametricFieldView.dateFormatting,
+                        inputTemplate: NumericParametricFieldView.dateInputTemplate
                     });
 
                     this.$el.append(this.graphView.$el);
