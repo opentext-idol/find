@@ -9,14 +9,15 @@ define([
     'underscore',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'parametric-refinement/prettify-field-name',
-    'find/app/util/collapsible',
-    'find/app/vent'
-], function(Backbone, $, _, NumericParametricFieldView, prettifyFieldName, Collapsible, vent) {
+    'find/app/vent',
+    'find/app/util/collapsible'
+], function(Backbone, $, _, NumericParametricFieldView, prettifyFieldName, vent, Collapsible) {
 
     'use strict';
 
     function getSubtitle() {
         var model = this.selectedParametricValues.findWhere({field: this.model.id});
+
         if (model) {
             var isNumeric = model.get('numeric');
 
@@ -34,20 +35,18 @@ define([
         initialize: function (options) {
             this.selectedParametricValues = options.selectedParametricValues;
 
+            var fieldView = new NumericParametricFieldView(_.extend(options, {hideTitle: true}));
+
             this.collapsible = new Collapsible({
                 title: prettifyFieldName(this.model.id),
                 subtitle: getSubtitle.call(this),
-                view: new NumericParametricFieldView(_.extend(options, {hideTitle: true})),
+                view: fieldView,
                 collapsed: true,
                 renderOnOpen: true
             });
 
             this.listenTo(this.selectedParametricValues, 'update change:range', this.setFieldSelectedValues);
-            
-            this.listenTo(vent, 'vent:resize', function() {
-                this.collapsible.view.viewWidth = this.$el.width();
-                this.collapsible.view.render();
-            });
+            this.listenTo(vent, 'vent:resize', fieldView.render.bind(fieldView));
         },
 
         setFieldSelectedValues: function() {
@@ -55,8 +54,13 @@ define([
         },
 
         render: function () {
-            this.$el.empty().append(this.collapsible.$el);
+            this.$el.append(this.collapsible.$el);
             this.collapsible.render();
+        },
+
+        remove: function() {
+            this.collapsible.remove();
+            Backbone.View.prototype.remove.call(this);
         }
     });
 

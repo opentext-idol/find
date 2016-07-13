@@ -81,7 +81,7 @@ define([
 
                 var data = options.data;
                 scale.barWidth.domain([0, data.bucketSize]);
-                scale.barWidth.range([0, options.xRange / data.buckets.length - barGapSize]);
+                scale.barWidth.range([0, options.xRange / data.buckets.length]);
                 scale.y.domain([0, data.maxCount]);
                 scale.y.range([options.yRange, 0]);
 

@@ -11,6 +11,8 @@ define([
             'show.bs.collapse': function() {
                 this.collapsed = false;
                 this.updateHeaderState();
+            },
+            'shown.bs.collapse': function() {
                 if (this.renderOnOpen) {
                     this.view.render();
                 }
@@ -39,8 +41,9 @@ define([
             this.$header = this.$('.collapsible-header');
             this.updateHeaderState();
 
-            this.view.render();
+            // Render after appending to the DOM since graph views must measure element dimensions
             this.$('.collapse').append(this.view.$el);
+            this.view.render();
         },
 
         remove: function() {

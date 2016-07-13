@@ -72,6 +72,7 @@ define([
         return calibratedBuckets;
     }
 
+    // This view must be visible before it is rendered
     var NumericParametricFieldView = Backbone.View.extend({
         className: 'animated fadeIn',
 
@@ -105,7 +106,6 @@ define([
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.selectedParametricValues;
             this.pixelsPerBucket = options.pixelsPerBucket;
-            this.viewWidth = options.viewWidth;
             this.selectionEnabled = options.selectionEnabled;
             this.zoomEnabled = options.zoomEnabled;
             this.buttonsEnabled = options.selectionEnabled && options.buttonsEnabled;
@@ -191,12 +191,14 @@ define([
                 this.$('.numeric-parametric-co-ordinates').text('');
             }.bind(this);
 
+            var $chart = this.$('.chart');
+
             //noinspection JSUnresolvedFunction
             var buckets = calibrateBuckets(this.model.get('values'), this.model.get('min'), this.model.get('max'), this.model.get('bucketSize'));
 
             //noinspection JSUnresolvedFunction
             this.graph = this.widget.drawGraph({
-                chart: this.$('.chart')[0],
+                chart: $chart[0],
                 data: {
                     buckets: buckets,
                     bucketSize: this.model.get('bucketSize'),
@@ -210,7 +212,7 @@ define([
                 mouseMoveCallback: mouseMoveCallback,
                 mouseLeaveCallback: mouseLeaveCallback,
                 zoomCallback: this.updateModel.bind(this),
-                xRange: this.viewWidth,
+                xRange: $chart.width(),
                 yRange: GRAPH_HEIGHT,
                 tooltip: i18n['search.numericParametricFields.tooltip'],
                 dragEnabled: this.selectionEnabled,
