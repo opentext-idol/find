@@ -17,9 +17,10 @@ define([
     'find/idol/app/model/comparison/comparison-documents-collection',
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/idol/app/page/search/idol-query-left-side-view',
+    'find/idol/app/page/search/comparison/compare-modal',
     'find/app/configuration'
 ], function(FindSearch, _, i18n, snapshotsI18n, SavedSearchModel, ServiceView, SuggestView, SnapshotDataView, ComparisonView, stateTokenStrategy,
-            ComparisonDocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView, configuration) {
+            ComparisonDocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView, CompareModal, configuration) {
 
     'use strict';
 
@@ -73,27 +74,33 @@ define([
             return searchTypes;
         },
 
-        serviceViewOptions: function() {
+        serviceViewOptions: function(cid) {
             return {
-                comparisonSuccessCallback: function(model, searchModels) {
-                    this.removeComparisonView();
-
-                    this.$('.service-view-container').addClass('hide');
-                    this.$('.comparison-service-view-container').removeClass('hide');
-
-                    this.comparisonView = new ComparisonView({
-                        model: model,
-                        searchModels: searchModels,
-                        scrollModel: this.windowScrollModel,
-                        escapeCallback: function() {
+                comparisonModalCallback: function() {
+                    new CompareModal({
+                        cid: cid,
+                        savedSearchCollection: this.savedSearchCollection,
+                        queryStates: this.queryStates,
+                        comparisonSuccessCallback: function(model, searchModels) {
                             this.removeComparisonView();
+
                             this.$('.service-view-container').addClass('hide');
-                            this.$('.query-service-view-container').removeClass('hide');
+                            this.$('.comparison-service-view-container').removeClass('hide');
+
+                            this.comparisonView = new ComparisonView({
+                                model: model,
+                                searchModels: searchModels,
+                                scrollModel: this.windowScrollModel,
+                                escapeCallback: function() {
+                                    this.removeComparisonView();
+                                    this.$('.service-view-container').addClass('hide');
+                                    this.$('.query-service-view-container').removeClass('hide');
+                                }.bind(this)
+                            });
+                            this.comparisonView.$el.insertBefore(this.$('.hp-logo-footer'));
+                            this.comparisonView.render();
                         }.bind(this)
                     });
-
-                    this.comparisonView.$el.insertBefore(this.$('.hp-logo-footer'));
-                    this.comparisonView.render();
                 }.bind(this)
             };
         },

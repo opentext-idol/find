@@ -24,16 +24,12 @@ define([
 
         events: _.extend({
             'click .compare-modal-button': function() {
-                new CompareModal({
-                    savedSearchCollection: this.savedSearchCollection,
-                    selectedSearch: this.savedSearchModel,
-                    comparisonSuccessCallback: this.comparisonSuccessCallback
-                });
+                this.comparisonModalCallback();
             }
         }, ServiceView.prototype.events),
 
         initialize: function(options) {
-            this.comparisonSuccessCallback = options.comparisonSuccessCallback;
+            this.comparisonModalCallback = options.comparisonModalCallback;
             this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
 
             if (configuration().hasBiRole) {

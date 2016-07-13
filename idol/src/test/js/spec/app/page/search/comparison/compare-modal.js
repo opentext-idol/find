@@ -35,25 +35,40 @@ define([
 
     describe('Compare Modal', function () {
         beforeEach(function (done) {
-            this.candidateOne = new Backbone.Model({
-                id: 'b',
-                title: 'Candidate One'
+            var savedSearchModel = new Backbone.Model({
+                id: 1,
+                title: 'Pegasus'
             });
 
-            var selectedSearch = new Backbone.Model();
-            this.savedSearchCollection = new Backbone.Collection([selectedSearch, this.candidateOne]);
+            var secondSavedSearchModel = new Backbone.Model({
+                id: 2,
+                title: 'Unicorns'
+            });
+
+            var queryState = {
+                queryTextModel: new Backbone.Model({inputText: 'Unicorns'}),
+                relatedConcepts: null,
+                selectedIndexes: [],
+                parametricValues: null,
+                parametricRanges: null,
+                minScore: null
+            };
+
+            this.savedSearchCollection = new Backbone.Collection([savedSearchModel, secondSavedSearchModel]);
+            this.queryStates = new Backbone.Model({2: queryState});
 
             this.comparisonSuccessCallback = jasmine.createSpy('comparisonSuccessCallback');
 
             this.view = new CompareModal({
+                cid: 1,
                 savedSearchCollection: this.savedSearchCollection,
-                selectedSearch: selectedSearch,
+                queryStates: this.queryStates,
                 comparisonSuccessCallback: this.comparisonSuccessCallback
             });
 
             // Wait 500 ms for the modal to open
             waitFor(modalToOpen, 'modal to open', _.bind(function() {
-                this.$bElement = this.view.$('[data-search-cid=' + this.savedSearchCollection.get('b').cid + ']');
+                this.$bElement = this.view.$('[data-search-cid=' + this.savedSearchCollection.get(2).cid + ']');
                 this.$confirmButton = this.view.$('.modal-action-button');
                 done();
             }, this), done.fail);

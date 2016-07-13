@@ -403,7 +403,7 @@ define([
                             searchTypes: this.searchTypes,
                             queryState: queryState,
                             savedSearchModel: savedSearchModel
-                        }, this.serviceViewOptions()))
+                        }, this.serviceViewOptions(cid)))
                     };
 
                     this.$('.query-service-view-container').append(viewData.view.$el);
