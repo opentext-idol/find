@@ -183,19 +183,19 @@ define([
             // does not depend on just the selected parametric range model.
             var updateCallback = function(x1, x2) {
                 // rounding to one decimal place
-                this.updateMinInput(Math.max(roundInputNumber(x1), this.model.get('min')));
-                this.updateMaxInput(Math.min(roundInputNumber(x2), this.model.get('max')));
+                this.updateMinInput(roundInputNumber(x1));
+                this.updateMaxInput(roundInputNumber(x2));
             }.bind(this);
 
             var selectionCallback = function(x1, x2) {
-                var newMin = this.parseBoundarySelection(Math.max(x1, this.model.get('min')));
-                var newMax = this.parseBoundarySelection(Math.min(x2, this.model.get('max')));
+                var newMin = this.parseBoundarySelection(x1);
+                var newMax = this.parseBoundarySelection(x2);
                 this.updateRestrictions([newMin, newMax]);
             }.bind(this);
 
             var mouseMoveCallback = function(x) {
                 //noinspection JSPotentiallyInvalidUsageOfThis
-                this.$('.numeric-parametric-co-ordinates').text(this.formatValue(Math.min(roundInputNumber(x), this.model.get('max'))));
+                this.$('.numeric-parametric-co-ordinates').text(this.formatValue(roundInputNumber(x)));
             }.bind(this);
 
             var mouseLeaveCallback = function() {
@@ -204,11 +204,8 @@ define([
             }.bind(this);
 
             var $chart = this.$('.chart');
-
-            //noinspection JSUnresolvedFunction
             var buckets = calibrateBuckets(this.model.get('values'), this.model.get('min'), this.model.get('max'), this.model.get('bucketSize'));
 
-            //noinspection JSUnresolvedFunction
             this.graph = this.widget.drawGraph({
                 chart: $chart[0],
                 data: {
@@ -261,6 +258,7 @@ define([
         },
 
         // Apply a new range selection; a null boundary will not be updated
+        // Should be called with values that are already parsed
         updateRestrictions: function(newRange) {
             var existingModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.dataType));
             var existingRange = existingModel ? existingModel.get('range') : [this.absoluteMinValue, this.absoluteMaxValue];
