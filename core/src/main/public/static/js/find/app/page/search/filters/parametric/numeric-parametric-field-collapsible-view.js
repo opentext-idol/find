@@ -7,11 +7,12 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'parametric-refinement/prettify-field-name',
-    'find/app/vent',
-    'find/app/util/collapsible'
-], function(Backbone, $, _, NumericParametricFieldView, prettifyFieldName, vent, Collapsible) {
+    'find/app/util/collapsible',
+    'find/app/vent'
+], function(Backbone, $, _, i18n, NumericParametricFieldView, prettifyFieldName, Collapsible, vent) {
 
     'use strict';
 
@@ -23,11 +24,11 @@ define([
 
             var range = _.map(model.get('range'), function (entry) {
                 return isNumeric ? Math.round(entry * 100) / 100 : NumericParametricFieldView.dateFormatting.format(entry);
-            }).join(' - ');
+            }).join(' \u2014 ');
 
             return range;
         } else {
-            return '';
+            return i18n['app.unfiltered'];
         }
     }
 
