@@ -26,6 +26,7 @@ define([
 
             this.view = new ParametricView({
                 parametricCollection: this.parametricCollection,
+                restrictedParametricCollection: this.parametricCollection,
                 displayCollection: displayCollection,
                 queryState: {
                     selectedParametricValues: this.selectedParametricValues
