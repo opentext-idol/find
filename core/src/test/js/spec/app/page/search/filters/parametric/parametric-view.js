@@ -12,21 +12,23 @@ define([
 
     describe('Parametric view', function() {
         beforeEach(function() {
-            this.parametricCollection = new Backbone.Collection([
+            var models = [
                 {id: '/DOCUMENT/WIKIPEDIA_CATEGORY', name: 'WIKIPEDIA_CATEGORY', values: [{value: 'food', count: 3}, {value: 'person', count: 5}]},
                 {id: '/DOCUMENT/PERSON_SEX', name: 'PERSON_SEX', values: [{value: 'female', count: 2}]}
-            ]);
+            ];
+
+            this.restrictedParametricCollection = new Backbone.Collection(models);
 
             this.selectedParametricValues = new SelectedValuesCollection();
 
             var displayCollection = new DisplayCollection([], {
-                parametricCollection: this.parametricCollection,
+                parametricCollection: this.restrictedParametricCollection,
                 selectedParametricValues: this.selectedParametricValues
             });
 
             this.view = new ParametricView({
-                parametricCollection: this.parametricCollection,
-                restrictedParametricCollection: this.parametricCollection,
+                parametricCollection: new Backbone.Collection(models),
+                restrictedParametricCollection: this.restrictedParametricCollection,
                 displayCollection: displayCollection,
                 queryState: {
                     selectedParametricValues: this.selectedParametricValues
@@ -64,7 +66,7 @@ define([
 
             describe('then the parametric collection is reset to empty', function() {
                 beforeEach(function() {
-                    this.parametricCollection.reset();
+                    this.restrictedParametricCollection.reset();
                 });
 
                 it('shows the empty message', function() {
@@ -74,8 +76,8 @@ define([
 
             describe('then the parametric collection is fetched', function() {
                 beforeEach(function() {
-                    this.parametricCollection.reset();
-                    this.parametricCollection.trigger('request');
+                    this.restrictedParametricCollection.reset();
+                    this.restrictedParametricCollection.trigger('request');
                 });
 
                 it('displays the loading spinner', function() {
@@ -88,7 +90,7 @@ define([
 
                 describe('then the request fails', function() {
                     beforeEach(function() {
-                        this.parametricCollection.trigger('error', this.parametricCollection, {status: 500});
+                        this.restrictedParametricCollection.trigger('error', this.restrictedParametricCollection, {status: 500});
                     });
 
                     it('hides the loading spinner', function() {
@@ -106,7 +108,7 @@ define([
 
                 describe('then the request is aborted', function() {
                     beforeEach(function() {
-                        this.parametricCollection.trigger('error', this.parametricCollection, {status: 0});
+                        this.restrictedParametricCollection.trigger('error', this.restrictedParametricCollection, {status: 0});
                     });
 
                     it('hides the error message', function() {
@@ -116,8 +118,8 @@ define([
 
                 describe('then the request succeeds', function() {
                     beforeEach(function() {
-                        this.parametricCollection.reset([{id: '/DOCUMENT/PERSON_SEX', name: 'PERSON_SEX', values: [{value: 'male', count: 1}]}]);
-                        this.parametricCollection.trigger('sync');
+                        this.restrictedParametricCollection.reset([{id: '/DOCUMENT/PERSON_SEX', name: 'PERSON_SEX', values: [{value: 'male', count: 1}]}]);
+                        this.restrictedParametricCollection.trigger('sync');
                     });
 
                     it('hides the loading spinner', function() {
