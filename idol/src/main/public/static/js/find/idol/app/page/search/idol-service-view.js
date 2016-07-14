@@ -30,13 +30,13 @@ define([
 
         initialize: function(options) {
             this.comparisonModalCallback = options.comparisonModalCallback;
-            this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
 
             if (configuration().hasBiRole) {
                 this.headerControlsHtml = _.template('<button class="btn button-primary compare-modal-button"><%-i18n["compare"]%></button>')({i18n: comparisonsI18n})
             }
-
             ServiceView.prototype.initialize.call(this, options);
+
+            this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
 
             addChangeListener(this, this.queryModel, ['queryText', 'fieldText', 'indexes', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchEntities);
         },
