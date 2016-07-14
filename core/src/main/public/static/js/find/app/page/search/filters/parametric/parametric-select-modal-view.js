@@ -43,7 +43,6 @@ define([
                     selectCollection: this.selectCollection,
                     allValues: _.map(this.parametricCollection.get(field.id).get('values'), function(attributes) {
                         return {
-                            count: 0, // we're using this list for zero count fields
                             id: attributes.value
                         }
                     })

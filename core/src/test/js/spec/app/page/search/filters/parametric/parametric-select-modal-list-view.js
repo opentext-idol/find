@@ -43,35 +43,13 @@ define([
                 selectCollection: this.selectCollection,
                 field: field,
                 allValues: [
-                    {
-                        count: 0,
-                        id: 'Leonardo',
-                    },
-                    {
-                        count: 0,
-                        id: 'Michelangelo',
-                    },
-                    {
-                        count: 0,
-                        id: 'Splinter',
-                    },
-                    {
-                        count: 0,
-                        id: 'Raphael',
-                    },
-                    {
-                        count: 0,
-                        id: 'Donatello',
-                    },
-                    {
-                        count: 0,
-                        id: 'Shredder',
-                    },
-                    {
-                        count: 0,
-                        id: 'Krang',
-                    }
-
+                    { id: 'Leonardo' },
+                    { id: 'Michelangelo' },
+                    { id: 'Splinter' },
+                    { id: 'Raphael' },
+                    { id: 'Donatello' },
+                    { id: 'Shredder' },
+                    { id: 'Krang' }
                 ]
             });
 
