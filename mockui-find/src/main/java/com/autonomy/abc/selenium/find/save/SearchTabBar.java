@@ -50,6 +50,10 @@ public class SearchTabBar implements Iterable<SearchTab> {
         throw new NoSuchElementException("could not find tab with title " + title);
     }
 
+    public SearchTab tabFromIndex(final int index) {
+        return tabs().get(index);
+    }
+
     WebElement newTabButton() {
         return bar.findElement(By.className("start-new-search"));
     }

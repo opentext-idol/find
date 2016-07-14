@@ -3,6 +3,7 @@ package com.autonomy.abc.bi;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.comparison.AppearsIn;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
@@ -16,6 +17,7 @@ import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +29,7 @@ import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disabled;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -42,6 +43,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
     private FindService findService;
     private SavedSearchService savedSearchService;
+    private IdolFindElementFactory elementFactory;
 
     private ResultsComparisonView resultsComparison;
     private IdolFindPage findPage;
@@ -54,7 +56,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     public void setUp() {
         findService = getApplication().findService();
         savedSearchService = getApplication().savedSearchService();
-
+        elementFactory = getApplication().elementFactory();
         findPage = getElementFactory().getFindPage();
     }
 
@@ -64,6 +66,19 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
             findService.search("back to results");
             savedSearchService.deleteAll();
         }
+    }
+
+    @SuppressWarnings("Duplicates")
+    @Test
+    @ResolvedBug("FIND-232")
+    public void testComparisonButtonActivates() {
+        findService.search("\"Unicorns\"");
+        assertThat(findPage.compareButton(), hasClass("disabled"));
+        savedSearchService.openNewTab();
+        findService.search("\"Pegasus\"");
+        assertThat(findPage.compareButton(), not(hasClass("disabled")));
+        elementFactory.getSearchTabBar().tabFromIndex(0);
+        assertThat(findPage.compareButton(), not(hasClass("disabled")));
     }
 
     @Test
