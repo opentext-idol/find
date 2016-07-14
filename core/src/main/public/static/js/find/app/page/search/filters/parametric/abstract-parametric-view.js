@@ -4,15 +4,33 @@
  */
 
 define([
-    'backbone',
-    'underscore'
-], function(Backbone, _) {
+    'backbone'
+], function(Backbone) {
     "use strict";
 
     return Backbone.View.extend({
         // will be overridden
         updateEmpty: null,
         template: null,
+
+        render: function() {
+            //noinspection JSUnresolvedVariable
+            this.$el.html(this.template).prepend(this.fieldNamesListView.$el);
+            this.fieldNamesListView.render();
+
+            //noinspection JSUnresolvedFunction
+            this.$emptyMessage = this.$('.parametric-empty');
+            //noinspection JSUnresolvedFunction
+            this.$errorMessage = this.$('.parametric-error');
+            //noinspection JSUnresolvedFunction
+            this.$processing = this.$('.parametric-processing-indicator');
+
+            this.updateEmpty();
+            this.updateError();
+            this.updateProcessing();
+
+            return this;
+        },
 
         monitorCollection: function(collection) {
             this.model = new Backbone.Model({
@@ -52,25 +70,6 @@ define([
             this.listenTo(collection, 'update reset', function() {
                 this.model.set('empty', collection.isEmpty());
             });
-        },
-
-        render: function() {
-            //noinspection JSUnresolvedVariable
-            this.$el.html(this.template).prepend(this.fieldNamesListView.$el);
-            this.fieldNamesListView.render();
-
-            //noinspection JSUnresolvedFunction
-            this.$emptyMessage = this.$('.parametric-empty');
-            //noinspection JSUnresolvedFunction
-            this.$errorMessage = this.$('.parametric-error');
-            //noinspection JSUnresolvedFunction
-            this.$processing = this.$('.parametric-processing-indicator');
-
-            this.updateEmpty();
-            this.updateError();
-            this.updateProcessing();
-
-            return this;
         },
 
         updateProcessing: function() {
