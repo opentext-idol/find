@@ -58,7 +58,7 @@ define([
         
         setSubTitle: function(subtitle) {
             this.subtitle = subtitle;
-            this.$('.collapsible-subtitle').text(subtitle).removeClass('hide');
+            this.$('.collapsible-subtitle').text(subtitle);
         }
     });
 });

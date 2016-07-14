@@ -73,7 +73,14 @@ define([
             this.listenTo(this.selectedParametricValues, 'update', function() {
                 this.collapsible.$('.selection-length').text(this.getFieldSelectedValuesLength());
                 this.toggleWarning();
-            })
+            });
+
+            this.collapsible.$el.on('show.bs.collapse', _.bind(function() {
+                this.collapsible.$('.collapsible-subtitle').removeClass('hide');
+            }, this));
+            this.collapsible.$el.on('hide.bs.collapse', _.bind(function() {
+                this.toggleSubtitle();
+            }, this));
         },
 
         render: function() {
@@ -88,7 +95,12 @@ define([
                 title: i18n['search.parametric.selected.notAllVisible']
             });
 
+            this.toggleSubtitle();
             this.toggleWarning();
+        },
+
+        toggleSubtitle: function() {
+            this.collapsible.$('.collapsible-subtitle').toggleClass('hide', this.getFieldSelectedValuesLength() === 0);
         },
 
         toggleWarning: function() {

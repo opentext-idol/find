@@ -48,6 +48,18 @@ define([
 
             this.listenTo(this.selectedParametricValues, 'update change:range', this.setFieldSelectedValues);
             this.listenTo(vent, 'vent:resize', fieldView.render.bind(fieldView));
+            
+            this.collapsible.$el.on('show.bs.collapse', _.bind(function() {
+                this.collapsible.$('.collapsible-subtitle').removeClass('hide');
+            }, this));
+            this.collapsible.$el.on('hide.bs.collapse', _.bind(function() {
+                this.toggleSubtitle();
+            }, this));
+        },
+
+        toggleSubtitle: function() {
+            var hideSubtitle = this.collapsible.$('.collapsible-subtitle').text() == i18n['app.unfiltered'];
+            this.collapsible.$('.collapsible-subtitle').toggleClass('hide', hideSubtitle);
         },
 
         setFieldSelectedValues: function() {
@@ -57,6 +69,8 @@ define([
         render: function () {
             this.$el.append(this.collapsible.$el);
             this.collapsible.render();
+
+            this.toggleSubtitle();
         },
 
         remove: function() {
