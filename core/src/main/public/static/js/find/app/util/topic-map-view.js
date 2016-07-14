@@ -19,6 +19,7 @@ define([
         initialize: function(options) {
             this.data = options.data || [];
             this.clickHandler = options.clickHandler;
+            this.titleClickHandler = options.titleClickHandler;
 
             this.render();
 
@@ -43,6 +44,10 @@ define([
 
                 topicMapOptions.onLeafClick = _.bind(function(node) {
                     this.clickHandler([node.name]);
+                }, this);
+
+                topicMapOptions.onNodeTitleClick = _.bind(function(node) {
+                    this.clickHandler(node.children ? _.pluck(node.children, 'name') : [node.name]);
                 }, this);
             }
 
