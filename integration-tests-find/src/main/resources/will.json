@@ -1,0 +1,18 @@
+{
+  "app": {
+    "type": "On Premise",
+    "find": "http://localhost:8080/"
+  },
+  "selenium": {
+    "browsers": ["chrome", "firefox", "internet explorer"],
+    "url": "http://localhost:4444/wd/hub",
+    "timeout": 3
+  },
+  "users": {
+    "default": {
+      "role": "Admin",
+      "username": "admin",
+      "password": "admin"
+    }
+  }
+}
