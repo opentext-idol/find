@@ -292,7 +292,7 @@ define([
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
             this.listenTo(this.queryModel, 'change', this.fetchRestrictedParametricCollection);
-            this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
+            this.fetchParametricFields(this.parametricFieldsCollection, _.bind(this.fetchParametricValueCollections, this));
             this.fetchParametricFields(this.numericParametricFieldsCollection);
             this.fetchParametricFields(this.dateParametricFieldsCollection);
             this.fetchEntities();
@@ -365,7 +365,7 @@ define([
 
         fetchData: function() {
             this.fetchEntities();
-            this.fetchParametricValues(this.parametricFieldsCollection, this.parametricCollection);
+            this.fetchParametricValues();
         },
 
         fetchEntities: function() {
@@ -394,14 +394,20 @@ define([
             $containerToggle.toggleClass('fa-rotate-180', hide);
         },
 
+        fetchParametricValueCollections: function() {
+            this.fetchParametricValues();
+            this.fetchRestrictedParametricCollection();
+        },
+
         fetchRestrictedParametricCollection: function() {
             this.restrictedParametricCollection.reset();
             
             var fieldNames = this.parametricFieldsCollection.pluck('id');
+
             if (fieldNames.length > 0 && this.queryModel.get('indexes').length !== 0) {
                 this.restrictedParametricCollection.fetch({
                     data: {
-                        fieldNames: this.parametricFieldsCollection.pluck('id'),
+                        fieldNames: fieldNames,
                         databases: this.queryModel.get('indexes'),
                         queryText: this.queryModel.get('queryText'),
                         fieldText: this.queryModel.get('fieldText'),

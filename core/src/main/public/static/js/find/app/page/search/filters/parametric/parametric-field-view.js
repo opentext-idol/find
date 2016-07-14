@@ -47,9 +47,10 @@ define([
             'click .show-all': function(e) {
                 new ParametricModal({
                     collection: this.model.fieldValues,
+                    currentFieldGroup: this.model.id,
+                    parametricCollection: this.parametricCollection,
                     parametricDisplayCollection: this.parametricDisplayCollection,
-                    selectedParametricValues: this.selectedParametricValues,
-                    currentFieldGroup: this.model.id
+                    selectedParametricValues: this.selectedParametricValues
                 });
             }
         },
@@ -59,6 +60,7 @@ define([
             this.$el.attr('data-field-display-name', this.model.get('displayName'));
             this.parametricDisplayCollection = options.parametricDisplayCollection;
             this.selectedParametricValues = options.selectedParametricValues;
+            this.parametricCollection = options.parametricCollection;
 
             this.collapsible = new Collapsible({
                 title: this.model.get('displayName') + ' (' + this.model.fieldValues.length +')',
@@ -126,8 +128,9 @@ define([
         },
 
         remove: function() {
-            Backbone.View.prototype.remove.call(this);
             this.collapsible.remove();
+            
+            Backbone.View.prototype.remove.call(this);
         }
     });
 });

@@ -39,12 +39,13 @@ define([
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.displayCollection = options.displayCollection;
 
-            this.monitorCollection(options.parametricCollection);
+            this.monitorCollection(options.restrictedParametricCollection);
 
             this.fieldNamesListView = new ListView({
                 collection: this.displayCollection,
                 ItemView: FieldView,
                 itemOptions: {
+                    parametricCollection: options.parametricCollection,
                     // collection is not passed to the individual views
                     parametricDisplayCollection: this.displayCollection,
                     selectedParametricValues: this.selectedParametricValues

@@ -95,7 +95,7 @@ define([
             });
 
             this.parametricDisplayCollection = new ParametricDisplayCollection([], {
-                parametricCollection: options.parametricCollection,
+                parametricCollection: options.restrictedParametricCollection,
                 selectedParametricValues: options.queryState.selectedParametricValues,
                 filterModel: this.filterModel
             });
@@ -138,6 +138,7 @@ define([
                 filterModel: this.filterModel,
                 indexesCollection: options.indexesCollection,
                 parametricCollection: options.parametricCollection,
+                restrictedParametricCollection: options.restrictedParametricCollection,
                 displayCollection: this.parametricDisplayCollection
             });
 
