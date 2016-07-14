@@ -103,6 +103,9 @@ define([
             },
             'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
                 this.updateRestrictions([null, event.date.unix()]);
+            },
+            'click .clickable-widget': function() {
+                this.clickCallback();
             }
         },
 
@@ -117,8 +120,10 @@ define([
             this.coordinatesEnabled = options.coordinatesEnabled === undefined ? true : options.coordinatesEnabled;
             this.numericRestriction = options.numericRestriction || false;
             this.hideTitle = options.hideTitle;
+            this.dataType = options.dataType;
+            this.clickCallback = options.clickCallback;
 
-            this.fieldName = this.model.id;
+            this.fieldName = this.model.get('id');
 
             var formatting = options.formatting || NumericParametricFieldView.defaultFormatting;
             this.formatValue = formatting.format;
@@ -130,7 +135,7 @@ define([
 
             this.bucketModel = new BucketedParametricCollection.Model({
                 id: this.model.get('id'),
-                name: this.model.get('id')
+                name: this.model.get('name')
             });
 
             this.absoluteMinValue = this.model.get('min');
@@ -152,7 +157,8 @@ define([
                 .empty()
                 .append(this.template({
                     i18n: i18n,
-                    fieldName: this.hideTitle ? undefined : prettifyFieldName(this.model.get('name')),
+                    theFieldName: this.model.get('id'),
+                    clickable: Boolean(this.clickCallback),
                     buttonsEnabled: this.buttonsEnabled,
                     inputsRowClass: this.selectionEnabled || this.coordinatesEnabled ? '' : 'hide',
                     inputColumnClass: inputColumnClass,

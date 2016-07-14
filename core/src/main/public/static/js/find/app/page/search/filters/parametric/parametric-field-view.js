@@ -6,8 +6,9 @@ define([
     'js-whatever/js/list-view',
     'find/app/util/collapsible',
     'find/app/page/search/filters/parametric/parametric-select-modal',
-    'find/app/page/search/filters/parametric/parametric-value-view'
-], function(Backbone, _, $, i18n, ListView, Collapsible, ParametricModal, ValueView) {
+    'find/app/page/search/filters/parametric/parametric-value-view',
+    'parametric-refinement/prettify-field-name'
+], function(Backbone, _, $, i18n, ListView, Collapsible, ParametricModal, ValueView, prettifyFieldName) {
 
     var MAX_SIZE = 5;
 
@@ -44,7 +45,7 @@ define([
         subtitleTemplate: _.template('<span class="selection-length"><%-length%></span> <%-i18n["app.selected"]%> <i class="hp-icon hp-warning selected-warning hidden"></i>'),
 
         events: {
-            'click .show-all': function(e) {
+            'click .show-all': function() {
                 new ParametricModal({
                     collection: this.model.fieldValues,
                     currentFieldGroup: this.model.id,
@@ -63,7 +64,7 @@ define([
             this.parametricCollection = options.parametricCollection;
 
             this.collapsible = new Collapsible({
-                title: this.model.get('displayName') + ' (' + this.model.fieldValues.length +')',
+                title: prettifyFieldName(this.model.get('displayName')) + ' (' + this.model.fieldValues.length +')',
                 view: new ValuesView({collection: this.model.fieldValues}),
                 collapsed: true,
                 subtitle: this.subtitleTemplate({

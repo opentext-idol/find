@@ -392,27 +392,27 @@ fieldset.radio-fieldset > label {
     height: calc(100% - 240px);
 }
 
-.middle-container.middle-container-with-time-bar.small-time-bar .middle-container-contents {
-    /* Subtract size of collapsed time bar */
-    height: calc(100% - 50px);
+.clickable-widget {
+    border: 2px solid #e2e2e2;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.highlighted-widget .clickable-widget {
+    background-color: #ececec;
+    border: 2px solid #dadada;
 }
 
 .middle-container-time-bar-content {
     height: 190px;
     margin: 0;
-    padding: 5px 0;
+    padding: 0;
     background-color: rgba(242, 240, 240, 0.46);
     border-top: 1px solid #dfdfdf;
 }
 
 .time-bar-container-toggle {
     height: 50px;
-}
-
-.time-bar-advice {
-    display: inline-block;
-    margin: 15px 15px 0 0;
-    float: right;
 }
 
 .middle-container-time-bar {

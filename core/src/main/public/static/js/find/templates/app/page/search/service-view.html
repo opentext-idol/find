@@ -6,7 +6,7 @@
             <div class="left-side-footer"></div>
         </div>
     </div>
-    <div class="middle-container <%= showTimeBar ? 'middle-container-with-time-bar' : '' %>">
+    <div class="middle-container">
         <div class="middle-container-contents">
             <div class="middle-column-header"></div>
             <% if (headerControlsHtml) { %>
@@ -15,16 +15,6 @@
             <div class="results-view-selection"></div>
             <div class="results-view-container"></div>
         </div>
-        <% if (showTimeBar) { %>
-            <div class="middle-container-time-bar">
-                <div class="time-bar-container-toggle clickable">
-                    <h4 class="time-bar-header"><%-timeBarFieldName%></h4>
-                    <i class="hp-icon hp-chevron-up hp-lg time-bar-container-icon"></i>
-                    <div class="time-bar-advice">Click to expand</div>
-                </div>
-                <div class="middle-container-time-bar-content"></div>
-            </div>
-        <% } %>
     </div>
     <div class="right-side-container side-container">
         <div class="right-container-icon">

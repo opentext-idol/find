@@ -19,7 +19,6 @@ define([
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
-    'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/entity-topic-map-view',
@@ -33,14 +32,13 @@ define([
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, 
             ParametricFieldsCollection, queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, 
-            RelatedConceptsView, Collapsible, addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, 
+            RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView, SunburstView,
             MapResultsView, TableView, TimeBarView, configuration, prettifyFieldName, i18n, templateString) {
 
     'use strict';
 
     var $window = $(window);
     var template = _.template(templateString);
-    var AUTN_DATE = 'autn_date';
 
     function updateScrollParameters() {
         if (this.$middleContainerContents) {
@@ -65,12 +63,7 @@ define([
         fetchParametricFields: null,
         fetchParametricValues: null,
 
-        events: {
-            'click .time-bar-container-toggle': function() {
-                var collapsed = this.timeBarModel.get('collapsed');
-                this.timeBarModel.set('collapsed', !collapsed)
-            }
-        },
+        timeBarView: null,
 
         initialize: function(options) {
             var hasBiRole = configuration().hasBiRole;
@@ -175,19 +168,16 @@ define([
                 this.savedSearchControlView = new SavedSearchControlView(subViewArguments);
 
                 if (this.searchTypes[searchType].showTimeBar) {
-                    this.timeBarView = new TimeBarView(_.extend({
-                        fieldName: AUTN_DATE
-                    }, subViewArguments));
-
                     this.timeBarModel = new Backbone.Model({
-                        collapsed: true
+                        graphedFieldName: null,
+                        graphedDataType: null
                     });
 
-                    this.listenTo(this.timeBarModel, 'change:collapsed', this.updateTimeBarCollapse);
+                    this.listenTo(this.timeBarModel, 'change:graphedFieldName', this.updateTimeBar);
                 }
             }
 
-            this.leftSideFooterView = new this.searchTypes[searchType].LeftSideFooterView(subViewArguments);
+            this.leftSideFooterView = new this.searchTypes[searchType].LeftSideFooterView(_.extend({timeBarModel: this.timeBarModel}, subViewArguments));
 
             var MiddleColumnHeaderView = this.searchTypes[searchType].MiddleColumnHeaderView;
             this.middleColumnHeaderView = MiddleColumnHeaderView ? new MiddleColumnHeaderView(subViewArguments) : null;
@@ -308,17 +298,12 @@ define([
             var hasBiRole = configuration().hasBiRole;
 
             this.$el.html(template({
-                i18n: i18n,
                 headerControlsHtml: this.headerControlsHtml,
-                hasBiRole: hasBiRole,
-                timeBarFieldName: prettifyFieldName(AUTN_DATE),
-                showTimeBar: Boolean(this.timeBarView)
+                hasBiRole: hasBiRole
             }));
 
-            if (this.timeBarView) {
-                this.timeBarView.setElement(this.$('.middle-container-time-bar-content'));
-                this.updateTimeBarCollapse();
-            }
+            this.$middleContainer = this.$('.middle-container');
+            this.renderTimeBar();
 
             if (this.savedSearchControlView) {
                 // the padding looks silly if we don't have the view so add it here
@@ -349,17 +334,36 @@ define([
             this.updateScrollParameters();
         },
 
-        updateTimeBarCollapse: function() {
-            var collapsed = this.timeBarModel.get('collapsed');
-
-            this.$('.middle-container-time-bar-content').toggleClass('hide', collapsed);
-            this.$('.middle-container-time-bar').toggleClass('small-time-bar-container', collapsed);
-            this.$('.middle-container').toggleClass('small-time-bar', collapsed);
-            this.$('.time-bar-container-icon').toggleClass('fa-rotate-180', !collapsed);
-            this.$('.time-bar-advice').toggleClass('hide', !collapsed);
-
-            if (this.timeBarView && !collapsed) {
+        renderTimeBar: function() {
+            if (this.timeBarView && this.$middleContainer) {
+                this.$middleContainer.append(this.timeBarView.$el);
                 this.timeBarView.render();
+            }
+        },
+
+        updateTimeBar: function() {
+            var graphedFieldName = this.timeBarModel.get('graphedFieldName');
+            var graphedDataType = this.timeBarModel.get('graphedDataType');
+            var collapsed = graphedFieldName === null;
+
+            if (this.$middleContainer) {
+                this.$middleContainer.toggleClass('middle-container-with-time-bar', !collapsed);
+            }
+
+            if (this.timeBarView) {
+                this.timeBarView.remove();
+                this.timeBarView = null;
+            }
+
+            if (!collapsed) {
+                this.timeBarView = new TimeBarView({
+                    queryModel: this.queryModel,
+                    queryState: this.queryState,
+                    previewModeModel: this.previewModeModel,
+                    timeBarModel: this.timeBarModel
+                });
+
+                this.renderTimeBar();
             }
         },
 

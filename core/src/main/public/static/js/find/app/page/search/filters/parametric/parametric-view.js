@@ -48,7 +48,8 @@ define([
                     parametricCollection: options.parametricCollection,
                     // collection is not passed to the individual views
                     parametricDisplayCollection: this.displayCollection,
-                    selectedParametricValues: this.selectedParametricValues
+                    selectedParametricValues: this.selectedParametricValues,
+                    timeBarModel: options.timeBarModel
                 }
             });
         },
