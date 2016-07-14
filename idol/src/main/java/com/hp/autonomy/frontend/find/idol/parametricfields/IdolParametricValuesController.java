@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -60,20 +62,39 @@ class IdolParametricValuesController extends ParametricValuesController<IdolQuer
         return getNumericParametricValuesInBuckets(parametricRequest, targetNumberOfBuckets, bucketMin, bucketMax);
     }
 
-    @RequestMapping(value = BUCKET_PARAMETRIC_PATH + "/{field}", method = RequestMethod.GET)
+    @RequestMapping(value = BUCKET_PARAMETRIC_PATH + "/{encodedField}", method = RequestMethod.GET)
     @ResponseBody
     public RangeInfo getNumericParametricValuesInBucketsForField(
-            @PathVariable("field") final String field,
+            @PathVariable("encodedField") final String encodedField,
             @RequestParam(TARGET_NUMBER_OF_BUCKETS_PARAM) final Integer targetNumberOfBuckets,
             @RequestParam(value = BUCKET_MIN_PARAM, required = false) final Double bucketMin,
             @RequestParam(value = BUCKET_MAX_PARAM, required = false) final Double bucketMax
     ) throws AciErrorException {
+        final String field = decodeUriComponent(encodedField);
+
         return getNumericParametricValuesInBuckets(
                 buildRequest(Collections.singletonList(field), null, SortParam.NumberIncreasing),
                 Collections.singletonList(targetNumberOfBuckets),
                 Collections.singletonList(bucketMin),
                 Collections.singletonList(bucketMax)
         ).get(0);
+    }
+
+    /**
+     * Auxiliary method for when forward slash-containing parametrs need to be passed to the server.
+     *
+     * Spring rejects URLs containing %2F, need to double encode field IDs.
+     *
+     * @param component
+     * @return
+     */
+    private String decodeUriComponent(final String component) {
+        try {
+            return URLDecoder.decode(component, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // Should not happen
+            throw new IllegalStateException("You don't have a standard JVM");
+        }
     }
 
     private IdolParametricRequest buildRequest(final List<String> fieldNames, final Integer maxValues, final SortParam sort) {
