@@ -43,7 +43,7 @@ define([
 
             // Render after appending to the DOM since graph views must measure element dimensions
             this.$('.collapse').append(this.view.$el);
-            this.view.render();
+            this.view.delegateEvents().render();
         },
 
         remove: function() {

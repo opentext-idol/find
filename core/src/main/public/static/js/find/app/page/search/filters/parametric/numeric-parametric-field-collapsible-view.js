@@ -51,7 +51,6 @@ define([
                 }.bind(this);
             }
 
-
             this.fieldView = new NumericParametricFieldView(_.extend({
                 hideTitle: true,
                 clickCallback: clickCallback
@@ -97,8 +96,10 @@ define([
         },
 
         toggleSubtitle: function() {
-            var hideSubtitle = this.collapsible.$('.collapsible-subtitle').text() == i18n['app.unfiltered'];
-            this.collapsible.$('.collapsible-subtitle').toggleClass('hide', hideSubtitle);
+            var subtitleUnfiltered = this.collapsible.$('.collapsible-subtitle').text() === i18n['app.unfiltered'];
+            var widgetCollapsed = this.collapsible.$('.collapsible-header').hasClass('collapsed');
+
+            this.collapsible.$('.collapsible-subtitle').toggleClass('hide', widgetCollapsed && subtitleUnfiltered);
         },
 
         setFieldSelectedValues: function() {
