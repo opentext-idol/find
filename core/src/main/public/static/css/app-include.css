@@ -1127,6 +1127,27 @@ input.find-input {
     background-color: #949494;
 }
 
+@media (max-width: 767px) {
+    .navbar-nav .open .dropdown-menu {
+        background-color: #fff;
+    }
+}
+
+@media (max-width: 767px) {
+    .navbar .navbar-nav .open .dropdown-menu > .active > a,
+    .navbar .navbar-nav .open .dropdown-menu > .active > a:hover{
+        background-color: #425563;
+        background-image: none;
+    }
+}
+
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+    background-color: #425563;
+    background-image: none;
+}
+
 .find-navbar .settings-logout-icon {
     margin-right: 10px;
     vertical-align: middle;
