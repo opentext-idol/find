@@ -97,6 +97,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
         int count = 0;
         for (final Language language : keywordsPage.getLanguageList()) {
             tryDeleteAll(language);
+            count=keywordsPage.countKeywords();
         }
         waitUntilNoKeywords(5 * (count + 1));
         return keywordsPage;

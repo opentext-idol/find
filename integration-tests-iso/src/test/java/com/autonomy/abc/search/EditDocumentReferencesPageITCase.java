@@ -329,7 +329,6 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
 
     @Test
     @ResolvedBug({"CSA-1761", "CCUK-3710", "CCUK-3728"})
-    //reloads promoDetailsPage to get the title of the unknown -> is that a bug?!
     public void testAddedDocumentsNotUnknown(){
         setUpPromotion("smiles", "fun happiness", 2);
 
