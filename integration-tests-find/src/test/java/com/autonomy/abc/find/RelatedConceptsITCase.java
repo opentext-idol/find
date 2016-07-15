@@ -79,42 +79,6 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    public void testRelatedConceptsInResults() {
-        ResultsView results = findService.search("Preposterous");
-        conceptsPanel().toggleHighlight();
-
-        for (final WebElement relatedConceptLink : conceptsPanel()) {
-            final String relatedConcept = relatedConceptLink.getText();
-            for (final WebElement relatedConceptElement : results.scrollForHighlightedSausages()) {
-                if (relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
-                    verifyThat(relatedConceptElement, containsTextIgnoringCase(relatedConcept));
-                }
-                verifyThat(relatedConceptElement, hasTagName("a"));
-                verifyThat(relatedConceptElement, hasClass("clickable"));
-            }
-        }
-    }
-
-    @Test
-    @RelatedTo("CCUK-3599")
-    public void testRelatedConceptsHighlightButton() {
-        ResultsView results = findService.search("pancakes");
-
-        final WebElement button = conceptsPanel().highlightButton();
-
-        verifyThat(results.scrollForHighlightedSausages(), empty());
-        verifyThat(button, not(hasClass("active")));
-
-        button.click();
-        verifyThat(results.scrollForHighlightedSausages(), not(empty()));
-        verifyThat(button, hasClass("active"));
-
-        button.click();
-        verifyThat(results.scrollForHighlightedSausages(), empty());
-        verifyThat(button, not(hasClass("active")));
-    }
-
-    @Test
     public void testMultipleAdditionalConcepts() {
         findService.search("bongo");
 
