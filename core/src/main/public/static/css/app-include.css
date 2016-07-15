@@ -1325,15 +1325,20 @@ input:-moz-placeholder::before {
 }
 
 .fields-list {
+    height: 100%;
+    overflow: auto;
+}
+
+.values-list {
     border-left: 1px solid #e5e5e5;
     height: 100%;
 }
 
-.fields-list .tab-pane .full-height {
+.values-list .tab-pane .full-height {
     overflow-y: auto;
 }
 
-.fields-list, .tab-content, .tab-pane, .full-height {
+.values-list, .tab-content, .tab-pane, .full-height {
     height: 100%;
 }
 
