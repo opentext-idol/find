@@ -45,6 +45,7 @@ define([
 
         initialize: function(options) {
             this.filterModel = new Backbone.Model();
+            this.timeBarModel = options.timeBarModel;
 
             this.filterInput = new TextInput({
                 model: this.filterModel,
@@ -109,6 +110,8 @@ define([
             this.numericParametricView = new NumericParametricView({
                 queryModel: options.queryModel,
                 queryState: options.queryState,
+                timeBarModel: options.timeBarModel,
+                dataType: 'numeric',
                 collection: this.filteredNumericCollection,
                 defaultTargetNumberOfPixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
                 numericRestriction: true
@@ -117,6 +120,8 @@ define([
             this.dateParametricView = new NumericParametricView({
                 queryModel: options.queryModel,
                 queryState: options.queryState,
+                timeBarModel: options.timeBarModel,
+                dataType: 'date',
                 collection: this.filteredDateCollection,
                 inputTemplate: NumericParametricFieldView.dateInputTemplate,
                 defaultTargetNumberOfPixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,

@@ -31,6 +31,8 @@ define([
                 itemOptions: {
                     inputTemplate: options.inputTemplate,
                     queryModel: options.queryModel,
+                    timeBarModel: options.timeBarModel,
+                    dataType: options.dataType,
                     selectedParametricValues: options.queryState.selectedParametricValues,
                     pixelsPerBucket: options.defaultTargetNumberOfPixelsPerBucket,
                     numericRestriction: options.numericRestriction,

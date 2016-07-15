@@ -11,20 +11,47 @@ define([
     'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'find/app/model/bucketed-parametric-collection',
-    'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, _, $, vent, i18n, NumericParametricFieldView, BucketedParametricCollection, loadingSpinnerTemplate, numericDateTemplate) {
+    'parametric-refinement/prettify-field-name',
+    'text!find/templates/app/page/loading-spinner.html',
+    'text!find/templates/app/page/search/time-bar-view.html'
+], function(Backbone, _, $, vent, i18n, NumericParametricFieldView, BucketedParametricCollection, prettifyFieldName, loadingSpinnerTemplate, timeBarTemplate) {
 
     var PIXELS_PER_BUCKET = 20;
 
+    var graphConfiguration = {
+        date: {
+            template: NumericParametricFieldView.dateInputTemplate,
+            formatting: NumericParametricFieldView.dateFormatting
+        },
+        numeric: {
+            template: NumericParametricFieldView.numericInputTemplate,
+            formatting: NumericParametricFieldView.defaultFormatting
+        }
+    };
+
     return Backbone.View.extend({
+        className: 'middle-container-time-bar',
         graphView: null,
         loadingSpinnerHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         errorHtml: _.template('<p class="p-t-xl text-center"><%-i18n["search.timeBar.error"]%></p>')({i18n: i18n}),
+        template: _.template(timeBarTemplate),
+
+        events: {
+            'click .time-bar-container-icon': function() {
+                this.timeBarModel.set({
+                    graphedFieldName: null,
+                    graphedDataType: null
+                });
+            }
+        },
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
-            this.fieldName = options.fieldName;
+            this.timeBarModel = options.timeBarModel;
+
+            this.fieldName = this.timeBarModel.get('graphedFieldName');
+            this.dataType = this.timeBarModel.get('graphedDataType');
 
             this.listenTo(vent, 'vent:resize', this.render);
             this.listenTo(options.previewModeModel, 'change:document', this.render);
@@ -38,10 +65,17 @@ define([
                 this.stopListening(this.bucketModel);
             }
 
+            this.$el.html(this.template({
+                fieldName: prettifyFieldName(this.fieldName)
+            }));
+
             var $loadingSpinner = $(this.loadingSpinnerHtml);
-            this.$el.empty().append($loadingSpinner);
+            var $content = this.$('.middle-container-time-bar-content');
+            $content.append($loadingSpinner);
 
             this.bucketModel = new BucketedParametricCollection.Model({id: this.fieldName, name: this.fieldName});
+
+            var currentGraphConfig = graphConfiguration[this.dataType];
 
             this.activeRequest = this.bucketModel
                 .fetch({
@@ -50,7 +84,7 @@ define([
                     }
                 })
                 .fail(function() {
-                    this.$el.append(this.errorHtml);
+                    $content.append(this.errorHtml);
                 }.bind(this))
                 .done(function() {
                     this.graphView = new NumericParametricFieldView({
@@ -59,14 +93,14 @@ define([
                         queryModel: this.queryModel,
                         selectionEnabled: true,
                         selectedParametricValues: this.selectedParametricValues,
-                        template: numericDateTemplate,
                         zoomEnabled: true,
+                        dataType: this.dataType,
                         model: this.bucketModel,
-                        formatting: NumericParametricFieldView.dateFormatting,
-                        inputTemplate: NumericParametricFieldView.dateInputTemplate
+                        formatting: currentGraphConfig.formatting,
+                        inputTemplate: currentGraphConfig.template
                     });
 
-                    this.$el.append(this.graphView.$el);
+                    $content.append(this.graphView.$el);
                     this.graphView.render();
                     this.listenTo(this.bucketModel, 'change', this.graphView.render.bind(this.graphView));
                 }.bind(this))
@@ -94,5 +128,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-
 });
