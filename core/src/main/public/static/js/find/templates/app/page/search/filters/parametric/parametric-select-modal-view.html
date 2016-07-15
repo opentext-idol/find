@@ -1,5 +1,5 @@
 <div class="tabs-left full-height row">
-    <div class="col-md-3">
+    <div class="col-md-3 fields-list">
         <ul class="nav nav-tabs minimal-tab" role="tablist">
             <% parametricDisplayCollection.each(function(field) { %>
                 <li class="category-title <%- currentFieldGroup === field.id ? 'active' : ''%> full-width">
@@ -11,7 +11,7 @@
         </ul>
     </div>
 
-    <div class="col-md-9 fields-list">
+    <div class="col-md-9 values-list">
         <div class="tab-content"></div>
     </div>
 </div>
