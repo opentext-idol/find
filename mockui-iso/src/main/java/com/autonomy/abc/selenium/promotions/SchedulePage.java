@@ -86,7 +86,7 @@ public class SchedulePage extends SOPageBase {
 
 	public String parseDateObjectToPromotions(final String date) {
 		final SimpleDateFormat wrongDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-		final SimpleDateFormat rightDate = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
+		final SimpleDateFormat rightDate = new SimpleDateFormat("d MMMMMMMMM yyyy HH:mm");
 
 		try {
 			return rightDate.format(wrongDate.parse(date));

@@ -10,6 +10,7 @@ import org.openqa.selenium.WebElement;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 public class IsoSearchResult extends QueryResult {
     public IsoSearchResult(final WebElement result, final WebDriver driver){
@@ -40,6 +41,10 @@ public class IsoSearchResult extends QueryResult {
 
     public WebElement trashCan() {
         return findElement(By.className("hp-trash"));
+    }
+
+    public List<WebElement> queryTermHighlights(){
+        return findElements(By.cssSelector("span.label a.query-text"));
     }
 
     public Date getDate() {

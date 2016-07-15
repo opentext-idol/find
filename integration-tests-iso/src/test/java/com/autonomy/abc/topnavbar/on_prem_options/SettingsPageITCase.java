@@ -171,8 +171,8 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 
 		for (final IsoSettingsPage.Panel settingsPanel : settingsPanels) {
 			originalHostNames.add(settingsPage.hostBox(settingsPanel).getAttribute("value"));
-			settingsPage.changeHost("idol-admin-test-01", settingsPanel);
-			assertThat(settingsPanel + " hostname should be changed to idol-admin-test-01", settingsPage.hostBox(settingsPanel).getAttribute("value").equals("idol-admin-test-01"));
+			settingsPage.changeHost("abc-dev.hpswlabs.hp.com", settingsPanel);
+			assertThat(settingsPanel + " hostname should be changed to abc-dev.hpswlabs.hp.com", settingsPage.hostBox(settingsPanel).getAttribute("value").equals("abc-dev.hpswlabs.hp.com"));
 		}
 
 		settingsPage.saveChanges();
@@ -186,7 +186,7 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 
 		for (final IsoSettingsPage.Panel settingsPanel : settingsPanels) {
 			assertThat(settingsPanel + " hostname should not be andrew", !settingsPage.hostBox(settingsPanel).getAttribute("value").equals("andrew"));
-			assertThat(settingsPanel + " hostname should equal idol-admin-test-01", settingsPage.hostBox(settingsPanel).getAttribute("value").equals("idol-admin-test-01"));
+			assertThat(settingsPanel + " hostname should equal abc-dev.hpswlabs.hp.com", settingsPage.hostBox(settingsPanel).getAttribute("value").equals("abc-dev.hpswlabs.hp.com"));
 		}
 
 		for (int i = 0; i < 2; i++) {

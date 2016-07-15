@@ -54,7 +54,7 @@ public class SearchLanguageITCase extends IdolIsoTestBase {
         search("1");
         String docTitle = searchPage.getSearchResult(1).getTitleString();
 
-        final List<Language> languages = Arrays.asList(Language.ENGLISH, Language.AFRIKAANS, Language.FRENCH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE, Language.SWAHILI);
+        final List<Language> languages = Arrays.asList(Language.AFRIKAANS, Language.FRENCH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE, Language.SWAHILI);
         for (final Language language : languages) {
             searchPage.selectLanguage(language);
 

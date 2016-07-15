@@ -10,7 +10,10 @@ import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
-import com.autonomy.abc.selenium.query.*;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.LanguageFilter;
+import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.query.SortBy;
 import com.autonomy.abc.selenium.search.IsoSearchResult;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
@@ -27,7 +30,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -176,7 +178,6 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	//TODO seems to be failing within VM - investigate futher
 	public void testDeleteDocsFromWithinBucket() {
 		search("sabre");
 		searchPage.openPromotionsBucket();
@@ -293,7 +294,6 @@ public class SearchPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testIdolSearchTypes() {
-
 		final int pickupCount = getResultCount("pickup");
 		final int truckCount = getResultCount("truck");
 		final int unquotedCount = getResultCount("pickup truck");
@@ -313,13 +313,31 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		verifyThat(andCount, lessThanOrEqualTo(unquotedCount));
 
 		verifyThat(orCount, lessThanOrEqualTo(pickupCount + truckCount));
-		verifyThat(andCount + pickupNotTruckCount + truckNotPickupCount, is(orCount));
+		verifyThat("Non-exclusive OR results equal to AND + A NOT B + B NOT A",andCount + pickupNotTruckCount + truckNotPickupCount, is(orCount));
 		verifyThat(orCount, is(unquotedCount));
 	}
 
 	private int getResultCount(final String searchTerm) {
 		search(searchTerm);
 		return searchPage.getHeadingResultsCount();
+	}
+
+	@Test
+	//Maybe IDOL not frontend -> do share results
+	public void testANotBandBNotAShareNoResults(){
+		Set<String> resultsANotB = searchAndGetResultTitles("pickup NOT truck");
+		Set<String> resultsBNotA = searchAndGetResultTitles("truck NOT pickup");
+
+		resultsANotB.retainAll(resultsBNotA);
+		verifyThat("\"A not B\" and \"B not A \" share no results",resultsANotB,hasSize(0));
+		for(String shared:resultsANotB){
+			LOGGER.info("Shared title: "+shared);
+		}
+	}
+
+	private Set<String> searchAndGetResultTitles(String queryTerm){
+		searchPage = searchService.search(queryTerm);
+		return new HashSet<>(searchPage.getSearchResultTitles(searchPage.getHeadingResultsCount()));
 	}
 
 	@Test
@@ -433,6 +451,8 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		searchPage.openParametricValuesList();
 		searchPage.waitForParametricValuesToLoad();
 
+		assertThat("Parametric values exist",searchPage.parametricValuesMessage().getText(),not(containsString("no parametric fields to display")));
+
 		//Need to get the result BEFORE filtering, and check that it's the same as after
 		int expectedResults = plainTextCheckbox().getResultsCount();
 		plainTextCheckbox().check();
@@ -489,32 +509,27 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	@Test
 	public void testSearchTermHighlightedInResults() {
 		final String searchTerm = "Tiger";
-
 		search(searchTerm);
 
-		for(int i = 0; i < 3; i++) {
-			for (final WebElement searchElement : getDriver().findElements(By.xpath("//div[contains(@class,'search-results-view')]//p//*[contains(text(),'" + searchTerm + "')]"))) {
-				if (searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
-					verifyThat(searchElement.getText(), containsString(searchTerm));
-				}
-				verifyThat(searchElement.getTagName(), is("a"));
-				verifyThat(searchElement.getAttribute("class"), is("query-text"));
-
-				final WebElement parent = searchElement.findElement(By.xpath(".//.."));
-				verifyThat(parent.getTagName(), is("span"));
-				verifyThat(parent.getAttribute("class"), containsString("label"));
+		for(int i = 0; i < 2; i++) {
+			for(IsoSearchResult result:searchPage.getSearchResults()){
+				String summary = result.getDescription();
+				int occurrences = countOccurrences(summary,searchTerm);
+				occurrences+=countOccurrences(summary,"tiger");
+				verifyThat("Query always highlighted in summary",result.queryTermHighlights(),hasSize(occurrences));
 			}
 			searchPage.switchResultsPage(Pagination.NEXT);
 		}
 	}
-
+	private int countOccurrences(String summary, String searchTerm){
+		return (summary.length() - summary.replace(searchTerm, "").length()) / searchTerm.length();
+	}
 	@Test
 	@ResolvedBug("CSA-1708")
 	public void testParametricLabelsNotUndefined(){
-		searchService.search(new Query("simpsons").withFilter(new ParametricFilter("Content Type", "TEXT/HTML")));
-
-		for(final WebElement filter : searchPage.findElements(By.cssSelector(".filter-display-view span"))){
-			assertThat(filter.getText().toLowerCase(),not(containsString("undefined")));
+		searchService.search(new Query("eat").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(new IndexFilter("WikiEnglish")));
+		for(final String filterLabel : searchPage.filterLabelList()){
+			verifyThat("Filter label is "+filterLabel+" - not undefined",filterLabel.toLowerCase(),not(containsString("undefined")));
 		}
 	}
 

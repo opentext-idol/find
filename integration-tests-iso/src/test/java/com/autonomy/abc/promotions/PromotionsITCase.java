@@ -426,7 +426,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 		}
 	}
 
-	// fails on Chrome - seems to be an issue with ChromeDriver
+	// fails on Chrome - seems to be an issue with ChromeDriver -> ViewServer down
 	@Test
 	public void testSpotlightViewable() {
 		final List<String> promotedDocs = setUpCarsPromotion(3);

@@ -347,8 +347,10 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		final List<String> availableFrequencies = schedulePage.getAvailableFrequencies();
 		verifyThat("Correct number frequency options available",availableFrequencies,hasSize(correctFrequencyOptions.size()));
 
-		sort(correctFrequencyOptions);
-		sort(availableFrequencies);
+		if(correctFrequencyOptions.size()>1) {
+			sort(correctFrequencyOptions);
+			sort(availableFrequencies);
+		}
 		verifyThat("Available frequencies are correct",availableFrequencies.equals(correctFrequencyOptions));
 
 		schedulePage.continueButton().click();

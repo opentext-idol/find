@@ -348,4 +348,6 @@ public abstract class SearchPage extends SearchBase implements LanguageFilter.Fi
 		DriverUtil.scrollIntoViewAndClick(getDriver(), findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")));
 		Waits.loadOrFadeWait();
 	}
+
+	public WebElement parametricValuesMessage(){return findElement(By.cssSelector(".collapsible-parametric-option p.parametric-info-text"));}
 }

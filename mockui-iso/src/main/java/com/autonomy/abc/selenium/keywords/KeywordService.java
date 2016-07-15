@@ -96,19 +96,18 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
         keywordsPage.filterView(type);
         int count = 0;
         for (final Language language : keywordsPage.getLanguageList()) {
-            final int current = keywordsPage.countKeywords();
-            if (current > 0) {
-                count += current;
-                tryDeleteAll(language);
-            }
+            tryDeleteAll(language);
+            count=keywordsPage.countKeywords();
         }
-        waitUntilNoKeywords(10 * (count + 1));
+        waitUntilNoKeywords(5 * (count + 1));
         return keywordsPage;
     }
 
     private void tryDeleteAll(final Language language) throws StaleElementReferenceException {
         final int limit = 5;
-        keywordsPage.selectLanguage(language);
+        if(!keywordsPage.languageMenuDisabled()){
+            keywordsPage.selectLanguage(language);
+        }
 
         List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
         int i=0;
@@ -119,6 +118,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
             i++;
             new WebDriverWait(getDriver(),20).until(keywordsPage.keywordLoadingIndicatorsGone());
             keywordGroups = keywordsPage.allKeywordGroups();
+            if (i>=limit){LOGGER.warn("Have looped greater than 5 times and keywords still not deleted");}
 
         }
     }
@@ -135,7 +135,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     private void waitUntilNoKeywords(final int timeout) {
         new WebDriverWait(getDriver(), timeout)
                 .withMessage("deleting keywords")
-                .until(ExpectedConditions.textToBePresentInElement(keywordsPage, "No keywords found"));
+                .until(keywordsPage.allKeywordsGone());
     }
 
     public void removeKeywordGroup(final WebElement group) {

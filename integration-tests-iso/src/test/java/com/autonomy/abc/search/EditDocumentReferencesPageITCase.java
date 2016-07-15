@@ -339,9 +339,12 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
         DriverUtil.scrollIntoView(getDriver(), editReferencesPage.saveButton());
         editReferencesPage.saveButton().click();
 
-        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-
-        final List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
+        List<String> promotedTitles = getElementFactory().getPromotionsDetailPage().getPromotedTitles();
+        if(promotedTitles.contains("Unknown Document")){
+            Waits.loadOrFadeWait();
+            promotionsDetailPage=getElementFactory().getPromotionsDetailPage();
+            promotedTitles = promotionsDetailPage.getPromotedTitles();
+        }
         verifyThat(promotedTitles, not(hasItem("Unknown Document")));
 
         if (verifyThat(promotedTitles, hasItem(title))) {
