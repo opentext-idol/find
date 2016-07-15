@@ -6,9 +6,8 @@ define([
     'js-whatever/js/list-view',
     'find/app/util/collapsible',
     'find/app/page/search/filters/parametric/parametric-select-modal',
-    'find/app/page/search/filters/parametric/parametric-value-view',
-    'parametric-refinement/prettify-field-name'
-], function(Backbone, _, $, i18n, ListView, Collapsible, ParametricModal, ValueView, prettifyFieldName) {
+    'find/app/page/search/filters/parametric/parametric-value-view'
+], function(Backbone, _, $, i18n, ListView, Collapsible, ParametricModal, ValueView) {
 
     var MAX_SIZE = 5;
 
@@ -64,7 +63,7 @@ define([
             this.parametricCollection = options.parametricCollection;
 
             this.collapsible = new Collapsible({
-                title: prettifyFieldName(this.model.get('displayName')) + ' (' + this.model.fieldValues.length +')',
+                title: this.model.get('displayName') + ' (' + this.model.fieldValues.length +')',
                 view: new ValuesView({collection: this.model.fieldValues}),
                 collapsed: true,
                 subtitle: this.subtitleTemplate({

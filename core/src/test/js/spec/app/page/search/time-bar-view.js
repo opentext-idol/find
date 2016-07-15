@@ -10,10 +10,15 @@ define([
             this.queryModel = new Backbone.Model();
             this.selectedParametricValues = new Backbone.Collection();
             this.previewModeModel = new Backbone.Model({document: null});
-            
+
+            this.timeBarModel = new Backbone.Model({
+                graphedFieldName: 'autn_date',
+                graphedDataType: 'date'
+            });
+
             this.view = new TimeBarView({
                 queryModel: this.queryModel,
-                fieldName: 'autn_date',
+                timeBarModel: this.timeBarModel,
                 previewModeModel: this.previewModeModel,
                 queryState: {
                     selectedParametricValues: this.selectedParametricValues
