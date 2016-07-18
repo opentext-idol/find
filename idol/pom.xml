@@ -35,7 +35,7 @@
                             <executable>npm</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>update</argument>
+                                <argument>install</argument>
                             </arguments>
                         </configuration>
                     </execution>
