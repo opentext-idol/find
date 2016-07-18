@@ -96,9 +96,12 @@ define([
                 }
             ];
 
+            // Initially, select the left-most tab
+            var initialTabId = resultsViews[0].id;
+
             var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
-                selectedTab: resultsViews[0].id
+                selectedTab: initialTabId
             });
 
             this.resultsViewSelection = new ResultsViewSelection({

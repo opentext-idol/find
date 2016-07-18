@@ -20,7 +20,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration, template, 
+            ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration, template,
             resultsTemplate, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     var SCROLL_INCREMENT = 30;
@@ -106,11 +106,11 @@ define([
             if (this.indexesCollection) {
                 this.selectedIndexesCollection = options.queryState.selectedIndexes;
             }
-            
+
             this.resultRenderer = new ResultRenderer({
                 config: resultsRendererConfig
             });
-            
+
             if (this.showPromotions) {
                 this.promotionsCollection = new PromotionsCollection();
             }
@@ -135,32 +135,6 @@ define([
 
             if (this.previewModeModel) {
                 this.listenTo(this.previewModeModel, 'change:document', this.updateSelectedDocument);
-            }
-        },
-
-        refreshResults: function() {
-            if (this.fetchStrategy.validateQuery(this.queryModel)) {
-                if (this.fetchStrategy.waitForIndexes(this.queryModel)) {
-                    this.$loadingSpinner.addClass('hide');
-                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes['search.error.noIndexes']}));
-                } else {
-                    this.endOfResults = false;
-                    this.start = 1;
-                    this.maxResults = SCROLL_INCREMENT;
-                    this.loadData(false);
-                    this.$('.main-results-content .promotions').empty();
-
-                    this.$loadingSpinner.removeClass('hide');
-                    this.toggleError(false);
-                    this.$('.main-results-content .error .error-list').empty();
-                    this.$('.main-results-content .results').empty();
-                }
-            }
-        },
-
-        clearLoadingSpinner: function() {
-            if (this.resultsFinished && this.promotionsFinished || !this.showPromotions) {
-                this.$loadingSpinner.addClass('hide');
             }
         },
 
@@ -217,15 +191,45 @@ define([
             });
 
 
-            if (this.documentsCollection.isEmpty()) {
-                this.refreshResults();
+            this.refreshResults();
+
+            if (this.entityCollection) {
+                this.updateEntityHighlighting();
             }
-            
+
             if (this.previewModeModel) {
                 this.$('.main-results-content').addClass('preview-mode');
                 this.updateSelectedDocument();
             } else {
                 this.$('.main-results-content').addClass('document-detail-mode');
+            }
+        },
+
+        refreshResults: function() {
+            if (this.fetchStrategy.validateQuery(this.queryModel)) {
+                if (this.fetchStrategy.waitForIndexes(this.queryModel)) {
+                    this.$loadingSpinner.addClass('hide');
+                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes['search.error.noIndexes']}));
+                } else {
+                    this.endOfResults = false;
+                    this.start = 1;
+                    this.maxResults = SCROLL_INCREMENT;
+                    this.loadData(false);
+                    this.$('.main-results-content .promotions').empty();
+
+                    if (this.$loadingSpinner) {
+                        this.$loadingSpinner.removeClass('hide');
+                    }
+                    this.toggleError(false);
+                    this.$('.main-results-content .error .error-list').empty();
+                    this.$('.main-results-content .results').empty();
+                }
+            }
+        },
+
+        clearLoadingSpinner: function() {
+            if (this.resultsFinished && this.promotionsFinished || !this.showPromotions) {
+                this.$loadingSpinner.addClass('hide');
             }
         },
 
@@ -263,7 +267,10 @@ define([
         },
 
         loadData: function(infiniteScroll) {
-            this.$loadingSpinner.removeClass('hide');
+            if (this.$loadingSpinner) {
+                this.$loadingSpinner.removeClass('hide');
+            }
+
             this.resultsFinished = false;
 
             var requestData = _.extend({
@@ -337,7 +344,7 @@ define([
                 if (!isPromotion) {
                     events().preview(collection.indexOf(model) + 1);
                 }
-            }            
+            }
         },
 
         remove: function() {

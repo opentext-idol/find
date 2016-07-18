@@ -32,6 +32,21 @@ define([
 
             var resultsViews = _.where([
                 {
+                    Constructor: ComparisonTopicMap,
+                    id: 'topic-map',
+                    uniqueId: _.uniqueId('results-view-item-'),
+                    shown: true,
+                    constructorArguments: {
+                        searchModels: options.searchModels,
+                        escapeCallback: options.escapeCallback,
+                        model: this.model
+                    },
+                    selector: {
+                        displayNameKey: 'topic-map',
+                        icon: 'hp-grid'
+                    }
+                },
+                {
                     Constructor: ResultsLists,
                     id: 'list',
                     uniqueId: _.uniqueId('results-view-item-'),
@@ -60,21 +75,6 @@ define([
                     selector: {
                         displayNameKey: 'map',
                         icon: 'hp-map-view'
-                    }
-                },
-                {
-                    Constructor: ComparisonTopicMap,
-                    id: 'topic-map',
-                    uniqueId: _.uniqueId('results-view-item-'),
-                    shown: true,
-                    constructorArguments: {
-                        searchModels: options.searchModels,
-                        escapeCallback: options.escapeCallback,
-                        model: this.model
-                    },
-                    selector: {
-                        displayNameKey: 'topic-map',
-                        icon: 'hp-grid'
                     }
                 }
             ], {shown: true});
