@@ -180,7 +180,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    @RelatedTo("FIND-243")
+    @RelatedTo({"FIND-243","FIND-110"})
     public void testRefreshAddedConcepts() {
         findService.search("fresh");
         final Collection<String> concepts = new ArrayList<>();
