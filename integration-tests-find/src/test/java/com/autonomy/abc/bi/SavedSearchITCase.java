@@ -25,7 +25,6 @@ import static org.hamcrest.Matchers.*;
 
 public class SavedSearchITCase extends IdolFindTestBase {
     private SearchTabBar searchTabBar;
-
     private FindService findService;
     private SavedSearchService saveService;
 
@@ -94,21 +93,24 @@ public class SavedSearchITCase extends IdolFindTestBase {
     public void testDuplicateNamesPrevented() {
         saveService.saveCurrentAs("duplicate", SearchType.QUERY);
         saveService.openNewTab();
-        final SearchOptionsBar options = getElementFactory().getSearchOptionsBar();
+        getElementFactory().getResultsPage().waitForResultsToLoad();
 
-        options.saveAsButton().click();
-        options.searchTitleInput().setValue("duplicate");
+        checkSavingDuplicateThrowsError("duplicate",SearchType.QUERY);
+        checkSavingDuplicateThrowsError("duplicate",SearchType.SNAPSHOT);
+    }
+
+    private void checkSavingDuplicateThrowsError(final String searchName, final SearchType type){
+        final SearchOptionsBar options = saveService.nameSavedSearch(searchName,type);
         options.saveConfirmButton().click();
         assertThat(options.getSaveErrorMessage(), isError(Errors.Find.DUPLICATE_SEARCH));
-
-        options.searchTypeButton(SearchType.SNAPSHOT).click();
-        options.saveConfirmButton().click();
-        assertThat(options.getSaveErrorMessage(), isError(Errors.Find.DUPLICATE_SEARCH));
+        options.cancelSave();
     }
 
     @Test
     public void testSavedSearchVisibleInNewSession() {
-        findService.search(new Query("live forever").withFilter(new ParametricFilter("OVERALL VIBE", "POSITIVE")));
+        findService.search(new Query("live forever"));
+        getElementFactory().getFilterPanel().checkboxForParametricValue(0,0).check();
+
         saveService.saveCurrentAs("oasis", SearchType.QUERY);
 
         final IdolFind other = new IdolFind();
@@ -120,7 +122,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         factory.getSearchTabBar().switchTo("oasis");
         factory.getFilterPanel().waitForParametricFields();
         assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
-        assertThat(factory.getFilterPanel().checkboxForParametricValue("OVERALL VIBE", "POSITIVE"), checked());
+        assertThat(factory.getFilterPanel().checkboxForParametricValue(0, 0), checked());
     }
 
     private static Matcher<SearchTab> modified() {

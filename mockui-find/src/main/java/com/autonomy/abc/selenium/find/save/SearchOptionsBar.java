@@ -20,12 +20,16 @@ public class SearchOptionsBar {
         this.bar = driver.findElement(By.cssSelector(".query-service-view-container > :not(.hide):not(.search-tabs-container) .search-options-container"));
     }
 
-    public WebElement saveAsButton() {
-        return findElement(By.className("show-save-as-button"));
+    public WebElement saveAsButton(final SearchType type){
+        return findElement(By.cssSelector(".show-save-as[data-search-type='"+type+"']"));
     }
 
     public FormInput searchTitleInput() {
         return new FormInput(findElement(By.className("search-title-input")), driver);
+    }
+
+    public void cancelSave(){
+        bar.findElement(By.className("save-title-cancel-button")).click();
     }
 
     void confirmSave() {
