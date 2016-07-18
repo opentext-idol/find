@@ -111,7 +111,7 @@ public class SunburstITCase extends IdolFindTestBase {
         LOGGER.info("filtering by " + fieldName + " = " + fieldValue);
         results.getIthSunburstSegment(1).click();
 
-        verifyThat(findPage.getFilterLabels(), hasItem(equalToIgnoringCase(fieldValue)));
+        verifyThat(findPage.getFilterLabels(), hasItem(containsString(fieldValue)));
         verifyThat(filters().checkboxForParametricValue(fieldName, fieldValue), checked());
         verifyThat("Parametric selection name has changed to another type of filter",results.getSelectedFieldName(1),not(fieldName));
 

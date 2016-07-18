@@ -51,15 +51,13 @@ public class TopicMapITCase extends IdolFindTestBase {
     }
 
     @Test
+    //TODO:only 1 slider in 11.1 - not in develop yet
     public void testNumbersForMapInSliders() {
         findService.search("gove");
         results.goToTopicMap();
 
         slidingIncreasesNumber(results.numberTopicsSlider());
         slidingIncreasesNumber(results.relevanceVsClusteringSlider());
-
-        results.numberTopicsSlider().hover();
-        verifyThat("Number of topics tooltip number correct", results.numberTopicsSlider().getValue(), is(results.numberOfMapEntities()));
     }
 
     private void slidingIncreasesNumber(final Slider slider) {
@@ -84,7 +82,7 @@ public class TopicMapITCase extends IdolFindTestBase {
 
         results.waitForMapLoaded();
         results.numberTopicsSlider().hover();
-        final int numberEntities = results.numberTopicsSlider().getValue();
+        final int numberEntities = results.numberOfMapEntities();
 
         final List<WebElement> textElements = results.mapEntityTextElements();
         verifyThat("Same number of text elements as map pieces", textElements.size(), is(numberEntities));
@@ -101,12 +99,13 @@ public class TopicMapITCase extends IdolFindTestBase {
         findService.search(searchTerm);
         results.goToTopicMap();
 
+        //checks first parametric filter of first parametric filter type
         final FindParametricCheckbox filter = getElementFactory().getFilterPanel().checkboxForParametricValue(0, 0);
         final String filterName = filter.getName();
         filter.check();
 
         results.waitForReload();
-        verifyThat("The correct filter label has appeared", findPage.getFilterLabels(), hasItem(equalToIgnoringCase(filterName)));
+        verifyThat("The correct filter label has appeared", findPage.getFilterLabels(), hasItem(containsString(filterName)));
         verifyThat("Search term still " + searchTerm, navBar.getSearchBoxTerm(), is(searchTerm));
     }
 
