@@ -22,7 +22,7 @@ public class DocumentViewer extends AppElement implements AppPage {
     }
 
     public static DocumentViewer make(final WebDriver driver) {
-//        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.id("cboxClose")));
+        new WebDriverWait(driver,10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
         final DocumentViewer documentViewer = new DocumentViewer(driver);
         documentViewer.waitForLoad();
         return documentViewer;
