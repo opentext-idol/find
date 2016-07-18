@@ -41,7 +41,7 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
 
     public List<WebElement> relatedConcepts() {
         waitForRelatedConceptsToLoad();
-        return panel.findElements(By.cssSelector(".related-concepts-list a"));
+        return panel.findElements(By.cssSelector(".related-concepts-list:not(.hide) a"));
     }
 
     public List<String> getRelatedConcepts() {

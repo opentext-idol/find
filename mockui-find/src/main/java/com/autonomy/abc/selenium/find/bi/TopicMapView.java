@@ -30,7 +30,7 @@ public class TopicMapView {
     private WebElement sliderBlock(){return findElement(By.cssSelector(".slider-block div:nth-child(2)"));}
 
     public Slider relevanceVsClusteringSlider(){
-        return new Slider(sliderBlock().findElement(By.cssSelector("[id*='relevance-slider']")), driver);
+        return new Slider(sliderBlock().findElement(By.cssSelector("[id*='speed-slider']")), driver);
     }
 
     public Slider numberTopicsSlider(){

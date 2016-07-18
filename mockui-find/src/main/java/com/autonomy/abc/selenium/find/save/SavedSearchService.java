@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.save;
 
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
@@ -11,12 +12,15 @@ public class SavedSearchService {
         elementFactory = find.elementFactory();
     }
 
-    public void saveCurrentAs(final String searchName, final SearchType type) {
+    public void saveCurrentAs(final String searchName, final SearchType type){
+        nameSavedSearch(searchName,type).confirmSave();
+    }
+
+    public SearchOptionsBar nameSavedSearch(final String searchName,final SearchType type){
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
-        options.saveAsButton().click();
+        options.saveAsButton(type).click();
         options.searchTitleInput().setValue(searchName);
-        options.searchTypeButton(type).click();
-        options.confirmSave();
+        return options;
     }
 
     public void openNewTab() {
