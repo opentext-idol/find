@@ -56,7 +56,7 @@ define([
             this.listView = new ListView({
                 collection: this.collection,
                 ItemView: FilterListItemView,
-                className: 'inline-block',
+                className: 'inline',
                 itemOptions: {
                     className: 'label filter-label border filters-margin inline-block m-b-xs',
                     template: this.itemTemplate
