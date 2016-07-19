@@ -19,14 +19,19 @@ define([
     function getSubtitle() {
         var model = this.selectedParametricValues.findWhere({field: this.model.id});
 
-        if (model) {
-            var isNumeric = model.get('numeric');
-
-            var range = _.map(model.get('range'), function (entry) {
-                return isNumeric ? Math.round(entry * 100) / 100 : NumericParametricFieldView.dateFormatting.format(entry);
-            }).join(' \u2014 ');
-
-            return range;
+        if(model) {
+            var range;
+            if(this.dataType === 'numeric') {
+                range = _.map(model.get('range'), function(entry) {
+                    // TODO: implement proper rounding to significant figures, rather than decimal places
+                    return Math.round(entry * 10) / 10;
+                });
+            } else if (this.dataType === 'date') {
+                range = _.map(model.get('range'), function(entry) {
+                    return NumericParametricFieldView.dateFormatting.format(entry);
+                });
+            }
+            return range.join('\u2013');
         } else {
             return i18n['app.unfiltered'];
         }
