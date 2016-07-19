@@ -124,7 +124,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-228")
+    @ResolvedBug("FIND-228")
     public void testCompareUnsavedSearches() {
         findService.search("\"not many results\"");
         savedSearchService.openNewTab();
@@ -145,7 +145,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-232")
+    @ResolvedBug("FIND-232")
     public void testAllSavedSearchesAreComparable() {
         searchAndSave(new Query("\"alice in wonderland\""), "alice", SearchType.QUERY);
         savedSearchService.openNewTab();
@@ -173,12 +173,12 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
     @Test
     public void testSimilarDocumentsNavigation() {
-        final Index expectedIndex = SOME_INDEX;
+        final Index expectedIndex = new Index("Wikipedia");
         final String comparedTabName = "nope";
         final String expectedTabName = "expected";
 
-        searchAndSave(new Query("the wrong place"), comparedTabName);
-        searchAndSave(new Query("return here").withFilter(new IndexFilter(expectedIndex)), expectedTabName);
+        searchAndSave(new Query("face"), comparedTabName);
+        searchAndSave(new Query("car").withFilter(new IndexFilter(expectedIndex)), expectedTabName);
         final String firstTitle = getElementFactory().getResultsPage().getResult(1).getTitleString();
 
         savedSearchService.compareCurrentWith(comparedTabName);
@@ -205,6 +205,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
     private void searchAndSave(final Query query, final String saveAs, final SearchType saveType) {
         findService.search(query);
+        getElementFactory().getResultsPage().waitForResultsToLoad();
         savedSearchService.saveCurrentAs(saveAs, saveType);
     }
 }
