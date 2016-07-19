@@ -107,7 +107,12 @@ public class SunburstView extends ParametricFieldView {
 
         int totalResults = 0;
         for (final FindParametricCheckbox checkbox : checkboxes) {
-            totalResults += checkbox.getResultsCount();
+            if (checkbox.getResultsCount()!=0) {
+                totalResults += checkbox.getResultsCount();
+            }
+            else{
+                break;
+            }
         }
 
         for (final FindParametricCheckbox checkbox : checkboxes) {
