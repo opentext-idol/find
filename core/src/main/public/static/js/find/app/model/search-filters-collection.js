@@ -46,7 +46,7 @@ define([
     }
 
     // Get the display text for the given parametric field name and array of selected parametric values
-    function parametricFilterText(field, values, ranges, numeric) {
+    function parametricFilterText(field, values, ranges, dataType) {
         var round = function (x) {
             // TODO: implement significant figures---e.g. using toPrecision()---instead of simple rounding
             return Math.round(x * 10) / 10;
@@ -59,11 +59,11 @@ define([
         } else {
             valueText = ranges.map(function (range) {
                 //Discard time of day if range greater than 1 week
-                if (numeric) {
+                if (dataType === 'numeric') {
                     return round(range[0]) + ' - ' + round(range[1]);
-                } else if (range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
+                } else if (dataType === 'date' && range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
                     return formatDate(range[0], DATE_FORMAT) + ' - ' + formatDate(range[1], DATE_FORMAT);
-                } else {
+                } else if (dataType === 'date') {
                     return formatDate(range[0], SHORT_DATE_FORMAT) + ' - ' + formatDate(range[1], SHORT_DATE_FORMAT);
                 }
             }).join(', ');
@@ -78,7 +78,7 @@ define([
             return {
                 id: parametricFilterId(field),
                 field: field,
-                text: parametricFilterText(field, data.values, data.range ? [data.range] : [], data.numeric),
+                text: parametricFilterText(field, data.values, data.range ? [data.range] : [], data.dataType),
                 type: FilterType.PARAMETRIC
             };
         });
@@ -96,7 +96,7 @@ define([
             this.selectedIndexesCollection = options.queryState.selectedIndexes;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
-            this.listenTo(this.selectedParametricValues, 'add remove', this.updateParametricSelection);
+            this.listenTo(this.selectedParametricValues, 'add remove change', this.updateParametricSelection);
             this.listenTo(this.selectedParametricValues, 'reset', this.resetParametricSelection);
             this.listenTo(this.selectedIndexesCollection, 'reset update', this.updateDatabases);
             this.listenTo(this.datesFilterModel, 'change', this.updateDateFilters);
@@ -194,7 +194,7 @@ define([
                 this.add({
                     id: id,
                     field: field,
-                    text: parametricFilterText(field, values, ranges, selectionModel.get('numeric')),
+                    text: parametricFilterText(field, values, ranges, selectionModel.get('dataType')),
                     type: FilterType.PARAMETRIC
                 }, {
                     // Merge true to overwrite the text for any existing model for this field name

@@ -25,9 +25,9 @@ define([
     var GRAPH_HEIGHT = 110;
     var DATE_WIDGET_FORMAT = 'YYYY-MM-DD HH:mm';
 
-    function rangeModelMatching(fieldName, numericRestriction) {
+    function rangeModelMatching(fieldName, dataType) {
         return function(model) {
-            return model.get('field') === fieldName && model.get('range') && model.get('numeric') === numericRestriction;
+            return model.get('field') === fieldName && model.get('range') && model.get('dataType') === dataType;
         };
     }
 
@@ -143,7 +143,7 @@ define([
 
             // Bind the selection rectangle to the selected parametric range
             this.listenTo(this.selectedParametricValues, 'add remove change', function(model) {
-                if (rangeModelMatching(this.fieldName, this.numericRestriction)(model)) {
+                if (rangeModelMatching(this.fieldName, this.dataType)(model)) {
                     this.updateSelection();
                 }
             });
@@ -243,7 +243,7 @@ define([
         // Update the rendered selection rectangle and inputs to match the selected parametric range model
         updateSelection: function() {
             if (this.graph) {
-                var rangeModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.numericRestriction));
+                var rangeModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.dataType));
 
                 if (rangeModel) {
                     var range = rangeModel.get('range');
@@ -262,12 +262,12 @@ define([
 
         // Apply a new range selection; a null boundary will not be updated
         updateRestrictions: function(newRange) {
-            var existingModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.numericRestriction));
+            var existingModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.dataType));
             var existingRange = existingModel ? existingModel.get('range') : [this.absoluteMinValue, this.absoluteMaxValue];
 
             var newAttributes = {
                 field: this.fieldName,
-                numeric: this.numericRestriction,
+                dataType: this.dataType,
                 range: _.map(newRange, function(value, index) {
                     // Explicitly check null since 0 is falsy
                     return value === null ? existingRange[index] : value;
@@ -282,7 +282,7 @@ define([
         },
 
         clearRestrictions: function () {
-            this.selectedParametricValues.remove(this.selectedParametricValues.filter(rangeModelMatching(this.fieldName, this.numericRestriction)));
+            this.selectedParametricValues.remove(this.selectedParametricValues.filter(rangeModelMatching(this.fieldName, this.dataType)));
         },
 
         updateModel: function(newMin, newMax) {

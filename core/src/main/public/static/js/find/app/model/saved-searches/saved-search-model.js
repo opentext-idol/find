@@ -65,7 +65,7 @@ define([
                     field: model.get('field'),
                     min: model.get('range')[0],
                     max: model.get('range')[1],
-                    type: model.get('numeric') ? 'Numeric' : 'Date'
+                    type: model.get('dataType') === 'numeric' ? 'Numeric' : 'Date'
                 })
             }
         });
