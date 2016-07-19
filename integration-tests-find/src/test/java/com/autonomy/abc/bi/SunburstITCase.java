@@ -74,32 +74,17 @@ public class SunburstITCase extends IdolFindTestBase {
         results.parametricSelectionDropdown(1).selectItem(1);
         Waits.loadOrFadeWait();
 
-        filters().parametricField(1).expand();
-        //TODO: seeAll should create a modal!!!!
-        filters().parametricField(1).seeAll();
-
-        final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
-        final int correctNumberSegments = filterModal.expectedParametricValues().size();
-        filterModal.cancelButton().click();
+        int correctNumberSegments = getFilterResultsBigEnoughToDisplay(1).size();
 
         assertThat("Correct number ("+correctNumberSegments+") of sunburst segments ",results.numberOfSunburstSegments(),is(correctNumberSegments));
     }
 
     @Test
-    //Currently not working because the ordering in sunburst not the same as ordering in modal
     public void testHoveringOverSegmentCausesTextToChange(){
         findService.search("elephant");
         results.goToSunburst();
 
-        filters().parametricField(0).expand();
-        //TODO: seeAll should create a modal!!!!
-        filters().parametricField(0).seeAll();
-
-        final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
-        final List<String> bigEnough = filterModal.expectedParametricValues();
-        filterModal.cancelButton().click();
-
-        results.waitForSunburst();
+        List<String> bigEnough = getFilterResultsBigEnoughToDisplay(0);
 
         for (final WebElement segment : results.findSunburstSegments()) {
             results.segmentHover(segment);
@@ -107,6 +92,19 @@ public class SunburstITCase extends IdolFindTestBase {
             verifyThat(name, not(isEmptyOrNullString()));
             verifyThat(name, isIn(bigEnough));
         }
+    }
+
+    //TODO: seeAll should create a modal!!!!
+    private List<String> getFilterResultsBigEnoughToDisplay(int filterContainerIndex){
+        filters().parametricField(filterContainerIndex).expand();
+        filters().parametricField(filterContainerIndex).seeAll();
+
+        final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
+        final List<String> bigEnough = filterModal.expectedParametricValues();
+        filterModal.cancelButton().click();
+
+        results.waitForSunburst();
+        return bigEnough;
     }
 
     @Test

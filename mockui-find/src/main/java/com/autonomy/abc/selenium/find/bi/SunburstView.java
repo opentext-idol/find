@@ -95,39 +95,4 @@ public class SunburstView extends ParametricFieldView {
         final Action hover = builder.build();
         hover.perform();
     }
-
-    /**
-     * Determines which values for a parametric field are significant
-     * enough to be displayed in sunburst
-     * @param checkboxes some iterable of parametric values
-     * @return the significant values
-     */
-    public static List<String> expectedParametricValues(final Iterable<FindParametricCheckbox> checkboxes) {
-        final List<String> expected = new ArrayList<>();
-
-        int totalResults = 0;
-        for (final FindParametricCheckbox checkbox : checkboxes) {
-            if (checkbox.getResultsCount()!=0) {
-                totalResults += checkbox.getResultsCount();
-            }
-            else{
-                break;
-            }
-        }
-
-        for (final FindParametricCheckbox checkbox : checkboxes) {
-            final int thisCount = checkbox.getResultsCount();
-            if (expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) {
-                expected.add(checkbox.getName());
-            } else {
-                break;
-            }
-        }
-        return expected;
-    }
-
-    private static boolean isBigEnough(final int thisCount, final int totalResults) {
-        return (double) thisCount /totalResults >= 0.05;
-    }
-
 }
