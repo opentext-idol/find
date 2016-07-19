@@ -5,15 +5,12 @@
 
 define([
     'underscore',
-    'i18n!find/idol/nls/comparisons',
     'find/app/configuration',
-    'find/idol/app/page/search/comparison/compare-modal',
     'find/app/page/search/service-view',
     'find/idol/app/page/search/results/idol-results-view-augmentation',
     'find/idol/app/page/search/results/idol-results-view',
     'find/app/util/model-any-changed-attribute-listener'
-], function(_, comparisonsI18n, configuration, CompareModal, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
-
+], function(_, configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
     'use strict';
 
     return ServiceView.extend({
@@ -22,32 +19,12 @@ define([
         mapViewResultsStep: configuration().map.resultsStep,
         mapViewAllowIncrement: true,
 
-        events: _.extend({
-            'click .compare-modal-button': function() {
-                this.comparisonModalCallback();
-            }
-        }, ServiceView.prototype.events),
-
         initialize: function(options) {
             this.comparisonModalCallback = options.comparisonModalCallback;
 
-            if (configuration().hasBiRole) {
-                this.headerControlsHtml = _.template('<button class="btn button-primary compare-modal-button"><%-i18n["compare"]%></button>')({i18n: comparisonsI18n})
-            }
             ServiceView.prototype.initialize.call(this, options);
 
-            this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
-
             addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchData);
-        },
-
-        render: function() {
-            ServiceView.prototype.render.call(this);
-            this.updateCompareModalButton();
-        },
-
-        updateCompareModalButton: function() {
-            this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
         },
 
         fetchParametricFields: function (fieldsCollection, callback) {
@@ -59,7 +36,13 @@ define([
                 }, this)
             });
         },
-
+        
+        getSavedSearchControlViewOptions: function () {
+            return {
+                comparisonModalCallback: this.comparisonModalCallback
+            };
+        },
+        
         fetchParametricValues: function () {
             this.parametricCollection.reset();
 

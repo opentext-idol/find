@@ -57,6 +57,10 @@ define([
         headerControlsHtml: '',
         displayDependentParametricViews: true,
 
+        getSavedSearchControlViewOptions: function() {
+            return {};
+        },
+
         // Abstract
         ResultsView: null,
         ResultsViewAugmentation: null,
@@ -165,7 +169,7 @@ define([
             };
 
             if (hasBiRole) {
-                this.savedSearchControlView = new SavedSearchControlView(subViewArguments);
+                this.savedSearchControlView = new SavedSearchControlView(_.extend(this.getSavedSearchControlViewOptions(), subViewArguments));
 
                 if (this.searchTypes[searchType].showTimeBar) {
                     this.timeBarModel = new Backbone.Model({

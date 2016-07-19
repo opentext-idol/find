@@ -49,6 +49,9 @@ define([
         titleInput: null,
 
         events: {
+            'click .compare-modal-button': function() {
+                this.comparisonModalCallback();
+            },
             'click .show-rename-button': function () {
                 var searchType = this.savedSearchModel.get('type');
                 toggleTitleEditState(TitleEditState.RENAME, searchType).call(this)
@@ -140,6 +143,7 @@ define([
             this.selectedTabModel = options.selectedTabModel;
             this.searchCollections = options.searchCollections;
             this.searchTypes = options.searchTypes;
+            this.comparisonModalCallback = options.comparisonModalCallback;
 
             this.model = new Backbone.Model({
                 // Is the saved search new, modified or up to date with the server?
@@ -183,6 +187,7 @@ define([
                 this.model.set(attributes);
             }, this);
 
+            this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
             this.listenTo(this.savedSearchModel, 'change', updateSavedState);
             this.listenTo(options.queryModel, 'change', updateSavedState);
 
@@ -208,10 +213,15 @@ define([
             this.updateForTitleEditState();
             this.updateLoading();
             this.createPopover();
+            this.updateCompareModalButton();
 
             this.$saveButtons = this.$('.save-button');
 
             this.updateSearchValidityUI();
+        },
+
+        updateCompareModalButton: function() {
+            this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
         },
 
         createPopover: function() {

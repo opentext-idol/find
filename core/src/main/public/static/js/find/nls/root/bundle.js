@@ -19,6 +19,7 @@ define([
         'app.apply': 'Apply',
         'app.backToSearch': 'Back to search',
         'app.cancel': 'Cancel',
+        'app.compare': 'Compare',
         'app.delete': 'Delete',
         'app.from': 'From',
         'app.loading': 'Loading...',
