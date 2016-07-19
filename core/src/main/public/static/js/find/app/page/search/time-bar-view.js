@@ -95,6 +95,7 @@ define([
                         selectedParametricValues: this.selectedParametricValues,
                         zoomEnabled: true,
                         dataType: this.dataType,
+                        numericRestriction: this.dataType === 'numeric',
                         model: this.bucketModel,
                         formatting: currentGraphConfig.formatting,
                         inputTemplate: currentGraphConfig.template
