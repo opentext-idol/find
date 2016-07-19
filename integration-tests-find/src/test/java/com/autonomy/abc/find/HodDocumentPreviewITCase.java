@@ -131,10 +131,11 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
 
     @Test
     public void testOpenDocumentFromSearch(){
+        final Window original = getWindow();
+
         ResultsView results = findService.search("Refuse to Feel");
 
         for(int i = 1; i <= 5; i++){
-            final Window original = getWindow();
             final FindResult result = results.getResult(i);
             final String reference = result.getReference();
             result.title().click();
@@ -143,7 +144,10 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
 
             verifyThat(getDriver().getCurrentUrl(), containsString(reference));
 
-            newWindow.close();
+            if(!newWindow.equals(original)) {
+                newWindow.close();
+            }
+
             original.activate();
         }
     }

@@ -14,7 +14,7 @@ public class FindResult extends QueryResult {
 
     @Override
     public WebElement title() {
-        return findElement(By.tagName("h4"));
+        return findElement(By.xpath(".//*[@class[contains(.,'result-header')] and text()[normalize-space()]]"));
     }
 
     @Override
