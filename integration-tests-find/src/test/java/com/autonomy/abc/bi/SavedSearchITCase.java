@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.save.*;
 import com.autonomy.abc.selenium.query.ParametricFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -109,7 +110,9 @@ public class SavedSearchITCase extends IdolFindTestBase {
     @Test
     public void testSavedSearchVisibleInNewSession() {
         findService.search(new Query("live forever"));
-        getElementFactory().getFilterPanel().checkboxForParametricValue(0,0).check();
+        FilterPanel filterPanel = getElementFactory().getFilterPanel();
+        filterPanel.waitForParametricFields();
+        filterPanel.checkboxForParametricValue(0,0).check();
 
         saveService.saveCurrentAs("oasis", SearchType.QUERY);
 

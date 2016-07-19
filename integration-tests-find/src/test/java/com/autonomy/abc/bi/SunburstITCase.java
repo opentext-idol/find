@@ -1,11 +1,13 @@
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
-import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,9 +15,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.checked;
 import static org.hamcrest.Matchers.*;
 
@@ -36,13 +36,20 @@ public class SunburstITCase extends IdolFindTestBase {
     //TODO: test that checks the total doc number against what's in sunburst centre
 
     @Test
-    public void testSunburstTabShowsSunburst(){
+    @ActiveBug("FIND-382")
+    public void testSunburstTabShowsSunburstOrMessage(){
         findService.search("shambolic");
         results.goToSunburst();
 
         verifyThat("Main results list hidden",getElementFactory().getResultsPage().mainResultsContainerHidden());
         verifyThat("Sunburst element displayed",results.sunburstVisible());
         verifyThat("Parametric selectors appear",results.parametricSelectionDropdownsExist());
+
+        findService.search("shouldBeNoFieldsForThisCrazySearch");
+        results.goToSunburst();
+
+        //TODO: find out expected behaviour once bug is resolved
+        //verifyThat("Sensible message is appearing when there is no sunburst")
     }
 
     @Test
@@ -50,11 +57,12 @@ public class SunburstITCase extends IdolFindTestBase {
         findService.search("wild horses");
         results.goToSunburst();
 
+        filters().parametricField(0).expand();
         final String firstParametric = filters().parametricField(0).getParentName();
-        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(results.getSelectedFieldName(1)));
+        verifyThat("Default parametric selection is 1st parametric type", firstParametric.replaceAll(" ","_"), startsWith(results.getSelectedFieldName(1)));
 
         results.parametricSelectionDropdown(2).open();
-        verifyThat("1st selected parametric does not appear as choice in 2nd",results.getParametricDropdownItems(2),not(contains(firstParametric)));
+        verifyThat("1st selected parametric does not appear as choice in 2nd",results.getParametricDropdownItems(2),not(contains(firstParametric.replaceAll(" ","_"))));
     }
 
     @Test
@@ -66,8 +74,8 @@ public class SunburstITCase extends IdolFindTestBase {
         results.parametricSelectionDropdown(1).selectItem(1);
         Waits.loadOrFadeWait();
 
-        filters().showFilters();
-        final int correctNumberSegments = SunburstView.expectedParametricValues(filters().parametricField(1)).size();
+        int correctNumberSegments = getFilterResultsBigEnoughToDisplay(1).size();
+
         assertThat("Correct number ("+correctNumberSegments+") of sunburst segments ",results.numberOfSunburstSegments(),is(correctNumberSegments));
     }
 
@@ -76,9 +84,7 @@ public class SunburstITCase extends IdolFindTestBase {
         findService.search("elephant");
         results.goToSunburst();
 
-        filters().showFilters();
-        final List<String> bigEnough = SunburstView.expectedParametricValues(filters().parametricField(0));
-        results.waitForSunburst();
+        List<String> bigEnough = getFilterResultsBigEnoughToDisplay(0);
 
         for (final WebElement segment : results.findSunburstSegments()) {
             results.segmentHover(segment);
@@ -86,6 +92,19 @@ public class SunburstITCase extends IdolFindTestBase {
             verifyThat(name, not(isEmptyOrNullString()));
             verifyThat(name, isIn(bigEnough));
         }
+    }
+
+    //TODO: seeAll should create a modal!!!!
+    private List<String> getFilterResultsBigEnoughToDisplay(int filterContainerIndex){
+        filters().parametricField(filterContainerIndex).expand();
+        filters().parametricField(filterContainerIndex).seeAll();
+
+        final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
+        final List<String> bigEnough = filterModal.expectedParametricValues();
+        filterModal.cancelButton().click();
+
+        results.waitForSunburst();
+        return bigEnough;
     }
 
     @Test
@@ -115,18 +134,16 @@ public class SunburstITCase extends IdolFindTestBase {
         verifyThat(filters().checkboxForParametricValue(fieldName, fieldValue), checked());
         verifyThat("Parametric selection name has changed to another type of filter",results.getSelectedFieldName(1),not(fieldName));
 
-        results.getIthSunburstSegment(1);
-        //TODO: wait til desired behaviour known for when runs out of parametric filter types
-        //verifyThat("When run out of parametric types to filter by ",,);
-
     }
 
     @Test
+    @ActiveBug("FIND-379")
     public void testSideBarFiltersChangeSunburst(){
         findService.search("lashing");
         results.goToSunburst();
 
         final String parametricSelectionFirst= results.getSelectedFieldName(1);
+        filters().parametricField(0).expand();
         filters().checkboxForParametricValue(0, 0).check();
 
         results.waitForSunburst();

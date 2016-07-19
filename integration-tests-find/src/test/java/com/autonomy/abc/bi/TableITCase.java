@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.bi.TableView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -144,12 +145,14 @@ public class TableITCase extends IdolFindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-383")
     public void testSideBarFiltersChangeTable(){
         init("lashing");
 
         tableView.waitForTable();
 
         final String parametricSelectionFirst = tableView.getSelectedFieldName(1);
+        filters().parametricField(0).expand();
         filters().checkboxForParametricValue(0, 0).check();
 
         tableView.waitForTable();
@@ -160,11 +163,12 @@ public class TableITCase extends IdolFindTestBase {
     public void testParametricSelectors(){
         init("wild horses");
 
+        filters().parametricField(0).expand();
         final String firstParametric = filters().parametricField(0).getParentName();
-        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(tableView.getSelectedFieldName(1)));
+        verifyThat("Default parametric selection is 1st parametric type", firstParametric.replaceAll(" ","_"), startsWith(tableView.getSelectedFieldName(1)));
 
         tableView.parametricSelectionDropdown(2).open();
-        verifyThat("1st selected parametric does not appear as choice in 2nd", tableView.getParametricDropdownItems(2), not(contains(firstParametric)));
+        verifyThat("1st selected parametric does not appear as choice in 2nd", tableView.getParametricDropdownItems(2), not(contains(firstParametric.replaceAll(" ","_"))));
     }
 
     private void init(final String searchText) {

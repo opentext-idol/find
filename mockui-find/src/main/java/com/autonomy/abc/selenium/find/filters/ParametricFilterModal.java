@@ -11,11 +11,18 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class ParametricFilterModal extends ModalView {
-    ParametricFilterModal(final WebElement element, final WebDriver driver) {
-        super(element, driver);
+public class ParametricFilterModal extends ModalView implements Iterable<ParametricModalCheckbox> {
+    //number of segments visible in sunburst - calculable from ParametricFilterModal
+    private static final int VISIBLE_SEGMENTS = 20;
+
+    private final WebDriver driver;
+
+    ParametricFilterModal(final WebElement element, final WebDriver webDriver) {
+        super(element, webDriver);
+        driver = webDriver;
     }
 
     public static ParametricFilterModal getParametricModal(final WebDriver driver) {
@@ -75,5 +82,52 @@ public class ParametricFilterModal extends ModalView {
             allCheckedFields.addAll(ElementUtil.getTexts(activePane().findElements(By.cssSelector(".icheckbox-hp.checked + span"))));
         }
         return allCheckedFields;
+    }
+
+    public Iterator<ParametricModalCheckbox> iterator() {
+        return values().iterator();
+    }
+
+    public List<ParametricModalCheckbox> values(){
+        final List<ParametricModalCheckbox> boxes = new ArrayList<>();
+        for (final WebElement checkbox: activeFieldList()){
+            boxes.add(new ParametricModalCheckbox(checkbox,driver));
+        }
+        return boxes;
+    }
+
+    private int totalResultsInPane(final Iterable<ParametricModalCheckbox> checkboxes){
+        int totalResults = 0;
+
+        for (final ParametricModalCheckbox checkbox: checkboxes){
+            if (checkbox.getResultsCount()!=0) {
+                totalResults += checkbox.getResultsCount();
+            }
+            else{
+                break;
+            }
+        }
+        return totalResults;
+    }
+
+    public List<String> expectedParametricValues(){
+        final Iterable<ParametricModalCheckbox> checkboxes = values();
+        final List<String> expected = new ArrayList<>();
+
+        int totalResults = totalResultsInPane(checkboxes);
+
+        for (final ParametricModalCheckbox checkbox : checkboxes) {
+            final int thisCount = checkbox.getResultsCount();
+            if ((expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) && thisCount!=0) {
+                expected.add(checkbox.getName());
+            } else {
+                break;
+            }
+        }
+        return expected;
+    }
+
+    private static boolean isBigEnough(final int thisCount, final int totalResults) {
+        return (double) thisCount /totalResults >= 0.05;
     }
 }
