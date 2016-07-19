@@ -76,6 +76,7 @@ public class DocumentPreviewITCase extends FindTestBase {
             findPage.filterBy(new IndexFilter("simpsonsarchive"));
         }
 
+        results.waitForResultsToLoad();
         for (final QueryResult queryResult : results.getResults(4)) {
             final DocumentViewer docViewer = queryResult.openDocumentPreview();
             final String reference = docViewer.getReference();
@@ -88,7 +89,7 @@ public class DocumentPreviewITCase extends FindTestBase {
             final Window newWindow = session.switchWindow(session.countWindows() - 1);
             newWindow.activate();
             Waits.loadOrFadeWait();
-            verifyThat(session.getDriver().getCurrentUrl(), is(reformatReference(reference)));
+            verifyThat(session.getDriver().getCurrentUrl(), containsString(reformatReference(reference)));
 
             newWindow.close();
             original.activate();
@@ -98,7 +99,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     }
 
     private String reformatReference(final String badFormatReference) {
-        return badFormatReference.replace(" ", "_");
+        return badFormatReference.replace(" ", "_").split("://")[1];
     }
 
     @Test
