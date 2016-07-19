@@ -7,6 +7,10 @@ html, body {
     min-width: 0;
 }
 
+body {
+    background-color: #fff;
+}
+
 .body, .header, .find-pages-container {
     min-width: 640px;
 }
@@ -337,7 +341,7 @@ fieldset.radio-fieldset > label {
 }
 
 .side-container {
-    background-color: #E2E2E2;
+    background-color: #efefef;
     width: 20%;
     overflow-y: auto;
     padding: 10px 15px;
@@ -393,7 +397,7 @@ fieldset.radio-fieldset > label {
 }
 
 .clickable-widget {
-    border: 2px solid #e2e2e2;
+    border: 2px solid #efefef;
     padding: 5px;
     cursor: pointer;
 }
@@ -406,8 +410,8 @@ fieldset.radio-fieldset > label {
 .middle-container-time-bar-content {
     height: 190px;
     margin: 0;
-    padding: 0;
-    background-color: rgba(242, 240, 240, 0.46);
+    padding-top: 10px;
+    background-color: rgba(239, 239, 239, 0.46);
     border-top: 1px solid #dfdfdf;
 }
 
@@ -416,7 +420,7 @@ fieldset.radio-fieldset > label {
 }
 
 .middle-container-time-bar {
-    background-color: #E2E2E2;
+    background-color: #eaeaea;
 }
 
 .time-bar-container-icon {
@@ -488,7 +492,7 @@ fieldset.radio-fieldset > label {
 }
 
 .search-tabs-container .nav-tabs > li.active > a {
-    background-color: #e2e2e2;
+    background-color: #efefef;
 }
 
 .search-tab-title i {
@@ -1085,7 +1089,7 @@ input.find-input {
 }
 
 .search-options-container {
-    background-color: #e2e2e2;
+    background-color: #efefef;
 }
 
 .search-title-form .radio-inline,
@@ -1463,7 +1467,7 @@ input:-moz-placeholder::before {
 }
 
 .category-input {
-    border-top: 1px solid #C9C9C9;
+    border-top: 1px solid #e5e5e5;
     border-bottom: none !important;
 }
 
