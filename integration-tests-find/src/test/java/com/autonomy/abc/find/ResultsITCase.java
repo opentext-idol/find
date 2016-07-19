@@ -85,11 +85,11 @@ public class ResultsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-93")
+    @ResolvedBug("FIND-93")
     public void testNoResults() {
         ResultsView results = findService.search("thissearchwillalmostcertainlyreturnnoresults");
 
-        verifyThat(results.resultsDiv(), either(containsText("No results found")).or(containsText("No more results found")));
+        verifyThat(results.resultsDiv(), containsText("No results found"));
 
         findPage.scrollToBottom();
 

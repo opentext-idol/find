@@ -118,7 +118,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-231")
+    @ResolvedBug("FIND-231")
     public void testDeselectingFiltersDoesNotRemove(){
         findService.search("confusion");
         findPage.waitForParametricValuesToLoad();
@@ -134,9 +134,9 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-231")
+    @ResolvedBug("FIND-231")
     public void testDeselectingFiltersNoFloatingTooltips(){
-        findService.search("boris");
+        findService.search("home");
         findPage.waitForParametricValuesToLoad();
 
         final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();

@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.shared.QueryTestHelper;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
@@ -103,14 +104,14 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("CORE-2925")
+    @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM)
     public void testCorrectErrorMessageDisplayed() {
         new QueryTestHelper<>(findService).booleanOperatorQueryText(Errors.Search.OPERATORS, Errors.Search.OPENING_BOOL);
         new QueryTestHelper<>(findService).emptyQueryText(Errors.Search.STOPWORDS, Errors.Search.NO_TEXT);
     }
 
     @Test
-    @ActiveBug("FIND-151")
+    @ActiveBug(value = "FIND-151", type = ApplicationType.ON_PREM)
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
         new QueryTestHelper<>(findService).hiddenQueryOperatorText();
     }
@@ -127,7 +128,7 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("CCUK-3700")
+    @ActiveBug(value = "CCUK-3700", type = ApplicationType.ON_PREM)
     public void testWhitespaceSearch() {
         try {
             findService.search("       ");
