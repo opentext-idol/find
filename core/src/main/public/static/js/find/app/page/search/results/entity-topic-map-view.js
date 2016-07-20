@@ -26,6 +26,11 @@ define([
         MAP: 'MAP'
     };
 
+    var Type = {
+        QUERY: 'QUERY',
+        COMPARISON: 'COMPARISON'
+    };
+
     var CLUSTER_MODE = 'docsWithPhrase';
 
     return Backbone.View.extend({
@@ -42,6 +47,7 @@ define([
         initialize: function(options) {
             this.entityCollection = options.entityCollection;
             this.queryModel = options.queryModel;
+            this.type = options.type;
 
             this.topicMap = new TopicMapView({
                 clickHandler: options.clickHandler
@@ -136,8 +142,18 @@ define([
         },
 
         fetchRelatedConcepts: function() {
-            if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
-                var data = {
+            var data;
+
+            if (this.type === Type.COMPARISON) {
+                data = {
+                    queryText: '*',
+                    maxResults: this.model.get('maxResults'),
+                    databases: this.queryModel.get('indexes'),
+                    stateTokens: this.queryModel.get('stateMatchIds')
+                };
+
+            } else if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+                data = {
                     databases: this.queryModel.get('indexes'),
                     queryText: this.queryModel.get('queryText'),
                     fieldText: this.queryModel.get('fieldText'),
@@ -147,7 +163,9 @@ define([
                     stateTokens: this.queryModel.get('stateMatchIds'),
                     maxResults: this.model.get('maxResults')
                 };
+            }
 
+            if (data) {
                 this.entityCollection.fetch({data: data});
             }
         },

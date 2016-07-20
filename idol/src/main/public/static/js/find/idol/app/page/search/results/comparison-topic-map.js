@@ -55,7 +55,9 @@ define([
                     uniqueId: _.uniqueId('results-view-item-'),
                     constructorArguments: {
                         clickHandler: _.noop,
-                        entityCollection: firstCollection
+                        entityCollection: firstCollection,
+                        queryModel: firstQueryModel,
+                        type: 'COMPARISON'
                     },
                     selector: {
                         displayName: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
@@ -68,7 +70,9 @@ define([
                     uniqueId: _.uniqueId('results-view-item-'),
                     constructorArguments: {
                         clickHandler: _.noop,
-                        entityCollection: bothCollection
+                        entityCollection: bothCollection,
+                        queryModel: bothQueryModel,
+                        type: 'COMPARISON'
                     },
                     selector: {
                         displayName: comparisonsI18n['list.title.both'],
@@ -81,7 +85,9 @@ define([
                     uniqueId: _.uniqueId('results-view-item-'),
                     constructorArguments: {
                         clickHandler: _.noop,
-                        entityCollection: secondCollection
+                        entityCollection: secondCollection,
+                        queryModel: secondQueryModel,
+                        type: 'COMPARISON'
                     },
                     selector: {
                         displayName: comparisonsI18n['list.title.second'](this.searchModels.second.get('title')),

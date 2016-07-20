@@ -225,7 +225,8 @@ define([
                 shown: hasBiRole,
                 uniqueId: _.uniqueId('results-view-item-'),
                 constructorArguments: _.extend({
-                    clickHandler: relatedConceptsClickHandler
+                    clickHandler: relatedConceptsClickHandler,
+                    type: 'QUERY'
                 }, subViewArguments),
                 selector: {
                     displayNameKey: 'topic-map',
