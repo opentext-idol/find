@@ -4,14 +4,11 @@
  */
 
 define([
-    'backbone',
     'find/app/model/find-base-collection'
-], function(Backbone, FindBaseCollection) {
+], function(FindBaseCollection) {
 
     return FindBaseCollection.extend({
-        initialize: function (models, options) {
-            this.url = options.url;
-        }
+        url: '../api/public/fields/parametric'
     });
 
 });

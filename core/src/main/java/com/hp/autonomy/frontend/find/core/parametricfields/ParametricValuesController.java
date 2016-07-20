@@ -19,14 +19,16 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +41,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_VALUES_PATH = "/api/public/parametric";
     private static final String RESTRICTED_PARAMETRIC_VALUES_PATH = "/restricted";
-    protected static final String BUCKET_PARAMETRIC_PATH = "/buckets";
+    static final String BUCKET_PARAMETRIC_PATH = "/buckets";
     public static final String DEPENDENT_VALUES_PATH = "/dependent-values";
 
     public static final String FIELD_NAMES_PARAM = "fieldNames";
@@ -50,9 +52,9 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     private static final String MAX_DATE_PARAM = "maxDate";
     private static final String MIN_SCORE = "minScore";
     private static final String STATE_TOKEN_PARAM = "stateTokens";
-    protected static final String TARGET_NUMBER_OF_BUCKETS_PARAM = "targetNumberOfBuckets";
-    protected static final String BUCKET_MIN_PARAM = "bucketMin";
-    protected static final String BUCKET_MAX_PARAM = "bucketMax";
+    static final String TARGET_NUMBER_OF_BUCKETS_PARAM = "targetNumberOfBuckets";
+    static final String BUCKET_MIN_PARAM = "bucketMin";
+    static final String BUCKET_MAX_PARAM = "bucketMax";
 
     protected final ParametricValuesService<R, S, E> parametricValuesService;
     protected final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
@@ -64,36 +66,6 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         this.parametricValuesService = parametricValuesService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.parametricRequestBuilderFactory = parametricRequestBuilderFactory;
-    }
-
-    protected List<RangeInfo> getNumericParametricValuesInBuckets(final R parametricRequest,
-                                                                  final List<Integer> targetNumberOfBuckets,
-                                                                  final List<Double> bucketMin,
-                                                                  final List<Double> bucketMax
-    ) throws E {
-        final List<String> fieldNames = parametricRequest.getFieldNames();
-        final int numberOfFields = fieldNames.size();
-
-        // A null value for a boundary list parameter means that no fields have that boundary
-        if (numberOfFields != targetNumberOfBuckets.size() || bucketMin != null && numberOfFields != bucketMin.size() || bucketMax != null && numberOfFields != bucketMax.size()) {
-            throw new IllegalArgumentException("Invalid bucketing parameters. Bucket boundaries must be supplied for every field or no fields.");
-        }
-
-        final Map<String, BucketingParams> bucketingParamsPerField = new LinkedHashMap<>(numberOfFields);
-        final Iterator<String> fieldNameIterator = fieldNames.iterator();
-        final Iterator<Integer> targetNumberOfBucketsIterator = targetNumberOfBuckets.iterator();
-
-        final Iterator<Double> bucketMinIterator = bucketMin == null ? null : bucketMin.iterator();
-        final Iterator<Double> bucketMaxIterator = bucketMax == null ? null : bucketMax.iterator();
-
-        while (fieldNameIterator.hasNext()) {
-            final String fieldName = fieldNameIterator.next();
-            final Double min = bucketMinIterator == null ? null : bucketMinIterator.next();
-            final Double max = bucketMaxIterator == null ? null : bucketMaxIterator.next();
-            bucketingParamsPerField.put(fieldName, new BucketingParams(targetNumberOfBucketsIterator.next(), min, max));
-        }
-
-        return parametricValuesService.getNumericParametricValuesInBuckets(parametricRequest, bucketingParamsPerField);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = RESTRICTED_PARAMETRIC_VALUES_PATH)
@@ -110,6 +82,40 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     ) throws E {
         final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, MAX_VALUES_DEFAULT, SortParam.DocumentCount);
         return parametricValuesService.getAllParametricValues(parametricRequest);
+    }
+
+    @RequestMapping(value = BUCKET_PARAMETRIC_PATH + "/{encodedField}", method = RequestMethod.GET)
+    @ResponseBody
+    public RangeInfo getNumericParametricValuesInBucketsForField(
+            @PathVariable("encodedField") final String encodedField,
+            @RequestParam(TARGET_NUMBER_OF_BUCKETS_PARAM) final Integer targetNumberOfBuckets,
+            @RequestParam(BUCKET_MIN_PARAM) final Double bucketMin,
+            @RequestParam(BUCKET_MAX_PARAM) final Double bucketMax,
+            @RequestParam(QUERY_TEXT_PARAM) final String queryText,
+            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(DATABASES_PARAM) final List<S> databases,
+            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+            @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore
+    ) throws E {
+        final String fieldName = decodeUriComponent(encodedField);
+
+        final R parametricRequest = buildRequest(
+                Collections.singletonList(fieldName),
+                queryText,
+                fieldText,
+                databases,
+                minDate,
+                maxDate,
+                minScore,
+                null,
+                null,
+                SortParam.NumberIncreasing
+        );
+
+        final BucketingParams bucketingParams = new BucketingParams(targetNumberOfBuckets, bucketMin, bucketMax);
+        final Map<String, BucketingParams> bucketingParamsPerField = Collections.singletonMap(fieldName, bucketingParams);
+        return parametricValuesService.getNumericParametricValuesInBuckets(parametricRequest, bucketingParamsPerField).get(0);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -150,5 +156,18 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
                 .setMaxValues(maxValues)
                 .setSort(sort)
                 .build();
+    }
+
+    /**
+     * Auxiliary method for when forward slash-containing parameters need to be passed to the server.
+     * Spring rejects URLs containing %2F, need to double encode field IDs.
+     */
+    private String decodeUriComponent(final String component) {
+        try {
+            return URLDecoder.decode(component, "UTF-8");
+        } catch (final UnsupportedEncodingException ignored) {
+            // Should not happen
+            throw new IllegalStateException("You don't have a standard JVM");
+        }
     }
 }

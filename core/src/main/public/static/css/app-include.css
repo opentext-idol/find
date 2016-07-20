@@ -29,6 +29,11 @@ body {
     min-height: 18px;
 }
 
+.numeric-parametric-chart-row,
+.numeric-parametric-chart-row .chart {
+    height: 110px;
+}
+
 .chart-selection-enabled {
     cursor: crosshair;
 }

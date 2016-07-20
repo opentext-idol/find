@@ -5,34 +5,49 @@
 
 package com.hp.autonomy.frontend.find.hod.fields;
 
+import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsRequest;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @Slf4j
-public class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorException> {
+class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorException, ResourceIdentifier, HodQueryRestrictions, HodParametricRequest> {
     @Autowired
-    public HodFieldsController(final FieldsService<HodFieldsRequest, HodErrorException> fieldsService) {
-        super(fieldsService);
+    HodFieldsController(
+            final FieldsService<HodFieldsRequest, HodErrorException> fieldsService,
+            final ParametricValuesService<HodParametricRequest, ResourceIdentifier, HodErrorException> parametricValuesService,
+            final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory
+    ) {
+        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory);
     }
 
     @Override
-    public List<TagName> getParametricDateFields(final HodFieldsRequest request) throws HodErrorException {
+    protected HodQueryRestrictions createValueDetailsQueryRestrictions(final HodFieldsRequest request) {
+        return new HodQueryRestrictions.Builder()
+                .setQueryText("*")
+                .setDatabases(new LinkedList<>(request.getDatabases()))
+                .build();
+    }
+
+    @Override
+    public List<FieldAndValueDetails> getParametricDateFields(final HodFieldsRequest request) throws HodErrorException {
         // TODO: Remove this override once FIND-180 is complete; we are just preventing AUTN_DATE from showing up in HoD as it will cause performance problems
-        final Map<FieldTypeParam, List<TagName>> response = fieldsService.getFields(request, FieldTypeParam.Parametric, FieldTypeParam.NumericDate);
-        final List<TagName> parametricFields = new ArrayList<>(response.get(FieldTypeParam.Parametric));
-        parametricFields.retainAll(response.get(FieldTypeParam.NumericDate));
-        return parametricFields;
+        return fetchParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, Collections.<String>emptyList());
     }
 }

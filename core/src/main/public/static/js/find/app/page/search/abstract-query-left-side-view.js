@@ -11,23 +11,19 @@ define([
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filters/parametric/numeric-parametric-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
-    'find/app/model/bucketed-parametric-collection',
     'find/app/util/text-input',
     'find/app/util/collapsible',
     'find/app/util/filtering-collection',
     'parametric-refinement/prettify-field-name',
-    'find/app/vent',
     'parametric-refinement/display-collection',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(Backbone, $, _, DateView, ParametricView, NumericParametricView, NumericParametricFieldView, BucketedParametricCollection,
-            TextInput, Collapsible, FilteringCollection, prettifyFieldName, vent, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
+], function(Backbone, $, _, DateView, ParametricView, NumericParametricView, NumericParametricFieldView,
+            TextInput, Collapsible, FilteringCollection, prettifyFieldName, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
     "use strict";
 
     var datesTitle = i18n['search.dates'];
-
-    var DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
 
     function filterPredicate(filterModel, model) {
         var searchText = filterModel.get('text');
@@ -41,7 +37,6 @@ define([
     return Backbone.View.extend({
         // Abstract
         IndexesView: null,
-        getBucketingRequestData: null,
 
         initialize: function(options) {
             this.filterModel = new Backbone.Model();
@@ -77,23 +72,18 @@ define([
 
             this.numericParametricFieldsCollection = options.numericParametricFieldsCollection;
             this.dateParametricFieldsCollection = options.dateParametricFieldsCollection;
-            
-            this.numericBucketedCollection = new BucketedParametricCollection();
-            this.dateBucketedCollection = new BucketedParametricCollection();
 
-            this.filteredNumericCollection = new FilteringCollection([], {
-                filterModel: this.filterModel,
-                collection: this.numericBucketedCollection,
-                predicate: filterPredicate,
-                resetOnFilter: false
-            });
+            var createFilteringCollection = function(baseCollection) {
+                return new FilteringCollection([], {
+                    collection: baseCollection,
+                    filterModel: this.filterModel,
+                    predicate: filterPredicate,
+                    resetOnFilter: false
+                });
+            }.bind(this);
 
-            this.filteredDateCollection = new FilteringCollection([], {
-                filterModel: this.filterModel,
-                collection: this.dateBucketedCollection,
-                predicate: filterPredicate,
-                resetOnFilter: false
-            });
+            this.filteredNumericCollection = createFilteringCollection(this.numericParametricFieldsCollection);
+            this.filteredDateCollection = createFilteringCollection(this.dateParametricFieldsCollection);
 
             this.parametricDisplayCollection = new ParametricDisplayCollection([], {
                 parametricCollection: options.restrictedParametricCollection,
@@ -113,7 +103,6 @@ define([
                 timeBarModel: options.timeBarModel,
                 dataType: 'numeric',
                 collection: this.filteredNumericCollection,
-                defaultTargetNumberOfPixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
                 numericRestriction: true
             });
 
@@ -124,17 +113,7 @@ define([
                 dataType: 'date',
                 collection: this.filteredDateCollection,
                 inputTemplate: NumericParametricFieldView.dateInputTemplate,
-                defaultTargetNumberOfPixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
                 formatting: NumericParametricFieldView.dateFormatting
-            });
-
-            this.refreshNumericFields = _.bind(this.refreshFields, this, this.numericParametricFieldsCollection, this.numericBucketedCollection, this.numericParametricView);
-            this.refreshDateFields = _.bind(this.refreshFields, this, this.dateParametricFieldsCollection, this.dateBucketedCollection, this.dateParametricView);
-            
-            //noinspection JSUnresolvedFunction
-            this.listenTo(vent, 'vent:resize', function () {
-                this.refreshNumericFields();
-                this.refreshDateFields();
             });
 
             this.parametricView = new ParametricView({
@@ -165,9 +144,6 @@ define([
                 this.updateParametricVisibility();
                 this.updateEmptyMessage();
             });
-
-            this.listenTo(this.numericParametricFieldsCollection, 'update reset',  this.refreshNumericFields);
-            this.listenTo(this.dateParametricFieldsCollection, 'update reset',  this.refreshDateFields);
 
             this.$emptyMessage = $('<p class="hide">' + i18n['search.filters.empty'] + '</p>');
         },
@@ -232,21 +208,6 @@ define([
 
         updateIndexesVisibility: function() {
             this.indexesViewWrapper.$el.toggleClass('hide', this.indexesEmpty);
-        },
-
-        refreshFields: function (fieldsCollection, bucketedCollection, view) {
-            var fieldNames = fieldsCollection.pluck('id');
-            if (fieldNames.length > 0) {
-                //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                var targetNumberOfBuckets = _.times(fieldsCollection.length, _.constant(Math.floor(view.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)));
-
-                bucketedCollection.fetch({
-                    data: this.getBucketingRequestData(fieldNames, targetNumberOfBuckets),
-                    reset: false
-                });
-            } else {
-                bucketedCollection.reset();
-            }
         }
     });
 

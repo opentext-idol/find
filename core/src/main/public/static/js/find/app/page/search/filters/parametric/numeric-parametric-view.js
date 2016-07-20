@@ -12,9 +12,11 @@ define([
     'js-whatever/js/list-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-view.html'
-], function ($, _, BucketedParametricCollection, AbstractView, FieldView, ListView, i18n, template) {
+], function ($, _, BucketedParametricCollection, AbstractView, CollapsibleFieldView, ListView, i18n, template) {
 
     'use strict';
+
+    var TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
 
     return AbstractView.extend({
         getBucketingRequestData: null,
@@ -27,14 +29,15 @@ define([
 
             this.fieldNamesListView = new ListView({
                 collection: this.collection,
-                ItemView: FieldView,
+                ItemView: CollapsibleFieldView,
+                collectionChangeEvents: false,
                 itemOptions: {
                     inputTemplate: options.inputTemplate,
                     queryModel: options.queryModel,
                     timeBarModel: options.timeBarModel,
                     dataType: options.dataType,
                     selectedParametricValues: options.queryState.selectedParametricValues,
-                    pixelsPerBucket: options.defaultTargetNumberOfPixelsPerBucket,
+                    pixelsPerBucket: TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
                     numericRestriction: options.numericRestriction,
                     formatting: options.formatting,
                     selectionEnabled: options.selectionEnabled,

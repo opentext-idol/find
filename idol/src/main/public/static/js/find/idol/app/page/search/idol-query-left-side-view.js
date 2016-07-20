@@ -9,12 +9,7 @@ define([
 ], function(AbstractQueryLeftSideView, IdolIndexesView) {
 
     return AbstractQueryLeftSideView.extend({
-        IndexesView: IdolIndexesView,
-        getBucketingRequestData: function(fieldNames, targetNumberOfBuckets) {
-            return {
-                fieldNames: fieldNames,
-                targetNumberOfBuckets: targetNumberOfBuckets
-            };
-        }
+        IndexesView: IdolIndexesView
     });
+
 });

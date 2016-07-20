@@ -14,6 +14,7 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/parametric-collection',
     'find/app/model/parametric-fields-collection',
+    'find/app/model/numeric-parametric-fields-collection',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/util/results-view-container',
@@ -31,7 +32,7 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, 
-            ParametricFieldsCollection, queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, 
+            ParametricFieldsCollection, NumericParametricFieldsCollection, queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
             RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView, SunburstView,
             MapResultsView, TableView, TimeBarView, configuration, prettifyFieldName, i18n, templateString) {
 
@@ -133,10 +134,10 @@ define([
                 }
             });
 
-            this.parametricFieldsCollection = new ParametricFieldsCollection([], {url: '../api/public/fields/parametric'});
+            this.parametricFieldsCollection = new ParametricFieldsCollection([]);
             this.restrictedParametricCollection = new ParametricCollection([], {url: '../api/public/parametric/restricted'});
-            this.numericParametricFieldsCollection = new ParametricFieldsCollection([], {url: '../api/public/fields/parametric-numeric'});
-            this.dateParametricFieldsCollection = new ParametricFieldsCollection([], {url: '../api/public/fields/parametric-date'});
+            this.numericParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'numeric'});
+            this.dateParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'date'});
             this.parametricCollection = new ParametricCollection([], {url: '../api/public/parametric'});
 
             // Tracks the document model which is currently shown in the preview
@@ -365,7 +366,9 @@ define([
                     queryModel: this.queryModel,
                     queryState: this.queryState,
                     previewModeModel: this.previewModeModel,
-                    timeBarModel: this.timeBarModel
+                    timeBarModel: this.timeBarModel,
+                    numericParametricFieldsCollection: this.numericParametricFieldsCollection,
+                    dateParametricFieldsCollection: this.dateParametricFieldsCollection
                 });
 
                 this.renderTimeBar();
