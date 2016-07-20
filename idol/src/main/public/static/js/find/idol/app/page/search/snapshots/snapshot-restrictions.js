@@ -26,6 +26,7 @@ define([
         return concepts.length ? {title: snapshotsI18n['restrictions.relatedConcepts'], content: concepts.join(', ')} : null;
     }
 
+    //TODO: Implement rounding based on significant figures.
     function roundNumericBoundary(x) {
         return Math.round(x * 10) / 10;
     }
@@ -58,11 +59,11 @@ define([
             });
 
             var numericRestrictions = _.map(attributes.parametricRanges, function(range) {
-                var formatFunction = range.type === 'DATE' ? formatEpoch : roundNumericBoundary;
+                var formatFunction = range.type === 'Date' ? formatEpoch : roundNumericBoundary;
 
                 return {
                     title: prettifyFieldName(range.field),
-                    content:  formatFunction(range.min) + ' - ' + formatFunction(range.max)
+                    content:  formatFunction(range.min) + ' \u2013 ' + formatFunction(range.max)
                 };
             });
 

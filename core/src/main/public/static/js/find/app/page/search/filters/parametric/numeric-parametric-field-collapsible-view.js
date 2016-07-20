@@ -31,7 +31,9 @@ define([
                     return NumericParametricFieldView.dateFormatting.format(entry);
                 });
             }
-            return range.join('\u2013');
+
+            // en-dash
+            return range.join(' \u2013 ');
         } else {
             return i18n['app.unfiltered'];
         }

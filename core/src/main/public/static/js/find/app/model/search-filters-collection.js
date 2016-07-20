@@ -59,12 +59,13 @@ define([
         } else {
             valueText = ranges.map(function (range) {
                 //Discard time of day if range greater than 1 week
+                // U+2013 = en-dash
                 if (dataType === 'numeric') {
-                    return round(range[0]) + ' - ' + round(range[1]);
+                    return round(range[0]) + ' \u2013 ' + round(range[1]);
                 } else if (dataType === 'date' && range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
-                    return formatDate(range[0], DATE_FORMAT) + ' - ' + formatDate(range[1], DATE_FORMAT);
+                    return formatDate(range[0], DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], DATE_FORMAT);
                 } else if (dataType === 'date') {
-                    return formatDate(range[0], SHORT_DATE_FORMAT) + ' - ' + formatDate(range[1], SHORT_DATE_FORMAT);
+                    return formatDate(range[0], SHORT_DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], SHORT_DATE_FORMAT);
                 }
             }).join(', ');
         }
