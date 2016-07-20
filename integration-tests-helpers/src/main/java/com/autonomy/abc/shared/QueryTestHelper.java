@@ -126,37 +126,5 @@ public class QueryTestHelper<T extends QueryResultsPage>{
             verifyThat("query term '" + result.term + "' has sensible error message", result.getErrorMessage(), stringContainingAnyOf(sensibleErrors));
         }
     }
-
-    /*protected Iterable<SharedResult> resultsFor(final Iterable<String> queries) {
-        return new Iterable<SharedResult>() {
-            @Override
-            public Iterator<SharedResult> iterator() {
-                final Iterator<String> queryIterator = queries.iterator();
-                return new Iterator<SharedResult>() {
-                    @Override
-                    public boolean hasNext() {
-                        return queryIterator.hasNext();
-                    }
-
-                    @Override
-                    public SharedResult next() {
-                        return resultFor(queryIterator.next());
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException("remove");
-                    }
-                };
-            }
-        };
-    }*/
-
-    /*private SharedResult resultFor(final String queryTerm) {
-        final Query query = new Query(queryTerm)
-                .withFilter(new LanguageFilter(Language.ENGLISH));
-        final T page = service.search(query);
-        return new SharedResult(queryTerm, page);
-    }*/
     
 }

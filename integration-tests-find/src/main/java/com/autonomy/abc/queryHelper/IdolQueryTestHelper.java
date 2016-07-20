@@ -1,12 +1,7 @@
 package com.autonomy.abc.queryHelper;
 
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.find.results.ResultsView;
-import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.query.LanguageFilter;
-import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryService;
-
 import com.autonomy.abc.shared.QueryTestHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +13,10 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.contain
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.stringContainingAnyOf;
 
 
-public class IdolQueryTestHelper extends QueryTestHelper<ResultsView> {
+public class IdolQueryTestHelper<T> extends QueryTestHelper{
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryTestHelper.class);
 
-    public IdolQueryTestHelper(final QueryService<ResultsView> queryService){super(queryService);}
+    public IdolQueryTestHelper(final QueryService queryService){super(queryService);}
 
     @Override
     public void hiddenQueryOperatorText() {
@@ -39,15 +34,4 @@ public class IdolQueryTestHelper extends QueryTestHelper<ResultsView> {
         }
 
     }
-
-    private IdolQueryTermResult resultFor(final String queryTerm) {
-        final Query query = new Query(queryTerm)
-                .withFilter(new LanguageFilter(Language.ENGLISH));
-        final ResultsView page = (ResultsView) getService().search(query);
-        return new IdolQueryTermResult(queryTerm, page);
-    }
-
-
-
-
 }
