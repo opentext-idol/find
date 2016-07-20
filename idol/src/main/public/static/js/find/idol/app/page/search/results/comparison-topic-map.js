@@ -138,8 +138,8 @@ define([
                 queryText: queryText,
                 indexes: indexes
             }, stateTokens));
-        },      
-        
+        },
+
         fetchRelatedConcepts: function () {
             _.forEach(this.comparisons, function(comparison) {
                 comparison.collection.fetch({
