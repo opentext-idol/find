@@ -1,12 +1,13 @@
+package com.autonomy.abc.queryHelper;
+
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.query.Query;
-import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.autonomy.abc.selenium.query.QueryService;
+
 import com.autonomy.abc.shared.QueryTestHelper;
-import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,14 +18,14 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.contain
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.stringContainingAnyOf;
 
 
-public class IdolQueryTestHelper extends QueryTestHelper{
+public class IdolQueryTestHelper extends QueryTestHelper<ResultsView> {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryTestHelper.class);
 
     public IdolQueryTestHelper(final QueryService<ResultsView> queryService){super(queryService);}
 
     @Override
     public void hiddenQueryOperatorText() {
-        for (IdolResult result : resultsFor(getHiddenBooleans())) {
+        for (IdolQueryTermResult result : IdolQueryTermResult.idolResultsFor(getHiddenBooleans(),getService())) {
             if (result.errorContainer().isDisplayed()) {
                 if(!result.correctedQuery().isDisplayed()){
                     verifyThat("Query not auto-corrected thus error is for no results",result.errorContainer(), containsText(Errors.Search.NO_RESULTS));
@@ -39,23 +40,14 @@ public class IdolQueryTestHelper extends QueryTestHelper{
 
     }
 
-
-    private class IdolResult extends Result{
-        private final ResultsView page;
-
-        IdolResult(final String term, final ResultsView currentPage) {
-            super(term,currentPage);
-            page = currentPage;
-        }
-
-        WebElement errorContainer() {
-            return getPage().errorContainer();
-        }
-
-        WebElement correctedQuery(){
-            return page.correctedQuery();
-        }
+    private IdolQueryTermResult resultFor(final String queryTerm) {
+        final Query query = new Query(queryTerm)
+                .withFilter(new LanguageFilter(Language.ENGLISH));
+        final ResultsView page = (ResultsView) getService().search(query);
+        return new IdolQueryTermResult(queryTerm, page);
     }
+
+
 
 
 }

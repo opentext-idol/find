@@ -1,6 +1,8 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
+import com.autonomy.abc.queryHelper.IdolQueryTestHelper;
+
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
@@ -115,7 +117,8 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @ResolvedBug(value = "FIND-151")
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-        new QueryTestHelper<>(findService).hiddenQueryOperatorText();
+        //want to pass it resultsview
+        new IdolQueryTestHelper<ResultsView>(findService).hiddenQueryOperatorText();
     }
 
     @Test
