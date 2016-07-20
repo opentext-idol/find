@@ -20,6 +20,9 @@ public class ParametricFieldContainer extends FilterContainer implements Iterabl
     @Override
     //check where this is used....
     public String getParentName(){
+        if(isCollapsed()){
+            expand();
+        }
         return getParent().getText().split(" \\(")[0];
     }
 

@@ -107,13 +107,13 @@ public class FilterPanel {
     }
 
     public void filterResults(final String term) {
-        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Search filters...']")), driver);
+        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter...']")), driver);
         input.clear();
         input.setAndSubmit(term);
     }
 
     public void clearFilter() {
-        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Search filters...']")), driver);
+        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter...']")), driver);
         input.clear();
         waitForIndexes();
     }
