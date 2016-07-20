@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class QueryTestHelper<T extends QueryResultsPage> {
+
     public static final List<String> NO_TERMS = Arrays.asList(
             "a",
             "the",
@@ -84,8 +85,8 @@ public class QueryTestHelper<T extends QueryResultsPage> {
         for (final Result result : resultsFor(HIDDEN_BOOLEANS)) {
             verifyThat("able to search for " + result.term, result.errorContainer(), anyOf(
                     not(displayed()),
-                    containsText(Errors.Search.NO_RESULTS)
-            ));
+                    containsText(Errors.Search.NO_RESULTS))
+            );
         }
     }
 
@@ -98,7 +99,9 @@ public class QueryTestHelper<T extends QueryResultsPage> {
                             Errors.Search.INVALID,
                             Errors.Search.OPERATORS,
                             Errors.Search.BRACKETS,
-                            Errors.Search.STOPWORDS
+                            Errors.Search.STOPWORDS,
+                            Errors.Search.BRACKETS_BOOLEAN_OPEN,
+                            Errors.Search.BRACKETS_BOOLEAN_CLOSE
                     ))
             );
         }
@@ -116,6 +119,12 @@ public class QueryTestHelper<T extends QueryResultsPage> {
         checkQueries(NO_TERMS, sensibleErrors);
     }
 
+    public static final List<String> getHiddenBooleans(){
+        return HIDDEN_BOOLEANS;
+    }
+
+    public QueryService<T> getService(){return service;}
+
     private void checkQueries(final List<String> terms, final Serializable... sensibleErrors) {
         for (final Result result : resultsFor(terms)) {
             assertThat("query term '" + result.term + "' produces an error", result.errorContainer(), displayed());
@@ -123,7 +132,7 @@ public class QueryTestHelper<T extends QueryResultsPage> {
         }
     }
 
-    private Iterable<Result> resultsFor(final Iterable<String> queries) {
+    protected Iterable<Result> resultsFor(final Iterable<String> queries) {
         return new Iterable<Result>() {
             @Override
             public Iterator<Result> iterator() {
@@ -155,22 +164,24 @@ public class QueryTestHelper<T extends QueryResultsPage> {
         return new Result(queryTerm, page);
     }
     
-    private class Result {
+    protected class Result {
         final String term;
         final T page;
         private String text;
 
-        Result(final String term, final T page) {
+        public Result(final String term, final T page) {
             this.term = term;
             this.page = page;
         }
 
-        String getErrorMessage() {
+        public String getErrorMessage() {
             if (text == null) {
                 text = errorContainer().getText();
             }
             return text;
         }
+
+        public T getPage(){return this.page;}
 
         WebElement errorContainer() {
             return page.errorContainer();

@@ -3,13 +3,14 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.shared.QueryTestHelper;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
+import com.hp.autonomy.frontend.selenium.framework.environment.Deployment;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.apache.commons.collections4.ListUtils;
@@ -54,6 +55,7 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
+    //TODO: test is bad because depends on having less than 30 of both results
     public void testBooleanOperators() {
         final String termOne = "musketeers";
         final String termTwo = "\"dearly departed\"";
@@ -104,14 +106,14 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM)
+    @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM, against = Deployment.DEVELOP)
     public void testCorrectErrorMessageDisplayed() {
         new QueryTestHelper<>(findService).booleanOperatorQueryText(Errors.Search.OPERATORS, Errors.Search.OPENING_BOOL);
         new QueryTestHelper<>(findService).emptyQueryText(Errors.Search.STOPWORDS, Errors.Search.NO_TEXT);
     }
 
     @Test
-    @ActiveBug(value = "FIND-151", type = ApplicationType.ON_PREM)
+    @ResolvedBug(value = "FIND-151")
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
         new QueryTestHelper<>(findService).hiddenQueryOperatorText();
     }

@@ -26,6 +26,8 @@ public class ResultsView extends AppElement implements QueryResultsPage {
         return Integer.valueOf(findElement(By.className("total-results-number")).getText());
     }
 
+    public WebElement correctedQuery(){ return findElement(By.className("corrected-query"));}
+
     @Override
     public WebElement errorContainer() {
         return findElement(By.cssSelector(".error.well"));
