@@ -1577,8 +1577,8 @@ input:-moz-placeholder::before {
     color: #D33D2A;
 }
 
-.topic-map-comparison-selection, .topic-map-comparison-container {
-    padding-left: 40px;
+.comparison-view.results-view-container{
+    padding: 0 25px;
 }
 
 .both-location-cluster {
