@@ -268,6 +268,8 @@ define([
             var newAttributes = {
                 field: this.fieldName,
                 dataType: this.dataType,
+                // TODO: Replace numeric with the more expressive dataType
+                numeric: this.dataType === 'numeric',
                 range: _.map(newRange, function(value, index) {
                     // Explicitly check null since 0 is falsy
                     return value === null ? existingRange[index] : value;
