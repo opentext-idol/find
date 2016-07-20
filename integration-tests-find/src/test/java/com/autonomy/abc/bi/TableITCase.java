@@ -158,7 +158,6 @@ public class TableITCase extends IdolFindTestBase {
     public void testParametricSelectors(){
         init("wild horses");
 
-        filters().parametricField(0).expand();
         final String firstParametric = filters().parametricField(0).getParentName();
         verifyThat("Default parametric selection is 1st parametric type", firstParametric.replaceAll(" ","_"), startsWith(tableView.getSelectedFieldName(1)));
 

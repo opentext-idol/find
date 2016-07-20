@@ -88,7 +88,6 @@ public class FilterITCase extends FindTestBase {
         findPage.waitForParametricValuesToLoad();
 
         final ParametricFieldContainer container = filters().parametricField(2);
-        container.expand();
         final String filterCategory = container.getParentName();
 
         final List<String> selectedFilters = new ArrayList<>();
@@ -133,9 +132,7 @@ public class FilterITCase extends FindTestBase {
         findService.search("confusion");
         findPage.waitForParametricValuesToLoad();
 
-        ParametricFieldContainer container = filters().parametricField(0);
-        container.expand();
-        final String parametricFilterType = container.getParentName();
+        final String parametricFilterType = filters().parametricField(0).getParentName();
 
         final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
         for(final FindParametricCheckbox checkbox:boxes){

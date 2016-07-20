@@ -57,7 +57,6 @@ public class SunburstITCase extends IdolFindTestBase {
         findService.search("wild horses");
         results.goToSunburst();
 
-        filters().parametricField(0).expand();
         final String firstParametric = filters().parametricField(0).getParentName();
         verifyThat("Default parametric selection is 1st parametric type", firstParametric.replaceAll(" ","_"), startsWith(results.getSelectedFieldName(1)));
 
