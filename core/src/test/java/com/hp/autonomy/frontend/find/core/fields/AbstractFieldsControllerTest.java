@@ -40,7 +40,7 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
     @Mock
     protected ParametricValuesService<P, S, E> parametricValuesService;
 
-    private FieldsController<R, E, S, Q, P> controller;
+    protected FieldsController<R, E, S, Q, P> controller;
 
     protected abstract FieldsController<R, E, S, Q, P> constructController();
 

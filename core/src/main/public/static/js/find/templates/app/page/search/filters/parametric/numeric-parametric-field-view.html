@@ -2,8 +2,10 @@
     <form>
         <div class="container-fluid <%= clickable ? 'clickable-widget' : '' %>">
             <div class="row">
-                <div class="col-xs-12">
-                    <svg class="chart full-width"></svg>
+                <div class="col-xs-12 numeric-parametric-chart-row">
+                    <div class="numeric-parametric-loading-indicator"><%= loadingSpinnerHtml %></div>
+                    <p class="numeric-parametric-empty-text"><%- i18n['search.numericParametricFields.noValues'] %></p>
+                    <p class="numeric-parametric-error-text"><%- i18n['search.numericParametricFields.error'] %></p>
                 </div>
             </div>
             <div class="row numeric-parametric-inputs <%- inputsRowClass %>">

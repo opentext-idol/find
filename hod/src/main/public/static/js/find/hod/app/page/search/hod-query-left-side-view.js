@@ -9,13 +9,7 @@ define([
 ], function(AbstractQueryLeftSideView, HodIndexesView) {
 
     return AbstractQueryLeftSideView.extend({
-        IndexesView: HodIndexesView,
-        getBucketingRequestData: function(fieldNames, targetNumberOfBuckets) {
-            return {
-                fieldNames: fieldNames,
-                databases: this.queryModel.get('indexes'),
-                targetNumberOfBuckets: targetNumberOfBuckets
-            };
-        }
+        IndexesView: HodIndexesView
     });
+
 });

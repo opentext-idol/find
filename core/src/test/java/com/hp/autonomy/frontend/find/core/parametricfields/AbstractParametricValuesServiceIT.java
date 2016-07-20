@@ -36,9 +36,9 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
 
     @Test
     public void getDateParametricValues() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_VALUES_PATH + ParametricValuesController.BUCKET_PARAMETRIC_PATH)
-                .param(ParametricValuesController.FIELD_NAMES_PARAM, ParametricValuesService.AUTN_DATE_FIELD)
+        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_VALUES_PATH + ParametricValuesController.BUCKET_PARAMETRIC_PATH + '/' + ParametricValuesService.AUTN_DATE_FIELD)
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
+                .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
                 .param(ParametricValuesController.TARGET_NUMBER_OF_BUCKETS_PARAM, "35")
                 .param(ParametricValuesController.BUCKET_MIN_PARAM, "0")
                 .param(ParametricValuesController.BUCKET_MAX_PARAM, String.valueOf(Integer.MAX_VALUE))

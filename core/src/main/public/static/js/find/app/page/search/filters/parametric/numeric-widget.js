@@ -22,16 +22,16 @@ define([
         };
     }
 
-    function dragMove(scale, min, updateCallback, selectionRect) {
+    function dragMove(scale, updateCallback, selectionRect) {
         return function () {
             var p = d3.mouse(this);
             selectionRect.update(p[0]);
             var currentAttributes = selectionRect.getCurrentAttributes();
-            updateCallback(min + scale.invert(currentAttributes.x1), min + scale.invert(currentAttributes.x2));
+            updateCallback(scale.invert(currentAttributes.x1), scale.invert(currentAttributes.x2));
         };
     }
 
-    function dragEnd(scale, min, selectionCallback, deselectionCallback, selectionRect) {
+    function dragEnd(scale, selectionCallback, deselectionCallback, selectionRect) {
         return function () {
             var finalAttributes = selectionRect.getCurrentAttributes();
 
@@ -39,7 +39,7 @@ define([
                 // range selected
                 d3.event.sourceEvent.preventDefault();
                 selectionRect.focus();
-                selectionCallback(min + scale.invert(finalAttributes.x1), min + scale.invert(finalAttributes.x2));
+                selectionCallback(scale.invert(finalAttributes.x1), scale.invert(finalAttributes.x2));
             } else {
                 // single point selected
                 selectionRect.remove();
@@ -51,7 +51,8 @@ define([
     function zoom(barScale, min, max, zoomCallback) {
         return function () {
             var p = d3.mouse(this);
-            var mouseValue = min + barScale.invert(p[0]);
+            var mouseValue = barScale.invert(p[0]);
+
             if (mouseValue <= max) {
                 var zoomScale = d3.event.scale;
                 var totalXDiff = (max - min) / zoomScale - (max - min);
@@ -74,17 +75,20 @@ define([
         var formattingFn = options.formattingFn || _.identity;
 
         return {
+            // options.data must be an ordered array of non-overlapping buckets 
             drawGraph: function (options) {
-                var scale = {
-                    barWidth: d3.scale.linear(),
-                    y: d3.scale.linear()
-                };
-
                 var data = options.data;
-                scale.barWidth.domain([0, data.bucketSize]);
-                scale.barWidth.range([0, options.xRange / data.buckets.length]);
-                scale.y.domain([0, data.maxCount]);
-                scale.y.range([options.yRange, 0]);
+                var minValue = data[0].min;
+                var maxValue = _.last(data).max;
+
+                var scale = {
+                    x: d3.scale.linear()
+                        .domain([minValue, maxValue])
+                        .range([0, options.xRange]),
+                    y: d3.scale.linear()
+                        .domain([0, _.max(_.pluck(data, 'count'))])
+                        .range([0, options.yRange])
+                };
 
                 //noinspection JSUnresolvedFunction
                 var chart = d3.select(options.chart)
@@ -93,39 +97,42 @@ define([
                         height: options.yRange
                     });
 
-                var bars = chart
-                    .selectAll('g')
-                    .data(data.buckets)
-                    .enter()
-                    .append('g');
-
-                bars.append('rect')
+                // move origin to bottom left
+                var group = chart.append('g')
                     .attr({
-                        x: function (d, i) {
-                            return i * scale.barWidth(data.bucketSize);
-                        },
-                        y: function (d) {
-                            // If the computed bar height would be less than the emptyBarHeight, use the emptyBarHeight instead
-                            var scaledOffset = scale.y(d.count);
-                            return options.yRange - scaledOffset > emptyBarHeight ? scaledOffset : options.yRange - emptyBarHeight;
-                        },
-                        height: function (d) {
-                            // If the computed bar height would be less than the emptyBarHeight, use the emptyBarHeight instead
-                            var scaledHeight = options.yRange - scale.y(d.count);
-                            return scaledHeight > emptyBarHeight ? scaledHeight : emptyBarHeight;
-                        },
-                        width: function (d) {
-                            return Math.max(scale.barWidth(d.max - d.min), barGapSize) - barGapSize;
-                        }
-                    })
-                    .append('title')
-                    .text(function (d) {
-                        return options.tooltip(formattingFn(d.min), formattingFn(d.max), d.count);
+                        transform: 'translate(0 ' + options.yRange + ') scale(1 -1)'
                     });
+
+                group
+                    .selectAll('g')
+                    .data(data)
+                    .enter()
+                        .append('g')
+                            .append('rect')
+                            .attr({
+                                x: function (d) {
+                                    return scale.x(d.min);
+                                },
+                                y: function () {
+                                    return 0;
+                                },
+                                height: function (d) {
+                                    // If the computed bar height would be less than the emptyBarHeight, use the emptyBarHeight instead
+                                    return Math.max(scale.y(d.count), emptyBarHeight);
+                                },
+                                width: function (d) {
+                                    var scaledWidth = scale.x(d.max) - scale.x(d.min);
+                                    return Math.max(scaledWidth - barGapSize, 0);
+                                }
+                            })
+                            .append('title')
+                                .text(function (d) {
+                                    return options.tooltip(formattingFn(d.min), formattingFn(d.max), d.count);
+                                });
 
                 if (options.coordinatesEnabled) {
                     chart.on('mousemove', function () {
-                        options.mouseMoveCallback(data.minValue + scale.barWidth.invert(d3.mouse(this)[0]));
+                        options.mouseMoveCallback(scale.x.invert(d3.mouse(this)[0]));
                     });
                     
                     chart.on('mouseleave', function () {
@@ -137,16 +144,16 @@ define([
 
                 if (options.dragEnabled) {
                     var dragBehaviour = d3.behavior.drag()
-                        .on('drag', dragMove(scale.barWidth, data.minValue, options.updateCallback, selectionRect))
+                        .on('drag', dragMove(scale.x, options.updateCallback, selectionRect))
                         .on('dragstart', dragStart(chart, options.yRange, selectionRect))
-                        .on('dragend', dragEnd(scale.barWidth, data.minValue, options.selectionCallback, options.deselectionCallback, selectionRect));
+                        .on('dragend', dragEnd(scale.x, options.selectionCallback, options.deselectionCallback, selectionRect));
 
                     chart.call(dragBehaviour);
                 }
 
                 if (options.zoomEnabled) {
                     var zoomBehaviour = d3.behavior.zoom()
-                        .on('zoom', zoom(scale.barWidth, data.minValue, data.maxValue, options.zoomCallback))
+                        .on('zoom', zoom(scale.x, minValue, maxValue, options.zoomCallback))
                         .scaleExtent(zoomExtent);
 
                     chart
@@ -165,8 +172,8 @@ define([
                     },
                     setSelection: function(range) {
                         selectionRect.remove();
-                        selectionRect.init(chart, options.yRange, scale.barWidth(range[0] - data.minValue));
-                        selectionRect.update(scale.barWidth(range[1] - data.minValue));
+                        selectionRect.init(chart, options.yRange, scale.x(range[0]));
+                        selectionRect.update(scale.x(range[1]));
                         selectionRect.focus();
                     }
                 };
