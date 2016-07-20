@@ -93,7 +93,9 @@ public class FilterPanel {
     }
 
     public List<FindParametricCheckbox> checkBoxesForParametricFieldContainer(final int i ){
-        return parametricField(i).values();
+        ParametricFieldContainer container = parametricField(i);
+        container.expand();
+        return container.values();
     }
 
     public ParametricFieldContainer parametricField(final int i) {

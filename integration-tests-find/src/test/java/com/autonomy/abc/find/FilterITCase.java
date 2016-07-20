@@ -45,12 +45,14 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
+    //NEED TO TOTALLY REDO
     public void testParametricFiltersResults() {
         final ResultsView results = findService.search("cats");
         findPage.waitForParametricValuesToLoad();
         final int originalNumberOfResults = findPage.totalResultsNum();
 
         final ParametricFieldContainer parametricFieldContainer = filters().parametricField(1);
+        parametricFieldContainer.expand();
         final List<FindParametricCheckbox> firstParametricContainerCheckboxes = parametricFieldContainer.values();
         firstParametricContainerCheckboxes.get(0).check();
 
@@ -78,12 +80,15 @@ public class FilterITCase extends FindTestBase {
 
     }
 
+    //TODO: want to get the 1,2,3,4 from several different categories
+    //Then open modal and check they're there
     @Test
     public void testParametricFiltersModal() {
         findService.search("cats");
         findPage.waitForParametricValuesToLoad();
 
         final ParametricFieldContainer container = filters().parametricField(2);
+        container.expand();
         final String filterCategory = container.getParentName();
 
         final List<String> selectedFilters = new ArrayList<>();
@@ -105,27 +110,34 @@ public class FilterITCase extends FindTestBase {
     }
 
     private List<String> selectEvenFilters(final int filterCategory){
+        filters().parametricField(filterCategory).expand();
         final List<String> filterNames = new ArrayList<>();
         int i=1;
         for(final FindParametricCheckbox box:filters().checkBoxesForParametricFieldContainer(filterCategory)){
             if((i % 2) == 0){
                 filterNames.add(box.getName());
                 box.check();
+                filters().waitForParametricFields();
+                filters().parametricField(filterCategory).expand();
             }
             i++;
+
         }
         return filterNames;
     }
 
     @Test
     @ResolvedBug("FIND-231")
+    //bug might not be applicable with new filter panel
     public void testDeselectingFiltersDoesNotRemove(){
         findService.search("confusion");
         findPage.waitForParametricValuesToLoad();
 
-        final String parametricFilterType = filters().parametricField(0).getParentName();
-        final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
+        ParametricFieldContainer container = filters().parametricField(0);
+        container.expand();
+        final String parametricFilterType = container.getParentName();
 
+        final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
         for(final FindParametricCheckbox checkbox:boxes){
             checkbox.uncheck();
             verifyThat("Unchecking not removing filter from list",filters().checkBoxesForParametricFieldContainer(0),hasSize(boxes.size()));
@@ -148,6 +160,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     private List<FindParametricCheckbox> checkAllVisibleFiltersInFirstParametrics(){
+        filters().parametricField(0).expand();
         final List<FindParametricCheckbox> boxes = filters().checkBoxesForParametricFieldContainer(0);
         for(final FindParametricCheckbox checkBox:boxes){
             checkBox.check();
@@ -156,14 +169,18 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-247")
-    public void testSelectDifferentCategoryFiltersAndResultsLoad(){
+    @ResolvedBug("FIND-247")
+    //Because filter categories all collapse after selecting 1, must be quick or throws NoSuchElement
+    public void testSelectDifferentCategoryFiltersAndResultsLoad() throws  InterruptedException{
         final ResultsView results = findService.search("face");
+        FindParametricCheckbox filter1 = filters().checkBoxesForParametricFieldContainer(0).get(0);
+        FindParametricCheckbox filter2 = filters().checkBoxesForParametricFieldContainer(1).get(0);
 
-        for(int i = 0 ; i<filters().numberParametricFieldContainers()-1;i++){
-            filters().checkBoxesForParametricFieldContainer(i).get(0).check();
-        }
-        Waits.loadOrFadeWait();
+        filter1.check();
+        filter2.check();
+
+        //nasty but can't have wait dependent on the results loading.
+        Thread.sleep(2500);
         verifyThat("Loading indicator not present",!results.loadingIndicatorPresent());
     }
 
