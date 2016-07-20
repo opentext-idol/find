@@ -3,6 +3,7 @@ define([
     'text!find/templates/app/util/collapsible.html',
     'bootstrap'
 ], function(Backbone, collapsibleTemplate) {
+    'use strict';
 
     return Backbone.View.extend({
         template: _.template(collapsibleTemplate, {variable: 'data'}),
@@ -11,15 +12,21 @@ define([
             'show.bs.collapse': function() {
                 this.collapsed = false;
                 this.updateHeaderState();
+
+                this.trigger('show');
             },
             'shown.bs.collapse': function() {
                 if (this.renderOnOpen) {
                     this.view.render();
                 }
+
+                this.trigger('shown');
             },
             'hide.bs.collapse': function() {
                 this.collapsed = true;
                 this.updateHeaderState();
+
+                this.trigger('hide');
             }
         },
 
@@ -59,6 +66,10 @@ define([
         setSubTitle: function(subtitle) {
             this.subtitle = subtitle;
             this.$('.collapsible-subtitle').text(subtitle);
+        },
+
+        toggleSubtitle: function(toggle) {
+            this.$('.collapsible-subtitle').toggleClass('hide', !toggle)
         }
     });
 });
