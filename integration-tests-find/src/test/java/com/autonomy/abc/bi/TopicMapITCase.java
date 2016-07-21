@@ -2,6 +2,7 @@ package com.autonomy.abc.bi;
 
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.hp.autonomy.frontend.selenium.element.Slider;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.FindService;
@@ -117,8 +118,23 @@ public class TopicMapITCase extends IdolFindTestBase {
         results.waitForMapLoaded();
         Waits.loadOrFadeWait();
 
-        final List<String> addedConcepts = results.clickEntitiesAndAddText(3);
-        verifyThat("All "+addedConcepts.size()+" added concept terms added to search",relatedConceptsWithoutSpaces(),containsItems(addedConcepts));
+        final List<String> clusterNames = results.returnParentEntityNames();
+        final List<String> allRelatedConcepts = new ArrayList<>();
+
+        for (String concept: conceptsPanel().getRelatedConcepts()) {
+            allRelatedConcepts.add(concept.replace(" ", "").toLowerCase());
+        }
+
+        for (String cluster: clusterNames) {
+            verifyThat("The cluster " + cluster + " is in the right hand side", allRelatedConcepts ,hasItem(cluster));
+        }
+
+        final List<String> addedConcepts = new ArrayList<>();
+        addedConcepts.add(results.clickChildEntityAndAddText(clusterNames.size()));
+        results.waitForReload();
+        addedConcepts.add(results.clickChildEntityAndAddText(results.returnParentEntityNames().size()));
+
+        verifyThat("All " + addedConcepts.size() + " added concept terms added to search", relatedConceptsWithoutSpaces(),containsItems(addedConcepts));
     }
 
     private List<String> relatedConceptsWithoutSpaces(){
@@ -127,5 +143,9 @@ public class TopicMapITCase extends IdolFindTestBase {
             termsNoSpaces.add(term.replace(" ",""));
         }
         return termsNoSpaces;
+    }
+
+    private RelatedConceptsPanel conceptsPanel() {
+        return getElementFactory().getRelatedConceptsPanel();
     }
 }
