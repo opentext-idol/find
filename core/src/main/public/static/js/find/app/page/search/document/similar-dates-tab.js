@@ -34,7 +34,8 @@ define([
                 min_date: this.model.get('date').clone().subtract(this.ticks[this.$beforeDateSlider.val()].moment).toJSON(),
                 max_date: this.model.get('date').clone().add(this.ticks[this.$afterDateSlider.val()].moment).toJSON(),
                 highlight: false,
-                auto_correct: false
+                auto_correct: false,
+                queryType: 'MODIFIED'
             }
         },
 

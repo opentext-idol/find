@@ -270,7 +270,8 @@ define([
                 start: this.start,
                 max_results: this.maxResults,
                 sort: this.queryModel.get('sort'),
-                auto_correct: this.queryModel.get('autoCorrect')
+                auto_correct: this.queryModel.get('autoCorrect'),
+                queryType: 'MODIFIED'
             }, this.fetchStrategy.requestParams(this.queryModel, infiniteScroll));
 
             this.documentsCollection.fetch({
@@ -305,7 +306,8 @@ define([
                 var promotionsRequestData =  _.extend({
                     start: this.start,
                     max_results: this.maxResults,
-                    sort: this.queryModel.get('sort')
+                    sort: this.queryModel.get('sort'),
+                    queryType: 'PROMOTIONS'
                 }, this.fetchStrategy.promotionsRequestParams(this.queryModel, infiniteScroll));
 
                 this.promotionsCollection.fetch({

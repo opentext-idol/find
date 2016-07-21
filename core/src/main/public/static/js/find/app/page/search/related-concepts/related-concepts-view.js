@@ -61,7 +61,8 @@ define([
                 text: queryText,
                 max_results: 3,
                 summary: 'context',
-                indexes: this.queryModel.get('indexes')
+                indexes: this.queryModel.get('indexes'),
+                queryType: 'MODIFIED'
             },
             error: _.bind(function () {
                 $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.error']}));

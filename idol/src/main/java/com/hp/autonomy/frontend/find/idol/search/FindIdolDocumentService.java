@@ -8,9 +8,8 @@ package com.hp.autonomy.frontend.find.idol.search;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.util.AciParameters;
-import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
-import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
+import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentService;
 import com.hp.autonomy.searchcomponents.idol.search.QueryResponseParser;
@@ -22,18 +21,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class FindIdolDocumentService extends IdolDocumentService {
     static final String MISSING_RULE_ERROR = "missing rule";
-    static final String INVALID_RULE_ERROR = "invalid rule";
+    private static final String INVALID_RULE_ERROR = "invalid rule";
 
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Autowired
     public FindIdolDocumentService(
-            final ConfigService<? extends IdolSearchCapable> configService,
             final HavenSearchAciParameterHandler parameterHandler,
             final QueryResponseParser queryResponseParser,
-            final AciService contentAciService,
-            final AciService qmsAciService,
+            final AciServiceRetriever aciServiceRetriever,
             final AciResponseJaxbProcessorFactory aciResponseProcessorFactory) {
-        super(configService, parameterHandler, queryResponseParser, contentAciService, qmsAciService, aciResponseProcessorFactory);
+        super(parameterHandler, queryResponseParser, aciServiceRetriever, aciResponseProcessorFactory);
     }
 
     @Override

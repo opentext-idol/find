@@ -10,7 +10,7 @@ import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.searchcomponents.core.search.AciSearchRequest;
-import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
+import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentServiceTest;
 import com.hp.autonomy.types.idol.QueryResponseData;
@@ -26,28 +26,25 @@ public class FindIdolDocumentServiceTest extends IdolDocumentServiceTest {
     @Override
     @Before
     public void setUp() {
-        when(havenSearchConfig.getQueryManipulation()).thenReturn(new QueryManipulation.Builder().build());
-        when(configService.getConfig()).thenReturn(havenSearchConfig);
-        idolDocumentService = new FindIdolDocumentService(configService, parameterHandler, queryResponseParser, contentAciService, qmsAciService, aciResponseProcessorFactory);
+        when(aciServiceRetriever.getAciService(any(SearchRequest.QueryType.class))).thenReturn(aciService);
+        idolDocumentService = new FindIdolDocumentService(parameterHandler, queryResponseParser, aciServiceRetriever, aciResponseProcessorFactory);
     }
 
     @Test
     public void queryQmsButNoBlackList() {
-        when(havenSearchConfig.getQueryManipulation()).thenReturn(new QueryManipulation.Builder().setEnabled(true).build());
         final QueryResponseData responseData = new QueryResponseData();
         final AciErrorException blacklistError = new AciErrorException();
         blacklistError.setErrorString(FindIdolDocumentService.MISSING_RULE_ERROR);
-        when(qmsAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenThrow(blacklistError).thenReturn(responseData);
+        when(aciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenThrow(blacklistError).thenReturn(responseData);
 
-        idolDocumentService.queryTextIndex(mockQueryParams());
+        idolDocumentService.queryTextIndex(mockQueryParams(SearchRequest.QueryType.MODIFIED));
         verify(queryResponseParser).parseQueryResults(Matchers.<AciSearchRequest<String>>any(), any(AciParameters.class), eq(responseData), any(IdolDocumentService.QueryExecutor.class));
     }
 
     @Test(expected = AciErrorException.class)
     public void queryQmsButUnexpectedError() {
-        when(havenSearchConfig.getQueryManipulation()).thenReturn(new QueryManipulation.Builder().setEnabled(true).build());
-        when(qmsAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenThrow(new AciErrorException());
+        when(aciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenThrow(new AciErrorException());
 
-        idolDocumentService.queryTextIndex(mockQueryParams());
+        idolDocumentService.queryTextIndex(mockQueryParams(SearchRequest.QueryType.MODIFIED));
     }
 }

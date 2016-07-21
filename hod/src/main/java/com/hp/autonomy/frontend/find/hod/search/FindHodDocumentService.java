@@ -66,20 +66,9 @@ public class FindHodDocumentService extends HodDocumentsService {
 
     @Override
     @Cacheable(FindCacheNames.DOCUMENTS)
-    public Documents<HodSearchResult> queryTextIndex(final SearchRequest<ResourceIdentifier> findQueryParams) throws HodErrorException {
-        return super.queryTextIndex(findQueryParams);
-    }
-
-    @Override
-    @Cacheable(FindCacheNames.PROMOTED_DOCUMENTS)
-    public Documents<HodSearchResult> queryTextIndexForPromotions(final SearchRequest<ResourceIdentifier> findQueryParams) throws HodErrorException {
-        return super.queryTextIndexForPromotions(findQueryParams);
-    }
-
-    @Override
-    protected Documents<HodSearchResult> queryTextIndex(final SearchRequest<ResourceIdentifier> searchRequest, final boolean fetchPromotions) throws HodErrorException {
+    public Documents<HodSearchResult> queryTextIndex(final SearchRequest<ResourceIdentifier> searchRequest) throws HodErrorException {
         try {
-            return super.queryTextIndex(searchRequest, fetchPromotions);
+            return super.queryTextIndex(searchRequest);
         } catch (final HodErrorException e) {
             if (e.getErrorCode() == HodErrorCode.INDEX_NAME_INVALID) {
                 final Boolean publicIndexesEnabled = findConfigService.getConfig().getIod().getPublicIndexesEnabled();
@@ -113,7 +102,7 @@ public class FindHodDocumentService extends HodDocumentsService {
                         .setStateDontMatchId(queryRestrictions.getStateDontMatchId())
                         .build(
                 ));
-                final Documents<HodSearchResult> resultDocuments = super.queryTextIndex(searchRequest, fetchPromotions);
+                final Documents<HodSearchResult> resultDocuments = super.queryTextIndex(searchRequest);
                 final Warnings warnings = new Warnings(badIndexes);
                 return new Documents<>(
                         resultDocuments.getDocuments(),
