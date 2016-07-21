@@ -5,6 +5,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class MainNumericWidget {
     private final WebElement container;
@@ -21,7 +23,7 @@ public class MainNumericWidget {
     }
 
     public void closeWidget(){
-        container.findElement(By.className(".hp-close.time-bar-container-icon")).click();
+        container.findElement(By.cssSelector(".hp-close.time-bar-container-icon")).click();
     }
 
 
@@ -48,6 +50,17 @@ public class MainNumericWidget {
         return container.findElement(By.cssSelector("svg.chart"));
     }
 
+    public WebElement selectionRec(){
+        return graph().findElement(By.cssSelector("svg.chart > g > rect"));
+    }
+
+    public boolean selectionRectangleExists(){
+        return !graph().findElements(By.cssSelector("rect")).isEmpty();
+    }
+
+    public void waitUntilWidgetLoaded(){
+        new WebDriverWait(driver,10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("numeric-parametric-loading-indicator")));
+    }
     //Drag and drop not element -> needs to go in DriverUtils in QA infrastructure!!!
     public void clickAndDrag(int x_dest,int y_dest, WebElement startingElement){
         final Actions action = new Actions(driver);

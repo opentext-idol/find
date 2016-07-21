@@ -32,6 +32,9 @@ public class IdolFindPage extends FindPage {
 
     public MainNumericWidget mainGraph() {return new MainNumericWidget(getDriver());}
 
+    public boolean mainGraphDisplayed(){
+        return !findElements(By.className("middle-container-time-bar")).isEmpty();
+    }
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {
         @Override
         public IdolFindPage create(final WebDriver context) {

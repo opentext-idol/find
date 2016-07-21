@@ -19,6 +19,18 @@ public class IdolFilterPanel extends FilterPanel{
         this.driver = driver;
     }
 
+    public GraphFilterContainer getNthGraph(int n){
+        if(n == 0){
+            WebElement graphItself = getPanel().findElement(By.cssSelector("div.collapse .clickable-widget"));
+            return new GraphFilterContainer(ElementUtil.ancestor(graphItself,5),driver);
+        }
+        else{
+            return graphContainers().get(n);
+        }
+    }
+
+
+    //they might all actually be in an anon div together
     public List<GraphFilterContainer> graphContainers() {
         final List<GraphFilterContainer> containers = new ArrayList<>();
         for(final WebElement container : getGraphContainers()) {

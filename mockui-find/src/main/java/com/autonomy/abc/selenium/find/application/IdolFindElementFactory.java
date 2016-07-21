@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.bi.TableView;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
-import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.login.IdolFindLoginPage;
 import com.autonomy.abc.selenium.find.save.SearchOptionsBar;
 import com.autonomy.abc.selenium.find.save.SearchTabBar;
@@ -29,8 +29,8 @@ public class IdolFindElementFactory extends FindElementFactory {
     }
 
     @Override
-    public FilterPanel getFilterPanel() {
-        return new FilterPanel(new IdolDatabaseTree.Factory(), getDriver());
+    public IdolFilterPanel getFilterPanel() {
+        return new IdolFilterPanel(new IdolDatabaseTree.Factory(), getDriver());
     }
 
     public SearchTabBar getSearchTabBar() {

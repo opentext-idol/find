@@ -20,8 +20,9 @@ public class GraphFilterContainer extends FilterContainer {
     //gets the graph header
     @Override
     public WebElement getParent(){
-        return getContainer().findElement(By.cssSelector("collapsible-header"));
+        return getContainer().findElement(By.cssSelector(".collapsible-header h4"));
     }
+
     public WebElement graph(){
         return getContainer().findElement(By.cssSelector("div.collapse:nth-child(2)"));
     }

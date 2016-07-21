@@ -3,13 +3,30 @@ package com.autonomy.abc.bi;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
-import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
+import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
+
+//FIND-323 -> zoom in zoom out
+//FIND-304 -> resizing
+//FIND-389   //INteraction w/ saved search
+
 
 public class NumericWidgetITCase extends IdolFindTestBase{
     private FindService findService;
@@ -26,40 +43,51 @@ public class NumericWidgetITCase extends IdolFindTestBase{
     }
 
     @Test
-    public void clickAndDrag(){
-        findService.search("face");
-
+    public void testClickingOnFilterPanelGraphOpensMain(){
+        findService.search("book");
         filters().waitForParametricFields();
 
+        assertThat("Default: main graph not shown",!findPage.mainGraphDisplayed());
 
+        MainNumericWidget mainGraph;
+        for(GraphFilterContainer container : filters().graphContainers()){
+            String graphTitle = selectFilterGraph(container);
+            verifyThat("Main graph now shown",findPage.mainGraphDisplayed());
 
-        MainNumericWidget mainGraph = findPage.mainGraph();
+            mainGraph = findPage.mainGraph();
+            //doesn't actually check contents!
+            verifyThat("Correct graph is open",mainGraph.header(),equalToIgnoringCase(graphTitle));
+        }
 
-        //+x -> goes right on the x axis
-        mainGraph.clickAndDrag(100,0,mainGraph.graph());
+        findPage.mainGraph().closeWidget();
+        verifyThat("Main graph now gone",!findPage.mainGraphDisplayed());
     }
-    @Test
-    public void testClickingOnFilterPanelGraphOpensMain(){
-        //default main graph not present
-        //go thru all filter panel graphs and get titles then click.
-        //Check there is a main graph and the main graph has the right title
-        //close main
-        //check it's gone
+
+    private String selectFilterGraph(GraphFilterContainer container){
+        container.expand();
+        String graphTitle = container.getParentName();
+        container.graph().click();
+        return graphTitle;
     }
 
     @Test
     @ResolvedBug("FIND-356")
     public void testSelectionRecDoesNotDisappear(){
-        //make selection
-        //check it's still there
+        findService.search("politics");
+        IdolFilterPanel filterPanel = filters();
+        filterPanel.waitForParametricFields();
+
+        selectFilterGraph(filterPanel.getNthGraph(0));
+
+        MainNumericWidget mainGraph = findPage.mainGraph();
+        mainGraph.clickAndDrag(100,0,mainGraph.graph());
+
+        filterPanel.waitForParametricFields();
+        mainGraph.waitUntilWidgetLoaded();
+
+        verifyThat("Selection rectangle hasn't disappeared",mainGraph.selectionRectangleExists());
     }
 
-    @Test
-    @ResolvedBug("FIND-365")
-    public void testFilterLabelFormatReflectsNumericData(){
-        //the filter label shouldn't always be the date format
-        //e.g. if data is elevation
-    }
 
     @Test
     public void testSelectionRecFiltersResults(){
@@ -113,21 +141,56 @@ public class NumericWidgetITCase extends IdolFindTestBase{
     @Test
     @ResolvedBug("FIND-366")
     public void testFilterLabelsUpdate(){
-        //apply rec
-        //check label
-        //move same rectangle
-        //check label is different
+        findService.search("dance");
+        filters().waitForParametricFields();
+        selectFilterGraph(filters().getNthGraph(0));
+
+        MainNumericWidget mainGraph = findPage.mainGraph();
+        mainGraph.clickAndDrag(100,0,mainGraph.graph());
+        String label = findPage.getFilterLabels().get(0);
+
+        mainGraph.clickAndDrag(-100,0,mainGraph.graph());
+        String changedLabel = findPage.getFilterLabels().get(0);
+        assertThat("The label has changed",changedLabel,not(is(label)));
     }
 
     @Test
     @ResolvedBug("FIND-282")
     public void testFilterLabelsHaveTitle(){
-        //test the filter labels have title e.g. "AUTN Date:
+        findService.search("ball");
+        filters().waitForParametricFields();
+
+        List<String> graphTitles = filterByAllGraphs();
+        List<String> labels = findPage.getFilterLabels();
+
+        verifyThat("All filters have a label",labels,hasSize(graphTitles.size()));
+
+        for(int i=0;i<graphTitles.size();i++){
+            String title = graphTitles.get(i);
+            verifyThat("Title "+title+" is in filter label",labels.get(i),containsString(title));
+        }
     }
 
-    //FIND-323 -> zoom in zoom out
-    //FIND-304 -> resizing
-    //FIND-389   //INteraction w/ saved search
+    private List<String> filterByAllGraphs(){
+        List<String> titles = new ArrayList<>();
+        MainNumericWidget mainGraph;
+
+        for(GraphFilterContainer container : filters().graphContainers()) {
+            titles.add(selectFilterGraph(container));
+            mainGraph = findPage.mainGraph();
+            mainGraph.clickAndDrag(100,0,mainGraph.graph());
+        }
+
+        return titles;
+    }
+
+
+    @Test
+    @ResolvedBug("FIND-365")
+    public void testFilterLabelFormatReflectsNumericData(){
+        //the filter label shouldn't always be the date format
+        //e.g. if data is elevation
+    }
 
     @Test
     public void testInputBoundsAsText(){
@@ -144,7 +207,7 @@ public class NumericWidgetITCase extends IdolFindTestBase{
     }
 
     //SHOULD THIS BE IN HERE OR SHOULD IT BE IN IDOLFINDPAGE?!
-    private FilterPanel filters() {
+    private IdolFilterPanel filters() {
         return getElementFactory().getFilterPanel();
     }
 }
