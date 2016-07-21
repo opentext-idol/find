@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
@@ -27,6 +28,8 @@ public class IdolFindPage extends FindPage {
     public WebElement compareButton() {
         return mainContainer().findElement(By.className("compare-modal-button"));
     }
+
+    public MainNumericWidget mainNumericGraph() {return new MainNumericWidget();}
 
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {
         @Override
