@@ -32,11 +32,6 @@ public class FilterPanel {
         this.panel = Container.LEFT.findUsing(driver);
     }
 
-    //DELETE THIS
-    public WebElement getPanel(){
-        return this.panel;
-    }
-
     //INDEX/DATABASE RELATED
     public IndexesTree indexesTree() {
         return indexesTreeFactory.create(new FindIndexCategoryNode(panel.findElement(By.cssSelector(".databases-list [data-category-id='all']")), driver));
@@ -56,14 +51,14 @@ public class FilterPanel {
     }
 
     //CONTAINERS FOR FILTERS
-    private List<FilterContainer> allFilterContainers() {
-        final List<FilterContainer> nodes = new ArrayList<FilterContainer>(parametricFieldContainers());
+    private List<ListFilterContainer> allFilterContainers() {
+        final List<ListFilterContainer> nodes = new ArrayList<ListFilterContainer>(parametricFieldContainers());
         nodes.add(0, indexesTreeContainer());
         nodes.add(1, dateFilterContainer());
         return nodes;
     }
 
-    private FilterContainer indexesTreeContainer() {
+    private ListFilterContainer indexesTreeContainer() {
         final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
         final WebElement container = ElementUtil.ancestor(heading, 2);
         return new IndexesTreeContainer(container, driver);
@@ -170,5 +165,9 @@ public class FilterPanel {
 
     public void waitForParametricFields() {
         Container.LEFT.waitForLoad(driver);
+    }
+
+    protected WebElement getPanel(){
+        return this.panel;
     }
 }

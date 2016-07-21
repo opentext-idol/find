@@ -5,10 +5,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.interactions.ButtonReleaseAction;
-import org.openqa.selenium.interactions.ClickAndHoldAction;
-import org.openqa.selenium.interactions.MoveToOffsetAction;
-import org.openqa.selenium.internal.Locatable;
 
 public class MainNumericWidget {
     private final WebElement container;
@@ -47,26 +43,18 @@ public class MainNumericWidget {
         return container.findElement(By.className("time-bar-header")).getText();
     }
 
-    //how the hell am I supposed to do the purple square
     //ACTUAL GRAPH PART
     public WebElement graph(){
         return container.findElement(By.cssSelector("svg.chart"));
     }
 
-
     //Drag and drop not element -> needs to go in DriverUtils in QA infrastructure!!!
-    public void clickAndDrag( int x_dest,int y_dest){
-        //move mouse to coordinates
-
-        //blargh
+    public void clickAndDrag(int x_dest,int y_dest, WebElement startingElement){
         final Actions action = new Actions(driver);
-        //can have clickAndHold w/ and w/o Element parameter
+        action.moveToElement(startingElement);
         action.clickAndHold().build().perform();
-        //action.moveToOffsetAction(this.mouse, (Locatable)null, xOffset, yOffset));
         action.moveByOffset(x_dest,y_dest).build().perform();
-        action.
-
-        action.addAction(new ButtonReleaseAction(this.mouse, (Locatable)null));
+        action.release().build().perform();
     }
 
 

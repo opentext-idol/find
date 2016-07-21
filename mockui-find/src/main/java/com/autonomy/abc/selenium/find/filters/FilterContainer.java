@@ -7,9 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.List;
-
-public class FilterContainer implements Collapsible {
+public class FilterContainer implements Collapsible{
 
     private final WebElement container;
     private final Collapsible collapsible;
@@ -20,7 +18,7 @@ public class FilterContainer implements Collapsible {
     }
 
     public String getParentName(){
-       return getParent().getText();
+        return getParent().getText();
     }
 
     protected WebElement getParent(){
@@ -30,13 +28,6 @@ public class FilterContainer implements Collapsible {
 
     private WebElement findFilterType(){
         return container.findElement(By.tagName("h4"));
-    }
-
-    public List<String> getChildNames(){
-        final List<WebElement> children = container.findElements(By.cssSelector(".parametric-value-name"));
-        children.addAll(container.findElements(By.cssSelector("[data-filter-id] > td:nth-child(2)")));
-        children.addAll(container.findElements(By.className("database-name")));
-        return ElementUtil.getTexts(children);
     }
 
     WebElement getContainer(){
