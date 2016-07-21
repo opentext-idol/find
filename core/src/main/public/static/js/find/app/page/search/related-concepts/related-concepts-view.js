@@ -7,12 +7,13 @@ define([
     'find/app/util/popover',
     'find/app/util/search-data-util',
     'find/app/util/view-state-selector',
+    'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/related-concepts/related-concepts-view.html',
     'text!find/templates/app/page/search/related-concepts/related-concept-cluster.html',
     'text!find/templates/app/page/search/popover-message.html',
     'text!find/templates/app/page/search/results-popover.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function (Backbone, $, _, i18n, DocumentsCollection, popover, searchDataUtil, viewStateSelector, viewTemplate, clusterTemplate,
+], function (Backbone, $, _, i18n, DocumentsCollection, popover, searchDataUtil, viewStateSelector, addLinksToSummary, viewTemplate, clusterTemplate,
              popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
 
     var html = _.template(viewTemplate)({
@@ -73,7 +74,7 @@ define([
                     _.each(topResultsCollection.models, function (model) {
                         var listItem = $(popoverTemplateFunction({
                             title: model.get('title'),
-                            summary: model.get('summary').trim().substring(0, 100) + '...'
+                            summary: addLinksToSummary(model.get('summary')).trim().substring(0, 200) + '...'
                         }));
 
                         $content.find('ul').append(listItem);

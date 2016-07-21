@@ -939,11 +939,14 @@ input.find-input {
 
 .popover-content a {
     margin:0;
-    font-weight: 700;
+}
+
+.results-popover-title {
+    font-family: Metric-Semibold;
 }
 
 .search-text {
-    font-family: Metric-Bold;
+    font-family: Metric-Semibold;
 }
 
 .also-searching-for {
@@ -1248,10 +1251,12 @@ input:-moz-placeholder::before {
 /*TODO use bootstrap theme customiser for these */
 .popover {
     border-radius: 0;
+    font-family: Metric;
 }
 
 .popover-content p {
-    font-size: 12px;
+    font-size: 14px;
+    line-height: normal;
 }
 
 .popover-content {
