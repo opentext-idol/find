@@ -15,7 +15,8 @@ require.config({
     },
     map: {
         '*': {
-            'find/lib/backbone/backbone-extensions': 'backbone'
+            'find/lib/backbone/backbone-extensions': 'backbone',
+            'find/app/configuration': 'mock/configuration'
         }
     }
 });

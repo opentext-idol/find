@@ -11,9 +11,10 @@ define([
     'databases-view/js/databases-collection',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
+    'find/app/configuration',
     'backbone',
     'moment'
-], function (mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, Backbone, moment) {
+], function (mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, configuration, Backbone, moment) {
 
     var WOOKIEPEDIA = {
         id: 'TESTDOMAIN:wookiepedia',
@@ -33,6 +34,16 @@ define([
 
     describe('Search filters collection initialised with an indexes filter, a DatesFilterModel with a min date set and a selected parametric value on the AGE field', function () {
         beforeEach(function () {
+            configuration.and.returnValue({
+                parametricDisplayValues: [{
+                    name: "FELINES",
+                    displayName: "cats",
+                    values: [{
+                        name: "MR_MISTOFFELEES",
+                        displayName: "Mr. Mistoffelees, the magical cat"
+                    }]
+                }]
+            });
             this.indexesCollection = new DatabasesCollection([WOOKIEPEDIA, WIKI_ENG]);
             this.selectedIndexesCollection = new DatabasesCollection([WIKI_ENG]);
 
