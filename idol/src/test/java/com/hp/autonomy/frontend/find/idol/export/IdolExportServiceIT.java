@@ -15,13 +15,17 @@ import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolCo
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 @ContextConfiguration(classes = {HavenSearchIdolConfiguration.class, IdolExportServiceIT.ExportConfiguration.class})
+@TestPropertySource(properties = "export.it=true")
 public class IdolExportServiceIT extends ExportServiceIT<String, AciErrorException> {
     @Configuration
+    @ConditionalOnProperty("export.it")
     public static class ExportConfiguration {
         @Bean
         public ExportService<String, AciErrorException> exportService(

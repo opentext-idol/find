@@ -16,13 +16,17 @@ import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.hod.beanconfiguration.HavenSearchHodConfiguration;
 import com.hp.autonomy.searchcomponents.hod.configuration.HodSearchCapable;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 @ContextConfiguration(classes = {HavenSearchHodConfiguration.class, HodExportServiceIT.ExportConfiguration.class})
+@TestPropertySource(properties = "export.it=true")
 public class HodExportServiceIT extends ExportServiceIT<ResourceIdentifier, HodErrorException> {
     @Configuration
+    @ConditionalOnProperty("export.it")
     public static class ExportConfiguration {
         @Bean
         public ExportService<ResourceIdentifier, HodErrorException> exportService(
