@@ -7,6 +7,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.Calendar;
+
 public class FindResult extends QueryResult {
     FindResult(final WebElement result, final WebDriver driver){
         super(result, driver);
@@ -47,4 +49,51 @@ public class FindResult extends QueryResult {
         title().click();
         return DocumentPreviewer.make(getDriver());
     }
+
+    public String convertDate(){
+        String badFormatDate = getDate();
+        final String[] words = badFormatDate.split(" ");
+        final int timeAmount;
+        final String timeUnit;
+        if(words[0].equals("a")||words[0].equals("an")){
+            timeAmount=1;
+            timeUnit = words[1];
+        }
+        else{
+            timeAmount= Integer.parseInt(words[0]);
+            timeUnit = words[1];
+        }
+
+        final Calendar date = Calendar.getInstance();
+
+        switch (timeUnit) {
+            case "minute":
+            case "minutes":
+                date.add(Calendar.MINUTE,-timeAmount);
+                break;
+
+            case "hour":
+            case "hours":
+                date.add(Calendar.HOUR_OF_DAY, -timeAmount);
+                break;
+
+            case "day":
+            case "days":
+                date.add(Calendar.DAY_OF_MONTH,-timeAmount);
+                break;
+
+            case "month":
+            case "months":
+                date.add(Calendar.MONTH,-timeAmount);
+                break;
+
+            case "year":
+            case "years":
+                date.add(Calendar.YEAR,-timeAmount);
+                break;
+        }
+        date.set(Calendar.SECOND,0);
+        return date.getTime().toString();
+    }
+
 }

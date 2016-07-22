@@ -178,8 +178,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         Date previousDate = null;
 
         for(int i = 0; i <= 10; i++){
-            final String badFormatDate = searchResults.get(i).getDate();
-            final String date = similarDocuments.convertDate(badFormatDate);
+            final String date = searchResults.get(i).convertDate();
             final Date currentDate = SimilarDocumentsView.DATE_FORMAT.parse(date);
 
             if(previousDate != null){
