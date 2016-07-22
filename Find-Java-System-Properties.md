@@ -27,7 +27,7 @@ Find uses a relational database to store users' saved searches. By default, this
 
 ### Clustering
 
--` hp.find.persistentState` - possible values are `INMEMORY` (which is the default) or `REDIS`.  We've not documented how to use Find with Redis yet, so ignore this for now.
+- `hp.find.persistentState` - possible values are `INMEMORY` (which is the default) or `REDIS`.  We've not documented how to use Find with Redis yet, so ignore this for now.
 
 ### HTTP Proxy Configuration
 - `find.https.proxyHost` - the hostname of the proxy server that Find needs to use to contact havenondemand.com over HTTPS, e.g `proxy.corp.example.com`
