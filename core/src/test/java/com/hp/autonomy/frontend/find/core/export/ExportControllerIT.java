@@ -25,11 +25,11 @@ public abstract class ExportControllerIT extends AbstractFindIT {
                 '}';
 
         final MockHttpServletRequestBuilder requestBuilder = get(ExportController.EXPORT_PATH + ExportController.CSV_PATH).with(authentication(biAuth()));
-        requestBuilder.content(json);
+        requestBuilder.param(ExportController.POST_DATA_PARAM, json);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(ExportController.CSV_MIME_TYPE))
+                .andExpect(content().contentType(ExportFormat.CSV.getMimeType()))
                 .andExpect(content().string(notNullValue()));
     }
 }

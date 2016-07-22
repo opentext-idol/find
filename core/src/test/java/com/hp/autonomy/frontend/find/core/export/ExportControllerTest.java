@@ -14,7 +14,6 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -29,8 +28,6 @@ public abstract class ExportControllerTest<S extends Serializable, E extends Exc
     protected ExportService<S, E> exportService;
     @Mock
     protected RequestMapper<S> requestMapper;
-    @Mock
-    private ServletResponse response;
 
     private ExportController<S, E> controller;
 
@@ -43,7 +40,7 @@ public abstract class ExportControllerTest<S extends Serializable, E extends Exc
 
     @Test
     public void exportToCsv() throws IOException, E {
-        controller.exportToCsv("{}", response);
+        controller.exportToCsv("{}");
         verify(exportService).export(any(OutputStream.class), Matchers.<SearchRequest<S>>any(), eq(ExportFormat.CSV));
     }
 }

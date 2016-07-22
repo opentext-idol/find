@@ -7,10 +7,17 @@ package com.hp.autonomy.frontend.find.core.export;
 
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.ServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -18,7 +25,8 @@ import java.io.Serializable;
 public abstract class ExportController<S extends Serializable, E extends Exception> {
     static final String EXPORT_PATH = "/api/bi/export";
     static final String CSV_PATH = "/csv";
-    static final String CSV_MIME_TYPE = "text/csv";
+    static final String POST_DATA_PARAM = "postData";
+    private static final String EXPORT_FILE_NAME = "query-results";
 
     private final ExportService<S, E> exportService;
     private final RequestMapper<S> requestMapper;
@@ -28,12 +36,24 @@ public abstract class ExportController<S extends Serializable, E extends Excepti
         this.requestMapper = requestMapper;
     }
 
-    @RequestMapping(CSV_PATH)
-    public void exportToCsv(@RequestBody final String json, final ServletResponse response) throws IOException, E {
+    @RequestMapping(value = CSV_PATH, method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<byte[]> exportToCsv(@RequestParam(POST_DATA_PARAM) final String json) throws IOException, E {
+        return export(json, ExportFormat.CSV);
+    }
+
+    private ResponseEntity<byte[]> export(final String json, final ExportFormat exportFormat) throws IOException, E {
         final SearchRequest<S> searchRequest = requestMapper.parseSearchRequest(json);
 
-        response.setContentType(CSV_MIME_TYPE);
-        exportService.export(response.getOutputStream(), searchRequest, ExportFormat.CSV);
-        response.flushBuffer();
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        exportService.export(outputStream, searchRequest, ExportFormat.CSV);
+        final byte[] output = outputStream.toByteArray();
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(exportFormat.getMimeType()));
+        final String fileName = EXPORT_FILE_NAME + FilenameUtils.EXTENSION_SEPARATOR + exportFormat.getExtension();
+        headers.setContentDispositionFormData(fileName, fileName);
+
+        return new ResponseEntity<>(output, headers, HttpStatus.OK);
     }
 }

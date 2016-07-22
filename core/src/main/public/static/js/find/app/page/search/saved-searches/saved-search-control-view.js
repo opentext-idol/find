@@ -8,7 +8,7 @@ define([
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
     'i18n!find/nls/bundle',
     'find/app/util/popover'
-], function(Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, template, i18n, popover) {
+], function (Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, template, i18n, popover) {
 
     'use strict';
 
@@ -33,7 +33,7 @@ define([
     }
 
     function toggleTitleEditState(titleEditState, searchType) {
-        return function() {
+        return function () {
             var isCurrentMethod = this.model.get('titleEditState') === titleEditState;
 
             this.model.set({
@@ -49,22 +49,22 @@ define([
         titleInput: null,
 
         events: {
-            'click .compare-modal-button': function() {
+            'click .compare-modal-button': function () {
                 this.comparisonModalCallback();
             },
             'click .show-rename-button': function () {
                 var searchType = this.savedSearchModel.get('type');
                 toggleTitleEditState(TitleEditState.RENAME, searchType).call(this)
             },
-            'click .popover-control': function(e) {
+            'click .popover-control': function (e) {
                 this.$('.popover-control, .save-search-button').addClass('disabled not-clickable');
                 $(e.currentTarget).removeClass('disabled not-clickable');
             },
-            'click .show-save-as': function(e) {
+            'click .show-save-as': function (e) {
                 var searchType = $(e.currentTarget).attr('data-search-type');
                 toggleTitleEditState(TitleEditState.SAVE_AS, searchType).call(this);
             },
-            'click .open-as-query-option': function() {
+            'click .open-as-query-option': function () {
                 var newSearch = new SavedSearchModel(_.defaults({
                     id: null,
                     title: i18n['search.newSearch'],
@@ -74,20 +74,43 @@ define([
                 this.searchCollections.QUERY.add(newSearch);
                 this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
             },
-            'click .save-search-button': function() {
+            'click .save-search-button': function () {
                 this.model.set({error: null, loading: true});
 
                 this.savedSearchModel.save(SavedSearchModel.attributesFromQueryState(this.queryState), {
                     wait: true,
-                    error: _.bind(function() {
+                    error: _.bind(function () {
                         this.model.set({error: i18n['search.savedSearchControl.error'], loading: false});
                     }, this),
-                    success: _.bind(function() {
+                    success: _.bind(function () {
                         this.model.set({error: null, loading: false});
                     }, this)
                 });
             },
-            'click .saved-search-delete-option': function() {
+            'click .export-csv-option': function () {
+                //noinspection AmdModulesDependencies
+                var postData = JSON.stringify({
+                        queryRestrictions: {
+                            text: this.queryModel.get('queryText'),
+                            field_text: this.queryModel.get('fieldText'),
+                            indexes: this.queryModel.get('indexes'),
+                            min_date: this.queryModel.getIsoDate('minDate'),
+                            max_date: this.queryModel.getIsoDate('maxDate'),
+                            min_score: this.queryModel.get('minScore')
+                        },
+                        start: 1,
+                        max_results: 0x7fffffff,
+                        summary: 'context',
+                        sort: this.queryModel.get('sort'),
+                        highlight: false,
+                        auto_correct: false,
+                        queryType: 'MODIFIED'
+                    });
+                var form = $('<form></form>').attr('action', '../api/bi/export/csv').attr('method', 'post');
+                form.append($('<input></input>').attr('type', 'hidden').attr('name', 'postData').attr('value', postData));
+                form.appendTo('body').submit().remove();
+            },
+            'click .saved-search-delete-option': function () {
                 this.model.set('error', null);
 
                 new Confirm({
@@ -100,22 +123,22 @@ define([
                     message: i18n['search.savedSearches.confirm.deleteMessage'](this.savedSearchModel.get('title')),
                     title: i18n['search.savedSearches.confirm.deleteMessage.title'],
                     hiddenEvent: 'hidden.bs.modal',
-                    okHandler: _.bind(function() {
+                    okHandler: _.bind(function () {
                         this.model.set({error: null, loading: true});
 
                         this.savedSearchModel.destroy({
                             wait: true,
-                            error: _.bind(function() {
+                            error: _.bind(function () {
                                 this.model.set({error: i18n['search.savedSearches.deleteFailed'], loading: false});
                             }, this),
-                            success: _.bind(function() {
+                            success: _.bind(function () {
                                 this.model.set({error: null, loading: false});
                             }, this)
                         });
                     }, this)
                 });
             },
-            'click .search-reset-option': function() {
+            'click .search-reset-option': function () {
                 this.model.set('error', null);
 
                 new Confirm({
@@ -128,17 +151,18 @@ define([
                     message: i18n['search.savedSearches.confirm.resetMessage'](this.savedSearchModel.get('title')),
                     title: i18n['search.savedSearches.confirm.resetMessage.title'],
                     hiddenEvent: 'hidden.bs.modal',
-                    okHandler: _.bind(function() {
+                    okHandler: _.bind(function () {
                         this.resetQueryState();
                     }, this)
                 });
             }
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
             this.documentsCollection = options.documentsCollection;
+            this.queryModel = options.queryModel;
             this.queryState = options.queryState;
             this.selectedTabModel = options.selectedTabModel;
             this.searchCollections = options.searchCollections;
@@ -167,15 +191,15 @@ define([
             this.listenTo(this.model, 'change:titleEditState', this.updateForTitleEditState);
             this.listenTo(this.model, 'change:validForSave', this.updateSearchValidityUI);
 
-            this.listenTo(this.documentsCollection, 'error request', function() {
+            this.listenTo(this.documentsCollection, 'error request', function () {
                 this.model.set('validForSave', false);
             });
 
-            this.listenTo(this.documentsCollection, 'sync', function() {
+            this.listenTo(this.documentsCollection, 'sync', function () {
                 this.model.set('validForSave', true);
             });
 
-            var updateSavedState = _.bind(function() {
+            var updateSavedState = _.bind(function () {
                 var savedState = resolveSavedState(this.queryState, this.savedSearchModel);
                 var attributes = {savedState: savedState};
 
@@ -197,7 +221,7 @@ define([
             this.listenTo(this.queryState.selectedParametricValues, 'add remove', updateSavedState);
         },
 
-        render: function() {
+        render: function () {
             var isMutable = this.searchTypes[this.savedSearchModel.get('type')].isMutable;
 
             this.$el.html(this.template({
@@ -220,15 +244,15 @@ define([
             this.updateSearchValidityUI();
         },
 
-        updateCompareModalButton: function() {
+        updateCompareModalButton: function () {
             this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
         },
 
-        createPopover: function() {
+        createPopover: function () {
             var $popover;
             var $popoverControl = this.$('.popover-control');
 
-            var clickHandler = _.bind(function(e) {
+            var clickHandler = _.bind(function (e) {
                 var $target = $(e.target);
                 var notPopover = !$target.is($popover) && !$.contains($popover[0], $target[0]);
                 var notPopoverControl = !$target.is($popoverControl) && !$.contains($popoverControl[0], $target[0]);
@@ -240,18 +264,18 @@ define([
                 }
             }, this);
 
-            popover($popoverControl, 'click', function(content) {
+            popover($popoverControl, 'click', function (content) {
                 content.html('<div class="search-title-input-container"></div>');
                 $popover = content.closest('.popover');
                 $(document.body).on('click', clickHandler);
-            }, _.bind(function() {
+            }, _.bind(function () {
                 $(document.body).off('click', clickHandler);
 
                 this.$('.popover-control, .save-search-button').removeClass('active disabled not-clickable');
             }, this));
         },
 
-        updateForSavedState: function() {
+        updateForSavedState: function () {
             var savedState = this.model.get('savedState');
 
             this.$('.search-reset-option, .save-search-button').toggleClass('hide', savedState !== SavedState.MODIFIED);
@@ -259,15 +283,15 @@ define([
 
             if (this.searchTypes[this.savedSearchModel.get('type')].isMutable) {
                 var createOrEdit = savedState === SavedState.NEW ? 'create' : 'edit';
-                
-                _.each(this.$('.show-save-as[data-search-type]'), function(el) {
+
+                _.each(this.$('.show-save-as[data-search-type]'), function (el) {
                     var $el = $(el);
                     $el.text(this.searchTypes[$el.attr('data-search-type')].openEditText[createOrEdit]);
                 }, this);
             }
         },
 
-        updateForTitleEditState: function() {
+        updateForTitleEditState: function () {
             var searchType = this.model.get('searchType');
             var titleEditState = this.model.get('titleEditState');
 
@@ -297,18 +321,18 @@ define([
                 this.titleInput = new SearchTitleInput({
                     savedSearchModel: this.savedSearchModel,
                     savedSearchCollection: this.savedSearchCollection,
-                    saveCallback: _.bind(function(newAttributes, success, error) {
+                    saveCallback: _.bind(function (newAttributes, success, error) {
                         var savedState = this.model.get('savedState');
                         var titleEditState = this.model.get('titleEditState');
 
-                        var attributes = _.extend(newAttributes, 
-                            {type: searchType}, 
+                        var attributes = _.extend(newAttributes,
+                            {type: searchType},
                             SavedSearchModel.attributesFromQueryState(this.queryState)
                         );
 
                         var saveOptions = {
                             error: error,
-                            success: _.bind(function(model) {
+                            success: _.bind(function (model) {
                                 // If we have just created a saved query, switch to its tab
                                 if (this.searchTypes[searchType].isMutable) {
                                     this.selectedTabModel.set('selectedSearchCid', model.cid);
@@ -335,13 +359,13 @@ define([
 
                 this.renderTitleInput();
 
-                this.listenTo(this.titleInput, 'remove', function() {
+                this.listenTo(this.titleInput, 'remove', function () {
                     this.$('.popover-control.active').click();
                 });
             }
         },
 
-        resetQueryState: function() {
+        resetQueryState: function () {
             this.queryState.queryTextModel.set(this.savedSearchModel.toQueryTextModelAttributes());
             this.queryState.datesFilterModel.set(this.savedSearchModel.toDatesFilterModelAttributes());
             this.queryState.selectedIndexes.set(this.savedSearchModel.toSelectedIndexes());
@@ -349,24 +373,24 @@ define([
             this.queryState.minScoreModel.set(this.savedSearchModel.toMinScoreModelAttributes());
         },
 
-        updateErrorMessage: function() {
+        updateErrorMessage: function () {
             this.$('.search-controls-error-message').text(this.model.get('error') || '');
         },
 
-        updateLoading: function() {
+        updateLoading: function () {
             this.$('.save-search-button').prop('disabled', this.model.get('loading'));
         },
 
-        updateSearchValidityUI: function() {
+        updateSearchValidityUI: function () {
             this.$saveButtons.toggleClass('disabled not-clickable', !this.model.get('validForSave'));
         },
 
-        remove: function() {
+        remove: function () {
             this.destroyTitleInput();
             Backbone.View.prototype.remove.call(this);
         },
 
-        destroyTitleInput: function() {
+        destroyTitleInput: function () {
             if (this.titleInput !== null) {
                 this.titleInput.remove();
                 this.stopListening(this.titleInput);
@@ -374,7 +398,7 @@ define([
             }
         },
 
-        renderTitleInput: function() {
+        renderTitleInput: function () {
             if (this.titleInput) {
                 // Append before render so we can focus the input
                 this.$('.search-title-input-container').append(this.titleInput.$el);

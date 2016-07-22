@@ -5,6 +5,17 @@
 
 package com.hp.autonomy.frontend.find.core.export;
 
+import lombok.Getter;
+
+@Getter
 public enum ExportFormat {
-    CSV
+    CSV("text/csv", "csv");
+
+    private final String mimeType;
+    private final String extension;
+
+    ExportFormat(final String mimeType, final String extension) {
+        this.mimeType = mimeType;
+        this.extension = extension;
+    }
 }
