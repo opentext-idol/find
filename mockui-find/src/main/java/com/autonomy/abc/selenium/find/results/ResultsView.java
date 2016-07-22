@@ -3,14 +3,11 @@ package com.autonomy.abc.selenium.find.results;
 import com.autonomy.abc.selenium.find.Container;
 import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.DriverUtil;
-import com.hp.autonomy.frontend.selenium.util.Locator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class ResultsView extends AppElement implements QueryResultsPage {
@@ -86,22 +83,7 @@ public class ResultsView extends AppElement implements QueryResultsPage {
         return !findElement(By.className("main-results-content-container")).isDisplayed();
     }
 
-    public List<WebElement> scrollForHighlightedSausages() {
-        DriverUtil.scrollToBottom(getDriver());
-        waitForResultsToLoad();
-
-        final Locator sausageLocator = new Locator()
-                .havingClass("highlighted-entity-text");
-
-        final List<WebElement> visibleRelatedTerms = new LinkedList<>();
-        final List<WebElement> allHighlightedTerms = findElements(sausageLocator);
-
-        for (final WebElement sausage : allHighlightedTerms) {
-            if (sausage.isDisplayed()) {
-                visibleRelatedTerms.add(sausage);
-            }
-        }
-
-        return visibleRelatedTerms;
+    public List<WebElement> noMoreResultsMessage(){
+        return findElements(By.xpath("//div[@class = 'result-message' and contains(text(),'No more results')]"));
     }
 }
