@@ -2,12 +2,11 @@ define([
     'backbone',
     'js-whatever/js/list-view',
     'js-whatever/js/list-item-view',
-    'find/app/model/search-filters-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filter-display/filter-display.html',
     'text!find/templates/app/page/search/filter-display/filter-display-item.html',
     'bootstrap'
-], function(Backbone, ListView, ListItemView, SearchFiltersCollection, i18n, template, itemTemplate) {
+], function(Backbone, ListView, ListItemView, i18n, template, itemTemplate) {
 
     var html = _.template(template)({i18n: i18n});
 
@@ -56,7 +55,7 @@ define([
             this.listView = new ListView({
                 collection: this.collection,
                 ItemView: FilterListItemView,
-                className: 'inline-block',
+                className: 'inline',
                 itemOptions: {
                     className: 'label filter-label border filters-margin inline-block m-b-xs',
                     template: this.itemTemplate

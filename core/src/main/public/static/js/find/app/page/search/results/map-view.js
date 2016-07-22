@@ -11,15 +11,16 @@ define([
 ], function (Backbone, _, $, configuration, vent, leaflet) {
 
     'use strict';
-    var INITIAL_ZOOM = 12;
+    var INITIAL_ZOOM = 3;
 
     return Backbone.View.extend({
-        clusterMarkers: leaflet.markerClusterGroup(),
-        markerLayerGroup: leaflet.featureGroup(),
-        markers: [],
-
         initialize: function (options) {
             this.addControl = options.addControl || false;
+
+            this.clusterMarkers = leaflet.markerClusterGroup();
+            this.markerLayerGroup = leaflet.featureGroup();
+            this.markers = [];
+
             this.listenTo(vent, 'vent:resize', function () {
                 if (this.map) {
                     this.map.invalidateSize();
@@ -31,6 +32,8 @@ define([
             this.removeMap();
             var map = this.map = leaflet.map(this.$el.get(0), {
                 attributionControl: false,
+                minZoom: 1, // Furthest you can zoom out (smaller is further)
+                maxZoom: 18,// Map does not display tiles above zoom level 18 (2016-07-06)
                 worldCopyJump: true
             });
 

@@ -50,6 +50,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final MapConfiguration map;
     private final Integer minScore;
     private final StatsServerConfig statsServer;
+    private final Integer topicMapMaxResults;
     private final Boolean directAccessLink;
     private final Set<ParametricDisplayValues> parametricDisplayValues;
 
@@ -72,6 +73,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .setStatsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                 .setDirectAccessLink(directAccessLink == null ? other.directAccessLink : directAccessLink)
                 .setParametricDisplayValues(parametricDisplayValues == null ? other.parametricDisplayValues : parametricDisplayValues)
+                .setTopicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
                 .build();
     }
 
@@ -152,6 +154,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         private StatsServerConfig statsServer;
         private Boolean directAccessLink;
         private Set<ParametricDisplayValues> parametricDisplayValues;
+        private Integer topicMapMaxResults;
 
         public Builder(final IdolFindConfig config) {
             login = config.login;
@@ -164,12 +167,13 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             map = config.map;
             minScore = config.minScore;
             statsServer = config.statsServer;
+            topicMapMaxResults = config.topicMapMaxResults;
             directAccessLink = config.directAccessLink;
             parametricDisplayValues = config.parametricDisplayValues;
         }
 
         public IdolFindConfig build() {
-            return new IdolFindConfig(login, content, queryManipulation, view, savedSearchConfig, mmap, fieldsInfo, map, minScore, statsServer, directAccessLink, parametricDisplayValues);
+            return new IdolFindConfig(login, content, queryManipulation, view, savedSearchConfig, mmap, fieldsInfo, map, minScore, statsServer, topicMapMaxResults, directAccessLink, parametricDisplayValues);
         }
     }
 

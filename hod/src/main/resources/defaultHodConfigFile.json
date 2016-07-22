@@ -55,6 +55,7 @@
     },
     "minScore": 0,
     "directAccessLink": true,
+    "topicMapMaxResults": 1000,
     "fieldsInfo": {
         "contentType": {
             "names": [

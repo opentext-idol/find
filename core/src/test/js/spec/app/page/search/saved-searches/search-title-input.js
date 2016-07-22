@@ -38,6 +38,16 @@ define([
                 expect(this.view.$('.search-title-input')).toHaveValue('');
             });
 
+            describe('if the save button is clicked', function () {
+                beforeEach(function() {
+                    this.view.$('.save-title-confirm-button').click();
+                });
+
+                it('should not be possible to save without a title', function () {
+                    expect(this.saveCallback).not.toHaveBeenCalled();
+                });
+            });
+
             describe('when the user adds a title', function() {
                 var NEW_TITLE = 'My new title';
 

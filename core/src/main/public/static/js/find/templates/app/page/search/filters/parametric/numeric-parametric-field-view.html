@@ -1,22 +1,23 @@
-<h4><%-fieldName%></h4>
 <div>
     <form>
-        <div class="container-fluid">
+        <div class="container-fluid <%= clickable ? 'clickable-widget' : '' %>">
             <div class="row">
-                <div class="col-xs-12">
-                    <svg class="chart full-width"></svg>
+                <div class="col-xs-12 numeric-parametric-chart-row">
+                    <div class="numeric-parametric-loading-indicator"><%= loadingSpinnerHtml %></div>
+                    <p class="numeric-parametric-empty-text"><%- i18n['search.numericParametricFields.noValues'] %></p>
+                    <p class="numeric-parametric-error-text"><%- i18n['search.numericParametricFields.error'] %></p>
                 </div>
             </div>
             <div class="row numeric-parametric-inputs <%- inputsRowClass %>">
                 <div class="<%- inputColumnClass %>">
-                    <input class="numeric-parametric-min-input" type="text" title="min-value" size="5"/>
+                    <%= inputTemplate({minOrMax: 'min'}) %>
                 </div>
                 <div class="text-center <%- coordinatesColumnClass %>">
                     <span class="numeric-parametric-co-ordinates"></span>
                 </div>
                 <div class="<%- inputColumnClass %>">
                     <div class="pull-right">
-                        <input class="numeric-parametric-max-input" type="text" title="max-value" size="5"/>
+                        <%= inputTemplate({minOrMax: 'max'}) %>
                     </div>
                 </div>
             </div>

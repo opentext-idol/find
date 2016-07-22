@@ -1,7 +1,8 @@
-<h3><%-title%></h3>
-<dl>
-    <dt><%-i18n['search.document.detail.tabs.location.longitude']%></dt>
-    <dd><%-longitude%></dd>
-    <dt><%-i18n['search.document.detail.tabs.location.latitude']%></dt>
-    <dd><%-latitude%></dd>
-</dl>
+<h3>
+    <% if(cidForClickRouting){ %>
+    <a class="map-popup-title" cid="<%-cidForClickRouting%>"><%-title%></a>
+    <% } else { %>
+    <%-title%>
+    <% } %>
+</h3>
+<p><%-summary%></p>

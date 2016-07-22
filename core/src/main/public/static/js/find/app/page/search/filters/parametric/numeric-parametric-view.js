@@ -8,55 +8,36 @@ define([
     'underscore',
     'find/app/model/bucketed-parametric-collection',
     'find/app/page/search/filters/parametric/abstract-parametric-view',
-    'find/app/page/search/filters/parametric/numeric-parametric-field-view',
+    'find/app/page/search/filters/parametric/numeric-parametric-field-collapsible-view',
     'js-whatever/js/list-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-view.html'
-], function ($, _, BucketedParametricCollection, AbstractView, FieldView, ListView, i18n, template) {
-    "use strict";
+], function ($, _, BucketedParametricCollection, AbstractView, CollapsibleFieldView, ListView, i18n, template) {
 
-    var DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
+    'use strict';
 
-    var PreInitialisedListView = ListView.extend({
-        createItemView: function (model) {
-            //noinspection AssignmentResultUsedJS,JSUnresolvedFunction
-            var view = this.views[model.cid] = new this.ItemView(_.extend({
-                model: model,
-                viewWidth: this.$el.width()
-            }, this.itemOptions));
-
-            //noinspection JSUnresolvedFunction
-            _.each(this.proxyEvents, function (event) {
-                this.listenTo(view, event, function () {
-                    this.trigger.apply(this, ['item:' + event].concat(Array.prototype.slice.call(arguments, 0)));
-                });
-            }, this);
-
-            view.render();
-            return view;
-        }
-    });
+    var TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
 
     return AbstractView.extend({
         getBucketingRequestData: null,
-        
         template: _.template(template)({i18n: i18n}),
+        updateEmpty: $.noop,
 
-        initialize: function (options) {
-            this.fieldsCollection = options.fieldsCollection;
+        initialize: function (options) {            
             this.queryModel = options.queryModel;
-            
-            this.collection = new BucketedParametricCollection();
             this.monitorCollection(this.collection);
 
-            this.fieldNamesListView = new PreInitialisedListView({
+            this.fieldNamesListView = new ListView({
                 collection: this.collection,
-                ItemView: FieldView,
+                ItemView: CollapsibleFieldView,
+                collectionChangeEvents: false,
                 itemOptions: {
-                    template: options.fieldTemplate,
+                    inputTemplate: options.inputTemplate,
                     queryModel: options.queryModel,
+                    timeBarModel: options.timeBarModel,
+                    dataType: options.dataType,
                     selectedParametricValues: options.queryState.selectedParametricValues,
-                    pixelsPerBucket: DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
+                    pixelsPerBucket: TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
                     numericRestriction: options.numericRestriction,
                     formatting: options.formatting,
                     selectionEnabled: options.selectionEnabled,
@@ -65,28 +46,12 @@ define([
                     coordinatesEnabled: options.coordinatesEnabled
                 }
             });
-
-            //noinspection JSUnresolvedFunction
-            this.listenTo(options.fieldsCollection, 'update reset',  this.refreshFields);
-        },
-
-        refreshFields: function () {
-            var fieldNames = this.fieldsCollection.pluck('id');
-            if (fieldNames.length > 0) {
-                //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                var targetNumberOfBuckets = _.times(this.fieldsCollection.length, _.constant(Math.floor(this.$el.width() / DEFAULT_TARGET_NUMBER_OF_PIXELS_PER_BUCKET)));
-
-                this.collection.fetch({
-                    data: this.getBucketingRequestData(fieldNames, targetNumberOfBuckets)
-                });
-            }
         },
 
         remove: function () {
             this.fieldNamesListView.remove();
             AbstractView.prototype.remove.call(this);
-        },
-
-        updateEmpty: $.noop
+        }
     });
+
 });

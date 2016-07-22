@@ -25,7 +25,7 @@ define([
                         this.visibleIndexesCallback = options.visibleIndexesCallback;
                     }
                 }),
-                NumericParametricView: Backbone.View
+                getBucketingRequestData: _.constant({})
             }))({
                 queryState: {},
                 numericParametricFieldsCollection: new (backboneMockFactory.getCollection())(),

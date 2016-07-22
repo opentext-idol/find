@@ -7,12 +7,13 @@ define([
     'find/app/util/popover',
     'find/app/util/search-data-util',
     'find/app/util/view-state-selector',
+    'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/related-concepts/related-concepts-view.html',
     'text!find/templates/app/page/search/related-concepts/related-concept-cluster.html',
     'text!find/templates/app/page/search/popover-message.html',
     'text!find/templates/app/page/search/results-popover.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function (Backbone, $, _, i18n, DocumentsCollection, popover, searchDataUtil, viewStateSelector, viewTemplate, clusterTemplate,
+], function (Backbone, $, _, i18n, DocumentsCollection, popover, searchDataUtil, viewStateSelector, addLinksToSummary, viewTemplate, clusterTemplate,
              popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
 
     var html = _.template(viewTemplate)({
@@ -60,8 +61,7 @@ define([
                 text: queryText,
                 max_results: 3,
                 summary: 'context',
-                indexes: this.queryModel.get('indexes'),
-                highlight: false
+                indexes: this.queryModel.get('indexes')
             },
             error: _.bind(function () {
                 $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.error']}));
@@ -74,7 +74,7 @@ define([
                     _.each(topResultsCollection.models, function (model) {
                         var listItem = $(popoverTemplateFunction({
                             title: model.get('title'),
-                            summary: model.get('summary').trim().substring(0, 100) + '...'
+                            summary: addLinksToSummary(model.get('summary')).trim().substring(0, 200) + '...'
                         }));
 
                         $content.find('ul').append(listItem);
@@ -98,9 +98,6 @@ define([
                 var $target = $(e.currentTarget);
                 var queryCluster = Number($target.attr('data-entity-cluster'));
                 this.clickHandler(this.entityCollection.getClusterEntities(queryCluster));
-            },
-            'click .highlight-result-entities': function() {
-                this.highlightModel.set('highlightEntities', !this.highlightModel.get('highlightEntities'));
             }
         },
 
@@ -110,7 +107,6 @@ define([
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
             this.clickHandler = options.clickHandler;
-            this.highlightModel = options.highlightModel;
 
             var initialViewState;
 
@@ -164,8 +160,6 @@ define([
             this.listenTo(this.entityCollection, 'error', function () {
                 this.model.set('viewState', ViewState.ERROR);
             });
-
-            this.listenTo(this.highlightModel, 'change:highlightEntities', this.updateHighlightEntitiesButton);
         },
 
         render: function () {
@@ -176,7 +170,6 @@ define([
             this.$none = this.$('.related-concepts-none');
             this.$notLoading = this.$('.related-concepts-not-loading');
             this.$processing = this.$('.related-concepts-processing');
-            this.$highlightEntities = this.$('.highlight-result-entities');
 
             var viewStateElements = {};
             viewStateElements[ViewState.ERROR] = this.$error;
@@ -187,13 +180,8 @@ define([
 
             this.selectViewState = viewStateSelector(viewStateElements);
             updateForViewState.call(this);
-
-            this.updateHighlightEntitiesButton();
-        },
-
-        updateHighlightEntitiesButton: function() {
-            this.$highlightEntities.toggleClass('active', this.highlightModel.get('highlightEntities'));
         }
+
     });
 
 });

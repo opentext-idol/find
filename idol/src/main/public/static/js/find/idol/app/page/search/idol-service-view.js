@@ -5,15 +5,12 @@
 
 define([
     'underscore',
-    'i18n!find/idol/nls/comparisons',
     'find/app/configuration',
-    'find/idol/app/page/search/comparison/compare-modal',
     'find/app/page/search/service-view',
     'find/idol/app/page/search/results/idol-results-view-augmentation',
     'find/idol/app/page/search/results/idol-results-view',
     'find/app/util/model-any-changed-attribute-listener'
-], function(_, comparisonsI18n, configuration, CompareModal, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
-
+], function(_, configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
     'use strict';
 
     return ServiceView.extend({
@@ -22,55 +19,36 @@ define([
         mapViewResultsStep: configuration().map.resultsStep,
         mapViewAllowIncrement: true,
 
-        events: _.extend({
-            'click .compare-modal-button': function() {
-                new CompareModal({
-                    savedSearchCollection: this.savedSearchCollection,
-                    selectedSearch: this.savedSearchModel,
-                    comparisonSuccessCallback: this.comparisonSuccessCallback
-                });
-            }
-        }, ServiceView.prototype.events),
-
         initialize: function(options) {
-            this.comparisonSuccessCallback = options.comparisonSuccessCallback;
-            this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
-
-            if (configuration().hasBiRole) {
-                this.headerControlsHtml = _.template('<button class="btn button-primary compare-modal-button"><%-i18n["compare"]%></button>')({i18n: comparisonsI18n})
-            }
+            this.comparisonModalCallback = options.comparisonModalCallback;
 
             ServiceView.prototype.initialize.call(this, options);
 
-            addChangeListener(this, this.queryModel, ['queryText', 'fieldText', 'indexes', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchEntities);
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchData);
         },
 
-        render: function() {
-            ServiceView.prototype.render.call(this);
-            this.updateCompareModalButton();
-        },
-
-        updateCompareModalButton: function() {
-            this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
-        },
-
-        fetchParametricFields: function (fieldsCollection, valuesCollection) {
+        fetchParametricFields: function (fieldsCollection, callback) {
             fieldsCollection.fetch({
                 success: _.bind(function() {
-                    if (valuesCollection) {
-                        this.fetchParametricValues(fieldsCollection, valuesCollection);
-                        this.fetchRestrictedParametricCollection();
+                    if (callback) {
+                        callback();
                     }
                 }, this)
             });
         },
+        
+        getSavedSearchControlViewOptions: function () {
+            return {
+                comparisonModalCallback: this.comparisonModalCallback
+            };
+        },
+        
+        fetchParametricValues: function () {
+            this.parametricCollection.reset();
 
-        fetchParametricValues: function (fieldsCollection, valuesCollection) {
-            valuesCollection.reset();
-
-            var fieldNames = fieldsCollection.pluck('id');
+            var fieldNames = this.parametricFieldsCollection.pluck('id');
             if (fieldNames.length > 0) {
-                valuesCollection.fetch({data: {
+                this.parametricCollection.fetch({data: {
                     fieldNames: fieldNames
                 }});
             }

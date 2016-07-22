@@ -30,8 +30,8 @@ define([
                 };
                 return _.isEmpty(entry.field) ? entryHash : _.extend(entryHash, {children: parseResult(entry.field, entry.count)}); // recurse for children
             })
-            .sortBy('count')
-            .reverse()
+            .sortBy('id')
+            .sortBy(function(x) { return -x.count})
             .value();
 
         // Always show the highest 20 results
@@ -42,7 +42,6 @@ define([
             .filter(function(child) {
                 return child.count > minimumSize;
             })
-            .sortBy('count')
             .value();
 
         var sunburstData = _.union(alwaysShownValues, filteredSunburstData);

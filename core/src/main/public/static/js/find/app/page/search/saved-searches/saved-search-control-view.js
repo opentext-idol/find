@@ -32,12 +32,13 @@ define([
         }
     }
 
-    function toggleTitleEditState(titleEditState) {
+    function toggleTitleEditState(titleEditState, searchType) {
         return function() {
             var isCurrentMethod = this.model.get('titleEditState') === titleEditState;
 
             this.model.set({
                 error: null,
+                searchType: searchType,
                 titleEditState: isCurrentMethod ? TitleEditState.OFF : titleEditState
             });
         };
@@ -48,14 +49,20 @@ define([
         titleInput: null,
 
         events: {
-            'click .show-rename-button': toggleTitleEditState(TitleEditState.RENAME),
+            'click .compare-modal-button': function() {
+                this.comparisonModalCallback();
+            },
+            'click .show-rename-button': function () {
+                var searchType = this.savedSearchModel.get('type');
+                toggleTitleEditState(TitleEditState.RENAME, searchType).call(this)
+            },
             'click .popover-control': function(e) {
                 this.$('.popover-control, .save-search-button').addClass('disabled not-clickable');
                 $(e.currentTarget).removeClass('disabled not-clickable');
             },
             'click .show-save-as': function(e) {
-                this.searchType = $(e.currentTarget).attr('data-search-type');
-                toggleTitleEditState(TitleEditState.SAVE_AS).call(this);
+                var searchType = $(e.currentTarget).attr('data-search-type');
+                toggleTitleEditState(TitleEditState.SAVE_AS, searchType).call(this);
             },
             'click .open-as-query-option': function() {
                 var newSearch = new SavedSearchModel(_.defaults({
@@ -136,6 +143,7 @@ define([
             this.selectedTabModel = options.selectedTabModel;
             this.searchCollections = options.searchCollections;
             this.searchTypes = options.searchTypes;
+            this.comparisonModalCallback = options.comparisonModalCallback;
 
             this.model = new Backbone.Model({
                 // Is the saved search new, modified or up to date with the server?
@@ -179,6 +187,7 @@ define([
                 this.model.set(attributes);
             }, this);
 
+            this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
             this.listenTo(this.savedSearchModel, 'change', updateSavedState);
             this.listenTo(options.queryModel, 'change', updateSavedState);
 
@@ -204,10 +213,15 @@ define([
             this.updateForTitleEditState();
             this.updateLoading();
             this.createPopover();
+            this.updateCompareModalButton();
 
             this.$saveButtons = this.$('.save-button');
 
             this.updateSearchValidityUI();
+        },
+
+        updateCompareModalButton: function() {
+            this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
         },
 
         createPopover: function() {
@@ -254,15 +268,16 @@ define([
         },
 
         updateForTitleEditState: function() {
+            var searchType = this.model.get('searchType');
             var titleEditState = this.model.get('titleEditState');
 
             if (this.searchTypes[this.savedSearchModel.get('type')].isMutable) {
-                var editToggleQuery = TitleEditState.SAVE_AS === titleEditState && this.searchType === 'QUERY';
+                var editToggleQuery = TitleEditState.SAVE_AS === titleEditState && searchType === 'QUERY';
                 this.$('.show-save-as[data-search-type="QUERY"]')
                     .toggleClass('active', editToggleQuery)
                     .attr('aria-pressed', editToggleQuery);
 
-                var editToggleSnapshot = TitleEditState.SAVE_AS === titleEditState && this.searchType === 'SNAPSHOT';
+                var editToggleSnapshot = TitleEditState.SAVE_AS === titleEditState && searchType === 'SNAPSHOT';
                 this.$('.show-save-as[data-search-type="SNAPSHOT"]')
                     .toggleClass('active', editToggleSnapshot)
                     .attr('aria-pressed', editToggleSnapshot);
@@ -285,7 +300,6 @@ define([
                     saveCallback: _.bind(function(newAttributes, success, error) {
                         var savedState = this.model.get('savedState');
                         var titleEditState = this.model.get('titleEditState');
-                        var searchType = this.searchType;
 
                         var attributes = _.extend(newAttributes, 
                             {type: searchType}, 

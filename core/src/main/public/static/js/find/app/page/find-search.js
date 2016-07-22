@@ -39,7 +39,7 @@ define([
     'use strict';
 
     var reducedClasses = 'reverse-animated-container col-md-offset-1 col-lg-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8';
-    var expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-3 col-lg-offset-3 col-md-6 col-lg-6 col-xs-12 col-sm-12';
+    var expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-3 col-lg-offset-3 col-md-6 col-lg-6 col-xs-9 col-sm-9';
     var QUERY_TEXT_MODEL_ATTRIBUTES = ['inputText', 'relatedConcepts'];
 
     var html = _.template(template)({i18n: i18n});
@@ -399,7 +399,8 @@ define([
                             savedSearchModel: savedSearchModel,
                             searchCollections: this.searchCollections,
                             searchTypes: this.searchTypes,
-                            selectedTabModel: this.selectedTabModel
+                            selectedTabModel: this.selectedTabModel                            
+                            
                         }, this.serviceViewOptions()))
                     };
 

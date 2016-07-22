@@ -23,4 +23,6 @@ public interface FindConfig {
 
     Set<ParametricDisplayValues> getParametricDisplayValues();
 
+    Integer getTopicMapMaxResults();
+
 }

@@ -7,6 +7,10 @@ html, body {
     min-width: 0;
 }
 
+body {
+    background-color: #fff;
+}
+
 .body, .header, .find-pages-container {
     min-width: 640px;
 }
@@ -23,6 +27,15 @@ html, body {
 
 .numeric-parametric-inputs {
     min-height: 18px;
+}
+
+.numeric-parametric-chart-row,
+.numeric-parametric-chart-row .chart {
+    height: 110px;
+}
+
+.chart-selection-enabled {
+    cursor: crosshair;
 }
 
 .date input {
@@ -333,7 +346,7 @@ fieldset.radio-fieldset > label {
 }
 
 .side-container {
-    background-color: #E2E2E2;
+    background-color: #efefef;
     width: 20%;
     overflow-y: auto;
     padding: 10px 15px;
@@ -384,15 +397,47 @@ fieldset.radio-fieldset > label {
 }
 
 .middle-container.middle-container-with-time-bar .middle-container-contents {
-    /* Subtract size of time bar */
-    height: calc(100% - 230px);
+    /* Subtract size of time bar and collapse icon */
+    height: calc(100% - 240px);
+}
+
+.clickable-widget {
+    border: 2px solid #efefef;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.highlighted-widget .clickable-widget {
+    background-color: #ececec;
+    border: 2px solid #dadada;
+}
+
+.middle-container-time-bar-content {
+    height: 190px;
+    margin: 0;
+    padding-top: 10px;
+    background-color: rgba(239, 239, 239, 0.46);
+    border-top: 1px solid #dfdfdf;
+}
+
+.time-bar-container-toggle {
+    height: 50px;
 }
 
 .middle-container-time-bar {
-    height: 230px;
-    padding: 10px;
-    background-color: rgba(242, 240, 240, 0.46);
-    border-top: 1px solid #dfdfdf;
+    background-color: #eaeaea;
+}
+
+.time-bar-container-icon {
+    display: inline-block;
+    margin: 15px 15px 0 0;
+    float: right;
+}
+
+.time-bar-container-toggle h4.time-bar-header {
+    display: inline-block;
+    width: auto;
+    margin: 15px 0 0 15px;
 }
 
 .middle-container h4 {
@@ -452,7 +497,7 @@ fieldset.radio-fieldset > label {
 }
 
 .search-tabs-container .nav-tabs > li.active > a {
-    background-color: #e2e2e2;
+    background-color: #efefef;
 }
 
 .search-tab-title i {
@@ -622,6 +667,10 @@ input.find-input {
 
 .direct-access-title:hover {
     color: #035b44;
+}
+
+.document-detail-mode .main-results-container {
+    cursor: pointer;
 }
 
 .preview-mode .popover {
@@ -906,11 +955,14 @@ input.find-input {
 
 .popover-content a {
     margin:0;
-    font-weight: 700;
+}
+
+.results-popover-title {
+    font-family: Metric-Semibold;
 }
 
 .search-text {
-    font-family: Metric-Bold;
+    font-family: Metric-Semibold;
 }
 
 .also-searching-for {
@@ -1061,7 +1113,7 @@ input.find-input {
 }
 
 .search-options-container {
-    background-color: #e2e2e2;
+    background-color: #efefef;
 }
 
 .search-title-form .radio-inline,
@@ -1101,6 +1153,27 @@ input.find-input {
 .find-navbar .settings-logout a:focus,
 .find-navbar .settings-logout a:hover {
     background-color: #949494;
+}
+
+@media (max-width: 767px) {
+    .navbar-nav .open .dropdown-menu {
+        background-color: #fff;
+    }
+}
+
+@media (max-width: 767px) {
+    .navbar .navbar-nav .open .dropdown-menu > .active > a,
+    .navbar .navbar-nav .open .dropdown-menu > .active > a:hover{
+        background-color: #425563;
+        background-image: none;
+    }
+}
+
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+    background-color: #425563;
+    background-image: none;
 }
 
 .find-navbar .settings-logout-icon {
@@ -1194,10 +1267,12 @@ input:-moz-placeholder::before {
 /*TODO use bootstrap theme customiser for these */
 .popover {
     border-radius: 0;
+    font-family: Metric;
 }
 
 .popover-content p {
-    font-size: 12px;
+    font-size: 14px;
+    line-height: normal;
 }
 
 .popover-content {
@@ -1302,21 +1377,6 @@ input:-moz-placeholder::before {
 
 .label-white.border {
     border: 1px solid #e7eaec;
-}
-
-/* Result entity highlighting */
-.highlighted-entity-text {
-    background-color: #6b7984;
-    padding: 0 8px;
-    display: none;
-}
-
-.highlight-entities .highlighted-entity-text {
-    display: inherit;
-}
-
-.highlight-entities .plain-entity-text {
-    display: none;
 }
 
 .parametric-field-label {
@@ -1433,7 +1493,7 @@ input:-moz-placeholder::before {
 }
 
 .category-input {
-    border-top: 1px solid #C9C9C9;
+    border-top: 1px solid #e5e5e5;
     border-bottom: none !important;
 }
 
@@ -1531,31 +1591,46 @@ input:-moz-placeholder::before {
     padding-left: 3px;
 }
 
-.topic-map-comparison-selection, .topic-map-comparison-container {
-    padding-left: 40px;
+.first-select-label .fa-map-marker {
+    color: #70AD25;
+}
+
+.both-select-label .fa-map-marker {
+    color: #F0932F;
+}
+
+.second-select-label .fa-map-marker {
+    color: #D33D2A;
+}
+
+.comparison-view.results-view-container{
+    padding: 0 25px;
 }
 
 .both-location-cluster {
-    background-color: rgba(161, 51, 54, 0.6);
+    background-color: rgba(255, 192, 35, 0.6);
 }
+
 .both-location-cluster div {
-    background-color: rgb(161, 51, 54);
+    background-color: #F0932F;
     color: white;
 }
 
 .first-location-cluster {
-    background-color: rgba(91, 57, 107, 0.6);
+    background-color: rgba(132, 197, 55, 0.6);
 }
+
 .first-location-cluster div {
-    background-color: rgb(91, 57, 107);
+    background-color: #70AD25;
     color: white;
 }
 
 .second-location-cluster {
-    background-color: rgba(67, 105, 119, 0.6);
+    background-color: rgba(225, 97, 85, 0.6);
 }
+
 .second-location-cluster div {
-    background-color: rgb(67, 105, 119);
+    background-color: #D33D2A;
     color: white;
 }
 

@@ -46,8 +46,4 @@ public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/static-" + commit + "/**").addResourceLocations("classpath:/static/");
     }
 
-    @Override
-    public void addViewControllers(final ViewControllerRegistry registry) {
-        registry.addViewController("/configError").setViewName("configError");
-    }
 }

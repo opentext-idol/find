@@ -7,93 +7,80 @@ define([
     'backbone',
     'underscore',
     'jquery',
-    'find/app/vent',
     'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
-    'find/app/model/bucketed-parametric-collection',
-    'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/search/filters/parametric/numeric-date-parametric-field-view.html'
-], function(Backbone, _, $, vent, i18n, NumericParametricFieldView, BucketedParametricCollection, loadingSpinnerTemplate, numericDateTemplate) {
+    'parametric-refinement/prettify-field-name',
+    'text!find/templates/app/page/search/time-bar-view.html'
+], function(Backbone, _, $, i18n, NumericParametricFieldView, prettifyFieldName, timeBarTemplate) {
 
-    var FIELD_NAME = 'autn_date';
     var PIXELS_PER_BUCKET = 20;
 
+    var graphConfiguration = {
+        date: {
+            collectionName: 'dateParametricFieldsCollection',
+            template: NumericParametricFieldView.dateInputTemplate,
+            formatting: NumericParametricFieldView.dateFormatting
+        },
+        numeric: {
+            collectionName: 'numericParametricFieldsCollection',
+            template: NumericParametricFieldView.numericInputTemplate,
+            formatting: NumericParametricFieldView.defaultFormatting
+        }
+    };
+
     return Backbone.View.extend({
-        graphView: null,
-        loadingSpinnerHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
-        errorHtml: _.template('<p class="p-t-xl text-center"><%-i18n["search.timeBar.error"]%></p>')({i18n: i18n}),
+        className: 'middle-container-time-bar',
+        template: _.template(timeBarTemplate),
+
+        events: {
+            'click .time-bar-container-icon': function() {
+                this.timeBarModel.set({
+                    graphedFieldName: null,
+                    graphedDataType: null
+                });
+            }
+        },
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
+            this.timeBarModel = options.timeBarModel;
 
-            this.listenTo(vent, 'vent:resize', this.render);
-            this.listenTo(options.previewModeModel, 'change:document', this.render);
+            this.fieldName = this.timeBarModel.get('graphedFieldName');
+            this.dataType = this.timeBarModel.get('graphedDataType');
+
+            var currentGraphConfig = graphConfiguration[this.dataType];
+            var fieldModel = options[currentGraphConfig.collectionName].get(this.fieldName);
+
+            this.graphView = new NumericParametricFieldView({
+                buttonsEnabled: true,
+                pixelsPerBucket: PIXELS_PER_BUCKET,
+                queryModel: this.queryModel,
+                selectionEnabled: true,
+                selectedParametricValues: this.selectedParametricValues,
+                zoomEnabled: true,
+                dataType: this.dataType,
+                numericRestriction: this.dataType === 'numeric',
+                model: fieldModel,
+                formatting: currentGraphConfig.formatting,
+                inputTemplate: currentGraphConfig.template
+            });
+
+            this.listenTo(options.previewModeModel, 'change:document', this.graphView.render.bind(this.graphView));
         },
 
         render: function() {
-            this.destroyGraph();
-            this.abortActiveRequest();
+            this.$el.html(this.template({
+                fieldName: prettifyFieldName(this.fieldName)
+            }));
 
-            if (this.bucketModel) {
-                this.stopListening(this.bucketModel);
-            }
-
-            var $loadingSpinner = $(this.loadingSpinnerHtml);
-            this.$el.empty().append($loadingSpinner);
-
-            this.bucketModel = new BucketedParametricCollection.Model({id: FIELD_NAME, name: FIELD_NAME});
-
-            this.activeRequest = this.bucketModel
-                .fetch({
-                    data: {
-                        targetNumberOfBuckets: Math.floor(this.$el.width() / PIXELS_PER_BUCKET)
-                    }
-                })
-                .fail(function() {
-                    this.$el.append(this.errorHtml);
-                }.bind(this))
-                .done(function() {
-                    this.graphView = new NumericParametricFieldView({
-                        buttonsEnabled: true,
-                        pixelsPerBucket: PIXELS_PER_BUCKET,
-                        queryModel: this.queryModel,
-                        selectionEnabled: true,
-                        selectedParametricValues: this.selectedParametricValues,
-                        template: numericDateTemplate,
-                        zoomEnabled: true,
-                        model: this.bucketModel,
-                        formatting: NumericParametricFieldView.dateFormatting,
-                        viewWidth: this.$el.width()
-                    });
-
-                    this.$el.append(this.graphView.$el);
-                    this.graphView.render();
-                    this.listenTo(this.bucketModel, 'change', this.graphView.render.bind(this.graphView));
-                }.bind(this))
-                .always(function() {
-                    $loadingSpinner.remove();
-                }.bind(this));
-        },
-
-        abortActiveRequest: function() {
-            if (this.activeRequest) {
-                this.activeRequest.abort();
-            }
-        },
-
-        destroyGraph: function() {
-            if (this.graphView) {
-                this.graphView.remove();
-                this.graphView = null;
-            }
+            this.$('.middle-container-time-bar-content').append(this.graphView.$el);
+            this.graphView.render();
         },
 
         remove: function() {
-            this.abortActiveRequest();
-            this.destroyGraph();
+            this.graphView.remove();
             Backbone.View.prototype.remove.call(this);
         }
     });
-
 });

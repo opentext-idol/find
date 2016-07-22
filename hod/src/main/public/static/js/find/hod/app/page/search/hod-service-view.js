@@ -26,44 +26,42 @@ define([
 
         initialize: function(options) {
             ServiceView.prototype.initialize.call(this, options);
-            addChangeListener(this, this.queryModel, ['queryText', 'fieldText', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchEntities);
-            addChangeListener(this, this.queryModel, ['indexes'], _.bind(function () {
+            addChangeListener(this, this.queryModel, ['queryText', 'fieldText', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchData);
+            addChangeListener(this, this.queryModel, ['indexes'], function () {
                 this.fetchEntities();
                 this.parametricFieldsCollection.reset();
                 this.numericParametricFieldsCollection.reset();
                 this.dateParametricFieldsCollection.reset();
                 if (this.queryModel.get('indexes').length !== 0) {
-                    this.fetchParametricFields(this.parametricFieldsCollection, this.parametricCollection);
+                    this.fetchParametricFields(this.parametricFieldsCollection, _.bind(this.fetchParametricValueCollections, this));
                     this.fetchParametricFields(this.numericParametricFieldsCollection);
                     this.fetchParametricFields(this.dateParametricFieldsCollection);
                 }
-            }, this));
+            });
         },
         
-        fetchParametricFields: function (fieldsCollection, valuesCollection) {
+        fetchParametricFields: function (fieldsCollection, callback) {
             if (this.queryModel.get('indexes').length > 0) {
                 fieldsCollection.fetch({
                     data: {
                         databases: this.queryModel.get('indexes')
                     },
                     success: _.bind(function () {
-                        if (valuesCollection) {
-                            this.fetchParametricValues(fieldsCollection, valuesCollection);
-                            // disabled until we support sunburst on HOD 
-                            //this.fetchRestrictedParametricCollection();
+                        if (callback) {
+                            callback();
                         }
                     }, this)
                 });
             }
         },
 
-        fetchParametricValues: function (fieldsCollection, valuesCollection) {
-            valuesCollection.reset();
-
+        fetchParametricValues: function () {
+            this.parametricCollection.reset();
+            
             if (this.queryModel.get('indexes').length !== 0) {
-                var fieldNames = fieldsCollection.pluck('id');
+                var fieldNames = this.parametricFieldsCollection.pluck('id');
                 if (fieldNames.length > 0) {
-                    valuesCollection.fetch({data: {
+                    this.parametricCollection.fetch({data: {
                         databases: this.queryModel.get('indexes'),
                         fieldNames: fieldNames
                     }});

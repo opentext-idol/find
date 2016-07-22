@@ -11,14 +11,22 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/idol/templates/comparison/map-comparison-view.html',
     'text!find/templates/app/page/search/results/map-popover.html',
+    'find/app/vent',
     'iCheck'
-], function (Backbone, ComparisonDocumentsCollection, stateTokenStrategy, MapView, FieldSelectionView, configuration, i18n, comparisonsI18n, searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate) {
+], function (Backbone, ComparisonDocumentsCollection, stateTokenStrategy, MapView, FieldSelectionView, configuration, i18n, comparisonsI18n, searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate, vent) {
 
     return Backbone.View.extend({
         className: 'service-view-container',
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
         popoverTemplate: _.template(popoverTemplate),
+        
+        events: {
+            'click .map-popup-title': function (e) {
+                var allCollections = _.chain(this.comparisons).pluck('collection').pluck('models').flatten().value();
+                vent.navigateToDetailRoute(_.findWhere(allCollections, {cid: e.currentTarget.getAttribute('cid')}));
+            }
+        },
 
         initialize: function (options) {
             this.searchModels = options.searchModels;
@@ -27,21 +35,21 @@ define([
 
             this.mapView = new MapView({addControl: true});
 
-            var bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
             var firstQueryModel = this.createQueryModel(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
+            var bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
             var secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
 
-            this.bothSelectionView = new FieldSelectionView({
-                model: bothQueryModel,
-                name: 'BothFieldSelectionView',
+            this.firstSelectionView = new FieldSelectionView({
+                model: firstQueryModel,
+                name: 'FirstFieldSelectionView',
                 width: '100%',
                 fields: _.pluck(this.locationFields, 'displayName'),
                 allowEmpty: false
             });
 
-            this.firstSelectionView = new FieldSelectionView({
-                model: firstQueryModel,
-                name: 'FirstFieldSelectionView',
+            this.bothSelectionView = new FieldSelectionView({
+                model: bothQueryModel,
+                name: 'BothFieldSelectionView',
                 width: '100%',
                 fields: _.pluck(this.locationFields, 'displayName'),
                 allowEmpty: false
@@ -58,22 +66,22 @@ define([
 
             this.comparisons = [
                 {
-                    name: comparisonsI18n['list.title.both'],
-                    collection: new ComparisonDocumentsCollection(),
-                    layer: this.mapView.createLayer({
-                        iconCreateFunction: this.mapView.getDivIconCreateFunction('both-location-cluster')
-                    }),
-                    model: bothQueryModel,
-                    color: 'darkred'
-                },
-                {
                     name: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
                     collection: new ComparisonDocumentsCollection(),
                     layer: this.mapView.createLayer({
                         iconCreateFunction: this.mapView.getDivIconCreateFunction('first-location-cluster')
                     }),
                     model: firstQueryModel,
-                    color: 'darkpurple'
+                    color: 'green'
+                },
+                {
+                    name: comparisonsI18n['list.title.both'],
+                    collection: new ComparisonDocumentsCollection(),
+                    layer: this.mapView.createLayer({
+                        iconCreateFunction: this.mapView.getDivIconCreateFunction('both-location-cluster')
+                    }),
+                    model: bothQueryModel,
+                    color: 'orange'
                 },
                 {
                     name: comparisonsI18n['list.title.second'](this.searchModels.second.get('title')),
@@ -82,7 +90,7 @@ define([
                         iconCreateFunction: this.mapView.getDivIconCreateFunction('second-location-cluster')
                     }),
                     model: secondQueryModel,
-                    color: 'cadetblue'
+                    color: 'red'
                 }
             ];
 
@@ -106,8 +114,8 @@ define([
             this.$('.both-select-label').append(this.bothSelectionView.$el);
             this.$('.second-select-label').append(this.secondSelectionView.$el);
 
-            this.bothSelectionView.render();
             this.firstSelectionView.render();
+            this.bothSelectionView.render();
             this.secondSelectionView.render();
 
             this.mapView.setElement(this.$('.location-comparison-map')).render();
@@ -148,8 +156,8 @@ define([
                         var popover = this.popoverTemplate({
                             title: title,
                             i18n: i18n,
-                            latitude: location.latitude,
-                            longitude: location.longitude
+                            summary: model.get('summary'),
+                            cidForClickRouting: model.cid
                         });
                         var icon = this.mapView.getIcon('hp-record', 'white', comparison.color);
                         var marker = this.mapView.getMarker(location.latitude, location.longitude, icon, title, popover);
@@ -233,7 +241,7 @@ define([
                     max_results: length + this.resultsStep,
                     field_text: newFieldText,
                     sort: 'relevance',
-                    summary: 'off'
+                    summary: 'context'
                 }, stateTokenStrategy.requestParams(queryModel)),
                 remove: false,
                 reset: false

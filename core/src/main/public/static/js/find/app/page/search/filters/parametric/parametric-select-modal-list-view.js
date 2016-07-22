@@ -7,14 +7,15 @@ define([
     'text!find/templates/app/page/search/filters/parametric/parametric-select-modal-view.html',
     'iCheck'
 ], function(Backbone, $, _, ListView, ItemView, template) {
+    'use strict';
 
-    var increment = 30;
+    var INCREMENT = 30;
 
     function checkScroll() {
         var resultsPresent = this.fieldValues.size() > 0;
 
         if (resultsPresent && this.el.scrollTop + this.el.offsetHeight === this.el.scrollHeight) {
-            this.shown += increment;
+            this.shown += INCREMENT;
             this.filteredCollection.add(this.getModels());
         }
     }
@@ -22,7 +23,7 @@ define([
     return Backbone.View.extend({
         template: _.template(template),
         className: 'full-height',
-        shown: increment,
+        shown: INCREMENT,
 
         events: {
             'ifClicked .parametric-field-label': function(e) {
@@ -46,8 +47,15 @@ define([
         initialize: function(options) {
             this.parametricDisplayCollection = options.parametricDisplayCollection;
             this.selectCollection = options.selectCollection;
-            this.fieldValues = options.field.fieldValues;
             this.filteredCollection = new Backbone.Collection();
+
+            this.fieldValues = new Backbone.Collection(options.field.fieldValues.toJSON().concat(_.chain(options.allValues)
+                .reject(function(model) {
+                    return options.field.fieldValues.get(model.id)
+                }, this)
+                .sortBy('id')
+                .value()));
+
             this.listView = new ListView({
                 collection: this.filteredCollection,
                 ItemView: ItemView,
@@ -55,7 +63,9 @@ define([
                     field: options.field
                 }
             });
+
             this.checkScroll = checkScroll.bind(this);
+
             this.filteredCollection.add(this.getModels());
         },
 
@@ -67,9 +77,7 @@ define([
         },
 
         getModels: function() {
-            return this.fieldValues.filter(function(field, index) {
-                return index < this.shown && index >= this.filteredCollection.length
-            }, this);
+            return this.fieldValues.slice(this.filteredCollection.length, this.shown);
         }
     });
 });

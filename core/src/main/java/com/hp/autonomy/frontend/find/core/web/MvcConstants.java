@@ -17,7 +17,9 @@ public enum MvcConstants {
     MIN_SCORE("minScore"),
     FIELDS_INFO("fieldsInfo"),
     DIRECT_ACCESS_LINK("directAccessLink"),
-    PARAMETRIC_DISPLAY_VALUES("parametricDisplayValues");
+    PARAMETRIC_DISPLAY_VALUES("parametricDisplayValues"),
+    FIELDS_INFO("fieldsInfo"),
+    TOPIC_MAP_MAX_RESULTS("topicMapMaxResults");
 
     private final String value;
 

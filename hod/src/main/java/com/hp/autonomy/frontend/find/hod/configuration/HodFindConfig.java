@@ -49,6 +49,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private final Integer minScore;
     private final Boolean directAccessLink;
     private final Set<ParametricDisplayValues> parametricDisplayValues;
+    private final Integer topicMapMaxResults;
 
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
@@ -66,6 +67,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         minScore = builder.minScore;
         directAccessLink = builder.directAccessLink;
         parametricDisplayValues = builder.parametricDisplayValues;
+        topicMapMaxResults = builder.topicMapMaxResults;
     }
 
     @SuppressWarnings("OverlyComplexMethod")
@@ -84,6 +86,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
                 .setMinScore(minScore == null ? config.minScore : minScore)
                 .setDirectAccessLink(directAccessLink == null ? config.directAccessLink : directAccessLink)
                 .setParametricDisplayValues(parametricDisplayValues == null ? config.parametricDisplayValues : parametricDisplayValues)
+                .setTopicMapMaxResults(topicMapMaxResults == null ? config.topicMapMaxResults : topicMapMaxResults)
                 .build() : this;
     }
 
@@ -178,6 +181,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         private Integer minScore;
         private Boolean directAccessLink;
         private Set<ParametricDisplayValues> parametricDisplayValues;
+        private Integer topicMapMaxResults;
 
         public Builder(final HodFindConfig config) {
             login = config.login;
@@ -192,6 +196,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
             minScore = config.minScore;
             directAccessLink = config.directAccessLink;
             parametricDisplayValues = config.parametricDisplayValues;
+            topicMapMaxResults = config.topicMapMaxResults;
         }
 
         public HodFindConfig build() {

@@ -3,6 +3,7 @@ define([
     'jquery',
     'text!find/templates/app/page/search/filters/parametric/parametric-value-view.html'
 ], function(Backbone, $, template) {
+    'use strict';
 
     return Backbone.View.extend({
         className: 'parametric-value-element selectable-table-item clickable',
@@ -20,15 +21,26 @@ define([
             this.$count = this.$('.parametric-value-count');
             this.$check = this.$('.parametric-value-icon');
 
+            this.updateText();
             this.updateCount();
             this.updateSelected();
         },
 
-        updateCount: function() {
-            $('.tooltip').remove();
+        updateText: function() {
+            this.$text.tooltip('destroy');
 
-            if (this.$text) {
-                var name = this.model.get('displayName') || this.model.id;
+            var name = this.model.get('displayName') || this.model.id;
+            this.$name.text(name);
+
+            this.$text.tooltip({
+                placement: 'top',
+                title: name,
+                container: 'body'
+            });
+        },
+
+        updateCount: function() {
+            if (this.$count) {
                 var count = this.model.get('count');
 
                 if (count !== null) {
@@ -36,23 +48,19 @@ define([
                 } else {
                     this.$count.text('');
                 }
-
-                this.$name.text(name);
-
-                this.$text.tooltip({
-                    placement: 'top',
-                    title: name,
-                    container: 'body'
-                });
             }
-
-
         },
 
         updateSelected: function() {
             if (this.$check) {
                 this.$check.toggleClass('hide', !this.model.get('selected'));
             }
+        },
+
+        remove: function() {
+            this.$text.tooltip('destroy');
+
+            Backbone.View.prototype.remove.apply(this, arguments);
         }
     });
 

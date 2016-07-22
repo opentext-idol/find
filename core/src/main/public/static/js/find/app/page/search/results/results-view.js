@@ -49,30 +49,45 @@ define([
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
 
-        events: function() {
-            var events = {
-                'click .highlighted-entity-text': function(e) {
-                    e.stopPropagation();
+        events: {
+            'click .preview-mode [data-cid]': function(e) {
+                var $target = $(e.currentTarget);
 
-                    var $target = $(e.target);
-                    var entity = $target.attr('data-entity-text');
-                    this.relatedConceptsClickHandler([entity]);
-                },
-                'click .similar-documents-trigger': function(event) {
-                    event.stopPropagation();
-                    var cid = $(event.target).closest('[data-cid]').data('cid');
-                    var documentModel = this.documentsCollection.get(cid);
-                    if (!documentModel){
-                        documentModel = this.promotionsCollection.get(cid);
+                if ($target.hasClass('selected-document')) {
+                    // disable preview mode
+                    this.previewModeModel.set({document: null});
+                } else {
+                    //enable/choose another preview view
+                    var cid = $target.data('cid');
+                    var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
+                    var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                    var model = collection.get(cid);
+                    this.previewModeModel.set({document: model});
+
+                    if (!isPromotion) {
+                        events().preview(collection.indexOf(model) + 1);
                     }
-                    vent.navigateToSuggestRoute(documentModel);
                 }
-            };
+            },
 
-            var selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]';
-            events['click ' + selector] = 'openPreview';
-
-            return events;
+            // ToDo : Merge with changes made in FIND-229
+            'click .document-detail-mode [data-cid]': function(e) {
+                var $target = $(e.currentTarget);
+                var cid = $target.data('cid');
+                var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
+                var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                var model = collection.get(cid);
+                vent.navigateToDetailRoute(model);
+            },
+            'click .similar-documents-trigger': function(event) {
+                event.stopPropagation();
+                var cid = $(event.target).closest('[data-cid]').data('cid');
+                var documentModel = this.documentsCollection.get(cid);
+                if (!documentModel){
+                    documentModel = this.promotionsCollection.get(cid);
+                }
+                vent.navigateToSuggestRoute(documentModel);
+            }
         },
 
         initialize: function(options) {
@@ -91,22 +106,11 @@ define([
             if (this.indexesCollection) {
                 this.selectedIndexesCollection = options.queryState.selectedIndexes;
             }
-
-            this.entityCollection = options.entityCollection;
-
+            
             this.resultRenderer = new ResultRenderer({
-                config: resultsRendererConfig,
-                entityCollection: options.entityCollection
+                config: resultsRendererConfig
             });
-
-            if (this.entityCollection) {
-                // Only required if we are highlighting entities
-                this.queryTextModel = options.queryState.queryTextModel;
-                this.highlightModel = options.highlightModel;
-                this.listenTo(this.highlightModel, 'change:highlightEntities', this.updateEntityHighlighting);
-                this.relatedConceptsClickHandler = options.relatedConceptsClickHandler;
-            }
-
+            
             if (this.showPromotions) {
                 this.promotionsCollection = new PromotionsCollection();
             }
@@ -212,41 +216,17 @@ define([
                 this.$('.main-results-content .results').append(this.handleError(i18n['app.feature.search'], xhr));
             });
 
-            if (this.entityCollection) {
-                this.listenTo(this.entityCollection, 'reset', function() {
-                    if (!this.entityCollection.isEmpty()) {
-                        this.documentsCollection.each(function(document) {
-                            var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
-
-                            this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
-                        }, this);
-
-                        if (this.showPromotions) {
-                            this.promotionsCollection.each(function(document) {
-                                var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
-                                this.$('[data-cid="' + document.cid + '"] .result-summary').html(summary);
-                            }, this);
-                        }
-                    }
-                });
-            }
 
             if (this.documentsCollection.isEmpty()) {
                 this.refreshResults();
             }
-
-            if (this.entityCollection) {
-                this.updateEntityHighlighting();
-            }
-
+            
             if (this.previewModeModel) {
                 this.$('.main-results-content').addClass('preview-mode');
                 this.updateSelectedDocument();
+            } else {
+                this.$('.main-results-content').addClass('document-detail-mode');
             }
-        },
-
-        updateEntityHighlighting: function() {
-            this.$el.toggleClass('highlight-entities', this.highlightModel.get('highlightEntities'));
         },
 
         updateSelectedDocument: function() {

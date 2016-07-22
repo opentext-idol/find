@@ -9,9 +9,10 @@ define([
     'find/app/model/documents-collection',
     'text!find/templates/app/page/search/results/map-results-view.html',
     'text!find/templates/app/page/search/results/map-popover.html',
-    'text!find/templates/app/page/loading-spinner.html'
+    'text!find/templates/app/page/loading-spinner.html',
+    'find/app/vent'
 
-], function (Backbone, _, $, configuration, FieldSelectionView, MapView, i18n, DocumentsCollection, template, popoverTemplate, loadingSpinnerTemplate) {
+], function (Backbone, _, $, configuration, FieldSelectionView, MapView, i18n, DocumentsCollection, template, popoverTemplate, loadingSpinnerTemplate, vent) {
 
     'use strict';
 
@@ -24,6 +25,9 @@ define([
         events: {
             'click .map-show-more': function() {
                 this.fetchDocumentCollection()
+            },
+            'click .map-popup-title': function (e) {
+                vent.navigateToDetailRoute(this.documentsCollection.get(e.currentTarget.getAttribute('cid')));
             }
         },
 
@@ -61,8 +65,8 @@ define([
                     var popover = this.popoverTemplate({
                         title: title,
                         i18n: i18n,
-                        latitude: latitude,
-                        longitude: longitude
+                        summary: model.get('summary'),
+                        cidForClickRouting: model.cid
                     });
                     var marker = this.mapResultsView.getMarker(latitude, longitude, this.getIcon(), title, popover);
                     this.markers.push(marker);
@@ -159,7 +163,7 @@ define([
                     min_date: this.queryModel.get('minDate'),
                     max_date: this.queryModel.get('maxDate'),
                     sort: 'relevance',
-                    summary: 'off'
+                    summary: 'context'
                 },
                 remove: false,
                 reset: false

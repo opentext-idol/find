@@ -65,8 +65,8 @@ define([
                     field: model.get('field'),
                     min: model.get('range')[0],
                     max: model.get('range')[1],
-                    type: model.get('numeric') ? 'Numeric' : 'Date'
-                })
+                    type: model.get('dataType') === 'numeric' ? 'Numeric' : 'Date'
+                });
             }
         });
 
@@ -98,7 +98,7 @@ define([
             } else {
                 return equalityTest(optionalItem1, optionalItem2);
             }
-        }
+        };
     }
 
     var arrayEqualityPredicate = _.partial(arraysEqual, _, _, _.isEqual);
@@ -159,7 +159,7 @@ define([
             var tokensByType = _.chain(response.stateTokens)
                 .groupBy('type')
                 .mapObject(function(arr) {
-                    return _.pluck(arr, 'stateToken')
+                    return _.pluck(arr, 'stateToken');
                 })
                 .value();
             
@@ -175,6 +175,7 @@ define([
         destroy: function(options) {
             return Backbone.Model.prototype.destroy.call(this, _.extend(options || options, {
                 // The server returns an empty body (ie: not JSON)
+                // TODO: check for collision of names
                 dataType: 'text'
             }));
         },
@@ -229,7 +230,7 @@ define([
         },
 
         toMinScoreModelAttributes: function() {
-            return this.pick('minScore')
+            return this.pick('minScore');
         },
 
         toSelectedParametricValues: function() {
@@ -237,8 +238,10 @@ define([
                 return {
                     field: range.field,
                     range: [range.min, range.max],
+                    dataType: range.type === 'Numeric' ? 'numeric' : 'date',
+                    // TODO: Replace numeric with the more expressive dataType
                     numeric: range.type === 'Numeric'
-                }
+                };
             }));
         },
 

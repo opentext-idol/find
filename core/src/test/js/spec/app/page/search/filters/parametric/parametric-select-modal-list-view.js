@@ -3,9 +3,8 @@ define([
     'backbone'
 ], function(SelectModalListView, Backbone) {
 
-    describe('Select field modal list view', function() {
+    describe('Parametric Select Modal list view', function() {
         beforeEach(function() {
-
             this.selectCollection = new Backbone.Collection();
 
             var field = new Backbone.Model({
@@ -42,24 +41,37 @@ define([
             this.view = new SelectModalListView({
                 parametricDisplayCollection: this.parametricDisplayCollection,
                 selectCollection: this.selectCollection,
-                field: field
+                field: field,
+                allValues: [
+                    { id: 'Leonardo' },
+                    { id: 'Michelangelo' },
+                    { id: 'Splinter' },
+                    { id: 'Raphael' },
+                    { id: 'Donatello' },
+                    { id: 'Shredder' },
+                    { id: 'Krang' }
+                ]
             });
 
             this.view.render();
         });
 
-        it('should create 4 checkboxes', function() {
-            expect(this.view.$('.i-check').length).toBe(4);
+        it('should create 7 checkboxes', function() {
+            expect(this.view.$('.i-check').length).toBe(7);
         });
 
         it('should display the counts correctly', function() {
-            expect(this.view.$('label')[0]).toContainText('Leonardo');
-            expect(this.view.$('label')[1]).toContainText('Michelangelo');
-            expect(this.view.$('label')[2]).toContainText('Raphael');
-            expect(this.view.$('label')[3]).toContainText('Donatello');
+            var $labels = this.view.$('label');
+            expect($labels[0]).toContainText('Leonardo (100)');
+            expect($labels[1]).toContainText('Michelangelo (75)');
+            expect($labels[2]).toContainText('Raphael (50)');
+            expect($labels[3]).toContainText('Donatello (1)');
+            expect($labels[4]).toContainText('Krang (0)');
+            expect($labels[5]).toContainText('Shredder (0)');
+            expect($labels[6]).toContainText('Splinter (0)');
         });
 
-        it('should have two selected and two unselected', function() {
+        it('should have two selected', function() {
             expect(this.view.$('input[checked]').length).toBe(2);
         });
 

@@ -20,8 +20,9 @@ define([
 
             this.parametricSelectView = new ParametricSelectView({
                 collection: options.collection,
-                parametricDisplayCollection: this.parametricDisplayCollection,
                 currentFieldGroup: options.currentFieldGroup,
+                parametricCollection: options.parametricCollection,
+                parametricDisplayCollection: this.parametricDisplayCollection,
                 selectCollection: this.selectCollection
             });
 

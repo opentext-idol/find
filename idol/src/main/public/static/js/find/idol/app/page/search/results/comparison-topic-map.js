@@ -51,24 +51,13 @@ define([
             var resultsViews = [
                 {
                     Constructor: TopicMapView,
-                    id: 'both',
-                    uniqueId: _.uniqueId('results-view-item-'),
-                    constructorArguments: {
-                        clickHandler: _.noop,
-                        entityCollection: bothCollection
-                    },
-                    selector: {
-                        displayName: comparisonsI18n['list.title.both'],
-                        icon: 'hp-divide-in-center'
-                    }
-                },
-                {
-                    Constructor: TopicMapView,
                     id: 'first',
                     uniqueId: _.uniqueId('results-view-item-'),
                     constructorArguments: {
                         clickHandler: _.noop,
-                        entityCollection: firstCollection
+                        entityCollection: firstCollection,
+                        queryModel: firstQueryModel,
+                        type: 'COMPARISON'
                     },
                     selector: {
                         displayName: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
@@ -77,11 +66,28 @@ define([
                 },
                 {
                     Constructor: TopicMapView,
+                    id: 'both',
+                    uniqueId: _.uniqueId('results-view-item-'),
+                    constructorArguments: {
+                        clickHandler: _.noop,
+                        entityCollection: bothCollection,
+                        queryModel: bothQueryModel,
+                        type: 'COMPARISON'
+                    },
+                    selector: {
+                        displayName: comparisonsI18n['list.title.both'],
+                        icon: 'hp-divide-in-center'
+                    }
+                },
+                {
+                    Constructor: TopicMapView,
                     id: 'second',
                     uniqueId: _.uniqueId('results-view-item-'),
                     constructorArguments: {
                         clickHandler: _.noop,
-                        entityCollection: secondCollection
+                        entityCollection: secondCollection,
+                        queryModel: secondQueryModel,
+                        type: 'COMPARISON'
                     },
                     selector: {
                         displayName: comparisonsI18n['list.title.second'](this.searchModels.second.get('title')),

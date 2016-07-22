@@ -45,8 +45,8 @@ define([
                     identifier: 'second'
                 }));
 
-            this.$('.comparison-results-view-both').append(this.resultsLists.both.$el);
             this.$('.comparison-results-view-first').append(this.resultsLists.first.$el);
+            this.$('.comparison-results-view-both').append(this.resultsLists.both.$el);
             this.$('.comparison-results-view-second').append(this.resultsLists.second.$el);
 
             _.invoke(this.resultsLists, 'render');

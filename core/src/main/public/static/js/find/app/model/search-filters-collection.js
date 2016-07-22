@@ -91,7 +91,7 @@ define([
             return {
                 id: parametricFilterId(field),
                 field: field,
-                text: parametricFilterText(field, data.values, data.range ? [data.range] : [], data.numeric),
+                text: parametricFilterText(field, data.values, data.range ? [data.range] : [], data.dataType),                
                 type: FilterType.PARAMETRIC
             };
         });
@@ -109,7 +109,7 @@ define([
             this.selectedIndexesCollection = options.queryState.selectedIndexes;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
-            this.listenTo(this.selectedParametricValues, 'add remove', this.updateParametricSelection);
+            this.listenTo(this.selectedParametricValues, 'add remove change', this.updateParametricSelection);
             this.listenTo(this.selectedParametricValues, 'reset', this.resetParametricSelection);
             this.listenTo(this.selectedIndexesCollection, 'reset update', this.updateDatabases);
             this.listenTo(this.datesFilterModel, 'change', this.updateDateFilters);

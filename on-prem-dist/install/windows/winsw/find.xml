@@ -6,7 +6,7 @@
 <service>
     <id>%FIND_SERVICE_NAME%</id>
     <name>%FIND_SERVICE_NAME%</name>
-    <description>HPE BI for Human Information</description>
+    <description>HPE Find</description>
     <executable>java</executable>
     <arguments>-Dhp.find.home="%FIND_HOME_DIR%/" -Dserver.port=%FIND_PORT% -jar "%FIND_INSTALL_DIR%"/find.war</arguments>
     <logmode>rotate</logmode>

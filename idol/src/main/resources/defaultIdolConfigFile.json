@@ -114,6 +114,7 @@
       "displayName": "Place Elevation (ft)"
     }
   ],
+  "topicMapMaxResults": 1000,
   "fieldsInfo": {
     "contentType": {
       "names": [

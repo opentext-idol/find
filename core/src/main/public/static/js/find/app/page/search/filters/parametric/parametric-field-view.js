@@ -9,6 +9,8 @@ define([
     'find/app/page/search/filters/parametric/parametric-value-view'
 ], function(Backbone, _, $, i18n, ListView, Collapsible, ParametricModal, ValueView) {
 
+    var MAX_SIZE = 5;
+
     var ValuesView = Backbone.View.extend({
         className: 'table parametric-fields-table',
         tagName: 'table',
@@ -16,8 +18,9 @@ define([
         initialize: function() {
             this.listView = new ListView({
                 collection: this.collection,
-                tagName: 'tbody',
                 ItemView: ValueView,
+                maxSize: MAX_SIZE,
+                tagName: 'tbody',
                 collectionChangeEvents: {
                     count: 'updateCount',
                     selected: 'updateSelected'
@@ -38,14 +41,16 @@ define([
     return Backbone.View.extend({
         className: 'animated fadeIn',
         seeAllButtonTemplate: _.template('<tr class="show-all clickable"><td></td><td> <span class="toggle-more-text text-muted"><%-i18n["app.seeAll"]%></span></td></tr>'),
+        subtitleTemplate: _.template('<span class="selection-length"><%-length%></span> <%-i18n["app.selected"]%> <i class="hp-icon hp-warning selected-warning hidden"></i>'),
 
         events: {
-            'click .show-all': function(e) {
+            'click .show-all': function() {
                 new ParametricModal({
                     collection: this.model.fieldValues,
+                    currentFieldGroup: this.model.id,
+                    parametricCollection: this.parametricCollection,
                     parametricDisplayCollection: this.parametricDisplayCollection,
-                    selectedParametricValues: this.selectedParametricValues,
-                    currentFieldGroup: this.model.id
+                    selectedParametricValues: this.selectedParametricValues
                 });
             }
         },
@@ -55,43 +60,77 @@ define([
             this.$el.attr('data-field-display-name', this.model.get('displayName'));
             this.parametricDisplayCollection = options.parametricDisplayCollection;
             this.selectedParametricValues = options.selectedParametricValues;
+            this.parametricCollection = options.parametricCollection;
 
             this.collapsible = new Collapsible({
                 title: this.model.get('displayName') + ' (' + this.model.fieldValues.length +')',
-                subtitle: this.getFieldSelectedValuesLength() + ' ' + i18n['app.selected'],
                 view: new ValuesView({collection: this.model.fieldValues}),
-                collapsed: false
+                collapsed: true,
+                subtitle: this.subtitleTemplate({
+                    i18n: i18n,
+                    length: this.getFieldSelectedValuesLength()
+                })
             });
 
             this.listenTo(this.selectedParametricValues, 'update', function() {
-                this.collapsible.$('.collapsible-subtitle').text(this.getFieldSelectedValuesLength() + ' ' + i18n['app.selected'])
-            })
+                this.collapsible.$('.selection-length').text(this.getFieldSelectedValuesLength());
+                this.toggleWarning();
+            });
+
+            this.collapsible.$el.on('show.bs.collapse', _.bind(function() {
+                this.collapsible.$('.collapsible-subtitle').removeClass('hide');
+            }, this));
+            this.collapsible.$el.on('hide.bs.collapse', _.bind(function() {
+                this.toggleSubtitle();
+            }, this));
         },
 
         render: function() {
             this.$el.empty().append(this.collapsible.$el);
             this.collapsible.render();
 
-            if(this.collapsible.$('tbody tr').length > 5) {
-                this.toggleFacets(true);
-            }
             this.collapsible.$('tbody').append(this.seeAllButtonTemplate({i18n:i18n}));
+
+            this.$warning = this.collapsible.$('.selected-warning');
+
+            this.$warning.tooltip({
+                title: i18n['search.parametric.selected.notAllVisible']
+            });
+
+            this.toggleSubtitle();
+            this.toggleWarning();
+        },
+
+        toggleSubtitle: function() {
+            this.collapsible.$('.collapsible-subtitle').toggleClass('hide', this.getFieldSelectedValuesLength() === 0);
+        },
+
+        toggleWarning: function() {
+            var currentValues = this.selectedParametricValues.where({field: this.model.id});
+            var toggle = true;
+
+            if(currentValues.length > 0) {
+                var firstFiveValues = this.model.fieldValues.chain()
+                    .first(MAX_SIZE)
+                    .pluck('id')
+                    .value();
+
+                var fieldsArray = _.invoke(currentValues, 'get', 'value');
+
+                toggle = !_.difference(fieldsArray, firstFiveValues).length;
+            }
+
+            this.$warning.toggleClass('hidden', toggle);
         },
 
         getFieldSelectedValuesLength: function() {
             return this.selectedParametricValues.where({field: this.model.id}).length;
         },
 
-        toggleFacets: function(toggle) {
-            var lastFacets = this.collapsible.$('tbody tr').slice(5);
-            lastFacets.toggleClass('hide', toggle);
-
-            this.$('.toggle-more').removeClass('hide');
-        },
-
         remove: function() {
-            Backbone.View.prototype.remove.call(this);
             this.collapsible.remove();
+            
+            Backbone.View.prototype.remove.call(this);
         }
     });
 });

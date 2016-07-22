@@ -12,6 +12,7 @@ define([
     'i18n!find/nls/bundle',
     'iCheck'
 ], function(Backbone, _, $, template, SavedSearchModel, i18n) {
+    "use strict";
 
     // The initial title for an unsaved search should be blank, not "New Title"
     function resolveCurrentTitle(savedSearchModel) {
@@ -143,9 +144,10 @@ define([
         },
 
         updateConfirmButton: function() {
-            var title = this.model.get('title');
+            var title = this.model.get('title').trim();
 
-            this.$confirmButton.toggleClass('disabled not-clickable', resolveCurrentTitle(this.savedSearchModel) === title || !title);
+            var disabled = resolveCurrentTitle(this.savedSearchModel) === title || !title;
+            this.$confirmButton.toggleClass('disabled not-clickable', disabled).prop('disabled', disabled);
         }
     });
 

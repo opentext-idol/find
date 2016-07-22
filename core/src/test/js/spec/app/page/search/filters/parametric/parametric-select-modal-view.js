@@ -5,7 +5,6 @@ define([
 
     describe('Parametric Select Modal View', function() {
         beforeEach(function() {
-
             this.selectCollection = new Backbone.Collection();
 
             var field = new Backbone.Model({
@@ -36,9 +35,32 @@ define([
                 }
             ]);
 
+            var parametricCollectionModel = new Backbone.Model({
+                id: 'TMNT',
+                values: [
+                    {
+                        count: 2000,
+                        value: 'Leonardo'
+                    },
+                    {
+                        count: 1000,
+                        value: 'Michelangelo'
+                    },
+                    {
+                        count: 500,
+                        value: 'Raphael'
+                    },
+                    {
+                        count: 200,
+                        value: 'Donatello'
+                    }
+                ]
+            });
+
             this.parametricDisplayCollection = new Backbone.Collection([field]);
 
             this.view = new ParametricSelectModalView({
+                parametricCollection: new Backbone.Collection([parametricCollectionModel]),
                 parametricDisplayCollection: this.parametricDisplayCollection,
                 selectCollection: this.selectCollection,
                 currentFieldGroup: 'TMNT'

@@ -29,8 +29,8 @@ define([
     ];
 
     var PARAMETRIC_RANGES_CLIENT = [
-        {field: 'YEAR', range: [1066, 1485], numeric: true},
-        {field: 'DATE', range: [123456789000, 123456791000], numeric: false}
+        {field: 'YEAR', range: [1066, 1485], dataType: 'numeric'},
+        {field: 'DATE', range: [123456789000, 123456791000], dataType: 'date'}
     ];
 
     var PARAMETRIC_RANGES_SERVER = [
