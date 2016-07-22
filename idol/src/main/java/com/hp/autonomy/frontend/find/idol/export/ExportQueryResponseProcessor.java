@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.export;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.services.impl.AbstractStAXProcessor;
+import com.autonomy.aci.client.services.impl.ErrorProcessor;
 import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldType;
@@ -47,8 +48,7 @@ class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
         }
     };
 
-    private static final int METADATA_LENGTH = IdolMetadataNode.values().length;
-    private static final Map<String, IdolMetadataNode> METADATA_NODES = new HashMap<>(METADATA_LENGTH);
+    private static final Map<String, IdolMetadataNode> METADATA_NODES = new HashMap<>();
     private static final Map<FieldType, Converter<String, String>> converterMap = new EnumMap<>(FieldType.class);
 
     static {
@@ -74,9 +74,14 @@ class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
 
     @Override
     public Void process(final XMLStreamReader aciResponse) throws AciErrorException, ProcessorException {
-        final Collection<String> fieldNames = exportStrategy.getFieldNames(IdolMetadataNode.values());
-
         try {
+            if (isErrorResponse(aciResponse)) {
+                setErrorProcessor(new ErrorProcessor());
+                processErrorResponse(aciResponse);
+            }
+
+            final Collection<String> fieldNames = exportStrategy.getFieldNames(IdolMetadataNode.values());
+
             if (exportStrategy.writeHeader()) {
                 exportStrategy.exportRecord(outputStream, fieldNames);
             }
