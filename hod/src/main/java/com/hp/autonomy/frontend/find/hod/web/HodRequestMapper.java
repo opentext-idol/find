@@ -40,7 +40,7 @@ public class HodRequestMapper extends AbstractRequestMapper<ResourceIdentifier> 
         private String queryText;
         @JsonProperty("field_text")
         private String fieldText;
-        @JsonProperty(value = "indexes", required = true)
+        @JsonProperty("indexes")
         private List<ResourceIdentifier> databases;
         @JsonProperty("min_date")
         private DateTime minDate;

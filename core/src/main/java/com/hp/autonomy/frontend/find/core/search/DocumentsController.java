@@ -71,7 +71,7 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
             @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
             @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
             @RequestParam(SUMMARY_PARAM) final String summary,
-            @RequestParam(INDEXES_PARAM) final List<S> databases,
+            @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(value = SORT_PARAM, required = false) final String sort,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,

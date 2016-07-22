@@ -39,7 +39,7 @@ public class IdolRequestMapper extends AbstractRequestMapper<String> {
         private String queryText;
         @JsonProperty("field_text")
         private String fieldText;
-        @JsonProperty(value = "indexes", required = true)
+        @JsonProperty("indexes")
         private List<String> databases;
         @JsonProperty("min_date")
         private DateTime minDate;
