@@ -17,8 +17,7 @@ enum IdolMetadataNode implements MetadataNode {
     TITLE("Title", "autn:title", ExportQueryResponseProcessor.STRING_CONVERTER),
     SUMMARY("Summary", "autn:summary", ExportQueryResponseProcessor.STRING_CONVERTER),
     WEIGHT("Weight", "autn:weight", ExportQueryResponseProcessor.STRING_CONVERTER),
-    DATE("Date", "autn:date", ExportQueryResponseProcessor.DATE_CONVERTER),
-    CONTENT("Content", "DRECONTENT", ExportQueryResponseProcessor.STRING_CONVERTER);
+    DATE("Date", "autn:date", ExportQueryResponseProcessor.DATE_CONVERTER);
 
     private final String name;
     private final String nodeName;
