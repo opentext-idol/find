@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' ?><!--
+  ~ Copyright 2015 Hewlett-Packard Development Company, L.P.
+  ~ Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+  -->
+
+<autnresponse>
+    <action>QUERY</action>
+    <response>ERROR</response>
+    <responsedata>
+        <error>
+            <errorid>AXEQUERY501</errorid>
+            <rawerrorid>0x1F5</rawerrorid>
+            <errorstring>No query text supplied</errorstring>
+            <errorcode>ERRORPARAMMISSING</errorcode>
+            <errortime>22 Jul 16 08:46:06</errortime>
+        </error>
+    </responsedata>
+</autnresponse>

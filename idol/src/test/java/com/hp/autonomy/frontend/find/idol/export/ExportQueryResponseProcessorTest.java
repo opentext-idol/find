@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.export;
 
+import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.transport.AciResponseInputStream;
 import com.google.common.collect.ImmutableMap;
@@ -68,6 +69,11 @@ public class ExportQueryResponseProcessorTest {
     public void exportEmptyResultSetWithoutHeader() throws IOException {
         processor.process(new MockAciResponseInputStream(IOUtils.toInputStream("<?xml version='1.0' encoding='UTF-8' ?>\n<autnresponse/>")));
         verify(exportStrategy, never()).exportRecord(eq(outputStream), anyListOf(String.class));
+    }
+
+    @Test(expected = AciErrorException.class)
+    public void errorResponse() {
+        processor.process(new MockAciResponseInputStream(IdolExportServiceTest.class.getResourceAsStream("/com/hp/autonomy/frontend/find/idol/export/error-response.xml")));
     }
 
     @Test(expected = ProcessorException.class)
