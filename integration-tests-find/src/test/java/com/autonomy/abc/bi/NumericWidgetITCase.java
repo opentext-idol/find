@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.find.filters.DateOption;
 import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
+import com.autonomy.abc.selenium.find.numericWidgets.NumericWidget;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.SortBy;
@@ -20,6 +21,7 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -45,6 +47,30 @@ public class NumericWidgetITCase extends IdolFindTestBase{
         findService = getApplication().findService();
     }
 
+    private MainNumericWidget waitForReload(){
+        filters().waitForParametricFields();
+        MainNumericWidget mainGraph = findPage.mainGraph();
+        mainGraph.waitUntilWidgetLoaded();
+        return mainGraph;
+    }
+
+    private String selectFilterGraph(GraphFilterContainer container){
+        container.expand();
+        String graphTitle = container.getParentName();
+        container.graph().click();
+        return graphTitle;
+    }
+
+    private MainNumericWidget searchAndSelectNthGraph(int n, String searchTerm){
+        findService.search(searchTerm);
+        IdolFilterPanel filterPanel = filters();
+        filterPanel.waitForParametricFields();
+
+        selectFilterGraph(filterPanel.getNthGraph(n));
+
+        return findPage.mainGraph();
+    }
+
     @Test
     public void testClickingOnFilterPanelGraphOpensMain(){
         findService.search("book");
@@ -66,12 +92,7 @@ public class NumericWidgetITCase extends IdolFindTestBase{
         verifyThat("Main graph now gone",!findPage.mainGraphDisplayed());
     }
 
-    private String selectFilterGraph(GraphFilterContainer container){
-        container.expand();
-        String graphTitle = container.getParentName();
-        container.graph().click();
-        return graphTitle;
-    }
+
 
     @Test
     @ResolvedBug("FIND-356")
@@ -84,7 +105,7 @@ public class NumericWidgetITCase extends IdolFindTestBase{
         filters().waitForParametricFields();
         mainGraph.waitUntilWidgetLoaded();
 
-        verifyThat("Selection rectangle hasn't disappeared",mainGraph.selectionRectangleExists());
+        verifyThat("Selection rectangle hasn't disappeared",mainGraph.graphAsWidget().selectionRectangleExists());
     }
 
 
@@ -102,47 +123,55 @@ public class NumericWidgetITCase extends IdolFindTestBase{
         verifyThat("Fewer parametric filters",filters().numberParametricFieldContainers(),lessThan(beforeParametricFilters));
         verifyThat("Fewer results",findPage.totalResultsNum(),lessThan(beforeNumberResults));
 
-        //purple box should have appeared in the side panel
-
+        NumericWidget sidePanelChart = filters().getNthGraph(1).getChart();
+        verifyThat("Side panel chart has selection rectangle",sidePanelChart.selectionRectangleExists());
 
         mainGraph.reset();
         mainGraph = waitForReload();
-        verifyThat("Selection rectangle gone",!mainGraph.selectionRectangleExists());
+
+        verifyThat("Selection rectangle gone from centre",!mainGraph.graphAsWidget().selectionRectangleExists());
+        sidePanelChart = filters().getNthGraph(1).getChart();
+        verifyThat("Selection rectangle gone from side panel",!sidePanelChart.selectionRectangleExists());
     }
 
-    private MainNumericWidget waitForReload(){
-        filters().waitForParametricFields();
-        MainNumericWidget mainGraph = findPage.mainGraph();
-        mainGraph.waitUntilWidgetLoaded();
-        return mainGraph;
+
+
+    @Test
+    @ActiveBug("FIND-392")
+    public void testWidgetsReflectCurrentSearch(){
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(2,"face");
+        mainGraph.selectFractionOfBars(3,4);
+        waitForReload();
+        verifyThat("There are results present",findPage.totalResultsNum(),greaterThan(0));
     }
+
 
     @Test
     public void testSelectionRecFiltersResultsCorrectly(){
+        //test hovering over the bars -> something sensible on bottom
+        //test it's never negative
+
+        //FIND-
+        //
+
+
+
         //test things like range of data
         //max, min
         //mathsy things
     }
 
-    private MainNumericWidget searchAndSelectNthGraph(int n, String searchTerm){
-        findService.search(searchTerm);
-        IdolFilterPanel filterPanel = filters();
-        filterPanel.waitForParametricFields();
 
-        selectFilterGraph(filterPanel.getNthGraph(n));
-
-        return findPage.mainGraph();
-    }
 
     @Test
     @ActiveBug("FIND-336")
     public void testZoomingOutFar(){
         //test doesn't crash if zoom out really far
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(1,"politics");
+        /*MainNumericWidget mainGraph = searchAndSelectNthGraph(1,"politics");
 
         mainGraph.graph().click();
 
-        mainGraph.simulateZoomingIn();
+        mainGraph.simulateZoomingIn();*/
 
 
         //need to check the little text boxes are changing
@@ -265,12 +294,17 @@ public class NumericWidgetITCase extends IdolFindTestBase{
         return titles;
     }
 
-
     @Test
     @ResolvedBug("FIND-365")
+    //horrendously fragile -> v dependent on specific filters
     public void testFilterLabelFormatReflectsNumericData(){
-        //the filter label shouldn't always be the date format
-        //e.g. if data is elevation
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(0,"beer");
+        assumeThat("Test assumes that 0th graph is place elevation",mainGraph.header(),equalToIgnoringCase("Place Elevation"));
+        mainGraph.clickAndDrag(200,0,mainGraph.graph());
+        waitForReload();
+        String firstLabel =findPage.getFilterLabels().get(0).split(":")[1];
+        verifyThat("Place elevation filter label doesn't have time format",firstLabel,not(containsString(":")));
+
     }
 
     @Test
