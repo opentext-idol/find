@@ -39,7 +39,7 @@ public class HodExportService implements ExportService<ResourceIdentifier, HodEr
         CONVERTER_MAP.put(FieldType.STRING, new Converter<Object, String>() {
             @Override
             public String convert(final Object source) {
-                return (String) source;
+                return source.toString();
             }
         });
         CONVERTER_MAP.put(FieldType.BOOLEAN, new Converter<Object, String>() {

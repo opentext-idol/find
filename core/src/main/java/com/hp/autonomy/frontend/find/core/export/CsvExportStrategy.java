@@ -21,7 +21,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -46,11 +45,9 @@ public class CsvExportStrategy implements ExportStrategy {
             fieldNames.add(metadataNode.getName());
         }
 
-        final Collection<String> configurableFieldNames = new LinkedHashSet<>();
         for (final FieldInfo<?> field : getFieldConfig()) {
-            configurableFieldNames.add(field.getId());
+            fieldNames.add(field.getId());
         }
-        fieldNames.addAll(configurableFieldNames);
 
         return fieldNames;
     }

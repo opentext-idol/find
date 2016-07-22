@@ -46,6 +46,7 @@ define([
 
     return Backbone.View.extend({
         template: _.template(template),
+        formTemplate: _.template('<form action="../api/bi/export/csv" method="post"><input type="hidden" name="postData" value="<%-postData%>"/></form>'),
         titleInput: null,
 
         events: {
@@ -99,16 +100,15 @@ define([
                             min_score: this.queryModel.get('minScore')
                         },
                         start: 1,
-                        max_results: 0x7fffffff,
+                        max_results: 0x7fffffff, // 2^31 -1
                         summary: 'context',
                         sort: this.queryModel.get('sort'),
                         highlight: false,
                         auto_correct: false,
                         queryType: 'MODIFIED'
                     });
-                var form = $('<form></form>').attr('action', '../api/bi/export/csv').attr('method', 'post');
-                form.append($('<input></input>').attr('type', 'hidden').attr('name', 'postData').attr('value', postData));
-                form.appendTo('body').submit().remove();
+                var $form = $(this.formTemplate({postData: postData}));
+                $form.appendTo('body').submit().remove();
             },
             'click .saved-search-delete-option': function () {
                 this.model.set('error', null);
