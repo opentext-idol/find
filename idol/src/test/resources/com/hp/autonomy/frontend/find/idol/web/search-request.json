@@ -1,0 +1,17 @@
+{
+  "queryRestrictions": {
+    "text": "Homer",
+    "field_text": "MATCH{Iliad}:WORK",
+    "indexes": ["ClassicalLiterature", "EpicLiterature"],
+    "min_date": null,
+    "max_date": "2016-07-21T16:21:04.172+01:00",
+    "min_score": 5
+  },
+  "start": 10,
+  "max_results": 30,
+  "summary": "off",
+  "sort": "DocumentCount",
+  "highlight": true,
+  "auto_correct": true,
+  "queryType": "RAW"
+}
