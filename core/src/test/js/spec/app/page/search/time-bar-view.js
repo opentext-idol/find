@@ -1,18 +1,29 @@
 define([
     'backbone',
     'jquery',
+    'find/app/configuration',
     'find/app/page/search/time-bar-view',
     'find/app/model/bucketed-parametric-collection'
-], function(Backbone, $, TimeBarView, BucketedParametricCollection) {
+], function(Backbone, $, configuration, TimeBarView, BucketedParametricCollection) {
 
     describe('TimeBarView', function() {
         beforeEach(function() {
+            configuration.and.returnValue({
+                parametricDisplayValues: [{
+                    name: "FELINES",
+                    displayName: "cats",
+                    values: [{
+                        name: "MR_MISTOFFELEES",
+                        displayName: "Mr. Mistoffelees, the magical cat"
+                    }]
+                }]
+            });
             this.queryModel = new Backbone.Model();
             this.selectedParametricValues = new Backbone.Collection();
             this.numericParametricFieldsCollection = new Backbone.Collection();
 
             this.dateParametricFieldsCollection = new Backbone.Collection([
-                {id: 'autn_date'}
+                {id: 'autn_date', name: 'autn_date'}
             ]);
 
             this.timeBarModel = new Backbone.Model({

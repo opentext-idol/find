@@ -131,7 +131,7 @@ define([
             this.listenTo(this.bucketModel, 'change:values request sync error', this.updateGraph);
 
             var paramMap = _.findWhere(configuration().parametricDisplayValues, {name: this.model.id});
-            this.model.set('displayName', paramMap ? paramMap.displayName : prettifyFieldName(this.model.get('name')));
+            this.model.set('displayName', paramMap && paramMap.displayName ? paramMap.displayName : prettifyFieldName(this.model.get('name')));
         },
 
         render: function() {

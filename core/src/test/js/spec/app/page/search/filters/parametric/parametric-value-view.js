@@ -39,7 +39,7 @@ define([
         describe('when the model has a displayName', function() {
             beforeEach(function() {
                 this.model.set('displayName', 'feline');
-                this.view.updateCount();
+                this.view.updateText();
             });
 
             it('displays the display name when present', function() {
