@@ -3,23 +3,26 @@ package com.autonomy.abc.bi;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.filters.DateOption;
 import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
+import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.SortBy;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
@@ -73,16 +76,12 @@ public class NumericWidgetITCase extends IdolFindTestBase{
     @Test
     @ResolvedBug("FIND-356")
     public void testSelectionRecDoesNotDisappear(){
-        findService.search("politics");
-        IdolFilterPanel filterPanel = filters();
-        filterPanel.waitForParametricFields();
 
-        selectFilterGraph(filterPanel.getNthGraph(0));
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(0,"politics");
 
-        MainNumericWidget mainGraph = findPage.mainGraph();
         mainGraph.clickAndDrag(100,0,mainGraph.graph());
 
-        filterPanel.waitForParametricFields();
+        filters().waitForParametricFields();
         mainGraph.waitUntilWidgetLoaded();
 
         verifyThat("Selection rectangle hasn't disappeared",mainGraph.selectionRectangleExists());
@@ -91,13 +90,31 @@ public class NumericWidgetITCase extends IdolFindTestBase{
 
     @Test
     public void testSelectionRecFiltersResults(){
-        //use rectangle on main
-        //should reload search
-        //filter appears at top
-        //side panel changes
-        //no. of results <= original
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(1,"space");
+        int beforeParametricFilters = filters().numberParametricFieldContainers();
+        int beforeNumberResults = findPage.totalResultsNum();
+        mainGraph.waitUntilWidgetLoaded();
+
+        mainGraph.selectHalfTheBars();
+        mainGraph = waitForReload();
+
+        verifyThat("Filter label has appeared",findPage.getFilterLabels(),hasSize(1));
+        verifyThat("Fewer parametric filters",filters().numberParametricFieldContainers(),lessThan(beforeParametricFilters));
+        verifyThat("Fewer results",findPage.totalResultsNum(),lessThan(beforeNumberResults));
+
         //purple box should have appeared in the side panel
-        //check reset button
+
+
+        mainGraph.reset();
+        mainGraph = waitForReload();
+        verifyThat("Selection rectangle gone",!mainGraph.selectionRectangleExists());
+    }
+
+    private MainNumericWidget waitForReload(){
+        filters().waitForParametricFields();
+        MainNumericWidget mainGraph = findPage.mainGraph();
+        mainGraph.waitUntilWidgetLoaded();
+        return mainGraph;
     }
 
     @Test
@@ -107,11 +124,29 @@ public class NumericWidgetITCase extends IdolFindTestBase{
         //mathsy things
     }
 
+    private MainNumericWidget searchAndSelectNthGraph(int n, String searchTerm){
+        findService.search(searchTerm);
+        IdolFilterPanel filterPanel = filters();
+        filterPanel.waitForParametricFields();
+
+        selectFilterGraph(filterPanel.getNthGraph(n));
+
+        return findPage.mainGraph();
+    }
+
     @Test
     @ActiveBug("FIND-336")
     public void testZoomingOutFar(){
         //test doesn't crash if zoom out really far
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(1,"politics");
 
+        mainGraph.graph().click();
+
+        mainGraph.simulateZoomingIn();
+
+
+        //need to check the little text boxes are changing
+        //need to check the bottom date when you hover over the bar is sensible -> not negative
     }
 
     @Test
@@ -126,17 +161,63 @@ public class NumericWidgetITCase extends IdolFindTestBase{
 
     @Test
     public void testMinAndMaxReflectCurrentSearch(){
-        //values for noMin and noMax bounds should be for current search
-        //NOT whole data set
+        //currently 0th graph is place elevation (i.e. non-date)
+        searchAndSelectNthGraph(0,"*");
+        checkBoundsForPlaceElevationWidget();
 
+        searchAndSelectNthGraph(1,"moon");
+        checkBoundsForDateWidget();
+
+        //convert to same format as the boxes
+
+        //check that are the same as the value in the boxes minus the actual time part
+        //
+    }
+
+    //bad/flakey but there's no other way to do it right now
+    private void checkBoundsForPlaceElevationWidget(){
+        findPage.filterBy(new IndexFilter("Cities"));
+        MainNumericWidget mainGraph=findPage.mainGraph();
+        final int originalRange = getRange(mainGraph);
+
+        findService.search("Tse");
+        mainGraph = findPage.mainGraph();
+        final int newRange = getRange(mainGraph);
+
+        verifyThat("The bounds for the graphs are determined by the current query",newRange,lessThan(originalRange));
+    }
+
+    private int getRange(MainNumericWidget mainGraph){
+        return Integer.parseInt(mainGraph.maxNumValue()) - Integer.parseInt(mainGraph.minNumValue());
+    }
+
+    private void checkBoundsForDateWidget(){
+        findService.search("moon");
+        findPage.filterBy(IndexFilter.ALL);
+        findPage.sortBy(SortBy.DATE);
+        ResultsView results = getElementFactory().getResultsPage();
+        String firstResultDate = results.getResult(1).convertDate();
+
+        for(int i=0;i<10;i++) {
+            findPage.scrollToBottom();
+        }
+
+        String lastResultDate = results.getResult(results.getResultsCount()).convertDate();
     }
 
     @Test
     @ActiveBug("FIND-390")
     public void testInteractionWithRegularDateFilters(){
-        //Message of "Failed to load data" - shouldn't be there
-    }
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(0,"whatever");
+        filters().toggleFilter(DateOption.MONTH);
 
+        filters().waitForParametricFields();
+        mainGraph.waitUntilWidgetLoaded();
+
+        WebElement errorMessage = mainGraph.errorMessage();
+        verifyThat("Error message not displayed",!errorMessage.isDisplayed());
+        verifyThat("Error message not 'failed to load data'",errorMessage.getText(),not(equalToIgnoringCase("Failed to load data")));
+    }
 
     @Test
     @ResolvedBug("FIND-366")

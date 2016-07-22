@@ -1,12 +1,14 @@
 package com.autonomy.abc.selenium.find.numericWidgets;
 
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainNumericWidget {
     private final WebElement container;
@@ -40,6 +42,9 @@ public class MainNumericWidget {
         container.findElement(By.className("numeric-parametric-no-max")).click();
     }
 
+    public WebElement errorMessage(){
+        return container.findElement(By.className("numeric-parametric-error-text"));
+    }
 
     public String header(){
         return container.findElement(By.className("time-bar-header")).getText();
@@ -51,11 +56,29 @@ public class MainNumericWidget {
     }
 
     public WebElement selectionRec(){
-        return graph().findElement(By.cssSelector("svg.chart > g > rect"));
+        return graph().findElement(By.cssSelector("rect.selection"));
     }
 
     public boolean selectionRectangleExists(){
-        return !graph().findElements(By.cssSelector("rect")).isEmpty();
+        return graph().findElements(By.cssSelector("rect.selection")).size()>0;
+    }
+
+    public List<WebElement> barsWithResults(){
+        List<WebElement> bars = new ArrayList<>();
+        for(WebElement bar:graph().findElements(By.cssSelector("g > g > rect:not([height='1'])"))){
+            if(bar.isDisplayed()){
+                bars.add(bar);
+            }
+        }
+        return bars;
+    }
+
+    public void selectHalfTheBars(){
+        List<WebElement> bars = barsWithResults();
+        int index = bars.size()/2;
+
+        WebElement bar = bars.get(index);
+        clickAndDrag(100,0,bar);
     }
 
     public void waitUntilWidgetLoaded(){
@@ -69,6 +92,31 @@ public class MainNumericWidget {
         action.moveByOffset(x_dest,y_dest).build().perform();
         action.release().build().perform();
     }
+
+    //ALSO NEEDS TO GO IN DRIVERUTIL
+    public void zoomIn(){
+        Actions action = new Actions(driver);
+        action.sendKeys(Keys.CONTROL).sendKeys(Keys.ADD).perform();
+
+        graph().sendKeys(Keys.chord("Keys.CONTROL,Keys.ADD"));
+    }
+
+    //could cheat by just double clicking
+    public void simulateZoomingIn(){
+        final int clickNumber = 20;
+        Actions action = new Actions(driver);
+
+        for(int i=0;i<clickNumber;i++){
+            action.doubleClick(graph());
+        }
+
+    }
+
+    public void zoomOut(){
+        (new Actions(driver)).sendKeys(Keys.CONTROL).sendKeys(Keys.SUBTRACT).perform();
+    }
+
+
 
 
     //not all the numeric widgets have calendars e.g. place elevation
@@ -86,13 +134,13 @@ public class MainNumericWidget {
         return dateValueInputBox(LimitType.max);
     }
 
-    private WebElement numericValueInputBox(LimitType limit){
-        return container.findElement(By.className("numeric-parametric-"+limit.toString()+"-input"));
+    private String  numericValueInputBox(LimitType limit){
+        return container.findElement(By.className("numeric-parametric-"+limit.toString()+"-input")).getAttribute("value");
     }
-    public WebElement minNumValue(){
+    public String minNumValue(){
         return numericValueInputBox(LimitType.min);}
 
-    public WebElement maxNumValue(){
+    public String maxNumValue(){
         return numericValueInputBox(LimitType.max);
     }
 
