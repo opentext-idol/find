@@ -7,6 +7,8 @@ package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 
+import java.util.Set;
+
 public interface FindConfig {
 
     MapConfiguration getMap();
@@ -18,5 +20,7 @@ public interface FindConfig {
     FieldsInfo getFieldsInfo();
 
     Boolean getDirectAccessLink();
+
+    Set<ParametricDisplayValues> getParametricDisplayValues();
 
 }

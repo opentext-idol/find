@@ -28,7 +28,7 @@ define([
             $('.tooltip').remove();
 
             if (this.$text) {
-                var name = this.model.id;
+                var name = this.model.get('displayName') || this.model.id;
                 var count = this.model.get('count');
 
                 if (count !== null) {

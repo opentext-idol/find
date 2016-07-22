@@ -13,8 +13,9 @@ define([
     'find/app/model/bucketed-parametric-collection',
     'parametric-refinement/prettify-field-name',
     'parametric-refinement/selected-values-collection',
-    'i18n!find/nls/bundle'
-], function(Backbone, $, _, moment, FindBaseCollection, numericWidget, BucketedParametricCollection, prettifyFieldName, SelectedParametricValuesCollection, i18n) {
+    'i18n!find/nls/bundle',
+    'find/app/configuration'
+], function(Backbone, $, _, moment, FindBaseCollection, numericWidget, BucketedParametricCollection, prettifyFieldName, SelectedParametricValuesCollection, i18n, configuration) {
 
     'use strict';
 
@@ -160,6 +161,9 @@ define([
 
             this.absoluteMinValue = this.model.get('min');
             this.absoluteMaxValue = this.model.get('max');
+
+            var paramMap = _.findWhere(configuration().parametricDisplayValues, {name: this.model.id});
+            this.model.set('displayName', paramMap ? paramMap.displayName : prettifyFieldName(this.model.get('name')));
         },
 
         render: function() {
@@ -170,7 +174,7 @@ define([
                 .empty()
                 .append(this.template({
                     i18n: i18n,
-                    fieldName: prettifyFieldName(this.model.get('name')),
+                    fieldName: this.model.get('displayName'),
                     buttonsEnabled: this.buttonsEnabled,
                     inputsRowClass: this.selectionEnabled || this.coordinatesEnabled ? '' : 'hide',
                     inputColumnClass: inputColumnClass,

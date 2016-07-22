@@ -17,6 +17,7 @@ import com.hp.autonomy.frontend.configuration.PasswordsConfig;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
@@ -47,6 +48,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private final MapConfiguration map;
     private final Integer minScore;
     private final Boolean directAccessLink;
+    private final Set<ParametricDisplayValues> parametricDisplayValues;
 
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
@@ -63,6 +65,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         savedSearchConfig = builder.savedSearchConfig;
         minScore = builder.minScore;
         directAccessLink = builder.directAccessLink;
+        parametricDisplayValues = builder.parametricDisplayValues;
     }
 
     @SuppressWarnings("OverlyComplexMethod")
@@ -80,6 +83,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
                 .setSavedSearchConfig(savedSearchConfig == null ? config.savedSearchConfig : savedSearchConfig.merge(config.savedSearchConfig))
                 .setMinScore(minScore == null ? config.minScore : minScore)
                 .setDirectAccessLink(directAccessLink == null ? config.directAccessLink : directAccessLink)
+                .setParametricDisplayValues(parametricDisplayValues == null ? config.parametricDisplayValues : parametricDisplayValues)
                 .build() : this;
     }
 
@@ -173,6 +177,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         private SavedSearchConfig savedSearchConfig;
         private Integer minScore;
         private Boolean directAccessLink;
+        private Set<ParametricDisplayValues> parametricDisplayValues;
 
         public Builder(final HodFindConfig config) {
             login = config.login;
@@ -186,6 +191,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
             savedSearchConfig = config.savedSearchConfig;
             minScore = config.minScore;
             directAccessLink = config.directAccessLink;
+            parametricDisplayValues = config.parametricDisplayValues;
         }
 
         public HodFindConfig build() {

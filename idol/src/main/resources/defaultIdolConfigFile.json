@@ -98,6 +98,22 @@
   },
   "directAccessLink": false,
   "minScore": 0,
+  "parametricDisplayValues": [
+    {
+      "name": "COUNTRY_ORIGIN",
+      "displayName": "Country",
+      "values": [
+        {
+          "name": "UK",
+          "displayName": "United Kingdom of Great Britain and Northern Ireland"
+        }
+      ]
+    },
+    {
+      "name": "/DOCUMENT/PLACE_ELEVATION",
+      "displayName": "Place Elevation (ft)"
+    }
+  ],
   "fieldsInfo": {
     "contentType": {
       "names": [

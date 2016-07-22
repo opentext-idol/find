@@ -18,6 +18,7 @@ import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
@@ -29,6 +30,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.util.Set;
 
 @SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
 @Data
@@ -48,6 +51,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Boolean directAccessLink;
+    private final Set<ParametricDisplayValues> parametricDisplayValues;
 
     @Override
     public IdolFindConfig merge(final IdolFindConfig other) {
@@ -67,6 +71,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .setMinScore(minScore == null ? other.minScore : minScore)
                 .setStatsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                 .setDirectAccessLink(directAccessLink == null ? other.directAccessLink : directAccessLink)
+                .setParametricDisplayValues(parametricDisplayValues == null ? other.parametricDisplayValues : parametricDisplayValues)
                 .build();
     }
 
@@ -146,6 +151,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         private Integer minScore;
         private StatsServerConfig statsServer;
         private Boolean directAccessLink;
+        private Set<ParametricDisplayValues> parametricDisplayValues;
 
         public Builder(final IdolFindConfig config) {
             login = config.login;
@@ -159,10 +165,11 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             minScore = config.minScore;
             statsServer = config.statsServer;
             directAccessLink = config.directAccessLink;
+            parametricDisplayValues = config.parametricDisplayValues;
         }
 
         public IdolFindConfig build() {
-            return new IdolFindConfig(login, content, queryManipulation, view, savedSearchConfig, mmap, fieldsInfo, map, minScore, statsServer, directAccessLink);
+            return new IdolFindConfig(login, content, queryManipulation, view, savedSearchConfig, mmap, fieldsInfo, map, minScore, statsServer, directAccessLink, parametricDisplayValues);
         }
     }
 

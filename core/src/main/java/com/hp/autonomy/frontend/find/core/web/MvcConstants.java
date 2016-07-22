@@ -16,7 +16,8 @@ public enum MvcConstants {
     USERNAME("username"),
     MIN_SCORE("minScore"),
     FIELDS_INFO("fieldsInfo"),
-    DIRECT_ACCESS_LINK("directAccessLink");
+    DIRECT_ACCESS_LINK("directAccessLink"),
+    PARAMETRIC_DISPLAY_VALUES("parametricDisplayValues");
 
     private final String value;
 

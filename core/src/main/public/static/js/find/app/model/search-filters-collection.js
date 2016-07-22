@@ -10,8 +10,9 @@ define([
     'find/app/model/dates-filter-model',
     'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/prettify-field-name',
+    'find/app/configuration',
     'i18n!find/nls/bundle'
-], function(Backbone, _, moment, DatesFilterModel, addChangeListener, prettifyFieldName, i18n) {
+], function(Backbone, _, moment, DatesFilterModel, addChangeListener, prettifyFieldName, configuration, i18n) {
     "use strict";
 
     var DATE_FORMAT = "YYYY-MM-DD HH:mm";
@@ -52,10 +53,22 @@ define([
             return Math.round(x * 10) / 10;
         };
 
+        var fieldMap = _.findWhere(configuration().parametricDisplayValues, {name: field});
+
+        var displayName = fieldMap ? fieldMap.displayName : prettifyFieldName(field);
+
         var valueText;
 
         if (!_.isEmpty(values)) {
-            valueText = values.join(', ');
+            valueText = _.map(values, function(value) {
+                if (fieldMap) {
+                    var param = _.findWhere(fieldMap.values, {name: value});
+                    return param ? param.displayName : value;
+                }
+                else {
+                    return value;
+                }
+            }).join(', ');
         } else {
             valueText = ranges.map(function (range) {
                 //Discard time of day if range greater than 1 week
@@ -69,7 +82,7 @@ define([
             }).join(', ');
         }
 
-        return prettifyFieldName(field) + ': ' + valueText;
+        return displayName + ': ' + valueText;
     }
 
     // Get an array of filter model attributes from the selected parametric values collection
@@ -84,7 +97,7 @@ define([
         });
     }
 
-     // This collection backs the search filters display view. It monitors the query state models and collections and
+    // This collection backs the search filters display view. It monitors the query state models and collections and
     // creates/removes it's own models when they change.
     // When a dates filter model is removed, it updates the appropriate request model attribute with a null value. However,
     // this currently can't be done for the selected databases because the databases view isn't backed by a collection.

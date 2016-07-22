@@ -11,9 +11,10 @@ define([
     'databases-view/js/databases-collection',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
+    'find/app/configuration',
     'backbone',
     'moment'
-], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, Backbone, moment) {
+], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, configuration, Backbone, moment) {
 
     var WOOKIEPEDIA = {
         id: 'TESTDOMAIN:wookiepedia',
@@ -32,6 +33,17 @@ define([
 
     describe('Search filters collection initialised with an indexes filter, a DatesFilterModel with a min date set and a selected parametric value on the AGE field', function() {
         beforeEach(function() {
+            configuration.and.returnValue({
+                parametricDisplayValues: [{
+                    name: "FELINES",
+                    displayName: "cats",
+                    values: [{
+                        name: "MR_MISTOFFELEES",
+                        displayName: "Mr. Mistoffelees, the magical cat"
+                    }]
+                }]
+            });
+
             this.indexesCollection = new DatabasesCollection([WOOKIEPEDIA, WIKI_ENG]);
             this.selectedIndexesCollection = new DatabasesCollection([WIKI_ENG]);
 
@@ -236,6 +248,20 @@ define([
 
             it('selects all of the indexes', function() {
                 expect(this.selectedIndexesCollection.length).toBe(2);
+            });
+        });
+
+        describe('after adding a selected parametric value with a displayName in the configuration', function() {
+            beforeEach(function () {
+                this.selectedParametricValues.add([
+                    {field: 'FELINES', fieldDisplayName: 'cats', value: 'MR_MISTOFFELEES'}
+                ]);
+            });
+
+            it('uses the display names from the configuration', function () {
+                var model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC,  field: 'FELINES'});
+                expect(model).toBeDefined();
+                expect(model.get('text')).toContain('Mr. Mistoffelees, the magical cat');
             });
         });
 

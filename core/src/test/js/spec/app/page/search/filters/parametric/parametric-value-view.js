@@ -36,6 +36,21 @@ define([
             expect(this.$check).toHaveClass('hide');
         });
 
+        describe('when the model has a displayName', function() {
+            beforeEach(function() {
+                this.model.set('displayName', 'feline');
+                this.view.updateCount();
+            });
+
+            it('displays the display name when present', function() {
+                expect(this.$name).toContainText('feline');
+            });
+
+            it('still sets the correct name in the data value attribute', function() {
+                expect(this.view.$el).toHaveAttr('data-value', 'cat');
+            });
+        });
+
         describe('after the count is set to null', function() {
             beforeEach(function() {
                 this.model.set('count', null);

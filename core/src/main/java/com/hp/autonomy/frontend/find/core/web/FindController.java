@@ -88,6 +88,7 @@ public abstract class FindController {
         config.put(MvcConstants.MIN_SCORE.value(), configService.getConfig().getMinScore());
         config.put(MvcConstants.FIELDS_INFO.value(), configService.getConfig().getFieldsInfo().getFieldConfig());
         config.put(MvcConstants.DIRECT_ACCESS_LINK.value(), configService.getConfig().getDirectAccessLink());
+        config.put(MvcConstants.PARAMETRIC_DISPLAY_VALUES.value(), configService.getConfig().getParametricDisplayValues());
         config.putAll(getPublicConfig());
 
         final Map<String, Object> attributes = new HashMap<>();
