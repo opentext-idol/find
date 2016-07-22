@@ -5,6 +5,8 @@
 
 package com.hp.autonomy.frontend.find.hod.test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
@@ -46,6 +48,11 @@ public class HodMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
     @Override
     public String[] getDatabases() {
         return new String[]{ResourceIdentifier.WIKI_ENG.toString()};
+    }
+
+    @Override
+    public String getDatabasesAsJson() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(new ResourceIdentifier[]{ResourceIdentifier.WIKI_ENG});
     }
 
     @Override
