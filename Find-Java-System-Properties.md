@@ -13,6 +13,7 @@ Find uses Java System Properties to configure some runtime settings.
 ## Optional
 
 - `server.port` - The port to run Find on (defaults to 8080).
+- `server.session.timeout` - The session timeout in seconds (defaults to 3600).
 
 ### Database
 
