@@ -36,6 +36,7 @@ define([
 
             this.listView = new ListView({
                 collection: this.collection,
+                footerHtml: this.seeAllButtonTemplate({i18n:i18n}),
                 ItemView: ValueView,
                 maxSize: MAX_SIZE,
                 tagName: 'tbody',
@@ -48,8 +49,6 @@ define([
 
         render: function() {
             this.$el.empty().append(this.listView.render().$el);
-
-            this.$('tbody').append(this.seeAllButtonTemplate({i18n:i18n}));
         },
 
         remove: function() {
