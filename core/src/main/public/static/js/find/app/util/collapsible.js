@@ -42,14 +42,10 @@ define([
             this.title = options.title;
             this.subtitle = options.subtitle;
             this.renderOnOpen = options.renderOnOpen || false;
-
-            this.collapseId = _.uniqueId('collapse-');
         },
 
         render: function() {
             this.$el.html(this.template({
-                contentState: this.collapsed ? '' : 'in',
-                collapseId: this.collapseId,
                 title: this.title,
                 subtitle: this.subtitle
             }));
@@ -59,7 +55,7 @@ define([
 
             // activate plugin manually for greater control of click handlers
             this.$collapse = this.$('.collapse').collapse({
-                toggle: false
+                toggle: !this.collapsed
             });
 
             // Render after appending to the DOM since graph views must measure element dimensions
