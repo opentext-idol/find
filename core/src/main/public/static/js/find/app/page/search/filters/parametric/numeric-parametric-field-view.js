@@ -21,11 +21,10 @@ define([
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-numeric-input.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html',
     'text!find/templates/app/page/loading-spinner.html',
-    'i18n!find/nls/bundle',
-    'find/app/configuration'
+    'i18n!find/nls/bundle'
 ], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, numericWidget, BucketedParametricCollection,
             prettifyFieldName, toFieldTextNode, SelectedParametricValuesCollection, addChangeListener, template,
-            numericInputTemplate, dateInputTemplate, loadingTemplate, i18n, configuration) {
+            numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
 
     'use strict';
 
@@ -129,9 +128,6 @@ define([
             this.listenTo(vent, 'vent:resize', this.render);
 
             this.listenTo(this.bucketModel, 'change:values request sync error', this.updateGraph);
-
-            var paramMap = _.findWhere(configuration().parametricDisplayValues, {name: this.model.id});
-            this.model.set('displayName', paramMap && paramMap.displayName ? paramMap.displayName : prettifyFieldName(this.model.get('name')));
         },
 
         render: function() {
@@ -142,7 +138,7 @@ define([
                 .empty()
                 .append(this.template({
                     i18n: i18n,
-                    fieldName: this.model.get('displayName'),
+                    fieldName: this.hideTitle ? undefined : prettifyFieldName(this.model.get('name')),
                     clickable: Boolean(this.clickCallback),
                     buttonsEnabled: this.buttonsEnabled,
                     inputsRowClass: this.selectionEnabled || this.coordinatesEnabled ? '' : 'hide',
@@ -238,8 +234,7 @@ define([
 
             this.listenTo(this.selectedParametricValues, 'remove', function(model) {
                 if (model.get('field') == this.fieldName) {
-                    this.drawSelection();
-                    this.updateModel(this.absoluteMinValue, this.absoluteMaxValue);
+                    this.updateSelection();
                 }
             });
         },

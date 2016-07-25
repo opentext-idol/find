@@ -11,8 +11,9 @@ define([
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'parametric-refinement/prettify-field-name',
     'find/app/util/collapsible',
-    'find/app/vent'
-], function(Backbone, $, _, i18n, NumericParametricFieldView, prettifyFieldName, Collapsible, vent) {
+    'find/app/vent',
+    'find/app/configuration'
+], function(Backbone, $, _, i18n, NumericParametricFieldView, prettifyFieldName, Collapsible, vent, configuration) {
 
     'use strict';
 
@@ -63,8 +64,11 @@ define([
                 clickCallback: clickCallback
             }, options));
 
+            var paramMap = _.findWhere(configuration().parametricDisplayValues, {name: this.model.id});
+            this.model.set('displayName', paramMap ? paramMap.displayName : prettifyFieldName(this.model.id));
+
             this.collapsible = new Collapsible({
-                title: prettifyFieldName(this.model.id),
+                title: this.model.get('displayName'),
                 subtitle: getSubtitle.call(this),
                 view: this.fieldView,
                 collapsed: true,

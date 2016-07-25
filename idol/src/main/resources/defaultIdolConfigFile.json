@@ -100,18 +100,18 @@
   "minScore": 0,
   "parametricDisplayValues": [
     {
-      "name": "COUNTRY_ORIGIN",
-      "displayName": "Country",
+      "name": "/DOCUMENT/BLAH0",
+      "displayName": "BLAH0 Display Name",
       "values": [
         {
-          "name": "UK",
-          "displayName": "United Kingdom of Great Britain and Northern Ireland"
+          "name": "0",
+          "displayName": "Shrubbery"
         }
       ]
     },
     {
       "name": "/DOCUMENT/PLACE_ELEVATION",
-      "displayName": "Place Elevation (ft)"
+      "displayName": "PLACE ELEVATION DISPLAY NAME"
     }
   ],
   "topicMapMaxResults": 1000,
