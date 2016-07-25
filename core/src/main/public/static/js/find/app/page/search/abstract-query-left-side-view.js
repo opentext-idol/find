@@ -98,6 +98,7 @@ define([
             });
 
             this.numericParametricView = new NumericParametricView({
+                filterModel: this.filterModel,
                 queryModel: options.queryModel,
                 queryState: options.queryState,
                 timeBarModel: options.timeBarModel,
@@ -107,6 +108,7 @@ define([
             });
 
             this.dateParametricView = new NumericParametricView({
+                filterModel: this.filterModel,
                 queryModel: options.queryModel,
                 queryState: options.queryState,
                 timeBarModel: options.timeBarModel,

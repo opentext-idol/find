@@ -43,6 +43,8 @@ define([
             this.selectedParametricValues = options.selectedParametricValues;
             this.dataType = options.dataType;
             this.timeBarModel = options.timeBarModel;
+            this.filterModel = options.filterModel;
+            this.collapsed = true;
 
             var clickCallback = null;
 
@@ -66,7 +68,7 @@ define([
                 title: prettifyFieldName(this.model.id),
                 subtitle: getSubtitle.call(this),
                 view: this.fieldView,
-                collapsed: true,
+                collapsed: this.collapsed,
                 renderOnOpen: true
             });
 
@@ -81,6 +83,19 @@ define([
             this.listenTo(this.collapsible, 'hide', function() {
                 this.toggleSubtitle();
             });
+
+            this.listenTo(this.collapsible, 'toggle', function(newState) {
+                this.collapsed = newState;
+            });
+
+            this.listenTo(this.filterModel, 'change', function() {
+                if (this.filterModel.get('text')) {
+                    this.collapsible.show();
+                }
+                else {
+                    this.collapsible.toggle(!this.collapsed);
+                }
+            })
         },
 
         render: function () {
