@@ -7,12 +7,13 @@ define([
     'find/app/page/search/results/map-view',
     'i18n!find/nls/bundle',
     'find/app/model/documents-collection',
+    'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/results/map-results-view.html',
     'text!find/templates/app/page/search/results/map-popover.html',
     'text!find/templates/app/page/loading-spinner.html',
     'find/app/vent'
 
-], function (Backbone, _, $, configuration, FieldSelectionView, MapView, i18n, DocumentsCollection, template, popoverTemplate, loadingSpinnerTemplate, vent) {
+], function (Backbone, _, $, configuration, FieldSelectionView, MapView, i18n, DocumentsCollection, addLinksToSummary, template, popoverTemplate, loadingSpinnerTemplate, vent) {
 
     'use strict';
 
@@ -65,7 +66,7 @@ define([
                     var popover = this.popoverTemplate({
                         title: title,
                         i18n: i18n,
-                        summary: model.get('summary'),
+                        summary: addLinksToSummary(model.get('summary')),
                         cidForClickRouting: model.cid
                     });
                     var marker = this.mapResultsView.getMarker(latitude, longitude, this.getIcon(), title, popover);

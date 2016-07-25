@@ -7,13 +7,14 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/comparisons',
+    'find/app/page/search/results/add-links-to-summary',
     'find/app/util/search-data-util',
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/idol/templates/comparison/map-comparison-view.html',
     'text!find/templates/app/page/search/results/map-popover.html',
     'find/app/vent',
     'iCheck'
-], function (Backbone, ComparisonDocumentsCollection, stateTokenStrategy, MapView, FieldSelectionView, configuration, i18n, comparisonsI18n, searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate, vent) {
+], function (Backbone, ComparisonDocumentsCollection, stateTokenStrategy, MapView, FieldSelectionView, configuration, i18n, comparisonsI18n, addLinksToSummary, searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate, vent) {
 
     return Backbone.View.extend({
         className: 'service-view-container',
@@ -156,7 +157,7 @@ define([
                         var popover = this.popoverTemplate({
                             title: title,
                             i18n: i18n,
-                            summary: model.get('summary'),
+                            summary: addLinksToSummary(model.get('summary')),
                             cidForClickRouting: model.cid
                         });
                         var icon = this.mapView.getIcon('hp-record', 'white', comparison.color);

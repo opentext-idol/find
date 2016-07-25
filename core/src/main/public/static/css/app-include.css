@@ -1759,3 +1759,8 @@ h4.similar-dates-message {
 .dataTables_paginate ul.pagination li.active {
     transition: none;
 }
+
+
+.leaflet-container {
+    font-family: Metric;
+}

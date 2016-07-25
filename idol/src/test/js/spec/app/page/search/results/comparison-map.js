@@ -133,6 +133,7 @@ define([
         describe('after adding a model', function() {
             beforeEach(function() {
                 this.view.comparisons[0].collection.add(new Backbone.Model({
+                    summary: 'Here be dragons',
                     title: 'testTitle',
                     locations: [{
                         displayName: 'test',

@@ -13,6 +13,7 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
 ], function(Backbone, $, ListView, AbstractView, FieldView, DisplayCollection, i18n, template) {
+    'use strict';
 
     return AbstractView.extend({
         template: _.template(template)({i18n: i18n}),
@@ -38,19 +39,35 @@ define([
         initialize: function(options) {
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.displayCollection = options.displayCollection;
+            this.filterModel = options.filterModel;
 
             this.monitorCollection(options.restrictedParametricCollection);
+
+            var collapsed = {};
 
             this.fieldNamesListView = new ListView({
                 collection: this.displayCollection,
                 ItemView: FieldView,
+                proxyEvents: ['toggle'],
                 itemOptions: {
                     parametricCollection: options.parametricCollection,
                     // collection is not passed to the individual views
                     parametricDisplayCollection: this.displayCollection,
                     selectedParametricValues: this.selectedParametricValues,
-                    timeBarModel: options.timeBarModel
+                    timeBarModel: options.timeBarModel,
+                    collapsed: _.bind(function(model) {
+                        if (this.filterModel.get('text')) {
+                            return false;
+                        }
+                        else {
+                            return _.isUndefined(collapsed[model.id]) ? true : collapsed[model.id];
+                        }
+                    }, this)
                 }
+            });
+
+            this.listenTo(this.fieldNamesListView, 'item:toggle', function(model, newState) {
+                collapsed[model.id] = newState;
             });
         },
 
