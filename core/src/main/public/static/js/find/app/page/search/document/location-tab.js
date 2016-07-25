@@ -8,11 +8,12 @@ define([
     'underscore',
     'find/app/configuration',
     'find/app/page/search/results/map-view',
+    'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/document/location-tab.html',
     'text!find/templates/app/page/search/results/map-popover.html',
     'i18n!find/nls/bundle',
     'find/app/vent'
-], function(Backbone, _, configuration, MapView, templateString, popoverTemplate, i18n, vent) {
+], function(Backbone, _, configuration, MapView, addLinksToSummary, templateString, popoverTemplate, i18n, vent) {
 
     'use strict';
 
@@ -48,7 +49,7 @@ define([
                 var popover = this.popoverTemplate({
                     i18n: i18n,
                     title: location.displayName,
-                    summary: this.model.get('summary'),
+                    summary: addLinksToSummary(this.model.get('summary')),
                     cidForClickRouting: null
                 });
 
