@@ -1,0 +1,22 @@
+{
+	"login" : {{find_login | to_nice_json}},
+	"iod" : {
+		"apiKey" : "{{find_api_key}}",
+		"domain" : "{{find_domain}}",
+		"application" : "{{find_application}}",
+		"activeIndexes" : [],
+		"publicIndexesEnabled": {{find_enable_public_indexes | to_nice_json}}
+	},
+	"hsod": {
+		"landingPageUrl": "{{find_hsod_landing_page}}",
+		"externalUrl": "{{find_hsod_external_url}}"
+
+	},
+	"queryManipulation": {
+		"profile":"{{find_qm_profile}}",
+		"index": "{{find_qm_index}}"
+	},
+
+	"allowedOrigins": {{find_allowed_origins | to_nice_json}},
+	"redis": {{find_redis | to_nice_json}}
+}

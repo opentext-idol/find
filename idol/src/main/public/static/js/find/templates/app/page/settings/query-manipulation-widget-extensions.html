@@ -1,0 +1,15 @@
+<% var uniqueId = _.uniqueId('settings-'); %>
+<div class="row">
+    <div class="form-group m-t-sm col-sm-12">
+        <label for="<%-uniqueId%>-blacklist" class="control-label"><%-strings.blacklist%>:</label>
+        <input type="text" class="form-control blacklist-input" id="<%-uniqueId%>-blacklist">
+    </div>
+</div>
+<div class="row">
+    <div class="form-group m-t-sm col-sm-12">
+        <label class="control-label">
+            <input type="checkbox" class="form-control expand-query-input">
+            <%-strings.expandQuery%>
+        </label>
+    </div>
+</div>

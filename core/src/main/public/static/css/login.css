@@ -1,0 +1,20 @@
+@import "HPEElements.css";
+
+body {
+    background: url("../img/login.png");
+    background-size: cover;
+}
+
+.login-title-align {
+    color: #fff;
+}
+
+.login-banner {
+    height: 50px;
+    width: 121px;
+    background: url('../img/HPE_Dark.png');
+}
+
+.login-form-control {
+    color: #e5e6e7;
+}

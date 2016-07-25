@@ -1,0 +1,24 @@
+<% if(concepts.length > 1) { %>
+    <% var dropdownId = _.uniqueId('concept_cluster_dropdown_'); %>
+    <div class="selected-related-concept-cluster selected-related-concept" data-id="<%-clusterId%>">
+        <div class="btn-group selected-related-concept-dropdown-trigger-container" data-toggle="tooltip" title="<%- concepts[0] %>">
+            <span class="dropdown-toggle clickable selected-related-concept-dropdown-trigger" aria-expanded="false" data-toggle="dropdown" data-target="#<%- dropdownId %>">
+                <i class="hp-icon hp-chevron-down selected-related-concept-cluster-chevron m-r-xs"></i>
+                <span class="selected-related-concept-text shorten"><%- concepts[0] %></span>
+            </span>
+        </div>
+        <i class="clickable hp-icon hp-close concept-remove-icon"></i>
+    </div>
+    <div id="<%- dropdownId %>" class="selected-related-concept-dropdown-container">
+        <ul class="dropdown-menu selected-related-concept-dropdown" role="menu">
+            <% _.each(concepts, function(concept) { %>
+            <li><a><%- concept %></a></li>
+            <% }); %>
+        </ul>
+    </div>
+<% } else if(concepts.length) { %>
+    <span class="selected-related-concept" data-id="<%-clusterId%>">
+        <span class="selected-related-concept-text shorten m-r-xs" data-toggle="tooltip" title="<%- concepts[0] %>"><%- concepts[0] %></span>
+        <i class="clickable hp-icon hp-close concept-remove-icon"></i>
+    </span>
+<% } %>

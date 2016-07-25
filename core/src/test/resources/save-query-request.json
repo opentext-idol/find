@@ -1,0 +1,22 @@
+{
+    "title": "モンキー",
+    "queryText": "monkey face character 🐵",
+    "indexes": [
+        {"name": "English Wikipedia", "domain": "MY_DOMAIN"},
+        {"name": "日本語 Wikipedia", "domain": "MY_DOMAIN"}
+    ],
+    "parametricValues": [
+        {"field": "CATEGORY", "value": "COMPUTING"}
+    ],
+    "parametricRanges": [
+        {"field": "SOME_DATE", "min": 123456789, "max": 123456791, "type": "Date"}
+    ],
+    "conceptClusterPhrases": [
+        {"phrase": "characters", "primary": true, "clusterId": 1},
+        {"phrase": "faces", "primary": false, "clusterId": 1},
+        {"phrase": "animals", "primary": true, "clusterId": 2}
+    ],
+    "minDate": 1400000000,
+    "maxDate": 1500000000,
+    "minScore": 88
+}

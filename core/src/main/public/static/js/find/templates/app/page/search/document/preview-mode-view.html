@@ -1,0 +1,22 @@
+<div>
+    <span class="pull-right m-b-nil font-bold">
+        <i class="hp-icon hp-close clickable close-preview-mode"></i>
+    </span>
+    <button type="button" class="preview-mode-open-detail-button btn button-primary m-b-nil m-t-xs">
+        <%- i18n['search.document.detail.open'] %>
+    </button>
+    <% if(viewHighlighting) { %>
+        <button type="button" class="preview-mode-highlight-query-terms btn button-primary m-b-nil m-t-xs">
+            <%- i18n['search.document.detail.highlightQueryTerms'] %>
+        </button>
+    <% } %>
+    <% if (mmapBaseUrl && mmapUrl) { %>
+        <a class="btn btn-white m-b-nil m-t-xs" href="<%-mmapBaseUrl + mmapUrl%>" target="_blank">
+            <i class="fa fa-external-link"></i>
+            <%-i18n['search.preview.mmap']%>
+        </a>
+    <% } %>
+</div>
+<h4 class="preview-mode-document-title"></h4>
+<div class="preview-mode-document"></div>
+<div class="preview-mode-metadata"></div>

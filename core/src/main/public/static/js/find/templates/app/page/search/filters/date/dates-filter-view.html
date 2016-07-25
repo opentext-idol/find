@@ -1,0 +1,25 @@
+<table class="table date-filters-list">
+    <% _.each(filters, function(filterId) { %>
+    <tr data-filter-id="<%- filterId %>" class="clickable">
+        <td class="text-right check-cell"><i class="hp-icon hp-fw hp-check hide"></i></td>
+        <td><%- i18n['search.dates.timeInterval.' + filterId] %></td>
+    </tr>
+    <% }) %>
+</table>
+<div class="search-dates-wrapper m-l-md hide">
+    <form class="form-inline">
+        <% _.each(customFilterData, function(filterData) { %>
+            <div class="form-group">
+                <h6><%- i18n[filterData.headingKey] %></h6>
+                <div class="input-group m-l-sm m-b-sm">
+                    <div class="input-group date results-filter-date" data-date-attribute="<%- filterData.targetAttribute %>">
+                        <input type="text" class="form-control" value="">
+                        <span class="input-group-addon date-select">
+                            <i class="hp-icon hp-fw hp-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </form>
+</div>

@@ -1,0 +1,6 @@
+<li role="presentation">
+    <a role="tab" aria-controls="<%- data.uniqueId %>" data-toggle="tab" data-tab-id="<%- data.id %>" class="tab-title shorten result-view-type">
+        <i class="hp-icon <%- data.selector.icon %> visible-xs-inline-block visible-sm-inline-block visible-lg-inline-block"></i>
+        <span class="visible-md-inline visible-lg-inline"> <%- data.selector.displayNameKey ? data.i18n['search.resultsView.' + data.selector.displayNameKey] : data.selector.displayName %></span>
+    </a>
+</li>

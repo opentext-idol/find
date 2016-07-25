@@ -1,0 +1,14 @@
+<div>
+    <% if(model.get('media') === 'audio') {%>
+        <div class="preview-media-player-audio">
+            <i class="hp-icon hp-sound hp-5x" aria-hidden="true"></i>
+        </div>
+    <% } %>
+    <<%= model.get('media') %> src="<%- model.get('url') %>#t=<%- model.get('offset') %>" preload="auto" class="preview-media-player" controls>
+        <% if ('image' != model.get('media')) { %>
+            <p>
+                    Your browser does not support HTML5 <%= model.get('media') %>.  To view this content, please use a different browser.
+            </p>
+        <% } %>
+    </<%= model.get('media') %>>
+</div>

@@ -1,0 +1,8 @@
+<% var id = _.uniqueId('precision-recall-slider'); %>
+<div class="precision-slider-block row">
+    <label class="col-sm-2" for="<%=id%>-precision-recall-slider"><%-i18n['search.precisionRecall.recall']%></label>
+    <div class="col-sm-8">
+        <input  id="<%=id%>-precision-recall-slider" class="precision-recall-slider" type="text"/>
+    </div>
+    <label class="col-sm-2" for="<%=id%>-precision-recall-slider"><%-i18n['search.precisionRecall.precision']%></label>
+</div>

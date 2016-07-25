@@ -1,6 +1,8 @@
 language: java
 jdk:
 - oraclejdk7
+before_install:
+- nvm install 5.1
 branches:
   only:
   - master

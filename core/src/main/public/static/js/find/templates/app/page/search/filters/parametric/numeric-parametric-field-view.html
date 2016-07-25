@@ -1,0 +1,39 @@
+<div>
+    <form>
+        <div class="container-fluid <%= clickable ? 'clickable-widget' : '' %>">
+            <div class="row">
+                <div class="col-xs-12 numeric-parametric-chart-row">
+                    <div class="numeric-parametric-loading-indicator"><%= loadingSpinnerHtml %></div>
+                    <p class="numeric-parametric-empty-text"><%- i18n['search.numericParametricFields.noValues'] %></p>
+                    <p class="numeric-parametric-error-text"><%- i18n['search.numericParametricFields.error'] %></p>
+                </div>
+            </div>
+            <div class="row numeric-parametric-inputs <%- inputsRowClass %>">
+                <div class="<%- inputColumnClass %>">
+                    <%= inputTemplate({minOrMax: 'min'}) %>
+                </div>
+                <div class="text-center <%- coordinatesColumnClass %>">
+                    <span class="numeric-parametric-co-ordinates"></span>
+                </div>
+                <div class="<%- inputColumnClass %>">
+                    <div class="pull-right">
+                        <%= inputTemplate({minOrMax: 'max'}) %>
+                    </div>
+                </div>
+            </div>
+            <% if (buttonsEnabled) { %>
+                <div class="row numeric-parametric-buttons">
+                    <div class="col-xs-4">
+                        <a class="numeric-parametric-no-min numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.noMin']%></a>
+                    </div>
+                    <div class="col-xs-4 text-center">
+                        <a class="numeric-parametric-reset numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.reset']%></a>
+                    </div>
+                    <div class="col-xs-4 text-right">
+                        <a class="numeric-parametric-no-max numeric-parametric-field-control" role="button"><%-i18n['search.numericParametricFields.noMax']%></a>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </form>
+</div>

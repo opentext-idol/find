@@ -1,0 +1,72 @@
+/*
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+package com.hp.autonomy.frontend.find.core.search;
+
+import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
+import org.joda.time.DateTime;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import java.io.Serializable;
+import java.util.Collections;
+
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
+public abstract class AbstractDocumentsControllerTest<S extends Serializable, Q extends QueryRestrictions<S>, R extends SearchResult, E extends Exception> {
+    @Mock
+    protected DocumentsService<S, R, E> documentsService;
+
+    @Mock
+    protected QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
+
+    protected DocumentsController<S, Q, R, E> documentsController;
+    protected Class<S> databaseType;
+
+    protected abstract R sampleResult();
+
+    @Test
+    public void query() throws E {
+        documentsController.query("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, 0, false);
+        verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
+    }
+
+    @Test
+    public void queryForPromotions() throws E {
+        documentsController.queryForPromotions("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, 0, false);
+        verify(documentsService).queryTextIndexForPromotions(Matchers.<SearchRequest<S>>any());
+    }
+
+    @Test
+    public void queryPaginationTest() throws E {
+        documentsController.query("Some query text", 30, 60, null, Collections.<S>emptyList(), null, null, null, null, true, 0, false);
+        verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
+    }
+
+    @Test
+    public void findSimilar() throws E {
+        final String reference = "SomeReference";
+        documentsController.findSimilar(reference, 1, 30, "context", Collections.<S>emptyList(), "", "relevance", null, DateTime.now(), true, 0);
+        verify(documentsService).findSimilar(Matchers.<SuggestRequest<S>>any());
+    }
+
+    @Test
+    public void getDocumentContent() throws E {
+        when(documentsService.getDocumentContent(Matchers.<GetContentRequest<S>>any())).thenReturn(Collections.singletonList(sampleResult()));
+        final String reference = "SomeReference";
+        assertNotNull(documentsController.getDocumentContent(reference, null));
+    }
+}

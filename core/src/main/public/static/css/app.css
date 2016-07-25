@@ -1,0 +1,24 @@
+/*
+ * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+@import '../lib/bootstrap/css/bootstrap.css';
+@import '../lib/bootstrap/css/bootstrap-theme.css';
+@import '../bower_components/fontawesome/css/font-awesome.css';
+@import "../bower_components/hp-autonomy-settings-page/src/css/settings.css";
+@import "../bower_components/hp-autonomy-js-whatever/src/css/javascript-utils.css";
+@import "../bower_components/datatables.net-bs/css/dataTables.bootstrap.css";
+@import "../bower_components/datatables-vendor-plugins/integration/font-awesome/dataTables.fontAwesome.css";
+@import "../bower_components/datatables.net-fixedcolumns-bs/css/fixedColumns.bootstrap.css";
+@import "../bower_components/hp-autonomy-about-page/src/css/about-page.css";
+@import "../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css";
+@import "../bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css";
+@import "../bower_components/leaflet/dist/leaflet.css";
+@import "../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css";
+@import "../bower_components/leaflet.markercluster/dist/MarkerCluster.css";
+@import "../bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css";
+@import 'HPEElements.css';
+@import 'app-include.css';
+@import "result-highlighting.css";
+@import 'icons.css';

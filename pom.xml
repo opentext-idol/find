@@ -14,21 +14,27 @@
 
     <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>find</artifactId>
-    <version>11.1.0-SNAPSHOT</version>
+    <version>11.1.0</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>find-core</module>
-        <module>find-idol</module>
-        <module>find-hod</module>
-        <module>find-dist</module>
+        <module>core</module>
+        <module>idol</module>
+        <module>hod</module>
+        <module>on-prem-dist</module>
+        <module>hsod-dist</module>
     </modules>
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.12.11</haven.search.components.version>
+        <haven.search.components.version>0.21.11</haven.search.components.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
+        <!-- Disabling integration tests by default until we figure out how to run them on the build servers (CCUK-3480) -->
+        <skipITs>true</skipITs>
+        <h2.version>1.3.176</h2.version>
+        <mariaClient.version>1.4.2</mariaClient.version>
         <npm.binExtension/>
+        <skipTests/>
     </properties>
 
     <build>
@@ -43,8 +49,7 @@
                             <goal>integration-test</goal>
                         </goals>
                         <configuration>
-                            <!-- Temporarily disabling until we figure out how to run integration tests (CCUK-3480) -->
-                            <skip>true</skip>
+                            <skipITs>${skipITs}</skipITs>
                         </configuration>
                     </execution>
                 </executions>
@@ -56,6 +61,22 @@
             </plugin>
         </plugins>
     </build>
+
+     <dependencyManagement>
+        <dependencies>
+            <!-- Adding dependency management section to ensure stable version of H2 used (flyway declares dependency without version) -->
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariaClient.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -71,9 +92,32 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
             <version>2.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.5.1</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>junit</artifactId>
+                    <groupId>junit</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.springtestdbunit</groupId>
+            <artifactId>spring-test-dbunit</artifactId>
+            <version>1.2.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -99,15 +143,18 @@
             </properties>
         </profile>
         <profile>
+            <id>windows</id>
             <activation>
                 <os>
                     <family>windows</family>
                 </os>
             </activation>
-            <id>windows</id>
             <properties>
                 <npm.binExtension>.cmd</npm.binExtension>
             </properties>
+        </profile>
+        <profile>
+            <id>debian</id>
         </profile>
     </profiles>
 </project>

@@ -1,0 +1,15 @@
+<li class="m-b-md">
+    <h4>
+        <% // Choose the first entity from a cluster as a representative heading %>
+        <a class="entity-text suggestion-head-text clickable" data-entity-cluster="<%- cluster %>">
+            <strong><%- entities[0] %></strong>
+        </a>
+    </h4>
+    <% if (entities.length > 1) { %>
+        <ul class="list-unstyled p-l-sm">
+            <% _.each(entities, function(entity) { %>
+                <li class="m-b-xs"><a class="entity-text suggestion-head-text clickable" data-entity-text="<%- entity %>"><%- entity %></a></li>
+            <% }) %>
+        </ul>
+    <% } %>
+</li>

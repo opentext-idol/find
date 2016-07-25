@@ -1,0 +1,177 @@
+{
+  "login": {
+    "method": "default",
+    "community": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 9030,
+      "productType": [
+        "UASERVER",
+        "DAH",
+        "IDOLPROXY"
+      ]
+    },
+    "name": "CommunityAuthentication"
+  },
+  "content": {
+    "protocol": "HTTP",
+    "host": "localhost",
+    "port": 9000,
+    "productType": [
+      "AXE",
+      "DAH",
+      "IDOLPROXY"
+    ]
+  },
+  "queryManipulation": {
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 16000,
+      "productType": [
+        "QMS",
+        "DAH",
+        "IDOLPROXY"
+      ]
+    },
+    "typeAheadMode": "Index",
+    "expandQuery": true,
+    "blacklist": "ISO_BLACKLIST",
+    "enabled": false
+  },
+  "statsServer": {
+    "enabled": false,
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 19870,
+      "productType": [
+        "STATS",
+        "DAH",
+        "IDOLPROXY"
+      ]
+    }
+  },
+  "view": {
+    "protocol": "HTTP",
+    "host": "localhost",
+    "port": 9080,
+    "productType": [
+      "VIEW",
+      "IDOLPROXY",
+      "DAH"
+    ],
+    "referenceField": "DREREFERENCE",
+    "viewingMode": "FIELD",
+    "connector": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 10000,
+      "productTypeRegex": ".*?CONNECTOR"
+    },
+    "highlighting": true
+  },
+  "savedSearches": {
+    "pollForUpdates": true,
+    "pollingInterval": 5
+  },
+  "map": {
+    "enabled": false,
+    "attribution": null,
+    "initialLocation": {
+      "latitude": 51.5074,
+      "longitude":  0.1278
+    },
+    "tileUrlTemplate": null,
+    "resultsStep": 2500,
+    "locationFields": [
+      {
+        "displayName": "DefaultLocation",
+        "latitudeField": "latitude",
+        "longitudeField": "longitude"
+      }
+    ]
+  },
+  "mmap": {
+    "enabled": false,
+    "baseUrl": ""
+  },
+  "minScore": 0,
+  "topicMapMaxResults": 1000,
+  "fieldsInfo": {
+    "contentType": {
+      "names": [
+        "AU_REPOSITORY_METADATA_TYPE_STRING"
+      ]
+    },
+    "url": {
+      "names": [
+        "AU_REPOSITORY_METADATA_URL_FILE_STRING"
+      ]
+    },
+    "offset": {
+      "names": [
+        "OFFSET"
+      ]
+    },
+    "authors": {
+      "names": [
+        "AU_DOCUMENT_METADATA_AUTHOR_STRING"
+      ]
+    },
+    "categories": {
+      "names": [
+        "AU_REPOSITORY_METADATA_CATEGORY_STRING"
+      ]
+    },
+    "dateCreated": {
+      "names": [
+        "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS"
+      ],
+      "type": "Date"
+    },
+    "dateModified": {
+      "names": [
+        "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS"
+      ],
+      "type": "Date"
+    },
+    "mmapUrl": {
+      "names": [
+        "MMAP_PROXY_URL"
+      ]
+    },
+    "thumbnail": {
+      "names": [
+        "PREVIEW_THUMBNAIL_BASE64"
+      ]
+    },
+    "thumbnailUrl": {
+      "names": [
+        "THUMBNAIL_URL"
+      ]
+    },
+    "sourceType": {
+      "names": [
+        "SOURCETYPE"
+      ]
+    },
+    "transcript": {
+      "names": [
+        "TRANSCRIPTION_CONTENT"
+      ]
+    },
+    "latitude": {
+      "names": [
+        "LAT"
+      ],
+      "type": "NUMBER"
+    },
+    "longitude": {
+      "names": [
+        "LON"
+      ],
+      "type": "NUMBER"
+    }
+  }
+}

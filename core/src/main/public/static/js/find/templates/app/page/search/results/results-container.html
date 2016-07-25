@@ -1,0 +1,33 @@
+<% var promoted = data.isPromotion ? 'promoted-document' : ''; %>
+
+<div class="main-results-container m-b-sm <%-promoted%>" data-cid="<%-model.cid %>">
+    <span class="pull-left m-t-xs text-muted m-r-sm content-type">
+        <i class="icomoon-file-<%-data.contentType%>"></i>
+    </span>
+
+    <div class="results-contents">
+        <% if (data.isPromotion) { %>
+            <span class="pull-right m-t-xs text-muted promoted-label">
+                <i class="hp-icon hp-fw hp-favorite"></i> Promoted
+            </span>
+        <% } %>
+        <h4 class="pull-left m-b-nil m-t-xs result-header"><%- model.get('title') %></h4>
+        <span class="document-date pull-left m-t-xs m-l-xs">
+            <%- data.date %>
+        </span>
+        <span class="document-reference shorten"><%- model.get('reference') %></span>
+        <% if(model.get('thumbnail')) { %>
+            <img class="document-thumbnail m-r-sm pull-left" src="data:image/jpeg;base64,<%=model.get('thumbnail')%>"/>
+        <% } else if (model.get('thumbnailUrl')) { %>
+            <img class="document-thumbnail m-r-sm pull-left" src="<%=model.get('thumbnailUrl')%>"/>
+        <% } %>
+        <p class="result-summary">
+            <%= data.highlightedSummary %>
+        </p>
+        <p class="text-right">
+            <% if (!data.staticPromotion) { %>
+                <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
+            <% } %>
+        </p>
+    </div>
+</div>

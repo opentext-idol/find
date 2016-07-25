@@ -9,29 +9,31 @@
 *.ipr
 *.iml
 *.iws
+*.ids
 
 # Maven
 log/
-find-core/target/
-find-hod/target/
-find-idol/target/
-find-dist/target/
+core/target/
+hod/target/
+idol/target/
+on-prem-dist/target/
+hsod-dist/target/
 
 # Archetype
 filter-dev.properties
-find-core/src/test/js/lib/
+core/src/test/js/lib/
 .vagrant/
 
-find-core/.grunt/
-find-core/node_modules/
-find-core/src/main/public/static/bower_components/
-find-core/spec-runner.html
-find-hod/.grunt/
-find-hod/node_modules/
-find-hod/spec-runner.html
-find-idol/.grunt/
-find-idol/node_modules/
-find-idol/spec-runner.html
+core/.grunt/
+core/node_modules/
+core/src/main/public/static/bower_components/
+core/spec-runner.html
+hod/.grunt/
+hod/node_modules/
+hod/spec-runner.html
+idol/.grunt/
+idol/node_modules/
+idol/spec-runner.html
 
 # Vagrant
 cookbooks/
@@ -43,3 +45,6 @@ tmp
 *.LOCAL.*
 *.REMOTE.*
 *.orig
+
+# Database
+*.db
