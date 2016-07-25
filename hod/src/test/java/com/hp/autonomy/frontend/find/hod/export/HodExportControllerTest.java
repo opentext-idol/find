@@ -13,6 +13,6 @@ import com.hp.autonomy.hod.client.error.HodErrorException;
 public class HodExportControllerTest extends ExportControllerTest<ResourceIdentifier, HodErrorException> {
     @Override
     protected ExportController<ResourceIdentifier, HodErrorException> constructController() {
-        return new HodExportController(exportService, requestMapper);
+        return new HodExportController(exportService, requestMapper, controllerUtils);
     }
 }

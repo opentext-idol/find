@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.export;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.export.ExportController;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
+import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +17,8 @@ import org.springframework.stereotype.Controller;
 public class IdolExportController extends ExportController<String, AciErrorException> {
     @Autowired
     public IdolExportController(final ExportService<String, AciErrorException> exportService,
-                                final RequestMapper<String> requestMapper) {
-        super(exportService, requestMapper);
+                                final RequestMapper<String> requestMapper,
+                                final ControllerUtils controllerUtils) {
+        super(exportService, requestMapper, controllerUtils);
     }
 }

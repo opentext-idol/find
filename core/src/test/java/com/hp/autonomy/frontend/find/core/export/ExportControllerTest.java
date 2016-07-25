@@ -5,6 +5,8 @@
 
 package com.hp.autonomy.frontend.find.core.export;
 
+import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
+import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import org.junit.Before;
@@ -13,6 +15,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,6 +32,8 @@ public abstract class ExportControllerTest<S extends Serializable, E extends Exc
     protected ExportService<S, E> exportService;
     @Mock
     protected RequestMapper<S> requestMapper;
+    @Mock
+    protected ControllerUtils controllerUtils;
 
     private ExportController<S, E> controller;
 
@@ -42,5 +48,11 @@ public abstract class ExportControllerTest<S extends Serializable, E extends Exc
     public void exportToCsv() throws IOException, E {
         controller.exportToCsv("{}");
         verify(exportService).export(any(OutputStream.class), Matchers.<SearchRequest<S>>any(), eq(ExportFormat.CSV));
+    }
+
+    @Test
+    public void handleException() {
+        controller.handleException(new IOException(""), new MockHttpServletRequest(), new MockHttpServletResponse());
+        verify(controllerUtils).buildErrorModelAndView(any(ErrorModelAndViewInfo.class));
     }
 }

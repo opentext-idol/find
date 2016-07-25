@@ -12,6 +12,6 @@ import com.hp.autonomy.frontend.find.core.export.ExportControllerTest;
 public class IdolExportControllerTest extends ExportControllerTest<String, AciErrorException> {
     @Override
     protected ExportController<String, AciErrorException> constructController() {
-        return new IdolExportController(exportService, requestMapper);
+        return new IdolExportController(exportService, requestMapper, controllerUtils);
     }
 }

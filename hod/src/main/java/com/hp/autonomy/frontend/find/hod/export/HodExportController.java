@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.hod.export;
 
 import com.hp.autonomy.frontend.find.core.export.ExportController;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
+import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
@@ -17,7 +18,8 @@ import org.springframework.stereotype.Controller;
 public class HodExportController extends ExportController<ResourceIdentifier, HodErrorException> {
     @Autowired
     public HodExportController(final ExportService<ResourceIdentifier, HodErrorException> exportService,
-                               final RequestMapper<ResourceIdentifier> requestMapper) {
-        super(exportService, requestMapper);
+                               final RequestMapper<ResourceIdentifier> requestMapper,
+                               final ControllerUtils controllerUtils) {
+        super(exportService, requestMapper, controllerUtils);
     }
 }

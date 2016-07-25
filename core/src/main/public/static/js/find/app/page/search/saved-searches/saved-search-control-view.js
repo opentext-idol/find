@@ -46,7 +46,7 @@ define([
 
     return Backbone.View.extend({
         template: _.template(template),
-        formTemplate: _.template('<form action="../api/bi/export/csv" method="post"><input type="hidden" name="postData" value="<%-postData%>"/></form>'),
+        formTemplate: _.template('<form action="../api/bi/export/csv" method="post" target="_blank"><input type="hidden" name="postData" value="<%-postData%>"/></form>'),
         titleInput: null,
 
         events: {
