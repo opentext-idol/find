@@ -8,6 +8,7 @@ define([
     'find/app/page/search/filters/parametric/parametric-select-modal',
     'find/app/page/search/filters/parametric/parametric-value-view'
 ], function(Backbone, _, $, i18n, ListView, Collapsible, ParametricModal, ValueView) {
+    'use strict';
 
     var MAX_SIZE = 5;
 
@@ -53,6 +54,7 @@ define([
 
         remove: function() {
             this.listView.remove();
+
             Backbone.View.prototype.remove.call(this);
         }
     });
@@ -68,8 +70,17 @@ define([
             this.selectedParametricValues = options.selectedParametricValues;
             this.parametricCollection = options.parametricCollection;
 
+            var collapsed;
+
+            if (_.isFunction(options.collapsed)) {
+                collapsed = options.collapsed(options.model);
+            }
+            else {
+                collapsed = options.collapsed;
+            }
+
             this.collapsible = new Collapsible({
-                collapsed: true,
+                collapsed: collapsed,
                 title: this.model.get('displayName') + ' (' + this.model.fieldValues.length +')',
                 subtitle: this.subtitleTemplate({
                     i18n: i18n,
@@ -96,6 +107,10 @@ define([
             this.listenTo(this.collapsible, 'hide', function() {
                 this.toggleSubtitle();
             });
+
+            this.listenTo(this.collapsible, 'toggle', function(newState) {
+                this.trigger('toggle', this.model, newState)
+            })
         },
 
         render: function() {
