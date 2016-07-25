@@ -98,6 +98,7 @@ define([
             });
 
             this.numericParametricView = new NumericParametricView({
+                filterModel: this.filterModel,
                 queryModel: options.queryModel,
                 queryState: options.queryState,
                 timeBarModel: options.timeBarModel,
@@ -107,6 +108,7 @@ define([
             });
 
             this.dateParametricView = new NumericParametricView({
+                filterModel: this.filterModel,
                 queryModel: options.queryModel,
                 queryState: options.queryState,
                 timeBarModel: options.timeBarModel,
@@ -126,15 +128,20 @@ define([
                 displayCollection: this.parametricDisplayCollection
             });
 
+            this.collapsed = {
+                dates: false,
+                indexes: false
+            };
+
             this.indexesViewWrapper = new Collapsible({
                 view: indexesView,
-                collapsed: false,
+                collapsed: this.collapsed.indexes,
                 title: i18nIndexes['search.indexes']
             });
 
             this.dateViewWrapper = new Collapsible({
                 view: dateView,
-                collapsed: false,
+                collapsed: this.collapsed.dates,
                 title: datesTitle
             });
 
@@ -146,6 +153,15 @@ define([
             });
 
             this.$emptyMessage = $('<p class="hide">' + i18n['search.filters.empty'] + '</p>');
+
+            // only track user triggered changes, not automatic ones
+            this.listenTo(this.indexesViewWrapper, 'toggle', function(newState) {
+                this.collapsed.indexes = newState;
+            });
+
+            this.listenTo(this.dateViewWrapper, 'toggle', function(newState) {
+                this.collapsed.dates = newState;
+            });
         },
 
         render: function() {
@@ -204,10 +220,13 @@ define([
             this.hideDates = !(!search || searchMatches(datesTitle, search));
 
             this.dateViewWrapper.$el.toggleClass('hide', this.hideDates);
+            this.dateViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.dates);
         },
 
         updateIndexesVisibility: function() {
             this.indexesViewWrapper.$el.toggleClass('hide', this.indexesEmpty);
+
+            this.indexesViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.indexes);
         }
     });
 

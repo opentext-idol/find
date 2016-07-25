@@ -8,16 +8,35 @@ define([
     'find/app/page/search/filters/parametric/parametric-select-modal',
     'find/app/page/search/filters/parametric/parametric-value-view'
 ], function(Backbone, _, $, i18n, ListView, Collapsible, ParametricModal, ValueView) {
+    'use strict';
 
     var MAX_SIZE = 5;
 
     var ValuesView = Backbone.View.extend({
         className: 'table parametric-fields-table',
         tagName: 'table',
+        seeAllButtonTemplate: _.template('<tr class="show-all clickable"><td></td><td> <span class="toggle-more-text text-muted"><%-i18n["app.seeAll"]%></span></td></tr>'),
 
-        initialize: function() {
+        events: {
+            'click .show-all': function() {
+                new ParametricModal({
+                    collection: this.model.fieldValues,
+                    currentFieldGroup: this.model.id,
+                    parametricCollection: this.parametricCollection,
+                    parametricDisplayCollection: this.parametricDisplayCollection,
+                    selectedParametricValues: this.selectedParametricValues
+                });
+            }
+        },
+
+        initialize: function(options) {
+            this.parametricDisplayCollection = options.parametricDisplayCollection;
+            this.selectedParametricValues = options.selectedParametricValues;
+            this.parametricCollection = options.parametricCollection;
+
             this.listView = new ListView({
                 collection: this.collection,
+                footerHtml: this.seeAllButtonTemplate({i18n:i18n}),
                 ItemView: ValueView,
                 maxSize: MAX_SIZE,
                 tagName: 'tbody',
@@ -34,26 +53,14 @@ define([
 
         remove: function() {
             this.listView.remove();
+
             Backbone.View.prototype.remove.call(this);
         }
     });
 
     return Backbone.View.extend({
         className: 'animated fadeIn',
-        seeAllButtonTemplate: _.template('<tr class="show-all clickable"><td></td><td> <span class="toggle-more-text text-muted"><%-i18n["app.seeAll"]%></span></td></tr>'),
         subtitleTemplate: _.template('<span class="selection-length"><%-length%></span> <%-i18n["app.selected"]%> <i class="hp-icon hp-warning selected-warning hidden"></i>'),
-
-        events: {
-            'click .show-all': function() {
-                new ParametricModal({
-                    collection: this.model.fieldValues,
-                    currentFieldGroup: this.model.id,
-                    parametricCollection: this.parametricCollection,
-                    parametricDisplayCollection: this.parametricDisplayCollection,
-                    selectedParametricValues: this.selectedParametricValues
-                });
-            }
-        },
 
         initialize: function(options) {
             this.$el.attr('data-field', this.model.id);
@@ -62,13 +69,28 @@ define([
             this.selectedParametricValues = options.selectedParametricValues;
             this.parametricCollection = options.parametricCollection;
 
+            var collapsed;
+
+            if (_.isFunction(options.collapsed)) {
+                collapsed = options.collapsed(options.model);
+            }
+            else {
+                collapsed = options.collapsed;
+            }
+
             this.collapsible = new Collapsible({
+                collapsed: collapsed,
                 title: this.model.get('displayName') + ' (' + this.model.fieldValues.length +')',
-                view: new ValuesView({collection: this.model.fieldValues}),
-                collapsed: true,
                 subtitle: this.subtitleTemplate({
                     i18n: i18n,
                     length: this.getFieldSelectedValuesLength()
+                }),
+                view: new ValuesView({
+                    collection: this.model.fieldValues,
+                    model: this.model,
+                    parametricCollection:this.parametricCollection,
+                    parametricDisplayCollection: this.parametricDisplayCollection,
+                    selectedParametricValues: this.selectedParametricValues
                 })
             });
 
@@ -77,19 +99,22 @@ define([
                 this.toggleWarning();
             });
 
-            this.collapsible.$el.on('show.bs.collapse', _.bind(function() {
-                this.collapsible.$('.collapsible-subtitle').removeClass('hide');
-            }, this));
-            this.collapsible.$el.on('hide.bs.collapse', _.bind(function() {
+            this.listenTo(this.collapsible, 'show', function() {
+                this.collapsible.toggleSubtitle(true);
+            });
+
+            this.listenTo(this.collapsible, 'hide', function() {
                 this.toggleSubtitle();
-            }, this));
+            });
+
+            this.listenTo(this.collapsible, 'toggle', function(newState) {
+                this.trigger('toggle', this.model, newState)
+            })
         },
 
         render: function() {
             this.$el.empty().append(this.collapsible.$el);
             this.collapsible.render();
-
-            this.collapsible.$('tbody').append(this.seeAllButtonTemplate({i18n:i18n}));
 
             this.$warning = this.collapsible.$('.selected-warning');
 
@@ -102,7 +127,7 @@ define([
         },
 
         toggleSubtitle: function() {
-            this.collapsible.$('.collapsible-subtitle').toggleClass('hide', this.getFieldSelectedValuesLength() === 0);
+            this.collapsible.toggleSubtitle(this.getFieldSelectedValuesLength() !== 0);
         },
 
         toggleWarning: function() {
@@ -128,8 +153,9 @@ define([
         },
 
         remove: function() {
+            this.$warning.tooltip('destroy');
             this.collapsible.remove();
-            
+
             Backbone.View.prototype.remove.call(this);
         }
     });

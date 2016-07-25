@@ -13,7 +13,6 @@ define([
     'find/app/util/collapsible',
     'find/app/vent'
 ], function(Backbone, $, _, i18n, NumericParametricFieldView, prettifyFieldName, Collapsible, vent) {
-
     'use strict';
 
     function getSubtitle() {
@@ -44,6 +43,8 @@ define([
             this.selectedParametricValues = options.selectedParametricValues;
             this.dataType = options.dataType;
             this.timeBarModel = options.timeBarModel;
+            this.filterModel = options.filterModel;
+            this.collapsed = true;
 
             var clickCallback = null;
 
@@ -67,7 +68,7 @@ define([
                 title: prettifyFieldName(this.model.id),
                 subtitle: getSubtitle.call(this),
                 view: this.fieldView,
-                collapsed: true,
+                collapsed: this.collapsed,
                 renderOnOpen: true
             });
 
@@ -75,12 +76,26 @@ define([
             this.listenTo(this.selectedParametricValues, 'update change:range', this.setFieldSelectedValues);
             this.listenTo(vent, 'vent:resize', this.fieldView.render.bind(this.fieldView));
 
-            this.collapsible.$el.on('show.bs.collapse', _.bind(function() {
-                this.collapsible.$('.collapsible-subtitle').removeClass('hide');
-            }, this));
-            this.collapsible.$el.on('hide.bs.collapse', _.bind(function() {
+            this.listenTo(this.collapsible, 'show', function() {
+                this.collapsible.toggleSubtitle(true);
+            });
+
+            this.listenTo(this.collapsible, 'hide', function() {
                 this.toggleSubtitle();
-            }, this));
+            });
+
+            this.listenTo(this.collapsible, 'toggle', function(newState) {
+                this.collapsed = newState;
+            });
+
+            this.listenTo(this.filterModel, 'change', function() {
+                if (this.filterModel.get('text')) {
+                    this.collapsible.show();
+                }
+                else {
+                    this.collapsible.toggle(!this.collapsed);
+                }
+            })
         },
 
         render: function () {
@@ -103,18 +118,20 @@ define([
         },
 
         toggleSubtitle: function() {
-            var subtitleUnfiltered = this.collapsible.$('.collapsible-subtitle').text() === i18n['app.unfiltered'];
-            var widgetCollapsed = this.collapsible.$('.collapsible-header').hasClass('collapsed');
+            var subtitleUnfiltered = this.selectedParametricValues.findWhere({field: this.model.id});
 
-            this.collapsible.$('.collapsible-subtitle').toggleClass('hide', widgetCollapsed && subtitleUnfiltered);
+            this.collapsible.toggleSubtitle(subtitleUnfiltered);
         },
 
         setFieldSelectedValues: function() {
             this.collapsible.setSubTitle(getSubtitle.call(this));
+
+            this.toggleSubtitle();
         },
 
         remove: function() {
             this.collapsible.remove();
+
             Backbone.View.prototype.remove.call(this);
         }
     });

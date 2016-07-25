@@ -27,6 +27,7 @@ define([
             });
 
             this.view = new ParametricView({
+                filterModel: new Backbone.Model(),
                 parametricCollection: new Backbone.Collection(models),
                 restrictedParametricCollection: this.restrictedParametricCollection,
                 displayCollection: displayCollection,

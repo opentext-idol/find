@@ -34,6 +34,7 @@ define([
                 itemOptions: {
                     inputTemplate: options.inputTemplate,
                     queryModel: options.queryModel,
+                    filterModel: options.filterModel,
                     timeBarModel: options.timeBarModel,
                     dataType: options.dataType,
                     selectedParametricValues: options.queryState.selectedParametricValues,
