@@ -9,6 +9,12 @@ define([
         template: _.template(collapsibleTemplate, {variable: 'data'}),
 
         events: {
+            'click > .collapsible-header': function() {
+                this.$collapse.collapse('toggle');
+
+                // other handlers called before this trigger
+                this.trigger('toggle', this.collapsed);
+            },
             'show.bs.collapse': function() {
                 this.collapsed = false;
                 this.updateHeaderState();
@@ -36,11 +42,14 @@ define([
             this.title = options.title;
             this.subtitle = options.subtitle;
             this.renderOnOpen = options.renderOnOpen || false;
+
+            this.collapseId = _.uniqueId('collapse-');
         },
 
         render: function() {
             this.$el.html(this.template({
                 contentState: this.collapsed ? '' : 'in',
+                collapseId: this.collapseId,
                 title: this.title,
                 subtitle: this.subtitle
             }));
@@ -48,8 +57,13 @@ define([
             this.$header = this.$('.collapsible-header');
             this.updateHeaderState();
 
+            // activate plugin manually for greater control of click handlers
+            this.$collapse = this.$('.collapse').collapse({
+                toggle: false
+            });
+
             // Render after appending to the DOM since graph views must measure element dimensions
-            this.$('.collapse').append(this.view.$el);
+            this.$collapse.append(this.view.$el);
             this.view.delegateEvents().render();
         },
 
@@ -70,6 +84,26 @@ define([
 
         toggleSubtitle: function(toggle) {
             this.$('.collapsible-subtitle').toggleClass('hide', !toggle)
+        },
+
+        show: function() {
+            if (this.collapsed) {
+                this.$collapse.collapse('show');
+            }
+        },
+
+        hide: function() {
+            if (!this.collapsed) {
+                this.$collapse.collapse('hide');
+            }
+        },
+
+        toggle: function(state) {
+            if (state) {
+                this.show();
+            } else {
+                this.hide();
+            }
         }
     });
 });
