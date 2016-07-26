@@ -79,7 +79,7 @@ define([
 
         updateEmpty: function() {
             if (this.$emptyMessage) {
-                var showEmptyMessage = this.model.get('empty') && !(this.model.get('error') || this.model.get('processing'));
+                var showEmptyMessage = this.model.get('empty') && this.displayCollection.isEmpty() && !(this.model.get('error') || this.model.get('processing'));
                 this.$emptyMessage.toggleClass('hide', !showEmptyMessage);
             }
         }
