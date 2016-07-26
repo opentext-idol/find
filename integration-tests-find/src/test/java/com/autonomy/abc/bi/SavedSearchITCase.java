@@ -127,6 +127,8 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat(factory.getFilterPanel().checkboxForParametricValue(0, 0), checked());
     }
 
+
+
     private static Matcher<SearchTab> modified() {
         return new TypeSafeMatcher<SearchTab>() {
             @Override

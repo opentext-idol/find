@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.find.results;
 import com.autonomy.abc.selenium.find.Container;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.Locator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -22,12 +21,8 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
         this.panel = Container.RIGHT.findUsing(driver);
     }
 
-    public void toggleHighlight() {
-        highlightButton().click();
-    }
-
-    public WebElement highlightButton() {
-        return panel.findElement(new Locator().withTagName("button").containingCaseInsensitive("Highlight"));
+    public WebElement collapseButton(){
+        return panel.findElement(By.cssSelector(".container-toggle"));
     }
 
     @Override

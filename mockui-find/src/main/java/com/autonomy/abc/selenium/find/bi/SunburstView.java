@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.find.bi;
 
 
-import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -12,7 +11,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -89,6 +87,7 @@ public class SunburstView extends ParametricFieldView {
         }
     }
 
+    //Should go in DriverUtils
     private void hoveringOffSide(final WebElement element, final int xOffSet, final int yOffSet){
         final Actions builder = new Actions(getDriver());
         builder.moveToElement(element,xOffSet,yOffSet);

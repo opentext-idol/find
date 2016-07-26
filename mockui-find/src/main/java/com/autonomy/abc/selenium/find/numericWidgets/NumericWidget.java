@@ -11,6 +11,7 @@ import java.util.List;
 public class NumericWidget extends AppElement {
 
     final private WebElement container;
+
     public NumericWidget(WebDriver driver, WebElement outerContainer){
         //unless MainNumericWidget is also some kind of AppElement then have to pass its container
         super(outerContainer.findElement(By.cssSelector("svg.chart")),driver);
@@ -24,6 +25,8 @@ public class NumericWidget extends AppElement {
     public WebElement selectionRec(){
         return findElement(By.cssSelector("rect.selection"));
     }
+
+    public int selectionRectangleWidth(){return (int)Double.parseDouble(selectionRec().getAttribute("Width"));}
 
     public boolean selectionRectangleExists(){
         return findElements(By.cssSelector("rect.selection")).size()>0;
