@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -275,6 +275,15 @@ define([
                     return value === null ? existingRange[index] : value;
                 })
             };
+
+            // Fixes error where user could manually input min > max or max < min
+            if(newAttributes.range[0] > newAttributes.range[1]) {
+                if(existingRange.reduce(function(a,b){return a+b;}) - newAttributes.range.reduce(function(a,b){return a+b;}) > 0) { // if max was decreased
+                    newAttributes.range[0] = newAttributes.range[1]; //set min to equal max
+                } else { // if min was changed
+                    newAttributes.range[1] = newAttributes.range[0]; //set max to equal min
+                }
+            }
 
             if (existingModel) {
                 existingModel.set(newAttributes);
