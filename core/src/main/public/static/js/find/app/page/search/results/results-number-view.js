@@ -10,11 +10,7 @@ define([
         initialize: function(options) {
             this.documentsCollection = options.documentsCollection;
 
-            this.listenTo(this.documentsCollection, 'reset update sync', function(){
-                this.$currentNumber.text(this.documentsCollection.length);
-                this.$totalNumber.text(this.documentsCollection.totalResults || 0);
-                this.$firstNumber.text(this.documentsCollection.length ? 1 : 0);
-            })
+            this.listenTo(this.documentsCollection, 'reset update sync', this.updateCounts);
         },
 
         render: function() {
@@ -26,9 +22,15 @@ define([
             this.$totalNumber = this.$('.total-results-number');
             this.$firstNumber = this.$('.first-result-number');
 
-            this.$currentNumber.text(this.documentsCollection.length);
-            this.$totalNumber.text(this.documentsCollection.totalResults || 0);
-            this.$firstNumber.text(this.documentsCollection.length ? 1 : 0);
+            this.updateCounts();
+        },
+
+        updateCounts: function(){
+            if (this.$currentNumber) {
+                this.$currentNumber.text(this.documentsCollection.length);
+                this.$totalNumber.text(this.documentsCollection.totalResults || 0);
+                this.$firstNumber.text(this.documentsCollection.length ? 1 : 0);
+            }
         }
     });
 

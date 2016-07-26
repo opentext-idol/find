@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
@@ -32,6 +33,8 @@ public abstract class MvcIntegrationTestUtils {
     private static final Pattern REFERENCE_PATTERN = Pattern.compile(".*\"reference\"\\s*:\\s*\"(?<reference>[^\"]+)\".*");
 
     public abstract String[] getDatabases();
+
+    public abstract String getDatabasesAsJson() throws JsonProcessingException;
 
     public abstract EmbeddableIndex getEmbeddableIndex();
 

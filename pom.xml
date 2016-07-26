@@ -27,7 +27,7 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.21.11</haven.search.components.version>
+        <haven.search.components.version>0.22.0</haven.search.components.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <!-- Disabling integration tests by default until we figure out how to run them on the build servers (CCUK-3480) -->
         <skipITs>true</skipITs>

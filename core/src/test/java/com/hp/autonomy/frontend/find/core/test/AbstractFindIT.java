@@ -43,7 +43,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 })
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/clean-database.sql")
 public abstract class AbstractFindIT {
-    protected static final String TEST_DIR = "./target/test";
+    private static final String TEST_DIR = "./target/test";
 
     @BeforeClass
     public static void init() throws IOException {

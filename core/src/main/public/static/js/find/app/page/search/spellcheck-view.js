@@ -22,21 +22,7 @@ define([
             this.documentsCollection = options.documentsCollection;
             this.queryModel = options.queryModel;
 
-            this.listenTo(this.documentsCollection, 'error update', function() {
-                var autoCorrection = this.documentsCollection.getAutoCorrection();
-
-                if (autoCorrection) {
-                    this.$correctedQuery.text(autoCorrection.correctedQuery);
-                    this.$originalQuery.text(autoCorrection.originalQuery);
-
-                    this.show();
-                }
-                else {
-                    this.hide();
-                }
-            });
-
-            this.listenTo(this.documentsCollection, 'request', this.hide);
+            this.listenTo(this.documentsCollection, 'request error sync', this.update);
         },
 
         render: function() {
@@ -46,16 +32,19 @@ define([
 
             this.$correctedQuery = this.$('.corrected-query');
             this.$originalQuery = this.$('.original-query');
+
+            this.update();
         },
 
-        hide: function() {
-            this.$el.addClass('hidden');
-        },
+        update: function() {
+            var autoCorrection = this.documentsCollection.getAutoCorrection();
 
-        show: function() {
-            this.$el.removeClass('hidden');
+            if (this.$correctedQuery && autoCorrection) {
+                this.$correctedQuery.text(autoCorrection.correctedQuery);
+                this.$originalQuery.text(autoCorrection.originalQuery);
+            }
+
+            this.$el.toggleClass('hidden', !autoCorrection);
         }
-
     });
-
 });

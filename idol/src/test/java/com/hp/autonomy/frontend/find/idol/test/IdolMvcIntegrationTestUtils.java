@@ -5,6 +5,8 @@
 
 package com.hp.autonomy.frontend.find.idol.test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
@@ -26,6 +28,11 @@ public class IdolMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
     @Override
     public String[] getDatabases() {
         return new String[]{"Wookiepedia"};
+    }
+
+    @Override
+    public String getDatabasesAsJson() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(getDatabases());
     }
 
     @Override

@@ -44,7 +44,7 @@ define([
             var viewData = _.findWhere(this.views, {id: tabId});
 
             // Deactivate all tabs and activate the selected tab
-            this.$tabContent.find('.tab-pane').removeClass('active');
+            this.$tabContent.find('> .active').removeClass('active');
             this.$tabContent.find('#' + viewData.uniqueId).addClass('active');
 
             if (viewData) {

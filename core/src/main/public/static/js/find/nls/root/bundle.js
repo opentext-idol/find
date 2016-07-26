@@ -21,6 +21,7 @@ define([
         'app.cancel': 'Cancel',
         'app.compare': 'Compare',
         'app.delete': 'Delete',
+        'app.exportToCsv': 'Export Results to CSV',
         'app.from': 'From',
         'app.loading': 'Loading...',
         'app.logout': 'Logout',

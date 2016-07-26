@@ -10,7 +10,7 @@ define([
 
     return FindBaseCollection.extend({
         model: DocumentModel,
-        url: '../api/public/search/query-text-index/promotions',
+        url: '../api/public/search/query-text-index/results',
 
         parse: function(response) {
             return response.documents;

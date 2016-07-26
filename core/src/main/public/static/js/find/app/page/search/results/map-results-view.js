@@ -164,7 +164,8 @@ define([
                     min_date: this.queryModel.get('minDate'),
                     max_date: this.queryModel.get('maxDate'),
                     sort: 'relevance',
-                    summary: 'context'
+                    summary: 'context',
+                    queryType: 'MODIFIED'
                 },
                 remove: false,
                 reset: false

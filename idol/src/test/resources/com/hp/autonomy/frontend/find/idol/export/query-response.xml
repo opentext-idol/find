@@ -1,0 +1,2253 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+  ~ Copyright 2015 Hewlett-Packard Development Company, L.P.
+  ~ Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+  -->
+
+<autnresponse xmlns:autn='http://schemas.autonomy.com/aci/'>
+    <action>QUERY</action>
+    <response>SUCCESS</response>
+    <responsedata>
+        <autn:numhits>6</autn:numhits>
+        <autn:hit>
+            <autn:reference>
+                http://feeds.abcnews.com/c/35229/f/654826/s/3749129e/sc/10/l/0Labcnews0Bgo0N0CUS0CwireStory0Crunaway0Ecats0Ehard0Efind0E22578869/story01.htm
+            </autn:reference>
+            <autn:id>422044</autn:id>
+            <autn:section>0</autn:section>
+            <autn:weight>90.96</autn:weight>
+            <autn:links>CAT,DOG</autn:links>
+            <autn:database>ABCNews</autn:database>
+            <autn:title>Runaway Cats Won't Go Far but May Be Hard to Find</autn:title>
+            <autn:summary>Runaway Cats Won't Go Far but May Be Hard to Find. If the cat does get further, it's because a
+                dog or another cat chased it. The station is run by Catalyst for Cats, Inc., a group of volunteers
+                trying to control the feral cat population in Santa Barbara County by trapping, sterilizing and
+                returning and then feeding wild cats in the area. Owned, lost cats show up at feeding stations more
+                often than one would imagine," said Marci Kladnik, a Catalyst for Cats volunteer and columnist for the
+                Cat Writers' Association. That is something all cat owners need to do for their cats," she said.
+            </autn:summary>
+            <autn:content>
+                <DOCUMENT>
+                    <DREREFERENCE>
+                        http://feeds.abcnews.com/c/35229/f/654826/s/3749129e/sc/10/l/0Labcnews0Bgo0N0CUS0CwireStory0Crunaway0Ecats0Ehard0Efind0E22578869/story01.htm
+                    </DREREFERENCE>
+                    <DRETITLE>Runaway Cats Won't Go Far but May Be Hard to Find</DRETITLE>
+                    <UUID>e3041ca036b22f5ab62e3f314850427a</UUID>
+                    <AUTHOR>ABC News</AUTHOR>
+                    <AUTN_GROUP>Connector</AUTN_GROUP>
+                    <AUTN_IDENTIFIER>
+                        PGlkIHM9IkFCQ05FV1MiIHI9Imh0dHA6Ly9mZWVkcy5hYmNuZXdzLmNvbS9jLzM1MjI5L2YvNjU0ODI2L3MvMzc0OTEyOWUvc2MvMTAvbC8wTGFiY25ld3MwQmdvME4wQ1VTMEN3aXJlU3RvcnkwQ3J1bmF3YXkwRWNhdHMwRWhhcmQwRWZpbmQwRTIyNTc4ODY5L3N0b3J5MDEuaHRtIi8+
+                    </AUTN_IDENTIFIER>
+                    <AUTN_TASK_BATCH_ID>ABCNEWS_b955b1e3a7e49a71dda7301b01288f3a</AUTN_TASK_BATCH_ID>
+                    <CHANNEL_DESCRIPTION>ABC News: US</CHANNEL_DESCRIPTION>
+                    <CHANNEL_LANGUAGE>en</CHANNEL_LANGUAGE>
+                    <CHANNEL_LASTBUILDDATE>Wed, 19 Feb 2014 14:45:17 GMT</CHANNEL_LASTBUILDDATE>
+                    <CHANNEL_LINK>http://abcnews.go.com/US/</CHANNEL_LINK>
+                    <CHANNEL_PUBDATE>Wed, 19 Feb 2014 14:45:17 GMT</CHANNEL_PUBDATE>
+                    <CHANNEL_TITLE>ABC News: U.S.</CHANNEL_TITLE>
+                    <CONTENT-TYPE>text/html</CONTENT-TYPE>
+                    <COPYRIGHT>Copyright (c) 2014 ABC News Internet Ventures</COPYRIGHT>
+                    <DATE>2014-02-19</DATE>
+                    <DC.DATE.ISSUED>2014-02-19</DC.DATE.ISSUED>
+                    <DESCRIPTION>Runaway Cats Won't Go Far but May Be Hard to Find</DESCRIPTION>
+                    <DOCTRACKINGID>216f046122629098ae9d870fdb19bd94</DOCTRACKINGID>
+                    <DOCUMENTATTRIBUTES>0</DOCUMENTATTRIBUTES>
+                    <DOCUMENTCLASS>1</DOCUMENTCLASS>
+                    <DOCUMENTSIZE>92065</DOCUMENTSIZE>
+                    <DOCUMENTTYPE>236</DOCUMENTTYPE>
+                    <DRECHILDCOUNT>0</DRECHILDCOUNT>
+                    <DREDATE>1392820972</DREDATE>
+                    <DREDBNAME>ABCNews</DREDBNAME>
+                    <DREFILENAME>/opt/rssconnector/Temp/1392821291_l2npdey0_story01.htm</DREFILENAME>
+                    <DREORIGINALNAME>/opt/rssconnector/Temp/1392821291_l2npdey0_story01.htm</DREORIGINALNAME>
+                    <DREROOTFAMILYREFERENCE>
+                        http://feeds.abcnews.com/c/35229/f/654826/s/3749129e/sc/10/l/0Labcnews0Bgo0N0CUS0CwireStory0Crunaway0Ecats0Ehard0Efind0E22578869/story01.htm
+                    </DREROOTFAMILYREFERENCE>
+                    <DREROOTFAMILYREFERENCE_ID>e3041ca036b22f5ab62e3f314850427a</DREROOTFAMILYREFERENCE_ID>
+                    <FAMILYSORT>e3041ca036b22f5ab62e3f314850427a-0</FAMILYSORT>
+                    <FB_TITLE>Runaway Cats Won't Go Far but May Be Hard to Find</FB_TITLE>
+                    <FILEACCESSEDTIME>1392821293</FILEACCESSEDTIME>
+                    <FILECREATEDTIME>1392821293</FILECREATEDTIME>
+                    <FILEIMPORTEDTIME>1392821297</FILEIMPORTEDTIME>
+                    <FILEMODIFIEDTIME>1392821293</FILEMODIFIEDTIME>
+                    <IMPORTMAGICEXTENSION>htm</IMPORTMAGICEXTENSION>
+                    <IMPORTORIGINALENCODING>UTF8</IMPORTORIGINALENCODING>
+                    <IMPORTVERSION>1</IMPORTVERSION>
+                    <INFOFLAG>0</INFOFLAG>
+                    <ISFILEFILTERABLE>1</ISFILEFILTERABLE>
+                    <ITEM_CATEGORY>US</ITEM_CATEGORY>
+                    <ITEM_DESCRIPTION>Runaway house cats take hiding places over open spaces and are probably never far
+                        from home&lt;img width='1' height='1'
+                        src='http://feeds.abcnews.com/c/35229/f/654826/s/3749129e/sc/10/mf.gif' border='0'/&gt;&lt;br
+                        clear='all'/&gt;&lt;div class='mf-viral'&gt;&lt;table border='0'&gt;&lt;tr&gt;&lt;td
+                        valign='middle'&gt;&lt;a
+                        href="http://share.feedsportal.com/share/twitter/?u=http%3A%2F%2Fabcnews.go.com%2FUS%2FwireStory%2Frunaway-cats-hard-find-22578869&amp;t=Runaway+Cats+Won%27t+Go+Far+but+May+Be+Hard+to+Find"
+                        target="_blank"&gt;&lt;img src="http://res3.feedsportal.com/social/twitter.png" border="0" /&gt;&lt;/a&gt;&amp;nbsp;&lt;a
+                        href="http://share.feedsportal.com/share/facebook/?u=http%3A%2F%2Fabcnews.go.com%2FUS%2FwireStory%2Frunaway-cats-hard-find-22578869&amp;t=Runaway+Cats+Won%27t+Go+Far+but+May+Be+Hard+to+Find"
+                        target="_blank"&gt;&lt;img src="http://res3.feedsportal.com/social/facebook.png" border="0" /&gt;&lt;/a&gt;&amp;nbsp;&lt;a
+                        href="http://share.feedsportal.com/share/linkedin/?u=http%3A%2F%2Fabcnews.go.com%2FUS%2FwireStory%2Frunaway-cats-hard-find-22578869&amp;t=Runaway+Cats+Won%27t+Go+Far+but+May+Be+Hard+to+Find"
+                        target="_blank"&gt;&lt;img src="http://res3.feedsportal.com/social/linkedin.png" border="0" /&gt;&lt;/a&gt;&amp;nbsp;&lt;a
+                        href="http://share.feedsportal.com/share/gplus/?u=http%3A%2F%2Fabcnews.go.com%2FUS%2FwireStory%2Frunaway-cats-hard-find-22578869&amp;t=Runaway+Cats+Won%27t+Go+Far+but+May+Be+Hard+to+Find"
+                        target="_blank"&gt;&lt;img src="http://res3.feedsportal.com/social/googleplus.png" border="0" /&gt;&lt;/a&gt;&amp;nbsp;&lt;a
+                        href="http://share.feedsportal.com/share/email/?u=http%3A%2F%2Fabcnews.go.com%2FUS%2FwireStory%2Frunaway-cats-hard-find-22578869&amp;t=Runaway+Cats+Won%27t+Go+Far+but+May+Be+Hard+to+Find"
+                        target="_blank"&gt;&lt;img src="http://res3.feedsportal.com/social/email.png" border="0" /&gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</ITEM_DESCRIPTION>
+                    <ITEM_GUID>http://abcnews.go.com/US/wireStory/runaway-cats-hard-find-22578869</ITEM_GUID>
+                    <ITEM_LINK>
+                        http://feeds.abcnews.com/c/35229/f/654826/s/3749129e/sc/10/l/0Labcnews0Bgo0N0CUS0CwireStory0Crunaway0Ecats0Ehard0Efind0E22578869/story01.htm
+                    </ITEM_LINK>
+                    <ITEM_PUBDATE>Wed, 19 Feb 2014 14:42:52 GMT</ITEM_PUBDATE>
+                    <ITEM_TITLE>Runaway Cats Won't Go Far but May Be Hard to Find</ITEM_TITLE>
+                    <KEYVIEWVERSION>10180</KEYVIEWVERSION>
+                    <KEYWORDS>General news, Lifestyle, Pets, Pet care, Animal welfare, Social issues, Social affairs,
+                        Santa Barbara, California, United States, North America, us news, national news, local news
+                    </KEYWORDS>
+                    <LAST-MODIFIED>2014-02-19 09:42:52</LAST-MODIFIED>
+                    <NEWS_KEYWORDS>General news, Lifestyle, Pets, Pet care, Animal welfare, Social issues, Social
+                        affairs, Santa Barbara, California, United States, North America
+                    </NEWS_KEYWORDS>
+                    <ROBOTS>noarchive</ROBOTS>
+                    <ROBOTS>index, follow</ROBOTS>
+                    <TITLE>Runaway Cats Won't Go Far but May Be Hard to Find - ABC News</TITLE>
+                    <TWITTER_APP_ID_GOOGLEPLAY>com.abc.abcnews</TWITTER_APP_ID_GOOGLEPLAY>
+                    <TWITTER_APP_ID_IPAD>306934135</TWITTER_APP_ID_IPAD>
+                    <TWITTER_APP_ID_IPHONE>300255638</TWITTER_APP_ID_IPHONE>
+                    <TWITTER_APP_NAME_GOOGLEPLAY>ABC News</TWITTER_APP_NAME_GOOGLEPLAY>
+                    <TWITTER_APP_NAME_IPAD>ABC News</TWITTER_APP_NAME_IPAD>
+                    <TWITTER_APP_NAME_IPHONE>ABC News</TWITTER_APP_NAME_IPHONE>
+                    <TWITTER_APP_URL_GOOGLEPLAY>abcnewsandroid://link/story, 22578869</TWITTER_APP_URL_GOOGLEPLAY>
+                    <TWITTER_APP_URL_IPAD>abcnewsipad://link/story, 22578869</TWITTER_APP_URL_IPAD>
+                    <TWITTER_APP_URL_IPHONE>abcnewsiphone://link/story, 22578869</TWITTER_APP_URL_IPHONE>
+                    <VERSIONNUMBER>0</VERSIONNUMBER>
+                    <X-UA-COMPATIBLE>IE=edge,chrome=1</X-UA-COMPATIBLE>
+                    <DRECONTENT>• Now
+                        • Sochi Olympics
+                        • •
+                        • Ukraine
+                        • •
+                        • Mom Buys 'Indecent' T-Shirts
+                        • •
+                        • Jessica Simpson Weight Loss
+                        • •
+                        • Powerball
+                        • •
+                        • Weather News
+                        • Good Morning America
+                        • World News
+                        • Nightline
+                        • 20/20
+                        • This Week
+                        • • Sign In
+                        •
+                        • ABC News
+                        • Home
+                        • Video
+                        • U.S.
+                        • World
+                        • Politics
+                        • Entertainment
+                        • Tech
+                        • Health
+                        • Lifestyle
+                        • Money
+                        • Shows
+                        • GMA
+                        • World News
+                        • Nightline
+                        • 20/20
+                        • This Week
+                        • More
+                        • Investigative
+                        • Money
+                        • Sports
+                        • Good News
+                        • Photos
+                        • Fusion
+                        • Live
+                        •
+                        Weather Preferences
+                        Cancel
+                        Set
+
+
+                        Watch Live: Tension High After Deadly Ukraine Protests
+                        • ABC News
+                        • Home
+                        • Video
+                        • U.S.
+                        • World
+                        • Politics
+                        • Entertainment
+                        • Tech
+                        • Health
+                        • Lifestyle
+                        • Money
+                        • More
+                        • Investigative
+                        • Sports
+                        • Good News
+                        • Photos
+                        • Fusion
+                        • Live
+
+                        Home&gt; U.S.
+                        Runaway Cats Won't Go Far but May Be Hard to Find
+                        LOS ANGELES February 19, 2014 (AP)
+                        By SUE MANNING Associated Press
+                        Associated Press
+                        If a scared dog bolts from home, it's likely to run as fast and far as it can. But if a house
+                        cat panics, it's more likely to slink away and stop at the first good hiding place it finds.
+                        Because the getaway is so different, the search has to be, too, said Nancy Peterson, cat
+                        programs manager for the Humane Society of the United States and a registered veterinarian
+                        technician.
+                        Don't run to a shelter or post signs right away, she said. Immediately after you notice your pet
+                        is missing, search your yard, contact neighbors and show a photo to mail carriers, delivery
+                        drivers and paperboys.
+                        "Most cats that escape or leave home won't go more than five houses away, so you should go to
+                        neighbor homes and ask if you can check their backyards," she said. "If the cat does get
+                        further, it's because a dog or another cat chased it. Unfortunately, the farther away it gets,
+                        the harder it is for it to get home."
+                        The search for your feline friend tends to be tougher going than if you had lost a dog, experts
+                        say. Good Samaritans often come to the rescue of dog owners, picking up pooches and making a
+                        call to the owner or taking them to a shelter. But there is no cavalry for cats, and domestic
+                        ones are not easily caught 窶?you can't just open a car door and coax it to hop in. But you can
+                        protect against the loss of your cat by microchipping it and strapping on an ID collar.
+                        Even long-lost cats can be found, a joy that Mickey and June Wilson experienced. When an
+                        8,700-acre wildfire came close to their Santa Barbara, Calif., home in May 2009, the couple
+                        grabbed their cat Morris and evacuated.
+                        For one night, they stayed in a motel in Buellton, about 45 miles northwest of Santa Barbara.
+                        When Mickey Wilson went to get luggage from the car, Morris, rambling freely in the second-story
+                        room, escaped. Wilson searched everywhere, following several tips, but came up empty-handed.
+                        Heartbroken, Wilson and his wife returned home the next day without Morris. Relatives went up a
+                        few times after that to look but couldn't find the cat.
+                        Four months later, Wilson got a call from a woman who found Morris behind a restaurant at a
+                        feral cat feeding station. The station is run by Catalyst for Cats, Inc., a group of volunteers
+                        trying to control the feral cat population in Santa Barbara County by trapping, sterilizing and
+                        returning and then feeding wild cats in the area.
+                        "Owned, lost cats show up at feeding stations more often than one would imagine," said Marci
+                        Kladnik, a Catalyst for Cats volunteer and columnist for the Cat Writers' Association.
+                        Morris was in good shape except for the tip of his tail, which was broken.
+                        "If he hadn't had a name tag on his collar, we would never have seen him again," said Wilson, a
+                        retired aircraft engineer.
+                        Wilson had to put Morris down about six months ago because of bladder problems. "He was a
+                        special cat," Wilson said. "And we enjoyed him up to the very end."
+                        Morris' discovery shows even a long search isn't hopeless.
+                        "Don't give up! Cats can return home months after being lost," Orange County Animal Control
+                        spokesman Ryan Drabek said. But he says that most of the cats the facility takes in each year
+                        are feral. Only a third of them are domesticated, he said.
+                        But there's always hope if a cat has ID, said Dr. Karen "Doc" Halligan, author and chief
+                        veterinary officer of the Lucy Pet Foundation.
+                        "Both my cats have breakaway collars, tags and microchips. That is something all cat owners need
+                        to do for their cats," she said.
+                        Page
+
+                        • 1
+                        • |
+                        • 2
+                        View Single Page
+                        Join the Discussion
+                        You are using an outdated version of Internet Explorer. Please click here to upgrade your
+                        browser in order to comment.
+                        Please enable JavaScript to view the comments powered by Disqus. blog comments powered by Disqus
+                        Hot Right Now
+                        1
+                        PHOTO: Two Idaho families got stranded in the snow this weekend and were forced to walk 19 miles
+                        to safety
+                        Families Walk 19 Miles After Getting Stranded in Snow
+                        2
+                        PHOTO: Juror #4 窶?identified simply as 窶弖alerie窶?窶?says that the issue of self-defense forced
+                        the jury in Floridas loud music trial into a deadlock.
+                        Juror in 'Loud Music' Trial Wanted Murder Conviction
+                        3
+                        PHOTO: In this image released by Rogers &amp; Cowan public relations, actor John Travolta,
+                        second left, poses with his daughter Ella Bleu, left, wife Kelly Preston, right, and son Jett in
+                        an undated family photo.
+                        John Travolta Opens Up About Son Jett's Death
+                        4
+                        PHOTO: Josh Hargis stands on prosthetic legs alongside his expectant wife, Taylor Hargis, who is
+                        due in May.
+                        Maimed Soldier With Awesome Salute Expecting Baby
+                        5
+                        PHOTO: Victoria Beckham seen left during the Olympus Fashion Week Spring 2007 and seen right at
+                        the Harpers Bazaar Women of the Year awards on Nov. 5, 2013.
+                        Victoria Beckham on Her Breast Implants: 'I Don't Have Them...
+
+                        You Might Also Like...
+                        Photo Galleries
+
+                        PHOTO: Multiple Exposures from Sochi
+                        View: Weirdly Wonderful Sochi Multiple Exposures
+                        Sports
+
+                        PHOTO:
+                        View: 11 Athletes With Stunning Olympic Locks
+                        US
+
+                        PHOTO: Airborne Olympic Skiers Make Artful Images
+                        View: Olympic Freestyle Skiers' Airborne Beauty
+                        Sports
+
+                        PHOTO:
+                        View: This Is How Foggy It Is in Sochi Right Now
+                        Sports
+
+                        null
+                        View: Bringing the Garden to the Bathroom
+                        Business
+                        See It, Share It
+                        PHOTO: Josh Hargis stands on prosthetic legs alongside his expectant wife, Taylor Hargis, who is
+                        due in May.
+                        Courtesy Patrick Griffith
+                        Maimed Soldier With Awesome Salute Expecting Baby
+                        PHOTO: A cycling supporter wearing a beret watches the breakaway leaders during the 17th stage
+                        of the 94th Tour de France cycling race in this July 26, 2007, file photo.
+                        Frank Fife/AFP/Getty Images
+                        Berets Made in France Are Almost Fini
+                        PHOTO: Team USA celebrates winning over Russia in a shootout during overtime of a mens ice
+                        hockey game at the 2014 Winter Olympics, Saturday, Feb. 15, 2014, in Sochi, Russia.
+                        Morry Gash/AP Photo
+                        US vs. Czechs Olympic Hockey, By the Numbers
+                        PHOTO: American freeskier David Wise shows off a rock his wife Lexie gave him before the mens
+                        Olympic halfpipe skiing final, Feb. 18, 2014.
+                        Art Berko/ESPN
+                        David Wise Carried Heart-Shaped Rock to Gold
+                        PHOTO: Czech Republics Ondrej Moravec reacts as he wins bronze in the mens biathlon 15 km mass
+                        start, Feb. 18, 2014, in Rosa Khutor, near Sochi.
+                        Odd Andersen/AFP/Getty Images
+                        Olympians Triumph in Snow and Fog
+                        PHOTO: U.S. Army veteran Steve Baskis on St. Marys Glacier in Colorado.
+                        Didrik Johnck/JohnckMedia
+                        Blind Army Vet and Athlete Conquering Goals to Inspire
+                        PHOTO: An anti-government protester, center, throw a Molotov cocktail during clashes with riot
+                        police in Kievs Independence Square, the epicenter of the countrys current unrest, Kiev,
+                        Ukraine, Wednesday, Feb. 19, 2014.
+                        Efrem Lukatsky/AP Photo
+                        Police Among 26 Dead in Ukraine Clashes
+                        Most Commented
+                        PHOTO: George Zimmerman is breaking his silence on the 2012 shooting death of Florida teen
+                        Trayvon Martin
+                        1
+                        Zimmerman Says He's Homeless, Has PTSD
+                        2
+                        'I Was the Victim' Says Loud Music Trial Shooter in Jailhouse Phone Call
+                        3
+                        Minimum Wage Hike Could Cost 500K Jobs, CBO Reports
+                        4
+                        Gun Club For Liberals Challenges NRA - ABC News
+                        5
+                        Stranded Idaho Families Walk 19 Miles to Safety
+
+                        Sections
+                        • U.S.
+                        • World
+                        • Politics
+                        • Weird News
+                        • Investigative
+                        • Health
+                        • Entertainment
+                        • Sports
+                        • Money
+                        • Technology
+                        • Travel
+                        • Recipes
+                        • News Topics
+                        • Live Blog
+                        Shows
+                        • NY Med
+                        • Good Morning America
+                        • World News with Diane Sawyer
+                        • Nightline
+                        • ABC's The Lookout
+                        • This Week with George Stephanopoulos
+                        • 20/20
+                        • Primetime
+                        • What Would You Do?
+                        • ABC.com
+                        • Royal Baby
+                        Tools
+                        • iPad App
+                        • Register
+                        • Sign In
+                        • Facebook
+                        • Twitter
+                        • Google Plus
+                        • Blogs
+                        • Emails &amp; News Alerts
+                        • Message Boards
+                        • RSS Headlines
+                        About
+                        • Contact Us
+                        • Feedback
+                        • Advertising
+                        • Privacy Policy
+                        • Interest-Based Ads
+                        • Terms of Use
+                        • ABC News Store
+                        • Site Map
+                        • Authors List
+                        • Fusion
+                        • Go.com
+                        ABCNews.com
+                        External links are provided for reference purposes. ABC News is not responsible for the content
+                        of external Internet sites. Copyright © 2014 ABC News Internet Ventures. Yahoo! - ABC News
+                        Network
+                        Back to top
+                        " style="display: none;" border="0" height="1" width="1" alt="Quantcast"/&gt;
+
+
+                    </DRECONTENT>
+                </DOCUMENT>
+            </autn:content>
+            <autn:baseid>422044</autn:baseid>
+            <autn:date>1392820972</autn:date>
+            <autn:datestring>14:42:52 19/02/2014</autn:datestring>
+            <autn:expiredate>1395413356</autn:expiredate>
+            <autn:language>ENGLISH</autn:language>
+            <autn:languagetype>englishUTF8</autn:languagetype>
+            <autn:languageencoding>UTF8</autn:languageencoding>
+        </autn:hit>
+        <autn:hit>
+            <autn:reference>
+                http://www.npr.org/blogs/theprotojournalist/2014/02/15/276480990/what-we-might-learn-from-snoring-weather-cats?ft=1&amp;f=1001
+            </autn:reference>
+            <autn:id>416835</autn:id>
+            <autn:section>0</autn:section>
+            <autn:weight>87.01</autn:weight>
+            <autn:links>CAT,DOG</autn:links>
+            <autn:database>NPR</autn:database>
+            <autn:title>What We Might Learn From Snoring Weather Cats</autn:title>
+            <autn:summary>What We Might Learn From Snoring Weather Cats. Cats have the reputation of being weather
+                wise," according to the book. Maybe we should focus some of our attention on the world around us
+                窶?especially cats. When a cat scratches itself, or scratches on a log or tree, it indicates approaching
+                rain. When cats lie on their head with mouth turned up expect a storm.
+            </autn:summary>
+            <autn:content>
+                <DOCUMENT>
+                    <DREREFERENCE>
+                        http://www.npr.org/blogs/theprotojournalist/2014/02/15/276480990/what-we-might-learn-from-snoring-weather-cats?ft=1&amp;f=1001
+                    </DREREFERENCE>
+                    <DRETITLE>What We Might Learn From Snoring Weather Cats</DRETITLE>
+                    <UUID>4bafcfd06b9e548bb95d3d4f1601e380</UUID>
+                    <AUTN_GROUP>Connector</AUTN_GROUP>
+                    <AUTN_IDENTIFIER>
+                        PGlkIHM9Ik5QUiIgcj0iaHR0cDovL3d3dy5ucHIub3JnL2Jsb2dzL3RoZXByb3Rvam91cm5hbGlzdC8yMDE0LzAyLzE1LzI3NjQ4MDk5MC93aGF0LXdlLW1pZ2h0LWxlYXJuLWZyb20tc25vcmluZy13ZWF0aGVyLWNhdHM/ZnQ9MSZhbXA7Zj0xMDAxIi8+
+                    </AUTN_IDENTIFIER>
+                    <AUTN_TASK_BATCH_ID>NPR_8a437a15f84514e62ccab30d685e5165</AUTN_TASK_BATCH_ID>
+                    <CHANNEL_COPYRIGHT>Copyright 2014 NPR - For Personal Use Only</CHANNEL_COPYRIGHT>
+                    <CHANNEL_DESCRIPTION>NPR news, audio, and podcasts. Coverage of breaking stories, national and world
+                        news, politics, business, science, technology, and extended coverage of major national and world
+                        events.
+                    </CHANNEL_DESCRIPTION>
+                    <CHANNEL_LANGUAGE>en</CHANNEL_LANGUAGE>
+                    <CHANNEL_LASTBUILDDATE>Sat, 15 Feb 2014 11:14:00 -0500</CHANNEL_LASTBUILDDATE>
+                    <CHANNEL_LINK>http://www.npr.org/templates/story/story.php?storyId=1001&amp;ft=1&amp;f=1001
+                    </CHANNEL_LINK>
+                    <CHANNEL_TITLE>News</CHANNEL_TITLE>
+                    <CONTENT-TYPE>text/html</CONTENT-TYPE>
+                    <DATE>2014-02-15</DATE>
+                    <DESCRIPTION>In the late 19th century, the U.S. government compiled a list of popular proverbs to
+                        help meteorologists predict the weather. Could some of that folk wisdom help us now?
+                    </DESCRIPTION>
+                    <DOCTRACKINGID>7a49dde0ef2e19e116e458f7a3be6144</DOCTRACKINGID>
+                    <DOCUMENTATTRIBUTES>0</DOCUMENTATTRIBUTES>
+                    <DOCUMENTCLASS>1</DOCUMENTCLASS>
+                    <DOCUMENTSIZE>54268</DOCUMENTSIZE>
+                    <DOCUMENTTYPE>236</DOCUMENTTYPE>
+                    <DRECHILDCOUNT>0</DRECHILDCOUNT>
+                    <DREDATE>1392462660</DREDATE>
+                    <DREDBNAME>NPR</DREDBNAME>
+                    <DREFILENAME>
+                        /opt/rssconnector/Temp/1392482901_lrzlblj1_what-we-might-learn-from-snoring-weather-cats_ft=1&amp;f=1001
+                    </DREFILENAME>
+                    <DREORIGINALNAME>
+                        /opt/rssconnector/Temp/1392482901_lrzlblj1_what-we-might-learn-from-snoring-weather-cats_ft=1&amp;f=1001
+                    </DREORIGINALNAME>
+                    <DREROOTFAMILYREFERENCE>
+                        http://www.npr.org/blogs/theprotojournalist/2014/02/15/276480990/what-we-might-learn-from-snoring-weather-cats?ft=1&amp;f=1001
+                    </DREROOTFAMILYREFERENCE>
+                    <DREROOTFAMILYREFERENCE_ID>4bafcfd06b9e548bb95d3d4f1601e380</DREROOTFAMILYREFERENCE_ID>
+                    <FAMILYSORT>4bafcfd06b9e548bb95d3d4f1601e380-0</FAMILYSORT>
+                    <FILEACCESSEDTIME>1392482901</FILEACCESSEDTIME>
+                    <FILECREATEDTIME>1392482901</FILECREATEDTIME>
+                    <FILEIMPORTEDTIME>1392482902</FILEIMPORTEDTIME>
+                    <FILEMODIFIEDTIME>1392482901</FILEMODIFIEDTIME>
+                    <IMPORTORIGINALENCODING>UTF8</IMPORTORIGINALENCODING>
+                    <IMPORTVERSION>1</IMPORTVERSION>
+                    <INFOFLAG>0</INFOFLAG>
+                    <ISFILEFILTERABLE>1</ISFILEFILTERABLE>
+                    <ITEM_DESCRIPTION>In the late 19th century, the U.S. government compiled a list of popular proverbs
+                        to help meteorologists predict the weather. Could some of that folk wisdom help us now?
+                    </ITEM_DESCRIPTION>
+                    <ITEM_GUID>
+                        http://www.npr.org/blogs/theprotojournalist/2014/02/15/276480990/what-we-might-learn-from-snoring-weather-cats?ft=1&amp;f=1001
+                    </ITEM_GUID>
+                    <ITEM_LINK>
+                        http://www.npr.org/blogs/theprotojournalist/2014/02/15/276480990/what-we-might-learn-from-snoring-weather-cats?ft=1&amp;f=1001
+                    </ITEM_LINK>
+                    <ITEM_PUBDATE>Sat, 15 Feb 2014 11:11:00 -0500</ITEM_PUBDATE>
+                    <ITEM_TITLE>What We Might Learn From Snoring Weather Cats</ITEM_TITLE>
+                    <KEYVIEWVERSION>10180</KEYVIEWVERSION>
+                    <RATING>General</RATING>
+                    <ROBOTS>noarchive,index,follow</ROBOTS>
+                    <TITLE>What We Might Learn From Snoring Weather Cats : The Protojournalist : NPR</TITLE>
+                    <VERSIONNUMBER>0</VERSIONNUMBER>
+                    <VIEWPORT>width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no
+                    </VIEWPORT>
+                    <DRECONTENT>Skip to Main Content subnav toggleNPR
+                        Toggle search
+
+                        • Stations
+                        • Donate
+                        • Shop
+                        • Sign In/Register
+                        • • Logout
+                        • Topics
+                        • News
+                        • U.S.
+                        • World
+                        • Politics
+                        • Business
+                        • Technology
+                        • Science
+                        • Health
+                        • Race &amp; Culture
+                        • Olympics
+                        • Arts &amp; Life
+                        • Movies
+                        • Pop Culture
+                        • Food
+                        • Art &amp; Design
+                        • Performing Arts
+                        • Photography
+                        • Books
+                        • Book Reviews
+                        • Author Interviews
+                        • Music
+                        • First Listen
+                        • Music Articles
+                        • Studio Sessions
+                        • Videos
+                        • Programs
+                        • News and Conversations
+                        • Morning Edition
+                        • All Things Considered
+                        • Fresh Air
+                        • Here &amp; Now
+                        • The Diane Rehm Show
+                        • On The Media
+                        • On Point
+                        • Tell Me More
+                        • Weekend Edition Saturday
+                        • Weekend Edition Sunday
+                        • Storytelling &amp; Humor
+                        • Ask Me Another
+                        • Car Talk
+                        • Radiolab
+                        • Snap Judgment
+                        • StoryCorps
+                        • TED Radio Hour
+                        • Wait Wait...Don't Tell Me!
+                        • Music
+                        • All Songs Considered
+                        • Alt.Latino
+                        • First Listen
+                        • Metropolis
+                        • Microphone Check
+                        • Mountain Stage
+                        • From The Top
+                        • JazzSet
+                        • Piano Jazz
+                        • Song Travels
+                        • The Thistle &amp; Shamrock
+                        • World Cafe
+                        • Listen
+                        NPR logoNPR
+                        The ProtojournalistVery original reporting
+                        • Twitter
+                        What We Might Learn From Snoring Weather Cats
+                        by Linton Weeks
+                        February 15, 201411:11 AM
+                        Sleeping kitten.i i
+                        iStockphoto
+                        Sleeping kitten.
+                        iStockphoto
+                        Sometimes it feels like all the fancy meteorological machinery and prognostication equipment is
+                        actually working. And that the weatherfolks may finally be able to predict 窶?albeit with
+                        constant updates and countless hedge words 窶?what the weather is going to be.
+                        At least for the next day or so.
+                        But is that good enough?
+                        H.H.C. Dunwoody didn't think so. Dunwoody was a lieutenant in the U.S. Army Signal Service,
+                        predecessor to today's National Weather Service. In an 1883 book 窶?commissioned by the U.S. War
+                        Department and approved by the Chief Signal Officer 窶?Dunwoody lamented that "the ablest
+                        meteorologists of today, aided by the most perfect meteorological instruments and the results of
+                        years of accurate instrumental observations, are still unable to give reliable forecasts of the
+                        weather for a longer period than two or three days, and frequently not longer than twenty-four
+                        hours."
+                        It was Dunwoody's belief that the meteorologists should not only focus on advancing forecast
+                        technology, but on studying the natural world as well. "It is possible that a more accurate
+                        observation of the condition of plants or the condition or actions of animals," he wrote in the
+                        introduction to Signal Service Notes, Issue 9, "might lead to some valuable suggestion in this
+                        important field of investigation."
+                        Scientific inquiry meets adages and old saws. Producing perhaps a sort of Old Scientist's
+                        Almanac.
+                        Double Rainbow
+
+                        To further the pursuit, the Signal Service gathered folk wisdom from here and yond, proverbs
+                        concerning the sun, the moon, the stars, winds, rainbows, mist and fog: The appearance of two or
+                        three rainbows indicates fair weather for present, but settled and heavy rains in a few days.
+                        And proverbs pertaining to plants, such as clover, onions and seaweed: Onion-skins very thin /
+                        Mild winter coming in; / Onion-skins thick and tough, / Coming winter cold and rough.
+                        ... animals, such as bats, dogs, rabbits, mice and swine: Bats flying late in the evening
+                        indicate fair weather.
+                        ... and miscellaneous matter, such as lamps, rope, soap, smoke and aching teeth. Lamps, from the
+                        manner in which they burn, forebode weather. Before rain they burn less bright, the flame snaps
+                        and crackles...
+                        Feline Forecasters
+
+                        And cats. Lots of cats.
+                        "Cats have the reputation of being weather wise," according to the book. "It is almost
+                        universally believed that good weather may be expected when the cat washes herself, but bad when
+                        she licks her coat against the grain, or washes her face over her ears or sits with her tail to
+                        the fire."
+                        Now in 2014, we seem to be doing pretty well with the technology. Maybe we should focus some of
+                        our attention on the world around us 窶?especially cats. As these weather proverbs from that
+                        long-ago book suggest:
+                        • When cats sneeze it is a sign of rain.
+                        • When a cat scratches itself, or scratches on a log or tree, it indicates approaching rain.
+                        • The cardinal point to which a cat turns and washes her face after a rain shows the direction
+                        from which the wind will blow.
+                        • When cats lie on their head with mouth turned up expect a storm.
+                        • When cats are snoring, foul weather follows.
+                        The Protojournalist is an experiment in reporting. Abstract. Concrete. @NPRtpj
+                        • Share
+                        • Facebook
+                        • Twitter
+                        • Google+
+                        • Email
+                        • Comment
+                        We Are Just Not Here AnymoreFebruary 11, 2014
+                        More From The Protojournalist
+                        News
+                        What We Might Learn From Snoring Weather Cats
+                        Sleeping kitten.
+                        News
+                        We Are Just Not Here Anymore
+                        Texting.
+                        News
+                        Sonic Dictionary: An Aural History Project
+                        Brooke Watson of Duke University gathers sound for the Sonic Dictionary.
+                        News
+                        6 Odd College Courses In America
+                        Academic pursuits: Surfers are making history.
+                        More From The Protojournalist
+                        Comments
+
+                        You must be signed in to leave a comment. Sign In / Register
+                        Please keep your community civil. All comments must follow the NPR.org Community rules and terms
+                        of use, and will be moderated prior to posting. NPR reserves the right to use the comments we
+                        receive, in whole or in part, and to use the commenter's name and location, in any medium. See
+                        also the Terms of Use, Privacy Policy and Community FAQ.
+                        Please enable JavaScript to view the comments powered by Disqus.
+                        NPR logoNPR
+                        The ProtojournalistVery original reporting
+                        • Twitter
+                        The ProtojournalistVery original reporting
+                        About
+                        The Protojournalist is a news experiment, home to original reporting in a variety of
+                        storytelling forms. The Protojournalist believes:
+                        • Every story is part of a larger story.
+                        • There is more than one way to tell a story.
+                        • We should always explore new ways to tell stories.
+                        • A story never ends.
+                        Linton Weeks is The Protojournalist. You can learn about this project on the "about" page and
+                        get in touch with Linton via email: protojournalist@npr.org
+                        Subscribe
+                        • RSS
+                        • @NPRtpj
+                        The Protojournalist Twitter
+
+                        Follow @NPRtpj
+                        Support comes from:
+                        Search
+
+                        • Home
+                        • Topics
+                        • Programs
+                        • Donate
+                        • Stations
+                        • NPR Shop
+                        • Sign In / Register
+                        • • Logout
+                        Back
+                        News
+                        • U.S.
+                        • World
+                        • Politics
+                        • Business
+                        • Technology
+                        • Science
+                        • Health
+                        • Race &amp; Culture
+                        • Olympics
+                        Arts &amp; Life
+                        • Movies
+                        • Pop Culture
+                        • Food
+                        • Art &amp; Design
+                        • Performing Arts
+                        • Photography
+                        Books
+                        • Book Reviews
+                        • Author Interviews
+                        Music
+                        • First Listen
+                        • Music Articles
+                        • Studio Sessions
+                        • Videos
+                        Our Blogs
+                        All About NPR
+                        Back
+
+                        • news &amp; conversations
+                        • storytelling &amp; humor
+                        • music
+                        • also heard on npr stations
+                        Back
+
+                        • Morning Edition
+                        • All Things Considered
+                        • Fresh Air
+                        • Here &amp; Now
+                        • The Diane Rehm Show
+                        • On The Media
+                        • On Point
+                        • Science Friday
+                        • Tell Me More
+                        • Weekend Edition Saturday
+                        • Weekend Edition Sunday
+                        Back
+
+                        • Ask Me Another
+                        • Car Talk
+                        • Radiolab
+                        • Snap Judgment
+                        • StoryCorps
+                        • TED Radio Hour
+                        • Wait Wait...Don't Tell Me!
+                        Back
+
+                        • All Songs Considered
+                        • Alt.Latino
+                        • First Listen
+                        • Metropolis
+                        • Microphone Check
+                        • Mountain Stage
+                        • From The Top
+                        • JazzSet
+                        • Piano Jazz
+                        • Song Travels
+                        • The Thistle &amp; Shamrock
+                        • World Cafe
+                        Back
+
+                        • A Prairie Home Companion (APM)
+                        • Marketplace (APM)
+                        • Science Friday
+                        • This American Life (PRI)
+                        • Public Radio Programs A to Z
+                        NPR thanks our sponsors
+                        Become an NPR sponsor
+                        Support NPR
+                        Support NPR
+                        NPR Shop
+                        Support The Programs You Love
+                        • • News
+                        • U.S.
+                        • World
+                        • Opinion
+                        • Politics
+                        • Business
+                        • Technology
+                        • Science
+                        • Health
+                        • Sports
+                        • Arts &amp; Life
+                        • Books
+                        • Movies
+                        • Pop Culture
+                        • Food
+                        • Performing Arts
+                        • Games &amp; Humor
+                        • Music
+                        • Music Articles
+                        • Music Videos
+                        • NPR Music Radio
+                        • Browse Artists A-Z
+                        • All Songs Considered
+                        • Alt.Latino
+                        • First Listen
+                        • Metropolis
+                        • Microphone Check
+                        • Mountain Stage
+                        • From The Top
+                        • JazzSet
+                        • Piano Jazz
+                        • Song Travels
+                        • The Thistle &amp; Shamrock
+                        • World Cafe
+                        • Programs
+                        • All Things Considered
+                        • Ask Me Another
+                        • Car Talk
+                        • The Diane Rehm Show
+                        • Fresh Air
+                        • Here &amp; Now
+                        • Morning Edition
+                        • On The Media
+                        • On Point
+                        • Science Friday
+                        • TED Radio Hour
+                        • Tell Me More
+                        • Wait Wait...Don't Tell Me!
+                        • Weekend Edition Saturday
+                        • Weekend Edition Sunday
+                        • Listen
+                        • Hourly News
+                        • NPR Program Stream
+                        • Find Station Streams
+                        • Podcasts
+                        • More Ways To Listen
+                        • About
+                        • Contact Us
+                        • NPR Shop
+                        • Visit NPR
+                        • Careers at NPR
+                        • Press Room
+                        • 'This Is NPR' Blog
+                        • Support and Sponsor
+                        • Corrections
+                        • NPR Ombudsman
+                        • Permissions
+                        • Email Newsletters
+                        • RSS Feeds
+                        • The NPR API
+
+                        ©2014 NPR
+                        • Contact
+                        • Terms of Use
+                        • Privacy
+                        • Sponsorship Choices
+                        • Text-Only
+                        ©2014 NPR
+
+                    </DRECONTENT>
+                </DOCUMENT>
+            </autn:content>
+            <autn:baseid>416835</autn:baseid>
+            <autn:date>1392462660</autn:date>
+            <autn:datestring>11:11:00 15/02/2014</autn:datestring>
+            <autn:expiredate>1395074910</autn:expiredate>
+            <autn:language>ENGLISH</autn:language>
+            <autn:languagetype>englishUTF8</autn:languagetype>
+            <autn:languageencoding>UTF8</autn:languageencoding>
+        </autn:hit>
+        <autn:hit>
+            <autn:reference>http://feeds.cbsnews.com/~r/CBSNewsMain/~3/K27NqxnuWwQ/</autn:reference>
+            <autn:id>413970</autn:id>
+            <autn:section>0</autn:section>
+            <autn:weight>86.77</autn:weight>
+            <autn:links>CAT,DOG</autn:links>
+            <autn:database>CBS</autn:database>
+            <autn:title>One-third of cat bite victims end up in the hospital</autn:title>
+            <autn:summary>One-third of cat bite victims end up in the hospital. Spencer Platt/Getty Images
+                • • Shares
+                • Tweets
+                • Stumble
+                • Email
+                • More +
+                • • •
+                Cats might be cuddly, but their love nibbles can be a serious health matter. Who would've thought those
+                tiny teeth could be so dangerous?
+
+
+                18 Photos
+                Kids read to cats
+                Pupils improve reading skills by sharing books with shelter cats
+                “The dogs’ teeth are blunter, so they don’t tend to penetrate as deeply and they tend to leave a larger
+                wound after they bite," senior study author Dr. Brian Carlsen, a Mayo Clinic plastic surgeon and
+                orthopedic hand surgeon, said... The cats’ teeth are sharp and they can penetrate very deeply, they can
+                seed bacteria in the joint and tendon sheaths.”
+                The researchers identified 193 patients who had went to the Mayo Clinic in Rochester, Minn. over the
+                course of three years due to cat bites. Out of the patients who had to take a hospital bed because a cat
+                gnawed on them, 67 percent needed cleaning and removal of dead, damaged or infected tissue.
+            </autn:summary>
+            <autn:content>
+                <DOCUMENT>
+                    <DREREFERENCE>http://feeds.cbsnews.com/~r/CBSNewsMain/~3/K27NqxnuWwQ/</DREREFERENCE>
+                    <DRETITLE>One-third of cat bite victims end up in the hospital</DRETITLE>
+                    <UUID>1d3cef5ae811028815d296d3e5bbcf9f</UUID>
+                    <AUTN_GROUP>Connector</AUTN_GROUP>
+                    <AUTN_IDENTIFIER>
+                        PGlkIHM9IkNCUyIgcj0iaHR0cDovL2ZlZWRzLmNic25ld3MuY29tL35yL0NCU05ld3NNYWluL34zL0syN05xeG51V3dRLyIvPg==
+                    </AUTN_IDENTIFIER>
+                    <AUTN_TASK_BATCH_ID>CBS_a9571379a415187c82aacaa8fbc4de60</AUTN_TASK_BATCH_ID>
+                    <CHANNEL_DESCRIPTION>Headlines From CBSNews.com</CHANNEL_DESCRIPTION>
+                    <CHANNEL_LINK>http://www.cbsnews.com</CHANNEL_LINK>
+                    <CHANNEL_PUBDATE>Thu, 13 Feb 2014 12:43:44 -0500</CHANNEL_PUBDATE>
+                    <CHANNEL_TITLE>Home - CBSNews.com</CHANNEL_TITLE>
+                    <CONTENT-TYPE>text/html</CONTENT-TYPE>
+                    <DESCRIPTION>Researchers looked at 193 patients who were bitten by their cats, and found 57 had to
+                        be admitted to a hospital
+                    </DESCRIPTION>
+                    <DOCTRACKINGID>c5b71b5a74902cc0076153dad6e0eae8</DOCTRACKINGID>
+                    <DOCUMENTATTRIBUTES>0</DOCUMENTATTRIBUTES>
+                    <DOCUMENTCLASS>1</DOCUMENTCLASS>
+                    <DOCUMENTSIZE>104909</DOCUMENTSIZE>
+                    <DOCUMENTTYPE>236</DOCUMENTTYPE>
+                    <DRECHILDCOUNT>0</DRECHILDCOUNT>
+                    <DREDATE>1392310365</DREDATE>
+                    <DREDBNAME>CBS</DREDBNAME>
+                    <DREFILENAME>/opt/rssconnector/Temp/1392313684_2kxo51dw</DREFILENAME>
+                    <DREORIGINALNAME>/opt/rssconnector/Temp/1392313684_2kxo51dw</DREORIGINALNAME>
+                    <DREROOTFAMILYREFERENCE>http://feeds.cbsnews.com/~r/CBSNewsMain/~3/K27NqxnuWwQ/
+                    </DREROOTFAMILYREFERENCE>
+                    <DREROOTFAMILYREFERENCE_ID>1d3cef5ae811028815d296d3e5bbcf9f</DREROOTFAMILYREFERENCE_ID>
+                    <FAMILYSORT>1d3cef5ae811028815d296d3e5bbcf9f-0</FAMILYSORT>
+                    <FILEACCESSEDTIME>1392313684</FILEACCESSEDTIME>
+                    <FILECREATEDTIME>1392313684</FILECREATEDTIME>
+                    <FILEIMPORTEDTIME>1392313696</FILEIMPORTEDTIME>
+                    <FILEMODIFIEDTIME>1392313684</FILEMODIFIEDTIME>
+                    <IMPORTORIGINALENCODING>UTF8</IMPORTORIGINALENCODING>
+                    <IMPORTVERSION>1</IMPORTVERSION>
+                    <INFOFLAG>0</INFOFLAG>
+                    <ISFILEFILTERABLE>1</ISFILEFILTERABLE>
+                    <ITEM_DESCRIPTION>Researchers looked at 193 patients who were bitten by their cats, and found 57 had
+                        to be admitted to a hospital&lt;div class="feedflare"&gt;
+                        &lt;a href="http://feeds.cbsnews.com/~ff/CBSNewsMain?a=K27NqxnuWwQ:WVxnbL9XLLY:w--LzT5DBIM"&gt;&lt;img
+                        src="http://feeds.feedburner.com/~ff/CBSNewsMain?i=K27NqxnuWwQ:WVxnbL9XLLY:w--LzT5DBIM"
+                        border="0"&gt;&lt;/img&gt;&lt;/a&gt; &lt;a
+                        href="http://feeds.cbsnews.com/~ff/CBSNewsMain?a=K27NqxnuWwQ:WVxnbL9XLLY:yIl2AUoC8zA"&gt;&lt;img
+                        src="http://feeds.feedburner.com/~ff/CBSNewsMain?d=yIl2AUoC8zA" border="0"&gt;&lt;/img&gt;&lt;/a&gt;
+                        &lt;a href="http://feeds.cbsnews.com/~ff/CBSNewsMain?a=K27NqxnuWwQ:WVxnbL9XLLY:F7zBnMyn0Lo"&gt;&lt;img
+                        src="http://feeds.feedburner.com/~ff/CBSNewsMain?i=K27NqxnuWwQ:WVxnbL9XLLY:F7zBnMyn0Lo"
+                        border="0"&gt;&lt;/img&gt;&lt;/a&gt; &lt;a
+                        href="http://feeds.cbsnews.com/~ff/CBSNewsMain?a=K27NqxnuWwQ:WVxnbL9XLLY:V_sGLiPBpWU"&gt;&lt;img
+                        src="http://feeds.feedburner.com/~ff/CBSNewsMain?i=K27NqxnuWwQ:WVxnbL9XLLY:V_sGLiPBpWU"
+                        border="0"&gt;&lt;/img&gt;&lt;/a&gt; &lt;a
+                        href="http://feeds.cbsnews.com/~ff/CBSNewsMain?a=K27NqxnuWwQ:WVxnbL9XLLY:qj6IDK7rITs"&gt;&lt;img
+                        src="http://feeds.feedburner.com/~ff/CBSNewsMain?d=qj6IDK7rITs" border="0"&gt;&lt;/img&gt;&lt;/a&gt;
+                        &lt;a href="http://feeds.cbsnews.com/~ff/CBSNewsMain?a=K27NqxnuWwQ:WVxnbL9XLLY:dnMXMwOfBR0"&gt;&lt;img
+                        src="http://feeds.feedburner.com/~ff/CBSNewsMain?d=dnMXMwOfBR0" border="0"&gt;&lt;/img&gt;&lt;/a&gt;
+                        &lt;/div&gt;&lt;img src="http://feeds.feedburner.com/~r/CBSNewsMain/~4/K27NqxnuWwQ" height="1"
+                        width="1"/&gt;</ITEM_DESCRIPTION>
+                    <ITEM_GUID>65819987-64ad-44ba-93ef-02eebae5cd1e</ITEM_GUID>
+                    <ITEM_LINK>http://feeds.cbsnews.com/~r/CBSNewsMain/~3/K27NqxnuWwQ/</ITEM_LINK>
+                    <ITEM_PUBDATE>Thu, 13 Feb 2014 16:52:45 -0500</ITEM_PUBDATE>
+                    <ITEM_TITLE>One-third of cat bite victims end up in the hospital</ITEM_TITLE>
+                    <KEYVIEWVERSION>10180</KEYVIEWVERSION>
+                    <KEYWORDS>- cbs news</KEYWORDS>
+                    <ROBOTS>index, follow</ROBOTS>
+                    <TITLE>One-third of cat bite victims end up in the hospital - CBS News</TITLE>
+                    <TWITTER_CREATOR>Michelle Castillo</TWITTER_CREATOR>
+                    <TWITTER_DESCRIPTION>Researchers looked at 193 patients who were bitten by their cats, and found 57
+                        had to be admitted to a hospital
+                    </TWITTER_DESCRIPTION>
+                    <TWITTER_IMAGE>
+                        http://cbsnews2.cbsistatic.com/hub/i/r/2014/02/13/7484f3df-bfea-4af0-992b-64a2a4cc172a/thumbnail/620x350/catbite.jpg?hash=8a92e5b122527fa21a1b7c723c90f330
+                    </TWITTER_IMAGE>
+                    <TWITTER_TITLE>One-third of cat bite victims end up in the hospital</TWITTER_TITLE>
+                    <VERSIONNUMBER>0</VERSIONNUMBER>
+                    <VIEWPORT>width=device-width</VIEWPORT>
+                    <X-UA-COMPATIBLE>IE=edge</X-UA-COMPATIBLE>
+                    <DRECONTENT>
+                        • CBSNews.com
+                        • CBS Evening News
+                        • CBS This Morning
+                        • 48 Hours
+                        • 60 Minutes
+                        • Sunday Morning
+                        • Face The Nation
+                        GO
+
+                        • Log In
+                        • Log In
+                        • Join CBSNews.com
+                        • Sign in with
+
+                        CBSNews.com - Breaking News
+                        • Video
+                        • US
+                        • World
+                        • Politics
+                        • Entertainment
+                        • Health
+                        • MoneyWatch
+                        • SciTech
+                        • Crime
+                        • Sports
+                        • More
+                        • Blogs
+                        • Battleground
+                        • The WH
+                        • Web Shows
+                        • 60 Overtime
+                        • Face to Face
+                        • Resources
+                        • Mobile
+                        • Radio
+                        • Local
+
+                        ByMichelle CastilloCBS NewsFebruary 13, 2014, 12:14 PM
+                        One-third of cat bite victims end up in the hospital
+
+                        A cat sits in her cage at the Staten Island's Animal Care and Control Shelter Feb. 7, 2007 in
+                        Staten Island, New York. Spencer Platt/Getty Images
+                        • • Shares
+                        • Tweets
+                        • Stumble
+                        • Email
+                        • More +
+                        • • •
+                        Cats might be cuddly, but their love nibbles can be a serious health matter.
+                        A study published in the February issue of The Journal of Hand Surgery showed that 30 percent of
+                        patients who had a cat bite on hand ended up staying in a hospital for more than three days on
+                        average.
+                        Who would've thought those tiny teeth could be so dangerous?
+
+
+                        18 Photos
+                        Kids read to cats
+                        Pupils improve reading skills by sharing books with shelter cats
+                        “The dogs’ teeth are blunter, so they don’t tend to penetrate as deeply and they tend to leave a
+                        larger wound after they bite," senior study author Dr. Brian Carlsen, a Mayo Clinic plastic
+                        surgeon and orthopedic hand surgeon, said in a press release. "The cats’ teeth are sharp and
+                        they can penetrate very deeply, they can seed bacteria in the joint and tendon sheaths.”
+                        The researchers identified 193 patients who had went to the Mayo Clinic in Rochester, Minn. over
+                        the course of three years due to cat bites. Fifty-seven of them had to be admitted to the
+                        facilities, with an average stay of 3.2 days.
+                        Oral antibiotics were given to 154 patients, but failed to work in 14 percent of cases. Those
+                        patients ended up being hospitalized.
+
+                        Out of the patients who had to take a hospital bed because a cat gnawed on them, 67 percent
+                        needed cleaning and removal of dead, damaged or infected tissue. Eight of the patients needed
+                        more than one operation.
+                        Other injuries including erythema, a redness or rash on the skin due to damage to deeper skin
+                        layers, and swelling were linked to a higher chance of needing a hospital stay.
+                        Complications were also common in these cases, especially for those who were bit over a joint
+                        like the wrist or a tendon sheath. People who were smokers and had immune system problems were
+                        also more prone to having additional issues from a cat bite.
+                        “It can be just a pinpoint bite mark that can cause a real problem, because the bacteria get
+                        into the tendon sheath or into the joint where they can grow with relative protection from the
+                        blood and immune system,” Carlsen said.
+
+                        © 2014 CBS Interactive Inc. All Rights Reserved.
+                        • • Shares
+                        • Tweets
+                        • Stumble
+                        • Email
+                        • More +
+                        • • •
+                        •
+                        Michelle Castillo On Twitter» On Google+»
+                        Michelle Castillo is an associate editor for CBSNews.com.
+
+                        Featured in Health
+                        • Pet fit club: Before and after
+                        Cats and dogs before and after their ambitious weight loss journeys
+                        • Meth's devastating effects: Before and after
+                        Side effects of using meth include paranoia, hallucinations, psychosis, stroke and death
+
+                        Popular on CBS News
+                        •
+                        Tom Brokaw's multiple myeloma spotlights incurable cancer
+                        •
+                        Pinkeye sidelines Bob Costas: Tips to treat conjunctivitis
+                        •
+                        Brain-dead woman taken off life support after giving birth
+                        •
+                        NBC News' Tom Brokaw reveals he has cancer
+                        •
+                        Drugs can affect men and women differently
+                        •
+                        Minn. hospital says comatose student must go home to Pakistan
+                        •
+                        Doctor to release findings on toxic dust from Iraq
+                        •
+                        Ban sought on plastic microbeads commonly used in cosmetics
+
+                        Comments
+                        Most Popular
+                        • 01
+                        Shaun White falls to the "I-Pod" in Olympic stunner
+                        137294 views
+                        • 02
+                        Sinkhole swallows eight cars in Corvette museum in Kentucky
+                        38280 views
+                        • 03
+                        CBS to air encore presentation of Beatles tribute special
+                        25164 views
+                        • 04
+                        Michelle Obama wears Carolina Herrera gown to state dinner
+                        23763 views
+                        • 05
+                        Are humans changing the world faster than animals can evolve?
+                        18893 views
+
+                        •
+                        Play Video
+                        Remembering funnyman Sid Caesar
+                        •
+                        Play Video
+                        Winter Olympics 2014: When does technology go too far?
+                        •
+                        Play Video
+                        Toddler is moved to tears listening to “Say Something”
+                        •
+                        Play Video
+                        Apps for fans of Sochi 2014 Olympic Games
+                        •
+                        Play Video
+                        Time Lapse: Huelux
+
+                        Previous Next
+                        Most Shared
+                        •
+                        CBS to air encore presentation of Beatles tribute special
+                        •
+                        Sinkhole swallows eight cars in Corvette museum in Kentucky
+                        •
+                        Ex- NOLA Mayor Ray Nagin found guilty of corruption
+                        •
+                        Are humans changing the world faster than animals can evolve?
+                        •
+                        Graco recalling nearly 3.8M child car seats
+
+                        •
+                        55 Photos
+                        Top moments of Sochi 2014
+                        •
+                        23 Photos
+                        Thousands say "I do"
+                        •
+                        17 Photos
+                        Wipe outs at Sochi
+                        •
+                        18 Photos
+                        Bangladeshi film reenacts garment factory disaster
+                        •
+                        11 Photos
+                        Giraffe fed to lions at Danish zoo
+
+                        Previous Next
+                        Most Discussed
+                        • 1.3K
+                        Rand Paul sues Obama over NSA surveillance
+                        • 400
+                        Accused "Loud Music" Shooter: "It was life or death"
+                        • 213
+                        Republicans ratchet up scrutiny of the IRS
+                        • 203
+                        Debt limit showdown averted in House
+                        • 126
+                        Not all cutthroat politicians are the same
+
+
+                        CBSNews.com
+                        • Site Map
+                        • Help
+                        • Contact Us
+                        • CBS Bios
+                        • Careers
+                        • Internships
+                        • Development Programs
+                        CBS Interactive
+                        • Privacy Policy
+                        • Terms of Use
+                        • Mobile User Agreement
+                        • About CBS
+                        • Advertise
+                        • Closed Captioning
+                        Follow Us
+                        • Facebook
+                        • Twitter
+                        • RSS
+                        • Email Newsletters
+                        • YouTube
+                        • CBS Radio News
+                        • CBS Local
+                        CBS News
+                        Copyright © 2014 CBS Interactive Inc.
+                        All rights reserved.
+                        Search
+
+                    </DRECONTENT>
+                </DOCUMENT>
+            </autn:content>
+            <autn:baseid>413970</autn:baseid>
+            <autn:date>1392310365</autn:date>
+            <autn:datestring>16:52:45 13/02/2014</autn:datestring>
+            <autn:expiredate>1394905700</autn:expiredate>
+            <autn:language>ENGLISH</autn:language>
+            <autn:languagetype>englishUTF8</autn:languagetype>
+            <autn:languageencoding>UTF8</autn:languageencoding>
+        </autn:hit>
+        <autn:hit>
+            <autn:reference>
+                http://www.npr.org/blogs/alltechconsidered/2014/02/20/280232074/deep-learning-teaching-computers-to-tell-things-apart?ft=1&amp;f=1001
+            </autn:reference>
+            <autn:id>424697</autn:id>
+            <autn:section>0</autn:section>
+            <autn:weight>86.74</autn:weight>
+            <autn:links>CAT,DOG</autn:links>
+            <autn:database>NPR</autn:database>
+            <autn:title>Deep Learning: Teaching Computers To Tell Things Apart</autn:title>
+            <autn:summary>But a machine may not be able to guess on the first try.
+                iStockphoto
+                Cat or dog? One of his students has built a program that can tell cat from dog 99 percent of the time.
+                It could identify specific breeds of dogs and monkeys. And it could do it even if the monkey was in a
+                tree, or the dog was under a bed. Artificial Intelligence
+                • computer science
+                • research
+                • Share
+                • Facebook
+                • Twitter
+                • Google+
+                • Email
+                • Comment
+                Why Facebook Thinks WhatsApp Is Worth $19 BillionFebruary 20, 2014
+                More From All Tech Considered
+                Technology
+                Deep Learning: Teaching Computers To Tell Things Apart
+                Cat or dog?
+            </autn:summary>
+            <autn:content>
+                <DOCUMENT>
+                    <DREREFERENCE>
+                        http://www.npr.org/blogs/alltechconsidered/2014/02/20/280232074/deep-learning-teaching-computers-to-tell-things-apart?ft=1&amp;f=1001
+                    </DREREFERENCE>
+                    <DRETITLE>Deep Learning: Teaching Computers To Tell Things Apart</DRETITLE>
+                    <UUID>c054fde79bd5811c661ac942652cbad3</UUID>
+                    <AUTN_GROUP>Connector</AUTN_GROUP>
+                    <AUTN_IDENTIFIER>
+                        PGlkIHM9Ik5QUiIgcj0iaHR0cDovL3d3dy5ucHIub3JnL2Jsb2dzL2FsbHRlY2hjb25zaWRlcmVkLzIwMTQvMDIvMjAvMjgwMjMyMDc0L2RlZXAtbGVhcm5pbmctdGVhY2hpbmctY29tcHV0ZXJzLXRvLXRlbGwtdGhpbmdzLWFwYXJ0P2Z0PTEmYW1wO2Y9MTAwMSIvPg==
+                    </AUTN_IDENTIFIER>
+                    <AUTN_TASK_BATCH_ID>NPR_5185b11b4f48690f1a9202311c8f73b1</AUTN_TASK_BATCH_ID>
+                    <CHANNEL_COPYRIGHT>Copyright 2014 NPR - For Personal Use Only</CHANNEL_COPYRIGHT>
+                    <CHANNEL_DESCRIPTION>NPR news, audio, and podcasts. Coverage of breaking stories, national and world
+                        news, politics, business, science, technology, and extended coverage of major national and world
+                        events.
+                    </CHANNEL_DESCRIPTION>
+                    <CHANNEL_LANGUAGE>en</CHANNEL_LANGUAGE>
+                    <CHANNEL_LASTBUILDDATE>Thu, 20 Feb 2014 16:37:00 -0500</CHANNEL_LASTBUILDDATE>
+                    <CHANNEL_LINK>http://www.npr.org/templates/story/story.php?storyId=1001&amp;ft=1&amp;f=1001
+                    </CHANNEL_LINK>
+                    <CHANNEL_TITLE>News</CHANNEL_TITLE>
+                    <CONTENT-TYPE>text/html</CONTENT-TYPE>
+                    <DATE>2014-02-20</DATE>
+                    <DESCRIPTION>The first step in recognizing people could be telling the difference between a cat and
+                        a dog. Facebook is investing in artificial intelligence research, with the hopes of better
+                        sorting your photos.
+                    </DESCRIPTION>
+                    <DOCTRACKINGID>7f66cae95c160ab471fb3d785c4c0978</DOCTRACKINGID>
+                    <DOCUMENTATTRIBUTES>0</DOCUMENTATTRIBUTES>
+                    <DOCUMENTCLASS>1</DOCUMENTCLASS>
+                    <DOCUMENTSIZE>65842</DOCUMENTSIZE>
+                    <DOCUMENTTYPE>236</DOCUMENTTYPE>
+                    <DRECHILDCOUNT>0</DRECHILDCOUNT>
+                    <DREDATE>1392912000</DREDATE>
+                    <DREDBNAME>NPR</DREDBNAME>
+                    <DREFILENAME>
+                        /opt/rssconnector/Temp/1392932963_jm2uk4ae_deep-learning-teaching-computers-to-tell-things-apart_ft=1&amp;f=1001
+                    </DREFILENAME>
+                    <DREORIGINALNAME>
+                        /opt/rssconnector/Temp/1392932963_jm2uk4ae_deep-learning-teaching-computers-to-tell-things-apart_ft=1&amp;f=1001
+                    </DREORIGINALNAME>
+                    <DREROOTFAMILYREFERENCE>
+                        http://www.npr.org/blogs/alltechconsidered/2014/02/20/280232074/deep-learning-teaching-computers-to-tell-things-apart?ft=1&amp;f=1001
+                    </DREROOTFAMILYREFERENCE>
+                    <DREROOTFAMILYREFERENCE_ID>c054fde79bd5811c661ac942652cbad3</DREROOTFAMILYREFERENCE_ID>
+                    <FAMILYSORT>c054fde79bd5811c661ac942652cbad3-0</FAMILYSORT>
+                    <FILEACCESSEDTIME>1392932963</FILEACCESSEDTIME>
+                    <FILECREATEDTIME>1392932963</FILECREATEDTIME>
+                    <FILEIMPORTEDTIME>1392932967</FILEIMPORTEDTIME>
+                    <FILEMODIFIEDTIME>1392932963</FILEMODIFIEDTIME>
+                    <IMPORTORIGINALENCODING>UTF8</IMPORTORIGINALENCODING>
+                    <IMPORTVERSION>1</IMPORTVERSION>
+                    <INFOFLAG>0</INFOFLAG>
+                    <ISFILEFILTERABLE>1</ISFILEFILTERABLE>
+                    <ITEM_DESCRIPTION>The first step in recognizing people could be telling the difference between a cat
+                        and a dog. Facebook is investing in artificial intelligence research, with the hopes of better
+                        sorting your photos.
+                    </ITEM_DESCRIPTION>
+                    <ITEM_GUID>
+                        http://www.npr.org/blogs/alltechconsidered/2014/02/20/280232074/deep-learning-teaching-computers-to-tell-things-apart?ft=1&amp;f=1001
+                    </ITEM_GUID>
+                    <ITEM_LINK>
+                        http://www.npr.org/blogs/alltechconsidered/2014/02/20/280232074/deep-learning-teaching-computers-to-tell-things-apart?ft=1&amp;f=1001
+                    </ITEM_LINK>
+                    <ITEM_PUBDATE>Thu, 20 Feb 2014 16:00:00 -0500</ITEM_PUBDATE>
+                    <ITEM_TITLE>Deep Learning: Teaching Computers To Tell Things Apart</ITEM_TITLE>
+                    <KEYVIEWVERSION>10180</KEYVIEWVERSION>
+                    <RATING>General</RATING>
+                    <ROBOTS>noarchive,index,follow</ROBOTS>
+                    <TITLE>Deep Learning: Teaching Computers To Tell Things Apart : All Tech Considered : NPR</TITLE>
+                    <TWITTER_CARD>summary_large_image</TWITTER_CARD>
+                    <TWITTER_DOMAIN>npr.org</TWITTER_DOMAIN>
+                    <TWITTER_IMAGE_SRC>
+                        http://media.npr.org/assets/img/2014/02/20/istock_000031059856medium_wide-26919a35563326790e84b84af21f1e592b4a8cf9-s4-c85.jpg
+                    </TWITTER_IMAGE_SRC>
+                    <TWITTER_SITE>@nprnews</TWITTER_SITE>
+                    <VERSIONNUMBER>0</VERSIONNUMBER>
+                    <VIEWPORT>width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no
+                    </VIEWPORT>
+                    <DRECONTENT>Skip to Main Content subnav toggleNPR
+                        Toggle search
+
+                        • Stations
+                        • Donate
+                        • Shop
+                        • Sign In/Register
+                        • • Logout
+                        • Topics
+                        • News
+                        • U.S.
+                        • World
+                        • Politics
+                        • Business
+                        • Technology
+                        • Science
+                        • Health
+                        • Race &amp; Culture
+                        • Olympics
+                        • Arts &amp; Life
+                        • Movies
+                        • Pop Culture
+                        • Food
+                        • Art &amp; Design
+                        • Performing Arts
+                        • Photography
+                        • Books
+                        • Book Reviews
+                        • Author Interviews
+                        • Music
+                        • First Listen
+                        • Music Articles
+                        • Studio Sessions
+                        • Videos
+                        • Programs
+                        • News and Conversations
+                        • Morning Edition
+                        • All Things Considered
+                        • Fresh Air
+                        • Here &amp; Now
+                        • The Diane Rehm Show
+                        • Latino USA
+                        • On The Media
+                        • On Point
+                        • Tell Me More
+                        • Weekend Edition Saturday
+                        • Weekend Edition Sunday
+                        • Storytelling &amp; Humor
+                        • Ask Me Another
+                        • Car Talk
+                        • Radiolab
+                        • Snap Judgment
+                        • StoryCorps
+                        • TED Radio Hour
+                        • Wait Wait...Don't Tell Me!
+                        • Music
+                        • All Songs Considered
+                        • Alt.Latino
+                        • First Listen
+                        • Metropolis
+                        • Microphone Check
+                        • Mountain Stage
+                        • From The Top
+                        • JazzSet
+                        • Piano Jazz
+                        • Song Travels
+                        • The Thistle &amp; Shamrock
+                        • World Cafe
+                        • Listen
+                        NPR logoNPR
+                        All Tech ConsideredAll Tech ConsideredTech, Culture and Connection
+                        • Behavior
+                        • Privacy &amp; Security
+                        • Social Web
+                        • Innovation
+                        • Twitter
+                        Science
+                        Deep Learning: Teaching Computers To Tell Things Apart
+                        by Geoff Brumfiel
+                        February 20, 2014 4:00 PM
+                        Audio for this story from All Things Considered will be available at approximately 7:00 p.m. ET.
+                        • Transcript
+
+                        Cat or dog? Sure, you can easily tell the difference. But a machine may not be able to guess on
+                        the first try.i i
+                        hide captionCat or dog? Sure, you can easily tell the difference. But a machine may not be able
+                        to guess on the first try.
+                        iStockphoto
+                        Cat or dog? Sure, you can easily tell the difference. But a machine may not be able to guess on
+                        the first try.
+                        Cat or dog? Sure, you can easily tell the difference. But a machine may not be able to guess on
+                        the first try.
+                        iStockphoto
+                        WhatsApp may be Facebook's latest prize, but it's not the company's most ambitious investment.
+                        In recent months, the social networking giant has begun funding something potentially far more
+                        revolutionary: artificial intelligence.
+                        And it's not alone. Google and as of last week, Netflix, are all getting into a new kind of AI
+                        known as deep learning. Deep learning programs are able to perceive their world in a way unlike
+                        any other computer program, and these companies hope that deep learning programs will one day be
+                        able to sort your photos, recognize your voice, and do a whole lot more.
+                        Computers can already recognize some things. Take the scanner at the supermarket. You swipe your
+                        block of cheese, and the scanner reads the bar code. Not that you would ever do this, but try
+                        scanning something it doesn't expect 窶?like a cat 窶?and the machine will be hopelessly confused.
+                        Yann LeCun, a computer scientist at New York University, is developing deep learning programs.
+                        He's trying to create a program that can recognize things without bar codes. Things it hasn't
+                        seen before. Show his program a cat. And the program sees: nose, whiskers, ears, and takes a
+                        guess.
+                        The first time, it might guess dog. But the human user can correct it. And from that correction,
+                        it figures out what it did wrong. "Then it adjusts, so that next time around it will give you a
+                        better answer," LeCun says.
+                        This is the key thing about LeCun's program: It learns to recognize things on its own, without
+                        bar codes or labels. And it gets really good. One of his students has built a program that can
+                        tell cat from dog 99 percent of the time.
+                        Deep learning "really doesn't look like a computer program," says Gary Marcus a psychologist and
+                        AI expert at New York University who doesn't work with LeCun.
+                        He says ordinary computer code is written in very strict logical steps. "But what you'll see in
+                        deep learning is something different; you don't have a lot of instructions that say: 'If one
+                        thing is true do this other thing,' " he says.
+                        Joaquin Phoenix stars in the film Her, in which his character falls in love with an operating
+                        system. When will artificial intelligence programs like Siri evolve to the point where we'll
+                        fall in love with them?
+                        All Tech Considered
+                        That's Just Like 'Her': Could We Ever Love A Computer?
+                        One of several robots at the University of California, San Francisco's hospital pharmacy helps
+                        manage and track its drug inventory.
+                        All Tech Considered
+                        Is Silicon Valley Automating Our Obsolescence?
+                        On Super Bowl Sunday, an advertising startup that spun out from the research launches a website
+                        where ad viewers can have their emotions observed and catalogued.
+                        Technology
+                        How Did That Ad Make You Feel? Ask A Computer
+                        Instead of linear logic, deep learning is based on theories of how the human brain works. The
+                        program is made of tangled layers of interconnected nodes. It learns by rearranging connections
+                        between nodes after each new experience.
+                        New supercomputers and giant databases of images make deep learning programs hugely powerful.
+                        LeCun exposed one of his programs to a database filled with 1.5 million random pictures. After
+                        going through every picture in the database, the program could identify pretty much everything.
+                        It could identify specific breeds of dogs and monkeys. And it could do it even if the monkey was
+                        in a tree, or the dog was under a bed.
+                        LeCun's program was so good it got Facebook's attention. Late last year, he got a call from
+                        Facebook CEO Mark Zuckerberg. LeCun says the conversation was deep. "A lot of it was about
+                        philosophy really: How do we go about building machines? Is it a good idea to try and build
+                        intelligent machines to help Facebook's business?" he says.
+                        At the end of the call, LeCun got a new job: he's now director of AI research at Facebook.
+                        LeCun says deep learning will soon change the way Facebook and other companies handle your
+                        images. It may be possible for Facebook's search engine to know the face of a friend, or to
+                        organize images that are taken in the same place or with the same people. "You're going to have
+                        similar things happening for video," he adds.
+                        NYU's Gary Marcus says there are limits to what deep learning can do. It can hear words, for
+                        example, but it can't really understand what a sentence means. "Google, I think, would like to
+                        build search engines that understand the English language, and deep learning's not really
+                        powerful enough to do that," he says. "But it's powerful enough to help with a lot of things."
+                        • Artificial Intelligence
+                        • computer science
+                        • research
+                        • Share
+                        • Facebook
+                        • Twitter
+                        • Google+
+                        • Email
+                        • Comment
+                        Why Facebook Thinks WhatsApp Is Worth $19 BillionFebruary 20, 2014
+                        More From All Tech Considered
+                        Technology
+                        Deep Learning: Teaching Computers To Tell Things Apart
+                        Cat or dog? Sure, you can easily tell the difference. But a machine may not be able to guess on
+                        the first try.
+                        Business
+                        Why Facebook Thinks WhatsApp Is Worth $19 Billion
+                        Facebook announced it acquired WhatsApp late Wednesday.
+                        Pop Culture
+                        Here's What Happens When Thousands Play Pokemon Together
+                        A screenshot of the online multiplayer Pokemon game.
+                        Digital Life
+                        The Allure Of Anonymous Confessional Apps 'Secret' And 'Whisper'
+                        A couple shares a secret.
+                        More From All Tech Considered
+                        Comments
+
+                        You must be signed in to leave a comment. Sign In / Register
+                        Please keep your community civil. All comments must follow the NPR.org Community rules and terms
+                        of use, and will be moderated prior to posting. NPR reserves the right to use the comments we
+                        receive, in whole or in part, and to use the commenter's name and location, in any medium. See
+                        also the Terms of Use, Privacy Policy and Community FAQ.
+                        Please enable JavaScript to view the comments powered by Disqus.
+                        NPR logoNPR
+                        All Tech ConsideredAll Tech ConsideredTech, Culture and Connection
+                        • Behavior
+                        • Privacy &amp; Security
+                        • Social Web
+                        • Innovation
+                        • Twitter
+                        All Tech ConsideredAll Tech ConsideredTech, Culture and Connection
+                        About
+                        All Tech Considered explores how technology is changing culture and connection. It's hosted by
+                        Elise Hu, with contributions from technology correspondents Steve Henn, Laura Sydell and other
+                        curious NPR journalists. Reach us on Twitter @NPRAllTech or contact us via our handy form.
+                        Subscribe
+                        • RSS
+                        • @npralltech
+                        Technology Podcast
+
+                        Perspectives on digital culture, research news, gadgets, the tech industry and more.
+                        Subscribe
+                        Support comes from:
+                        Search
+
+                        • Home
+                        • Topics
+                        • Programs
+                        • Donate
+                        • Stations
+                        • NPR Shop
+                        • Sign In / Register
+                        • • Logout
+                        Back
+                        News
+                        • U.S.
+                        • World
+                        • Politics
+                        • Business
+                        • Technology
+                        • Science
+                        • Health
+                        • Race &amp; Culture
+                        • Olympics
+                        Arts &amp; Life
+                        • Movies
+                        • Pop Culture
+                        • Food
+                        • Art &amp; Design
+                        • Performing Arts
+                        • Photography
+                        Books
+                        • Book Reviews
+                        • Author Interviews
+                        Music
+                        • First Listen
+                        • Music Articles
+                        • Studio Sessions
+                        • Videos
+                        Our Blogs
+                        All About NPR
+                        Back
+
+                        • news &amp; conversations
+                        • storytelling &amp; humor
+                        • music
+                        • also heard on npr stations
+                        Back
+
+                        • Morning Edition
+                        • All Things Considered
+                        • Fresh Air
+                        • Here &amp; Now
+                        • The Diane Rehm Show
+                        • Latino USA
+                        • On The Media
+                        • On Point
+                        • Science Friday
+                        • Tell Me More
+                        • Weekend Edition Saturday
+                        • Weekend Edition Sunday
+                        Back
+
+                        • Ask Me Another
+                        • Car Talk
+                        • Radiolab
+                        • Snap Judgment
+                        • StoryCorps
+                        • TED Radio Hour
+                        • Wait Wait...Don't Tell Me!
+                        Back
+
+                        • All Songs Considered
+                        • Alt.Latino
+                        • First Listen
+                        • Metropolis
+                        • Microphone Check
+                        • Mountain Stage
+                        • From The Top
+                        • JazzSet
+                        • Piano Jazz
+                        • Song Travels
+                        • The Thistle &amp; Shamrock
+                        • World Cafe
+                        Back
+
+                        • A Prairie Home Companion (APM)
+                        • Marketplace (APM)
+                        • Science Friday
+                        • This American Life (PRI)
+                        • Public Radio Programs A to Z
+                        NPR thanks our sponsors
+                        Become an NPR sponsor
+                        Support NPR
+                        Support NPR
+                        NPR Shop
+                        Support The Programs You Love
+                        • • News
+                        • U.S.
+                        • World
+                        • Opinion
+                        • Politics
+                        • Business
+                        • Technology
+                        • Science
+                        • Health
+                        • Sports
+                        • Arts &amp; Life
+                        • Books
+                        • Movies
+                        • Pop Culture
+                        • Food
+                        • Performing Arts
+                        • Games &amp; Humor
+                        • Music
+                        • Music Articles
+                        • Music Videos
+                        • NPR Music Radio
+                        • Browse Artists A-Z
+                        • All Songs Considered
+                        • Alt.Latino
+                        • First Listen
+                        • Metropolis
+                        • Microphone Check
+                        • Mountain Stage
+                        • From The Top
+                        • JazzSet
+                        • Piano Jazz
+                        • Song Travels
+                        • The Thistle &amp; Shamrock
+                        • World Cafe
+                        • Programs
+                        • All Things Considered
+                        • Ask Me Another
+                        • Car Talk
+                        • The Diane Rehm Show
+                        • Fresh Air
+                        • Here &amp; Now
+                        • Latino USA
+                        • Morning Edition
+                        • On The Media
+                        • On Point
+                        • Science Friday
+                        • TED Radio Hour
+                        • Tell Me More
+                        • Wait Wait...Don't Tell Me!
+                        • Weekend Edition Saturday
+                        • Weekend Edition Sunday
+                        • Listen
+                        • Hourly News
+                        • NPR Program Stream
+                        • Find Station Streams
+                        • Podcasts
+                        • More Ways To Listen
+                        • About
+                        • Contact Us
+                        • NPR Shop
+                        • Visit NPR
+                        • Careers at NPR
+                        • Press Room
+                        • 'This Is NPR' Blog
+                        • Support and Sponsor
+                        • Corrections
+                        • NPR Ombudsman
+                        • Permissions
+                        • Email Newsletters
+                        • RSS Feeds
+                        • The NPR API
+
+                        ©2014 NPR
+                        • Contact
+                        • Terms of Use
+                        • Privacy
+                        • Sponsorship Choices
+                        • Text-Only
+                        ©2014 NPR
+
+                    </DRECONTENT>
+                </DOCUMENT>
+            </autn:content>
+            <autn:baseid>424697</autn:baseid>
+            <autn:date>1392912000</autn:date>
+            <autn:datestring>16:00:00 20/02/2014</autn:datestring>
+            <autn:expiredate>1395524989</autn:expiredate>
+            <autn:language>ENGLISH</autn:language>
+            <autn:languagetype>englishUTF8</autn:languagetype>
+            <autn:languageencoding>UTF8</autn:languageencoding>
+        </autn:hit>
+        <autn:hit>
+            <autn:reference>http://starwars.wikia.com/wiki/Dog</autn:reference>
+            <autn:id>104241</autn:id>
+            <autn:section>0</autn:section>
+            <autn:weight>86.67</autn:weight>
+            <autn:links>CAT,DOG</autn:links>
+            <autn:database>Wookiepedia</autn:database>
+            <autn:title>Dog</autn:title>
+            <autn:summary>An akk dog
+                At least one dog lived in Anchorhead. Ken sometimes wished he had a pet dog or cat instead of a pet
+                mooka. The K-9 series companion droids were designed to imitate a dog in both appearance and
+                behavior.The Lost Jedi Adventure Game Book
+
+                Several other creatures, such as the akk dog and the Cyborrean battle dog, may have been related to
+                dogs, or named for dogs due to similar behavior and habits. Dog" was also sometimes used as a term of
+                contempt. Though most mentions of dogs referred to non-sentient domestic animals, at least one sentient
+                being existed who was only identified as a "dog."
+            </autn:summary>
+            <autn:content>
+                <DOCUMENT>
+                    <DREREFERENCE>http://starwars.wikia.com/wiki/Dog</DREREFERENCE>
+                    <DRETITLE>Dog</DRETITLE>
+                    <ALTTITLE>Green dog|Pup|Hound</ALTTITLE>
+                    <AUTNRANK>1308</AUTNRANK>
+                    <TITLELENGTH>3</TITLELENGTH>
+                    <CONTENTLENGTH>2132</CONTENTLENGTH>
+                    <LANGUAGETYPE>englishUTF8</LANGUAGETYPE>
+                    <WIKIID>35015</WIKIID>
+                    <DREDATE>2012-05-04T12:18:09Z</DREDATE>
+                    <CATEGORY>Species of Maramere</CATEGORY>
+                    <CATEGORY>Species of Socorro</CATEGORY>
+                    <CATEGORY>Species of Tatooine</CATEGORY>
+                    <CATEGORY>Domesticated creatures</CATEGORY>
+                    <DREDBNAME>Wookiepedia</DREDBNAME>
+                    <DRECONTENT>
+
+                        Dogs were domesticated animals noted for their keen sense of smell and their barking
+                        vocalizations.Lost City of the Jedi They were often kept as pets by Humans and other species,
+                        such as Talz. A similar, more wild canid, was a wolf.
+
+                        An akk dog
+                        At least one dog lived in Anchorhead.
+
+                        In their youth, both Luke Skywalker and Lando Calrissian owned dogs, though Lando's was run over
+                        by a hovercraft. The memory would haunt Calrissian for years to come.Lando Calrissian and the
+                        Flamewind of Oseon Likewise, Luke would reflect upon his pet as he left the Tatoo system for the
+                        first time on the Millennium Falcon. Ken sometimes wished he had a pet dog or cat instead of a
+                        pet mooka. The K-9 series companion droids were designed to imitate a dog in both appearance and
+                        behavior.The Lost Jedi Adventure Game Book
+
+                        Several other creatures, such as the akk dog and the Cyborrean battle dog, may have been related
+                        to dogs, or named for dogs due to similar behavior and habits.
+
+                        "Dog" was also sometimes used as a term of contempt. A Mandalorian mercenary once referred to
+                        the bounty hunter Durge as Jaing's "dog."Prototypes Likewise, while C-3PO's head was temporarily
+                        attached to a B-1 battle droid's body during the Battle of Geonosis, he was heard to shout,
+                        "Die, Jedi dogs!"
+
+                        Though most mentions of dogs referred to non-sentient domestic animals, at least one sentient
+                        being existed who was only identified as a "dog." This being was an associate of the mercenary
+                        bunny Max.
+
+                        Behind the scenes
+                        As with most Earth animals featured in the Star Wars canon, the status and origins of the dog
+                        remain a mystery. Quite a few organisms in the Star Wars galaxy have obvious real-world
+                        analogues that share the same name, such as ducks; rabbits; horses; chickens; frogs; cats; and,
+                        of course, Humans.
+                        George Lucas and Indiana
+                        Dog-related words such as hound, are used figuratively in some sources. These may be further
+                        examples of the place of dogs in the culture of the Star Wars galaxy.
+
+                        Appearances
+
+                        Sources
+                        Star Wars Official Poster Monthly 16
+
+                        Threats of the Galaxy
+
+                        Notes and references
+
+                        See also
+                        Canoid
+                        Akk dog
+                        Indiana
+                        The Chihuahua
+
+
+                    </DRECONTENT>
+                </DOCUMENT>
+            </autn:content>
+            <autn:baseid>104241</autn:baseid>
+            <autn:date>1336086000</autn:date>
+            <autn:datestring>23:00:00 03/05/2012</autn:datestring>
+            <autn:expiredate>2147483645</autn:expiredate>
+            <autn:language>ENGLISH</autn:language>
+            <autn:languagetype>englishUTF8</autn:languagetype>
+            <autn:languageencoding>UTF8</autn:languageencoding>
+        </autn:hit>
+        <autn:hit>
+            <autn:reference>
+                http://feeds.abcnews.com/c/35229/f/654824/s/3734e327/sc/4/l/0Labcnews0Bgo0N0CEntertainment0Cphotos0Ccelebrity0Eanimal0Elovers0E34370A97/story01.htm
+            </autn:reference>
+            <autn:id>418953</autn:id>
+            <autn:section>0</autn:section>
+            <autn:weight>85.91</autn:weight>
+            <autn:links>CAT,DOG</autn:links>
+            <autn:database>ABCNews</autn:database>
+            <autn:title>Photos: Julianne Hough Steps Out With A New Beau - And Her Dogs</autn:title>
+            <autn:summary>RebeccaARomijn/Twitter
+                • Meet Heidi Klum's Dogs
+                Heidi Klum posted this photo of her with her dogs on Instagram writing, "Beautiful hike on a Sunday."
+                Raymond Hall/Getty Images
+                • Meet Naya Rivera's Dog Lucy
+                Naya Rivera exercises with her dog in Griffith Park in Los Angeles, Dec. 4, 2013. Splash News
+                • Mariah Carey's Dog Crashes Her Bubble Bath
+                Mariah Carey's dog decided to join her in her bath as she prepares for Valentine's night out with
+                husband Nick Cannon. MariahCarey/Twitter
+                • Britney's New Dog
+                Britney Spears posted a photo of herself and her new dog in her Facebook timeline on Feb. 8, 2013.
+                Britney Spears/Facebook
+                • Katharine McPhee Walk in the Rain with her Dogs
+                Katharine McPhee walks with her dog in the rain, during a break from filming her latest TV show, "Smash"
+                in New York City, Jan. 28, 2013.
+            </autn:summary>
+            <autn:content>
+                <DOCUMENT>
+                    <DREREFERENCE>
+                        http://feeds.abcnews.com/c/35229/f/654824/s/3734e327/sc/4/l/0Labcnews0Bgo0N0CEntertainment0Cphotos0Ccelebrity0Eanimal0Elovers0E34370A97/story01.htm
+                    </DREREFERENCE>
+                    <DRETITLE>Photos: Julianne Hough Steps Out With A New Beau - And Her Dogs</DRETITLE>
+                    <UUID>a975a00fda4fc2b32b35bf9f7ef541e3</UUID>
+                    <AUTHOR>ABC News</AUTHOR>
+                    <AUTN_GROUP>Connector</AUTN_GROUP>
+                    <AUTN_IDENTIFIER>
+                        PGlkIHM9IkFCQ05FV1MiIHI9Imh0dHA6Ly9mZWVkcy5hYmNuZXdzLmNvbS9jLzM1MjI5L2YvNjU0ODI0L3MvMzczNGUzMjcvc2MvNC9sLzBMYWJjbmV3czBCZ28wTjBDRW50ZXJ0YWlubWVudDBDcGhvdG9zMENjZWxlYnJpdHkwRWFuaW1hbDBFbG92ZXJzMEUzNDM3MEE5Ny9zdG9yeTAxLmh0bSIvPg==
+                    </AUTN_IDENTIFIER>
+                    <AUTN_TASK_BATCH_ID>ABCNEWS_c08b6bbce8355521f38d8c5400ce1e72</AUTN_TASK_BATCH_ID>
+                    <CHANNEL_DESCRIPTION>ABC News: Top Stories</CHANNEL_DESCRIPTION>
+                    <CHANNEL_LANGUAGE>en</CHANNEL_LANGUAGE>
+                    <CHANNEL_LASTBUILDDATE>Mon, 17 Feb 2014 19:44:40 GMT</CHANNEL_LASTBUILDDATE>
+                    <CHANNEL_LINK>http://abcnews.go.com/</CHANNEL_LINK>
+                    <CHANNEL_PUBDATE>Mon, 17 Feb 2014 19:44:40 GMT</CHANNEL_PUBDATE>
+                    <CHANNEL_TITLE>ABC News: Top Stories</CHANNEL_TITLE>
+                    <CONTENT-TYPE>text/html</CONTENT-TYPE>
+                    <COPYRIGHT>Copyright (c) 2014 ABC News Internet Ventures</COPYRIGHT>
+                    <DESCRIPTION>Celebs and their pets.</DESCRIPTION>
+                    <DOCTRACKINGID>a5f68ef0a8fa7260af9d5d8f80e9afcc</DOCTRACKINGID>
+                    <DOCUMENTATTRIBUTES>0</DOCUMENTATTRIBUTES>
+                    <DOCUMENTCLASS>1</DOCUMENTCLASS>
+                    <DOCUMENTSIZE>95926</DOCUMENTSIZE>
+                    <DOCUMENTTYPE>236</DOCUMENTTYPE>
+                    <DRECHILDCOUNT>0</DRECHILDCOUNT>
+                    <DREDATE>1392663836</DREDATE>
+                    <DREDBNAME>ABCNews</DREDBNAME>
+                    <DREFILENAME>/opt/rssconnector/Temp/1392666490_8plnwy2l_story01.htm</DREFILENAME>
+                    <DREORIGINALNAME>/opt/rssconnector/Temp/1392666490_8plnwy2l_story01.htm</DREORIGINALNAME>
+                    <DREROOTFAMILYREFERENCE>
+                        http://feeds.abcnews.com/c/35229/f/654824/s/3734e327/sc/4/l/0Labcnews0Bgo0N0CEntertainment0Cphotos0Ccelebrity0Eanimal0Elovers0E34370A97/story01.htm
+                    </DREROOTFAMILYREFERENCE>
+                    <DREROOTFAMILYREFERENCE_ID>a975a00fda4fc2b32b35bf9f7ef541e3</DREROOTFAMILYREFERENCE_ID>
+                    <FAMILYSORT>a975a00fda4fc2b32b35bf9f7ef541e3-0</FAMILYSORT>
+                    <FB_TITLE>Julianne Hough Steps Out With A New Beau - And Her Dogs</FB_TITLE>
+                    <FILEACCESSEDTIME>1392666491</FILEACCESSEDTIME>
+                    <FILECREATEDTIME>1392666491</FILECREATEDTIME>
+                    <FILEIMPORTEDTIME>1392666498</FILEIMPORTEDTIME>
+                    <FILEMODIFIEDTIME>1392666491</FILEMODIFIEDTIME>
+                    <IMPORTMAGICEXTENSION>htm</IMPORTMAGICEXTENSION>
+                    <IMPORTORIGINALENCODING>UTF8</IMPORTORIGINALENCODING>
+                    <IMPORTVERSION>1</IMPORTVERSION>
+                    <INFOFLAG>0</INFOFLAG>
+                    <ISFILEFILTERABLE>1</ISFILEFILTERABLE>
+                    <ITEM_CATEGORY>Entertainment</ITEM_CATEGORY>
+                    <ITEM_DESCRIPTION>Celebs and their pets.&lt;img width='1' height='1'
+                        src='http://feeds.abcnews.com/c/35229/f/654824/s/3734e327/sc/4/mf.gif' border='0'/&gt;&lt;br
+                        clear='all'/&gt;&lt;div class='mf-viral'&gt;&lt;table border='0'&gt;&lt;tr&gt;&lt;td
+                        valign='middle'&gt;&lt;a
+                        href="http://share.feedsportal.com/share/twitter/?u=http%3A%2F%2Fabcnews.go.com%2FEntertainment%2Fphotos%2Fcelebrity-animal-lovers-3437097&amp;t=Photos%3A++Julianne+Hough+Steps+Out+With+A+New+Beau+-+And+Her+Dogs"
+                        target="_blank"&gt;&lt;img src="http://res3.feedsportal.com/social/twitter.png" border="0" /&gt;&lt;/a&gt;&amp;nbsp;&lt;a
+                        href="http://share.feedsportal.com/share/facebook/?u=http%3A%2F%2Fabcnews.go.com%2FEntertainment%2Fphotos%2Fcelebrity-animal-lovers-3437097&amp;t=Photos%3A++Julianne+Hough+Steps+Out+With+A+New+Beau+-+And+Her+Dogs"
+                        target="_blank"&gt;&lt;img src="http://res3.feedsportal.com/social/facebook.png" border="0" /&gt;&lt;/a&gt;&amp;nbsp;&lt;a
+                        href="http://share.feedsportal.com/share/linkedin/?u=http%3A%2F%2Fabcnews.go.com%2FEntertainment%2Fphotos%2Fcelebrity-animal-lovers-3437097&amp;t=Photos%3A++Julianne+Hough+Steps+Out+With+A+New+Beau+-+And+Her+Dogs"
+                        target="_blank"&gt;&lt;img src="http://res3.feedsportal.com/social/linkedin.png" border="0" /&gt;&lt;/a&gt;&amp;nbsp;&lt;a
+                        href="http://share.feedsportal.com/share/gplus/?u=http%3A%2F%2Fabcnews.go.com%2FEntertainment%2Fphotos%2Fcelebrity-animal-lovers-3437097&amp;t=Photos%3A++Julianne+Hough+Steps+Out+With+A+New+Beau+-+And+Her+Dogs"
+                        target="_blank"&gt;&lt;img src="http://res3.feedsportal.com/social/googleplus.png" border="0" /&gt;&lt;/a&gt;&amp;nbsp;&lt;a
+                        href="http://share.feedsportal.com/share/email/?u=http%3A%2F%2Fabcnews.go.com%2FEntertainment%2Fphotos%2Fcelebrity-animal-lovers-3437097&amp;t=Photos%3A++Julianne+Hough+Steps+Out+With+A+New+Beau+-+And+Her+Dogs"
+                        target="_blank"&gt;&lt;img src="http://res3.feedsportal.com/social/email.png" border="0" /&gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</ITEM_DESCRIPTION>
+                    <ITEM_GUID>http://abcnews.go.com/Entertainment/photos/celebrity-animal-lovers-3437097</ITEM_GUID>
+                    <ITEM_LINK>
+                        http://feeds.abcnews.com/c/35229/f/654824/s/3734e327/sc/4/l/0Labcnews0Bgo0N0CEntertainment0Cphotos0Ccelebrity0Eanimal0Elovers0E34370A97/story01.htm
+                    </ITEM_LINK>
+                    <ITEM_PUBDATE>Mon, 17 Feb 2014 19:03:56 GMT</ITEM_PUBDATE>
+                    <ITEM_TITLE>Photos: Julianne Hough Steps Out With A New Beau - And Her Dogs</ITEM_TITLE>
+                    <KEYVIEWVERSION>10180</KEYVIEWVERSION>
+                    <KEYWORDS>celebrity pets, dog, cats, entertainment news, celebrity news, celebrity gossip</KEYWORDS>
+                    <ROBOTS>noarchive</ROBOTS>
+                    <ROBOTS>index, follow</ROBOTS>
+                    <TITLE>Celebs and Their Pets Photos - ABC News</TITLE>
+                    <VERSIONNUMBER>0</VERSIONNUMBER>
+                    <X-UA-COMPATIBLE>IE=edge,chrome=1</X-UA-COMPATIBLE>
+                    <DRECONTENT>• ABC News
+                        • Home
+                        • Video
+                        • U.S.
+                        • World
+                        • Politics
+                        • Entertainment
+                        • Tech
+                        • Health
+                        • Lifestyle
+                        • Money
+                        • More
+                        • Investigative
+                        • Sports
+                        • Good News
+                        • Photos
+                        • Fusion
+                        • Live
+
+                        Celebs and Their Pets
+                        +
+                        竏?/a&gt;
+                        • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
+                        • • • • • • •
+                        • • • •
+                        Julianne Hough Steps Out With A New Beau - And Her Dogs
+                        Julianne Hough and Brooks Laich spotted on a Sunday outing, Feb. 16, 2014.
+                        AKM-GSI
+                        • Julianne Hough Steps Out With A New Beau - And Her Dogs
+                        Julianne Hough and Brooks Laich spotted on a Sunday outing, Feb. 16, 2014.
+                        AKM-GSI
+                        • Meet Heidi Klum's Pomeranian, Buttercup
+                        Heidi Klum is seen with her dog Buttercup, Feb. 08, 2014 in Los Angeles.
+                        Bauer-Griffin/GC Images/Getty Images
+                        • Meet Hilary Swank's Furry Travel Companion
+                        Hilary Swank is seen at LAX airport, Feb. 03, 2014, in Los Angeles.
+                        GVK/Bauer-Griffin/Getty Images
+                        • Ashley Judd Goes Makeup Free With Her Pup
+                        Actress Ashley Judd and a friend go for a stroll around Beverly Hills, Calif., Jan. 28, 2014.
+                        AKM-GSI
+                        • Kaley Cuoco Smooches Her Pitbull Norman
+                        Kaley Cuoco posted this image on Instagram with this caption: "Yes. We share everything. :)
+                        #norman," Jan. 28, 2014.
+                        normancook/Instagram
+                        • Meet Jon Hamm's Dog Cora
+                        Jon Hamm and wife Jennifer Westfeldt take their dog for a walk in Los Feliz, Calif., Jan. 23,
+                        2014.
+                        GOLA/Broadimage
+                        • Rachel McAdams Steps Out with Her Pup
+                        Rachel McAdams walks her dog with her sister Kayleen in Los Angeles, Jan. 21, 2014.
+                        PacificCoastNews
+                        • Amanda Seyfried Walks Her Furry Friend
+                        Actress Amanda Seyfried is seen in Los Angeles, Jan. 16, 2014.
+                        SMXRF/Star Max/GC Images/Getty Images
+                        • Meet Julia Roberts's Furry Friend
+                        Chrissy Teigen posted this photo to Instagram on Jan. 5, 2014 with the caption "D**n pudds that
+                        was cold".
+                        @chrissyteigen/Instagram
+                        • Meet Julia Roberts's Furry Friend
+                        Actress Julia Roberts catches a flight out of Los Angeles, Calif. with her kids for the
+                        holidays, Dec. 23, 2013.
+                        WCP/Terma/4CRNS/ Fame Flynet
+                        • Meet Hilary Swank's Furry Friend
+                        Adam Brody and Leighton Meester take their pups out for an early morning walk, Dec. 22, 2013, in
+                        Los Angeles.
+                        FameFlynet
+                        • Meet Hillary Swank's Furry Friend
+                        Hilary Swank is seen at Charles de Gaulle Airport in Paris, France, Dec. 19, 2013.
+                        Marc Piasecki/Getty Images
+                        • So Cute! Jack Osbourne's Daughter Cuddles With Their Pup
+                        Jack Osbourne tweeted this photo with the caption "Pearl's dog/chair," Dec. 18, 2013.
+                        Twitter/JackOsbourne | Getty Images
+                        • Rebecca Romijn Shares Her (Pet-Friendly!) Christmas Card
+                        Rebecca Romijn tweeted this festive photo Dec. 15, 2013 with the caption, "Happy Holidays from
+                        all nine of us!!"
+                        RebeccaARomijn/Twitter
+                        • Meet Heidi Klum's Dogs
+                        Heidi Klum posted this photo of her with her dogs on Instagram writing, "Beautiful hike on a
+                        Sunday."
+                        Heidi Klum/Instagram
+                        • Rosie Huntington-Whiteley Snuggles With Her Dachshund
+                        Victoria's Secret model Rosie Huntington-Whiteley posted this photo with her dachshund to
+                        Instagram, Dec. 10, 2013.
+                        Instagram
+                        • Meet Orlando Bloom's Pooch, Sidi
+                        Orlando Bloom is seen walking his dog, Sidi, Dec. 4, 2013, in New York City.
+                        Raymond Hall/Getty Images
+                        • Meet Naya Rivera's Dog Lucy
+                        Naya Rivera exercises with her dog in Griffith Park in Los Angeles, Dec. 4, 2013.
+                        Splash News
+                        • Gwen Stafani and her injured puppy
+                        Gwen Stefani is seen on November 28, 2013 in Los Angeles, California.
+                        Bauer-Griffin/Getty Images
+                        • Newly Married Chrissy Tiegen's new Stepchild!
+                        Chrissy Teigen arrives at Los Angeles International airport in Los Angeles, Nov. 13, 2013.
+                        GVK/Bauer-Griffin/GC Images
+                        • Blake Lively Hits the Park with Her Pup
+                        Actor Jason Bateman walks around eating while his dog poses for the camera and follows him back
+                        to the trailer on the set of 'Horrible Bosses 2' in Los Angles, Nov. 6, 2013.
+                        London Entertainment/Splash News
+                        • Blake Lively Hits the Park with her Pup
+                        Blake Lively texting on her pink Moto X while hanging with her adorable dog Baxter in Los
+                        Angeles, Nov. 5, 2013.
+                        Courtesy Joey Andrew
+                        • Meet Kendall Jenner's New Puppy
+                        Kendall Jenner carries her new puppy in Los Angeles, Oct. 23, 2013.
+                        SMXRF/Star Max/Getty Images
+                        • Meet Hugh Jackman's French Bulldog Dali!
+                        Hugh Jackman is seen in the West Village with his French Bulldog Dali, Oct. 21, 2013, in New
+                        York City.
+                        Raymond Hall/Getty Images
+                        • Liv Tyler Takes Her Pup Out
+                        Liv Tyler walks her dog in the Greenwich Village section of New York, Oct. 17, 2013.
+                        TNYF/WENN
+                        • Ciara Cuddles Her Puppy at LAX
+                        Ciara wearing a beanie and shades as she cradles her pup like a baby at LAX, Oct. 14, 2013.
+                        X17online.com
+                        • Meet Heidi Klum's New Puppy, Buttercup!
+                        Heidi Klum, dressed down in jeans and a leather biker jacket, walks her Pomeranian, Buttercup,
+                        in a park in Los Angeles, Oct. 13, 2013.
+                        VP/Star Max/FilmMagic/Getty Images
+                        • Aw! Simon Cowell Cuddles Two Puppies
+                        Simon Cowell shared this intimate moment with two new puppies on Twitter, Oct. 3, 2013.
+                        @SimonCowell/Twitter
+                        • Amanda Seyfried Walks Her Pooch
+                        Actress Amanda Seyfried walks her dog around the Soho neighborhood, Oct. 3, 2013, in New York
+                        City.
+                        Raymond Hall/FilmMagic/Getty Images
+                        • See Julianne Hough and Her Lookalike Pooch!
+                        Julianne Hough posted this photo on Instagram on Sept. 19, 2013 with the caption, "Rocking the
+                        topknot! #fashiontrend #topknot #bitchin'love #blondies."
+                        JulesHough/Instagram
+                        • Hugh Jackman's Smiling Pup!
+                        Actress Olivia Wilde is seen Walking her dog in Soho on September 4, 2013 in New York City.
+                        Raymond Hall/FilmMagic/Getty Images
+                        • Hugh Jackman's Smiling Pup!
+                        Actress Amanda Seyfried is sighted Walking her Dog in Soho on September 12, 2013 in New York
+                        City.
+                        Raymond Hall/FilmMagic/Getty Images
+                        • Hugh Jackman's Smiling Pup!
+                        Singer Ryan Cabrera and his dog Penny Lane arrive at the 102.7 KIIS FM Teen Choice Awards
+                        Pre-Party at W Los Angeles - Westwood on August 9, 2013 in Los Angeles, Calif.
+                        Amanda Edwards/WireImage/Getty Images
+                        • Hugh Jackman's Smiling Pup!
+                        In this handout image provided by Kensington Palace, Catherine, Duchess of Cambridge and Prince
+                        William, Duke of Cambridge pose for a photograph with their son, Prince George Alexander Louis
+                        of Cambridge, surrounded by Lupo, the couple's cocker spaniel, and Tilly the retriever (a
+                        Middleton family pet) in the garden of the Middleton family home in August 2013 in Bucklebury,
+                        Berkshire.
+                        Michael Middleton/WPA Pool/Getty Images
+                        • Wolverine's Smiling Dog
+                        Hugh Jackman's french bulldog, Dali, gets to enjoy a nice walk and neighborhood stroll in New
+                        York City, April 10, 2013.
+                        Splash News
+                        • Alessandra Plays With Puppy
+                        Alessandra Ambrosio does a Victoria's Secret photo-shoot in front of Shutter Hotel in Santa
+                        Monica, Calif., March 8, 2013. The model took a break from posing to greet the furry pooch that
+                        crashed the photo shoot.
+                        Splash News
+                        • Mariah Carey's Dog Crashes Her Bubble Bath
+                        Mariah Carey's dog decided to join her in her bath as she prepares for Valentine's night out
+                        with husband Nick Cannon. She &lt;a
+                        href="https://twitter.com/MariahCarey/status/302238913009963008/photo/1" target="external"&gt;tweeted
+                        this photo&lt;/a&gt; Feb. 14, 2013: "Aaaah! Jill E Beans leaps to the tub In hopes of a splash
+                        champagne - whhhhhy?!"
+                        @MariahCarey/Twitter
+                        • Britney's New Dog
+                        Britney Spears posted a photo of herself and her new dog in her Facebook timeline on Feb. 8,
+                        2013. The pop star wrote, "Say good morning to my new baby people."
+                        Britney Spears/Facebook
+                        • Katharine McPhee Walk in the Rain with her Dogs
+                        Katharine McPhee walks with her dog in the rain, during a break from filming her latest TV show,
+                        "Smash" in New York City, Jan. 28, 2013.
+                        Elder Ordonez/INFphoto.com
+                        • Britney's New Best Friend
+                        Miley Cyrus has a new pooch. The actress shared photos on Twitter of a new puppy she adopted on
+                        Jan. 3, 2013. "Bean is a little girl :) she is a chihuahua mix of some type :) she brought so
+                        much sunshine!!!" the 20-year-old tweeted. In December 2012, Cyrus was heartbroken after her
+                        Yorkie mix Lila died following an incident with her other dog, Ziggy.
+                        Twitter/MileyCyrus
+                        • Usher Bids $12K for Puppy
+                        Meet the newest addition to Britney Spears' family: a tiny puppy. The pop star and "X Factor"
+                        judge took her new best friend to get pet supplies with sons Jayden James and Sean Preston on
+                        Nov. 18.
+                        FameFlynet
+                        • Usher Outbids for Puppy at Charity Auction
+                        Usher bid $12,000 to win a Goldendoodle puppy at the second annual Pencils of Promise charity
+                        gala in New York City Oct. 25. He tweeted, "Poppy Raymond is what I'm think of namin' her,
+                        however there are two gregarious 3 and 4-year-olds that will have the last say -- and the
+                        responsibility that comes with her."
+                        Mike Coppola/Getty Images for Pencils of Promise
+                        • Carrie Cuddles with Kittens
+                        Amanda Seyfried donned a black coat and shoes made for walking to trek with her dogs in New York
+                        on Oct. 25.
+                        GSNY/Splash News
+                        • Karl Lagerfield's Pampered Pet
+                        Carrie Underwood posts a picture of her cuddling up with kittens at an animal shelter in her
+                        hometown Checotah, Okla., writing, "Hanging out at the Checotah animal shelter! Anyone want a
+                        kitten? I think we have a few!!! Ha ha!"
+                        @carrieunderwood/Twitter
+                        • What Star Has Dog Named Fish?
+                        Meet the most pampered cat in the world: Karl Lagerfeld's Parisian feline, Choupette. The Chanel
+                        honcho poses with his pet in the September 2012 issue of Harper's Bazaar. Choupette has two
+                        maids, gets manicures, and owns an iPad. "She has an attitude like a princess," Lagerfeld said.
+                        Hearst Magazines
+                        • What Star Has Dog Named Fish?
+                        Christian Slater is seen walking his rescue dog, Fish, while shopping on Lincoln Road Mall in
+                        Miami Beach, Florida, Aug. 6, 2012.
+                        INFPhoto
+                        • Steven Tyler's Furry Friend
+                        Olympic tennis champion Andy Murray poses with the gold and silver medals he won at the London
+                        2012 games. His dogs, Maggie May and Rusty, appeared with the medals in a photo that Murray's
+                        girlfriend, Kim Sears, posted to Instagram via the Twitter account she runs for Maggie May.
+                        Twitter/Maggie May
+                        • Star Cuddles With 3-Legged Dog
+                        Steven Tyler's best friend traels in style. The Aerosmith frontman walked out of the Trump Soho
+                        Hotel in Manhattan carrying his pint-sized pooch.
+                        WENN.com
+                        • Ryan Gosling's Day With His Dog
+                        Cue the "aw." Actress Jessica Chastain got cozy with her three-legged dog named Chaplin on the
+                        set of "The Disappearance of Eleanor Rigby: His" in New York on July 23.
+                        Christopher Peterson/Splash News
+                        • Ryan Gosling's Day With His Dog
+                        Miley Cyrus arrives at Miami International Airport, with new puppy, Happy, May 14, 2012 in
+                        Miami, Florida.
+                        Jonathan Pavel/WireImage/Getty Images
+                        • Ryan Gosling's Day With His Dog
+                        Actor Bradley Cooper takes his dog, Charlotte, for a walk, June 26, 2012, in New York City.
+                        Humberto Carreno/startraksphoto.com
+                        • Ryan Gosling's Day With His Dog
+                        Blake Lively on location with her Malti-poo dog, Penny, during a filming of "Gossip Girl", March
+                        14, 2010 in New York City.
+                        Arnaldo Magnani/Getty Images
+                        • Ryan Gosling's Day With His Dog
+                        Amanda Seyfried is seen with her Australian shepard dog, Finn, July 14, 2011 in Los Angeles,
+                        California.
+                        Jean Baptiste Lacroix/WireImage/Getty Images
+                        • Liz Taylor's Lifelong Passion for Animals
+                        Tori Spelling's not your run-of-the-mill pet owner. The reality TV star carried her pet chicken,
+                        Coco, while filming "Tori &amp; Dean: Home Sweet Hollywood" on March 28, 2011.
+                        Ben Tsui / Splash News
+                        • Amanda Seyfried's Doggy Date
+                        Amanda Seyfried got really affectionate with her dog as she let it lick her lips in Los Angeles
+                        Feb. 21, 2010.
+                        Bauer Griffin
+
+                        Related
+                        • PHOTO: ABC News Jen: Starlet-Turned-Groupie?
+                        • PHOTO: ABC NewsLindsay Lohan's New Body Art
+                        • PHOTO: ABC NewsJim Carrey Packs on the Pounds
+                        • PHOTO: ABC NewsPicture This: Featured Photography Curated By ABC News' Photo Editors
+
+                        REPLAY
+                        YOU JUST SAW:
+                        Celebs and Their Pets
+                        • • • •
+
+                        All ABC News Photos
+                        Home&gt; Entertainment &gt; Photos &gt; Celebs and Their Pets
+                        Join the Discussion
+                        You are using an outdated version of Internet Explorer. Please click here to upgrade your
+                        browser in order to comment.
+                        Please enable JavaScript to view the comments powered by Disqus. blog comments powered by Disqus
+                        See It, Share It
+                        PHOTO: Oprah Winfrey attends the EE British Academy Film Awards 2014 at The Royal Opera House,
+                        Feb. 16, 2014 in London.
+                        David M. Benett/Getty Images
+                        How Oprah Got Into Her Skin-Tight BAFTA Gown
+                        Meet Simon Cowells Son, Eric
+                        @SimonCowell/Twitter
+                        Meet Simon Cowell's Son, Eric
+                        PHOTO: The Confederate submarine H.L. Hunley sits in a conservation tank after a steel truss
+                        that had surrounded it was removed in this Jan. 12, 2012, file photo.
+                        Bruce Smith/AP Images
+                        Confederate Sub Made History 150 Years Ago
+                        PHOTO: Residents of Maryvale in Phoenix, Ariz. are worried about chihuahuas that are on the
+                        loose.
+                        Getty Images
+                        Chihuahuas Rampage in Arizona
+                        PHOTO: Mom writes an online thank you to the stranger that helped her daughter cope with flying
+                        on a plane.
+                        Courtesy Shanell Mouland
+                        7 Acts That'll Make You Want to Be a Better Person
+                        PHOTO:
+                        Lee Jin-man/AP Photo
+                        This Is How Foggy It Is in Sochi Right Now
+                        PHOTO: An image grab released by Al-Qaeda-linked media group as Sahab shows Adam Gadahn, an
+                        American member of Al-Qaeda and a convert to Islam, Jan. 6, 2008.
+
+
+                        AFP/Getty Images
+                        Which American Turncoat Could Be On U.S. Kill List?
+                        Sections
+                        • U.S.
+                        • World
+                        • Politics
+                        • Weird News
+                        • Investigative
+                        • Health
+                        • Entertainment
+                        • Sports
+                        • Money
+                        • Technology
+                        • Travel
+                        • Recipes
+                        • News Topics
+                        • Live Blog
+                        Shows
+                        • NY Med
+                        • Good Morning America
+                        • World News with Diane Sawyer
+                        • Nightline
+                        • ABC's The Lookout
+                        • This Week with George Stephanopoulos
+                        • 20/20
+                        • Primetime
+                        • What Would You Do?
+                        • ABC.com
+                        • Royal Baby
+                        Tools
+                        • iPad App
+                        • Register
+                        • Sign In
+                        • Facebook
+                        • Twitter
+                        • Google Plus
+                        • Blogs
+                        • Emails &amp; News Alerts
+                        • Message Boards
+                        • RSS Headlines
+                        About
+                        • Contact Us
+                        • Feedback
+                        • Advertising
+                        • Privacy Policy
+                        • Interest-Based Ads
+                        • Terms of Use
+                        • ABC News Store
+                        • Site Map
+                        • Authors List
+                        • Fusion
+                        • Go.com
+                        ABCNews.com
+                        External links are provided for reference purposes. ABC News is not responsible for the content
+                        of external Internet sites. Copyright © 2014 ABC News Internet Ventures. Yahoo! - ABC News
+                        Network
+                        Back to top
+                        " style="display: none;" border="0" height="1" width="1" alt="Quantcast"/&gt;
+
+
+                    </DRECONTENT>
+                </DOCUMENT>
+            </autn:content>
+            <autn:baseid>418953</autn:baseid>
+            <autn:date>1392663836</autn:date>
+            <autn:datestring>19:03:56 17/02/2014</autn:datestring>
+            <autn:expiredate>1395258521</autn:expiredate>
+            <autn:language>ENGLISH</autn:language>
+            <autn:languagetype>englishUTF8</autn:languagetype>
+            <autn:languageencoding>UTF8</autn:languageencoding>
+        </autn:hit>
+    </responsedata>
+</autnresponse>

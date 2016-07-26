@@ -6,9 +6,8 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
+import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -21,10 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("ProhibitedExceptionDeclared")
 public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired
-    protected MvcIntegrationTestUtils mvcIntegrationTestUtils;
-
     @Test
     public void query() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH)
@@ -50,6 +45,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
                 .param(DocumentsController.AUTO_CORRECT_PARAM, "false")
                 .param(DocumentsController.SUMMARY_PARAM, "context")
                 .param(DocumentsController.INDEXES_PARAM, mvcIntegrationTestUtils.getDatabases())
+                .param(DocumentsController.QUERY_TYPE_PARAM, SearchRequest.QueryType.MODIFIED.name())
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -60,12 +56,13 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
     @Test
     public void queryForPromotions() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.PROMOTIONS_PATH)
+        final MockHttpServletRequestBuilder requestBuilder = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH)
                 .param(DocumentsController.TEXT_PARAM, "*")
                 .param(DocumentsController.RESULTS_START_PARAM, "1")
                 .param(DocumentsController.MAX_RESULTS_PARAM, "50")
                 .param(DocumentsController.SUMMARY_PARAM, "context")
                 .param(DocumentsController.INDEXES_PARAM, mvcIntegrationTestUtils.getDatabases())
+                .param(DocumentsController.QUERY_TYPE_PARAM, SearchRequest.QueryType.PROMOTIONS.name())
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)

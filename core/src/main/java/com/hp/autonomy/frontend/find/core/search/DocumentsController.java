@@ -32,7 +32,6 @@ import java.util.List;
 public abstract class DocumentsController<S extends Serializable, Q extends QueryRestrictions<S>, R extends SearchResult, E extends Exception> {
     public static final String SEARCH_PATH = "/api/public/search";
     public static final String QUERY_PATH = "query-text-index/results";
-    static final String PROMOTIONS_PATH = "query-text-index/promotions";
     static final String SIMILAR_DOCUMENTS_PATH = "similar-documents";
     static final String GET_DOCUMENT_CONTENT_PATH = "get-document-content";
 
@@ -49,6 +48,7 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
     private static final String MIN_SCORE_PARAM = "min_score";
     static final String REFERENCE_PARAM = "reference";
     static final String AUTO_CORRECT_PARAM = "auto_correct";
+    static final String QUERY_TYPE_PARAM = "queryType";
     static final String DATABASE_PARAM = "database";
 
     public static final int MAX_SUMMARY_CHARACTERS = 250;
@@ -67,46 +67,20 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
     @RequestMapping(value = QUERY_PATH, method = RequestMethod.GET)
     @ResponseBody
     public Documents<R> query(
-            @RequestParam(TEXT_PARAM) final String text,
+            @RequestParam(TEXT_PARAM) final String queryText,
             @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
             @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
             @RequestParam(SUMMARY_PARAM) final String summary,
-            @RequestParam(INDEXES_PARAM) final List<S> index,
+            @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(value = SORT_PARAM, required = false) final String sort,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
             @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore,
-            @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect
+            @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect,
+            @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType
     ) throws E {
-        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, resultsStart, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight, minScore, autoCorrect);
-        return documentsService.queryTextIndex(searchRequest);
-    }
-
-    @SuppressWarnings("MethodWithTooManyParameters")
-    @RequestMapping(value = PROMOTIONS_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public Documents<R> queryForPromotions(
-            @RequestParam(TEXT_PARAM) final String text,
-            @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
-            @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
-            @RequestParam(SUMMARY_PARAM) final String summary,
-            @RequestParam(value = INDEXES_PARAM, required = false) final List<S> index,
-            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(value = SORT_PARAM, required = false) final String sort,
-            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
-            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
-            @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
-            @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore,
-            @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect
-    ) throws E {
-        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, resultsStart, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight, minScore, autoCorrect);
-        return documentsService.queryTextIndexForPromotions(searchRequest);
-    }
-
-    @SuppressWarnings("MethodWithTooManyParameters")
-    private SearchRequest<S> parseRequestParamsToObject(final String queryText, final int resultsStart, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight, final Integer minScore, final boolean autoCorrect) {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
                 .setQueryText(queryText)
                 .setFieldText(fieldText)
@@ -116,7 +90,7 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
                 .setMinScore(minScore)
                 .build();
 
-        return new SearchRequest.Builder<S>()
+        final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
                 .setQueryRestrictions(queryRestrictions)
                 .setStart(resultsStart)
                 .setMaxResults(maxResults)
@@ -125,7 +99,10 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
                 .setSort(sort)
                 .setHighlight(highlight)
                 .setAutoCorrect(autoCorrect)
+                .setQueryType(SearchRequest.QueryType.valueOf(queryType))
                 .build();
+
+        return documentsService.queryTextIndex(searchRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")

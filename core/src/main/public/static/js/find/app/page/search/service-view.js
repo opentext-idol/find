@@ -204,6 +204,19 @@ define([
             }, subViewArguments));
 
             this.resultsViews = _.where([{
+                Constructor: TopicMapView,
+                id: 'topic-map',
+                shown: hasBiRole,
+                uniqueId: _.uniqueId('results-view-item-'),
+                constructorArguments: _.extend({
+                    clickHandler: relatedConceptsClickHandler,
+                    type: 'QUERY'
+                }, subViewArguments),
+                selector: {
+                    displayNameKey: 'topic-map',
+                    icon: 'hp-grid'
+                }
+            }, {
                 Constructor: this.ResultsViewAugmentation,
                 id: 'list',
                 shown: true,
@@ -221,19 +234,6 @@ define([
                 selector: {
                     displayNameKey: 'list',
                     icon: 'hp-list'
-                }
-            }, {
-                Constructor: TopicMapView,
-                id: 'topic-map',
-                shown: hasBiRole,
-                uniqueId: _.uniqueId('results-view-item-'),
-                constructorArguments: _.extend({
-                    clickHandler: relatedConceptsClickHandler,
-                    type: 'QUERY'
-                }, subViewArguments),
-                selector: {
-                    displayNameKey: 'topic-map',
-                    icon: 'hp-grid'
                 }
             }, {
                 Constructor: SunburstView,
@@ -417,7 +417,7 @@ define([
             this.restrictedParametricCollection.reset();
 
             var fieldNames = this.parametricFieldsCollection.pluck('id');
-            
+
             if (fieldNames.length > 0 && this.queryModel.get('indexes').length !== 0) {
                 this.restrictedParametricCollection.fetch({
                     data: {
