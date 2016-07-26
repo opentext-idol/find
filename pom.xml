@@ -29,6 +29,7 @@
         <build.config.override><!-- unspecified by default --></build.config.override>
         <config.selenium.url>http://localhost:4444/wd/hub</config.selenium.url>
         <config.selenium.browsers>["chrome"]</config.selenium.browsers>
+        <qa.infrastructure.version>1.5.0</qa.infrastructure.version>
     </properties>
 
     <build>
@@ -97,6 +98,12 @@
             <id>staging</id>
             <properties>
                 <build.config.base>hsod-staging.json</build.config.base>
+            </properties>
+        </profile>
+        <profile>
+            <id>integration</id>
+            <properties>
+                <build.config.base>hsod-dev.json</build.config.base>
             </properties>
         </profile>
         <profile>
