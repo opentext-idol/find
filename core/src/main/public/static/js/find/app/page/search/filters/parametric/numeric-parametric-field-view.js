@@ -303,8 +303,8 @@ define([
                     data: {
                         queryText: this.queryModel.get('queryText'),
                         fieldText: toFieldTextNode(otherSelectedValues),
-                        minDate: this.queryModel.get('minDate'),
-                        maxDate: this.queryModel.get('maxDate'),
+                        minDate: this.queryModel.getIsoDate('minDate'),
+                        maxDate: this.queryModel.getIsoDate('maxDate'),
                         minScore: this.queryModel.get('minScore'),
                         databases: this.queryModel.get('indexes'),
                         targetNumberOfBuckets: Math.floor(width / this.pixelsPerBucket),
