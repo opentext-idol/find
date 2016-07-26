@@ -85,9 +85,9 @@ define([
         it('displays three dropdown boxes with the correct field names', function() {
             var $selects = this.view.$('.chosen-select');
             expect($selects).toHaveLength(3);
-            expect($selects[0]).toHaveText('test');
-            expect($selects[1]).toHaveText('test');
-            expect($selects[2]).toHaveText('test');
+            expect($selects[0]).toHaveText('Test');
+            expect($selects[1]).toHaveText('Test');
+            expect($selects[2]).toHaveText('Test');
         });
 
         it('should show the show more button but it should be disabled', function() {

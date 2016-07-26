@@ -100,6 +100,7 @@ define([
                         this.parametricCollection.fetching = false;
 
                         var sources = {
+                            id: '/DOCUMENT/SOURCE',
                             field: 'SOURCE',
                             values: [
                                 {
@@ -114,6 +115,7 @@ define([
                         };
 
                         var category = {
+                            id: '/DOCUMENT/CATEGORY',
                             field: 'CATEGORY',
                             values: [
                                 {

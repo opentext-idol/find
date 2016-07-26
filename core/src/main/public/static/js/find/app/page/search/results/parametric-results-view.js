@@ -162,7 +162,7 @@ define([
             this.firstChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(0),
                 name: 'first',
-                fields: _.difference(this.parametricCollection.pluck('name'), this.selectedParametricValues.pluck('field')).sort(),
+                fields: _.difference(this.parametricCollection.pluck('id'), this.selectedParametricValues.pluck('field')).sort(),
                 allowEmpty: false
             });
 
@@ -178,7 +178,7 @@ define([
             this.secondChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(1),
                 name: 'second',
-                fields: _.difference(this.parametricCollection.pluck('name'), _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))).sort(),
+                fields: _.difference(this.parametricCollection.pluck('id'), _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))).sort(),
                 allowEmpty: true
             });
 

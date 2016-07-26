@@ -64,7 +64,7 @@ define([
                         columns: [
                             {
                                 data: 'text',
-                                title: this.fieldsCollection.at(0).get('field')
+                                title: this.fieldsCollection.at(0).get('displayValue')
                             }, {
                                 data: 'count',
                                 title: i18n['search.resultsView.table.count']
@@ -91,7 +91,7 @@ define([
                         columns: [
                             {
                                 data: 'text',
-                                title: this.fieldsCollection.at(0).get('field')
+                                title: this.fieldsCollection.at(0).get('displayValue')
                             }
                         ].concat(columns),
                         language: strings

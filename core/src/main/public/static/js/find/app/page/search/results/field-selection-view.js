@@ -3,12 +3,13 @@ define([
     'underscore',
     'text!find/templates/app/page/search/results/sunburst/field-selection-view.html',
     'i18n!find/nls/bundle',
+    'parametric-refinement/prettify-field-name',
     'chosen'
-], function(Backbone, _, template, i18n) {
+], function(Backbone, _, template, i18n, prettifyFieldName) {
 
     'use strict';
 
-    var optionTemplate = _.template('<option value="<%-field%>" <%= selected ? "selected" : ""%>><%-field%></option>');
+    var optionTemplate = _.template('<option value="<%-field%>" <%= selected ? "selected" : ""%>><%-displayValue%></option>');
     var emptyOptionHtml = '<option value=""></option>';
 
     return Backbone.View.extend({
@@ -25,6 +26,11 @@ define([
             this.selectionsStart = this.allowEmpty ? [emptyOptionHtml] : [];
         },
 
+        updateModel: function () {
+            this.model.set('field', this.$select.val());
+            this.model.set('displayValue', prettifyFieldName(this.$select.val()));
+        },
+
         render: function() {
             this.$el.html(this.template({
                 dataPlaceholder: i18n['search.sunburst.fieldPlaceholder.' + this.name]
@@ -33,7 +39,8 @@ define([
             var options = this.selectionsStart.concat(_.map(this.fields, function(field) {
                 return optionTemplate({
                     field: field,
-                    selected: field === this.model.get('field')
+                    selected: field === this.model.get('field'),
+                    displayValue: prettifyFieldName(field)
                 });
             }, this));
 
@@ -46,12 +53,10 @@ define([
                 })
                 .trigger('chosen:updated');
 
-            this.$select.change(_.bind(function() {
-                this.model.set('field', this.$select.val());
-            }, this));
+            this.$select.change(_.bind(this.updateModel, this));
 
-            if (!this.allowEmpty) {
-                this.model.set('field', this.$select.val())
+            if (!this.allowEmpty && !_.isEmpty(this.fields)) {
+                this.updateModel();
             }
 
             return this;
