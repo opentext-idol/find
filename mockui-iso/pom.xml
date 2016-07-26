@@ -7,17 +7,17 @@
     <parent>
         <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
         <artifactId>iso-find-test-parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>1.0.4</version>
     </parent>
 
     <artifactId>mockui-iso</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>1.0.4</version>
 
     <dependencies>
         <dependency>
             <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
             <artifactId>mockui-helpers</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>1.0.4</version>
         </dependency>
     </dependencies>
 
