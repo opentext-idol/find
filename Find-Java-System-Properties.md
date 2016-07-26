@@ -14,6 +14,7 @@ Find uses Java System Properties to configure some runtime settings.
 
 - `server.port` - The port to run Find on (defaults to 8080).
 - `server.session.timeout` - The session timeout in seconds (defaults to 3600).
+- `hp.find.enableBi` - Property to control BI functionality. Set this to false to disable BI functionality for all users (defaults to true). This will disable database creation or prevent access to an existing database.
 
 ### Database
 
