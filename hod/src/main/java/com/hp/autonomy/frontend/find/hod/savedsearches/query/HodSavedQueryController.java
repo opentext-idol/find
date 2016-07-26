@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
@@ -18,9 +19,11 @@ import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
 class HodSavedQueryController extends SavedQueryController<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
     @Autowired
     public HodSavedQueryController(final SavedSearchService<SavedQuery> service,

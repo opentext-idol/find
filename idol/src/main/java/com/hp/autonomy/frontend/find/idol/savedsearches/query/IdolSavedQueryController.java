@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.savedsearches.query;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
@@ -17,9 +18,11 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
 class IdolSavedQueryController extends SavedQueryController<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
     @Autowired
     public IdolSavedQueryController(final SavedSearchService<SavedQuery> service,
