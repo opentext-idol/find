@@ -61,13 +61,13 @@ public class ExportQueryResponseProcessorTest {
     public void exportEmptyResultSetWithHeader() throws IOException {
         when(exportStrategy.writeHeader()).thenReturn(true);
 
-        processor.process(new MockAciResponseInputStream(IOUtils.toInputStream("<?xml version='1.0' encoding='UTF-8' ?>\n<autnresponse/>")));
+        processor.process(new MockAciResponseInputStream(IOUtils.toInputStream("<?xml version='1.0' encoding='UTF-8' ?>\n<autnresponse><response/></autnresponse>")));
         verify(exportStrategy).exportRecord(outputStream, fieldNames);
     }
 
     @Test
     public void exportEmptyResultSetWithoutHeader() throws IOException {
-        processor.process(new MockAciResponseInputStream(IOUtils.toInputStream("<?xml version='1.0' encoding='UTF-8' ?>\n<autnresponse/>")));
+        processor.process(new MockAciResponseInputStream(IOUtils.toInputStream("<?xml version='1.0' encoding='UTF-8' ?>\n<autnresponse><response/></autnresponse>")));
         verify(exportStrategy, never()).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
