@@ -5,8 +5,12 @@ import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
 import com.hp.autonomy.frontend.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.util.Factory;
+import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
 
 public class HodAuthenticationStrategy implements AuthenticationStrategy {
     private final Factory<WebDriver> factory;
@@ -24,6 +28,13 @@ public class HodAuthenticationStrategy implements AuthenticationStrategy {
         try {
             strategy.tryGoingToAuthPage(driver);
             LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
+            
+            //TODO move into page element
+            List<WebElement> showMore = driver.findElements(By.className("js-show-more"));
+            if(showMore.size() > 0){
+                showMore.get(0).click();
+            }
+
             try {
                 loginPage.loginWith(user.getAuthProvider());
             } catch (TimeoutException e) {

@@ -142,7 +142,7 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
 
     private boolean isOnAuthPage() {
         try {
-            new WebDriverWait(driver,20).until(ExpectedConditions.visibilityOfElementLocated(By.className("twitter")));
+            new WebDriverWait(driver,20).until(ExpectedConditions.visibilityOfElementLocated(By.className("google")));
             return true;
         } catch (final TimeoutException e) {
             return false;
