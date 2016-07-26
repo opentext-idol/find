@@ -28,8 +28,7 @@ import org.springframework.web.WebApplicationInitializer;
         ErrorMvcAutoConfiguration.class,
         DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class,
-        HibernateJpaAutoConfiguration.class,
-        JpaRepositoriesAutoConfiguration.class
+        HibernateJpaAutoConfiguration.class
 })
 @Import({HavenSearchHodConfiguration.class, CachingConfiguration.class})
 public class HodFindApplication extends SpringBootServletInitializer implements WebApplicationInitializer {

@@ -28,8 +28,7 @@ import org.springframework.web.WebApplicationInitializer;
         ErrorMvcAutoConfiguration.class,
         DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class,
-        HibernateJpaAutoConfiguration.class,
-        JpaRepositoriesAutoConfiguration.class
+        HibernateJpaAutoConfiguration.class
 })
 @Import(HavenSearchIdolConfiguration.class)
 @PropertySource("classpath:/custom-application.properties")
