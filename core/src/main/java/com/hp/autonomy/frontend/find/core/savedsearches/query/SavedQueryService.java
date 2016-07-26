@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Service;
 
 @Service
-@ConditionalOnProperty("hp.find.enableBi")
+@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
 public class SavedQueryService extends AbstractSavedSearchService<SavedQuery> {
     @Autowired
     public SavedQueryService(final SavedQueryRepository savedQueryRepository, final AuditorAware<UserEntity> userEntityAuditorAware) {

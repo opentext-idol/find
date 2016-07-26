@@ -7,13 +7,12 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.authentication.OneToOneOrZeroSimpleAuthorityMapper;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-
-import java.util.Map;
 
 @Configuration
 public class UserConfiguration {
@@ -21,7 +20,7 @@ public class UserConfiguration {
     public static final String IDOL_ADMIN_ROLE = "FindAdmin";
     public static final String IDOL_BI_ROLE = "FindBI";
 
-    @Value("${hp.find.enableBi}")
+    @Value("${" + BiConfiguration.BI_PROPERTY + '}')
     private boolean enableBi;
 
     @Bean

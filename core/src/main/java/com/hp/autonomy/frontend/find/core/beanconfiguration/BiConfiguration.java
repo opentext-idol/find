@@ -22,6 +22,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaAuditing
 @EnableJpaRepositories(basePackages = "com.hp.autonomy.frontend.find")
 @EnableTransactionManagement
-@ConditionalOnProperty("hp.find.enableBi")
+@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
 public class BiConfiguration {
+
+    public final static String BI_PROPERTY = "hp.find.enableBi";
+
 }

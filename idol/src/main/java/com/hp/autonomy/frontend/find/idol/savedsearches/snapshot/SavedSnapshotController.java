@@ -1,6 +1,7 @@
 package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
@@ -27,7 +28,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping(SavedSnapshotController.PATH)
-@ConditionalOnProperty("hp.find.enableBi")
+@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
 class SavedSnapshotController {
     static final String PATH = "/api/bi/saved-snapshot";
 

@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
+import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.DispatcherServletConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.web.FindController;
@@ -47,7 +48,7 @@ import java.util.Collection;
 public class HodSecurity extends WebSecurityConfigurerAdapter {
     private static final String HOD_BI_ROLE = "bi_user";
 
-    @Value("${hp.find.enableBi}")
+    @Value("${" + BiConfiguration.BI_PROPERTY + '}')
     private boolean enableBi;
 
     @Autowired
