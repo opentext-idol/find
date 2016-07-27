@@ -13,7 +13,7 @@ define([
     'use strict';
 
     return Backbone.View.extend({
-        similarDocumentTemplate: _.template('<li data-cid="<%-cid%>" class="clickable"><h4><%-model.get("title")%></h4><p><%-model.get("summary").trim().substring(0, 200) + "..."%></p></li>'),
+        similarDocumentTemplate: _.template('<li data-cid="<%-cid%>" class="clickable"><h4><%-model.get("title")%></h4><p><%-model.get("summary").trim().substring(0, 200) + "\u2026"%></p></li>'),
         template: _.template(template),
 
         events: {

@@ -75,7 +75,7 @@ define([
                     _.each(topResultsCollection.models, function (model) {
                         var listItem = $(popoverTemplateFunction({
                             title: model.get('title'),
-                            summary: addLinksToSummary(model.get('summary')).trim().substring(0, 200) + '...'
+                            summary: addLinksToSummary(model.get('summary')).trim().substring(0, 200) + '\u2026'
                         }));
 
                         $content.find('ul').append(listItem);

@@ -73,11 +73,11 @@ define([
             valueText = ranges.map(function (range) {
                 //Discard time of day if range greater than 1 week
                 if (numeric) {
-                    return round(range[0]) + ' - ' + round(range[1]);
+                    return round(range[0]) + ' \u2013 ' + round(range[1]);
                 } else if (range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
-                    return formatDate(range[0], DATE_FORMAT) + ' - ' + formatDate(range[1], DATE_FORMAT);
+                    return formatDate(range[0], DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], DATE_FORMAT);
                 } else {
-                    return formatDate(range[0], SHORT_DATE_FORMAT) + ' - ' + formatDate(range[1], SHORT_DATE_FORMAT);
+                    return formatDate(range[0], SHORT_DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], SHORT_DATE_FORMAT);
                 }
             }).join(', ');
         }

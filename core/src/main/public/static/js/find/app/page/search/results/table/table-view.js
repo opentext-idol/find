@@ -50,7 +50,7 @@ define([
             if (this.dataTable) {
                 this.dataTable.destroy();
 
-                // DataTables doesn't like tables that already have data...
+                // DataTables doesn't like tables that already have data
                 this.$table.empty();
             }
 
