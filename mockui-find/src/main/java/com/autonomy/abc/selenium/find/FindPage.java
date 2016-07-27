@@ -8,6 +8,7 @@ import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -22,10 +23,10 @@ public class FindPage extends AppElement implements AppPage,
         StringDateFilter.Filterable,
         ParametricFilter.Filterable {
 
-    FindPage(final WebDriver driver){
-        super(new WebDriverWait(driver,30)
+    FindPage(final WebDriver driver) {
+        super(new WebDriverWait(driver, 30)
                 .withMessage("loading Find page")
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container"))),driver);
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container"))), driver);
     }
 
     protected FilterPanel filters() {
@@ -34,7 +35,7 @@ public class FindPage extends AppElement implements AppPage,
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container")));
+        new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container")));
     }
 
     public void unhover() {
@@ -94,7 +95,7 @@ public class FindPage extends AppElement implements AppPage,
         final WebElement firstParametric = findElement(By.cssSelector("[data-field]"));
         return ElementUtil.ancestor(firstParametric, 2);
     }
-    
+
     @Override
     public void waitForParametricValuesToLoad() {
         filters().waitForParametricFields();
@@ -106,7 +107,9 @@ public class FindPage extends AppElement implements AppPage,
         return findElement(By.className("hp-logo-footer"));
     }
 
-    public int totalResultsNum(){return Integer.parseInt(findElement(By.className("total-results-number")).getText());}
+    public int totalResultsNum() {
+        return Integer.parseInt(findElement(By.className("total-results-number")).getText());
+    }
 
     public List<String> getFilterLabels() {
         return ElementUtil.getTexts(findElements(By.className("filter-label")));
@@ -124,6 +127,12 @@ public class FindPage extends AppElement implements AppPage,
 
     private void waitForResultsToLoad() {
         Container.MIDDLE.waitForLoad(getDriver());
+    }
+
+    public boolean verticalScrollBarPresent() {
+        String javaScript = "return document.documentElement.scrollHeight>document.documentElement.clientHeight;";
+        JavascriptExecutor executor = (JavascriptExecutor) getDriver();
+        return (boolean) executor.executeScript(javaScript);
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {

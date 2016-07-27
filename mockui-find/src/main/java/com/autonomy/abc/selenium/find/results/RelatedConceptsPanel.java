@@ -20,11 +20,7 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
         this.driver = driver;
         this.panel = Container.RIGHT.findUsing(driver);
     }
-
-    public WebElement collapseButton(){
-        return panel.findElement(By.cssSelector(".container-toggle"));
-    }
-
+    
     @Override
     public Iterator<WebElement> iterator() {
         return relatedConcepts().iterator();
@@ -37,6 +33,16 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
     public List<WebElement> relatedConcepts() {
         waitForRelatedConceptsToLoad();
         return panel.findElements(By.cssSelector(".related-concepts-list:not(.hide) a"));
+    }
+
+    public List<WebElement> relatedConceptsClusters() {
+        waitForRelatedConceptsToLoad();
+        return panel.findElements(By.cssSelector("a.data-entity-cluster"));
+    }
+
+    public List<WebElement> membersOfCluster(int i) {
+        WebElement container = ElementUtil.ancestor(relatedConceptsClusters().get(i),2);
+        return container.findElements(By.cssSelector(".entity-text"));
     }
 
     public List<String> getRelatedConcepts() {
