@@ -15,7 +15,7 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.NONE)
 public class HavenSearchUserMetadata {
 
-    public static final String USERNAME = "DisplayName";
+    public static final String USERNAME = "HAVEN_SEARCH_ONDEMAND_USERNAME";
 
     public static final Map<String, Class<? extends Serializable>> METADATA_TYPES = ImmutableMap.<String, Class<? extends Serializable>>builder()
             .put(USERNAME, String.class)
