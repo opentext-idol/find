@@ -29,7 +29,7 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
 
     private void goToGoogleAndLogIn() {
         driver.get(GMAIL_URL);
-        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.id("signIn")));
+        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.tagName("form")));
         googleAuth.login(driver);
     }
 
