@@ -6,6 +6,8 @@ import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,11 @@ public class ResultsView extends AppElement implements QueryResultsPage {
 
     public ResultsView(final WebDriver driver) {
         this(Container.currentTabContents(driver).findElement(By.className("middle-container")), driver);
+    }
+
+    public void goToListView() {
+        findElement(By.cssSelector("[data-tab-id='list']")).click();
+        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".results-list-container"))));
     }
 
     public int getResultsCount() {

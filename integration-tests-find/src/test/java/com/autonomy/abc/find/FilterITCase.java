@@ -44,11 +44,38 @@ public class FilterITCase extends FindTestBase {
         findService = getApplication().findService();
     }
 
-    @Test
-    //NEED TO TOTALLY REDO
-    public void testParametricFiltersResults() {
-        final ResultsView results = findService.search("cats");
+    private ResultsView search(String searchTerm) {
+        final ResultsView results = findService.search(searchTerm);
         findPage.waitForParametricValuesToLoad();
+        return results;
+    }
+
+    @Test
+    public void testParametricFiltersDefaultCollapsed(){
+        final ResultsView results = search("knee");
+
+        //get parametricFieldContainers or parametricFilters
+        //div class "clickable collapsible-header collapsed"
+        //or check that div class=collapse --> sibling of the above -> not visible
+    }
+
+    @Test
+    //TODO NEED TO TOTALLY REDO
+    public void testParametricFiltersResults() {
+        final ResultsView results = search("cats");
+
+        //each parametric filter container should have max 5 filter values
+        //search for '*' -> search for 'cats' -> search for 'shouldhavenoresultsprobably'
+        //will have less results in side panel
+
+
+        //if click on filter -> should have as many results as says in little number
+        //other filters update -> DISAPPPEARS IS NO RESULTS
+
+        //What should be happening with collapsing and selecting
+        //If I have 1 selected -> should only that 1 appear or should the top 5 appear
+
+        //check little text 'x selected' under filter type even when collapsed
         final int originalNumberOfResults = findPage.totalResultsNum();
 
         final ParametricFieldContainer parametricFieldContainer = filters().parametricField(1);
@@ -84,8 +111,13 @@ public class FilterITCase extends FindTestBase {
     //Then open modal and check they're there
     @Test
     public void testParametricFiltersModal() {
-        findService.search("cats");
-        findPage.waitForParametricValuesToLoad();
+        //See all opens the modal
+
+        //check little number next to filter TYPE is the num filters selected
+
+        //FIND-406: the filter modal should NOT filter on the search -> see all should see filter cat.s with 0s next to them.
+
+        search("cats");
 
         final ParametricFieldContainer container = filters().parametricField(2);
         final String filterCategory = container.getParentName();
@@ -129,8 +161,7 @@ public class FilterITCase extends FindTestBase {
     @ResolvedBug("FIND-231")
     //bug might not be applicable with new filter panel
     public void testDeselectingFiltersDoesNotRemove(){
-        findService.search("confusion");
-        findPage.waitForParametricValuesToLoad();
+        search("confusion");
 
         final String parametricFilterType = filters().parametricField(0).getParentName();
 
@@ -145,8 +176,7 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-231")
     public void testDeselectingFiltersNoFloatingTooltips(){
-        findService.search("home");
-        findPage.waitForParametricValuesToLoad();
+        search("home");
 
         final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
         for(final FindParametricCheckbox checkbox:boxes){

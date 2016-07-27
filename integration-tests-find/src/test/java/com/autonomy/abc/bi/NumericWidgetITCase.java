@@ -8,13 +8,16 @@ import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
 import com.autonomy.abc.selenium.find.numericWidgets.NumericWidget;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
+import com.autonomy.abc.selenium.find.save.SearchTabBar;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
@@ -31,6 +34,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
+//NB: FIND-399 -> these tests will stop needing to re-assign MainGraph every minute once stops reloading
 public class NumericWidgetITCase extends IdolFindTestBase {
     private FindService findService;
     private IdolFindPage findPage;
@@ -70,6 +74,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-417")
     public void testClickingOnFilterPanelGraphOpensMain() {
         findService.search("book");
         filters().waitForParametricFields();
@@ -82,7 +87,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
             verifyThat("Main graph now shown", findPage.mainGraphDisplayed());
 
             mainGraph = findPage.mainGraph();
-            verifyThat("Correct graph is open", mainGraph.header(), equalToIgnoringCase(graphTitle));
+            verifyThat("Correct graph is open", mainGraph.header(),equalToIgnoringCase(graphTitle));
         }
 
         findPage.mainGraph().closeWidget();
@@ -96,7 +101,11 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.clickAndDrag(100, 0, mainGraph.graph());
 
         filters().waitForParametricFields();
+        //I swear this doesn't work
         mainGraph.waitUntilWidgetLoaded();
+
+        mainGraph = findPage.mainGraph();
+        mainGraph.waitUntilRectangleBack();
 
         verifyThat("Selection rectangle hasn't disappeared", mainGraph.graphAsWidget().selectionRectangleExists());
     }
@@ -105,6 +114,9 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     public void testSelectionRecFiltersResults() {
         MainNumericWidget mainGraph = searchAndSelectNthGraph(1, "space");
         int beforeParametricFilters = filters().numberParametricFieldContainers();
+        ResultsView results = getElementFactory().getResultsPage();
+        results.goToListView();
+
         int beforeNumberResults = findPage.totalResultsNum();
         mainGraph.waitUntilWidgetLoaded();
         String beforeMin = mainGraph.minFieldValue();
@@ -140,6 +152,8 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         MainNumericWidget mainGraph = searchAndSelectNthGraph(2, "face");
         mainGraph.selectFractionOfBars(3, 4);
         waitForReload();
+        ResultsView results = getElementFactory().getResultsPage();
+        results.goToListView();
         verifyThat("There are results present", findPage.totalResultsNum(), greaterThan(0));
     }
 
@@ -157,7 +171,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     private void checkBoundsForPlaceElevationWidget() {
         findPage.filterBy(new IndexFilter("Cities"));
         MainNumericWidget mainGraph = findPage.mainGraph();
-        //need to subtract time
         final int originalRange = mainGraph.getRange();
 
         findService.search("Tse");
@@ -165,11 +178,13 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         final int newRange = mainGraph.getRange();
 
         verifyThat("Bounds are determined by current query for non-date widget", newRange, lessThan(originalRange));
+        mainGraph.reset();
     }
 
     private void checkBoundsForDateWidget() {
         List<Date> oldD = findPage.mainGraph().getDates();
 
+        findPage.filterBy(IndexFilter.ALL);
         findService.search("George Orwell");
         List<Date> newD = findPage.mainGraph().getDates();
 
@@ -282,12 +297,13 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
         //#1 testing that correct proportion of chart selected
         mainGraph = setMinAndMax("500", "750", mainGraph);
-        int newUnitsPerWidthUnit = 250 / mainGraph.graphAsWidget().selectionRectangleWidth();
-        //v fragile
+        Waits.loadOrFadeWait();
+        int newUnitsPerWidthUnit = 250 / findPage.mainGraph().graphAsWidget().selectionRectangleWidth();
         verifyThat("Selection rectangle covering correct fraction of chart", newUnitsPerWidthUnit, is(numericUnitsPerChartWidth));
 
         //#2 testing correct boundaries of rectangle
         mainGraph.waitUntilWidgetLoaded();
+        mainGraph = findPage.mainGraph();
         mainGraph.rectangleHoverRight();
         String rightCorner = mainGraph.hoverMessage();
         mainGraph.rectangleHoverLeft();
@@ -316,6 +332,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
 
     private MainNumericWidget setMinAndMax(String min, String max, MainNumericWidget mainGraph) throws Exception {
+        Thread.sleep(2000);
         mainGraph.setMinValueViaText(min);
         //bad but soon the graph will not reload so this won't be necessary
         Thread.sleep(2000);
@@ -357,14 +374,16 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.clickAndDrag(-50, 0, mainGraph.graph());
 
         SavedSearchService saveService = getApplication().savedSearchService();
-
+        SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
         try {
             saveService.saveCurrentAs("bad", SearchType.SNAPSHOT);
-            getElementFactory().getSearchTabBar().switchTo("bad");
+            searchTabs.switchTo("bad");
+            Waits.loadOrFadeWait();
             String dateRange = filters().getFirstSelectedFilterOfType(filterType);
             verifyThat("Date range formatted like date", dateRange, allOf(containsString("/"), containsString(":")));
         } finally {
-            saveService.deleteAll();
+            searchTabs.switchTo("bad");
+            saveService.deleteCurrentSearch();
         }
     }
 
