@@ -155,14 +155,15 @@ public class TableITCase extends IdolFindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-405")
     public void testParametricSelectors(){
         init("wild horses");
 
         final String firstParametric = filters().parametricField(0).getParentName();
-        verifyThat("Default parametric selection is 1st parametric type", firstParametric.replaceAll(" ","_"), startsWith(tableView.getSelectedFieldName(1)));
+        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(tableView.getSelectedFieldName(1)));
 
         tableView.parametricSelectionDropdown(2).open();
-        verifyThat("1st selected parametric does not appear as choice in 2nd", tableView.getParametricDropdownItems(2), not(contains(firstParametric.replaceAll(" ","_"))));
+        verifyThat("1st selected parametric does not appear as choice in 2nd", tableView.getParametricDropdownItems(2), not(contains(firstParametric)));
     }
 
     private void init(final String searchText) {
