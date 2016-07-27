@@ -29,7 +29,8 @@ public class GoesToHodAuthPageFromGmail implements GoesToAuthPage {
 
     private void goToGoogleAndLogIn() {
         driver.get(GMAIL_URL);
-        new GoogleAuth.GoogleLoginPage(driver).login(googleAuth);
+        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.tagName("form")));
+        googleAuth.login(driver);
     }
 
     private void markAllEmailAsRead() {
