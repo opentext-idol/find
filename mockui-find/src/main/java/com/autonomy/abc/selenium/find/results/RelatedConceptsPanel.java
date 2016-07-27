@@ -37,7 +37,7 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
 
     public List<WebElement> relatedConceptsClusters() {
         waitForRelatedConceptsToLoad();
-        return panel.findElements(By.cssSelector("a.data-entity-cluster"));
+        return panel.findElements(By.cssSelector("a[data-entity-cluster]"));
     }
 
     public List<WebElement> membersOfCluster(int i) {
@@ -49,12 +49,16 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
         return ElementUtil.getTexts(relatedConcepts());
     }
 
-    public WebElement hoverOverRelatedConcept(final int i) {
-        final WebElement concept = relatedConcepts().get(i);
+    public WebElement hoverOverRelatedConcept(final WebElement concept) {
         DriverUtil.hover(driver, concept);
         final WebElement popover = panel.findElement(By.className("popover"));
         waitForPopoverToLoad(popover);
         return popover;
+    }
+
+    public WebElement hoverOverRelatedConcept(final int i) {
+        final WebElement concept = relatedConcepts().get(i);
+        return hoverOverRelatedConcept(concept);
     }
 
     private void waitForPopoverToLoad(final WebElement popover) {

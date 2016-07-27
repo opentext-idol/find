@@ -2,7 +2,6 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
@@ -11,7 +10,6 @@ import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
-import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -22,7 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsTextIgnoringCase;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTextThat;
@@ -172,13 +171,17 @@ public class RelatedConceptsITCase extends FindTestBase {
     @Test
     @ActiveBug("FIND-308")
     public void testRelatedConceptsHoverNoExtraScrollBar(){
-        findService.search("beef");
+        findService.search("orange");
         //if few related concepts then bug not happen
-        assumeThat("2 or more related concepts",conceptsPanel().relatedConceptsClusters().size(),greaterThanOrEqualTo(2));
-        DriverUtil.hover(getDriver(),conceptsPanel().membersOfCluster(1).get(2));
-
-        FindPage findPage = getElementFactory().getFindPage();
-        verifyThat("No vertical scroll bar",!findPage.verticalScrollBarPresent());
+        if(conceptsPanel().relatedConceptsClusters().size()>=2){
+            List<WebElement> clusterMembers= conceptsPanel().membersOfCluster(1);
+            int lastConcept = clusterMembers.size()-1;
+            conceptsPanel().hoverOverRelatedConcept(clusterMembers.get(lastConcept));
+            verifyThat("No vertical scroll bar",!getElementFactory().getFindPage().verticalScrollBarPresent());
+        }
+        else{
+            LOGGER.warn("There were too few concept clusters to carry out this test - bug would not occur");
+        }
     }
 
     private String clickFirstNewConcept(final Collection<String> existingConcepts, List<WebElement> relatedConcepts) {

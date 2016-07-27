@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find.numericWidgets;
 
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
@@ -8,9 +9,11 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class MainNumericWidget {
+public class MainNumericWidget extends AppElement {
     private final WebElement container;
     private final WebDriver driver;
     private final NumericWidget chart;
@@ -21,6 +24,7 @@ public class MainNumericWidget {
     }
 
     public MainNumericWidget(final WebDriver driver) {
+        super(driver.findElement(By.className("middle-container-time-bar")),driver);
         this.driver = driver;
         this.container = driver.findElement(By.className("middle-container-time-bar"));
         this.chart = new NumericWidget(driver, container);
@@ -28,35 +32,41 @@ public class MainNumericWidget {
 
     //Around the graph/chart
     public void closeWidget() {
-        container.findElement(By.cssSelector(".hp-close.time-bar-container-icon")).click();
+        findElement(By.cssSelector(".hp-close.time-bar-container-icon")).click();
     }
 
     public void reset() {
-        container.findElement(By.className("numeric-parametric-reset")).click();
+        findElement(By.className("numeric-parametric-reset")).click();
     }
 
     public void noMin() {
-        container.findElement(By.className("numeric-parametric-no-min")).click();
+        findElement(By.className("numeric-parametric-no-min")).click();
     }
 
     public void noMax() {
-        container.findElement(By.className("numeric-parametric-no-max")).click();
+        findElement(By.className("numeric-parametric-no-max")).click();
+    }
+
+    public int getRange() {
+        noMin();
+        noMax();
+        return Integer.parseInt(maxFieldValue()) - Integer.parseInt(minFieldValue());
     }
 
     public WebElement errorMessage() {
-        return container.findElement(By.className("numeric-parametric-error-text"));
+        return findElement(By.className("numeric-parametric-error-text"));
     }
 
     public String hoverMessage() {
-        return container.findElement(By.className("numeric-parametric-co-ordinates")).getText();
+        return findElement(By.className("numeric-parametric-co-ordinates")).getText();
     }
 
     public WebElement messageRow() {
-        return container.findElement(By.cssSelector(".numeric-parametric-inputs"));
+        return findElement(By.cssSelector(".numeric-parametric-inputs"));
     }
 
     public String header() {
-        return container.findElement(By.className("time-bar-header")).getText();
+        return findElement(By.className("time-bar-header")).getText();
     }
 
     //Actual graph
@@ -93,6 +103,7 @@ public class MainNumericWidget {
         action.release().build().perform();
     }
 
+    //Waits
     public void waitUntilWidgetLoaded() {
         new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("numeric-parametric-loading-indicator")));
     }
@@ -109,7 +120,7 @@ public class MainNumericWidget {
         return new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver webDriver) {
-                return container.findElements(By.cssSelector("div.bootstrap-datetimepicker-widget")).size() < 1;
+                return findElements(By.cssSelector("div.bootstrap-datetimepicker-widget")).size() < 1;
             }
         };
     }
@@ -142,12 +153,27 @@ public class MainNumericWidget {
     }
 
     private String fieldValue(LimitType limit) {
-        return container.findElement(By.cssSelector(".numeric-parametric-" + limit.toString() + "-input")).getAttribute("value");
+        return findElement(By.cssSelector(".numeric-parametric-" + limit.toString() + "-input")).getAttribute("value");
     }
+
+    public List<Date> getDates() {
+        List<Date> dates = new ArrayList<>();
+        dates.add(parseTheDates(minFieldValue()));
+        dates.add(parseTheDates(maxFieldValue()));
+        return dates;
+    }
+
+    //DATE FORMAT: YYYY-MM-DD hh:mm
+    private Date parseTheDates(String stringDate) {
+        String date = stringDate.split(" ")[0];
+        String[] dateParts = date.split("-");
+        return new Date(Integer.parseInt(dateParts[0]) - 1900, Integer.parseInt(dateParts[1]), Integer.parseInt(dateParts[2]));
+    }
+
 
     //Setting date field values
     private WebElement inputBox(LimitType limit) {
-        return container.findElement(By.className("numeric-parametric-" + limit.toString() + "-input"));
+        return findElement(By.className("numeric-parametric-" + limit.toString() + "-input"));
     }
 
     public void setMinValueViaText(String value) {
@@ -171,11 +197,11 @@ public class MainNumericWidget {
 
     //Setting date via calendars
     public WebElement startCalendar() {
-        return container.findElement(By.cssSelector(".input-group[data-date-attribute='min-date']"));
+        return findElement(By.cssSelector(".input-group[data-date-attribute='min-date']"));
     }
 
     public WebElement endCalendar() {
-        return container.findElement(By.cssSelector(".input-group[data-date-attribute='max-date']"));
+        return findElement(By.cssSelector(".input-group[data-date-attribute='max-date']"));
     }
 
     public DatePicker openCalendar(WebElement dateInput) {

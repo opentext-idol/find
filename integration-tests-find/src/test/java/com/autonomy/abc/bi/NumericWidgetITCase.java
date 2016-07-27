@@ -69,12 +69,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         return findPage.mainGraph();
     }
 
-    private int getRange(MainNumericWidget mainGraph) {
-        mainGraph.noMin();
-        mainGraph.noMax();
-        return Integer.parseInt(mainGraph.maxFieldValue()) - Integer.parseInt(mainGraph.minFieldValue());
-    }
-
     @Test
     public void testClickingOnFilterPanelGraphOpensMain() {
         findService.search("book");
@@ -149,46 +143,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         verifyThat("There are results present", findPage.totalResultsNum(), greaterThan(0));
     }
 
-    @Test
-    @ResolvedBug("FIND-304")
-    //Not sure how this will work remotely
-    public void testTimeBarSelectionScalesWithWindow() {
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "face");
-        mainGraph.clickAndDrag(-100, 0, mainGraph.graph());
-
-        Dimension dimension = new Dimension(800, 600);
-        getDriver().manage().window().setSize(dimension);
-
-        //check if some body element is greater than window.width()
-        //TODO: get clarification from Matt G on what should do
-    }
-
-    //TODO: this is proving tricky -> have already tried several ways
-    /*@Test
-    @ActiveBug("FIND-336")
-    public void testZoomingOutFar(){
-        //test doesn't crash if zoom out really far
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(1,"politics");
-
-        mainGraph.graph().click();
-
-        mainGraph.simulateZoomingIn();
-
-
-        //need to check the little text boxes are changing
-        //need to check the bottom date when you hover over the bar is sensible -> not negative
-    }
-
-    @Test
-    @ActiveBug("FIND-300")
-    public void testZooming() {
-        //test range of purple remains the same
-        //the selection rec moves independently of x axis -> range changes
-
-        //Applies zooming to side panel
-    }*/
-    //FIND-323 -> zoom in zoom out
-
 
     @Test
     public void testMinAndMaxReflectCurrentSearch() {
@@ -198,49 +152,32 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
         searchAndSelectNthGraph(1, "*");
         checkBoundsForDateWidget();
-
     }
 
     private void checkBoundsForPlaceElevationWidget() {
         findPage.filterBy(new IndexFilter("Cities"));
         MainNumericWidget mainGraph = findPage.mainGraph();
         //need to subtract time
-        final int originalRange = getRange(mainGraph);
+        final int originalRange = mainGraph.getRange();
 
         findService.search("Tse");
         mainGraph = findPage.mainGraph();
-        final int newRange = getRange(mainGraph);
+        final int newRange = mainGraph.getRange();
 
         verifyThat("Bounds are determined by current query for non-date widget", newRange, lessThan(originalRange));
     }
 
-
     private void checkBoundsForDateWidget() {
-        List<Date> oldD = getDates();
+        List<Date> oldD = findPage.mainGraph().getDates();
 
         findService.search("George Orwell");
-        List<Date> newD = getDates();
+        List<Date> newD = findPage.mainGraph().getDates();
 
         if (newD.get(0).after(oldD.get(0))) {
             verifyThat("Bounds are determined by current query for date widget", newD.get(0).after(oldD.get(0)));
         } else {
             verifyThat("Bounds are determined by current query for date widget", newD.get(1).before(oldD.get(1)));
         }
-    }
-
-    private List<Date> getDates() {
-        List<Date> dates = new ArrayList<>();
-        MainNumericWidget mainGraph = findPage.mainGraph();
-        dates.add(parseTheDates(mainGraph.minFieldValue()));
-        dates.add(parseTheDates(mainGraph.maxFieldValue()));
-        return dates;
-    }
-
-    //DATE FORMAT: YYYY-MM-DD hh:mm
-    private Date parseTheDates(String stringDate) {
-        String date = stringDate.split(" ")[0];
-        String[] dateParts = date.split("-");
-        return new Date(Integer.parseInt(dateParts[0]) - 1900, Integer.parseInt(dateParts[1]), Integer.parseInt(dateParts[2]));
     }
 
     @Test
@@ -317,7 +254,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         verifyThat("Place elevation filter label doesn't have time format", firstLabel, not(containsString(":")));
     }
 
-    //DATE FORMAT: YYYY-MM-DD hh:mm
     @Test
     @ActiveBug("FIND-400")
     public void testInputDateBoundsAsText() throws Exception {
@@ -336,14 +272,13 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-393")
     public void testInputNumericBoundsAsText() throws Exception {
         final int range = 250;
         int rangeMinusDelta = (int) (range * 0.98);
         int rangePlusDelta = (int) (range * 1.02);
 
         MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "red");
-        int numericUnitsPerChartWidth = getRange(mainGraph) / mainGraph.graphWidth();
+        int numericUnitsPerChartWidth = mainGraph.getRange() / mainGraph.graphWidth();
 
         //#1 testing that correct proportion of chart selected
         mainGraph = setMinAndMax("500", "750", mainGraph);
@@ -359,14 +294,30 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         String leftCorner = mainGraph.hoverMessage();
         int rectangleRange = (int) (Double.parseDouble(rightCorner) - Double.parseDouble(leftCorner));
         verifyThat("Edges of rectangle reflect bounds correctly", rectangleRange, allOf(greaterThanOrEqualTo(rangeMinusDelta), lessThanOrEqualTo(rangePlusDelta)));
-
-        //#3 test max < min
-        setMinAndMax("600", "0", mainGraph);
-        //TODO:find out what should happen/what error should be
     }
+
+    @Test
+    @ActiveBug("FIND-393")
+    public void testTextMaxBoundCannotBeLessThanMin() throws Exception {
+        final String lowNum = "0";
+        final String highNum = "600";
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "red");
+
+        mainGraph = setMinAndMax(highNum, lowNum, mainGraph);
+        verifyThat("Min bound re-set to value of max",mainGraph.minFieldValue(),is(lowNum));
+
+        mainGraph.setMaxValueViaText(lowNum);
+        Thread.sleep(2000);
+        mainGraph = findPage.mainGraph();
+        mainGraph.setMinValueViaText(highNum);
+
+        verifyThat("Max bound re-set to value of min",mainGraph.maxFieldValue(),is(highNum));
+    }
+
 
     private MainNumericWidget setMinAndMax(String min, String max, MainNumericWidget mainGraph) throws Exception {
         mainGraph.setMinValueViaText(min);
+        //bad but soon the graph will not reload so this won't be necessary
         Thread.sleep(2000);
         mainGraph = findPage.mainGraph();
         mainGraph.setMaxValueViaText(max);
@@ -397,7 +348,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         verifyThat("Start bound is correct", leftCorner, containsString("1976"));
     }
 
-
     //TODO: FilterPanel needs to be extended/CHANGED in case of saved search
     @Test
     @ResolvedBug("FIND-389")
@@ -417,6 +367,48 @@ public class NumericWidgetITCase extends IdolFindTestBase {
             saveService.deleteAll();
         }
     }
+
+    @Test
+    @ResolvedBug("FIND-304")
+    //Not sure how this will work remotely
+    public void testTimeBarSelectionScalesWithWindow() {
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "face");
+        mainGraph.clickAndDrag(-100, 0, mainGraph.graph());
+
+        Dimension dimension = new Dimension(800, 600);
+        getDriver().manage().window().setSize(dimension);
+
+        //check if some body element is greater than window.width()
+        //TODO: get clarification from Matt G on what should do
+    }
+
+    //TODO: this is proving tricky -> have already tried several ways
+    /*@Test
+    @ActiveBug("FIND-336")
+    public void testZoomingOutFar(){
+        //test doesn't crash if zoom out really far
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(1,"politics");
+
+        mainGraph.graph().click();
+
+        mainGraph.simulateZoomingIn();
+
+
+        //need to check the little text boxes are changing
+        //need to check the bottom date when you hover over the bar is sensible -> not negative
+    }
+
+    @Test
+    @ActiveBug("FIND-300")
+    public void testZooming() {
+        //test range of purple remains the same
+        //the selection rec moves independently of x axis -> range changes
+
+        //Applies zooming to side panel
+    }*/
+    //FIND-323 -> zoom in zoom out
+
+
 
     private IdolFilterPanel filters() {
         return getElementFactory().getFilterPanel();

@@ -13,7 +13,6 @@ public class NumericWidget extends AppElement {
     final private WebElement container;
 
     public NumericWidget(WebDriver driver, WebElement outerContainer) {
-        //unless MainNumericWidget is also some kind of AppElement then have to pass its container
         super(outerContainer.findElement(By.cssSelector("svg.chart")), driver);
         this.container = outerContainer.findElement(By.cssSelector("svg.chart"));
     }
