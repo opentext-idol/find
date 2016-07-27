@@ -4,14 +4,13 @@ define([
     'underscore',
     'find/app/vent',
     'find/app/util/string-blank',
+    'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/input-view.html',
     'text!find/templates/app/page/search/related-concepts/selected-related-concept.html',
     'typeahead',
     'bootstrap'
-], function(Backbone, $, _, vent, stringBlank, i18n, template, relatedConceptTemplate) {
-
-    var html = _.template(template)({i18n: i18n});
+], function(Backbone, $, _, vent, stringBlank, configuration, i18n, template, relatedConceptTemplate) {
 
     var conceptsTemplate = _.template(relatedConceptTemplate);
     
@@ -21,6 +20,8 @@ define([
         '</span>');
 
     return Backbone.View.extend({
+        template: _.template(template),
+
         events: {
             'submit .find-form': function(event) {
                 event.preventDefault();
@@ -108,7 +109,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(html);
+            this.$el.html(this.template({i18n: i18n, hasBiRole: configuration().hasBiRole}));
             this.$input = this.$('.find-input');
             this.$additionalConcepts = this.$('.additional-concepts');
             this.$alsoSearchingFor = this.$('.also-searching-for');

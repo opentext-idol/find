@@ -7,5 +7,7 @@
         <span class="also-searching-for hide pull-left m-r-sm"><%-i18n['search.alsoSearchingFor']%></span>
         <div class="additional-concepts m-r-sm"></div>
     </div>
-    <a class="hyperlink see-all-documents pull-right"><%-i18n['search.seeAllDocuments']%></a>
+    <% if (hasBiRole) { %>
+        <a class="hyperlink see-all-documents pull-right"><%-i18n['search.seeAllDocuments']%></a>
+    <% } %>
 </form>
