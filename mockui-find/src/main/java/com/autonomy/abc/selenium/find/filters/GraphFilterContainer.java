@@ -19,6 +19,7 @@ public class GraphFilterContainer extends FilterContainer {
     public NumericWidget getChart(){
         return new NumericWidget(driver,container);
     }
+
     public String filteringInfo(){
         return getContainer().findElement(By.className("collapsible-subtitle")).getText();
     }

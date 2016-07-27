@@ -156,6 +156,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     //currently failing because of routing
     @RelatedTo({"FIND-243","FIND-110"})
     public void testRefreshAddedConcepts() {
+        LOGGER.info("Test will always currently fail due to lack of routing/push-state");
         findService.search("fresh");
         final Collection<String> concepts = new ArrayList<>();
         clickFirstNewConcept(concepts,conceptsPanel().relatedConcepts());

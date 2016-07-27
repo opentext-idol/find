@@ -206,8 +206,7 @@ public class FilterITCase extends FindTestBase {
         filter1.check();
         filter2.check();
 
-        //nasty but can't have wait dependent on the results loading.
-        Thread.sleep(2500);
+        results.waitForResultsToLoad();
         verifyThat("Loading indicator not present",!results.loadingIndicatorPresent());
     }
 

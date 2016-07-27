@@ -23,10 +23,14 @@ public class IdolQueryTestHelper<T> extends QueryTestHelper{
         for (IdolQueryTermResult result : IdolQueryTermResult.idolResultsFor(getHiddenBooleans(),getService())) {
             if (result.errorContainer().isDisplayed()) {
                 if(!result.correctedQuery().isDisplayed()){
-                    verifyThat("Query not auto-corrected thus error is for no results",result.errorContainer(), containsText(Errors.Search.NO_RESULTS));
+                    verifyThat("Query not auto-corrected thus error is for no results",
+                            result.errorContainer(),
+                            containsText(Errors.Search.NO_RESULTS));
                 }
                 else{
-                    verifyThat("Query auto-corrected so sees the Boolean",result.getErrorMessage(),stringContainingAnyOf(Arrays.asList(Errors.Search.CLOSING_BOOL,Errors.Search.OPENING_BOOL)));
+                    verifyThat("Query auto-corrected so sees the Boolean",
+                            result.getErrorMessage(),
+                            stringContainingAnyOf(Arrays.asList(Errors.Search.CLOSING_BOOL,Errors.Search.OPENING_BOOL)));
                 }
             } else {
                 LOGGER.info("The error message is not displayed.");

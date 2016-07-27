@@ -91,16 +91,17 @@ public class MainNumericWidget extends AppElement {
         int index = bars.size() * i / j;
 
         WebElement bar = bars.get(index);
-        clickAndDrag(100, 0, bar);
+        clickAndDrag(100, bar);
     }
 
     //Drag and drop not element -> needs to go in DriverUtils in QA infrastructure!!!
-    public void clickAndDrag(int x_dest, int y_dest, WebElement startingElement) {
+    public void clickAndDrag(int x_dest, WebElement startingElement) {
         final Actions action = new Actions(driver);
-        action.moveToElement(startingElement);
-        action.clickAndHold().build().perform();
-        action.moveByOffset(x_dest, y_dest).build().perform();
-        action.release().build().perform();
+        action.moveToElement(startingElement)
+                .clickAndHold()
+                .moveByOffset(x_dest, 0)
+                .release()
+                .build().perform();
     }
 
     //Waits
@@ -169,7 +170,6 @@ public class MainNumericWidget extends AppElement {
         String[] dateParts = date.split("-");
         return new Date(Integer.parseInt(dateParts[0]) - 1900, Integer.parseInt(dateParts[1]), Integer.parseInt(dateParts[2]));
     }
-
 
     //Setting date field values
     private WebElement inputBox(LimitType limit) {

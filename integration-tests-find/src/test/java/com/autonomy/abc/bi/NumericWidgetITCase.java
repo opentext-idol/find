@@ -98,10 +98,10 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-356")
     public void testSelectionRecDoesNotDisappear() {
         MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "politics");
-        mainGraph.clickAndDrag(100, 0, mainGraph.graph());
+        mainGraph.clickAndDrag(100, mainGraph.graph());
 
         filters().waitForParametricFields();
-        //I swear this doesn't work
+
         mainGraph.waitUntilWidgetLoaded();
 
         mainGraph = findPage.mainGraph();
@@ -114,9 +114,9 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     public void testSelectionRecFiltersResults() {
         MainNumericWidget mainGraph = searchAndSelectNthGraph(1, "space");
         int beforeParametricFilters = filters().numberParametricFieldContainers();
+
         ResultsView results = getElementFactory().getResultsPage();
         results.goToListView();
-
         int beforeNumberResults = findPage.totalResultsNum();
         mainGraph.waitUntilWidgetLoaded();
         String beforeMin = mainGraph.minFieldValue();
@@ -183,7 +183,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     private void checkBoundsForDateWidget() {
         List<Date> oldD = findPage.mainGraph().getDates();
-
         findPage.filterBy(IndexFilter.ALL);
         findService.search("George Orwell");
         List<Date> newD = findPage.mainGraph().getDates();
@@ -196,7 +195,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-390")
+    @ResolvedBug("FIND-390")
     public void testInteractionWithRegularDateFilters() {
         MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "whatever");
         filters().toggleFilter(DateOption.MONTH);
@@ -217,10 +216,10 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         selectFilterGraph(filters().getNthGraph(0));
 
         MainNumericWidget mainGraph = findPage.mainGraph();
-        mainGraph.clickAndDrag(100, 0, mainGraph.graph());
+        mainGraph.clickAndDrag(100, mainGraph.graph());
         String label = findPage.getFilterLabels().get(0);
 
-        mainGraph.clickAndDrag(-100, 0, mainGraph.graph());
+        mainGraph.clickAndDrag(-100, mainGraph.graph());
         String changedLabel = findPage.getFilterLabels().get(0);
         assertThat("The label has changed", changedLabel, not(is(label)));
     }
@@ -249,7 +248,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         for (GraphFilterContainer container : filters().graphContainers()) {
             titles.add(selectFilterGraph(container));
             mainGraph = findPage.mainGraph();
-            mainGraph.clickAndDrag(100, 0, mainGraph.graph());
+            mainGraph.clickAndDrag(100, mainGraph.graph());
         }
 
         return titles;
@@ -262,7 +261,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "beer");
         assumeThat("Test assumes that 0th graph is place elevation", mainGraph.header(), equalToIgnoringCase("Place Elevation"));
 
-        mainGraph.clickAndDrag(200, 0, mainGraph.graph());
+        mainGraph.clickAndDrag(200, mainGraph.graph());
         waitForReload();
 
         String firstLabel = findPage.getFilterLabels().get(0).split(":")[1];
@@ -275,15 +274,12 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         MainNumericWidget mainGraph = searchAndSelectNthGraph(2, "red");
         final String startDate = "1976-10-22 08:46";
         final String endDate = "2012-10-10 21:49";
-        mainGraph = setMinAndMax(startDate, endDate, mainGraph);
-        mainGraph.waitUntilWidgetLoaded();
-        mainGraph.rectangleHoverRight();
-        String rightCorner = mainGraph.hoverMessage().split(" ")[0];
-        mainGraph.rectangleHoverLeft();
-        String leftCorner = mainGraph.hoverMessage().split(" ")[0];
 
-        verifyThat("Start date correctly selected", leftCorner, containsString("1976"));
-        verifyThat("End date correctly selected", rightCorner, containsString("2012"));
+        mainGraph = setMinAndMax(startDate, endDate, mainGraph);
+
+        mainGraph.waitUntilWidgetLoaded();
+
+        dateRectangleHover(mainGraph,"1976","2012");
     }
 
     @Test
@@ -304,10 +300,12 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         //#2 testing correct boundaries of rectangle
         mainGraph.waitUntilWidgetLoaded();
         mainGraph = findPage.mainGraph();
+
         mainGraph.rectangleHoverRight();
         String rightCorner = mainGraph.hoverMessage();
         mainGraph.rectangleHoverLeft();
         String leftCorner = mainGraph.hoverMessage();
+
         int rectangleRange = (int) (Double.parseDouble(rightCorner) - Double.parseDouble(leftCorner));
         verifyThat("Edges of rectangle reflect bounds correctly", rectangleRange, allOf(greaterThanOrEqualTo(rangeMinusDelta), lessThanOrEqualTo(rangePlusDelta)));
     }
@@ -323,7 +321,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         verifyThat("Min bound re-set to value of max",mainGraph.minFieldValue(),is(lowNum));
 
         mainGraph.setMaxValueViaText(lowNum);
-        Thread.sleep(2000);
+        Waits.loadOrFadeWait();
         mainGraph = findPage.mainGraph();
         mainGraph.setMinValueViaText(highNum);
 
@@ -332,10 +330,12 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
 
     private MainNumericWidget setMinAndMax(String min, String max, MainNumericWidget mainGraph) throws Exception {
-        Thread.sleep(2000);
+        Waits.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         mainGraph.setMinValueViaText(min);
         //bad but soon the graph will not reload so this won't be necessary
-        Thread.sleep(2000);
+        Waits.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         mainGraph = findPage.mainGraph();
         mainGraph.setMaxValueViaText(max);
         return findPage.mainGraph();
@@ -356,13 +356,17 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.messageRow().click();
         mainGraph.waitUntilDatePickerGone();
 
+        dateRectangleHover(mainGraph,"1976","2101");
+    }
+
+    private void dateRectangleHover(MainNumericWidget mainGraph,String start, String end) {
         mainGraph.rectangleHoverRight();
         String rightCorner = mainGraph.hoverMessage().split(" ")[0];
         mainGraph.rectangleHoverLeft();
         String leftCorner = mainGraph.hoverMessage().split(" ")[0];
 
-        verifyThat("End bound is correct", rightCorner, containsString("2101"));
-        verifyThat("Start bound is correct", leftCorner, containsString("1976"));
+        verifyThat("Start bound is correct", leftCorner, containsString(start));
+        verifyThat("End bound is correct", rightCorner, containsString(end));
     }
 
     //TODO: FilterPanel needs to be extended/CHANGED in case of saved search
@@ -371,7 +375,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     public void testSnapshotDateRangesDisplayedCorrectly() {
         MainNumericWidget mainGraph = searchAndSelectNthGraph(1, "dire");
         String filterType = mainGraph.header();
-        mainGraph.clickAndDrag(-50, 0, mainGraph.graph());
+        mainGraph.clickAndDrag(-50,mainGraph.graph());
 
         SavedSearchService saveService = getApplication().savedSearchService();
         SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
@@ -392,7 +396,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     //Not sure how this will work remotely
     public void testTimeBarSelectionScalesWithWindow() {
         MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "face");
-        mainGraph.clickAndDrag(-100, 0, mainGraph.graph());
+        mainGraph.clickAndDrag(-100, mainGraph.graph());
 
         Dimension dimension = new Dimension(800, 600);
         getDriver().manage().window().setSize(dimension);
@@ -411,7 +415,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.graph().click();
 
         mainGraph.simulateZoomingIn();
-
 
         //need to check the little text boxes are changing
         //need to check the bottom date when you hover over the bar is sensible -> not negative
