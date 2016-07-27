@@ -44,13 +44,42 @@ public class FilterITCase extends FindTestBase {
         findService = getApplication().findService();
     }
 
-    @Test
-    public void testParametricFiltersResults() {
-        final ResultsView results = findService.search("cats");
+    private ResultsView search(String searchTerm) {
+        final ResultsView results = findService.search(searchTerm);
         findPage.waitForParametricValuesToLoad();
+        return results;
+    }
+
+    @Test
+    public void testParametricFiltersDefaultCollapsed(){
+        final ResultsView results = search("knee");
+
+        //get parametricFieldContainers or parametricFilters
+        //div class "clickable collapsible-header collapsed"
+        //or check that div class=collapse --> sibling of the above -> not visible
+    }
+
+    @Test
+    //TODO NEED TO TOTALLY REDO
+    public void testParametricFiltersResults() {
+        final ResultsView results = search("cats");
+
+        //each parametric filter container should have max 5 filter values
+        //search for '*' -> search for 'cats' -> search for 'shouldhavenoresultsprobably'
+        //will have less results in side panel
+
+
+        //if click on filter -> should have as many results as says in little number
+        //other filters update -> DISAPPPEARS IS NO RESULTS
+
+        //What should be happening with collapsing and selecting
+        //If I have 1 selected -> should only that 1 appear or should the top 5 appear
+
+        //check little text 'x selected' under filter type even when collapsed
         final int originalNumberOfResults = findPage.totalResultsNum();
 
         final ParametricFieldContainer parametricFieldContainer = filters().parametricField(1);
+        parametricFieldContainer.expand();
         final List<FindParametricCheckbox> firstParametricContainerCheckboxes = parametricFieldContainer.values();
         firstParametricContainerCheckboxes.get(0).check();
 
@@ -78,10 +107,17 @@ public class FilterITCase extends FindTestBase {
 
     }
 
+    //TODO: want to get the 1,2,3,4 from several different categories
+    //Then open modal and check they're there
     @Test
     public void testParametricFiltersModal() {
-        findService.search("cats");
-        findPage.waitForParametricValuesToLoad();
+        //See all opens the modal
+
+        //check little number next to filter TYPE is the num filters selected
+
+        //FIND-406: the filter modal should NOT filter on the search -> see all should see filter cat.s with 0s next to them.
+
+        search("cats");
 
         final ParametricFieldContainer container = filters().parametricField(2);
         final String filterCategory = container.getParentName();
@@ -105,27 +141,31 @@ public class FilterITCase extends FindTestBase {
     }
 
     private List<String> selectEvenFilters(final int filterCategory){
+        filters().parametricField(filterCategory).expand();
         final List<String> filterNames = new ArrayList<>();
         int i=1;
         for(final FindParametricCheckbox box:filters().checkBoxesForParametricFieldContainer(filterCategory)){
             if((i % 2) == 0){
                 filterNames.add(box.getName());
                 box.check();
+                filters().waitForParametricFields();
+                filters().parametricField(filterCategory).expand();
             }
             i++;
+
         }
         return filterNames;
     }
 
     @Test
     @ResolvedBug("FIND-231")
+    //bug might not be applicable with new filter panel
     public void testDeselectingFiltersDoesNotRemove(){
-        findService.search("confusion");
-        findPage.waitForParametricValuesToLoad();
+        search("confusion");
 
         final String parametricFilterType = filters().parametricField(0).getParentName();
-        final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
 
+        final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
         for(final FindParametricCheckbox checkbox:boxes){
             checkbox.uncheck();
             verifyThat("Unchecking not removing filter from list",filters().checkBoxesForParametricFieldContainer(0),hasSize(boxes.size()));
@@ -136,8 +176,7 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-231")
     public void testDeselectingFiltersNoFloatingTooltips(){
-        findService.search("home");
-        findPage.waitForParametricValuesToLoad();
+        search("home");
 
         final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
         for(final FindParametricCheckbox checkbox:boxes){
@@ -148,6 +187,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     private List<FindParametricCheckbox> checkAllVisibleFiltersInFirstParametrics(){
+        filters().parametricField(0).expand();
         final List<FindParametricCheckbox> boxes = filters().checkBoxesForParametricFieldContainer(0);
         for(final FindParametricCheckbox checkBox:boxes){
             checkBox.check();
@@ -156,14 +196,17 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-247")
-    public void testSelectDifferentCategoryFiltersAndResultsLoad(){
+    @ResolvedBug("FIND-247")
+    //Because filter categories all collapse after selecting 1, must be quick or throws NoSuchElement
+    public void testSelectDifferentCategoryFiltersAndResultsLoad() throws  InterruptedException{
         final ResultsView results = findService.search("face");
+        FindParametricCheckbox filter1 = filters().checkBoxesForParametricFieldContainer(0).get(0);
+        FindParametricCheckbox filter2 = filters().checkBoxesForParametricFieldContainer(1).get(0);
 
-        for(int i = 0 ; i<filters().numberParametricFieldContainers()-1;i++){
-            filters().checkBoxesForParametricFieldContainer(i).get(0).check();
-        }
-        Waits.loadOrFadeWait();
+        filter1.check();
+        filter2.check();
+
+        results.waitForResultsToLoad();
         verifyThat("Loading indicator not present",!results.loadingIndicatorPresent());
     }
 

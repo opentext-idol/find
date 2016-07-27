@@ -2,9 +2,9 @@ package com.autonomy.abc.session;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
+import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
-import com.autonomy.abc.selenium.find.FindService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;

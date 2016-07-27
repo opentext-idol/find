@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ParametricFieldContainer extends FilterContainer implements Iterable<FindParametricCheckbox> {
+public class ParametricFieldContainer extends ListFilterContainer implements Iterable<FindParametricCheckbox> {
     private final WebDriver driver;
 
     ParametricFieldContainer(final WebElement element, final WebDriver webDriver) {
@@ -18,8 +18,10 @@ public class ParametricFieldContainer extends FilterContainer implements Iterabl
     }
 
     @Override
-    //check where this is used....
     public String getParentName(){
+        if(isCollapsed()){
+            expand();
+        }
         return getParent().getText().split(" \\(")[0];
     }
 

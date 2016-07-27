@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.save.*;
-import com.autonomy.abc.selenium.query.ParametricFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.hamcrest.Description;
@@ -127,6 +126,8 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
         assertThat(factory.getFilterPanel().checkboxForParametricValue(0, 0), checked());
     }
+
+
 
     private static Matcher<SearchTab> modified() {
         return new TypeSafeMatcher<SearchTab>() {

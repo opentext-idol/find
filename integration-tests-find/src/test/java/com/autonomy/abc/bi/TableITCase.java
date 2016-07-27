@@ -15,13 +15,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.autonomy.abc.selenium.find.bi.TableView.EntryCount.TWENTY_FIVE;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.startsWith;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
 public class TableITCase extends IdolFindTestBase {
@@ -160,15 +155,15 @@ public class TableITCase extends IdolFindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-405")
     public void testParametricSelectors(){
         init("wild horses");
 
-        filters().parametricField(0).expand();
         final String firstParametric = filters().parametricField(0).getParentName();
-        verifyThat("Default parametric selection is 1st parametric type", firstParametric.replaceAll(" ","_"), startsWith(tableView.getSelectedFieldName(1)));
+        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(tableView.getSelectedFieldName(1)));
 
         tableView.parametricSelectionDropdown(2).open();
-        verifyThat("1st selected parametric does not appear as choice in 2nd", tableView.getParametricDropdownItems(2), not(contains(firstParametric.replaceAll(" ","_"))));
+        verifyThat("1st selected parametric does not appear as choice in 2nd", tableView.getParametricDropdownItems(2), not(contains(firstParametric)));
     }
 
     private void init(final String searchText) {

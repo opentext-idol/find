@@ -1,16 +1,11 @@
 package com.autonomy.abc.shared;
 
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.query.LanguageFilter;
-import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.autonomy.abc.selenium.query.QueryService;
-import org.openqa.selenium.WebElement;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -21,7 +16,8 @@ import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class QueryTestHelper<T extends QueryResultsPage> {
+public class QueryTestHelper<T extends QueryResultsPage>{
+
     public static final List<String> NO_TERMS = Arrays.asList(
             "a",
             "the",
@@ -81,16 +77,16 @@ public class QueryTestHelper<T extends QueryResultsPage> {
     }
 
     public void hiddenQueryOperatorText() {
-        for (final Result result : resultsFor(HIDDEN_BOOLEANS)) {
+        for (final SharedResult result : SharedResult.resultsFor(HIDDEN_BOOLEANS,service)) {
             verifyThat("able to search for " + result.term, result.errorContainer(), anyOf(
                     not(displayed()),
-                    containsText(Errors.Search.NO_RESULTS)
-            ));
+                    containsText(Errors.Search.NO_RESULTS))
+            );
         }
     }
 
     public void mismatchedBracketQueryText() {
-        for (final Result result : resultsFor(MISMATCHED_BRACKETS)) {
+        for (final SharedResult result : SharedResult.resultsFor(MISMATCHED_BRACKETS,service)) {
             verifyThat("query term '" + result.term + "' is invalid",
                     result.errorContainer(), displayed());
             verifyThat("query term '" + result.term + "' has sensible error message",
@@ -98,7 +94,9 @@ public class QueryTestHelper<T extends QueryResultsPage> {
                             Errors.Search.INVALID,
                             Errors.Search.OPERATORS,
                             Errors.Search.BRACKETS,
-                            Errors.Search.STOPWORDS
+                            Errors.Search.STOPWORDS,
+                            Errors.Search.BRACKETS_BOOLEAN_OPEN,
+                            Errors.Search.BRACKETS_BOOLEAN_CLOSE
                     ))
             );
         }
@@ -116,64 +114,17 @@ public class QueryTestHelper<T extends QueryResultsPage> {
         checkQueries(NO_TERMS, sensibleErrors);
     }
 
+    public static final List<String> getHiddenBooleans(){
+        return HIDDEN_BOOLEANS;
+    }
+
+    public QueryService<T> getService(){return service;}
+
     private void checkQueries(final List<String> terms, final Serializable... sensibleErrors) {
-        for (final Result result : resultsFor(terms)) {
+        for (final SharedResult result : SharedResult.resultsFor(terms,service)) {
             assertThat("query term '" + result.term + "' produces an error", result.errorContainer(), displayed());
             verifyThat("query term '" + result.term + "' has sensible error message", result.getErrorMessage(), stringContainingAnyOf(sensibleErrors));
         }
     }
-
-    private Iterable<Result> resultsFor(final Iterable<String> queries) {
-        return new Iterable<Result>() {
-            @Override
-            public Iterator<Result> iterator() {
-                final Iterator<String> queryIterator = queries.iterator();
-                return new Iterator<Result>() {
-                    @Override
-                    public boolean hasNext() {
-                        return queryIterator.hasNext();
-                    }
-
-                    @Override
-                    public Result next() {
-                        return resultFor(queryIterator.next());
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException("remove");
-                    }
-                };
-            }
-        };
-    }
-
-    private Result resultFor(final String queryTerm) {
-        final Query query = new Query(queryTerm)
-                .withFilter(new LanguageFilter(Language.ENGLISH));
-        final T page = service.search(query);
-        return new Result(queryTerm, page);
-    }
     
-    private class Result {
-        final String term;
-        final T page;
-        private String text;
-
-        Result(final String term, final T page) {
-            this.term = term;
-            this.page = page;
-        }
-
-        String getErrorMessage() {
-            if (text == null) {
-                text = errorContainer().getText();
-            }
-            return text;
-        }
-
-        WebElement errorContainer() {
-            return page.errorContainer();
-        }
-    }
 }

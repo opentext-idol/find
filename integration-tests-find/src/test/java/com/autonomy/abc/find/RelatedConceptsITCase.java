@@ -4,7 +4,6 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
-import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
@@ -24,7 +23,8 @@ import java.util.List;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsTextIgnoringCase;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTextThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
@@ -153,35 +153,10 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-164")
-    public void testAddSausageToQuery() {
-        ResultsView results = findService.search("sausage");
-        conceptsPanel().toggleHighlight();
-
-        final Collection<String> addedConcepts = new ArrayList<>();
-
-        for (int i = 0; i < 5; i++) {
-            final WebElement firstSausage = results.scrollForHighlightedSausages().get(0);
-
-            // Lower case since concepts are upper-cased for display in the UI, but appear in their original case in the nav bar
-            final String firstSausageText = firstSausage.getText().toLowerCase();
-
-            LOGGER.info("clicking sausage {}", firstSausageText);
-
-            addedConcepts.add(firstSausageText);
-            firstSausage.click();
-
-            // Query text has not changed
-            verifyThat(navBar.getSearchBoxTerm(), equalToIgnoringCase("sausage"));
-
-            // But we have a new related concept
-            verifyThat(navBar.getAlsoSearchingForTerms(), containsItems(addedConcepts));
-        }
-    }
-
-    @Test
+    //currently failing because of routing
     @RelatedTo({"FIND-243","FIND-110"})
     public void testRefreshAddedConcepts() {
+        LOGGER.info("Test will always currently fail due to lack of routing/push-state");
         findService.search("fresh");
         final Collection<String> concepts = new ArrayList<>();
         clickFirstNewConcept(concepts,conceptsPanel().relatedConcepts());
@@ -192,6 +167,22 @@ public class RelatedConceptsITCase extends FindTestBase {
 
         verifyThat(navBar.getSearchBoxTerm(), is("fresh"));
         verifyThat(navBar.getAlsoSearchingForTerms(), containsItems(concepts));
+    }
+
+    @Test
+    @ActiveBug("FIND-308")
+    public void testRelatedConceptsHoverNoExtraScrollBar(){
+        findService.search("orange");
+        //if few related concepts then bug not happen
+        if(conceptsPanel().relatedConceptsClusters().size()>=2){
+            List<WebElement> clusterMembers= conceptsPanel().membersOfCluster(1);
+            int lastConcept = clusterMembers.size()-1;
+            conceptsPanel().hoverOverRelatedConcept(clusterMembers.get(lastConcept));
+            verifyThat("No vertical scroll bar",!getElementFactory().getFindPage().verticalScrollBarPresent());
+        }
+        else{
+            LOGGER.warn("There were too few concept clusters to carry out this test - bug would not occur");
+        }
     }
 
     private String clickFirstNewConcept(final Collection<String> existingConcepts, List<WebElement> relatedConcepts) {

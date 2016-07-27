@@ -37,12 +37,14 @@ public class Errors {
         NO_TEXT("No valid query text supplied"),
         BLACKLIST("All query text has been blocked by white or blacklists"),
         RELATED_CONCEPTS("An error occurred fetching top results"),
-        OPENING_BOOL("Opening boolean operator"),
+        OPENING_BOOL("The query begins with a boolean operator"),
         CLOSING_BOOL("Terminating boolean operator"),
         INVALID("Invalid query text"),
         ANALYSIS("An error occurred fetching the query analysis"),
         NO_CONCEPTS("No related concepts found"),
-        BRACKETS("Bracket Mismatch in the query");
+        BRACKETS("Bracket Mismatch in the query"),
+        BRACKETS_BOOLEAN_OPEN("more open brackets than close brackets in the boolean expression(s)"),
+        BRACKETS_BOOLEAN_CLOSE("more close brackets than open brackets in the boolean expression(s)");
 
         private final String value;
 

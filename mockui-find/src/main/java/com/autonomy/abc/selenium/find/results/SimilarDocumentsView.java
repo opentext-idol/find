@@ -10,7 +10,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class SimilarDocumentsView implements AppPage {
@@ -113,52 +112,6 @@ public class SimilarDocumentsView implements AppPage {
     public void sortByRelevance() {
         sortBy(2);
     }
-
-    public String convertDate(final String badFormatDate){
-        final String[] words = badFormatDate.split(" ");
-        final int timeAmount;
-        final String timeUnit;
-        if(words[0].equals("a")||words[0].equals("an")){
-            timeAmount=1;
-            timeUnit = words[1];
-        }
-        else{
-            timeAmount= Integer.parseInt(words[0]);
-            timeUnit = words[1];
-        }
-
-        final Calendar date = Calendar.getInstance();
-
-        switch (timeUnit) {
-            case "minute":
-            case "minutes":
-                date.add(Calendar.MINUTE,-timeAmount);
-                break;
-
-            case "hour":
-            case "hours":
-                date.add(Calendar.HOUR_OF_DAY, -timeAmount);
-                break;
-
-            case "day":
-            case "days":
-                date.add(Calendar.DAY_OF_MONTH,-timeAmount);
-                break;
-
-            case "month":
-            case "months":
-                date.add(Calendar.MONTH,-timeAmount);
-                break;
-
-            case "year":
-            case "years":
-                date.add(Calendar.YEAR,-timeAmount);
-                break;
-        }
-        date.set(Calendar.SECOND,0);
-        return date.getTime().toString();
-    }
-
 
     private void sortBy(final int dropdownRow){
         findElement(By.className("current-search-sort")).click();

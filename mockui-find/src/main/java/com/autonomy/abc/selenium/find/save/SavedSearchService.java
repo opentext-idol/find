@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.find.save;
 
-import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
@@ -35,7 +34,7 @@ public class SavedSearchService {
         }
     }
 
-    private void deleteCurrentSearch() {
+    public void deleteCurrentSearch() {
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
         options.openDeleteModal();
         options.confirmDelete();

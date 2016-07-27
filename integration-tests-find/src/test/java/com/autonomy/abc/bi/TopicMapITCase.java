@@ -2,12 +2,12 @@ package com.autonomy.abc.bi;
 
 
 import com.autonomy.abc.base.IdolFindTestBase;
-import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
-import com.hp.autonomy.frontend.selenium.element.Slider;
-import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.bi.TopicMapView;
+import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
+import com.hp.autonomy.frontend.selenium.element.Slider;
 import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.util.Waits;

@@ -2,7 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.filters.FilterContainer;
+import com.autonomy.abc.selenium.find.filters.ListFilterContainer;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
@@ -35,7 +35,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
     public void testSearchForParametricFieldName(){
         findService.search("face");
 
-        final FilterContainer goodField = filters().parametricField(2);
+        final ListFilterContainer goodField = filters().parametricField(2);
         final String badFieldName = filters().parametricField(0).getParentName();
         final String goodFieldName = goodField.getParentName();
         final String goodFieldValue = goodField.getChildNames().get(0);
@@ -51,7 +51,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
     public void testSearchForParametricFieldValue(){
         findService.search("face");
 
-        final FilterContainer goodField = filters().parametricField(0);
+        final ListFilterContainer goodField = filters().parametricField(0);
         final String goodFieldName = goodField.getParentName();
         final String badFieldValue = goodField.getChildNames().get(0);
         final String goodFieldValue = goodField.getChildNames().get(1);
