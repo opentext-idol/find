@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.auth;
 
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import com.hp.autonomy.frontend.selenium.sso.HPPassport;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -31,7 +32,7 @@ public class HodAuthenticationStrategy implements AuthenticationStrategy {
             
             //TODO move into page element
             List<WebElement> showMore = driver.findElements(By.className("js-show-more"));
-            if(showMore.size() > 0){
+            if(showMore.size() > 0 && !(user.getAuthProvider() instanceof HPPassport)){
                 showMore.get(0).click();
             }
 
