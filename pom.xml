@@ -7,7 +7,7 @@
     <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
     <artifactId>iso-find-test-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 
     <parent>
         <groupId>com.autonomy.frontend</groupId>
