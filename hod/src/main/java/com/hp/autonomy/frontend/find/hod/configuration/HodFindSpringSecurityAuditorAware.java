@@ -11,9 +11,11 @@ import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepository;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
 import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnBean(UserEntityRepository.class)
 public class HodFindSpringSecurityAuditorAware extends AbstractFindSpringSecurityAuditorAware<HodAuthenticationPrincipal> {
     @Autowired
     public HodFindSpringSecurityAuditorAware(
