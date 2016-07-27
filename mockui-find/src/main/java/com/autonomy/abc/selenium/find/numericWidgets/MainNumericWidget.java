@@ -10,12 +10,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public class MainNumericWidget{
+public class MainNumericWidget {
     private final WebElement container;
     private final WebDriver driver;
     private final NumericWidget chart;
 
-    private enum LimitType{
+    private enum LimitType {
         max,
         min
     }
@@ -23,87 +23,89 @@ public class MainNumericWidget{
     public MainNumericWidget(final WebDriver driver) {
         this.driver = driver;
         this.container = driver.findElement(By.className("middle-container-time-bar"));
-        this.chart = new NumericWidget(driver,container);
+        this.chart = new NumericWidget(driver, container);
     }
 
     //Around the graph/chart
-    public void closeWidget(){
+    public void closeWidget() {
         container.findElement(By.cssSelector(".hp-close.time-bar-container-icon")).click();
     }
 
-    public void reset(){
+    public void reset() {
         container.findElement(By.className("numeric-parametric-reset")).click();
     }
 
-    public void noMin(){
+    public void noMin() {
         container.findElement(By.className("numeric-parametric-no-min")).click();
     }
 
-    public void noMax(){
+    public void noMax() {
         container.findElement(By.className("numeric-parametric-no-max")).click();
     }
 
-    public WebElement errorMessage(){
+    public WebElement errorMessage() {
         return container.findElement(By.className("numeric-parametric-error-text"));
     }
 
-    public String hoverMessage(){
+    public String hoverMessage() {
         return container.findElement(By.className("numeric-parametric-co-ordinates")).getText();
     }
 
-    public WebElement messageRow(){
+    public WebElement messageRow() {
         return container.findElement(By.cssSelector(".numeric-parametric-inputs"));
     }
 
-    public String header(){
+    public String header() {
         return container.findElement(By.className("time-bar-header")).getText();
     }
 
     //Actual graph
-    public WebElement graph(){
+    public WebElement graph() {
         return chart.getContainer();
     }
 
-    public NumericWidget graphAsWidget(){
+    public NumericWidget graphAsWidget() {
         return chart;
     }
 
-    public int graphWidth(){return Integer.parseInt(graph().getAttribute("width"));}
-
-    public void selectHalfTheBars(){
-        selectFractionOfBars(1,2);
+    public int graphWidth() {
+        return Integer.parseInt(graph().getAttribute("width"));
     }
 
-    public void selectFractionOfBars(int i,int j){
+    public void selectHalfTheBars() {
+        selectFractionOfBars(1, 2);
+    }
+
+    public void selectFractionOfBars(int i, int j) {
         List<WebElement> bars = graphAsWidget().barsWithResults();
-        int index = bars.size()*i/j;
+        int index = bars.size() * i / j;
 
         WebElement bar = bars.get(index);
-        clickAndDrag(100,0,bar);
+        clickAndDrag(100, 0, bar);
     }
 
     //Drag and drop not element -> needs to go in DriverUtils in QA infrastructure!!!
-    public void clickAndDrag(int x_dest,int y_dest, WebElement startingElement){
+    public void clickAndDrag(int x_dest, int y_dest, WebElement startingElement) {
         final Actions action = new Actions(driver);
         action.moveToElement(startingElement);
         action.clickAndHold().build().perform();
-        action.moveByOffset(x_dest,y_dest).build().perform();
+        action.moveByOffset(x_dest, y_dest).build().perform();
         action.release().build().perform();
     }
 
-    public void waitUntilWidgetLoaded(){
-        new WebDriverWait(driver,10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("numeric-parametric-loading-indicator")));
+    public void waitUntilWidgetLoaded() {
+        new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("numeric-parametric-loading-indicator")));
     }
 
-    public void waitUntilRectangleBack(){
-        new WebDriverWait(driver,20).until(ExpectedConditions.visibilityOf(graphAsWidget().selectionRec()));
+    public void waitUntilRectangleBack() {
+        new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOf(graphAsWidget().selectionRec()));
     }
 
-    public void waitUntilDatePickerGone(){
-        new WebDriverWait(driver,20).until(calendarPopUpsGone());
+    public void waitUntilDatePickerGone() {
+        new WebDriverWait(driver, 20).until(calendarPopUpsGone());
     }
 
-    public ExpectedCondition<Boolean> calendarPopUpsGone() {
+    private ExpectedCondition<Boolean> calendarPopUpsGone() {
         return new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver webDriver) {
@@ -112,57 +114,54 @@ public class MainNumericWidget{
         };
     }
 
-    public void rectangleHoverRight(){
+    public void rectangleHoverRight() {
         final Dimension dimensions = graphAsWidget().selectionRec().getSize();
-        hoveringOffSide(graphAsWidget().selectionRec(),(dimensions.getWidth()), dimensions.getHeight()/100);
+        hoveringOffSide(graphAsWidget().selectionRec(), (dimensions.getWidth()), dimensions.getHeight() / 100);
     }
 
-    public void rectangleHoverLeft(){
+    public void rectangleHoverLeft() {
         final Dimension dimensions = graphAsWidget().selectionRec().getSize();
-        hoveringOffSide(graphAsWidget().selectionRec(),0, dimensions.getHeight()/100);
+        hoveringOffSide(graphAsWidget().selectionRec(), 0, dimensions.getHeight() / 100);
     }
 
     //IS GOING TO DRIVERUTILS (also the one from SunburstView)
-    private void hoveringOffSide(final WebElement element, final int xOffSet, final int yOffSet){
+    private void hoveringOffSide(final WebElement element, final int xOffSet, final int yOffSet) {
         final Actions builder = new Actions(driver);
-        builder.moveToElement(element,xOffSet,yOffSet);
+        builder.moveToElement(element, xOffSet, yOffSet);
         final Action hover = builder.build();
         hover.perform();
     }
 
-    public boolean isDateWidget(){
-        return header().contains("DATE") || header().contains("Date");
-    }
-
     //Getting date field values
-    public String minFieldValue(){
+    public String minFieldValue() {
         return fieldValue(LimitType.min);
     }
-    public String maxFieldValue(){
+
+    public String maxFieldValue() {
         return fieldValue(LimitType.max);
     }
 
-    public String fieldValue(LimitType limit){
-        return container.findElement(By.cssSelector( ".numeric-parametric-"+limit.toString()+"-input")).getAttribute("value");
+    private String fieldValue(LimitType limit) {
+        return container.findElement(By.cssSelector(".numeric-parametric-" + limit.toString() + "-input")).getAttribute("value");
     }
 
     //Setting date field values
-    private WebElement inputBox(LimitType limit){
-        return container.findElement(By.className("numeric-parametric-"+limit.toString()+"-input"));
+    private WebElement inputBox(LimitType limit) {
+        return container.findElement(By.className("numeric-parametric-" + limit.toString() + "-input"));
     }
 
-    public void setMinValueViaText(String value){
-        inputValue(value,minFieldValue().length(),inputBox(LimitType.min));
+    public void setMinValueViaText(String value) {
+        inputValue(value, minFieldValue().length(), inputBox(LimitType.min));
     }
 
-    public void setMaxValueViaText(String value){
-        inputValue(value,maxFieldValue().length(),inputBox(LimitType.max));
+    public void setMaxValueViaText(String value) {
+        inputValue(value, maxFieldValue().length(), inputBox(LimitType.max));
     }
 
     //FormInput class is not used because the in-built clear and submit methods don't work w/ these boxes
-    public void inputValue(final String term, int length, WebElement inputBox) {
+    private void inputValue(final String term, int length, WebElement inputBox) {
         waitUntilWidgetLoaded();
-        for(int i=0; i<length; i++) {
+        for (int i = 0; i < length; i++) {
             inputBox.sendKeys(Keys.BACK_SPACE);
         }
         inputBox.sendKeys(term);
@@ -171,16 +170,17 @@ public class MainNumericWidget{
     }
 
     //Setting date via calendars
-    public WebElement startCalendar(){
+    public WebElement startCalendar() {
         return container.findElement(By.cssSelector(".input-group[data-date-attribute='min-date']"));
     }
-    public WebElement endCalendar(){
+
+    public WebElement endCalendar() {
         return container.findElement(By.cssSelector(".input-group[data-date-attribute='max-date']"));
     }
 
-    public DatePicker openCalendar(WebElement dateInput){
+    public DatePicker openCalendar(WebElement dateInput) {
         dateInput.findElement(By.className("hp-calendar")).click();
-        return new DatePicker(dateInput,driver);
+        return new DatePicker(dateInput, driver);
     }
 
 

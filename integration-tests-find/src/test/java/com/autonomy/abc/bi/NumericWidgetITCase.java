@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
-public class NumericWidgetITCase extends IdolFindTestBase{
+public class NumericWidgetITCase extends IdolFindTestBase {
     private FindService findService;
     private IdolFindPage findPage;
 
@@ -40,26 +40,26 @@ public class NumericWidgetITCase extends IdolFindTestBase{
     }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
     }
 
-    private MainNumericWidget waitForReload(){
+    private MainNumericWidget waitForReload() {
         filters().waitForParametricFields();
         MainNumericWidget mainGraph = findPage.mainGraph();
         mainGraph.waitUntilWidgetLoaded();
         return mainGraph;
     }
 
-    private String selectFilterGraph(GraphFilterContainer container){
+    private String selectFilterGraph(GraphFilterContainer container) {
         container.expand();
         String graphTitle = container.getParentName();
         container.graph().click();
         return graphTitle;
     }
 
-    private MainNumericWidget searchAndSelectNthGraph(int n, String searchTerm){
+    private MainNumericWidget searchAndSelectNthGraph(int n, String searchTerm) {
         findService.search(searchTerm);
         IdolFilterPanel filterPanel = filters();
         filterPanel.waitForParametricFields();
@@ -69,45 +69,47 @@ public class NumericWidgetITCase extends IdolFindTestBase{
         return findPage.mainGraph();
     }
 
-    private int getRange(MainNumericWidget mainGraph){
+    private int getRange(MainNumericWidget mainGraph) {
+        mainGraph.noMin();
+        mainGraph.noMax();
         return Integer.parseInt(mainGraph.maxFieldValue()) - Integer.parseInt(mainGraph.minFieldValue());
     }
 
     @Test
-    public void testClickingOnFilterPanelGraphOpensMain(){
+    public void testClickingOnFilterPanelGraphOpensMain() {
         findService.search("book");
         filters().waitForParametricFields();
 
-        assertThat("Default: main graph not shown",!findPage.mainGraphDisplayed());
+        assertThat("Default: main graph not shown", !findPage.mainGraphDisplayed());
 
         MainNumericWidget mainGraph;
-        for(GraphFilterContainer container : filters().graphContainers()){
+        for (GraphFilterContainer container : filters().graphContainers()) {
             String graphTitle = selectFilterGraph(container);
-            verifyThat("Main graph now shown",findPage.mainGraphDisplayed());
+            verifyThat("Main graph now shown", findPage.mainGraphDisplayed());
 
             mainGraph = findPage.mainGraph();
-            verifyThat("Correct graph is open",mainGraph.header(),equalToIgnoringCase(graphTitle));
+            verifyThat("Correct graph is open", mainGraph.header(), equalToIgnoringCase(graphTitle));
         }
 
         findPage.mainGraph().closeWidget();
-        verifyThat("Main graph now gone",!findPage.mainGraphDisplayed());
+        verifyThat("Main graph now gone", !findPage.mainGraphDisplayed());
     }
 
     @Test
     @ResolvedBug("FIND-356")
-    public void testSelectionRecDoesNotDisappear(){
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(0,"politics");
-        mainGraph.clickAndDrag(100,0,mainGraph.graph());
+    public void testSelectionRecDoesNotDisappear() {
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "politics");
+        mainGraph.clickAndDrag(100, 0, mainGraph.graph());
 
         filters().waitForParametricFields();
         mainGraph.waitUntilWidgetLoaded();
 
-        verifyThat("Selection rectangle hasn't disappeared",mainGraph.graphAsWidget().selectionRectangleExists());
+        verifyThat("Selection rectangle hasn't disappeared", mainGraph.graphAsWidget().selectionRectangleExists());
     }
 
     @Test
-    public void testSelectionRecFiltersResults(){
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(1,"space");
+    public void testSelectionRecFiltersResults() {
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(1, "space");
         int beforeParametricFilters = filters().numberParametricFieldContainers();
         int beforeNumberResults = findPage.totalResultsNum();
         mainGraph.waitUntilWidgetLoaded();
@@ -117,44 +119,44 @@ public class NumericWidgetITCase extends IdolFindTestBase{
         mainGraph.selectHalfTheBars();
         mainGraph = waitForReload();
 
-        verifyThat("Filter label has appeared",findPage.getFilterLabels(),hasSize(1));
-        verifyThat("Fewer parametric filters",filters().numberParametricFieldContainers(),lessThan(beforeParametricFilters));
-        verifyThat("Fewer results",findPage.totalResultsNum(),lessThan(beforeNumberResults));
+        verifyThat("Filter label has appeared", findPage.getFilterLabels(), hasSize(1));
+        verifyThat("Fewer parametric filters", filters().numberParametricFieldContainers(), lessThan(beforeParametricFilters));
+        verifyThat("Fewer results", findPage.totalResultsNum(), lessThan(beforeNumberResults));
 
-        verifyThat("Min field text value changed",mainGraph.minFieldValue(),not(is(beforeMin)));
-        verifyThat("Max field text value changed",mainGraph.maxFieldValue(),not(is(beforeMax)));
+        verifyThat("Min field text value changed", mainGraph.minFieldValue(), not(is(beforeMin)));
+        verifyThat("Max field text value changed", mainGraph.maxFieldValue(), not(is(beforeMax)));
 
         NumericWidget sidePanelChart = filters().getNthGraph(1).getChart();
-        verifyThat("Side panel chart has selection rectangle",sidePanelChart.selectionRectangleExists());
+        verifyThat("Side panel chart has selection rectangle", sidePanelChart.selectionRectangleExists());
 
         mainGraph.reset();
         mainGraph = waitForReload();
 
-        verifyThat("Selection rectangle gone from centre",!mainGraph.graphAsWidget().selectionRectangleExists());
-        verifyThat("Min bound returned to original",mainGraph.minFieldValue(),is(beforeMin));
-        verifyThat("Max bound returned to original",mainGraph.maxFieldValue(),is(beforeMax));
+        verifyThat("Selection rectangle gone from centre", !mainGraph.graphAsWidget().selectionRectangleExists());
+        verifyThat("Min bound returned to original", mainGraph.minFieldValue(), is(beforeMin));
+        verifyThat("Max bound returned to original", mainGraph.maxFieldValue(), is(beforeMax));
 
         sidePanelChart = filters().getNthGraph(1).getChart();
-        verifyThat("Selection rectangle gone from side panel",!sidePanelChart.selectionRectangleExists());
+        verifyThat("Selection rectangle gone from side panel", !sidePanelChart.selectionRectangleExists());
     }
 
     @Test
     @ActiveBug("FIND-392")
-    public void testWidgetsReflectCurrentSearch(){
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(2,"face");
-        mainGraph.selectFractionOfBars(3,4);
+    public void testWidgetsReflectCurrentSearch() {
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(2, "face");
+        mainGraph.selectFractionOfBars(3, 4);
         waitForReload();
-        verifyThat("There are results present",findPage.totalResultsNum(),greaterThan(0));
+        verifyThat("There are results present", findPage.totalResultsNum(), greaterThan(0));
     }
 
     @Test
     @ResolvedBug("FIND-304")
     //Not sure how this will work remotely
-    public void testTimeBarSelectionScalesWithWindow(){
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(0,"face");
-        mainGraph.clickAndDrag(-100,0,mainGraph.graph());
+    public void testTimeBarSelectionScalesWithWindow() {
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "face");
+        mainGraph.clickAndDrag(-100, 0, mainGraph.graph());
 
-        Dimension dimension = new Dimension(800,600);
+        Dimension dimension = new Dimension(800, 600);
         getDriver().manage().window().setSize(dimension);
 
         //check if some body element is greater than window.width()
@@ -189,19 +191,19 @@ public class NumericWidgetITCase extends IdolFindTestBase{
 
 
     @Test
-    public void testMinAndMaxReflectCurrentSearch(){
+    public void testMinAndMaxReflectCurrentSearch() {
         //currently 0th graph is place elevation (i.e. non-date)
-        searchAndSelectNthGraph(0,"*");
+        searchAndSelectNthGraph(0, "*");
         checkBoundsForPlaceElevationWidget();
 
-        searchAndSelectNthGraph(1,"*");
+        searchAndSelectNthGraph(1, "*");
         checkBoundsForDateWidget();
 
     }
 
-    private void checkBoundsForPlaceElevationWidget(){
+    private void checkBoundsForPlaceElevationWidget() {
         findPage.filterBy(new IndexFilter("Cities"));
-        MainNumericWidget mainGraph=findPage.mainGraph();
+        MainNumericWidget mainGraph = findPage.mainGraph();
         //need to subtract time
         final int originalRange = getRange(mainGraph);
 
@@ -209,25 +211,24 @@ public class NumericWidgetITCase extends IdolFindTestBase{
         mainGraph = findPage.mainGraph();
         final int newRange = getRange(mainGraph);
 
-        verifyThat("Bounds are determined by current query for non-date widget",newRange,lessThan(originalRange));
+        verifyThat("Bounds are determined by current query for non-date widget", newRange, lessThan(originalRange));
     }
 
 
-    private void checkBoundsForDateWidget(){
+    private void checkBoundsForDateWidget() {
         List<Date> oldD = getDates();
 
         findService.search("George Orwell");
         List<Date> newD = getDates();
 
-        if(newD.get(0).after(oldD.get(0))){
-            verifyThat("Bounds are determined by current query for date widget",newD.get(0).after(oldD.get(0)));
-        }
-        else{
-            verifyThat("Bounds are determined by current query for date widget",newD.get(1).before(oldD.get(1)));
+        if (newD.get(0).after(oldD.get(0))) {
+            verifyThat("Bounds are determined by current query for date widget", newD.get(0).after(oldD.get(0)));
+        } else {
+            verifyThat("Bounds are determined by current query for date widget", newD.get(1).before(oldD.get(1)));
         }
     }
 
-    private List<Date> getDates(){
+    private List<Date> getDates() {
         List<Date> dates = new ArrayList<>();
         MainNumericWidget mainGraph = findPage.mainGraph();
         dates.add(parseTheDates(mainGraph.minFieldValue()));
@@ -236,67 +237,67 @@ public class NumericWidgetITCase extends IdolFindTestBase{
     }
 
     //DATE FORMAT: YYYY-MM-DD hh:mm
-    private Date parseTheDates(String stringDate){
+    private Date parseTheDates(String stringDate) {
         String date = stringDate.split(" ")[0];
         String[] dateParts = date.split("-");
-        return new Date(Integer.parseInt(dateParts[0])-1900,Integer.parseInt(dateParts[1]),Integer.parseInt(dateParts[2]));
+        return new Date(Integer.parseInt(dateParts[0]) - 1900, Integer.parseInt(dateParts[1]), Integer.parseInt(dateParts[2]));
     }
 
     @Test
     @ActiveBug("FIND-390")
-    public void testInteractionWithRegularDateFilters(){
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(0,"whatever");
+    public void testInteractionWithRegularDateFilters() {
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "whatever");
         filters().toggleFilter(DateOption.MONTH);
 
         filters().waitForParametricFields();
         mainGraph.waitUntilWidgetLoaded();
 
         WebElement errorMessage = mainGraph.errorMessage();
-        verifyThat("Error message not displayed",!errorMessage.isDisplayed());
-        verifyThat("Error message not 'failed to load data'",errorMessage.getText(),not(equalToIgnoringCase("Failed to load data")));
+        verifyThat("Error message not displayed", !errorMessage.isDisplayed());
+        verifyThat("Error message not 'failed to load data'", errorMessage.getText(), not(equalToIgnoringCase("Failed to load data")));
     }
 
     @Test
     @ResolvedBug("FIND-366")
-    public void testFilterLabelsUpdate(){
+    public void testFilterLabelsUpdate() {
         findService.search("dance");
         filters().waitForParametricFields();
         selectFilterGraph(filters().getNthGraph(0));
 
         MainNumericWidget mainGraph = findPage.mainGraph();
-        mainGraph.clickAndDrag(100,0,mainGraph.graph());
+        mainGraph.clickAndDrag(100, 0, mainGraph.graph());
         String label = findPage.getFilterLabels().get(0);
 
-        mainGraph.clickAndDrag(-100,0,mainGraph.graph());
+        mainGraph.clickAndDrag(-100, 0, mainGraph.graph());
         String changedLabel = findPage.getFilterLabels().get(0);
-        assertThat("The label has changed",changedLabel,not(is(label)));
+        assertThat("The label has changed", changedLabel, not(is(label)));
     }
 
     @Test
     @ResolvedBug("FIND-282")
-    public void testFilterLabelsHaveTitle(){
+    public void testFilterLabelsHaveTitle() {
         findService.search("ball");
         filters().waitForParametricFields();
 
         List<String> graphTitles = filterByAllGraphs();
         List<String> labels = findPage.getFilterLabels();
 
-        verifyThat("All filters have a label",labels,hasSize(graphTitles.size()));
+        verifyThat("All filters have a label", labels, hasSize(graphTitles.size()));
 
-        for(int i=0;i<graphTitles.size();i++){
+        for (int i = 0; i < graphTitles.size(); i++) {
             String title = graphTitles.get(i);
-            verifyThat("Title "+title+" is in filter label",labels.get(i),containsString(title));
+            verifyThat("Title " + title + " is in filter label", labels.get(i), containsString(title));
         }
     }
 
-    private List<String> filterByAllGraphs(){
+    private List<String> filterByAllGraphs() {
         List<String> titles = new ArrayList<>();
         MainNumericWidget mainGraph;
 
-        for(GraphFilterContainer container : filters().graphContainers()) {
+        for (GraphFilterContainer container : filters().graphContainers()) {
             titles.add(selectFilterGraph(container));
             mainGraph = findPage.mainGraph();
-            mainGraph.clickAndDrag(100,0,mainGraph.graph());
+            mainGraph.clickAndDrag(100, 0, mainGraph.graph());
         }
 
         return titles;
@@ -305,51 +306,50 @@ public class NumericWidgetITCase extends IdolFindTestBase{
     @Test
     @ResolvedBug("FIND-365")
     //horrendously fragile -> v dependent on specific filters
-    public void testFilterLabelFormatReflectsNumericData(){
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(0,"beer");
-        assumeThat("Test assumes that 0th graph is place elevation",mainGraph.header(),equalToIgnoringCase("Place Elevation"));
+    public void testFilterLabelFormatReflectsNumericData() {
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "beer");
+        assumeThat("Test assumes that 0th graph is place elevation", mainGraph.header(), equalToIgnoringCase("Place Elevation"));
 
-        mainGraph.clickAndDrag(200,0,mainGraph.graph());
+        mainGraph.clickAndDrag(200, 0, mainGraph.graph());
         waitForReload();
 
-        String firstLabel =findPage.getFilterLabels().get(0).split(":")[1];
-        verifyThat("Place elevation filter label doesn't have time format",firstLabel,not(containsString(":")));
+        String firstLabel = findPage.getFilterLabels().get(0).split(":")[1];
+        verifyThat("Place elevation filter label doesn't have time format", firstLabel, not(containsString(":")));
     }
 
     //DATE FORMAT: YYYY-MM-DD hh:mm
     @Test
     @ActiveBug("FIND-400")
-    public void testInputDateBoundsAsText() throws Exception{
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(2,"red");
+    public void testInputDateBoundsAsText() throws Exception {
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(2, "red");
         final String startDate = "1976-10-22 08:46";
         final String endDate = "2012-10-10 21:49";
-        mainGraph = setMinAndMax(startDate,endDate,mainGraph);
+        mainGraph = setMinAndMax(startDate, endDate, mainGraph);
         mainGraph.waitUntilWidgetLoaded();
         mainGraph.rectangleHoverRight();
         String rightCorner = mainGraph.hoverMessage().split(" ")[0];
         mainGraph.rectangleHoverLeft();
         String leftCorner = mainGraph.hoverMessage().split(" ")[0];
 
-        //THIS PROBABLY WON'T ACTUALLY WORK NEED TO CHECK USING CALENDAR ONE
-        verifyThat("Start date correctly selected",leftCorner,containsString("1976"));
-        verifyThat("End date correctly selected",rightCorner,containsString("2012"));
+        verifyThat("Start date correctly selected", leftCorner, containsString("1976"));
+        verifyThat("End date correctly selected", rightCorner, containsString("2012"));
     }
 
     @Test
     @ActiveBug("FIND-393")
-    public void testInputNumericBoundsAsText()throws Exception{
+    public void testInputNumericBoundsAsText() throws Exception {
         final int range = 250;
-        int rangeMinusDelta = (int) (range*0.98);
-        int rangePlusDelta = (int) (range*1.02);
+        int rangeMinusDelta = (int) (range * 0.98);
+        int rangePlusDelta = (int) (range * 1.02);
 
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(0,"red");
-        int numericUnitsPerChartWidth = getRange(mainGraph)/mainGraph.graphWidth() ;
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(0, "red");
+        int numericUnitsPerChartWidth = getRange(mainGraph) / mainGraph.graphWidth();
 
         //#1 testing that correct proportion of chart selected
-        mainGraph = setMinAndMax("500","750",mainGraph);
-        int newUnitsPerWidthUnit = 250/mainGraph.graphAsWidget().selectionRectangleWidth();
+        mainGraph = setMinAndMax("500", "750", mainGraph);
+        int newUnitsPerWidthUnit = 250 / mainGraph.graphAsWidget().selectionRectangleWidth();
         //v fragile
-        verifyThat("Selection rectangle covering correct fraction of chart",newUnitsPerWidthUnit,is(numericUnitsPerChartWidth));
+        verifyThat("Selection rectangle covering correct fraction of chart", newUnitsPerWidthUnit, is(numericUnitsPerChartWidth));
 
         //#2 testing correct boundaries of rectangle
         mainGraph.waitUntilWidgetLoaded();
@@ -357,15 +357,15 @@ public class NumericWidgetITCase extends IdolFindTestBase{
         String rightCorner = mainGraph.hoverMessage();
         mainGraph.rectangleHoverLeft();
         String leftCorner = mainGraph.hoverMessage();
-        int rectangleRange = (int) (Double.parseDouble(rightCorner)-Double.parseDouble(leftCorner));
-        verifyThat("Edges of rectangle reflect bounds correctly",rectangleRange,allOf(greaterThanOrEqualTo(rangeMinusDelta),lessThanOrEqualTo(rangePlusDelta)));
+        int rectangleRange = (int) (Double.parseDouble(rightCorner) - Double.parseDouble(leftCorner));
+        verifyThat("Edges of rectangle reflect bounds correctly", rectangleRange, allOf(greaterThanOrEqualTo(rangeMinusDelta), lessThanOrEqualTo(rangePlusDelta)));
 
         //#3 test max < min
-        setMinAndMax("600","0",mainGraph);
+        setMinAndMax("600", "0", mainGraph);
         //TODO:find out what should happen/what error should be
     }
 
-    private MainNumericWidget setMinAndMax(String min, String max, MainNumericWidget mainGraph) throws Exception{
+    private MainNumericWidget setMinAndMax(String min, String max, MainNumericWidget mainGraph) throws Exception {
         mainGraph.setMinValueViaText(min);
         Thread.sleep(2000);
         mainGraph = findPage.mainGraph();
@@ -374,12 +374,12 @@ public class NumericWidgetITCase extends IdolFindTestBase{
     }
 
     @Test
-    public void testInputDateBoundsWithCalendar(){
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(1,"tragedy");
+    public void testInputDateBoundsWithCalendar() {
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(1, "tragedy");
         DatePicker startCalendar = mainGraph.openCalendar(mainGraph.startCalendar());
-        startCalendar.calendarDateSelect(new Date(76,8,26));
+        startCalendar.calendarDateSelect(new Date(76, 8, 26));
         DatePicker endCalendar = mainGraph.openCalendar(mainGraph.endCalendar());
-        endCalendar.calendarDateSelect(new Date(201,3,22));
+        endCalendar.calendarDateSelect(new Date(201, 3, 22));
 
         mainGraph = findPage.mainGraph();
         mainGraph.waitUntilWidgetLoaded();
@@ -393,18 +393,18 @@ public class NumericWidgetITCase extends IdolFindTestBase{
         mainGraph.rectangleHoverLeft();
         String leftCorner = mainGraph.hoverMessage().split(" ")[0];
 
-        verifyThat("End bound is correct",rightCorner,containsString("2101"));
-        verifyThat("Start bound is correct",leftCorner,containsString("1976"));
+        verifyThat("End bound is correct", rightCorner, containsString("2101"));
+        verifyThat("Start bound is correct", leftCorner, containsString("1976"));
     }
 
 
     //TODO: FilterPanel needs to be extended/CHANGED in case of saved search
     @Test
     @ResolvedBug("FIND-389")
-    public void testSnapshotDateRangesDisplayedCorrectly(){
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(1,"dire");
+    public void testSnapshotDateRangesDisplayedCorrectly() {
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(1, "dire");
         String filterType = mainGraph.header();
-        mainGraph.clickAndDrag(-50,0,mainGraph.graph());
+        mainGraph.clickAndDrag(-50, 0, mainGraph.graph());
 
         SavedSearchService saveService = getApplication().savedSearchService();
 
@@ -412,9 +412,8 @@ public class NumericWidgetITCase extends IdolFindTestBase{
             saveService.saveCurrentAs("bad", SearchType.SNAPSHOT);
             getElementFactory().getSearchTabBar().switchTo("bad");
             String dateRange = filters().getFirstSelectedFilterOfType(filterType);
-            verifyThat("Date range formatted like date",dateRange,allOf(containsString("/"),containsString(":")));
-        }
-        finally {
+            verifyThat("Date range formatted like date", dateRange, allOf(containsString("/"), containsString(":")));
+        } finally {
             saveService.deleteAll();
         }
     }

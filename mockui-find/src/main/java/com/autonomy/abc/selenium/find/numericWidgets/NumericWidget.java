@@ -12,30 +12,32 @@ public class NumericWidget extends AppElement {
 
     final private WebElement container;
 
-    public NumericWidget(WebDriver driver, WebElement outerContainer){
+    public NumericWidget(WebDriver driver, WebElement outerContainer) {
         //unless MainNumericWidget is also some kind of AppElement then have to pass its container
-        super(outerContainer.findElement(By.cssSelector("svg.chart")),driver);
+        super(outerContainer.findElement(By.cssSelector("svg.chart")), driver);
         this.container = outerContainer.findElement(By.cssSelector("svg.chart"));
     }
 
-    public WebElement getContainer(){
+    public WebElement getContainer() {
         return container;
     }
 
-    public WebElement selectionRec(){
+    public WebElement selectionRec() {
         return findElement(By.cssSelector("rect.selection"));
     }
 
-    public int selectionRectangleWidth(){return (int)Double.parseDouble(selectionRec().getAttribute("Width"));}
-
-    public boolean selectionRectangleExists(){
-        return findElements(By.cssSelector("rect.selection")).size()>0;
+    public int selectionRectangleWidth() {
+        return (int) Double.parseDouble(selectionRec().getAttribute("Width"));
     }
 
-    public List<WebElement> barsWithResults(){
+    public boolean selectionRectangleExists() {
+        return findElements(By.cssSelector("rect.selection")).size() > 0;
+    }
+
+    public List<WebElement> barsWithResults() {
         List<WebElement> bars = new ArrayList<>();
-        for(WebElement bar:findElements(By.cssSelector("g > g > rect:not([height='1'])"))){
-            if(bar.isDisplayed()){
+        for (WebElement bar : findElements(By.cssSelector("g > g > rect:not([height='1'])"))) {
+            if (bar.isDisplayed()) {
                 bars.add(bar);
             }
         }

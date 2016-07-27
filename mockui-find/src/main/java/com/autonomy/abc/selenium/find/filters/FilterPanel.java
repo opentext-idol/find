@@ -173,10 +173,16 @@ public class FilterPanel {
 
     //Shouldn't be here -> need case of panel when in saved search
     public String getFirstSelectedFilterOfType(String filterType) {
-        return savedFilterParent(filterType).findElement(By.cssSelector("p:nth-child(2)")).getText();
+        WebElement actual = savedFilterParent(filterType).findElement(By.cssSelector("p:nth-child(2)"));
+        String theClass = actual.getAttribute("class");
+        String theTag = actual.getAttribute("tag");
+        return actual.getText();
     }
 
     private WebElement savedFilterParent(String filterType){
-        return ElementUtil.getParent(panel.findElement(By.xpath(".//p[contains(text(),'"+filterType+"')]")));
+        WebElement parent = ElementUtil.getParent(panel.findElement(By.xpath(".//p[contains(text(),'"+filterType+"')]")));
+        String theClass = parent.getAttribute("class");
+        String theTag = parent.getTagName();
+        return parent;
     }
 }
