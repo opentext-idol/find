@@ -583,9 +583,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		getElementFactory().getTopNavBar().notificationsDropdown();
 		notifications = getElementFactory().getTopNavBar().getNotifications();
 
-		assertThat(notifications.notificationNumber(1).getText(), anyOf(is("Added \"" + blacklistOne.toLowerCase() + "\" to the blacklist"), is("Added \"" + blacklistTwo.toLowerCase() + "\" to the blacklist")));
-		assertThat(notifications.notificationNumber(2).getText(), anyOf(is("Added \"" + blacklistOne.toLowerCase() + "\" to the blacklist"), is("Added \"" + blacklistTwo.toLowerCase() + "\" to the blacklist")));
-		assertThat(notifications.notificationNumber(1).getText(), not(notifications.notificationNumber(2).getText()));
+		assertThat(notifications.notificationNumber(1).getText(), is("Added \"aardvark, aardwolf\" to the blacklist"));
 	}
 
 	@Test

@@ -105,7 +105,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 		Waits.loadOrFadeWait();
 
 		try {
-			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+			new WebDriverWait(getDriver(), 25).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		} catch (final TimeoutException t) {
 			fail("Promotions summary has not appeared");
 		}
@@ -153,7 +153,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "Ida"), query, 1);
 
-		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		new WebDriverWait(getDriver(), 25).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		assertThat("Promotion labels exist",((IdolIsoSearchPage) searchPage).promotionsLabelsExist());
 		assertThat("Promotions are labelled as Sponsored", ((IdolIsoSearchPage) searchPage).promotionsLabel().getText(), equalToIgnoringCase("Sponsored"));
 
@@ -165,7 +165,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
 		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "Ida"), query, 1);
 
-		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		new WebDriverWait(getDriver(), 25).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		final List<String> promotionLabels = ((IdolIsoSearchPage) searchPage).getPromotionLabels();
 		assertThat("Hotwire labels in promotions summary", promotionLabels, hasItem(Promotion.SpotlightType.HOTWIRE.getOption().toUpperCase()));
 		assertThat("Sponsored labels in promotions summary", promotionLabels, hasItem(Promotion.SpotlightType.SPONSORED.getOption().toUpperCase()));
@@ -179,7 +179,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends IdolIsoTestBase {
         searchPage = getElementFactory().getSearchPage();
 
 		try {
-			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+			new WebDriverWait(getDriver(), 25).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		} catch (final TimeoutException t) {
 			fail("Promotions summary has not appeared");
         }

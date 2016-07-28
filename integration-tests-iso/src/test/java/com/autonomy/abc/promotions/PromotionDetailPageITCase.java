@@ -88,7 +88,7 @@ public class PromotionDetailPageITCase extends HybridIsoTestBase {
 
         getElementFactory().getTopNavBar().notificationsDropdown();
 
-        verifyThat(getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages(), hasItem("Edited a spotlight promotion"));
+        verifyThat(getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages(), hasItem("Added \"hc, sochi, cksa, ...\" to a static spotlight's trigger terms"));
 
         for(final String notification : getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages()){
             for(final String trigger : triggers){

@@ -9,7 +9,6 @@ import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -32,7 +31,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
         return keywordsPage;
     }
 
-    public CreateNewKeywordsPage goToKeywordsWizard() {
+    private CreateNewKeywordsPage goToKeywordsWizard() {
         goToKeywords();
         keywordsPage.createNewKeywordsButton().click();
         newKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
@@ -71,7 +70,7 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
         return addBlacklistTerms(language, Arrays.asList(blacklists));
     }
 
-    public KeywordsPage addBlacklistTerms(final Language language, final Iterable<String> blacklists) {
+    private KeywordsPage addBlacklistTerms(final Language language, final Iterable<String> blacklists) {
         addKeywords(KeywordWizardType.BLACKLIST, language, blacklists);
         final FluentWait<WebDriver> wait = new WebDriverWait(getDriver(), 40)
                 .withMessage("adding " + blacklists + " to the blacklist");
@@ -104,34 +103,27 @@ public class KeywordService extends ServiceBase<IsoElementFactory> {
     }
 
     private void tryDeleteAll(final Language language) throws StaleElementReferenceException {
-        final int limit = 5;
         if(!keywordsPage.languageMenuDisabled()){
             keywordsPage.selectLanguage(language);
         }
 
-        List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
-        int i=0;
-        while(keywordGroups.size()>0 && i<limit) {
-            for(WebElement group:keywordGroups) {
-                removeGroupFromLastElementToFirst(group);
-            }
-            i++;
-            new WebDriverWait(getDriver(),20).until(keywordsPage.keywordLoadingIndicatorsGone());
-            keywordGroups = keywordsPage.allKeywordGroups();
-            if (i>=limit){LOGGER.warn("Have looped greater than 5 times and keywords still not deleted");}
-
+        final List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
+        for (final WebElement group : keywordGroups) {
+            removeKeywordGroup(group);
         }
     }
 
-    private void removeGroupFromLastElementToFirst(WebElement group){
-        List<WebElement> buttons = keywordsPage.removeButtons(group);
-        if(buttons.size()>1){
-            for (int j=buttons.size()-1;j>0;j--){
+    private void removeGroupFromLastElementToFirst(final WebElement group) {
+        final List<WebElement> buttons = keywordsPage.removeButtons(group);
+        if (buttons.size() > 1) {
+            for (int j = buttons.size() - 1; j > 0; j--) {
                 buttons.get(j).click();
             }
+        } else {
+            buttons.get(0).click();
         }
-        else{buttons.get(0).click();}
     }
+
     private void waitUntilNoKeywords(final int timeout) {
         new WebDriverWait(getDriver(), timeout)
                 .withMessage("deleting keywords")
