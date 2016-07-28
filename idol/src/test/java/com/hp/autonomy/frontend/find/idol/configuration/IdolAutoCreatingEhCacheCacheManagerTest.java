@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 import com.hp.autonomy.frontend.find.core.configuration.AbstractAutoCreatingEhCacheCacheManagerTest;
 import net.sf.ehcache.config.CacheConfiguration;
 
-public class IdolAutoCreatingEhCacheCacheManagerTest extends AbstractAutoCreatingEhCacheCacheManagerTest {
+public class IdolAutoCreatingEhCacheCacheManagerTest extends AbstractAutoCreatingEhCacheCacheManagerTest<IdolAutoCreatingEhCacheCacheManager> {
     @Override
     public void setUp() {
         autoCreatingEhCacheCacheManager = new IdolAutoCreatingEhCacheCacheManager(cacheManager, new CacheConfiguration());

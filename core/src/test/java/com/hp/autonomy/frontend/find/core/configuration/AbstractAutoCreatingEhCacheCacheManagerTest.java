@@ -21,11 +21,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractAutoCreatingEhCacheCacheManagerTest {
+public abstract class AbstractAutoCreatingEhCacheCacheManagerTest<A extends AutoCreatingEhCacheCacheManager> {
     @Mock
     protected CacheManager cacheManager;
 
-    protected AutoCreatingEhCacheCacheManager autoCreatingEhCacheCacheManager;
+    protected A autoCreatingEhCacheCacheManager;
 
     @Before
     public abstract void setUp();

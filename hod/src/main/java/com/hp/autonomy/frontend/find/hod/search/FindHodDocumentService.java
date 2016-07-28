@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.hod.search;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
+import com.hp.autonomy.hod.caching.CachingConfiguration;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
@@ -65,7 +66,7 @@ public class FindHodDocumentService extends HodDocumentsService {
     }
 
     @Override
-    @Cacheable(FindCacheNames.DOCUMENTS)
+    @Cacheable(value = FindCacheNames.DOCUMENTS, cacheResolver = CachingConfiguration.PER_USER_CACHE_RESOLVER_NAME)
     public Documents<HodSearchResult> queryTextIndex(final SearchRequest<ResourceIdentifier> searchRequest) throws HodErrorException {
         try {
             return super.queryTextIndex(searchRequest);
@@ -118,7 +119,7 @@ public class FindHodDocumentService extends HodDocumentsService {
     }
 
     @Override
-    @Cacheable(FindCacheNames.SIMILAR_DOCUMENTS)
+    @Cacheable(value = FindCacheNames.SIMILAR_DOCUMENTS, cacheResolver = CachingConfiguration.PER_USER_CACHE_RESOLVER_NAME)
     public Documents<HodSearchResult> findSimilar(final SuggestRequest<ResourceIdentifier> suggestRequest) throws HodErrorException {
         return super.findSimilar(suggestRequest);
     }
