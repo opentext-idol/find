@@ -989,20 +989,12 @@ input.find-input {
     margin-left: 5px;
 }
 
-.selected-related-concept-text,
 .database-name {
     max-width: 110px;
 }
 
 .concept-remove-icon {
     line-height: inherit;
-}
-
-.additional-concepts {
-    overflow: hidden;
-    width: calc(100% - 218px); /* 218 is the width of 'also searching for' and scrolling buttons */
-    float: left;
-    white-space: nowrap;
 }
 
 .left-scroll,
@@ -1029,13 +1021,6 @@ input.find-input {
     width: calc(100% - 349px); /* 349 is the width of 'also searching for', scrolling buttons and 'see all docs' */
     float: left;
     white-space: nowrap;
-}
-
-.left-scroll,
-.right-scroll,
-.left-scroll:hover,
-.right-scroll:hover {
-    box-shadow: none;
 }
 
 .selected-related-concept-dropdown-container {
