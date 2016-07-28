@@ -6,10 +6,11 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
-import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
-import com.hp.autonomy.frontend.selenium.element.Slider;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
+import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.Slider;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,19 +47,14 @@ public class TopicMapITCase extends IdolFindTestBase {
     @Test
     public void testTopicMapTabShowsTopicMap() {
         findService.search("shambolic");
-        results.goToTopicMap();
         verifyThat("Main results list hidden", getElementFactory().getResultsPage().mainResultsContainerHidden());
         verifyThat("Topic map element displayed", results.topicMapVisible());
     }
 
     @Test
-    //TODO:only 1 slider in 11.1 - not in develop yet
     public void testNumbersForMapInSliders() {
         findService.search("gove");
-        results.goToTopicMap();
-
-        slidingIncreasesNumber(results.numberTopicsSlider());
-        slidingIncreasesNumber(results.relevanceVsClusteringSlider());
+        slidingIncreasesNumber(results.speedVsAccuracySlider());
     }
 
     private void slidingIncreasesNumber(final Slider slider) {
@@ -77,12 +73,12 @@ public class TopicMapITCase extends IdolFindTestBase {
     @Test
     public void testEveryMapEntityHasText() {
         findService.search("trouble");
-        results.goToTopicMap();
 
-        results.numberTopicsSlider().dragBy(100);
-
+        results.speedVsAccuracySlider().dragBy(100);
+        Waits.loadOrFadeWait();
         results.waitForMapLoaded();
-        results.numberTopicsSlider().hover();
+
+        results.speedVsAccuracySlider().hover();
         final int numberEntities = results.numberOfMapEntities();
 
         final List<WebElement> textElements = results.mapEntityTextElements();
@@ -91,21 +87,21 @@ public class TopicMapITCase extends IdolFindTestBase {
         for (final WebElement textElement : textElements) {
             verifyThat("Text element not empty", textElement.getText(), not(""));
         }
-
     }
 
     @Test
     public void testApplyingFiltersToMap() {
         final String searchTerm = "European Union";
         findService.search(searchTerm);
-        results.goToTopicMap();
 
         //checks first parametric filter of first parametric filter type
-        final FindParametricCheckbox filter = getElementFactory().getFilterPanel().checkboxForParametricValue(0, 0);
+        FilterPanel filters = getElementFactory().getFilterPanel();
+        filters.parametricField(0).expand();
+        final FindParametricCheckbox filter = filters.checkboxForParametricValue(0, 0);
         final String filterName = filter.getName();
         filter.check();
 
-        results.waitForReload();
+        results.waitForMapLoaded();
         verifyThat("The correct filter label has appeared", findPage.getFilterLabels(), hasItem(containsString(filterName)));
         verifyThat("Search term still " + searchTerm, navBar.getSearchBoxTerm(), is(searchTerm));
     }
@@ -113,27 +109,22 @@ public class TopicMapITCase extends IdolFindTestBase {
     @Test
     public void testClickingOnMapEntities(){
         findService.search("rubbish");
-        results.goToTopicMap();
-
         results.waitForMapLoaded();
         Waits.loadOrFadeWait();
 
         final List<String> clusterNames = results.returnParentEntityNames();
-        final List<String> allRelatedConcepts = new ArrayList<>();
-
-        for (String concept: conceptsPanel().getRelatedConcepts()) {
-            allRelatedConcepts.add(concept.replace(" ", "").toLowerCase());
-        }
+        final List<String> allRelatedConcepts = relatedConceptsInMapFormat();
 
         for (String cluster: clusterNames) {
             verifyThat("The cluster " + cluster + " is in the right hand side", allRelatedConcepts ,hasItem(cluster));
         }
 
         final List<String> addedConcepts = new ArrayList<>();
-        addedConcepts.add(results.clickChildEntityAndAddText(clusterNames.size()));
-        results.waitForReload();
-        addedConcepts.add(results.clickChildEntityAndAddText(results.returnParentEntityNames().size()));
 
+        addedConcepts.add(results.clickChildEntityAndAddText(clusterNames.size()));
+        results.waitForMapLoaded();
+        addedConcepts.add(results.clickChildEntityAndAddText(results.returnParentEntityNames().size()));
+        
         verifyThat("All " + addedConcepts.size() + " added concept terms added to search", relatedConceptsWithoutSpaces(),containsItems(addedConcepts));
     }
 
@@ -143,6 +134,14 @@ public class TopicMapITCase extends IdolFindTestBase {
             termsNoSpaces.add(term.replace(" ",""));
         }
         return termsNoSpaces;
+    }
+
+    private List<String> relatedConceptsInMapFormat() {
+        final List<String> allRelatedConcepts = new ArrayList<>();
+        for (String concept : conceptsPanel().getRelatedConcepts()) {
+            allRelatedConcepts.add(concept.replace(" ", "").toLowerCase());
+        }
+        return allRelatedConcepts;
     }
 
     private RelatedConceptsPanel conceptsPanel() {

@@ -21,23 +21,12 @@ public class TopicMapView {
         this.container = driver.findElement(By.className("service-view-container"));
     }
 
-    public void goToTopicMap() {
-        findElement(By.cssSelector("[data-tab-id='topic-map']")).click();
-        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".entity-topic-map"))));
-    }
-
     public boolean topicMapVisible() {
         return !findElements(By.cssSelector(".entity-topic-map")).isEmpty();
     }
 
-    private WebElement sliderBlock(){return findElement(By.cssSelector(".slider-block div:nth-child(2)"));}
-
-    public Slider relevanceVsClusteringSlider() {
-        return new Slider(sliderBlock().findElement(By.cssSelector("[id*='speed-slider']")), driver);
-    }
-
-    public Slider numberTopicsSlider() {
-        return new Slider(sliderBlock().findElement(By.cssSelector("[id*='count-slider']")), driver);
+    public Slider speedVsAccuracySlider() {
+        return new Slider(findElement(By.className("slider")), driver);
     }
 
     //map
@@ -83,20 +72,19 @@ public class TopicMapView {
     }
 
     public String clickChildEntityAndAddText(int noOfClusters) {
+        waitForMapLoaded();
         final int maxIndex = mapEntities().size() - 1;
         final int i = maxIndex - 1;
         clickParentEntities();
+        Waits.loadOrFadeWait();
         final String concept = mapEntityTextElements().get(i - noOfClusters).getText().replace(" ", "").toLowerCase();
-        mapEntityTextElements().get(i - noOfClusters).click();
+        offCentreClick(mapEntityTextElements().get(i - noOfClusters));
+        Waits.loadOrFadeWait();
         return concept;
     }
 
     public void waitForMapLoaded() {
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfAllElements(mapEntityTextElements()));
-    }
-
-    public void waitForReload() {
-        new WebDriverWait(driver, 50).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
     }
 
     private WebElement findElement(final By locator) {

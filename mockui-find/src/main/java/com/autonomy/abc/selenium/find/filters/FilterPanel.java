@@ -79,6 +79,11 @@ public class FilterPanel {
         return containers;
     }
 
+    public void expandParametricContainer(final String fieldName) {
+        WebElement container = panel.findElement(By.cssSelector("[data-field-display-name='"+fieldName+"'] div"));
+        (new ParametricFieldContainer(container,driver)).expand();
+    }
+
     public ParametricFieldContainer parametricField(final int i) {
         return parametricFieldContainers().get(i);
     }
@@ -116,7 +121,7 @@ public class FilterPanel {
     }
 
     public FindParametricCheckbox checkboxForParametricValue(final String fieldName, final String fieldValue) {
-        final WebElement checkbox = panel.findElement(By.cssSelector("[data-field='" + fieldName.replace(" ", "_") + "'] [data-value='" + fieldValue.toUpperCase() + "']"));
+        final WebElement checkbox = panel.findElement(By.cssSelector("[data-field-display-name='" + fieldName.replace(" ", "_") + "'] [data-value='" + fieldValue.toUpperCase() + "']"));
         return new FindParametricCheckbox(checkbox, driver);
     }
 
