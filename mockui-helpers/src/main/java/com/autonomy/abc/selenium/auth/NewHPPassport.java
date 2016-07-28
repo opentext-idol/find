@@ -12,6 +12,7 @@ public class NewHPPassport implements AuthProvider {
 
     private final String email;
     private final String password;
+    private final By showLessBtn = By.className("js-show-less");
 
     private WebDriver driver;
 
@@ -29,7 +30,12 @@ public class NewHPPassport implements AuthProvider {
             //Wait to see if there's been an error, and if there has go back to the normal authentication page
             final WebElement error = new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(driver.findElement(By.className("message-error"))));
             if(error.getText().contains("email address is already registered")) {
-                existingAccountButton().click();
+                if(showLessButtonExists()){
+                    showLessButton().click();
+                } else {
+                    existingAccountButton().click();
+                }
+                
                 throw new UnsupportedOperationException();
             }
         } catch (ElementNotVisibleException | NoSuchElementException | UnsupportedOperationException e) {
@@ -69,5 +75,13 @@ public class NewHPPassport implements AuthProvider {
 
     private WebElement existingAccountButton(){
         return driver.findElement(By.xpath("//*[text()='Existing account']"));
+    }
+
+    private WebElement showLessButton(){
+        return driver.findElement(showLessBtn);
+    }
+
+    private boolean showLessButtonExists(){
+        return driver.findElements(showLessBtn).size() > 0;
     }
 }
