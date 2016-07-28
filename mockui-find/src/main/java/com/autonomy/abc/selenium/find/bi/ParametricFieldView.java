@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class ParametricFieldView {
@@ -36,8 +37,13 @@ class ParametricFieldView {
 
     public List<String> getParametricDropdownItems(final int i){
         final ChosenDrop dropdown = parametricSelectionDropdown(i);
+        List<String> badFormat = ElementUtil.getTexts(dropdown.getItems());
+        List<String> goodFormat = new ArrayList<>();
 
-        return ElementUtil.getTexts(dropdown.getItems());
+        for(String title : badFormat) {
+            goodFormat.add(title.toUpperCase());
+        }
+        return goodFormat;
     }
 
     protected WebDriver getDriver() {

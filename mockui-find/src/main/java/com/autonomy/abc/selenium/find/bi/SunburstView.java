@@ -21,19 +21,13 @@ public class SunburstView extends ParametricFieldView {
         super(driver);
     }
 
-    //Navigation
-    public void goToSunburst(){
-        findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
-        new WebDriverWait(getDriver(),15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".sunburst"))));
-    }
-
     //Display
     public boolean sunburstVisible(){
         return findElement(By.cssSelector(".sunburst svg")).isDisplayed();
     }
 
     public List<WebElement> findSunburstSegments(){
-        return findElements(By.cssSelector("path:not([fill='#f0f0f0']):not([fill='#ffffff'])"));
+        return findElements(By.cssSelector(".sunburst path:not([fill='#f0f0f0']):not([fill='#ffffff'])"));
     }
 
     public int numberOfSunburstSegments(){
@@ -41,8 +35,7 @@ public class SunburstView extends ParametricFieldView {
     }
 
     public void waitForSunburst(){
-        // TODO: view-server?
-        new WebDriverWait(getDriver(),15).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
+        new WebDriverWait(getDriver(),15).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".parametric-loading")));
     }
 
     public String getSunburstCentreName(){
@@ -67,7 +60,8 @@ public class SunburstView extends ParametricFieldView {
     }
 
     public String hoverOnSegmentGetCentre(final int i){
-        DriverUtil.hover(getDriver(),getIthSunburstSegment(i));
+        //DriverUtil.hover(getDriver(),getIthSunburstSegment(i));
+        segmentHover(getIthSunburstSegment(i));
         return getSunburstCentreName();
     }
 

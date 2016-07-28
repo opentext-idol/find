@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,28 +39,25 @@ public class SunburstITCase extends IdolFindTestBase {
     @Test
     @ActiveBug("FIND-382")
     public void testSunburstTabShowsSunburstOrMessage(){
-        findService.search("shambolic");
-        results.goToSunburst();
+        search("shambolic");
 
         verifyThat("Main results list hidden",getElementFactory().getResultsPage().mainResultsContainerHidden());
         verifyThat("Sunburst element displayed",results.sunburstVisible());
         verifyThat("Parametric selectors appear",results.parametricSelectionDropdownsExist());
 
-        findService.search("shouldBeNoFieldsForThisCrazySearch");
-        results.goToSunburst();
+        search("shouldBeNoFieldsForThisCrazySearch");
 
         //TODO: find out expected behaviour once bug is resolved
         //verifyThat("Sensible message is appearing when there is no sunburst")
     }
 
     @Test
-    @ActiveBug("FIND-405")
+    @ResolvedBug("FIND-405")
     public void testParametricSelectors(){
-        findService.search("wild horses");
-        results.goToSunburst();
+        search("wild horses");
 
         final String firstParametric = filters().parametricField(0).getParentName();
-        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(results.getSelectedFieldName(1)));
+        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(results.getSelectedFieldName(1).toUpperCase()));
 
         results.parametricSelectionDropdown(2).open();
         verifyThat("1st selected parametric does not appear as choice in 2nd",results.getParametricDropdownItems(2),not(contains(firstParametric)));
@@ -67,8 +65,7 @@ public class SunburstITCase extends IdolFindTestBase {
 
     @Test
     public void testParametricSelectorsChangeDisplay(){
-        findService.search("cricket");
-        results.goToSunburst();
+        search("cricket");
 
         //only works if you have at least 2 parametric types
         results.parametricSelectionDropdown(1).selectItem(1);
@@ -81,8 +78,7 @@ public class SunburstITCase extends IdolFindTestBase {
 
     @Test
     public void testHoveringOverSegmentCausesTextToChange(){
-        findService.search("elephant");
-        results.goToSunburst();
+        search("elephant");
 
         List<String> bigEnough = getFilterResultsBigEnoughToDisplay(0);
 
@@ -103,14 +99,13 @@ public class SunburstITCase extends IdolFindTestBase {
         final List<String> bigEnough = filterModal.expectedParametricValues();
         filterModal.cancelButton().click();
 
-        results.waitForSunburst();
+        findPage.waitUntilParametricModalGone();
         return bigEnough;
     }
 
     @Test
     public void testHoveringOnGreySegmentGivesMessage(){
-        findService.search("elephant");
-        results.goToSunburst();
+        search("elephant");
 
         assumeThat("Some segments not displayable",results.greySunburstAreaExists());
         results.hoverOverTooFewToDisplaySegment();
@@ -121,26 +116,25 @@ public class SunburstITCase extends IdolFindTestBase {
     @Test
     public void testClickingSunburstSegmentFiltersTheSearch(){
         //needs to search something that only has 2 parametric filter types
-        findService.search("churchill");
-        results.goToSunburst();
-
+        search("churchill");
 
         final String fieldValue = results.hoverOnSegmentGetCentre(1);
         final String fieldName = results.getSelectedFieldName(1);
         LOGGER.info("filtering by " + fieldName + " = " + fieldValue);
         results.getIthSunburstSegment(1).click();
-
+        results.waitForSunburst();
+        
         verifyThat(findPage.getFilterLabels(), hasItem(containsString(fieldValue)));
+        filters().expandParametricContainer(fieldName);
         verifyThat(filters().checkboxForParametricValue(fieldName, fieldValue), checked());
         verifyThat("Parametric selection name has changed to another type of filter",results.getSelectedFieldName(1),not(fieldName));
 
     }
 
     @Test
-    @ActiveBug("FIND-379")
+    @ResolvedBug("FIND-379")
     public void testSideBarFiltersChangeSunburst(){
-        findService.search("lashing");
-        results.goToSunburst();
+        search("lashing");
 
         final String parametricSelectionFirst= results.getSelectedFieldName(1);
         filters().parametricField(0).expand();
@@ -153,18 +147,23 @@ public class SunburstITCase extends IdolFindTestBase {
     //will probably fail if your databases are different to the testing ones
     @Test
     public void testTwoParametricSelectorSunburst(){
-        findService.search("cameron");
-        results.goToSunburst();
+        search("cameron");
 
-        results.parametricSelectionDropdown(1).select("SOURCE");
+        results.parametricSelectionDropdown(1).select("Category");
         results.waitForSunburst();
         final int segNumberBefore = results.numberOfSunburstSegments();
 
-        results.parametricSelectionDropdown(2).select("CATEGORY");
+        results.parametricSelectionDropdown(2).select("Source");
         results.waitForSunburst();
         final int segNumberAfter = results.numberOfSunburstSegments();
 
         assertThat("More segments with second parametric selector",segNumberAfter,greaterThan(segNumberBefore));
+    }
+
+    private void search(String searchTerm) {
+        findService.search(searchTerm);
+        findPage.goToSunburst();
+        results.waitForSunburst();
     }
 
     private FilterPanel filters() {

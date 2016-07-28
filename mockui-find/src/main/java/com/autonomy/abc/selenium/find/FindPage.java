@@ -121,12 +121,25 @@ public class FindPage extends AppElement implements AppPage,
         waitForResultsToLoad();
     }
 
+    //should really be in IdolFindPage
+    public void goToListView() {
+        findElement(By.cssSelector("[data-tab-id='list']")).click();
+        new WebDriverWait(getDriver(), 15)
+                .until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".results-list-container"))));
+    }
+
+
     protected WebElement mainContainer() {
         return Container.currentTabContents(getDriver());
     }
 
     private void waitForResultsToLoad() {
         Container.MIDDLE.waitForLoad(getDriver());
+    }
+
+    public void waitUntilParametricModalGone() {
+        new WebDriverWait(getDriver(),10)
+                .until(ExpectedConditions.invisibilityOfElementLocated(By.className(".parametric-modal")));
     }
 
     public boolean verticalScrollBarPresent() {
