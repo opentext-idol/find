@@ -44,7 +44,7 @@ public class FilterITCase extends FindTestBase {
         findService = getApplication().findService();
     }
 
-    private ResultsView search(String searchTerm) {
+    private ResultsView search(final String searchTerm) {
         final ResultsView results = findService.search(searchTerm);
         findPage.waitForParametricValuesToLoad();
         return results;
@@ -54,6 +54,7 @@ public class FilterITCase extends FindTestBase {
     public void testParametricFiltersDefaultCollapsed(){
         final ResultsView results = search("knee");
 
+        // TODO implement or delete
         //get parametricFieldContainers or parametricFilters
         //div class "clickable collapsible-header collapsed"
         //or check that div class=collapse --> sibling of the above -> not visible
@@ -200,8 +201,8 @@ public class FilterITCase extends FindTestBase {
     //Because filter categories all collapse after selecting 1, must be quick or throws NoSuchElement
     public void testSelectDifferentCategoryFiltersAndResultsLoad() throws  InterruptedException{
         final ResultsView results = findService.search("face");
-        FindParametricCheckbox filter1 = filters().checkBoxesForParametricFieldContainer(0).get(0);
-        FindParametricCheckbox filter2 = filters().checkBoxesForParametricFieldContainer(1).get(0);
+        final FindParametricCheckbox filter1 = filters().checkBoxesForParametricFieldContainer(0).get(0);
+        final FindParametricCheckbox filter2 = filters().checkBoxesForParametricFieldContainer(1).get(0);
 
         filter1.check();
         filter2.check();
