@@ -52,9 +52,10 @@ public class FilterPanel {
 
     //CONTAINERS FOR FILTERS
     private List<ListFilterContainer> allFilterContainers() {
-        final List<ListFilterContainer> nodes = new ArrayList<ListFilterContainer>(parametricFieldContainers());
-        nodes.add(0, indexesTreeContainer());
-        nodes.add(1, dateFilterContainer());
+        final List<ListFilterContainer> nodes = new ArrayList<>();
+        nodes.add(indexesTreeContainer());
+        nodes.add(dateFilterContainer());
+        nodes.addAll(parametricFieldContainers());
         return nodes;
     }
 
