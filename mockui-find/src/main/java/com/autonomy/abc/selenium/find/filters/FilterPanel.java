@@ -127,13 +127,14 @@ public class FilterPanel {
 
     //METAFILTERING
     public void filterResults(final String term) {
-        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter...']")), driver);
+        // placeholder text uses ellipsis unicode character
+        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter\u2026']")), driver);
         input.clear();
         input.setAndSubmit(term);
     }
 
     public void clearFilter() {
-        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter...']")), driver);
+        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter\u2026']")), driver);
         input.clear();
         waitForIndexes();
     }
