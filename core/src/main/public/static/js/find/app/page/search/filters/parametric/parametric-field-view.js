@@ -60,7 +60,6 @@ define([
 
     return Backbone.View.extend({
         className: 'animated fadeIn',
-        subtitleTemplate: _.template('<span class="selection-length"><%-length%></span> <%-i18n["app.selected"]%> <i class="hp-icon hp-warning selected-warning hidden"></i>'),
 
         initialize: function(options) {
             this.$el.attr('data-field', this.model.id);
@@ -80,11 +79,8 @@ define([
 
             this.collapsible = new Collapsible({
                 collapsed: collapsed,
-                title: this.model.get('displayName') + ' (' + this.model.fieldValues.length +')',
-                subtitle: this.subtitleTemplate({
-                    i18n: i18n,
-                    length: this.getFieldSelectedValuesLength()
-                }),
+                subtitle: null,
+                title: this.model.get('displayName') + ' (' + this.calculateSelectedCount() + ')',
                 view: new ValuesView({
                     collection: this.model.fieldValues,
                     model: this.model,
@@ -94,17 +90,8 @@ define([
                 })
             });
 
-            this.listenTo(this.selectedParametricValues, 'update', function() {
-                this.collapsible.$('.selection-length').text(this.getFieldSelectedValuesLength());
-                this.toggleWarning();
-            });
-
-            this.listenTo(this.collapsible, 'show', function() {
-                this.collapsible.toggleSubtitle(true);
-            });
-
-            this.listenTo(this.collapsible, 'hide', function() {
-                this.toggleSubtitle();
+            this.listenTo(this.model.fieldValues, 'update change', function() {
+                this.collapsible.setTitle(this.model.get('displayName') + ' (' + this.calculateSelectedCount() + ')');
             });
 
             this.listenTo(this.collapsible, 'toggle', function(newState) {
@@ -115,45 +102,18 @@ define([
         render: function() {
             this.$el.empty().append(this.collapsible.$el);
             this.collapsible.render();
-
-            this.$warning = this.collapsible.$('.selected-warning');
-
-            this.$warning.tooltip({
-                title: i18n['search.parametric.selected.notAllVisible']
-            });
-
-            this.toggleSubtitle();
-            this.toggleWarning();
         },
 
-        toggleSubtitle: function() {
-            this.collapsible.toggleSubtitle(this.getFieldSelectedValuesLength() !== 0);
-        },
-
-        toggleWarning: function() {
-            var currentValues = this.selectedParametricValues.where({field: this.model.id});
-            var toggle = true;
-
-            if(currentValues.length > 0) {
-                var firstFiveValues = this.model.fieldValues.chain()
-                    .first(MAX_SIZE)
-                    .pluck('id')
-                    .value();
-
-                var fieldsArray = _.invoke(currentValues, 'get', 'value');
-
-                toggle = !_.difference(fieldsArray, firstFiveValues).length;
-            }
-
-            this.$warning.toggleClass('hidden', toggle);
+        calculateSelectedCount: function() {
+            var selectedCount = this.getFieldSelectedValuesLength();
+            return selectedCount ? selectedCount + ' / ' + this.model.fieldValues.length : this.model.fieldValues.length;
         },
 
         getFieldSelectedValuesLength: function() {
-            return this.selectedParametricValues.where({field: this.model.id}).length;
+            return this.model.fieldValues.where({selected: true}).length;
         },
 
         remove: function() {
-            this.$warning.tooltip('destroy');
             this.collapsible.remove();
 
             Backbone.View.prototype.remove.call(this);

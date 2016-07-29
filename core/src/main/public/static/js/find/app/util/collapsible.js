@@ -88,6 +88,14 @@ define([
             }
         },
 
+        setTitle: function(title) {
+            this.title = title;
+
+            if (this.$header) {
+                this.$header.text(this.title);
+            }
+        },
+
         hide: function() {
             if (!this.collapsed) {
                 this.$collapse.collapse('hide');

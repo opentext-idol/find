@@ -82,7 +82,32 @@ define([
             it('should set the collapsed property', function() {
                 expect(this.fieldView.collapsible.collapsed).toBe(true);
             });
-        })
+        });
+
+        describe('with a header', function() {
+            beforeEach(function() {
+                this.fieldView = new FieldView({
+                    model: this.model,
+                    selectedParametricValues: new Backbone.Collection(this.model.fieldValues.where({selected: true}).map(function(valueModel) {
+                        return {field: this.model.id, value: valueModel.id};
+                    }.bind(this))),
+                    collapsed: false
+                });
+                this.fieldView.render();
+            });
+
+            it('that counts selected fields', function() {
+                expect(this.fieldView.$el).toContainText('(2 / 3)');
+            });
+
+            it('that displays (X) and not (0 / X) when no fields are selected', function() {
+                this.model.fieldValues.each(function(model) {
+                    model.set('selected', false);
+                });
+                expect(this.fieldView.$el).toContainText('(3)');
+            });
+
+        });
 
     });
 
