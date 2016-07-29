@@ -5,8 +5,14 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.ToolTips;
-import com.autonomy.abc.selenium.find.filters.*;
+import com.autonomy.abc.selenium.find.filters.DateOption;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
+import com.autonomy.abc.selenium.find.filters.ListFilterContainer;
+import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
+import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
 import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResult;
@@ -27,7 +33,12 @@ import java.util.List;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
 
 public class FilterITCase extends FindTestBase {
@@ -367,5 +378,91 @@ public class FilterITCase extends FindTestBase {
     private void toggleDateSelection(final DateOption date) {
         filters().toggleFilter(date);
         getElementFactory().getResultsPage().waitForResultsToLoad();
+    }
+
+    @Test
+    public void testParametricFiltersOpenWhenMatchingFilter() {
+        search("haven");
+
+        final FilterPanel filterPanel = filters();
+
+        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
+        final String firstValue = filterPanel.parametricField(0).getChildNames().get(0);
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
+    }
+
+    @Test
+    public void testParametricFilterRemembersStateWhenMetaFiltering() {
+        search("haven");
+
+        final FilterPanel filterPanel = filters();
+
+        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
+        final String firstValue = filterPanel.parametricField(0).getChildNames().get(0);
+
+        filterPanel.parametricField(0).expand();
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
+    }
+
+    @Test
+    public void testIndexesOpenWhenMatchingMetaFilter() {
+        search("haven");
+
+        final FilterPanel filterPanel = filters();
+
+        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
+        final IndexesTree indexes = filterPanel.indexesTree();
+        final String firstValue = indexes.allIndexes().getIndex(0).getName();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
+    }
+
+    @Test
+    public void testIndexesRememberStateWhenMetaFiltering() {
+        search("haven");
+
+        final FilterPanel filterPanel = filters();
+
+        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
+        final IndexesTree indexes = filterPanel.indexesTree();
+        final String firstValue = indexes.allIndexes().getIndex(0).getName();
+
+        indexesTreeContainer.collapse();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
     }
 }

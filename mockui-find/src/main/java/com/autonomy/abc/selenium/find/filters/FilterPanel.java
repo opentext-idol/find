@@ -59,7 +59,7 @@ public class FilterPanel {
         return nodes;
     }
 
-    private ListFilterContainer indexesTreeContainer() {
+    public ListFilterContainer indexesTreeContainer() {
         final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
         final WebElement container = ElementUtil.ancestor(heading, 2);
         return new IndexesTreeContainer(container, driver);
