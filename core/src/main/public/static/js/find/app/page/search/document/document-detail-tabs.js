@@ -21,6 +21,9 @@ define([
     'use strict';
 
     var always = _.constant(true);
+    var hasBiRole = function() {
+        return configuration().hasBiRole;
+    };
 
     return [
         {
@@ -61,7 +64,7 @@ define([
 
             title: i18n['search.document.detail.tabs.similarDates'],
 
-            shown: always
+            shown: hasBiRole
         },
         {
             TabContentConstructor: TabContentView.extend({TabSubContentConstructor: SimilarSourcesTab}),
