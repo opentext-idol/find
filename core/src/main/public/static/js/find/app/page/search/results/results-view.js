@@ -14,14 +14,13 @@ define([
     'find/app/page/search/results/add-links-to-summary',
     'find/app/configuration',
     'text!find/templates/app/page/search/results/results-view.html',
-    'text!find/templates/app/page/search/results/results-container.html',
     'text!find/templates/app/page/loading-spinner.html',
     'moment',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
             ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration, template,
-            resultsTemplate, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
+            loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
 
     var SCROLL_INCREMENT = 30;
     var INFINITE_SCROLL_POSITION_PIXELS = 500;
@@ -45,49 +44,35 @@ define([
 
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
-        resultsTemplate: _.template(resultsTemplate),
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
 
-        events: {
-            'click .preview-mode [data-cid]': function(e) {
-                var $target = $(e.currentTarget);
-
-                if ($target.hasClass('selected-document')) {
-                    // disable preview mode
-                    this.previewModeModel.set({document: null});
-                } else {
-                    //enable/choose another preview view
+        events: function() {
+            var events = {
+                // ToDo : Merge with changes made in FIND-229
+                'click .document-detail-mode [data-cid]': function(e) {
+                    var $target = $(e.currentTarget);
                     var cid = $target.data('cid');
                     var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
                     var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
                     var model = collection.get(cid);
-                    this.previewModeModel.set({document: model});
-
-                    if (!isPromotion) {
-                        events().preview(collection.indexOf(model) + 1);
+                    vent.navigateToDetailRoute(model);
+                },
+                'click .similar-documents-trigger': function(event) {
+                    event.stopPropagation();
+                    var cid = $(event.target).closest('[data-cid]').data('cid');
+                    var documentModel = this.documentsCollection.get(cid);
+                    if (!documentModel){
+                        documentModel = this.promotionsCollection.get(cid);
                     }
+                    vent.navigateToSuggestRoute(documentModel);
                 }
-            },
+            };
 
-            // ToDo : Merge with changes made in FIND-229
-            'click .document-detail-mode [data-cid]': function(e) {
-                var $target = $(e.currentTarget);
-                var cid = $target.data('cid');
-                var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
-                var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
-                var model = collection.get(cid);
-                vent.navigateToDetailRoute(model);
-            },
-            'click .similar-documents-trigger': function(event) {
-                event.stopPropagation();
-                var cid = $(event.target).closest('[data-cid]').data('cid');
-                var documentModel = this.documentsCollection.get(cid);
-                if (!documentModel){
-                    documentModel = this.promotionsCollection.get(cid);
-                }
-                vent.navigateToSuggestRoute(documentModel);
-            }
+            var selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]';
+            events['click ' + selector] = 'openPreview';
+
+            return events;
         },
 
         initialize: function(options) {

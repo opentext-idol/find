@@ -8,7 +8,7 @@ define([
     'find/app/page/search/results/add-links-to-summary',
     'find/app/util/document-mime-types',
     'find/app/configuration',
-    'text!find/templates/app/page/search/results/results-container.html',
+    'text!find/templates/app/page/search/results/results-container.html'
 ], function(_, addLinksToSummary, documentMimeTypes, configuration, resultsTemplate) {
 
     function getContentTypeClass(model) {
