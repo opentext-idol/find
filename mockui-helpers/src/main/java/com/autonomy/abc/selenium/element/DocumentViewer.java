@@ -112,7 +112,7 @@ public class DocumentViewer extends AppElement implements AppPage {
     }
 
     public void openInNewTab() {
-        findElement(By.xpath("//*[text()='Open in New Tab']")).click();
+        findElement(By.xpath("//*[text()='Open']")).click();
     }
 
     public boolean previewPresent(){

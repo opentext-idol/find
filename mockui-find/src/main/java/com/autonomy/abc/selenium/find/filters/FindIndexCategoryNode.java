@@ -21,7 +21,11 @@ class FindIndexCategoryNode extends IndexCategoryNode {
 
     @Override
     protected void seeMore() {
-        container.findElement(By.className("toggle-more")).click();
+        By toggleMore = By.className("toggle-more");
+
+        if(container.findElements(toggleMore).size() > 0) {
+            container.findElement(toggleMore).click();
+        }
     }
 
     @Override

@@ -17,7 +17,6 @@ import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriverException;
@@ -26,7 +25,8 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class HodDocumentPreviewITCase extends HsodFindTestBase {
@@ -49,13 +49,9 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
         ResultsView results = findService.search("Review");
 
         for(final FindResult result : results.getResults(5)){
-            try {
-                final DocumentViewer docViewer = result.openDocumentPreview();
-                verifyDocumentViewer(docViewer);
-                docViewer.close();
-            } catch (final WebDriverException e){
-                fail("Could not click on preview button - most likely CSA-1767");
-            }
+            final DocumentViewer docViewer = result.openDocumentPreview();
+            verifyDocumentViewer(docViewer);
+            docViewer.close();
         }
     }
 
@@ -63,8 +59,6 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
         final Frame frame = new Frame(getWindow(), docViewer.frame());
 
         verifyThat("document visible", docViewer, displayed());
-        verifyThat("next button visible", docViewer.nextButton(), displayed());
-        verifyThat("previous button visible", docViewer.prevButton(), displayed());
 
         frame.activate();
 
@@ -80,43 +74,13 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     }
 
     @Test
-    public void testViewportSearchResultNumbers(){
-        ResultsView results = findService.search("Messi");
-
-        results.getResult(1).openDocumentPreview();
-        verifyDocViewerTotalDocuments(30);
-
-        findPage.scrollToBottom();
-        results.getResult(31).openDocumentPreview();
-        verifyDocViewerTotalDocuments(60);
-
-        findPage.scrollToBottom();
-        results.getResult(61).openDocumentPreview();
-        verifyDocViewerTotalDocuments(90);
-    }
-
-    @Test
     public void testBetween30And60Results(){
         ResultsView results = findService.search(new Query("connectors"));
         findPage.filterBy(new IndexFilter("sitesearch"));
 
         findPage.scrollToBottom();
 
-        final DocumentViewer docViewer = results.getResult(1).openDocumentPreview();
-        verifyThat(docViewer.getTotalDocumentsNumber(),lessThanOrEqualTo(60));
-        docViewer.close();
-
         verifyThat(results.resultsDiv(), containsText("No more results found"));
-    }
-
-    private void verifyDocViewerTotalDocuments(final int docs){
-        verifyDocViewerTotalDocuments(is(docs));
-    }
-
-    private void verifyDocViewerTotalDocuments(final Matcher matcher){
-        final DocumentViewer docViewer = DocumentViewer.make(getDriver());
-        verifyThat(docViewer.getTotalDocumentsNumber(), matcher);
-        docViewer.close();
     }
 
     @Test
@@ -149,17 +113,6 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
             }
 
             original.activate();
-        }
-    }
-
-    @Test
-    public void testViewDocumentsOpenWithArrows(){
-        ResultsView results = findService.search("Review");
-
-        final DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
-        for(int i = 0; i < 5; i++) {
-            verifyDocumentViewer(docViewer);
-            docViewer.next();
         }
     }
 }

@@ -35,18 +35,21 @@ public class FindResult extends QueryResult {
     }
 
     private WebElement previewButton(){
-        return findElement(By.className("preview-documents-trigger"));
+        return findElement(By.className("preview-link"));
     }
 
-    private Boolean previewButtonExists(){ return !findElements(By.className("preview-documents-trigger")).isEmpty();}
+    private Boolean previewButtonExists(){
+        return !findElements(By.className("preview-link")).isEmpty();
+    }
 
     @Override
     public DocumentViewer openDocumentPreview(){
         if (previewButtonExists()){
             previewButton().click();
-            return DocumentViewer.make(getDriver());
+        } else {
+            title().click();
         }
-        title().click();
+
         return DocumentPreviewer.make(getDriver());
     }
 
