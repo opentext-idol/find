@@ -1,7 +1,8 @@
 define([
     'backbone',
+    'underscore',
     'text!find/templates/app/util/text-input.html'
-], function(Backbone, template) {
+], function(Backbone, _, template) {
 
     return Backbone.View.extend({
         template: _.template(template),

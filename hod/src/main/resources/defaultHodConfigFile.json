@@ -54,7 +54,17 @@
         ]
     },
     "minScore": 0,
-    "directAccessLink": true,
+    "uiCustomization": {
+        "options": {
+            "directAccessLink": {
+                "user": true
+            },
+            "enableMetaFilter": {
+                "user": false,
+                "bi": true
+            }
+        }
+    },
     "topicMapMaxResults": 1000,
     "fieldsInfo": {
         "contentType": {

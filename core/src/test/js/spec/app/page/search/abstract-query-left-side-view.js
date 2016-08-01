@@ -6,10 +6,11 @@
 define([
     'underscore',
     'find/app/page/search/abstract-query-left-side-view',
+    'find/app/configuration',
     'backbone',
     'i18n!find/nls/bundle',
     'js-testing/backbone-mock-factory'
-], function (_, AbstractQueryLeftSideView, Backbone, i18n, backboneMockFactory) {
+], function (_, AbstractQueryLeftSideView, configuration, Backbone, i18n, backboneMockFactory) {
     "use strict";
 
     var MATCH_NOTHING = 'y54u65u4w5uy654u5eureuy654yht754wy54euy45';
@@ -19,6 +20,12 @@ define([
     describe("Abstract Query Left Side View", function () {
 
         beforeEach(function () {
+            configuration.and.callFake(function () {
+                return {
+                    enableMetaFilter: true
+                };
+            });
+
             this.view = new (AbstractQueryLeftSideView.extend({
                 IndexesView: Backbone.View.extend({
                     initialize: function (options) {

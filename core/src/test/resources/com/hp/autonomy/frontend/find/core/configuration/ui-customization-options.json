@@ -1,0 +1,9 @@
+{
+  "option1": {
+    "user": false
+  },
+  "option2": {
+    "user": true,
+    "bi": true
+  }
+}

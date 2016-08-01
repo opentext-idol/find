@@ -103,6 +103,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>uk.co.datumedge</groupId>
+            <artifactId>hamcrest-json</artifactId>
+            <version>0.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.dbunit</groupId>
             <artifactId>dbunit</artifactId>
             <version>2.5.1</version>

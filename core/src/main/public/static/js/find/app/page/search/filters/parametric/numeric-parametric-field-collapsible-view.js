@@ -93,14 +93,16 @@ define([
                 this.collapsed = newState;
             });
 
-            this.listenTo(this.filterModel, 'change', function() {
-                if (this.filterModel.get('text')) {
-                    this.collapsible.show();
-                }
-                else {
-                    this.collapsible.toggle(!this.collapsed);
-                }
-            })
+            if (this.filterModel) {
+                this.listenTo(this.filterModel, 'change', function () {
+                    if (this.filterModel.get('text')) {
+                        this.collapsible.show();
+                    }
+                    else {
+                        this.collapsible.toggle(!this.collapsed);
+                    }
+                });
+            }
         },
 
         render: function () {

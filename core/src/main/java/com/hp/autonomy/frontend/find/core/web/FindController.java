@@ -84,10 +84,10 @@ public abstract class FindController {
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
         config.put(MvcConstants.MAP.value(), configService.getConfig().getMap());
+        config.put(MvcConstants.UI_CUSTOMIZATION.value(), configService.getConfig().getUiCustomization());
         config.put(MvcConstants.SAVED_SEARCH_CONFIG.value(), configService.getConfig().getSavedSearchConfig());
         config.put(MvcConstants.MIN_SCORE.value(), configService.getConfig().getMinScore());
         config.put(MvcConstants.FIELDS_INFO.value(), configService.getConfig().getFieldsInfo().getFieldConfig());
-        config.put(MvcConstants.DIRECT_ACCESS_LINK.value(), configService.getConfig().getDirectAccessLink());
         config.put(MvcConstants.PARAMETRIC_DISPLAY_VALUES.value(), configService.getConfig().getParametricDisplayValues());
         config.put(MvcConstants.TOPIC_MAP_MAX_RESULTS.value(), configService.getConfig().getTopicMapMaxResults());
         config.putAll(getPublicConfig());

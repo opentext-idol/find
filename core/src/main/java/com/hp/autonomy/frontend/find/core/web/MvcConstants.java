@@ -15,7 +15,7 @@ public enum MvcConstants {
     SAVED_SEARCH_CONFIG("savedSearchConfig"),
     USERNAME("username"),
     MIN_SCORE("minScore"),
-    DIRECT_ACCESS_LINK("directAccessLink"),
+    UI_CUSTOMIZATION("uiCustomization"),
     PARAMETRIC_DISPLAY_VALUES("parametricDisplayValues"),
     FIELDS_INFO("fieldsInfo"),
     TOPIC_MAP_MAX_RESULTS("topicMapMaxResults");

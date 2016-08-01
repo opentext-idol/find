@@ -37,6 +37,7 @@ require.config({
             'find/app/model/dependent-parametric-collection': 'mock/model/dependent-parametric-collection'
         },
         'find/app/page/search/abstract-query-left-side-view': {
+            'find/app/configuration': 'mock/configuration',
             'find/app/page/search/filters/date/dates-filter-view': 'mock/page/search/filters/date/dates-filter-view',
             'find/app/page/search/filters/parametric/numeric-parametric-view': 'mock/page/search/filters/parametric/numeric-parametric-view',
             'find/app/page/search/filters/parametric/parametric-view': 'mock/page/search/filters/parametric/parametric-view',

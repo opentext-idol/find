@@ -20,6 +20,7 @@ import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
+import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
@@ -46,13 +47,29 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
     private final MMAP mmap;
+    private final UiCustomization uiCustomization;
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
-    private final Boolean directAccessLink;
     private final Set<ParametricDisplayValues> parametricDisplayValues;
+
+    public IdolFindConfig(final Builder builder) {
+        login = builder.login;
+        content = builder.content;
+        queryManipulation = builder.queryManipulation;
+        view = builder.view;
+        savedSearchConfig = builder.savedSearchConfig;
+        mmap = builder.mmap;
+        uiCustomization = builder.uiCustomization;
+        fieldsInfo = builder.fieldsInfo;
+        map = builder.map;
+        minScore = builder.minScore;
+        statsServer = builder.statsServer;
+        topicMapMaxResults = builder.topicMapMaxResults;
+        parametricDisplayValues = builder.parametricDisplayValues;
+    }
 
     @Override
     public IdolFindConfig merge(final IdolFindConfig other) {
@@ -67,11 +84,11 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .setView(view == null ? other.view : view.merge(other.view))
                 .setSavedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
                 .setMmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
+                .setUiCustomization(uiCustomization == null ? other.uiCustomization : uiCustomization.merge(other.uiCustomization))
                 .setFieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
                 .setMap(map == null ? other.map : map.merge(other.map))
                 .setMinScore(minScore == null ? other.minScore : minScore)
                 .setStatsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
-                .setDirectAccessLink(directAccessLink == null ? other.directAccessLink : directAccessLink)
                 .setParametricDisplayValues(parametricDisplayValues == null ? other.parametricDisplayValues : parametricDisplayValues)
                 .setTopicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
                 .build();
@@ -148,11 +165,11 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         @JsonProperty("savedSearches")
         private SavedSearchConfig savedSearchConfig;
         private MMAP mmap;
+        private UiCustomization uiCustomization;
         private FieldsInfo fieldsInfo;
         private MapConfiguration map;
         private Integer minScore;
         private StatsServerConfig statsServer;
-        private Boolean directAccessLink;
         private Set<ParametricDisplayValues> parametricDisplayValues;
         private Integer topicMapMaxResults;
 
@@ -163,17 +180,17 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             view = config.view;
             savedSearchConfig = config.savedSearchConfig;
             mmap = config.mmap;
+            uiCustomization = config.uiCustomization;
             fieldsInfo = config.fieldsInfo;
             map = config.map;
             minScore = config.minScore;
             statsServer = config.statsServer;
             topicMapMaxResults = config.topicMapMaxResults;
-            directAccessLink = config.directAccessLink;
             parametricDisplayValues = config.parametricDisplayValues;
         }
 
         public IdolFindConfig build() {
-            return new IdolFindConfig(login, content, queryManipulation, view, savedSearchConfig, mmap, fieldsInfo, map, minScore, statsServer, topicMapMaxResults, directAccessLink, parametricDisplayValues);
+            return new IdolFindConfig(this);
         }
     }
 

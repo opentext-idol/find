@@ -6,13 +6,14 @@
 define([
     'backbone',
     'jquery',
+    'underscore',
     'js-whatever/js/list-view',
     'find/app/page/search/filters/parametric/abstract-parametric-view',
     'find/app/page/search/filters/parametric/parametric-field-view',
     'parametric-refinement/display-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
-], function(Backbone, $, ListView, AbstractView, FieldView, DisplayCollection, i18n, template) {
+], function(Backbone, $, _, ListView, AbstractView, FieldView, DisplayCollection, i18n, template) {
     'use strict';
 
     return AbstractView.extend({
@@ -55,17 +56,19 @@ define([
                     parametricDisplayCollection: this.displayCollection,
                     selectedParametricValues: this.selectedParametricValues,
                     timeBarModel: options.timeBarModel,
-                    collapsed: _.bind(function(model) {
-                        if (this.filterModel.get('text')) {
+                    collapsed: function(model) {
+                        if (this.filterModel && this.filterModel.get('text')) {
                             return false;
                         }
                         else {
+                            //noinspection JSUnresolvedFunction
                             return _.isUndefined(collapsed[model.id]) ? true : collapsed[model.id];
                         }
-                    }, this)
+                    }.bind(this)
                 }
             });
 
+            //noinspection JSUnresolvedFunction
             this.listenTo(this.fieldNamesListView, 'item:toggle', function(model, newState) {
                 collapsed[model.id] = newState;
             });

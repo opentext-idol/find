@@ -19,6 +19,7 @@ import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
+import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
@@ -46,8 +47,8 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private final RedisConfig redis;
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
+    private final UiCustomization uiCustomization;
     private final Integer minScore;
-    private final Boolean directAccessLink;
     private final Set<ParametricDisplayValues> parametricDisplayValues;
     private final Integer topicMapMaxResults;
 
@@ -63,9 +64,9 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         fieldsInfo = builder.fieldsInfo;
         queryManipulation = builder.queryManipulation;
         map = builder.map;
+        uiCustomization = builder.uiCustomization;
         savedSearchConfig = builder.savedSearchConfig;
         minScore = builder.minScore;
-        directAccessLink = builder.directAccessLink;
         parametricDisplayValues = builder.parametricDisplayValues;
         topicMapMaxResults = builder.topicMapMaxResults;
     }
@@ -82,9 +83,9 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
                 .setHsod(hsod == null ? config.hsod : hsod.merge(config.hsod))
                 .setFieldsInfo(fieldsInfo == null ? config.fieldsInfo : fieldsInfo.merge(config.fieldsInfo))
                 .setMap(map == null ? config.map : map.merge(config.map))
+                .setUiCustomization(uiCustomization == null ? config.uiCustomization : uiCustomization.merge(config.uiCustomization))
                 .setSavedSearchConfig(savedSearchConfig == null ? config.savedSearchConfig : savedSearchConfig.merge(config.savedSearchConfig))
                 .setMinScore(minScore == null ? config.minScore : minScore)
-                .setDirectAccessLink(directAccessLink == null ? config.directAccessLink : directAccessLink)
                 .setParametricDisplayValues(parametricDisplayValues == null ? config.parametricDisplayValues : parametricDisplayValues)
                 .setTopicMapMaxResults(topicMapMaxResults == null ? config.topicMapMaxResults : topicMapMaxResults)
                 .build() : this;
@@ -176,10 +177,10 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         private QueryManipulationConfig queryManipulation;
         private FieldsInfo fieldsInfo;
         private MapConfiguration map;
+        private UiCustomization uiCustomization;
         @JsonProperty("savedSearches")
         private SavedSearchConfig savedSearchConfig;
         private Integer minScore;
-        private Boolean directAccessLink;
         private Set<ParametricDisplayValues> parametricDisplayValues;
         private Integer topicMapMaxResults;
 
@@ -192,9 +193,9 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
             queryManipulation = config.queryManipulation;
             fieldsInfo = config.fieldsInfo;
             map = config.map;
+            uiCustomization = config.uiCustomization;
             savedSearchConfig = config.savedSearchConfig;
             minScore = config.minScore;
-            directAccessLink = config.directAccessLink;
             parametricDisplayValues = config.parametricDisplayValues;
             topicMapMaxResults = config.topicMapMaxResults;
         }

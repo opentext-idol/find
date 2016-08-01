@@ -19,7 +19,7 @@ public interface FindConfig {
 
     FieldsInfo getFieldsInfo();
 
-    Boolean getDirectAccessLink();
+    UiCustomization getUiCustomization();
 
     Set<ParametricDisplayValues> getParametricDisplayValues();
 

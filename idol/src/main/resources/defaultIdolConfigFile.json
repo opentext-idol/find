@@ -80,7 +80,7 @@
     "attribution": null,
     "initialLocation": {
       "latitude": 51.5074,
-      "longitude":  0.1278
+      "longitude": 0.1278
     },
     "tileUrlTemplate": null,
     "resultsStep": 2500,
@@ -96,7 +96,17 @@
     "enabled": false,
     "baseUrl": ""
   },
-  "directAccessLink": false,
+  "uiCustomization": {
+    "options": {
+        "directAccessLink": {
+          "user": false
+        },
+        "enableMetaFilter": {
+          "user": false,
+          "bi": true
+        }
+      }
+  },
   "minScore": 0,
   "parametricDisplayValues": [
     {
