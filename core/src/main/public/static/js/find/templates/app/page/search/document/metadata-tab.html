@@ -9,12 +9,12 @@
     <% } %>
 
     <% _.each(model.pick([
+        'title',
+        'url',
         'reference',
         'index',
-        'title',
         'summary',
-        'contentType',
-        'url'
+        'contentType'
     ]), function(value, key) { %>
         <% if(value) { %>
             <tr>
