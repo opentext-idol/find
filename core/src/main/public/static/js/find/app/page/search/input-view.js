@@ -4,20 +4,22 @@ define([
     'underscore',
     'find/app/vent',
     'find/app/util/string-blank',
-    'find/app/configuration',
     'i18n!find/nls/bundle',
+    'find/app/configuration',
     'text!find/templates/app/page/search/input-view.html',
     'text!find/templates/app/page/search/related-concepts/selected-related-concept.html',
     'typeahead',
     'bootstrap'
-], function(Backbone, $, _, vent, stringBlank, configuration, i18n, template, relatedConceptTemplate) {
+], function(Backbone, $, _, vent, stringBlank, i18n, configuration, template, relatedConceptTemplate) {
 
     var conceptsTemplate = _.template(relatedConceptTemplate);
     
-    var scrollingButtons = _.template('<span class="scrolling-buttons">' +
-            '<button class="btn btn-xs btn-white left-scroll"><i class="hp-icon hp-chevron-left"></i></button> ' +
-            '<button class="btn btn-xs btn-white right-scroll"><i class="hp-icon hp-chevron-right"></i></button> ' +
-        '</span>');
+    var scrollingButtons = _.template(
+        '<span class="scrolling-buttons">' +
+            '<button class="btn btn-xs btn-white left-scroll"><i class="hp-icon hp-chevron-left"></i></button>' +
+            '<button class="btn btn-xs btn-white right-scroll"><i class="hp-icon hp-chevron-right"></i></button>' +
+        '</span>'
+    );
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -166,8 +168,10 @@ define([
         },
 
         updateSeeAllDocumentsLink: function(queryStateChanged) {
-            var disableLink = this.model.get('inputText') === '*' && !this.model.get('relatedConcepts').length && !queryStateChanged;
-            this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', disableLink);
+            if(configuration().hasBiRole) {
+                var disableLink = this.model.get('inputText') === '*' && !this.model.get('relatedConcepts').length && !queryStateChanged;
+                this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', disableLink);
+            }
         },
 
         updateRelatedConcepts: function() {
