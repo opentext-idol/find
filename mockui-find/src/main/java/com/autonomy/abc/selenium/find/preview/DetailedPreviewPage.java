@@ -56,7 +56,7 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
 
     public int numberOfHeadersWithDocTitle(){
         final String title = getTitle();
-        return findElements(By.xpath("//h1[contains(text(),'"+title+"')]")).size();
+        return findElements(By.xpath("//h1[contains(text(),'" + title + "')]")).size();
     }
 
     //metadata
@@ -66,6 +66,7 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     public String getTitle(){ return getField("Title");}
     public String getSummary(){ return getField("Summary");}
     public String getDate(){ return getField("Date");}
+    public String getAuthor() { return getField("authors");}
 
     private String getField(final String name) {
         try {

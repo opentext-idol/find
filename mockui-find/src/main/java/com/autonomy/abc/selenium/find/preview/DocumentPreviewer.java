@@ -32,9 +32,8 @@ public class DocumentPreviewer extends DocumentViewer {
         Waits.loadOrFadeWait();
     }
 
-    @Override
-    public void openInNewTab(){
-        findElement(By.xpath("//button[text()='Open']")).click();
+    public void openPreview(){
+        findElement(By.xpath("//button[contains(text(), 'Open')]")).click();
     }
 
     @Override
