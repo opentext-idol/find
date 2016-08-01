@@ -28,7 +28,8 @@ define([
                 configuration.and.returnValue({
                     map: {
                         enabled: true
-                    }
+                    },
+                    hasBiRole: true
                 });
             });
 
@@ -131,7 +132,7 @@ define([
                 });
 
                 var tabs = filterTabs(model);
-                expect(tabs.length).toBe(3);
+                expect(tabs.length).toBe(2);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeUndefined();
             });
         });
