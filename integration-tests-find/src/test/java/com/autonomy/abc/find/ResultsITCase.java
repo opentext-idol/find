@@ -83,7 +83,7 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("CCUK-3647")
     public void testNoMoreResultsFoundAtEnd() {
-        ResultsView results = findService.search(new Query("oesophageal"));
+        ResultsView results = findService.search(new Query("Cheese AND Onion"));
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
