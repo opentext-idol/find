@@ -14,27 +14,31 @@ define([
         initialize: function(models, options) {
             this.filterModel = options.filterModel;
             this.collection = options.collection;
-            this.predicate = _.bind(options.predicate, this, this.filterModel);
+
+            // _ allows us to pass the model as the first argument
+            this.predicate = _.partial(options.predicate, _, this.filterModel);
             this.resetOnFilter = options.resetOnFilter || false;
 
-            _.each(options.collectionFunctions, _.bind(function(functionName) {
+            _.each(options.collectionFunctions, function(functionName) {
                 this[functionName] = function() {
                     options.collection[functionName](arguments);
                 }
-            }, this));
+            }, this);
 
-            this.listenTo(this.filterModel, 'change', this.filterModels);
+            if (this.filterModel) {
+                this.listenTo(this.filterModel, 'change', this.filterModels);
+            }
 
             this.listenTo(this.collection, 'add', this.onAdd);
             this.listenTo(this.collection, 'remove', this.onRemove);
             this.listenTo(this.collection, 'change', this.onChange);
             this.listenTo(this.collection, 'reset', this.onReset);
 
-            this.collection.each(_.bind(function(model) {
+            this.collection.each(function(model) {
                 if (this.predicate(model)) {
                     models.push(model);
                 }
-            }, this));
+            }, this);
         },
 
         onAdd: function(model) {

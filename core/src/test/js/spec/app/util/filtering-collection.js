@@ -37,7 +37,7 @@ define([
             this.filteringCollection = new FilteringCollection([], {
                 collection: this.petCollection,
                 filterModel: this.filterModel,
-                predicate: function(filterModel, model) {
+                predicate: function(model, filterModel) {
                     var filterOn = filterModel.get('filterOn');
                     return model.get(filterOn).toLowerCase().indexOf(filterModel.get('text').toLowerCase()) > -1;
                 },

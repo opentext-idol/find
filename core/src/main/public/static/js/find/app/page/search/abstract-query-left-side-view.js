@@ -34,7 +34,7 @@ define([
         });
     };
 
-    function filterPredicate(filterModel, model) {
+    function filterPredicate(model, filterModel) {
         var searchText = filterModel && filterModel.get('text');
         return searchText ? searchMatches(prettifyFieldName(model.id), filterModel.get('text')) : true;
     }
