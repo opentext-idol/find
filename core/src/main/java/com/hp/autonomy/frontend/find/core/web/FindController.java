@@ -12,7 +12,6 @@ import com.hp.autonomy.frontend.configuration.LoginTypes;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,20 +26,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public abstract class FindController {
+public abstract class FindController<C extends FindConfig> {
     public static final String APP_PATH = "/public/";
     public static final String LOGIN_PATH = "/login";
     public static final String DEFAULT_LOGIN_PAGE = "/loginPage";
     public static final String CONFIG_PATH = "/config";
 
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired
-    private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
-
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired
-    private ConfigService<? extends FindConfig> configService;
+    private final ControllerUtils controllerUtils;
+    private final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever;
+    private final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
+    protected final ConfigService<C> configService;
 
     @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
     private String gitCommit;
@@ -48,12 +46,15 @@ public abstract class FindController {
     @Value(AppConfiguration.APPLICATION_RELEASE_VERSION_PROPERTY)
     private String releaseVersion;
 
-    @Autowired
-    private ControllerUtils controllerUtils;
-
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired
-    private AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever;
+    protected FindController(final ControllerUtils controllerUtils,
+                             final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
+                             final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService,
+                             final ConfigService<C> configService) {
+        this.controllerUtils = controllerUtils;
+        this.authenticationInformationRetriever = authenticationInformationRetriever;
+        this.authenticationConfigService = authenticationConfigService;
+        this.configService = configService;
+    }
 
     protected abstract Map<String, Object> getPublicConfig();
 
@@ -72,11 +73,7 @@ public abstract class FindController {
     public ModelAndView mainPage() throws JsonProcessingException {
         final String username = authenticationInformationRetriever.getAuthentication().getName();
 
-        final Collection<String> roles = new LinkedList<>();
-
-        for (final GrantedAuthority authority : authenticationInformationRetriever.getAuthentication().getAuthorities()) {
-            roles.add(authority.getAuthority());
-        }
+        final Collection<String> roles = authenticationInformationRetriever.getAuthentication().getAuthorities().stream().map((Function<GrantedAuthority, String>) GrantedAuthority::getAuthority).collect(Collectors.toCollection(LinkedList::new));
 
         final Map<String, Object> config = new HashMap<>();
         config.put(MvcConstants.USERNAME.value(), username);

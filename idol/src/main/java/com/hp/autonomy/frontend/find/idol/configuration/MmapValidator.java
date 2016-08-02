@@ -14,7 +14,7 @@ public class MmapValidator implements Validator<MMAP> {
     @Override
     public ValidationResult<?> validate(final MMAP config) {
         // TODO: real validation
-        return new ValidationResult<Object>(true);
+        return new ValidationResult<>(true);
     }
 
     @Override

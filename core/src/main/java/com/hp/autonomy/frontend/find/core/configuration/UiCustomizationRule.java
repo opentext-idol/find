@@ -30,11 +30,7 @@ public class UiCustomizationRule implements ConfigurationComponent<UiCustomizati
     @Override
     public UiCustomizationRule merge(final UiCustomizationRule other) {
         if (other != null) {
-            for (final Map.Entry<String, Object> entry : other.roleMap.entrySet()) {
-                if (!roleMap.containsKey(entry.getKey())) {
-                    roleMap.put(entry.getKey(), entry.getValue());
-                }
-            }
+            other.roleMap.entrySet().stream().filter(entry -> !roleMap.containsKey(entry.getKey())).forEach(entry -> roleMap.put(entry.getKey(), entry.getValue()));
         }
 
         return this;

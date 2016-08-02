@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -70,11 +71,7 @@ public class IdolConfigurationController {
         }
 
         final List<SecurityType> types = communityService.getSecurityTypes(new AciServerDetails(protocol, host, port));
-        final List<String> typeNames = new ArrayList<>();
-
-        for (final SecurityType type : types) {
-            typeNames.add(type.getName());
-        }
+        final List<String> typeNames = types.stream().map(SecurityType::getName).collect(Collectors.toList());
 
         return Collections.singletonMap("securityTypes", typeNames);
     }

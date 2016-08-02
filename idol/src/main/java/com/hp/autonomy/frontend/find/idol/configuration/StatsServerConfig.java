@@ -25,6 +25,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.Set;
 
 @Data
@@ -54,7 +55,7 @@ public class StatsServerConfig implements ConfigurationComponent {
         return enabled;
     }
 
-    public ValidationResult<?> validate(final AciService aciService, final Set<Statistic> requiredStatistics, final IdolAnnotationsProcessorFactory processorFactory) {
+    public ValidationResult<?> validate(final AciService aciService, final Collection<Statistic> requiredStatistics, final IdolAnnotationsProcessorFactory processorFactory) {
         final ValidationResult<?> serverResult =  server.validate(aciService, null, processorFactory);
 
         if (!serverResult.isValid()) {
@@ -65,22 +66,14 @@ public class StatsServerConfig implements ConfigurationComponent {
 
         try {
             statistics = aciService.executeAction(server.toAciServerDetails(), new AciParameters("GetStatus"), new StatisticProcessor(processorFactory));
-        } catch (final ProcessorException | AciServiceException e) {
+        } catch (final ProcessorException | AciServiceException ignored) {
             return new ValidationResult<>(false, ValidationKey.CONNECTION_ERROR);
         }
 
         if (!statistics.containsAll(requiredStatistics)) {
-            for (final Statistic statistic : statistics) {
-                if (!requiredStatistics.contains(statistic)) {
-                    log.debug("Additional statistic present in StatsServer: {}", statistic);
-                }
-            }
+            statistics.stream().filter(statistic -> !requiredStatistics.contains(statistic)).forEach(statistic -> log.debug("Additional statistic present in StatsServer: {}", statistic));
 
-            for (final Statistic requiredStatistic : requiredStatistics) {
-                if (!statistics.contains(requiredStatistic)) {
-                    log.debug("Required statistic missing from StatsServer: {}", requiredStatistic);
-                }
-            }
+            requiredStatistics.stream().filter(requiredStatistic -> !statistics.contains(requiredStatistic)).forEach(requiredStatistic -> log.debug("Required statistic missing from StatsServer: {}", requiredStatistic));
 
             return new ValidationResult<>(false, ValidationKey.INVALID_CONFIGURATION);
         }
@@ -101,7 +94,7 @@ public class StatsServerConfig implements ConfigurationComponent {
     }
 
     private enum ValidationKey  {
-        CONNECTION_ERROR, INVALID_CONFIGURATION;
+        CONNECTION_ERROR, INVALID_CONFIGURATION
     }
 
 }

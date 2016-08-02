@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Service
 public class FindHodDatabasesServiceImpl extends HodDatabasesService implements FindHodDatabasesService {
@@ -55,11 +56,7 @@ public class FindHodDatabasesServiceImpl extends HodDatabasesService implements 
 
         final List<Resource> resources = new ArrayList<>(indexes.getResources().size());
 
-        for (final Resource resource : indexes.getResources()) {
-            if (CONTENT_FLAVOURS.contains(resource.getFlavour())) {
-                resources.add(resource);
-            }
-        }
+        resources.addAll(indexes.getResources().stream().filter(resource -> CONTENT_FLAVOURS.contains(resource.getFlavour())).collect(Collectors.toList()));
 
         return new Resources(resources, indexes.getPublicResources());
     }

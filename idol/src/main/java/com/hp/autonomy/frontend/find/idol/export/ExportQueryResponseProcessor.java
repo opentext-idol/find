@@ -32,20 +32,12 @@ import java.util.Map;
 class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
     private static final String HIT_NODE_NAME = "autn:hit";
 
-    static final Converter<String, String> STRING_CONVERTER = new Converter<String, String>() {
-        @Override
-        public String convert(final String source) {
-            return source;
-        }
-    };
+    static final Converter<String, String> STRING_CONVERTER = source -> source;
 
-    static final Converter<String, String> DATE_CONVERTER = new Converter<String, String>() {
-        @Override
-        public String convert(final String source) {
-            final long epoch = Long.parseLong(source) * 1000;
-            final DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
-            return formatter.print(epoch);
-        }
+    static final Converter<String, String> DATE_CONVERTER = source -> {
+        final long epoch = Long.parseLong(source) * 1000;
+        final DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
+        return formatter.print(epoch);
     };
 
     private static final Map<String, IdolMetadataNode> METADATA_NODES = new HashMap<>();
@@ -133,7 +125,7 @@ class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
 
     private void addValueToMap(final Map<String, List<String>> valueMap, final String name, final String value) {
         if (!valueMap.containsKey(name)) {
-            valueMap.put(name, new ArrayList<String>());
+            valueMap.put(name, new ArrayList<>());
         }
 
         valueMap.get(name).add(value);

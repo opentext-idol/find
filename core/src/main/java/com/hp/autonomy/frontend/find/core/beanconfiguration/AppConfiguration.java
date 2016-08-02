@@ -11,11 +11,9 @@ import com.hp.autonomy.frontend.configuration.Config;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
-import com.hp.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter;
 import com.hp.autonomy.frontend.logging.ApplicationStartLogger;
 import com.hp.autonomy.frontend.logging.UserLoggingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.ErrorPage;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
@@ -52,17 +50,14 @@ public class AppConfiguration<C extends Config<C>> {
     @Bean
     public EmbeddedServletContainerCustomizer containerCustomizer() {
 
-        return new EmbeddedServletContainerCustomizer() {
-            @Override
-            public void customize(final ConfigurableEmbeddedServletContainer container) {
+        return container -> {
 
-                final ErrorPage error401Page = new ErrorPage(HttpStatus.UNAUTHORIZED, DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH);
-                final ErrorPage error403Page = new ErrorPage(HttpStatus.FORBIDDEN, DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH);
-                final ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, DispatcherServletConfiguration.NOT_FOUND_ERROR_PATH);
-                final ErrorPage error500Page = new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, DispatcherServletConfiguration.SERVER_ERROR_PATH);
+            final ErrorPage error401Page = new ErrorPage(HttpStatus.UNAUTHORIZED, DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH);
+            final ErrorPage error403Page = new ErrorPage(HttpStatus.FORBIDDEN, DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH);
+            final ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, DispatcherServletConfiguration.NOT_FOUND_ERROR_PATH);
+            final ErrorPage error500Page = new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, DispatcherServletConfiguration.SERVER_ERROR_PATH);
 
-                container.addErrorPages(error401Page, error403Page, error404Page, error500Page);
-            }
+            container.addErrorPages(error401Page, error403Page, error404Page, error500Page);
         };
     }
 
@@ -105,7 +100,6 @@ public class AppConfiguration<C extends Config<C>> {
     }
 
     @Bean
-    @Autowired
     public ValidationService<C> validationService() {
         final ValidationServiceImpl<C> validationService = new ValidationServiceImpl<>();
 

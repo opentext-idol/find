@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = SavedSearch.Table.NAME)
@@ -181,11 +182,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         if (CollectionUtils.isEmpty(conceptClusterPhrases)) {
             return queryText;
         } else {
-            final Collection<String> quotedConcepts = new LinkedList<>();
-
-            for (final ConceptClusterPhrase clusterPhrase : conceptClusterPhrases) {
-                quotedConcepts.add(wrapQuotes(clusterPhrase.getPhrase()));
-            }
+            final Collection<String> quotedConcepts = conceptClusterPhrases.stream().map(clusterPhrase -> wrapQuotes(clusterPhrase.getPhrase())).collect(Collectors.toCollection(LinkedList::new));
 
             return '(' + queryText + ") " + StringUtils.join(quotedConcepts, ' ');
         }

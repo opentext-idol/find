@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequestMapping(FieldsController.FIELDS_PATH)
 public abstract class FieldsController<R extends FieldsRequest, E extends Exception, S extends Serializable, Q extends QueryRestrictions<S>, P extends ParametricRequest<S>> {
@@ -65,7 +66,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     @RequestMapping(value = GET_PARAMETRIC_NUMERIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public List<FieldAndValueDetails> getParametricNumericFields(final R request) throws E {
-        return fetchParametricFieldAndValueDetails(request, FieldTypeParam.Numeric, Collections.<String>emptyList());
+        return fetchParametricFieldAndValueDetails(request, FieldTypeParam.Numeric, Collections.emptyList());
     }
 
     @RequestMapping(value = GET_PARAMETRIC_DATE_FIELDS_PATH, method = RequestMethod.GET)
@@ -86,10 +87,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
             parametricFields.add(new TagName(field));
         }
 
-        final List<String> fieldNames = new LinkedList<>();
-        for (final TagName tagName : parametricFields) {
-            fieldNames.add(tagName.getId());
-        }
+        final List<String> fieldNames = parametricFields.stream().map(TagName::getId).collect(Collectors.toCollection(LinkedList::new));
 
         final P parametricRequest = parametricRequestBuilderFactory.getObject()
                 .setFieldNames(fieldNames)

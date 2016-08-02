@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @Configuration
 @Conditional(RedisCondition.class)
@@ -44,11 +45,7 @@ public class RedisHodConfiguration {
                     .setDatabase(database)
                     .build());
         } else {
-            final Collection<RedisTokenRepositorySentinelConfig.HostAndPort> sentinels = new HashSet<>();
-
-            for (final HostAndPort hostAndPort : redisConfig.getSentinels()) {
-                sentinels.add(new RedisTokenRepositorySentinelConfig.HostAndPort(hostAndPort.getHost(), hostAndPort.getPort()));
-            }
+            final Collection<RedisTokenRepositorySentinelConfig.HostAndPort> sentinels = redisConfig.getSentinels().stream().map(hostAndPort -> new RedisTokenRepositorySentinelConfig.HostAndPort(hostAndPort.getHost(), hostAndPort.getPort())).collect(Collectors.toCollection(HashSet::new));
 
             return new RedisTokenRepository(new RedisTokenRepositorySentinelConfig.Builder()
                     .setHostsAndPorts(sentinels)

@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(SavedSnapshotController.PATH)
@@ -108,9 +109,7 @@ class SavedSnapshotController {
         } else {
             indexes = new ArrayList<>();
 
-            for (final EmbeddableIndex embeddableIndex : snapshot.getIndexes()) {
-                indexes.add(embeddableIndex.getName());
-            }
+            indexes.addAll(snapshot.getIndexes().stream().map(EmbeddableIndex::getName).collect(Collectors.toList()));
         }
 
         final QueryRestrictions<String> restrictions = new IdolQueryRestrictions.Builder()

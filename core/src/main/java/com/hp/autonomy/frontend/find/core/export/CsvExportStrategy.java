@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class CsvExportStrategy implements ExportStrategy {
@@ -45,9 +46,7 @@ public class CsvExportStrategy implements ExportStrategy {
             fieldNames.add(metadataNode.getName());
         }
 
-        for (final FieldInfo<?> field : getFieldConfig()) {
-            fieldNames.add(field.getId());
-        }
+        fieldNames.addAll(getFieldConfig().stream().map(FieldInfo::getId).collect(Collectors.toList()));
 
         return fieldNames;
     }

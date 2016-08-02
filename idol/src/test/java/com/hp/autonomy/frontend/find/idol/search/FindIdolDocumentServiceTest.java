@@ -35,15 +35,15 @@ public class FindIdolDocumentServiceTest extends IdolDocumentServiceTest {
         final QueryResponseData responseData = new QueryResponseData();
         final AciErrorException blacklistError = new AciErrorException();
         blacklistError.setErrorString(FindIdolDocumentService.MISSING_RULE_ERROR);
-        when(aciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenThrow(blacklistError).thenReturn(responseData);
+        when(aciService.executeAction(anySetOf(AciParameter.class), any())).thenThrow(blacklistError).thenReturn(responseData);
 
         idolDocumentService.queryTextIndex(mockQueryParams(SearchRequest.QueryType.MODIFIED));
-        verify(queryResponseParser).parseQueryResults(Matchers.<AciSearchRequest<String>>any(), any(AciParameters.class), eq(responseData), any(IdolDocumentService.QueryExecutor.class));
+        verify(queryResponseParser).parseQueryResults(any(), any(AciParameters.class), eq(responseData), any());
     }
 
     @Test(expected = AciErrorException.class)
     public void queryQmsButUnexpectedError() {
-        when(aciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenThrow(new AciErrorException());
+        when(aciService.executeAction(anySetOf(AciParameter.class), any())).thenThrow(new AciErrorException());
 
         idolDocumentService.queryTextIndex(mockQueryParams(SearchRequest.QueryType.MODIFIED));
     }

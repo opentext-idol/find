@@ -10,9 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.junit.Test;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.util.List;
 
@@ -24,7 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public abstract class AbstractTypeAheadIT extends AbstractFindIT {
-    private static final TypeReference<List<String>> RESPONSE_TYPE = new TypeReference<List<String>>() {};
+    private static final TypeReference<List<String>> RESPONSE_TYPE = new TypeReference<List<String>>() {
+    };
 
     private final String inputText;
     private final String expectedSuggestion;
@@ -44,12 +43,9 @@ public abstract class AbstractTypeAheadIT extends AbstractFindIT {
         mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(new ResultMatcher() {
-                    @Override
-                    public void match(final MvcResult result) throws Exception {
-                        final List<String> output = objectMapper.readValue(result.getResponse().getContentAsString(), RESPONSE_TYPE);
-                        assertThat(output, hasItem(expectedSuggestion));
-                    }
+                .andExpect(result -> {
+                    final List<String> output = objectMapper.readValue(result.getResponse().getContentAsString(), RESPONSE_TYPE);
+                    assertThat(output, hasItem(expectedSuggestion));
                 });
     }
 }

@@ -68,21 +68,18 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(new HodAuthenticationProvider(
                 tokenRepository,
-                new GrantedAuthoritiesResolver() {
-                    @Override
-                    public Collection<GrantedAuthority> resolveAuthorities(final TokenProxy<EntityType.Combined, TokenType.Simple> tokenProxy, final CombinedTokenInformation combinedTokenInformation) {
-                        final Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>(2);
-                        grantedAuthorities.add(new SimpleGrantedAuthority(FindRole.USER.toString()));
+                (tokenProxy, combinedTokenInformation) -> {
+                    final Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>(2);
+                    grantedAuthorities.add(new SimpleGrantedAuthority(FindRole.USER.toString()));
 
-                        for (final GroupInformation groupInformation : combinedTokenInformation.getUser().getGroups()) {
-                            if (enableBi && groupInformation.getGroups().contains(HOD_BI_ROLE)) {
-                                grantedAuthorities.add(new SimpleGrantedAuthority(FindRole.BI.toString()));
-                                break;
-                            }
+                    for (final GroupInformation groupInformation : combinedTokenInformation.getUser().getGroups()) {
+                        if (enableBi && groupInformation.getGroups().contains(HOD_BI_ROLE)) {
+                            grantedAuthorities.add(new SimpleGrantedAuthority(FindRole.BI.toString()));
+                            break;
                         }
-
-                        return grantedAuthorities;
                     }
+
+                    return grantedAuthorities;
                 },
                 authenticationService,
                 unboundTokenService,

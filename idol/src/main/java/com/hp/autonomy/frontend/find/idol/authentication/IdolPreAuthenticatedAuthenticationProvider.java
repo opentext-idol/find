@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -61,7 +62,7 @@ public class IdolPreAuthenticatedAuthenticationProvider implements Authenticatio
 
             if(USER_NOT_FOUND_ERROR_ID.equals(e.getErrorId())) {
                 // use empty password so that auto created users cannot be authenticated against
-                this.userService.addUser(username, "", UserConfiguration.IDOL_USER_ROLE);
+                userService.addUser(username, "", UserConfiguration.IDOL_USER_ROLE);
 
                 user = userService.getUser(username);
             } else {
@@ -69,11 +70,7 @@ public class IdolPreAuthenticatedAuthenticationProvider implements Authenticatio
             }
         }
 
-        final Collection<SimpleGrantedAuthority> grantedAuthorities = new HashSet<>();
-
-        for (final String role : user.getRoles()) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(role));
-        }
+        final Collection<SimpleGrantedAuthority> grantedAuthorities = user.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toCollection(HashSet::new));
 
         return new UsernamePasswordAuthenticationToken(new CommunityPrincipal(user.getUid(), username, user.getSecurityInfo()), null, authoritiesMapper.mapAuthorities(grantedAuthorities));
     }

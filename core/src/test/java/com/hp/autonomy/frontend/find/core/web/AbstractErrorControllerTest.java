@@ -46,7 +46,7 @@ public abstract class AbstractErrorControllerTest<T extends CustomErrorControlle
     @Test
     public void authenticationErrorPage() {
         assertNotNull(errorController.authenticationErrorPage(request, response));
-        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<ErrorModelAndViewInfo>("mainMessageCode", is(CustomErrorController.MESSAGE_CODE_AUTHENTICATION_ERROR_MAIN))));
+        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<>("mainMessageCode", is(CustomErrorController.MESSAGE_CODE_AUTHENTICATION_ERROR_MAIN))));
     }
 
     @Test
@@ -54,20 +54,20 @@ public abstract class AbstractErrorControllerTest<T extends CustomErrorControlle
         request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, mock(Exception.class));
 
         assertNotNull(errorController.serverErrorPage(request, response));
-        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<ErrorModelAndViewInfo>("mainMessageCode", is(CustomErrorController.MESSAGE_CODE_INTERNAL_SERVER_ERROR_MAIN))));
-        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<ErrorModelAndViewInfo>("subMessageCode", is(CustomErrorController.MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB))));
+        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<>("mainMessageCode", is(CustomErrorController.MESSAGE_CODE_INTERNAL_SERVER_ERROR_MAIN))));
+        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<>("subMessageCode", is(CustomErrorController.MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB))));
     }
 
     @Test
     public void serverErrorPageWithoutUUID() {
         assertNotNull(errorController.serverErrorPage(request, response));
-        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<ErrorModelAndViewInfo>("mainMessageCode", is(CustomErrorController.MESSAGE_CODE_INTERNAL_SERVER_ERROR_MAIN))));
-        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<ErrorModelAndViewInfo>("subMessageCode", is(CustomErrorController.MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB))));
+        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<>("mainMessageCode", is(CustomErrorController.MESSAGE_CODE_INTERNAL_SERVER_ERROR_MAIN))));
+        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<>("subMessageCode", is(CustomErrorController.MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB))));
     }
 
     @Test
     public void notFoundError() {
         assertNotNull(errorController.notFoundError(request, response));
-        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<ErrorModelAndViewInfo>("mainMessageCode", is(CustomErrorController.MESSAGE_CODE_NOT_FOUND_MAIN))));
+        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<>("mainMessageCode", is(CustomErrorController.MESSAGE_CODE_NOT_FOUND_MAIN))));
     }
 }

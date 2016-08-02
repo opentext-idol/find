@@ -30,36 +30,17 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class HodExportService implements ExportService<ResourceIdentifier, HodErrorException> {
     private static final Map<FieldType, Converter<Object, String>> CONVERTER_MAP = new EnumMap<>(FieldType.class);
 
     static {
-        CONVERTER_MAP.put(FieldType.STRING, new Converter<Object, String>() {
-            @Override
-            public String convert(final Object source) {
-                return source.toString();
-            }
-        });
-        CONVERTER_MAP.put(FieldType.BOOLEAN, new Converter<Object, String>() {
-            @Override
-            public String convert(final Object source) {
-                return source.toString();
-            }
-        });
-        CONVERTER_MAP.put(FieldType.NUMBER, new Converter<Object, String>() {
-            @Override
-            public String convert(final Object source) {
-                return source.toString();
-            }
-        });
-        CONVERTER_MAP.put(FieldType.DATE, new Converter<Object, String>() {
-            @Override
-            public String convert(final Object source) {
-                return ISODateTimeFormat.dateTime().print((ReadableInstant) source);
-            }
-        });
+        CONVERTER_MAP.put(FieldType.STRING, Object::toString);
+        CONVERTER_MAP.put(FieldType.BOOLEAN, Object::toString);
+        CONVERTER_MAP.put(FieldType.NUMBER, Object::toString);
+        CONVERTER_MAP.put(FieldType.DATE, source -> ISODateTimeFormat.dateTime().print((ReadableInstant) source));
     }
 
     private final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService;
@@ -113,9 +94,7 @@ public class HodExportService implements ExportService<ResourceIdentifier, HodEr
         final List<String> stringList;
         if (fieldInfo != null) {
             stringList = new ArrayList<>(fieldInfo.getValues().size());
-            for (final Object value : fieldInfo.getValues()) {
-                stringList.add(CONVERTER_MAP.get(fieldInfo.getType()).convert(value));
-            }
+            stringList.addAll(fieldInfo.getValues().stream().map(value -> CONVERTER_MAP.get(fieldInfo.getType()).convert(value)).collect(Collectors.toList()));
         } else {
             stringList = Collections.emptyList();
         }
