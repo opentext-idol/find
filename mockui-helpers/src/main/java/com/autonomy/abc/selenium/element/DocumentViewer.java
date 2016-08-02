@@ -111,10 +111,6 @@ public class DocumentViewer extends AppElement implements AppPage {
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
     }
 
-    public void openInNewTab() {
-        findElement(By.xpath("//*[text()='Open in New Tab']")).click();
-    }
-
     public boolean previewPresent(){
         return  findElement(By.id("colorbox")).isDisplayed();
     }

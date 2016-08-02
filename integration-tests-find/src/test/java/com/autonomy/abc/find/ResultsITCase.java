@@ -3,10 +3,10 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,9 +54,8 @@ public class ResultsITCase extends FindTestBase {
         }
     }
 
-    //Both correctly failing last part because some titles are duplicates
     @Test
-    @ActiveBug("CSA-2082")
+    @ResolvedBug("CSA-2082")
     public void testAutoScroll() {
         ResultsView results = findService.search("nightmare");
 
@@ -67,16 +67,23 @@ public class ResultsITCase extends FindTestBase {
         findPage.scrollToBottom();
         verifyThat(results.getResults(), hasSize(allOf(greaterThanOrEqualTo(60), lessThanOrEqualTo(90))));
 
-        final List<String> titles = results.getResultTitles();
-        final Set<String> titlesSet = new HashSet<>(titles);
+        List<String> references = new ArrayList<>();
 
-        verifyThat("No duplicate titles", titles, hasSize(titlesSet.size()));
+        for(FindResult result : results.getResults()){
+            references.add(result.getReference());
+        }
+
+        Set<String> referencesSet = new HashSet<>(references);
+
+        /* References apparently may not be unique, but they're definitely ~more unique
+                than titles within our data set  */
+        verifyThat("No duplicate references", references, hasSize(referencesSet.size()));
     }
 
     @Test
     @ResolvedBug("CCUK-3647")
     public void testNoMoreResultsFoundAtEnd() {
-        ResultsView results = findService.search(new Query("oesophageal"));
+        ResultsView results = findService.search(new Query("Cheese AND Onion"));
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 

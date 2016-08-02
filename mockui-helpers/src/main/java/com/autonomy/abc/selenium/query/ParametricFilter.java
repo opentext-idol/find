@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.query;
 
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -20,6 +21,18 @@ public class ParametricFilter implements QueryFilter {
         this.map = new HashMap<>(map);
     }
 
+    /**
+     * Used for clearing all filters as obviously won't go round the for each loop considering the empty map
+     *   but will still run uncheckAll
+     */
+    private ParametricFilter() {
+        this.map = new HashMap<>();
+    }
+
+    public static ParametricFilter clearFilters(){
+        return new ParametricFilter();
+    }
+
     @Override
     public void apply(final QueryFilter.Filterable page) {
         if(page instanceof Filterable){
@@ -29,6 +42,7 @@ public class ParametricFilter implements QueryFilter {
 
             for(final Map.Entry<String, String> entry : map.entrySet()){
                 final WebElement filterContainer = filterContainer(parametricContainer, entry.getKey());
+                openContainer(filterContainer);
                 fieldCheckbox(filterContainer, entry.getValue()).click();
                 filterable.waitForParametricValuesToLoad();
             }
@@ -36,7 +50,16 @@ public class ParametricFilter implements QueryFilter {
     }
 
     private WebElement filterContainer(final WebElement parametricContainer, final String category){
-        return parametricContainer.findElement(By.cssSelector("[data-field='" + category.replace(" ","_") + "']"));
+        return parametricContainer.findElement(By.cssSelector("[data-field-display-name='" + category + "']"));
+    }
+
+    private void openContainer(WebElement container) {
+        WebElement list = container.findElement(By.className("collapse"));
+
+        if(list.getAttribute("aria-expanded").equals("false")) {
+            container.click();
+            Waits.loadOrFadeWait();
+        }
     }
 
     private WebElement fieldCheckbox(final WebElement filterContainer, final String field){
@@ -48,18 +71,12 @@ public class ParametricFilter implements QueryFilter {
     }
 
     private void uncheckAll(final WebElement parametricContainer, final Filterable filterable){
-        final List<WebElement> checkboxes;
+        By checkbox = By.cssSelector(".parametric-value-icon:not(.hide)");
+        List<WebElement> checkboxes = parametricContainer.findElements(checkbox);
 
-        checkboxes = parametricContainer.findElements(By.className("icheckbox_square-green"));
-        if(checkboxes.isEmpty()){
-            parametricContainer.findElements(By.className("fa-check"));
-        }
-
-        for(final WebElement element : checkboxes){
-            if(isUnchecked(element)){
-                element.click();
-                filterable.waitForParametricValuesToLoad();
-            }
+        for(int i = 0; i < checkboxes.size(); i++) {
+            parametricContainer.findElement(checkbox).click();
+            filterable.waitForParametricValuesToLoad();
         }
     }
 

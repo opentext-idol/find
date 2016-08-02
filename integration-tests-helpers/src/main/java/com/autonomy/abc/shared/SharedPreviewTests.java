@@ -7,6 +7,7 @@ import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.util.Waits;
+import com.sun.xml.internal.bind.v2.TODO;
 
 import java.util.List;
 
@@ -41,26 +42,10 @@ public class SharedPreviewTests {
         verifyThat("frame has content", frameText, not(isEmptyOrNullString()));
         verifyThat(frameText, not(containsString("server error")));
 
-        testOpenInNewTabFromViewer(session, documentViewer);
+//        TODO Can no longer open in a new tab from document preview - should probably check whether can open full preview
     }
 
     public static void testDocumentPreview(final Session session, final DocumentViewer documentViewer){
         testDocumentPreview(session, documentViewer, null);
-    }
-
-    public static void testOpenInNewTabFromViewer(final Session session, final DocumentViewer documentViewer){
-        final String reference = documentViewer.getReference();
-
-        final Window original = session.getActiveWindow();
-        documentViewer.openInNewTab();
-        Waits.loadOrFadeWait();
-        final Window newWindow = session.switchWindow(session.countWindows() - 1);
-        newWindow.activate();
-
-        //need to split because newWindow URL could be "https..."
-        verifyThat(reference,containsString(session.getDriver().getCurrentUrl().split(":")[1]));
-
-        newWindow.close();
-        original.activate();
     }
 }

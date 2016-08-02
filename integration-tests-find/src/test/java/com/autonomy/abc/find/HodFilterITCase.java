@@ -6,6 +6,8 @@ import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
+import com.autonomy.abc.selenium.find.preview.DocumentPreviewer;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
@@ -70,12 +72,12 @@ public class HodFilterITCase extends HsodFindTestBase {
                 assertThat(result.icon().getAttribute("class"), containsString(f.getFileIconString()));
             }
 
-            findPage.filterBy(new ParametricFilter("Content Type", f.getSidebarString()));
+            findPage.filterBy(ParametricFilter.clearFilters());
         }
     }
 
     @Test
-    @ActiveBug("CCUK-3641")
+    @ResolvedBug("CCUK-3641")
     public void testAuthor(){
         final String author = "FIFA.COM";
 
@@ -88,8 +90,13 @@ public class HodFilterITCase extends HsodFindTestBase {
         final List<FindResult> searchResults = results.getResults();
 
         for(int i = 0; i < 6; i++){
-            final DocumentViewer documentViewer = searchResults.get(i).openDocumentPreview();
-            verifyThat(documentViewer.getAuthor(), equalToIgnoringCase(author));
+            final DocumentPreviewer documentViewer = (DocumentPreviewer) searchResults.get(i).openDocumentPreview();
+            documentViewer.openPreview();
+
+            DetailedPreviewPage preview = getElementFactory().getDetailedPreview();
+            verifyThat(preview.getAuthor(), equalToIgnoringCase(author));
+
+            preview.goBackToSearch();
             documentViewer.close();
         }
     }
