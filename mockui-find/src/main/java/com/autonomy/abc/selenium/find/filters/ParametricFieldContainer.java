@@ -31,7 +31,21 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
 
     @Override
     public List<String> getChildNames() {
-        return ElementUtil.getTexts(getChildren());
+        final boolean startedCollapsed = this.isCollapsed();
+
+        // text cannot be read if it is not visible
+        if (startedCollapsed) {
+            this.expand();
+        }
+
+        final List<String> childNames = ElementUtil.getTexts(getChildren());
+
+        // restore collapsed state
+        if (startedCollapsed) {
+            this.collapse();
+        }
+
+        return childNames;
     }
 
     //visible only

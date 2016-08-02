@@ -52,13 +52,14 @@ public class FilterPanel {
 
     //CONTAINERS FOR FILTERS
     private List<ListFilterContainer> allFilterContainers() {
-        final List<ListFilterContainer> nodes = new ArrayList<ListFilterContainer>(parametricFieldContainers());
-        nodes.add(0, indexesTreeContainer());
-        nodes.add(1, dateFilterContainer());
+        final List<ListFilterContainer> nodes = new ArrayList<>();
+        nodes.add(indexesTreeContainer());
+        nodes.add(dateFilterContainer());
+        nodes.addAll(parametricFieldContainers());
         return nodes;
     }
 
-    private ListFilterContainer indexesTreeContainer() {
+    public ListFilterContainer indexesTreeContainer() {
         final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
         final WebElement container = ElementUtil.ancestor(heading, 2);
         return new IndexesTreeContainer(container, driver);
@@ -126,13 +127,14 @@ public class FilterPanel {
 
     //METAFILTERING
     public void filterResults(final String term) {
-        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter...']")), driver);
+        // placeholder text uses ellipsis unicode character
+        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter\u2026']")), driver);
         input.clear();
         input.setAndSubmit(term);
     }
 
     public void clearFilter() {
-        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter...']")), driver);
+        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter\u2026']")), driver);
         input.clear();
         waitForIndexes();
     }
