@@ -7,7 +7,6 @@ import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import com.sun.xml.internal.bind.v2.TODO;
 
 import java.util.List;
 
