@@ -40,8 +40,6 @@ define([
         'app.until': 'Until',
         'app.user': 'User',
         'app.users': 'Users',
-        'app.feature.search': 'Search',
-        'app.feature.promotions': 'Promotions',
         'datepicker.language': 'en',
         'default.title': 'Page Unavailable',
         'default.message': "We can't find the page you requested.",

@@ -45,7 +45,6 @@ define([
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
-        errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
 
         events: function() {
             var events = {
@@ -146,8 +145,6 @@ define([
                 this.listenTo(this.promotionsCollection, 'error', function(collection, xhr) {
                     this.promotionsFinished = true;
                     this.clearLoadingSpinner();
-
-                    this.$('.main-results-content .promotions').append(this.handleError(i18n['app.feature.promotions'], xhr));
                 });
             }
 
@@ -172,7 +169,7 @@ define([
                 this.resultsFinished = true;
                 this.clearLoadingSpinner();
 
-                this.$('.main-results-content .results').append(this.handleError(i18n['app.feature.search'], xhr));
+                this.handleError(xhr);
             });
 
 
@@ -206,7 +203,6 @@ define([
                         this.$loadingSpinner.removeClass('hide');
                     }
                     this.toggleError(false);
-                    this.$('.main-results-content .error .error-list').empty();
                     this.$('.main-results-content .results').empty();
                 }
             }
@@ -237,12 +233,10 @@ define([
             }
         },
 
-        handleError: function(feature, xhr) {
+        handleError: function(xhr) {
             this.toggleError(true);
             var message = this.generateErrorMessage(xhr);
-
-            var messageTemplate = this.errorTemplate({feature: feature, error: message});
-            this.$('.main-results-content .error .error-list').append(messageTemplate);
+            this.$('.main-results-content .error-message').text(message);
         },
 
         toggleError: function(on) {

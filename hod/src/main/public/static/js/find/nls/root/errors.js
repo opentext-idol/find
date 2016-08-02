@@ -12,7 +12,7 @@ define([
         'error.default.message.uuid': 'Unknown error with UUID: {0}, please contact support.',
         'error.default.message': 'Unknown error, please contact support.',
         'hod.error.INVALID_QUERY_TEXT': 'All terms were invalid, through being stopwords, too short, or incorrectly formatted',
-        'hod.error.NO_IGNORE_SPECIALS': 'Invalid use of special tokens',
+        'hod.error.NO_IGNORE_SPECIALS': 'Find did not understand your search text',
         'hod.error.QUERY_PROFILE_NAME_INVALID': 'Query profile name is invalid, please contact support',
         'hod.error.QUERY_PROFILE_NAME_NOT_PROVIDED': 'Query profile name missing, please contact support',
         'hod.error.QUERY_MANIPULATION_INDEX_INVALID': 'Query manipulation index is invalid, please contact support',
