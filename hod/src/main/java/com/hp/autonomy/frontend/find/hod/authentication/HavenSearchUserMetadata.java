@@ -6,19 +6,16 @@
 package com.hp.autonomy.frontend.find.hod.authentication;
 
 import com.google.common.collect.ImmutableMap;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Map;
 
-@NoArgsConstructor(access = AccessLevel.NONE)
-public class HavenSearchUserMetadata {
+public interface HavenSearchUserMetadata {
+    String LEGACY_USER_DISPLAY_NAME = "HAVEN_SEARCH_ONDEMAND_USERNAME";
+    String USER_DISPLAY_NAME = "DisplayName";
 
-    public static final String USERNAME = "HAVEN_SEARCH_ONDEMAND_USERNAME";
-
-    public static final Map<String, Class<? extends Serializable>> METADATA_TYPES = ImmutableMap.<String, Class<? extends Serializable>>builder()
-            .put(USERNAME, String.class)
+    Map<String, Class<? extends Serializable>> METADATA_TYPES = ImmutableMap.<String, Class<? extends Serializable>>builder()
+            .put(LEGACY_USER_DISPLAY_NAME, String.class)
+            .put(USER_DISPLAY_NAME, String.class)
             .build();
-
 }
