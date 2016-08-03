@@ -9,6 +9,7 @@ define([
     'i18n!find/nls/bundle',
     'find/idol/nls/root/snapshots',
     'find/app/model/saved-searches/saved-search-model',
+    'find/idol/app/model/idol-indexes-collection',
     'find/idol/app/page/search/idol-service-view',
     'find/idol/app/page/search/suggest/idol-suggest-view',
     'find/idol/app/page/search/snapshots/snapshot-data-view',
@@ -19,12 +20,13 @@ define([
     'find/idol/app/page/search/idol-query-left-side-view',
     'find/idol/app/page/search/comparison/compare-modal',
     'find/app/configuration'
-], function(FindSearch, _, i18n, snapshotsI18n, SavedSearchModel, ServiceView, SuggestView, SnapshotDataView, ComparisonView, stateTokenStrategy,
+], function(FindSearch, _, i18n, snapshotsI18n, SavedSearchModel, IndexesCollection, ServiceView, SuggestView, SnapshotDataView, ComparisonView, stateTokenStrategy,
             ComparisonDocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView, CompareModal, configuration) {
 
     'use strict';
 
     return FindSearch.extend({
+        IndexesCollection: IndexesCollection,
         ServiceView: ServiceView,
         SuggestView: SuggestView,
         QueryLeftSideView: IdolQueryLeftSideView,

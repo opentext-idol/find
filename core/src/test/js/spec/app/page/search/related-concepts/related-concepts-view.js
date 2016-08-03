@@ -6,10 +6,9 @@
 define([
     'backbone',
     'find/app/page/search/related-concepts/related-concepts-view',
-    'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
     'jasmine-jquery'
-], function(Backbone, RelatedConceptsView, IndexesCollection, EntityCollection) {
+], function(Backbone, RelatedConceptsView, EntityCollection) {
 
     describe('Related concepts view', function() {
         function createView() {
@@ -29,7 +28,7 @@ define([
         }
 
         beforeEach(function() {
-            this.indexesCollection = new IndexesCollection();
+            this.indexesCollection = new Backbone.Collection();
             this.queryModel = new Backbone.Model();
 
             this.queryTextModel = new Backbone.Model({

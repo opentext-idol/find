@@ -4,9 +4,9 @@
  */
 
 define(function() {
-    
     'use strict';
 
+    //noinspection JSUnusedGlobalSymbols
     return {
         resolveDatabaseNameForModel: function (model) {
             return encodeURIComponent(model.get('name'));
@@ -14,6 +14,12 @@ define(function() {
 
         resolveDatabaseNameForDocumentModel: function (model) {
             return encodeURIComponent(model.get('index'));
+        },
+
+        getDatabaseInfoFromCollection: function (selectedDatabaseCollection) {
+            return selectedDatabaseCollection.map(function (model) {
+                return model.pick('name');
+            });
         }
     };
     

@@ -4,5 +4,5 @@
  */
 
 define(function() {
-    return jasmine.createSpyObj('databaseNameResolver', ['constructDatabaseString', 'resolveDatabaseNameForModel', 'resolveDatabaseNameForDocumentModel']);
+    return jasmine.createSpyObj('databaseNameResolver', ['constructDatabaseString', 'resolveDatabaseNameForModel', 'resolveDatabaseNameForDocumentModel', 'getDatabaseInfoFromCollection']);
 });

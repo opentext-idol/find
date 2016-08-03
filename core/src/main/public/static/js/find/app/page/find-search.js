@@ -9,7 +9,6 @@ define([
     'find/app/configuration',
     'find/app/model/dates-filter-model',
     'parametric-refinement/selected-values-collection',
-    'find/app/model/indexes-collection',
     'find/app/model/documents-collection',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
@@ -32,7 +31,7 @@ define([
     'jquery',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function (BasePage, Backbone, config, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
+], function (BasePage, Backbone, config, DatesFilterModel, SelectedParametricValuesCollection, DocumentsCollection,
              InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel,
              QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, events, router, vent, i18n, $, _, template) {
 
@@ -85,6 +84,7 @@ define([
         serviceViewOptions: _.constant({}),
 
         // Abstract
+        IndexesCollection: null,
         ServiceView: null,
         SuggestView: null,
         documentDetailOptions: null,
@@ -383,7 +383,7 @@ define([
                         initialSelectedIndexes = savedSelectedIndexes;
                     }
 
-                    queryState.selectedIndexes = new IndexesCollection(initialSelectedIndexes);
+                    queryState.selectedIndexes = new this.IndexesCollection(initialSelectedIndexes);
 
                     this.queryStates.set(cid, queryState);
 

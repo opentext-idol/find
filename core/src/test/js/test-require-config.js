@@ -27,9 +27,6 @@ require.config({
             'find/app/util/topic-map-view': 'mock/util/topic-map-view',
             'find/app/model/bucketed-parametric-collection': 'mock/model/bucketed-parametric-collection'
         },
-        'find/app/page/search/service-view': {
-            'find/app/model/indexes-collection': 'mock/model/indexes-collection'
-        },
         'find/app/page/search/related-concepts/related-concepts-view': {
             'find/app/model/documents-collection': 'mock/model/documents-collection'
         },

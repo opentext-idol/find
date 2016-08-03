@@ -3,8 +3,9 @@ define([
     'moment',
     'underscore',
     'find/app/util/array-equality',
+    'find/app/util/database-name-resolver',
     'find/app/model/dates-filter-model'
-], function(Backbone, moment, _, arraysEqual, DatesFilterModel) {
+], function(Backbone, moment, _, arraysEqual, databaseNameResolver, DatesFilterModel) {
     "use strict";
 
     /**
@@ -103,12 +104,6 @@ define([
 
     var arrayEqualityPredicate = _.partial(arraysEqual, _, _, _.isEqual);
 
-    // TODO: Remove this when toResourceIdentifiers consistently returns null for domains against IDOL
-    function selectedIndexToResourceIdentifier(selectedIndex) {
-        // Selected indexes against IDOL are either null, undefined or the empty string; normalize to null here
-        return {name: selectedIndex.name, domain: selectedIndex.domain || null};
-    }
-
     function relatedConceptsToClusterModel(relatedConcepts, clusterId) {
         if(!relatedConcepts.length) {
             return null;
@@ -186,7 +181,7 @@ define([
          * @return {Boolean}
          */
         equalsQueryState: function(queryState) {
-            var selectedIndexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
+            var selectedIndexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
 
             var parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
             return this.get('queryText') === queryState.queryTextModel.get('inputText')
@@ -257,7 +252,7 @@ define([
          * @return {SavedSearchModelAttributes}
          */
         attributesFromQueryState: function(queryState) {
-            var indexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
+            var indexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
             var parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
 
             return _.extend(

@@ -8,7 +8,7 @@ define([
     'find/app/model/dates-filter-model',
     'find/hod/app/model/hod-search-filters-collection',
     'parametric-refinement/selected-values-collection',
-    'databases-view/js/databases-collection',
+    'databases-view/js/hod-databases-collection',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
     'find/app/configuration',

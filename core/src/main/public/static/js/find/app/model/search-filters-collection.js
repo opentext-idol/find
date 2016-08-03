@@ -8,11 +8,12 @@ define([
     'underscore',
     'moment',
     'find/app/model/dates-filter-model',
+    'find/app/util/database-name-resolver',
     'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/prettify-field-name',
     'find/app/configuration',
     'i18n!find/nls/bundle'
-], function(Backbone, _, moment, DatesFilterModel, addChangeListener, prettifyFieldName, configuration, i18n) {
+], function(Backbone, _, moment, DatesFilterModel, databaseNameResolver, addChangeListener, prettifyFieldName, configuration, i18n) {
     "use strict";
 
     var DATE_FORMAT = "YYYY-MM-DD HH:mm";
@@ -121,7 +122,7 @@ define([
                     var field = model.get('field');
                     this.selectedParametricValues.remove(this.selectedParametricValues.where({field: field}));
                 } else if (type === FilterType.INDEXES) {
-                    this.selectedIndexesCollection.set(this.indexesCollection.toResourceIdentifiers());
+                    this.selectedIndexesCollection.set(databaseNameResolver.getDatabaseInfoFromCollection(this.indexesCollection));
                 } else if (type === FilterType.DATE_RANGE) {
                     if (this.datesFilterModel.get('dateRange') !== DatesFilterModel.DateRange.CUSTOM) {
                         this.datesFilterModel.set('dateRange', null);

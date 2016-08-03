@@ -9,7 +9,6 @@ define([
     'underscore',
     'find/app/util/test-browser',
     'find/app/model/window-scroll-model',
-    'find/app/model/indexes-collection',
     'find/app/model/saved-searches/saved-query-collection',
     './model-registry',
     'find/app/navigation',
@@ -19,7 +18,7 @@ define([
     'find/app/vent',
     'find/app/router',
     'text!find/templates/app/app.html'
-], function($, Backbone, _, testBrowser, WindowScrollModel, IndexesCollection, SavedQueryCollection, ModelRegistry,
+], function($, Backbone, _, testBrowser, WindowScrollModel, SavedQueryCollection, ModelRegistry,
             Navigation, configuration, Pages, logout, vent, router, template) {
 
     return Backbone.View.extend({
@@ -29,6 +28,7 @@ define([
         // Can be overridden
         defaultPage: null,
         Navigation: Navigation,
+        IndexesCollection: null,
 
         // Abstract
         getPageData: null,
@@ -87,7 +87,7 @@ define([
         getModelData: function() {
             var modelData = {
                 indexesCollection: {
-                    Constructor: IndexesCollection
+                    Constructor: this.IndexesCollection
                 },
                 windowScrollModel: {
                     Constructor: WindowScrollModel,
