@@ -25,6 +25,8 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.Serializable;
@@ -296,10 +298,18 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		checkUserCountIs(userCount);
 
 		userService.deleteUser(user2);
+		Waits.loadOrFadeWait();
 		checkUserCountIs(--userCount);
 
 		userService.deleteUser(user1);
-		Waits.loadOrFadeWait();
+
+		new WebDriverWait(getDriver(), 5).until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver input) {
+				return usersPage.getUserCountInTitle() == 0;
+			}
+		});
+
 		checkUserCountIs(--userCount);
 	}
 

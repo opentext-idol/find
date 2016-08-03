@@ -48,6 +48,8 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
     }
 
     public List<Index> getSelected() {
+        expandAll();
+
         final List<Index> selected = new ArrayList<>();
         for (final IndexNodeElement node : this) {
             if (node.isSelected()) {

@@ -536,8 +536,8 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	public void testDoesDeletingSynonymDisableOtherSynonyms() throws InterruptedException {
-		final List<String> synonyms = Arrays.asList("ea", "es", "ed", "ef", "eg");
+	public void testDeletingSynonyms() throws InterruptedException {
+		final List<String> synonyms = Arrays.asList("death", "cab", "cutie", "panic", "disco");
 
 		keywordService.addSynonymGroup(synonyms);
 		keywordService.goToKeywords();

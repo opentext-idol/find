@@ -14,6 +14,7 @@ public class IndexFilter implements QueryFilter{
     public static final IndexFilter NONE = new EmptyIndexFilter();
     public static final IndexFilter PUBLIC = new PublicIndexFilter();
     public static final IndexFilter PRIVATE = new PrivateIndexFilter();
+    public static final IndexFilter WIKI_ENG = new IndexFilter("wiki_eng");
 
     public IndexFilter(final String index) {
         indexes = new HashSet<>();

@@ -126,15 +126,7 @@ public class PromotionsDetailPage extends SOPageBase {
     }
 
     private List<String> getVisibleDynamicPromotedTitles() {
-        final List<String> docTitles = new ArrayList<>();
-
-        for (final WebElement docTitle : dynamicPromotedList()) {
-            if(!docTitle.getText().equals("Search for something...")) {
-                docTitles.add(docTitle.getText());
-            }
-        }
-
-        return docTitles;
+        return ElementUtil.getTexts(dynamicPromotedList());
     }
 
     public List<String> getPromotedTitles() {
@@ -180,6 +172,8 @@ public class PromotionsDetailPage extends SOPageBase {
         new WebDriverWait(getDriver(), 30)
                 .withMessage("Dynamic promoted results didn't load")
                 .until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-spin")));
+
+        Waits.loadOrFadeWait();
     }
 
     public void waitForSpotLightType(){
