@@ -6,13 +6,15 @@
 define([
     'find/app/app',
     'find/app/page/default/default-page',
+    'find/hod/app/model/hod-indexes-collection',
     'find/hod/app/page/hod-find-search'
-], function(BaseApp, DefaultPage, FindSearch) {
+], function(BaseApp, DefaultPage, IndexesCollection, FindSearch) {
 
     'use strict';
 
     return BaseApp.extend({
         defaultPage: 'default',
+        IndexesCollection: IndexesCollection,
 
         getPageData: function() {
             return {

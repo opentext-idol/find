@@ -1,10 +1,10 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'databases-view/js/databases-collection',
+    'databases-view/js/hod-databases-collection',
     'underscore'
 ], function (DatabasesCollection, _) {
 
@@ -15,7 +15,10 @@ define([
 
         parse: function (response) {
             return _.map(response, function (responseItem) {
-                responseItem.id = responseItem.domain ? encodeURIComponent(responseItem.domain) + ':' + encodeURIComponent(responseItem.name) : responseItem.name;
+                responseItem.id = encodeURIComponent(responseItem.domain) + ':' + encodeURIComponent(responseItem.name);
+                if (!responseItem.displayName) {
+                    responseItem.displayName = responseItem.name;
+                }
                 return responseItem;
             });
         },

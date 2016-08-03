@@ -7,18 +7,20 @@ define([
     'find/app/app',
     'underscore',
     'find/app/configuration',
+    'find/idol/app/model/idol-indexes-collection',
     'find/idol/app/model/saved-searches/saved-snapshot-collection',
     'find/idol/app/idol-navigation',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
     'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
-], function(BaseApp, _, configuration, SavedSnapshotCollection, Navigation, FindSearch, AboutPage, SettingsPage, i18n) {
+], function(BaseApp, _, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage, SettingsPage, i18n) {
 
     'use strict';
 
     return BaseApp.extend({
         Navigation: Navigation,
+        IndexesCollection: IndexesCollection,
 
         getModelData: function() {
             var modelData = BaseApp.prototype.getModelData.call(this);

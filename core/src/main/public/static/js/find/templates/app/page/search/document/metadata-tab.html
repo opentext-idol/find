@@ -8,18 +8,11 @@
         </tr>
     <% } %>
 
-    <% _.each(model.pick([
-        'title',
-        'url',
-        'reference',
-        'index',
-        'summary',
-        'contentType'
-    ]), function(value, key) { %>
-        <% if(value) { %>
+    <% _.each(fields, function(field) { %>
+        <% if (field.value) { %>
             <tr>
-                <td class="font-bold"><%-i18n['search.document.' + key] || i18nIndexes['search.document.' + key]%></td>
-                <td class="break-all p-l-sm"><%-value%></td>
+                <td class="font-bold"><%-i18n['search.document.' + field.key] || i18nIndexes['search.document.' + field.key]%></td>
+                <td class="break-all p-l-sm"><%-field.value%></td>
             </tr>
         <% } %>
     <% }); %>

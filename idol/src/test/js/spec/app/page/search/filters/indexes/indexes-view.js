@@ -8,7 +8,7 @@ define([
     'underscore',
     'jquery',
     'find/idol/app/page/search/filters/indexes/idol-indexes-view',
-    'databases-view/js/databases-collection',
+    'databases-view/js/idol-databases-collection',
     'jasmine-jquery'
 ], function(Backbone, _, $, IndexesView, DatabasesCollection) {
 

@@ -6,18 +6,18 @@
 define([
     'underscore',
     'find/app/page/find-search',
+    'find/hod/app/model/hod-indexes-collection',
     'find/hod/app/page/search/hod-service-view',
     'find/hod/app/page/search/suggest/hod-suggest-view',
     'find/app/util/database-name-resolver',
-    'find/hod/app/page/search/hod-query-left-side-view',
-    'find/hod/app/page/search/hod-query-middle-column-header-view'
-], function(_, FindSearch, ServiceView, SuggestView, databaseNameResolver, HodQueryLeftSideView, HodQueryMiddleColumnHeaderView) {
+    'find/hod/app/page/search/hod-query-left-side-view'
+], function(_, FindSearch, IndexesCollection, ServiceView, SuggestView, databaseNameResolver, HodQueryLeftSideView) {
     'use strict';
 
     return FindSearch.extend({
+        IndexesCollection: IndexesCollection,
         ServiceView: ServiceView,
         SuggestView: SuggestView,
-        QueryMiddleColumnHeaderView: HodQueryMiddleColumnHeaderView,
         QueryLeftSideView: HodQueryLeftSideView,
 
         getSearchTypes: function() {

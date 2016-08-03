@@ -5,7 +5,7 @@
 
 define([
     'settings/js/server-widget',
-    'find/app/model/indexes-collection',
+    'find/hod/app/model/hod-indexes-collection',
     'text!find/templates/app/page/settings/server-widget.html',
     'text!find/templates/app/page/settings/iod-widget.html',
     'text!find/templates/app/page/settings/indexes-list.html'

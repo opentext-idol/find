@@ -8,7 +8,7 @@ define([
     'underscore',
     'jquery',
     'find/hod/app/page/search/filters/indexes/hod-indexes-view',
-    'databases-view/js/databases-collection',
+    'databases-view/js/hod-databases-collection',
     'jasmine-jquery'
 ], function(Backbone, _, $, IndexesView, DatabasesCollection) {
 

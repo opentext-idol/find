@@ -6,12 +6,12 @@
 define([
     'backbone',
     'underscore',
-    'databases-view/js/databases-collection',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/dates-filter-model',
     'find/app/model/min-score-model',
+    'find/app/util/database-name-resolver',
     'moment'
-], function(Backbone, _, DatabasesCollection, SavedSearchModel, DatesFilterModel, MinScoreModel, moment) {
+], function(Backbone, _, SavedSearchModel, DatesFilterModel, MinScoreModel, databaseNameResolver, moment) {
 
     var INPUT_TEXT = 'johnny';
     var RELATED_CONCEPTS = [['depp']];
@@ -68,7 +68,10 @@ define([
                 minScore: MIN_SCORE
             });
 
-            this.selectedIndexes = new DatabasesCollection(BASE_INDEXES);
+            this.selectedIndexes = new Backbone.Collection(BASE_INDEXES);
+            databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function () {
+                return BASE_INDEXES;
+            });
 
             // The real selected parametric values collection also contains display names
             this.selectedParametricValues = new Backbone.Collection(_.map(PARAMETRIC_VALUES.concat(PARAMETRIC_RANGES_CLIENT), function(data, index) {
@@ -128,7 +131,11 @@ define([
             });
 
             it('returns false when the indexes are different', function() {
-                this.selectedIndexes.add({domain: 'DOMAIN', name: 'MORE_DOCUMENTS'});
+                var newIndex = {domain: 'DOMAIN', name: 'MORE_DOCUMENTS'};
+                this.selectedIndexes.add(newIndex);
+                databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function () {
+                    return [newIndex].concat(BASE_INDEXES);
+                });
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });
@@ -137,14 +144,6 @@ define([
                 this.selectedParametricValues.pop();
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
-            });
-
-            it('returns true if the only difference is an index domain being the empty string rather than null', function() {
-                var databaseName = 'MORE_DOCUMENTS';
-                this.selectedIndexes.add({domain: '', name: databaseName});
-                this.model.set('indexes', BASE_INDEXES.concat([{domain: null, name: databaseName}]));
-
-                expect(this.model.equalsQueryState(this.queryState)).toBe(true);
             });
 
             it('returns false if the min score is different', function() {
@@ -167,14 +166,6 @@ define([
             it('returns the min and max dates from the dates filter model model', function() {
                 expect(this.attributes.minDate.isSame(moment(MIN_DATE))).toBe(true);
                 expect(this.attributes.maxDate.isSame(moment(MAX_DATE))).toBe(true);
-            });
-
-            it('returns the selected indexes with empty domains normalised to null', function() {
-                var databaseName = 'NEW_DATABASE';
-                this.queryState.selectedIndexes.push({name: databaseName, domain: undefined});
-
-                var output = SavedSearchModel.attributesFromQueryState(this.queryState);
-                expect(output.indexes).toEqual(BASE_INDEXES.concat([{name: databaseName, domain: null}]));
             });
 
             it('returns the selected parametric values', function() {

@@ -4,13 +4,13 @@
  */
 
 define(['underscore'], function(_) {
-
     'use strict';
 
     function constructDatabaseString(domain, index) {
         return _.map([domain, index], encodeURIComponent).join(':');
     }
 
+    //noinspection JSUnusedGlobalSymbols
     return {
         constructDatabaseString: constructDatabaseString,
 
@@ -20,6 +20,23 @@ define(['underscore'], function(_) {
 
         resolveDatabaseNameForDocumentModel: function (model) {
             return constructDatabaseString(model.get('domain'), model.get('index'));
+        },
+        
+        getDatabaseInfoFromCollection: function (databaseCollection) {
+            return databaseCollection.toResourceIdentifiers();
+        },
+        
+        getDatabaseDisplayNameFromDocumentModel: function (indexesCollection, documentModel) {
+            var databaseModel = indexesCollection.find({
+                name: documentModel.get('index'),
+                domain: documentModel.get('domain')
+            });
+            return databaseModel.get('displayName');
+        },
+
+        getDatabaseDisplayNameFromDatabaseModel: function (indexesCollection, selectedDatabaseModel) {
+            var databaseModel = indexesCollection.find(selectedDatabaseModel.pick('name', 'domain'));
+            return databaseModel.get('displayName');
         }
     };
     

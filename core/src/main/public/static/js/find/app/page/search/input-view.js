@@ -3,6 +3,7 @@ define([
     'jquery',
     'underscore',
     'find/app/vent',
+    'find/app/util/database-name-resolver',
     'find/app/util/string-blank',
     'i18n!find/nls/bundle',
     'find/app/configuration',
@@ -10,7 +11,7 @@ define([
     'text!find/templates/app/page/search/related-concepts/selected-related-concept.html',
     'typeahead',
     'bootstrap'
-], function(Backbone, $, _, vent, stringBlank, i18n, configuration, template, relatedConceptTemplate) {
+], function(Backbone, $, _, vent, databaseNameResolver, stringBlank, i18n, configuration, template, relatedConceptTemplate) {
 
     var conceptsTemplate = _.template(relatedConceptTemplate);
     
@@ -51,7 +52,7 @@ define([
                 if(queryState) {
                     queryState.datesFilterModel.clear().set(queryState.datesFilterModel.defaults);
                     queryState.selectedParametricValues.reset();
-                    queryState.selectedIndexes.set(this.indexesCollection.toResourceIdentifiers());
+                    queryState.selectedIndexes.set(databaseNameResolver.getDatabaseInfoFromCollection(this.indexesCollection));
                 }
 
                 this.search('*');

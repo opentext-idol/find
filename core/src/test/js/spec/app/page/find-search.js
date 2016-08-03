@@ -13,6 +13,7 @@ define([
             });
 
             this.findSearch = new (FindSearch.extend({
+                IndexesCollection: Backbone.Collection,
                 ServiceView: Backbone.View
             }))({
                 savedQueryCollection: new Backbone.Collection(),

@@ -17,7 +17,8 @@ define([
 
     return DatabasesView.extend({
         // will be overridden
-        getIndexCategories: $.noop,
+        getIndexCategories: null,
+        databaseHelper: null,
 
         template: _.template(template),
         categoryTemplate: _.template(listTemplate),
@@ -27,11 +28,12 @@ define([
                 e.stopPropagation();
 
                 var $target = $(e.currentTarget).find('.database-input');
-                var index = $target.attr('data-name');
-                var domain = $target.attr('data-domain');
+                //noinspection JSUnresolvedFunction
+                var args = this.findInCurrentSelectionArguments($target);
                 var checked = $target.find('i').hasClass('hp-check');
 
-                this.selectDatabase(index, domain, !checked);
+                //noinspection JSUnresolvedFunction
+                this.selectDatabase(args, !checked);
             },
             'click .category-input': function(e) {
                 e.stopPropagation();
@@ -72,6 +74,7 @@ define([
                 emptyMessage: i18n['search.indexes.empty'],
                 topLevelDisplayName: i18n['search.indexes.all'],
                 childCategories: this.getIndexCategories(),
+                databaseHelper: this.databaseHelper,
                 listViewOptions: {
                     ItemView: IndexItemView,
                     useCollectionChange: {

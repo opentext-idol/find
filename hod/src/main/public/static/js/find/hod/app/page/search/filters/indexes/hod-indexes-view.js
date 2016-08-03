@@ -5,12 +5,15 @@
 
 define([
     'find/app/page/search/filters/indexes/indexes-view',
+    'databases-view/js/hod-database-helper',
     'js-whatever/js/escape-hod-identifier',
     'i18n!find/nls/indexes'
-], function (IndexesView, escapeHodIdentifier, i18n) {
+], function (IndexesView, databaseHelper, escapeHodIdentifier, i18n) {
     'use strict';
 
     return IndexesView.extend({
+        databaseHelper: databaseHelper,
+        
         getIndexCategories: function () {
             return [
                 {

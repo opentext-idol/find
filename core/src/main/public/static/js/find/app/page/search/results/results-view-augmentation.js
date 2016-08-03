@@ -27,7 +27,8 @@ define([
                     this.previewModeView = new this.PreviewModeView({
                         model: documentModel,
                         previewModeModel: this.previewModeModel,
-                        queryText: this.queryModel.get('queryText')
+                        queryText: this.queryModel.get('queryText'),
+                        indexesCollection: options.indexesCollection
                     });
 
                     this.$previewModeContainer.append(this.previewModeView.$el);

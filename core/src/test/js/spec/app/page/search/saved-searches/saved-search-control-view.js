@@ -11,10 +11,10 @@ define([
     'find/app/model/dates-filter-model',
     'find/app/model/min-score-model',
     'find/app/util/confirm-view',
-    'databases-view/js/databases-collection',
+    'find/app/util/database-name-resolver',
     'moment',
     'i18n!find/nls/bundle'
-], function(Backbone, $, SavedSearchControlView, SavedSearchModel, DatesFilterModel, MinScoreModel, MockConfirmView, DatabasesCollection, moment, i18n) {
+], function(Backbone, $, SavedSearchControlView, SavedSearchModel, DatesFilterModel, MinScoreModel, MockConfirmView, databaseNameResolver, moment, i18n) {
 
     var CREATE_TEXT = 'Make a new one!';
     var EDIT_TEXT = 'Change an old one!';
@@ -148,9 +148,12 @@ define([
             this.documentsCollection = new Backbone.Collection();
             this.documentsCollection.totalResults = 50;
 
-            var selectedIndexes = new DatabasesCollection([
+            var selectedIndexes = new Backbone.Collection([
                 {name: 'Wikipedia', domain: 'PUBLIC'}
             ]);
+            databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function () {
+                return [{name: 'Wikipedia', domain: 'PUBLIC'}];
+            });
 
             var selectedParametricValues = new Backbone.Collection([
                 {field: 'WIKIPEDIA_CATEGORY', value: 'Concepts in Physics'}
@@ -854,8 +857,12 @@ define([
 
             describe('then the selected indexes are changed', function() {
                 beforeEach(function() {
+                    databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function () {
+                        return [{name: 'Wikipedia', domain: 'PUBLIC'}, {name: 'NEW_DATABASE', domain: 'PUBLIC'}];
+                    });
                     this.queryState.selectedIndexes.add({
-                        name: 'NEW_DATABASE'
+                        name: 'NEW_DATABASE',
+                        domain: 'PUBLIC'
                     });
                 });
 

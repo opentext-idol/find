@@ -8,13 +8,14 @@ define([
     'find/app/model/dates-filter-model',
     'find/app/model/search-filters-collection',
     'parametric-refinement/selected-values-collection',
-    'databases-view/js/databases-collection',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
     'find/app/configuration',
+    'find/app/util/database-name-resolver',
     'backbone',
     'moment'
-], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, configuration, Backbone, moment) {
+], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, i18n, fieldTextParser, configuration, databaseNameResolver, Backbone, moment) {
+    "use strict";
 
     var WOOKIEPEDIA = {
         id: 'TESTDOMAIN:wookiepedia',
@@ -44,8 +45,11 @@ define([
                 }]
             });
 
-            this.indexesCollection = new DatabasesCollection([WOOKIEPEDIA, WIKI_ENG]);
-            this.selectedIndexesCollection = new DatabasesCollection([WIKI_ENG]);
+            this.indexesCollection = new Backbone.Collection([WOOKIEPEDIA, WIKI_ENG]);
+            this.selectedIndexesCollection = new Backbone.Collection([WIKI_ENG]);
+            databaseNameResolver.getDatabaseDisplayNameFromDatabaseModel.and.callFake(function () {
+                return WIKI_ENG.name;
+            });
 
             this.queryModel = new Backbone.Model({
                 minDate: INITIAL_MIN_DATE
@@ -200,6 +204,9 @@ define([
 
             describe('then a database is deselected', function() {
                 beforeEach(function() {
+                    databaseNameResolver.getDatabaseDisplayNameFromDatabaseModel.and.callFake(function () {
+                        return WOOKIEPEDIA.name;
+                    });
                     this.selectedIndexesCollection.set([WOOKIEPEDIA]);
                 });
 
@@ -243,6 +250,9 @@ define([
 
         describe('after the indexes filter model is removed', function() {
             beforeEach(function() {
+                databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function () {
+                    return [WOOKIEPEDIA, WIKI_ENG];
+                });
                 this.collection.remove(this.collection.where({type: FiltersCollection.FilterType.INDEXES}));
             });
 
