@@ -47,6 +47,9 @@ define([
 
             this.indexesCollection = new Backbone.Collection([WOOKIEPEDIA, WIKI_ENG]);
             this.selectedIndexesCollection = new Backbone.Collection([WIKI_ENG]);
+            databaseNameResolver.getDatabaseDisplayNameFromDatabaseModel.and.callFake(function () {
+                return WIKI_ENG.name;
+            });
 
             this.queryModel = new Backbone.Model({
                 minDate: INITIAL_MIN_DATE
@@ -201,6 +204,9 @@ define([
 
             describe('then a database is deselected', function() {
                 beforeEach(function() {
+                    databaseNameResolver.getDatabaseDisplayNameFromDatabaseModel.and.callFake(function () {
+                        return WOOKIEPEDIA.name;
+                    });
                     this.selectedIndexesCollection.set([WOOKIEPEDIA]);
                 });
 

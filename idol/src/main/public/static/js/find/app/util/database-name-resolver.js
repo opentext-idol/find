@@ -20,6 +20,14 @@ define(function() {
             return selectedDatabaseCollection.map(function (model) {
                 return model.pick('name');
             });
+        },
+
+        getDatabaseDisplayNameFromDocumentModel: function (indexesCollection, documentModel) {
+            return documentModel.get('index');
+        },
+
+        getDatabaseDisplayNameFromDatabaseModel: function (indexesCollection, databaseModel) {
+            return databaseModel.get('name');
         }
     };
     

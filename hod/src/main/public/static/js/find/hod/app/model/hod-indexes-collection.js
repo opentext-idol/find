@@ -16,6 +16,9 @@ define([
         parse: function (response) {
             return _.map(response, function (responseItem) {
                 responseItem.id = encodeURIComponent(responseItem.domain) + ':' + encodeURIComponent(responseItem.name);
+                if (!responseItem.displayName) {
+                    responseItem.displayName = responseItem.name;
+                }
                 return responseItem;
             });
         },

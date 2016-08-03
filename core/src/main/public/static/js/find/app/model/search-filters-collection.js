@@ -170,7 +170,10 @@ define([
         },
 
         getDatabasesFilterText: function() {
-            var selectedIndexNames = this.selectedIndexesCollection.pluck('name');
+            var selectedIndexNames = this.selectedIndexesCollection.map(function (model) {
+                //noinspection JSUnresolvedFunction
+                return databaseNameResolver.getDatabaseDisplayNameFromDatabaseModel(this.indexesCollection, model);
+            }.bind(this));
             return selectedIndexNames.join(', ');
         },
 

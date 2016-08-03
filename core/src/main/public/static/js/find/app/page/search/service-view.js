@@ -224,6 +224,7 @@ define([
                 constructorArguments: {
                     resultsView: resultsView,
                     queryModel: this.queryModel,
+                    indexesCollection: this.indexesCollection,
                     previewModeModel: this.previewModeModel,
                     scrollModel: this.middleColumnScrollModel
                 },

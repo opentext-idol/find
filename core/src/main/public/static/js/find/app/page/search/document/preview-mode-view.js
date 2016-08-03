@@ -8,13 +8,14 @@ define([
     'find/app/util/view-server-client',
     'find/app/model/document-model',
     'find/app/configuration',
+    'find/app/util/database-name-resolver',
     'find/app/util/events',
     'text!find/templates/app/page/search/document/preview-mode-view.html',
     'text!find/templates/app/page/search/document/preview-mode-metadata.html',
     'text!find/templates/app/page/search/document/view-mode-document.html',
     'text!find/templates/app/page/search/document/view-media-player.html',
     'text!css/result-highlighting.css'
-], function(Backbone, _, $, i18n, i18nIndexes, vent, viewClient, DocumentModel, configuration, events, template, metaDataTemplate,
+], function(Backbone, _, $, i18n, i18nIndexes, vent, viewClient, DocumentModel, configuration, databaseNameResolver, events, template, metaDataTemplate,
             documentTemplate, mediaTemplate, highlightingRule) {
 
     'use strict';
@@ -43,6 +44,7 @@ define([
         },
 
         initialize: function(options) {
+            this.indexesCollection = options.indexesCollection;
             this.previewModeModel = options.previewModeModel;
             this.highlightingModel = new Backbone.Model({highlighting: false});
 
@@ -76,10 +78,19 @@ define([
 
             this.$('.preview-mode-document-title').text(this.model.get('title'));
 
+            var referenceKey = this.model.get('url') ? 'url' : 'reference';
+            //noinspection JSUnresolvedFunction
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
                 i18n: i18n,
                 i18nIndexes: i18nIndexes,
-                model: this.model
+                model: this.model,
+                fields: [{
+                    key: 'index',
+                    value: databaseNameResolver.getDatabaseDisplayNameFromDocumentModel(this.indexesCollection, this.model)
+                }, {
+                    key: referenceKey,
+                    value: this.model.get(referenceKey)
+                }]
             }));
 
             var $preview = this.$('.preview-mode-document');

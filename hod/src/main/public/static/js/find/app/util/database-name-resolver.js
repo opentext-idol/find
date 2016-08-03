@@ -3,9 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-define([
-    'underscore'
-], function(_) {
+define(['underscore'], function(_) {
     'use strict';
 
     function constructDatabaseString(domain, index) {
@@ -24,8 +22,21 @@ define([
             return constructDatabaseString(model.get('domain'), model.get('index'));
         },
         
-        getDatabaseInfoFromCollection: function (selectedDatabaseCollection) {
-            return selectedDatabaseCollection.toResourceIdentifiers();
+        getDatabaseInfoFromCollection: function (databaseCollection) {
+            return databaseCollection.toResourceIdentifiers();
+        },
+        
+        getDatabaseDisplayNameFromDocumentModel: function (indexesCollection, documentModel) {
+            var databaseModel = indexesCollection.find({
+                name: documentModel.get('index'),
+                domain: documentModel.get('domain')
+            });
+            return databaseModel.get('displayName');
+        },
+
+        getDatabaseDisplayNameFromDatabaseModel: function (indexesCollection, selectedDatabaseModel) {
+            var databaseModel = indexesCollection.find(selectedDatabaseModel.pick('name', 'domain'));
+            return databaseModel.get('displayName');
         }
     };
     

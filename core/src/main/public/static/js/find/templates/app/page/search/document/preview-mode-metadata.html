@@ -1,23 +1,23 @@
-<% _.each(['index', 'reference'], function(field) { %>
-  <% if(model.has(field)) { %>
-    <tr>
-      <th class="font-bold"><%-i18n['search.document.' + field] || i18nIndexes['search.document.' + field]%></th>
-      <td class="break-all"><%-model.get(field)%></td>
-    </tr>
-  <% } %>
+<% _.each(fields, function(field) { %>
+    <% if (field.value) { %>
+        <tr>
+            <th class="font-bold"><%-i18n['search.document.' + field.key] || i18nIndexes['search.document.' + field.key]%></th>
+            <td class="break-all"><%-field.value%></td>
+        </tr>
+    <% } %>
 <% }); %>
 
 <% _.each(model.get('fields'), function(field) { %>
-<% if (field.displayName) { %>
-    <tr>
-      <th class="font-bold"><%-field.displayName%></th>
-      <td class="break-all">
-        <ul class="list-unstyled m-b-nil">
-          <% _.each(field.values, function(value) { %>
-            <li><%-value%></li>
-          <% }); %>
-        </ul>
-      </td>
-    </tr>
-  <% } %>
+    <% if (field.displayName) { %>
+        <tr>
+            <th class="font-bold"><%-field.displayName%></th>
+            <td class="break-all">
+                <ul class="list-unstyled m-b-nil">
+                    <% _.each(field.values, function(value) { %>
+                        <li><%-value%></li>
+                    <% }); %>
+                </ul>
+            </td>
+        </tr>
+    <% } %>
 <% }); %>
