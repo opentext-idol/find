@@ -9,8 +9,7 @@ define([
     'jquery',
     'text!find/templates/app/page/search/saved-searches/search-title-input.html',
     'find/app/model/saved-searches/saved-search-model',
-    'i18n!find/nls/bundle',
-    'iCheck'
+    'i18n!find/nls/bundle'
 ], function(Backbone, _, $, template, SavedSearchModel, i18n) {
     "use strict";
 
@@ -81,20 +80,18 @@ define([
             this.savedSearchModel = options.savedSearchModel;
             this.savedSearchCollection = options.savedSearchCollection;
 
-            // Called with the new title, search type, and a success callback and an error callback
+            // Called with the new title, and a success callback and an error callback
             this.saveCallback = options.saveCallback;
 
             this.model = new Backbone.Model({
                 error: null,
                 loading: false,
-                title: resolveCurrentTitle(this.savedSearchModel),
-                type: this.savedSearchModel.get('type')
+                title: resolveCurrentTitle(this.savedSearchModel)
             });
 
             this.listenTo(this.model, 'change:error', this.updateError);
             this.listenTo(this.model, 'change:loading', this.updateLoading);
             this.listenTo(this.model, 'change:title', this.updateTitle);
-            this.listenTo(this.model, 'change:type', this.updateType);
         },
 
         render: function() {
@@ -109,9 +106,6 @@ define([
             this.updateError();
             this.updateLoading();
             this.updateTitle();
-            this.updateType();
-
-            this.$('.i-check').iCheck({radioClass: 'iradio-hp'});
         },
 
         updateError: function() {
@@ -136,11 +130,6 @@ define([
             }
 
             this.updateConfirmButton();
-        },
-
-        updateType: function() {
-            var type = this.model.get('type');
-            this.$('[name="saved-search-type"][value="' + type + '"]').iCheck('check');
         },
 
         updateConfirmButton: function() {
