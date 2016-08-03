@@ -14,6 +14,7 @@ import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -157,6 +158,8 @@ public class UsersPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
+	@ResolvedBug("HOD-532")
+	@ActiveBug("HOD-1073")
 	public void testEditUserType() {
 		final User user = helper.singleSignUp(aNewUser);
 

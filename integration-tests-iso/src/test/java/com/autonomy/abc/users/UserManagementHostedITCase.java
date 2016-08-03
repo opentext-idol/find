@@ -43,7 +43,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UserManagementHostedITCase extends IsoHsodTestBase {
     private final NewUser aNewUser;
-    private final UserTestHelper helper;
+    private UserTestHelper helper;
 
     private HsodUserService userService;
     private HsodUsersPage usersPage;
@@ -51,11 +51,12 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
     public UserManagementHostedITCase(final TestConfig config) {
         super(config);
         aNewUser = config.getNewUser("james");
-        helper = new UserTestHelper(getApplication(), config);
     }
 
     @Before
     public void setUp() {
+        helper = new UserTestHelper(getApplication(), getConfig());
+
         userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();

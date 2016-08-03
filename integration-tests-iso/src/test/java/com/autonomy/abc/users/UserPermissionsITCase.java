@@ -22,7 +22,9 @@ import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.users.UsersPage;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Session;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.users.AuthenticationStrategy;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -89,7 +91,7 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
             } finally {
                 if(assumeFailed) {
                     emailTearDown();
-                    userTearDown();
+                        userTearDown();
                 }
             }
         }
@@ -106,6 +108,8 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
     }
 
     @Test
+    @ResolvedBug("HOD-532")
+    @ActiveBug("HOD-1073")
     public void testCannotAddKeywords(){
         final List<String> blacklist = new ArrayList<>();
         blacklist.add("Dave");
@@ -140,6 +144,8 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
     }
 
     @Test
+    @ResolvedBug("HOD-532")
+    @ActiveBug("HOD-1073")
     public void testCannotAddPromotions(){
         userApp.switchTo(SearchPage.class);
 
@@ -155,6 +161,8 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
     }
 
     @Test
+    @ResolvedBug("HOD-532")
+    @ActiveBug("HOD-1073")
     public void testCannotAddStaticPromotion() {
         assumeThat(isHosted(), is(true));
 
@@ -177,6 +185,8 @@ public class UserPermissionsITCase extends IsoHsodTestBase {
     }
 
     @Test
+    @ResolvedBug("HOD-532")
+    @ActiveBug("HOD-1073")
     public void testCannotAddUser(){
         final UsersPage usersPage = userApp.userService().goToUsers();
 
