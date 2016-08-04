@@ -94,23 +94,23 @@ public class HodExportServiceTest {
                 .setSummary("Inspired by the Muses of Mount Helicon let us sing")
                 .setWeight(0.62)
                 .setDate(DateTime.now())
-                .setFieldMap(ImmutableMap.<String, FieldInfo<?>>of("categories", new FieldInfo<>("categories", Collections.singleton("category"), FieldType.STRING, Arrays.asList("Epic Literature", "Philosophy", "Cosmogony"))))
+                .setFieldMap(ImmutableMap.of("categories", new FieldInfo<>("categories", Collections.singleton("category"), FieldType.STRING, false, Arrays.asList("Epic Literature", "Philosophy", "Cosmogony"))))
                 .build();
         final Documents<HodSearchResult> results = new Documents<>(Arrays.asList(result1, result2), 2, null, null, null, null);
-        when(documentsService.queryTextIndex(Matchers.<SearchRequest<ResourceIdentifier>>any())).thenReturn(results);
+        when(documentsService.queryTextIndex(Matchers.any())).thenReturn(results);
 
         hodExportService.export(outputStream, searchRequest, ExportFormat.CSV);
         verify(exportStrategy, times(3)).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
     private FieldInfo<?> fieldInfo(final String id, final String name, final FieldType type, final Object value) {
-        return new FieldInfo<>(id, Collections.singleton(name), type, value);
+        return new FieldInfo<>(id, Collections.singleton(name), type, true, value);
     }
 
     @Test
     public void exportEmptyResultSetWithHeader() throws IOException, HodErrorException {
         when(exportStrategy.writeHeader()).thenReturn(true);
-        when(documentsService.queryTextIndex(Matchers.<SearchRequest<ResourceIdentifier>>any())).thenReturn(new Documents<>(Collections.<HodSearchResult>emptyList(), 0, null, null, null, null));
+        when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
 
         hodExportService.export(outputStream, searchRequest, ExportFormat.CSV);
         verify(exportStrategy).exportRecord(outputStream, fieldNames);
@@ -118,7 +118,7 @@ public class HodExportServiceTest {
 
     @Test
     public void exportEmptyResultSetWithoutHeader() throws IOException, HodErrorException {
-        when(documentsService.queryTextIndex(Matchers.<SearchRequest<ResourceIdentifier>>any())).thenReturn(new Documents<>(Collections.<HodSearchResult>emptyList(), 0, null, null, null, null));
+        when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
 
         hodExportService.export(outputStream, searchRequest, ExportFormat.CSV);
         verify(exportStrategy, never()).exportRecord(eq(outputStream), anyListOf(String.class));
@@ -127,7 +127,7 @@ public class HodExportServiceTest {
     @Test(expected = RuntimeException.class)
     public void unexpectedError() throws IOException, HodErrorException {
         when(exportStrategy.writeHeader()).thenReturn(true);
-        when(documentsService.queryTextIndex(Matchers.<SearchRequest<ResourceIdentifier>>any())).thenReturn(new Documents<>(Collections.<HodSearchResult>emptyList(), 0, null, null, null, null));
+        when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
         doThrow(new IOException("")).when(exportStrategy).exportRecord(eq(outputStream), anyListOf(String.class));
         hodExportService.export(outputStream, searchRequest, ExportFormat.CSV);
     }
