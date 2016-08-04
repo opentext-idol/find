@@ -34,6 +34,10 @@ define([
 
             this.filterModel = new Backbone.Model({text: '', filterOn: 'name'});
 
+            spyOn(this.petCollection, 'spy1').and.callThrough();
+            spyOn(this.petCollection, 'spy2').and.callThrough();
+            spyOn(this.petCollection, 'spy3').and.callThrough();
+
             this.filteringCollection = new FilteringCollection([], {
                 collection: this.petCollection,
                 filterModel: this.filterModel,
@@ -44,9 +48,6 @@ define([
                 resetOnFilter: false,
                 collectionFunctions: ['spy1', 'spy2', 'spy3']
             });
-            spyOn(this.petCollection, 'spy1').and.callThrough();
-            spyOn(this.petCollection, 'spy2').and.callThrough();
-            spyOn(this.petCollection, 'spy3').and.callThrough();
         });
 
         it('should have 4 elements in the filtered collection', function() {
@@ -91,13 +92,15 @@ define([
         describe('When calling the collection functions', function() {
             beforeEach(function() {
                 this.filteringCollection.spy1();
-                this.filteringCollection.spy2();
+                this.filteringCollection.spy2(1,2,3);
             });
 
             it('should have called the original functions', function(){
                 expect(this.petCollection.spy1).toHaveBeenCalled();
                 expect(this.petCollection.spy2).toHaveBeenCalled();
                 expect(this.petCollection.spy3).not.toHaveBeenCalled();
+
+                expect(this.petCollection.spy2.calls.argsFor(0)).toEqual([1,2,3]);
             })
         });
 

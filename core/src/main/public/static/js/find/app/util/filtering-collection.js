@@ -21,7 +21,7 @@ define([
 
             _.each(options.collectionFunctions, function(functionName) {
                 this[functionName] = function() {
-                    options.collection[functionName](arguments);
+                    return options.collection[functionName].apply(this, arguments);
                 }
             }, this);
 
