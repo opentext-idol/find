@@ -4,6 +4,7 @@ import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindAll;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +43,7 @@ public class ParametricFilter implements QueryFilter {
 
             for(final Map.Entry<String, String> entry : map.entrySet()){
                 final WebElement filterContainer = filterContainer(parametricContainer, entry.getKey());
-                openContainer(filterContainer);
+                filterable.openContainer(filterContainer);
                 fieldCheckbox(filterContainer, entry.getValue()).click();
                 filterable.waitForParametricValuesToLoad();
             }
@@ -51,15 +52,6 @@ public class ParametricFilter implements QueryFilter {
 
     private WebElement filterContainer(final WebElement parametricContainer, final String category){
         return parametricContainer.findElement(By.cssSelector("[data-field-display-name='" + category + "']"));
-    }
-
-    private void openContainer(WebElement container) {
-        WebElement list = container.findElement(By.className("collapse"));
-
-        if(list.getAttribute("aria-expanded").equals("false")) {
-            container.click();
-            Waits.loadOrFadeWait();
-        }
     }
 
     private WebElement fieldCheckbox(final WebElement filterContainer, final String field){
@@ -88,5 +80,6 @@ public class ParametricFilter implements QueryFilter {
     public interface Filterable extends QueryFilter.Filterable{
         WebElement parametricContainer();
         void waitForParametricValuesToLoad();
+        void openContainer(WebElement container);
     }
 }
