@@ -3,6 +3,7 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
@@ -49,6 +50,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     @Before
     public void setUp(){
         findService = getApplication().findService();
+        ((IdolFindPage) getElementFactory().getFindPage()).goToListView();
     }
 
     @Test

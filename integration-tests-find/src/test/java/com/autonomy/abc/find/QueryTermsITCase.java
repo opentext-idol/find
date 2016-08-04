@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
+import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.shared.QueryTestHelper;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
@@ -45,6 +46,9 @@ public class QueryTermsITCase extends FindTestBase {
         findPage = getElementFactory().getFindPage();
         navBar = getElementFactory().getTopNavBar();
         findService = getApplication().findService();
+        if(!isHosted()) {
+            ((IdolFindPage) findPage).goToListView();
+        }
     }
 
     @Test
@@ -115,7 +119,7 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    @ResolvedBug(value = "FIND-151")
+    @ResolvedBug("FIND-151")
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
         //want to pass it resultsview
         new IdolQueryTestHelper<ResultsView>(findService).hiddenQueryOperatorText();

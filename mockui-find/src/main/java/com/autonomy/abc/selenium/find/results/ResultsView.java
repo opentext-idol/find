@@ -21,6 +21,7 @@ public class ResultsView extends AppElement implements QueryResultsPage {
         this(Container.currentTabContents(driver).findElement(By.className("middle-container")), driver);
     }
 
+    //bad because it assumes it exists in both which it doesn't
     public void goToListView() {
         findElement(By.cssSelector("[data-tab-id='list']")).click();
         new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".results-list-container"))));
