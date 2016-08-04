@@ -1148,9 +1148,6 @@ input.find-input {
     .navbar-nav .open .dropdown-menu {
         background-color: #fff;
     }
-}
-
-@media (max-width: 767px) {
     .navbar .navbar-nav .open .dropdown-menu > .active > a,
     .navbar .navbar-nav .open .dropdown-menu > .active > a:hover{
         background-color: #425563;
@@ -1301,6 +1298,9 @@ input:-moz-placeholder::before {
         width: 100%;
     }
     .find-logo-small {
+        display: none;
+    }
+    .navbar-username { /* hackish, minimise overlap of navbar username with See all docs link. See [FIND-450] */
         display: none;
     }
 }
