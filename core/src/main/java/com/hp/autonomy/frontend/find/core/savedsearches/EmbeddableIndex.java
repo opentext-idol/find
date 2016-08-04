@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,9 @@ import javax.persistence.Embeddable;
 @Embeddable
 @Data
 @NoArgsConstructor
+// Exclude domain when null to avoid confusing client
+// TODO: come up with better solution
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmbeddableIndex {
     private String name;
     private String domain;
