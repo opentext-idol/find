@@ -139,7 +139,8 @@
     "offset": {
       "names": [
         "OFFSET"
-      ]
+      ],
+      "advanced": true
     },
     "authors": {
       "names": [
@@ -166,7 +167,8 @@
     "mmapUrl": {
       "names": [
         "MMAP_PROXY_URL"
-      ]
+      ],
+      "advanced": true
     },
     "thumbnail": {
       "names": [
@@ -176,29 +178,34 @@
     "thumbnailUrl": {
       "names": [
         "THUMBNAIL_URL"
-      ]
+      ],
+      "advanced": true
     },
     "sourceType": {
       "names": [
         "SOURCETYPE"
-      ]
+      ],
+      "advanced": true
     },
     "transcript": {
       "names": [
         "TRANSCRIPTION_CONTENT"
-      ]
+      ],
+      "advanced": true
     },
     "latitude": {
       "names": [
         "LAT"
       ],
-      "type": "NUMBER"
+      "type": "NUMBER",
+      "advanced": true
     },
     "longitude": {
       "names": [
         "LON"
       ],
-      "type": "NUMBER"
+      "type": "NUMBER",
+      "advanced": true
     }
   }
 }

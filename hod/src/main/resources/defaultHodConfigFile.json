@@ -80,7 +80,8 @@
         "offset": {
             "names": [
                 "offset"
-            ]
+            ],
+            "advanced": true
         },
         "categories": {
             "names": [
@@ -105,13 +106,15 @@
             "names": [
                 "lat"
             ],
-            "type": "NUMBER"
+            "type": "NUMBER",
+            "advanced": true
         },
         "longitude": {
             "names": [
                 "lon"
             ],
-            "type": "NUMBER"
+            "type": "NUMBER",
+            "advanced": true
         }
     }
 }

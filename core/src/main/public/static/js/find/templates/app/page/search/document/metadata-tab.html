@@ -8,7 +8,7 @@
         </tr>
     <% } %>
 
-    <% _.each(fields, function(field) { %>
+    <% _.each(importantFields, function(field) { %>
         <% if (field.value) { %>
             <tr>
                 <td class="font-bold"><%-i18n['search.document.' + field.key] || i18nIndexes['search.document.' + field.key]%></td>
@@ -24,22 +24,34 @@
     </tr>
     <% } %>
 
-    <% var ignoreFields = ['thumbnail', 'DRECONTENT', 'DRETITLE', 'DREREFERENCE', 'contentType', 'url']; %>
-
-    <% _.each(model.get('fields'), function(field) { %>
-        <% if(!_.contains(ignoreFields, field.id)) { %>
-            <tr>
-                <td class="font-bold"><%-field.id%></td>
-                <td class="break-all p-l-sm">
-                    <ul class="list-unstyled m-b-nil">
-                        <% _.each(field.values, function(value) { %>
-                        <li><%-value%></li>
-                        <% }); %>
-                    </ul>
-                </td>
-            </tr>
-        <% } %>
+    <% basicFields.forEach(function(field) { %>
+        <tr>
+            <td class="font-bold"><%-field.id%></td>
+            <td class="break-all p-l-sm">
+                <ul class="list-unstyled m-b-nil">
+                    <% _.each(field.values, function(value) { %>
+                    <li><%-value%></li>
+                    <% }); %>
+                </ul>
+            </td>
+        </tr>
+    <% }); %>
+    <% advancedFields.forEach(function(field) { %>
+        <tr class="advanced-field hide">
+            <td class="font-bold"><%-field.id%></td>
+            <td class="break-all p-l-sm">
+                <ul class="list-unstyled m-b-nil">
+                    <% _.each(field.values, function(value) { %>
+                    <li><%-value%></li>
+                    <% }); %>
+                </ul>
+            </td>
+        </tr>
     <% }); %>
 </table>
+<div>
+    <button class="btn button-secondary metadata-tab-see-more"><%-i18n['search.document.detail.tabs.metadata.showAdvanced']%></button>
+    <button class="btn button-secondary metadata-tab-see-less hide"><%-i18n['search.document.detail.tabs.metadata.hideAdvanced']%></button>
+</div>
 
 

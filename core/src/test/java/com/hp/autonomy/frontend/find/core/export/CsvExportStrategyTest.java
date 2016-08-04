@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CsvExportStrategyTest {
     @Mock
-    private ConfigService<? extends HavenSearchCapable> configService;
+    private ConfigService<HavenSearchCapable> configService;
     @Mock
     private HavenSearchCapable config;
 
@@ -40,8 +40,8 @@ public class CsvExportStrategyTest {
     public void setUp() {
         when(configService.getConfig()).thenReturn(config);
         when(config.getFieldsInfo()).thenReturn(new FieldsInfo.Builder()
-                .populateResponseMap("authors", new FieldInfo<String>("authors", Arrays.asList("AUTHOR", "author"), FieldType.STRING))
-                .populateResponseMap("categories", new FieldInfo<String>("categories", Arrays.asList("CATEGORY", "category"), FieldType.STRING))
+                .populateResponseMap("authors", new FieldInfo<String>("authors", Arrays.asList("AUTHOR", "author"), FieldType.STRING, false))
+                .populateResponseMap("categories", new FieldInfo<String>("categories", Arrays.asList("CATEGORY", "category"), FieldType.STRING, false))
                 .build());
 
         csvExportStrategy = new CsvExportStrategy(configService);

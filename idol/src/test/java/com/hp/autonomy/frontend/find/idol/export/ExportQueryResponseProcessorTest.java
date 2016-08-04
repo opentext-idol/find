@@ -43,7 +43,7 @@ public class ExportQueryResponseProcessorTest {
     public void setUp() {
         fieldNames = Arrays.asList("Reference", "Database", "Summary", "Date", "categories");
         when(exportStrategy.getFieldNames(any(MetadataNode[].class))).thenReturn(fieldNames);
-        when(exportStrategy.getConfiguredFields()).thenReturn(ImmutableMap.<String, FieldInfo<?>>of("CATEGORY", new FieldInfo<String>("categories", Collections.singleton("CATEGORY"), FieldType.STRING)));
+        when(exportStrategy.getConfiguredFields()).thenReturn(ImmutableMap.of("CATEGORY", new FieldInfo<String>("categories", Collections.singleton("CATEGORY"), FieldType.STRING, false)));
 
         outputStream = new ByteArrayOutputStream();
         processor = new ExportQueryResponseProcessor(exportStrategy, outputStream);

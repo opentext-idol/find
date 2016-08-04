@@ -88,6 +88,8 @@ define([
         'search.document.detail.tabs.location.latitude': 'Latitude',
         'search.document.detail.tabs.location.longitude': 'Longitude',
         'search.document.detail.tabs.metadata': 'Metadata',
+        'search.document.detail.tabs.metadata.showAdvanced': 'Show advanced',
+        'search.document.detail.tabs.metadata.hideAdvanced': 'Hide advanced',
         'search.document.detail.tabs.similarDocuments': 'Similar documents',
         'search.document.detail.tabs.similarDates': 'Similar dates',
         'search.document.detail.tabs.similarDates.pickMessage': 'Set a time window using the sliders',
