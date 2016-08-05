@@ -178,13 +178,13 @@ public class FilterITCase extends FindTestBase {
 
         final ParametricFieldContainer container = filters().parametricContainerOfFieldValue(filterName);
         final String filterNumber = container.getFilterNumber();
-        final String filterParentName = container.getParentName();
+        final String filterCategory = container.getParentName();
 
         container.seeAll();
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
         verifyThat("Filter category title shows the number of filters chosen from total",filterNumber,is("1 / "+filterModal.filtersWithResultsForCurrentSearch()));
 
-        filters().checkboxForParametricValue(WordUtils.capitalize(filterParentName.toLowerCase()),filterName).uncheck();
+        filters().checkboxForParametricValue(WordUtils.capitalize(filterCategory.toLowerCase()),filterName).uncheck();
         search("shouldhavenoresultsprobably");
         findPage.originalQuery().click();
         findPage.waitForParametricValuesToLoad();
@@ -275,8 +275,8 @@ public class FilterITCase extends FindTestBase {
     //Because filter categories all collapse after selecting 1, must be quick or throws NoSuchElement
     public void testSelectDifferentCategoryFiltersAndResultsLoad() throws  InterruptedException{
         final ResultsView results = findService.search("face");
-        FindParametricCheckbox filter1 = filters().checkBoxesForParametricFieldContainer(0).get(0);
-        FindParametricCheckbox filter2 = filters().checkBoxesForParametricFieldContainer(1).get(0);
+        final FindParametricCheckbox filter1 = filters().checkBoxesForParametricFieldContainer(0).get(0);
+        final FindParametricCheckbox filter2 = filters().checkBoxesForParametricFieldContainer(1).get(0);
 
         filter1.check();
         filter2.check();
