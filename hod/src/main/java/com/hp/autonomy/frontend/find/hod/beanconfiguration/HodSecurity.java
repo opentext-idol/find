@@ -9,26 +9,21 @@ import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.DispatcherServletConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.web.FindController;
-import com.hp.autonomy.frontend.find.hod.authentication.HavenSearchUserMetadata;
-import com.hp.autonomy.frontend.find.hod.authentication.HsodUsernameResolver;
 import com.hp.autonomy.frontend.find.hod.web.SsoController;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
-import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
-import com.hp.autonomy.hod.client.api.authentication.tokeninformation.CombinedTokenInformation;
 import com.hp.autonomy.hod.client.api.authentication.tokeninformation.GroupInformation;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
-import com.hp.autonomy.hod.client.token.TokenProxy;
 import com.hp.autonomy.hod.client.token.TokenRepository;
-import com.hp.autonomy.hod.sso.GrantedAuthoritiesResolver;
 import com.hp.autonomy.hod.sso.HodAuthenticationProvider;
 import com.hp.autonomy.hod.sso.HodTokenLogoutSuccessHandler;
+import com.hp.autonomy.hod.sso.HodUsernameResolver;
 import com.hp.autonomy.hod.sso.SsoAuthenticationEntryPoint;
 import com.hp.autonomy.hod.sso.SsoAuthenticationFilter;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
+import com.hp.autonomy.searchcomponents.hod.authentication.HavenSearchUserMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -63,6 +58,9 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserStoreUsersService userStoreUsersService;
 
+    @Autowired
+    private HodUsernameResolver hodUsernameResolverImpl;
+
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
@@ -85,7 +83,7 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
                 unboundTokenService,
                 userStoreUsersService,
                 HavenSearchUserMetadata.METADATA_TYPES,
-                usernameResolver(),
+                hodUsernameResolverImpl,
                 null
         ));
     }
@@ -102,23 +100,17 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
 
         http.regexMatcher("/public/.*|/sso|/authenticate-sso|/api/authentication/.*|/logout")
                 .csrf()
-                    .disable()
+                .disable()
                 .exceptionHandling()
-                    .authenticationEntryPoint(ssoEntryPoint)
-                    .accessDeniedPage(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
-                    .and()
+                .authenticationEntryPoint(ssoEntryPoint)
+                .accessDeniedPage(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
+                .and()
                 .authorizeRequests()
-                    .antMatchers(FindController.APP_PATH + "**").hasRole(FindRole.USER.name())
-                    .and()
+                .antMatchers(FindController.APP_PATH + "**").hasRole(FindRole.USER.name())
+                .and()
                 .logout()
-                    .logoutSuccessHandler(logoutSuccessHandler)
-                    .and()
+                .logoutSuccessHandler(logoutSuccessHandler)
+                .and()
                 .addFilterAfter(ssoAuthenticationFilter, AbstractPreAuthenticatedProcessingFilter.class);
     }
-
-    @Bean
-    public HsodUsernameResolver usernameResolver() {
-        return new HsodUsernameResolver();
-    }
-
 }
