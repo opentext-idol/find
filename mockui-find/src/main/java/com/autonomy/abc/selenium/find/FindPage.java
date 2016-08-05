@@ -111,6 +111,8 @@ public class FindPage extends AppElement implements AppPage,
         return Integer.parseInt(findElement(By.className("total-results-number")).getText());
     }
 
+    public WebElement originalQuery() { return findElement(By.className("original-query")); }
+
     public List<String> getFilterLabels() {
         return ElementUtil.getTexts(findElements(By.className("filter-label")));
     }
@@ -120,14 +122,6 @@ public class FindPage extends AppElement implements AppPage,
         DriverUtil.scrollToBottom(getDriver());
         waitForResultsToLoad();
     }
-
-    //should really be in IdolFindPage
-    public void goToListView() {
-        findElement(By.cssSelector("[data-tab-id='list']")).click();
-        new WebDriverWait(getDriver(), 15)
-                .until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".results-list-container"))));
-    }
-
 
     protected WebElement mainContainer() {
         return Container.currentTabContents(getDriver());
