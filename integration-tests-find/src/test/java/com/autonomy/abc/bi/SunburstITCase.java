@@ -35,6 +35,7 @@ public class SunburstITCase extends IdolFindTestBase {
     }
 
     //TODO: test that checks the total doc number against what's in sunburst centre
+    //TODO: test that checks what happens to sunburst when docs have 2 (non-mutually exclusive) fields from the same category
 
     @Test
     @ActiveBug("FIND-382")
@@ -97,7 +98,7 @@ public class SunburstITCase extends IdolFindTestBase {
 
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
         final List<String> bigEnough = filterModal.expectedParametricValues();
-        filterModal.cancelButton().click();
+        filterModal.cancel();
 
         findPage.waitUntilParametricModalGone();
         return bigEnough;

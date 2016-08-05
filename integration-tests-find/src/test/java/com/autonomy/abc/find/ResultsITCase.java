@@ -3,6 +3,7 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.Query;
@@ -37,6 +38,9 @@ public class ResultsITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
+        if(!isHosted()) {
+            ((IdolFindPage) findPage).goToListView();
+        }
     }
 
     @Test
