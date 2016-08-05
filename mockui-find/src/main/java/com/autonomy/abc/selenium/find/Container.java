@@ -22,12 +22,13 @@ public enum Container {
     }
 
     public void waitForLoad(final WebDriver driver) {
-        try {
-            new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(asCssClass() + " .loading-spinner")));
-        } catch (final Exception e) {
-            //Noop
-        }
-
+         try {
+             new WebDriverWait(driver, 5)
+                     .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(asCssClass() + " .loading-spinner")));
+         }
+         catch (final Exception e) {
+             //Noop
+         }
         new WebDriverWait(driver, 60)
                 .withMessage("Container " + this + " failed to load")
                 .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(asCssClass() + " .fa-spinner")));

@@ -4,6 +4,7 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
+import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
@@ -43,6 +44,9 @@ public class RelatedConceptsITCase extends FindTestBase {
     public void setUp() {
         findService = getApplication().findService();
         navBar = getElementFactory().getTopNavBar();
+        if(!isHosted()) {
+            ((IdolFindPage) getElementFactory().getFindPage()).goToListView();
+        }
     }
 
     @Test
@@ -153,7 +157,6 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    //currently failing because of routing
     @RelatedTo({"FIND-243","FIND-110"})
     public void testRefreshAddedConcepts() {
         LOGGER.info("Test will always currently fail due to lack of routing/push-state");

@@ -26,22 +26,31 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
     }
 
     public static ParametricFilterModal getParametricModal(final WebDriver driver) {
-        final WebElement $el = new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".parametric-modal")));
+        final WebElement $el = new WebDriverWait(driver, 30)
+                .withMessage("Parametric filter modal did not open within 30 seconds ")
+                .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".parametric-modal")));
         return new ParametricFilterModal($el, driver);
     }
 
-    public WebElement cancelButton() {
-        return findElement(new Locator()
-            .withTagName("button")
-            .containingText("Cancel")
-        );
+    public boolean loadingIndicatorPresent() {
+        return !findElements(By.cssSelector(".loading-spinner")).isEmpty();
     }
 
-    public WebElement applyButton() {
-        return findElement(new Locator()
+    public void cancel() {
+        findElement(new Locator()
+            .withTagName("button")
+            .containingText("Cancel")
+        ).click();
+        new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".parametric-modal")));
+    }
+
+    public void apply() {
+        findElement(new Locator()
             .withTagName("button")
             .containingText("Apply")
-        );
+        ).click();
+        new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".parametric-modal")));
+
     }
 
     public List<WebElement> tabs() {
@@ -65,23 +74,27 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         return findElement(By.cssSelector(".tab-pane.active"));
     }
 
-    public List<WebElement> activeFieldList() {
+    public List<WebElement> activePaneFilterList() {
         return activePane().findElements(By.cssSelector(".checkbox.parametric-field-label"));
     }
 
+    public List<WebElement> allFilters() {
+        return findElements(By.cssSelector(".checkbox.parametric-field-label"));
+    }
+
     public String checkCheckBoxInActivePane(final int i) {
-        final ParametricModalCheckbox box = new ParametricModalCheckbox(activeFieldList().get(i), getDriver());
+        final ParametricModalCheckbox box = new ParametricModalCheckbox(activePaneFilterList().get(i), getDriver());
         box.check();
         return box.getName();
     }
 
-    public List<String> checkedFieldsAllPanes() {
-        final List<String> allCheckedFields = new ArrayList<>();
+    public List<String> checkedFiltersAllPanes() {
+        final List<String> allCheckedFilters = new ArrayList<>();
         for (final WebElement tab : tabs()) {
             tab.click();
-            allCheckedFields.addAll(ElementUtil.getTexts(activePane().findElements(By.cssSelector(".icheckbox-hp.checked + span"))));
+            allCheckedFilters.addAll(ElementUtil.getTexts(activePane().findElements(By.cssSelector(".icheckbox-hp.checked + span"))));
         }
-        return allCheckedFields;
+        return allCheckedFilters;
     }
 
     public Iterator<ParametricModalCheckbox> iterator() {
@@ -90,7 +103,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
     public List<ParametricModalCheckbox> values(){
         final List<ParametricModalCheckbox> boxes = new ArrayList<>();
-        for (final WebElement checkbox: activeFieldList()){
+        for (final WebElement checkbox: activePaneFilterList()){
             boxes.add(new ParametricModalCheckbox(checkbox,driver));
         }
         return boxes;
@@ -108,6 +121,22 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
             }
         }
         return totalResults;
+    }
+
+    public int filtersWithResultsForCurrentSearch() {
+        final Iterable<ParametricModalCheckbox> checkboxes = values();
+        int count = 0;
+
+        for (final ParametricModalCheckbox checkbox : checkboxes) {
+            if(checkbox.getResultsCount()!=0) {
+                count++;
+            }
+            else {
+                break;
+            }
+        }
+        cancel();
+        return count;
     }
 
     public List<String> expectedParametricValues(){

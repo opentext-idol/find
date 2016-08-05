@@ -38,7 +38,7 @@ public class SOHasLoggedIn implements HasLoggedIn {
         }
 
         private boolean navbarIsVisible(final WebDriver driver) {
-            return !driver.findElements(By.className("navbar-static-top")).isEmpty();
+            return !driver.findElements(By.className("navbar")).isEmpty();
         }
 
         private boolean signedInTextVisible(final WebDriver driver) {

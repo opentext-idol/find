@@ -2,14 +2,16 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
+import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.filters.ListFilterContainer;
-import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
@@ -26,6 +28,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
     @Before
     public void setUp(){
         findService = getApplication().findService();
+        getElementFactory().getFindPage().goToListView();
     }
 
 
@@ -39,6 +42,8 @@ public class IdolFilterITCase extends IdolFindTestBase {
         final String badFieldName = filters().parametricField(0).getParentName();
         final String goodFieldName = goodField.getParentName();
         final String goodFieldValue = goodField.getChildNames().get(0);
+
+        filters().collapseAll();
 
         filters().filterResults(goodFieldName);
 
@@ -63,7 +68,6 @@ public class IdolFilterITCase extends IdolFindTestBase {
         assertThat(filters().parametricField(0).getChildNames().get(0), is(goodFieldValue));
     }
 
-
     @Test
     public void testSearchForNonExistentFilter() {
         findService.search("face");
@@ -75,7 +79,16 @@ public class IdolFilterITCase extends IdolFindTestBase {
         assertThat(filters().getErrorMessage(), isEmptyOrNullString());
     }
 
-    private FilterPanel filters() {
+    @Test
+    public void testNumericWidgetsDefaultCollapsed() {
+        findService.search("swim");
+
+        for(GraphFilterContainer container : filters().graphContainers()) {
+            verifyThat("Widget is collapsed",container.isCollapsed());
+        }
+    }
+
+    private IdolFilterPanel filters() {
         return getElementFactory().getFilterPanel();
     }
 

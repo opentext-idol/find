@@ -37,7 +37,7 @@ public class Errors {
         NO_TEXT("No valid query text supplied"),
         BLACKLIST("All query text has been blocked by white or blacklists"),
         RELATED_CONCEPTS("An error occurred fetching top results"),
-        OPENING_BOOL("The query begins with a boolean operator"),
+        OPENING_BOOL("Opening boolean operator"),
         CLOSING_BOOL("Terminating boolean operator"),
         INVALID("Invalid query text"),
         ANALYSIS("An error occurred fetching the query analysis"),

@@ -9,6 +9,8 @@ import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class IdolFindPage extends FindPage {
 
@@ -30,11 +32,36 @@ public class IdolFindPage extends FindPage {
         return mainContainer().findElement(By.className("compare-modal-button"));
     }
 
+    public void waitUntilSearchTabsLoaded() {
+        new WebDriverWait(getDriver(),10).until(ExpectedConditions.elementToBeClickable(compareButton()));
+    }
+
     public MainNumericWidget mainGraph() {return new MainNumericWidget(getDriver());}
 
     public boolean mainGraphDisplayed(){
         return !findElements(By.className("middle-container-time-bar")).isEmpty();
     }
+
+    public void goToListView() {
+        findElement(By.cssSelector("[data-tab-id='list']")).click();
+        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".results-list-container"))));
+    }
+
+    public void goToTopicMap() {
+        findElement(By.cssSelector("[data-tab-id='topic-map']")).click();
+        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".entity-topic-map"))));
+    }
+
+    public void goToSunburst(){
+        findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
+        new WebDriverWait(getDriver(),15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".sunburst"))));
+    }
+
+    public void goToTable(){
+        findElement(By.cssSelector("[data-tab-id='table']")).click();
+        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector("table.dataTable"))));
+    }
+
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {
         @Override
         public IdolFindPage create(final WebDriver context) {

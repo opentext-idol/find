@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.save.*;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -33,11 +34,12 @@ public class SavedSearchITCase extends IdolFindTestBase {
     }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         findService = getApplication().findService();
         saveService = getApplication().savedSearchService();
 
         findService.search("*");
+        getElementFactory().getFindPage().goToListView();
         searchTabBar = getElementFactory().getSearchTabBar();
     }
 
@@ -91,6 +93,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
     @Test
     public void testDuplicateNamesPrevented() {
+        findService.search("useless");
         saveService.saveCurrentAs("duplicate", SearchType.QUERY);
         saveService.openNewTab();
         getElementFactory().getResultsPage().waitForResultsToLoad();
@@ -100,6 +103,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
     }
 
     private void checkSavingDuplicateThrowsError(final String searchName, final SearchType type){
+        Waits.loadOrFadeWait();
         final SearchOptionsBar options = saveService.nameSavedSearch(searchName,type);
         options.saveConfirmButton().click();
         assertThat(options.getSaveErrorMessage(), isError(Errors.Find.DUPLICATE_SEARCH));
@@ -111,6 +115,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         findService.search(new Query("live forever"));
         FilterPanel filterPanel = getElementFactory().getFilterPanel();
         filterPanel.waitForParametricFields();
+        filterPanel.parametricField(0).expand();
         filterPanel.checkboxForParametricValue(0,0).check();
 
         saveService.saveCurrentAs("oasis", SearchType.QUERY);
