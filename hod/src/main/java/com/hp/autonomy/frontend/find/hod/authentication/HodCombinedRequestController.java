@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HodCombinedRequestController {
-
     public static final String COMBINED_REQUEST = "/api/authentication/combined-request";
-    public static final String LIST_APPLICATION_REQUEST = "/api/authentication/list-application-request";
+
+    private final HodAuthenticationRequestService tokenService;
 
     @Autowired
-    private HodAuthenticationRequestService tokenService;
+    public HodCombinedRequestController(final HodAuthenticationRequestService tokenService) {
+        this.tokenService = tokenService;
+    }
 
     @RequestMapping(value = COMBINED_REQUEST, method = RequestMethod.GET)
     public SignedRequest getCombinedRequest(
@@ -31,10 +33,5 @@ public class HodCombinedRequestController {
             @RequestParam("user-store-name") final String userStoreName
     ) throws HodErrorException {
         return tokenService.getCombinedRequest(domain, application, userStoreDomain, userStoreName);
-    }
-
-    @RequestMapping(value = "/list-application-request", method = RequestMethod.GET)
-    public SignedRequest getListApplicationRequest() throws HodErrorException {
-        return tokenService.getListApplicationRequest();
     }
 }

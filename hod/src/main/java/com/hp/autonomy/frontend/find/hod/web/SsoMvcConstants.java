@@ -11,7 +11,6 @@ enum SsoMvcConstants {
     ERROR_PAGE("errorPage"),
     COOKIE_ERROR_PAGE("cookieErrorPage"),
     LIST_APPLICATION_REQUEST("listApplicationRequest"),
-    LIST_APPLICATION_REQUEST_API("listApplicationRequestApi"),
     LOGOUT_ENDPOINT("endpoint"),
     LOGOUT_REDIRECT_URL("redirectUrl"),
     SSO_PAGE("ssoPage"),

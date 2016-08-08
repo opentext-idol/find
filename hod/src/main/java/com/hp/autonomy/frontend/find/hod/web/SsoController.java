@@ -40,26 +40,32 @@ public class SsoController {
     public static final String SSO_LOGOUT_PAGE = "/sso-logout";
     public static final String HOD_SSO_ERROR_PARAM = "error";
 
-    @Autowired
-    private HodAuthenticationRequestService hodAuthenticationRequestService;
+    private final HodAuthenticationRequestService hodAuthenticationRequestService;
+    private final HodErrorController hodErrorController;
+    private final ConfigService<HodFindConfig> configService;
+    private final ControllerUtils controllerUtils;
+    private final String gitCommit;
+    private final String ssoPage;
+    private final String logoutEndpoint;
 
     @Autowired
-    private HodErrorController hodErrorController;
-
-    @Autowired
-    private ConfigService<HodFindConfig> configService;
-
-    @Autowired
-    private ControllerUtils controllerUtils;
-
-    @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
-    private String gitCommit;
-
-    @Value(HodConfiguration.SSO_PAGE_PROPERTY)
-    private String ssoPage;
-
-    @Value(HodConfiguration.HOD_API_URL_PROPERTY)
-    private String logoutEndpoint;
+    public SsoController(
+            final HodAuthenticationRequestService hodAuthenticationRequestService,
+            final ConfigService<HodFindConfig> configService,
+            final ControllerUtils controllerUtils,
+            final HodErrorController hodErrorController,
+            @Value(AppConfiguration.GIT_COMMIT_PROPERTY) final String gitCommit,
+            @Value(HodConfiguration.SSO_PAGE_PROPERTY) final String ssoPage,
+            @Value(HodConfiguration.HOD_API_URL_PROPERTY) final String logoutEndpoint
+    ) {
+        this.hodAuthenticationRequestService = hodAuthenticationRequestService;
+        this.configService = configService;
+        this.controllerUtils = controllerUtils;
+        this.hodErrorController = hodErrorController;
+        this.gitCommit = gitCommit;
+        this.ssoPage = ssoPage;
+        this.logoutEndpoint = logoutEndpoint;
+    }
 
     @RequestMapping(value = SSO_PAGE, method = RequestMethod.GET, params = HOD_SSO_ERROR_PARAM)
     public ModelAndView ssoError(final HttpServletRequest request, final HttpServletResponse response) throws HodErrorException {
@@ -75,7 +81,6 @@ public class SsoController {
         ssoConfig.put(SsoMvcConstants.ERROR_PAGE.value(), DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH);
         ssoConfig.put(SsoMvcConstants.COOKIE_ERROR_PAGE.value(), DispatcherServletConfiguration.COOKIE_AUTHENTICATION_ERROR_PATH);
         ssoConfig.put(SsoMvcConstants.LIST_APPLICATION_REQUEST.value(), hodAuthenticationRequestService.getListApplicationRequest());
-        ssoConfig.put(SsoMvcConstants.LIST_APPLICATION_REQUEST_API.value(), HodCombinedRequestController.LIST_APPLICATION_REQUEST);
         ssoConfig.put(SsoMvcConstants.SSO_PAGE.value(), ssoPage);
         ssoConfig.put(SsoMvcConstants.SSO_ENTRY_PAGE.value(), SSO_PAGE);
 
