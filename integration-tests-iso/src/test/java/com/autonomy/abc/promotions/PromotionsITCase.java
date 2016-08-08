@@ -121,6 +121,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 
 	@Test
 	@ActiveBug("CCUK-2671")
+	//TODO ISO-77 => RAPIDLY adding or removing
 	public void testAddRemoveTriggers() throws InterruptedException {
 		setUpCarsPromotion(1);
 
