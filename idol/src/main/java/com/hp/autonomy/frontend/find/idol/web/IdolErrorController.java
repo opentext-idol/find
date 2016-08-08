@@ -28,15 +28,6 @@ public class IdolErrorController extends CustomErrorController {
 
     @Override
     protected URI getAuthenticationErrorUrl(final HttpServletRequest request) {
-        return getUrl(request);
-    }
-
-    @Override
-    protected URI getErrorUrl(final HttpServletRequest request) {
-        return getUrl(request);
-    }
-
-    private URI getUrl(final HttpServletRequest request) {
-        return URI.create(request.getContextPath() + BASE_SEARCH_URL);
+        return getErrorUrl(request);
     }
 }

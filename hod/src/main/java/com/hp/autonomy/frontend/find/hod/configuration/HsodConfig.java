@@ -17,13 +17,9 @@ import java.net.URL;
 @JsonDeserialize(builder = HsodConfig.Builder.class)
 public class HsodConfig {
     private final URL landingPageUrl;
-    private final URL externalUrl;
-    private final URL findAppUrl;
 
     private HsodConfig(final Builder builder) {
         landingPageUrl = builder.landingPageUrl;
-        externalUrl = builder.externalUrl;
-        findAppUrl = builder.findAppUrl;
     }
 
     public HsodConfig merge(final HsodConfig other) {
@@ -33,8 +29,6 @@ public class HsodConfig {
 
         return new Builder()
                 .setLandingPageUrl(landingPageUrl == null ? other.landingPageUrl : landingPageUrl)
-                .setExternalUrl(externalUrl == null ? other.externalUrl : externalUrl)
-                .setFindAppUrl(findAppUrl == null ? other.findAppUrl : findAppUrl)
                 .build();
     }
 
@@ -43,8 +37,6 @@ public class HsodConfig {
     @Accessors(chain = true)
     public static class Builder {
         private URL landingPageUrl;
-        private URL externalUrl;
-        private URL findAppUrl;
 
         public HsodConfig build() {
             return new HsodConfig(this);

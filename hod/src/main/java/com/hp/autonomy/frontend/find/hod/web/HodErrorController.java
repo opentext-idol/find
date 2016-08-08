@@ -46,11 +46,6 @@ public class HodErrorController extends CustomErrorController {
         return URI.create(configService.getConfig().getHsod().getLandingPageUrl().toString());
     }
 
-    @Override
-    protected URI getErrorUrl(final HttpServletRequest request) {
-        return URI.create(configService.getConfig().getHsod().getFindAppUrl().toString());
-    }
-
     @RequestMapping(DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH)
     public ModelAndView clientAuthenticationErrorPage(
             @RequestParam(STATUS_CODE_PARAM) final int statusCode,

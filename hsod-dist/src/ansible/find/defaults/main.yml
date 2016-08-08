@@ -40,7 +40,6 @@ find_options:
 find_enable_public_indexes: false
 
 find_hsod_landing_page: http://search.havenondemand.com
-find_hsod_external_url: http://search.havenondemand.com
 
 find_qm_profile: search_default_profile
 find_qm_index: search_default_index

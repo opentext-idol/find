@@ -38,7 +38,6 @@ public class HodFindMockConfigConfiguration {
 
         final HsodConfig hsodConfig = new HsodConfig.Builder()
                 .setLandingPageUrl(new URL("https://search.havenondemand.com"))
-                .setFindAppUrl(new URL("https://find.havenapps.io"))
                 .build();
 
         final IodConfig iodConfig = new IodConfig.Builder()

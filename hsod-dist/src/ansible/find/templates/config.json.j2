@@ -8,15 +8,12 @@
 		"publicIndexesEnabled": {{find_enable_public_indexes | to_nice_json}}
 	},
 	"hsod": {
-		"landingPageUrl": "{{find_hsod_landing_page}}",
-		"externalUrl": "{{find_hsod_external_url}}"
-
+		"landingPageUrl": "{{find_hsod_landing_page}}"
 	},
 	"queryManipulation": {
 		"profile":"{{find_qm_profile}}",
 		"index": "{{find_qm_index}}"
 	},
-
 	"allowedOrigins": {{find_allowed_origins | to_nice_json}},
 	"redis": {{find_redis | to_nice_json}}
 }
