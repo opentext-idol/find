@@ -50,7 +50,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
     @Before
     public void setUp(){
         findService = getApplication().findService();
-        ((IdolFindPage) getElementFactory().getFindPage()).goToListView();
+        if(!isHosted()) {
+            ((IdolFindPage) getElementFactory().getFindPage()).goToListView();
+        }
     }
 
     @Test
