@@ -30,6 +30,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
@@ -310,7 +311,7 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
     public void testDeletedDocumentsRemainDeleted() {
         setUpPromotion("dog", "woof bark", 8);
         final List<String> bucketList = editReferencesPage.getBucketTitles();
-        assumeThat(bucketList, hasSize(8));
+        assertThat("Correct number of documents within bucket", bucketList, hasSize(8));
 
         for (int i = 0; i < 4; i++) {
             editReferencesPage.deleteDocFromWithinBucket(bucketList.get(i));

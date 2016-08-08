@@ -18,6 +18,7 @@ import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
@@ -386,7 +387,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	public void testSpinnerPresentOnLastSynonymWhilePenultimateSynonymSpinnerPresent() throws InterruptedException {
+	public void testSpinnerPresentOnLastSynonymWhilePenultimateSynonymSpinnerPresent() {
 		keywordService.addSynonymGroup(Language.KOREAN, "ying yang");
 		keywordsPage = keywordService.goToKeywords();
 
@@ -395,13 +396,16 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 		assertThat(keywordsPage.countKeywords(), is(2));
 
 		keywordsPage.getSynonymIcon("ying").click();
-		if (keywordsPage.getSynonymIcon("ying").getAttribute("class").contains("fa-spin")) {
-			assertThat("Spinner not present on last synonym", keywordsPage.getSynonymIcon("yang").getAttribute("class"),containsString("fa-spin"));
-		}
+
+		assertThat("Spinner present on ying", ElementUtil.hasClass("fa-spin", keywordsPage.getSynonymIcon("ying")));
+		assertThat("Spinner present on yang", ElementUtil.hasClass("fa-spin", keywordsPage.getSynonymIcon("yang")));
+
+		//Wait until they're deleted, otherwise there's issues in the teardown
+		new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
 	}
 
 	@Test
-	public void testAddKeywordsBoxOpenClickDelete() throws InterruptedException {
+	public void testAddKeywordsBoxOpenClickDelete() {
 		keywordService.addSynonymGroup(Language.KAZAKH, "бір екі үш төрт бес");
 		keywordService.goToKeywords();
 
@@ -417,7 +421,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 	@Test
 	@ResolvedBug("CCUK-3243")
-	public void testQuickSynonymDelete() throws InterruptedException {
+	public void testQuickSynonymDelete() {
 		keywordService.addSynonymGroup(Language.ENGLISH, "string strong strang streng strung");
 		keywordService.goToKeywords();
 
@@ -472,7 +476,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	public void testSynonymsDisplayedInAlphabeticalOrder() throws InterruptedException {
+	public void testSynonymsDisplayedInAlphabeticalOrder() {
 		for (final String synonyms : Arrays.asList("aa ba ca da", "ab bb cb db", "dc cc bc ac", "ca ba da aa")) {
 			searchPage = keywordService.addSynonymGroup(Language.ENGLISH, synonyms);
 			final List<String> keywords = searchPage.getFirstSynonymInGroup();
@@ -496,7 +500,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	public void testBlacklistedKeywordsDisplayedInAlphabeticalOrder() throws InterruptedException {
+	public void testBlacklistedKeywordsDisplayedInAlphabeticalOrder() {
 		keywordService.addBlacklistTerms(Language.ENGLISH, "aa ba ca da ab bb cb db");
 
 		keywordsPage.filterView(KeywordFilter.BLACKLIST);
@@ -510,7 +514,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	public void testDeletingOfSynonymsAndBlacklistedTerms() throws InterruptedException {
+	public void testDeletingOfSynonymsAndBlacklistedTerms() {
 		final String blacklistTerms = "aa ba ca da ab bb cb db";
 		final String synonyms = "ea es ed ef eg eh";
 		final String[] blacklistTermsToDelete = {"db", "aa", "da"};
@@ -536,7 +540,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	public void testDeletingSynonyms() throws InterruptedException {
+	public void testDeletingSynonyms() {
 		final List<String> synonyms = Arrays.asList("death", "cab", "cutie", "panic", "disco");
 
 		keywordService.addSynonymGroup(synonyms);
@@ -561,7 +565,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	public void testSynonymNotificationText() throws InterruptedException {
+	public void testSynonymNotificationText() {
 		final String synonymOne = "Flesh";
 		final String synonymTwo = "Meat";
 		final String synonymThree = "Skin";
@@ -575,7 +579,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	public void testBlacklistNotificationText() throws InterruptedException {
+	public void testBlacklistNotificationText() {
 		final String blacklistOne = "Aardvark";
 		final String blacklistTwo = "Aardwolf";
 
@@ -588,7 +592,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 	@Test
 	@ActiveBug(value = "CSA-1882", type = ApplicationType.HOSTED)
-	public void testClickingOnNotifications() throws InterruptedException {
+	public void testClickingOnNotifications() {
 		keywordService.addSynonymGroup("squid kraken octopus monster");
 
 		getApplication().switchTo(PromotionsPage.class);
@@ -644,7 +648,7 @@ public class KeywordsPageITCase extends HybridIsoTestBase {
 
 	@Test
 	@ResolvedBug("CSA-1440")
-	public void testNavigatingAwayBeforeKeywordAdded() throws InterruptedException {
+	public void testNavigatingAwayBeforeKeywordAdded() {
 		keywordService.addKeywords(KeywordWizardType.BLACKLIST, Language.ENGLISH, Collections.singletonList("Jeff"));
 
 		getApplication().switchTo(PromotionsPage.class);

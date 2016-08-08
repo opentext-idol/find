@@ -42,12 +42,5 @@ public abstract class UserService<T extends IsoElementFactory> extends ServiceBa
                 deleteUserInRow(row);
             }
         }
-
-        new WebDriverWait(getDriver(), 10).until(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver input) {
-                return usersPage.countNumberOfUsers() == 0;
-            }
-        });
     }
 }
