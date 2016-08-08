@@ -4,6 +4,7 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.ToolTips;
 import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.find.results.ResultsView;
@@ -39,6 +40,9 @@ public class FilterITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
+        if(!isHosted()) {
+            ((IdolFindPage) findPage).goToListView();
+        }
     }
 
     private ResultsView search(final String searchTerm) {

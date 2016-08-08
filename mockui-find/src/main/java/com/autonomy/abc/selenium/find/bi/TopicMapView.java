@@ -6,7 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
@@ -84,7 +84,14 @@ public class TopicMapView {
     }
 
     public void waitForMapLoaded() {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfAllElements(mapEntityTextElements()));
+        new WebDriverWait(driver, 30).until(new mapLoaded());
+    }
+
+    private static class mapLoaded implements ExpectedCondition<Boolean> {
+        @Override
+        public Boolean apply(final WebDriver driver) {
+            return driver.findElements(By.cssSelector(".entity-topic-map > svg > text")).size()>0;
+        }
     }
 
     private WebElement findElement(final By locator) {

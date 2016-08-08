@@ -68,6 +68,8 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         catch (TimeoutException e) {
             //no-op
         }
+
+        findPage.goToListView();
     }
 
     @After
@@ -197,6 +199,8 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
         searchAndSave(new Query("face"), comparedTabName);
         searchAndSave(new Query("bus").withFilter(new IndexFilter(expectedIndex)), expectedTabName);
+
+        getElementFactory().getTopicMap().waitForMapLoaded();
         ResultsView resultsView = getElementFactory().getResultsPage();
         resultsView.goToListView();
         final String firstTitle = resultsView.getResult(1).getTitleString();
@@ -226,7 +230,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
     private void searchAndSave(final Query query, final String saveAs, final SearchType saveType) {
         findService.search(query);
-        getElementFactory().getResultsPage().waitForResultsToLoad();
+        getElementFactory().getTopicMap().waitForMapLoaded();
         savedSearchService.saveCurrentAs(saveAs, saveType);
     }
 }
