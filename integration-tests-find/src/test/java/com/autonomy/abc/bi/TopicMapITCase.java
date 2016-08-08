@@ -47,7 +47,6 @@ public class TopicMapITCase extends IdolFindTestBase {
     @Test
     public void testTopicMapTabShowsTopicMap() {
         findService.search("shambolic");
-        verifyThat("Main results list hidden", getElementFactory().getResultsPage().mainResultsContainerHidden());
         verifyThat("Topic map element displayed", results.topicMapVisible());
     }
 
@@ -113,22 +112,19 @@ public class TopicMapITCase extends IdolFindTestBase {
         Waits.loadOrFadeWait();
 
         final List<String> clusterNames = results.returnParentEntityNames();
-        final List<String> allRelatedConcepts = relatedConceptsInMapFormat();
-
         for (String cluster: clusterNames) {
-            verifyThat("The cluster " + cluster + " is in the right hand side", allRelatedConcepts ,hasItem(cluster));
+            verifyThat("The cluster " + cluster + " is in the right hand side", formattedRelatedConcepts() ,hasItem(cluster));
         }
 
         final List<String> addedConcepts = new ArrayList<>();
-
         addedConcepts.add(results.clickChildEntityAndAddText(clusterNames.size()));
         results.waitForMapLoaded();
         addedConcepts.add(results.clickChildEntityAndAddText(results.returnParentEntityNames().size()));
         
-        verifyThat("All " + addedConcepts.size() + " added concept terms added to search", relatedConceptsWithoutSpaces(),containsItems(addedConcepts));
+        verifyThat("All " + addedConcepts.size() + " added concept terms added to search", alsoSearchingFor(),containsItems(addedConcepts));
     }
 
-    private List<String> relatedConceptsWithoutSpaces(){
+    private List<String> alsoSearchingFor(){
         final List<String> termsNoSpaces = new ArrayList<>();
         for(final String term: navBar.getAlsoSearchingForTerms()){
             termsNoSpaces.add(term.replace(" ",""));
@@ -136,7 +132,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         return termsNoSpaces;
     }
 
-    private List<String> relatedConceptsInMapFormat() {
+    private List<String> formattedRelatedConcepts() {
         final List<String> allRelatedConcepts = new ArrayList<>();
         for (String concept : conceptsPanel().getRelatedConcepts()) {
             allRelatedConcepts.add(concept.replace(" ", "").toLowerCase());

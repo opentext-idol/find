@@ -75,8 +75,11 @@ public class TopicMapView {
         waitForMapLoaded();
         final int maxIndex = mapEntities().size() - 1;
         final int i = maxIndex - 1;
+
+        Waits.loadOrFadeWait();
         clickParentEntities();
         Waits.loadOrFadeWait();
+
         final String concept = mapEntityTextElements().get(i - noOfClusters).getText().replace(" ", "").toLowerCase();
         offCentreClick(mapEntityTextElements().get(i - noOfClusters));
         Waits.loadOrFadeWait();
