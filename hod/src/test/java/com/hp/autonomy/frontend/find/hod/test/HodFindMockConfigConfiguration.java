@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.hod.test;
 import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HsodConfig;
-import com.hp.autonomy.frontend.find.hod.configuration.IodConfig;
+import com.hp.autonomy.frontend.find.hod.configuration.HodConfig;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
@@ -40,7 +40,7 @@ public class HodFindMockConfigConfiguration {
                 .setLandingPageUrl(new URL("https://search.havenondemand.com"))
                 .build();
 
-        final IodConfig iodConfig = new IodConfig.Builder()
+        final HodConfig hodConfig = new HodConfig.Builder()
                 .setApiKey(new ApiKey("mock-api-key"))
                 .setActiveIndexes(Collections.<ResourceIdentifier>emptyList())
                 .setPublicIndexesEnabled(true)
@@ -49,7 +49,7 @@ public class HodFindMockConfigConfiguration {
         final HodFindConfig config = new HodFindConfig.Builder()
                 .setQueryManipulation(queryManipulationConfig)
                 .setHsod(hsodConfig)
-                .setIod(iodConfig)
+                .setHod(hodConfig)
                 .setFieldsInfo(new FieldsInfo.Builder().build())
                 .build();
 

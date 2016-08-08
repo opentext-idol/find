@@ -11,5 +11,5 @@ import com.hp.autonomy.frontend.configuration.ConfigException;
 public interface ConfigurationComponent<C extends ConfigurationComponent<C>> {
     C merge(C other);
 
-    void basicValidate(String... options) throws ConfigException;
+    void basicValidate(String section) throws ConfigException;
 }

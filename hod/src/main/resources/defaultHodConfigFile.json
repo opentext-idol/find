@@ -10,7 +10,7 @@
     "hsod": {
         "landingPageUrl": "https://search.havenondemand.com"
     },
-    "iod": {
+    "hod": {
         "apiKey": "",
         "activeIndexes": [],
         "publicIndexesEnabled": false

@@ -7,6 +7,8 @@ package com.hp.autonomy.frontend.find.hod.configuration;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.find.core.configuration.ConfigurationComponent;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -15,13 +17,14 @@ import java.net.URL;
 
 @Data
 @JsonDeserialize(builder = HsodConfig.Builder.class)
-public class HsodConfig {
+public class HsodConfig implements ConfigurationComponent<HsodConfig> {
     private final URL landingPageUrl;
 
     private HsodConfig(final Builder builder) {
         landingPageUrl = builder.landingPageUrl;
     }
 
+    @Override
     public HsodConfig merge(final HsodConfig other) {
         if (other == null) {
             return this;
@@ -30,6 +33,13 @@ public class HsodConfig {
         return new Builder()
                 .setLandingPageUrl(landingPageUrl == null ? other.landingPageUrl : landingPageUrl)
                 .build();
+    }
+
+    @Override
+    public void basicValidate(final String section) throws ConfigException {
+        if (landingPageUrl == null) {
+            throw new ConfigException(section, "Landing page URL must be provided");
+        }
     }
 
     @Setter

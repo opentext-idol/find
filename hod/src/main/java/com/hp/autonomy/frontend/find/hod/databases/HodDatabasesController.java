@@ -28,7 +28,7 @@ public class HodDatabasesController extends DatabasesController<Database, HodDat
 
     @Override
     protected HodDatabasesRequest buildDatabasesRequest() {
-        final Boolean publicIndexesEnabled = configService.getConfig().getIod().getPublicIndexesEnabled();
+        final Boolean publicIndexesEnabled = configService.getConfig().getHod().getPublicIndexesEnabled();
 
         return new HodDatabasesRequest.Builder()
                 .setPublicIndexesEnabled(publicIndexesEnabled)

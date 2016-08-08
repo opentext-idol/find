@@ -41,7 +41,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
     }
 
     @Override
-    public void basicValidate(final String... options) throws ConfigException {
+    public void basicValidate(final String section) throws ConfigException {
     }
 
     @SuppressWarnings("WeakerAccess")

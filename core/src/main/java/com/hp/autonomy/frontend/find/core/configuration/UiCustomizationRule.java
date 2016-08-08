@@ -37,6 +37,6 @@ public class UiCustomizationRule implements ConfigurationComponent<UiCustomizati
     }
 
     @Override
-    public void basicValidate(final String... options) throws ConfigException {
+    public void basicValidate(final String section) throws ConfigException {
     }
 }

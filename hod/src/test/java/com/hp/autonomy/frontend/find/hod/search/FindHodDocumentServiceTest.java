@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.hod.search;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
-import com.hp.autonomy.frontend.find.hod.configuration.IodConfig;
+import com.hp.autonomy.frontend.find.hod.configuration.HodConfig;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryRequestBuilder;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryResults;
@@ -70,7 +70,7 @@ public class FindHodDocumentServiceTest extends HodDocumentServiceTest {
         documentsService = new FindHodDocumentService(findSimilarService, findConfigService, queryTextIndexService, getContentService, authenticationInformationRetriever, databasesService, documentFieldsService, cacheManager);
 
         when(findConfig.getQueryManipulation()).thenReturn(new QueryManipulationConfig("SomeProfile", "SomeIndex"));
-        when(findConfig.getIod()).thenReturn(new IodConfig.Builder().setPublicIndexesEnabled(true).build());
+        when(findConfig.getHod()).thenReturn(new HodConfig.Builder().setPublicIndexesEnabled(true).build());
         when(findConfigService.getConfig()).thenReturn(findConfig);
     }
 

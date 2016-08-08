@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.hod.databases;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.databases.AbstractDatabasesControllerTest;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
-import com.hp.autonomy.frontend.find.hod.configuration.IodConfig;
+import com.hp.autonomy.frontend.find.hod.configuration.HodConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
@@ -26,8 +26,8 @@ public class HodDatabasesControllerTest extends AbstractDatabasesControllerTest<
 
     @Before
     public void setUp() {
-        final IodConfig iodConfig = new IodConfig.Builder().setPublicIndexesEnabled(true).build();
-        when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setIod(iodConfig).build());
+        final HodConfig hodConfig = new HodConfig.Builder().setPublicIndexesEnabled(true).build();
+        when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setHod(hodConfig).build());
 
         databasesController = new HodDatabasesController(databasesService, configService);
     }

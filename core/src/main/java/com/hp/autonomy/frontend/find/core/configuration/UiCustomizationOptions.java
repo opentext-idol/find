@@ -43,6 +43,6 @@ public class UiCustomizationOptions implements ConfigurationComponent<UiCustomiz
     }
 
     @Override
-    public void basicValidate(final String... options) throws ConfigException {
+    public void basicValidate(final String section) throws ConfigException {
     }
 }

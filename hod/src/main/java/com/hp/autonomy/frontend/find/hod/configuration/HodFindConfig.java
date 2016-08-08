@@ -41,7 +41,7 @@ import java.util.Set;
 public class HodFindConfig extends AbstractConfig<HodFindConfig> implements AuthenticationConfig<HodFindConfig>, HodSearchCapable, PasswordsConfig<HodFindConfig>, HodSsoConfig, FindConfig {
     private final Authentication<?> login;
     private final HsodConfig hsod;
-    private final IodConfig iod;
+    private final HodConfig hod;
     private final QueryManipulationConfig queryManipulation;
     private final Set<String> allowedOrigins;
     private final RedisConfig redis;
@@ -58,7 +58,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private HodFindConfig(final Builder builder) {
         login = builder.login;
         hsod = builder.hsod;
-        iod = builder.iod;
+        hod = builder.hod;
         allowedOrigins = builder.allowedOrigins;
         redis = builder.redis;
         fieldsInfo = builder.fieldsInfo;
@@ -76,7 +76,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     public HodFindConfig merge(final HodFindConfig config) {
         return config != null ? new Builder()
                 .setLogin(login == null ? config.login : login.merge(config.login))
-                .setIod(iod == null ? config.iod : iod.merge(config.iod))
+                .setHod(hod == null ? config.hod : hod.merge(config.hod))
                 .setAllowedOrigins(allowedOrigins == null ? config.allowedOrigins : allowedOrigins)
                 .setRedis(redis == null ? config.redis : redis.merge(config.redis))
                 .setQueryManipulation(queryManipulation == null ? config.queryManipulation : queryManipulation.merge(config.queryManipulation))
@@ -161,7 +161,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     @Override
     @JsonIgnore
     public ApiKey getApiKey() {
-        return iod.getApiKey();
+        return hod.getApiKey();
     }
 
     @JsonPOJOBuilder(withPrefix = "set")
@@ -171,7 +171,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     public static class Builder {
         private Authentication<?> login;
         private HsodConfig hsod;
-        private IodConfig iod;
+        private HodConfig hod;
         private Set<String> allowedOrigins;
         private RedisConfig redis;
         private QueryManipulationConfig queryManipulation;
@@ -187,7 +187,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         public Builder(final HodFindConfig config) {
             login = config.login;
             hsod = config.hsod;
-            iod = config.iod;
+            hod = config.hod;
             allowedOrigins = config.allowedOrigins;
             redis = config.redis;
             queryManipulation = config.queryManipulation;
