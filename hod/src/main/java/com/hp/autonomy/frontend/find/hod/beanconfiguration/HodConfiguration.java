@@ -33,6 +33,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,6 +52,9 @@ public class HodConfiguration {
 
     @Autowired
     private TokenRepository tokenRepository;
+
+    @Value(HOD_API_URL_PROPERTY)
+    private String endpoint;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
@@ -92,8 +96,6 @@ public class HodConfiguration {
 
     @Bean
     public HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder(final HttpClient httpClient, final ObjectMapper objectMapper) {
-        final String endpoint = environment.getProperty("find.iod.api", "https://api.havenondemand.com");
-
         return new HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple>(endpoint)
                 .setHttpClient(httpClient)
                 .setObjectMapper(objectMapper)

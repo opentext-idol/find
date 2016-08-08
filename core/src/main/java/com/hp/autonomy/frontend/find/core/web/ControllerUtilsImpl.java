@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class ControllerUtilsImpl implements ControllerUtils {
     private final String commit;
 
     @Autowired
-    public ControllerUtilsImpl(final ObjectMapper objectMapper, final MessageSource messageSource, @Value("${application.commit}") final String commit) {
+    public ControllerUtilsImpl(final ObjectMapper objectMapper, final MessageSource messageSource, @Value(AppConfiguration.GIT_COMMIT_PROPERTY) final String commit) {
         this.objectMapper = objectMapper;
         this.messageSource = messageSource;
         this.commit = commit;
