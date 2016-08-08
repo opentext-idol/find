@@ -48,7 +48,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     @Test
     public void testShowDocumentPreview() {
         final ResultsView results = findService.search("cake");
-        findPage.filterBy(new IndexFilter(filters().getIndex(1).getName()));
+        findPage.filterBy(new IndexFilter(filters().getIndex(1)));
 
         final DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
         final InlinePreview inlinePreview = getElementFactory().getInlinePreview();
@@ -108,7 +108,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     @Test
     public void testDetailedPreview() {
         final ResultsView results = findService.search("tragic");
-        findPage.filterBy(new IndexFilter(filters().getIndex(1).getName()));
+        findPage.filterBy(new IndexFilter(filters().getIndex(1)));
 
         results.getResult(1).openDocumentPreview();
         getElementFactory().getInlinePreview().openDetailedPreview();

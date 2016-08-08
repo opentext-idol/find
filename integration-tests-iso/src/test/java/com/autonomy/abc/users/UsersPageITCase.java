@@ -14,6 +14,7 @@ import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
@@ -24,6 +25,8 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.Serializable;
@@ -157,6 +160,8 @@ public class UsersPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
+	@ResolvedBug("HOD-532")
+	@ActiveBug("HOD-1073")
 	public void testEditUserType() {
 		final User user = helper.singleSignUp(aNewUser);
 
@@ -293,10 +298,18 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		checkUserCountIs(userCount);
 
 		userService.deleteUser(user2);
+		Waits.loadOrFadeWait();
 		checkUserCountIs(--userCount);
 
 		userService.deleteUser(user1);
-		Waits.loadOrFadeWait();
+
+		new WebDriverWait(getDriver(), 5).until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver input) {
+				return usersPage.getUserCountInTitle() == 0;
+			}
+		});
+
 		checkUserCountIs(--userCount);
 	}
 

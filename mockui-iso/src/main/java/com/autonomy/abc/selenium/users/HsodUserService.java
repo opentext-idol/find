@@ -9,6 +9,7 @@ import com.hp.autonomy.frontend.selenium.element.GritterNotice;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HsodUserService extends UserService<IsoHsodElementFactory> {
@@ -26,7 +27,8 @@ public class HsodUserService extends UserService<IsoHsodElementFactory> {
     protected void deleteUserInRow(final UserTableRow row) {
         row.deleteButton().click();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
-        new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
+        new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining("Deleted user"));
+        Waits.loadOrFadeWait();
     }
 
     @Override

@@ -76,7 +76,7 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     @Test
     public void testBetween30And60Results(){
         ResultsView results = findService.search(new Query("connectors"));
-        findPage.filterBy(new IndexFilter("sitesearch"));
+        findPage.filterBy(new IndexFilter("Site Search"));
 
         findPage.scrollToBottom();
 

@@ -15,7 +15,7 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
     }
 
     public void select(final Index index) {
-        select(index.getName());
+        select(index.getDisplayName());
     }
 
     public void select(final String indexName) {
@@ -48,6 +48,8 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
     }
 
     public List<Index> getSelected() {
+        expandAll();
+
         final List<Index> selected = new ArrayList<>();
         for (final IndexNodeElement node : this) {
             if (node.isSelected()) {

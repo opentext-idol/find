@@ -41,8 +41,7 @@ public class SearchErrorMessageITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @ResolvedBug("CCUK-3741")
-    @ActiveBug(value = "HOD-2170", type = ApplicationType.HOSTED)
+    @ResolvedBug({"CCUK-3741", "HOD-2170"})
     public void testSearchQuotationMarks() {
         @RelatedTo("CCUK-3747") final
         Serializable error = isHosted() ?

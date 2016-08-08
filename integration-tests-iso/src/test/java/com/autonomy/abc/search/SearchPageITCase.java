@@ -527,9 +527,9 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	@Test
 	@ResolvedBug("CSA-1708")
 	public void testParametricLabelsNotUndefined(){
-		searchService.search(new Query("eat").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(new IndexFilter("WikiEnglish")));
+		searchService.search(new Query("eat").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.WIKI_ENG));
 		for(final String filterLabel : searchPage.filterLabelList()){
-			verifyThat("Filter label is "+filterLabel+" - not undefined",filterLabel.toLowerCase(),not(containsString("undefined")));
+			verifyThat("Filter label is " + filterLabel + " - not undefined",filterLabel.toLowerCase(), not(containsString("undefined")));
 		}
 	}
 
@@ -559,8 +559,8 @@ public class SearchPageITCase extends HybridIsoTestBase {
 			firstIndex = new Index("WikiEnglish");
 			secondIndex = new Index("Wookiepedia");
 		} else {
-			firstIndex = new Index("news_eng");
-			secondIndex = new Index("news_ger");
+			firstIndex = new Index("News - English");
+			secondIndex = new Index("News - German");
 		}
 		final List<Index> selected = new ArrayList<>();
 

@@ -392,4 +392,9 @@ public abstract class SearchBase extends SOPageBase implements
 		expand(Facet.PARAMETRIC_VALUES);
 		return findElement(By.className("collapsible-parametric-option"));
 	}
+
+	@Override
+	public void openContainer(WebElement container) {
+		//No need to open containers in ISO
+	}
 }

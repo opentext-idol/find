@@ -38,8 +38,9 @@ class FindIndexCategoryNode extends IndexCategoryNode {
     }
 
     @Override
+    //TODO update this to use index name rather than data-name
     protected IndexNodeElement find(final String name) {
-        final WebElement childElement = container.findElement(By.cssSelector(".clickable[data-name='" + name+"']"));
+        final WebElement childElement = container.findElement(By.xpath("//*[normalize-space(.)='" + name + "' and contains(@class,'clickable')]"));
         return new FindIndexLeafNode(childElement, driver);
     }
 

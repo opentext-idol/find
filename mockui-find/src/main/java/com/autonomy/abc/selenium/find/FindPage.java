@@ -101,6 +101,16 @@ public class FindPage extends AppElement implements AppPage,
         filters().waitForParametricFields();
     }
 
+    @Override
+    public void openContainer(WebElement container) {
+        WebElement list = container.findElement(By.className("collapse"));
+
+        if(list.getAttribute("aria-expanded").equals("false")) {
+            container.click();
+            Waits.loadOrFadeWait();
+        }
+    }
+
     // this can be used to check whether on the landing page,
     // as opposed to main results page
     public WebElement footerLogo() {

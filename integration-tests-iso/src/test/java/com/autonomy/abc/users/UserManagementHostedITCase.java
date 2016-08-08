@@ -43,7 +43,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UserManagementHostedITCase extends IsoHsodTestBase {
     private final NewUser aNewUser;
-    private final UserTestHelper helper;
+    private UserTestHelper helper;
 
     private HsodUserService userService;
     private HsodUsersPage usersPage;
@@ -51,11 +51,12 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
     public UserManagementHostedITCase(final TestConfig config) {
         super(config);
         aNewUser = config.getNewUser("james");
-        helper = new UserTestHelper(getApplication(), config);
     }
 
     @Before
     public void setUp() {
+        helper = new UserTestHelper(getApplication(), getConfig());
+
         userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
@@ -83,8 +84,9 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
         //Sometimes it requires us to add a valid user before invalid users show up
         userService.createNewUser(new HsodNewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN);
 
-        Waits.loadOrFadeWait();
+        getDriver().navigate().refresh();
 
+        usersPage = getElementFactory().getUsersPage();
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
     }
 
@@ -104,6 +106,11 @@ public class UserManagementHostedITCase extends IsoHsodTestBase {
         verifyAddingInvalidUser(new HsodNewUser(username, "INVALID_EMAIL"));
         verifyAddingValidUser(new HsodNewUser(username, gmailString("isValid")));
         verifyAddingValidUser(new HsodNewUser(username, gmailString("alsoValid")));
+
+        getDriver().navigate().refresh();
+
+        usersPage = getElementFactory().getUsersPage();
+        verifyThat(usersPage.getUsernames(), hasSize(2));
     }
 
     private void verifyAddingInvalidUser(final HsodNewUser invalidUser) {

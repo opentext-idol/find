@@ -121,6 +121,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 
 	@Test
 	@ActiveBug("CCUK-2671")
+	//TODO ISO-77 => RAPIDLY adding or removing
 	public void testAddRemoveTriggers() throws InterruptedException {
 		setUpCarsPromotion(1);
 
@@ -476,7 +477,7 @@ public class PromotionsITCase extends HybridIsoTestBase {
 
 		SearchPage searchPage = searchService.search("pointless");
 		searchPage.filterBy(new LanguageFilter(Language.ENGLISH));
-		final Query query = new Query("\"Lens (optics)\"").withFilter(new IndexFilter("WikiEnglish"));
+		final Query query = new Query("\"Lens (optics)\"").withFilter(IndexFilter.WIKI_ENG);
 
 		searchPage = searchService.search(query);
 		assumeThat("Was expecting Lens (optics) to be the first result", searchPage.getSearchResult(1).getTitleString(), containsString("Lens (optics)"));
