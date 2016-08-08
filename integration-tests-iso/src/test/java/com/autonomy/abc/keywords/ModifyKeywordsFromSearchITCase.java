@@ -188,7 +188,7 @@ public class ModifyKeywordsFromSearchITCase extends HybridIsoTestBase {
     private void search(final String searchTerm, final Language language) {
         Query query = new Query(searchTerm).withFilter(new LanguageFilter(language));
         if (isHosted()) {
-            query = query.withFilter(new IndexFilter("news_eng"));
+            query = query.withFilter(IndexFilter.NEWS_ENG);
         }
         searchPage = searchService.search(query);
     }

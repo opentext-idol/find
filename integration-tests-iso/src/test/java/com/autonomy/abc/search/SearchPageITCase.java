@@ -527,7 +527,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	@Test
 	@ResolvedBug("CSA-1708")
 	public void testParametricLabelsNotUndefined(){
-		searchService.search(new Query("eat").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(new IndexFilter("English Wikipedia")));
+		searchService.search(new Query("eat").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.WIKI_ENG));
 		for(final String filterLabel : searchPage.filterLabelList()){
 			verifyThat("Filter label is " + filterLabel + " - not undefined",filterLabel.toLowerCase(), not(containsString("undefined")));
 		}

@@ -51,7 +51,7 @@ public class SearchPageHostedITCase extends IsoHsodTestBase {
 
 	@Test
 	public void testFieldTextFilter() {
-		searchService.search(new Query("Harrison Ford").withFilter(new IndexFilter("wiki_eng")));
+		searchService.search(new Query("Harrison Ford").withFilter(IndexFilter.WIKI_ENG));
 
 		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
 		searchPage.fieldTextAddButton().click();

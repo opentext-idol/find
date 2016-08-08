@@ -133,7 +133,7 @@ public class KeywordsWizardITCase extends HybridIsoTestBase {
         searchPage.selectLanguage(Language.FRENCH);
 
         if(isHosted()) {
-            new IndexFilter("news_eng").apply(searchPage);
+            IndexFilter.NEWS_ENG.apply(searchPage);
         }
 
         searchPage.waitForSearchLoadIndicatorToDisappear();

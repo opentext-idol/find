@@ -15,7 +15,7 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
     }
 
     public void select(final Index index) {
-        select(index.getName());
+        select(index.getDisplayName());
     }
 
     public void select(final String indexName) {
