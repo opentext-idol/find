@@ -18,6 +18,7 @@ import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +59,17 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService = getApplication().savedSearchService();
         elementFactory = getApplication().elementFactory();
         findPage = getElementFactory().getFindPage();
+        findService.search("long set-up");
+
+        try {
+            findPage.waitUntilSearchTabsLoaded();
+            savedSearchService.deleteAll();
+        }
+        catch (TimeoutException e) {
+            //no-op
+        }
+
+        findPage.goToListView();
     }
 
     @After
@@ -92,7 +104,10 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService.compareCurrentWith("polar");
 
         resultsComparison = getElementFactory().getResultsComparison();
+        Waits.loadOrFadeWait();
+        resultsComparison.goToListView();
         final ResultsView resultsView = resultsComparison.resultsView(AppearsIn.BOTH);
+
         assertThat(resultsView.getResults(), empty());
         assertThat(resultsView, containsText("No results found"));
     }
@@ -106,10 +121,15 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         final int outerCount = getTotalResults();
         savedSearchService.openNewTab();
         searchAndSave(innerQuery, "inner");
+        Waits.loadOrFadeWait();
+        ResultsView resultsView = getElementFactory().getResultsPage();
+        resultsView.goToListView();
+
         final int innerCount = getTotalResults();
 
         savedSearchService.compareCurrentWith("outer");
         resultsComparison = getElementFactory().getResultsComparison();
+        resultsComparison.goToListView();
 
         verifyThat(resultsComparison.getResults(AppearsIn.THIS_ONLY), empty());
         verifyThat(resultsComparison.getResults(AppearsIn.OTHER_ONLY), not(empty()));
@@ -178,12 +198,17 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         final String expectedTabName = "expected";
 
         searchAndSave(new Query("face"), comparedTabName);
-        searchAndSave(new Query("car").withFilter(new IndexFilter(expectedIndex)), expectedTabName);
-        final String firstTitle = getElementFactory().getResultsPage().getResult(1).getTitleString();
+        searchAndSave(new Query("bus").withFilter(new IndexFilter(expectedIndex)), expectedTabName);
+
+        getElementFactory().getTopicMap().waitForMapLoaded();
+        ResultsView resultsView = getElementFactory().getResultsPage();
+        resultsView.goToListView();
+        final String firstTitle = resultsView.getResult(1).getTitleString();
 
         savedSearchService.compareCurrentWith(comparedTabName);
-        getElementFactory().getResultsComparison()
-                .resultsView(AppearsIn.THIS_ONLY)
+        ResultsComparisonView resultsComparison = getElementFactory().getResultsComparison();
+        resultsComparison.goToListView();
+        resultsComparison.resultsView(AppearsIn.THIS_ONLY)
                 .getResult(1)
                 .similarDocuments()
                 .click();
@@ -205,7 +230,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
     private void searchAndSave(final Query query, final String saveAs, final SearchType saveType) {
         findService.search(query);
-        getElementFactory().getResultsPage().waitForResultsToLoad();
+        getElementFactory().getTopicMap().waitForMapLoaded();
         savedSearchService.saveCurrentAs(saveAs, saveType);
     }
 }

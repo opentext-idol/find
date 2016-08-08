@@ -6,6 +6,7 @@ import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -21,6 +22,7 @@ public class ResultsView extends AppElement implements QueryResultsPage {
         this(Container.currentTabContents(driver).findElement(By.className("middle-container")), driver);
     }
 
+    //bad because it assumes it exists in both which it doesn't
     public void goToListView() {
         findElement(By.cssSelector("[data-tab-id='list']")).click();
         new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".results-list-container"))));
@@ -79,7 +81,23 @@ public class ResultsView extends AppElement implements QueryResultsPage {
     }
 
     public void waitForResultsToLoad() {
-        Container.MIDDLE.waitForLoad(getDriver());
+        new WebDriverWait(getDriver(),50).until(new LoadedCondition());
+    }
+
+    private static class LoadedCondition implements ExpectedCondition<Boolean> {
+        @Override
+        public Boolean apply(final WebDriver input) {
+            if (resultsLoaded(input)) {
+                return true;
+            }
+            return false;
+        }
+
+        private boolean resultsLoaded(final WebDriver driver) {
+            return !driver.findElements(By.cssSelector(".error.well:not(.hide)")).isEmpty()
+                    || !driver.findElements(By.xpath("//div[contains(@class,'result-message') and contains(text(),'No results found')]")).isEmpty()
+                    || !driver.findElements(By.cssSelector(".results-contents")).isEmpty();
+        }
     }
 
     public FindResult searchResult(final int searchResultNumber) {

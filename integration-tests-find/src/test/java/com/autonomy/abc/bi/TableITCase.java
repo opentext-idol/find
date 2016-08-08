@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.bi.TableView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,6 @@ public class TableITCase extends IdolFindTestBase {
     public void testTableTabShowsTable(){
         init("shambolic");
 
-        verifyThat("Main results list hidden", getElementFactory().getResultsPage().mainResultsContainerHidden());
         verifyThat("Table element displayed", tableView.tableVisible());
         verifyThat("Parametric selectors appear", tableView.parametricSelectionDropdownsExist());
     }
@@ -140,7 +139,7 @@ public class TableITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-383")
+    @ResolvedBug("FIND-383")
     public void testSideBarFiltersChangeTable(){
         init("lashing");
 
@@ -155,12 +154,12 @@ public class TableITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-405")
+    @ResolvedBug("FIND-405")
     public void testParametricSelectors(){
         init("wild horses");
 
         final String firstParametric = filters().parametricField(0).getParentName();
-        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(tableView.getSelectedFieldName(1)));
+        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(tableView.getSelectedFieldName(1).toUpperCase()));
 
         tableView.parametricSelectionDropdown(2).open();
         verifyThat("1st selected parametric does not appear as choice in 2nd", tableView.getParametricDropdownItems(2), not(contains(firstParametric)));
@@ -168,8 +167,7 @@ public class TableITCase extends IdolFindTestBase {
 
     private void init(final String searchText) {
         findService.search(searchText);
-
-        tableView.goToTable();
+        getElementFactory().getFindPage().goToTable();
     }
 
     private FilterPanel filters() {

@@ -25,6 +25,10 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
         return getParent().getText().split(" \\(")[0];
     }
 
+    public String getFilterNumber() {
+        return getParent().getText().split(" \\(")[1].replaceAll("[()]","");
+    }
+
     public List<WebElement> getChildren(){
         return getContainer().findElements(By.className("parametric-value-name"));
     }

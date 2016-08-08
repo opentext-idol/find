@@ -22,13 +22,6 @@ public class TableView  extends ParametricFieldView {
         super(driver);
     }
 
-    //Navigation
-    public void goToTable(){
-        findElement(By.cssSelector("[data-tab-id='table']")).click();
-
-        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector("table.dataTable"))));
-    }
-
     //Display
     public boolean tableVisible(){
         return findElement(By.cssSelector("table.dataTable")).isDisplayed();

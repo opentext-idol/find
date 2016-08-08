@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.find.results.ResultsView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
@@ -35,6 +36,11 @@ public class ResultsComparisonView {
 
     public ResultsView resultsView(final AppearsIn appearsIn) {
         return new ResultsView(wholeContainer.findElement(appearsIn.getResultsListLocator()), driver);
+    }
+
+    public void goToListView() {
+        wholeContainer.findElement(By.cssSelector("[data-tab-id='list']")).click();
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOf(wholeContainer.findElement(By.cssSelector(".results-list-container"))));
     }
 
     private static void waitForLoad(final WebDriver driver) {

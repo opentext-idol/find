@@ -4,13 +4,9 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.ToolTips;
-import com.autonomy.abc.selenium.find.filters.DateOption;
-import com.autonomy.abc.selenium.find.filters.FilterPanel;
-import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
-import com.autonomy.abc.selenium.find.filters.ListFilterContainer;
-import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
-import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
+import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -21,24 +17,15 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
+import org.apache.commons.lang3.text.WordUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.StaleElementReferenceException;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
 public class FilterITCase extends FindTestBase {
@@ -53,6 +40,9 @@ public class FilterITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
+        if(!isHosted()) {
+            ((IdolFindPage) findPage).goToListView();
+        }
     }
 
     private ResultsView search(final String searchTerm) {
@@ -62,127 +52,203 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
+    public void testParametricFiltersOpenWhenMatchingFilter() {
+        search("haven");
+
+        final FilterPanel filterPanel = filters();
+
+        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
+        final String firstValue = filterPanel.parametricField(0).getChildNames().get(0);
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
+    }
+
+    @Test
+    public void testParametricFilterRemembersStateWhenMetaFiltering() {
+        search("haven");
+
+        final FilterPanel filterPanel = filters();
+
+        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
+        final String firstValue = filterPanel.parametricField(0).getChildNames().get(0);
+
+        filterPanel.parametricField(0).expand();
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
+    }
+
+    @Test
+    public void testIndexesOpenWhenMatchingMetaFilter() {
+        search("haven");
+
+        final FilterPanel filterPanel = filters();
+
+        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
+        final IndexesTree indexes = filterPanel.indexesTree();
+        final String firstValue = indexes.allIndexes().getIndex(0).getName();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
+    }
+
+    @Test
+    public void testIndexesRememberStateWhenMetaFiltering() {
+        search("haven");
+
+        final FilterPanel filterPanel = filters();
+
+        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
+        final IndexesTree indexes = filterPanel.indexesTree();
+        final String firstValue = indexes.allIndexes().getIndex(0).getName();
+
+        indexesTreeContainer.collapse();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
+    }
+
+
+
+    @Test
     public void testParametricFiltersDefaultCollapsed(){
-        final ResultsView results = search("knee");
+        search("knee");
 
-        // TODO implement or delete
-        //get parametricFieldContainers or parametricFilters
-        //div class "clickable collapsible-header collapsed"
-        //or check that div class=collapse --> sibling of the above -> not visible
+        for(ParametricFieldContainer container : filters().parametricFieldContainers()) {
+            verifyThat("Container is collapsed",container.isCollapsed());
+        }
     }
 
     @Test
-    //TODO NEED TO TOTALLY REDO
     public void testParametricFiltersResults() {
-        final ResultsView results = search("cats");
+        ResultsView results = search("*");
 
-        //each parametric filter container should have max 5 filter values
-        //search for '*' -> search for 'cats' -> search for 'shouldhavenoresultsprobably'
-        //will have less results in side panel
+        List<ParametricFieldContainer> containers = filters().parametricFieldContainers();
+        for(ParametricFieldContainer container : containers) {
+            container.expand();
+            int numberFields = container.getChildren().size();
+            verifyThat("Field values: "+numberFields + " - less than or equal to 5",numberFields,lessThanOrEqualTo(5));
+        }
 
+        final ParametricFieldContainer secondContainer = filters().parametricField(1);
+        secondContainer.expand();
+        final FindParametricCheckbox secondField = secondContainer.values().get(1);
+        final String filterName = secondField.getName();
+        final int expectedResults = secondField.getResultsCount();
 
-        //if click on filter -> should have as many results as says in little number
-        //other filters update -> DISAPPPEARS IS NO RESULTS
-
-        //What should be happening with collapsing and selecting
-        //If I have 1 selected -> should only that 1 appear or should the top 5 appear
-
-        //check little text 'x selected' under filter type even when collapsed
         final int originalNumberOfResults = findPage.totalResultsNum();
+        assumeThat("Fewer results predicted w/ this filter",expectedResults,lessThan(originalNumberOfResults));
 
-        final ParametricFieldContainer parametricFieldContainer = filters().parametricField(1);
-        parametricFieldContainer.expand();
-        final List<FindParametricCheckbox> firstParametricContainerCheckboxes = parametricFieldContainer.values();
-        firstParametricContainerCheckboxes.get(0).check();
-
-        try{
-            parametricFieldContainer.getParentName();
+        secondField.check();
+        results.waitForResultsToLoad();
+        verifyThat("Expected number of results (according to panel) equals actual number of results",
+                results.getResultsCount(),is(expectedResults));
+        try {
+            secondContainer.getChildren();
+            fail("Filter panel did not reload after filter selection");
         }
-        catch (final StaleElementReferenceException e){
-            fail("Parametric fields reloaded");
+        catch (Exception e) {
+            LOGGER.info("Correctly threw exception as filter panel has reloaded");
         }
 
-        results.waitForResultsToLoad();
-        verifyThat("Added 1 filter: fewer or equal results", findPage.totalResultsNum(), lessThanOrEqualTo(originalNumberOfResults));
-        int previousNumberOfResults = findPage.totalResultsNum();
-
-        //within the same filter type
-        firstParametricContainerCheckboxes.get(1).check();
-        results.waitForResultsToLoad();
-        verifyThat("Added filter from same type: more or equal results", findPage.totalResultsNum(), greaterThanOrEqualTo(previousNumberOfResults));
-        previousNumberOfResults = findPage.totalResultsNum();
-
-        //different filter type
-        filters().checkBoxesForParametricFieldContainer(2).get(1).check();
-        results.waitForResultsToLoad();
-        verifyThat("Added filter from different type: fewer or equal results", findPage.totalResultsNum(), lessThanOrEqualTo(previousNumberOfResults));
-
-    }
-
-    //TODO: want to get the 1,2,3,4 from several different categories
-    //Then open modal and check they're there
-    @Test
-    public void testParametricFiltersModal() {
-        //See all opens the modal
-
-        //check little number next to filter TYPE is the num filters selected
-
-        //FIND-406: the filter modal should NOT filter on the search -> see all should see filter cat.s with 0s next to them.
-
-        search("cats");
-
-        final ParametricFieldContainer container = filters().parametricField(2);
+        final ParametricFieldContainer container = filters().parametricContainerOfFieldValue(filterName);
+        final String filterNumber = container.getFilterNumber();
         final String filterCategory = container.getParentName();
-
-        final List<String> selectedFilters = new ArrayList<>();
-        selectedFilters.addAll(selectEvenFilters(1));
-        selectedFilters.addAll(selectEvenFilters(2));
 
         container.seeAll();
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
+        verifyThat("Filter category title shows the number of filters chosen from total",filterNumber,is("1 / "+filterModal.filtersWithResultsForCurrentSearch()));
 
+        filters().checkboxForParametricValue(WordUtils.capitalize(filterCategory.toLowerCase()),filterName).uncheck();
+        search("shouldhavenoresultsprobably");
+        findPage.originalQuery().click();
+        findPage.waitForParametricValuesToLoad();
+        verifyThat("Filters changed: no results -> no parametric fields",filters().noParametricFields());
+    }
+
+
+    @Test
+    @ActiveBug("FIND-463")
+    public void testFilterPanelAndModalLinked() {
+        search("cats");
+
+        //TODO: when everyone has same data, make test select across several filter categories
+        final ParametricFieldContainer container = filters().parametricField(1);
+        final String filterCategory = container.getParentName();
+        FindParametricCheckbox checkbox = filters().checkboxForParametricValue(1, 1);
+        final List<String> selectedFilter = Arrays.asList(checkbox.getName());
+        checkbox.check();
+
+        container.seeAll();
+        final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
+        //TODO: once loading forever bug fixed check that this passes -> may need to do a time-out w/ message
+        assertThat("Modal not loading forever",!filterModal.loadingIndicatorPresent());
         verifyThat("Correct tab is active",filterModal.activeTabName(),equalToIgnoringCase(filterCategory));
-        verifyThat("Same fields selected in modal as panel",filterModal.checkedFieldsAllPanes(),is(selectedFilters));
+        verifyThat("Same fields selected in modal as panel",filterModal.checkedFiltersAllPanes(),is(selectedFilter));
 
         final String filterType = filterModal.activeTabName();
         final String checkedFilterName = filterModal.checkCheckBoxInActivePane(0);
-        filterModal.applyButton().click();
+        filterModal.apply();
 
         final FindParametricCheckbox panelBox = filters().checkboxForParametricValue(filterType,checkedFilterName);
         verifyThat("Filter: "+checkedFilterName+" is now checked on panel",panelBox.isChecked());
     }
 
-    private List<String> selectEvenFilters(final int filterCategory){
-        filters().parametricField(filterCategory).expand();
-        final List<String> filterNames = new ArrayList<>();
-        int i=1;
-        for(final FindParametricCheckbox box:filters().checkBoxesForParametricFieldContainer(filterCategory)){
-            if((i % 2) == 0){
-                filterNames.add(box.getName());
-                box.check();
-                filters().waitForParametricFields();
-                filters().parametricField(filterCategory).expand();
-            }
-            i++;
-
-        }
-        return filterNames;
-    }
-
     @Test
-    @ResolvedBug("FIND-231")
-    //bug might not be applicable with new filter panel
-    public void testDeselectingFiltersDoesNotRemove(){
-        search("confusion");
-
-        final String parametricFilterType = filters().parametricField(0).getParentName();
-
-        final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
-        for(final FindParametricCheckbox checkbox:boxes){
-            checkbox.uncheck();
-            verifyThat("Unchecking not removing filter from list",filters().checkBoxesForParametricFieldContainer(0),hasSize(boxes.size()));
+    @ActiveBug("FIND-406")
+    public void testModalShowsALLFiltersRegardlessOfQuery() {
+        search("*");
+        List<String> allFilterCategories = new ArrayList<>();
+        for(ParametricFieldContainer container :  filters().parametricFieldContainers()) {
+            allFilterCategories.add(container.getParentName());
         }
-        verifyThat("Removing all has not removed group", filters().parametricField(0).getParentName(),is(parametricFilterType));
+
+        filters().parametricField(0).seeAll();
+        ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
+        final int totalNumberFilters = filterModal.allFilters().size();
+        filterModal.cancel();
+
+        filters().checkboxForParametricValue(0,1).check();
+
+        filters().waitForParametricFields();
+        filters().parametricField(0).seeAll();
+        filterModal = ParametricFilterModal.getParametricModal(getDriver());
+
+        assertThat("Modal shows all filter categories",filterModal.tabs(),hasSize(allFilterCategories.size()));
+        verifyThat("Shows all filters for restricted search (some filters may have 0 docs)"
+                ,filterModal.allFilters()
+                ,hasSize(totalNumberFilters));
+
+        filterModal.cancel();
     }
 
     @Test
@@ -195,6 +261,7 @@ public class FilterITCase extends FindTestBase {
             checkbox.name().click();
         }
 
+        Waits.loadOrFadeWait();
         verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()),not(hasSize(boxes.size())));
     }
 
@@ -378,91 +445,5 @@ public class FilterITCase extends FindTestBase {
     private void toggleDateSelection(final DateOption date) {
         filters().toggleFilter(date);
         getElementFactory().getResultsPage().waitForResultsToLoad();
-    }
-
-    @Test
-    public void testParametricFiltersOpenWhenMatchingFilter() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
-        final String firstValue = filterPanel.parametricField(0).getChildNames().get(0);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
-    }
-
-    @Test
-    public void testParametricFilterRemembersStateWhenMetaFiltering() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
-        final String firstValue = filterPanel.parametricField(0).getChildNames().get(0);
-
-        filterPanel.parametricField(0).expand();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-    }
-
-    @Test
-    public void testIndexesOpenWhenMatchingMetaFilter() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
-        final IndexesTree indexes = filterPanel.indexesTree();
-        final String firstValue = indexes.allIndexes().getIndex(0).getName();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-    }
-
-    @Test
-    public void testIndexesRememberStateWhenMetaFiltering() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
-        final IndexesTree indexes = filterPanel.indexesTree();
-        final String firstValue = indexes.allIndexes().getIndex(0).getName();
-
-        indexesTreeContainer.collapse();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
     }
 }

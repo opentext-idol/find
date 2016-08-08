@@ -71,12 +71,22 @@ public class FilterPanel {
         return new DateFilterContainer(container, driver);
     }
 
-    private List<ParametricFieldContainer> parametricFieldContainers() {
+    public List<ParametricFieldContainer> parametricFieldContainers() {
         final List<ParametricFieldContainer> containers = new ArrayList<>();
         for (final WebElement container : getParametricFilters()) {
             containers.add(new ParametricFieldContainer(container, driver));
         }
         return containers;
+    }
+
+    public void expandParametricContainer(final String fieldName) {
+        WebElement container = panel.findElement(By.cssSelector("[data-field-display-name='"+fieldName+"'] div"));
+        (new ParametricFieldContainer(container,driver)).expand();
+    }
+
+    public ParametricFieldContainer parametricContainerOfFieldValue(final String fieldName) {
+        WebElement field = panel.findElement(By.cssSelector(".parametric-value-element[data-value='"+fieldName+"']"));
+        return new ParametricFieldContainer(ElementUtil.ancestor(field,4),driver);
     }
 
     public ParametricFieldContainer parametricField(final int i) {
@@ -116,7 +126,7 @@ public class FilterPanel {
     }
 
     public FindParametricCheckbox checkboxForParametricValue(final String fieldName, final String fieldValue) {
-        final WebElement checkbox = panel.findElement(By.cssSelector("[data-field='" + fieldName.replace(" ", "_") + "'] [data-value='" + fieldValue.toUpperCase() + "']"));
+        final WebElement checkbox = panel.findElement(By.cssSelector("[data-field-display-name='" + fieldName.replace(" ", "_") + "'] [data-value='" + fieldValue.toUpperCase() + "']"));
         return new FindParametricCheckbox(checkbox, driver);
     }
 
@@ -141,7 +151,7 @@ public class FilterPanel {
 
     //SHOWING MORE
     public void showFilters() {
-        for (final WebElement element : panel.findElements(By.className("toggle-more-text"))) {
+        for (final WebElement element : panel.findElements(By.cssSelector(".toggle-more-text"))) {
             element.click();
         }
     }
@@ -164,6 +174,8 @@ public class FilterPanel {
     public String getErrorMessage() {
         return panel.findElement(By.cssSelector("p:not(.hide)")).getText();
     }
+
+    public boolean noParametricFields() { return !panel.findElements(By.cssSelector(".parametric-empty:not(.hide)")).isEmpty(); }
 
     public void waitForParametricFields() {
         Container.LEFT.waitForLoad(driver);

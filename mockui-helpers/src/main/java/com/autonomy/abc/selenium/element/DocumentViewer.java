@@ -81,7 +81,7 @@ public class DocumentViewer extends AppElement implements AppPage {
     }
 
     public String getReference() {
-        return getField("Reference");
+        return getField("URL");
     }
 
     public String getAuthor(){

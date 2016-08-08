@@ -121,6 +121,8 @@ public class FindPage extends AppElement implements AppPage,
         return Integer.parseInt(findElement(By.className("total-results-number")).getText());
     }
 
+    public WebElement originalQuery() { return findElement(By.className("original-query")); }
+
     public List<String> getFilterLabels() {
         return ElementUtil.getTexts(findElements(By.className("filter-label")));
     }
@@ -137,6 +139,11 @@ public class FindPage extends AppElement implements AppPage,
 
     private void waitForResultsToLoad() {
         Container.MIDDLE.waitForLoad(getDriver());
+    }
+
+    public void waitUntilParametricModalGone() {
+        new WebDriverWait(getDriver(),10)
+                .until(ExpectedConditions.invisibilityOfElementLocated(By.className(".parametric-modal")));
     }
 
     public boolean verticalScrollBarPresent() {
