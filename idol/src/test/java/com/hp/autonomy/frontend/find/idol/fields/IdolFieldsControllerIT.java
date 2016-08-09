@@ -5,12 +5,9 @@
 
 package com.hp.autonomy.frontend.find.idol.fields;
 
-import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.fields.FieldsControllerIT;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-@SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class IdolFieldsControllerIT extends FieldsControllerIT {
     @Override
     protected void addParams(final MockHttpServletRequestBuilder requestBuilder) {

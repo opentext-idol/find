@@ -7,22 +7,19 @@ package com.hp.autonomy.frontend.find.core;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.sql.DataSource;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public abstract class AbstractDatabaseInitIT extends AbstractFindIT {
-
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired private DataSource dataSource;
+    @Autowired
+    private DataSource dataSource;
 
     /**
      * Check connection to our configured datasource.
-     *
+     * <p>
      * Depending on the datasource a dummy statement must sometimes
      * be executed to ensure a valid connection.
      */

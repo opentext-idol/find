@@ -11,10 +11,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -25,10 +25,9 @@ import java.io.IOException;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @SuppressWarnings("UtilityClass")
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebIntegrationTest({
+@RunWith(SpringRunner.class)
+@SpringBootTest(properties = {
         "application.buildNumber=test",
-        "server.port=0",
         "hp.find.persistentState = INMEMORY",
         "hp.find.home = ./target/test",
         "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
@@ -40,7 +39,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
         "find.hod.sso = https://dev.havenondemand.com/sso.html",
         "spring.datasource.url = jdbc:h2:mem:find-db;DB_CLOSE_ON_EXIT=FALSE",
         "mock.authenticationRetriever=false"
-})
+}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/clean-database.sql")
 public abstract class AbstractFindIT {
     private static final String TEST_DIR = "./target/test";

@@ -6,9 +6,7 @@
 package com.hp.autonomy.frontend.find.core.view;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -19,10 +17,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("ProhibitedExceptionDeclared")
 public abstract class AbstractViewControllerIT extends AbstractFindIT {
-    @SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaAutowiredMembersInspection"})
-    @Autowired
-    protected MvcIntegrationTestUtils mvcIntegrationTestUtils;
-
     @Test
     public void viewDocument() throws Exception {
         final String reference = mvcIntegrationTestUtils.getValidReference(mockMvc);

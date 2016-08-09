@@ -5,11 +5,8 @@
 
 package com.hp.autonomy.frontend.find.hod.typeahead;
 
-import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.typeahead.AbstractTypeAheadIT;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = HodFindApplication.class)
 public class TypeAheadIT extends AbstractTypeAheadIT {
     public TypeAheadIT() {
         super("fleetwo", "fleetwood mac");

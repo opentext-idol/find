@@ -2,14 +2,10 @@ package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -27,9 +23,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class SavedSnapshotIT extends AbstractFindIT {
-    private static final TypeReference<Set<SavedSnapshot>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedSnapshot>>() {};
+    private static final TypeReference<Set<SavedSnapshot>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedSnapshot>>() {
+    };
     private static final String QUERY_TEXT = "orange";
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -71,7 +67,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", is(createdEntity.getId().intValue())))
-                .andExpect(jsonPath("$.queryText", is(QUERY_TEXT))) // Only title is updateable for snapshots
+                .andExpect(jsonPath("$.queryText", is(QUERY_TEXT))) // Only title is updatable for snapshots
                 .andExpect(jsonPath("$.title", is(updatedTitle)));
     }
 

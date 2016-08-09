@@ -5,10 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.parametricfields;
 
-import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesServiceIT;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class IdolParametricValuesServiceIT extends AbstractParametricValuesServiceIT {
 }

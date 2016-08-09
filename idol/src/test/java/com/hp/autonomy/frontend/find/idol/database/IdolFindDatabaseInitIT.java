@@ -5,10 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.database;
 
-import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.AbstractDatabaseInitIT;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class IdolFindDatabaseInitIT extends AbstractDatabaseInitIT {
 }

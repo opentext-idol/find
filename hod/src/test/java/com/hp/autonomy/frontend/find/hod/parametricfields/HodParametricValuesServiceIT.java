@@ -5,11 +5,9 @@
 
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
-import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesServiceIT;
 import com.hp.autonomy.frontend.find.core.parametricfields.ParametricValuesController;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -18,7 +16,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringApplicationConfiguration(classes = HodFindApplication.class)
 public class HodParametricValuesServiceIT extends AbstractParametricValuesServiceIT {
     @Override
     public void getDependentParametricValues() throws Exception {

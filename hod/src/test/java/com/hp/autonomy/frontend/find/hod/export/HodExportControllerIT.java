@@ -5,10 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.export;
 
-import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.export.ExportControllerIT;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = HodFindApplication.class)
 public class HodExportControllerIT extends ExportControllerIT {
 }

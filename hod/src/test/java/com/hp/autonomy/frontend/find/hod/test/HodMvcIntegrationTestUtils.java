@@ -75,6 +75,7 @@ public class HodMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
         when(authentication.getTokenProxy()).thenReturn(testTokenProxy);
         when(authentication.getAuthorities()).thenReturn(hodAuthorities);
         when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn("user");
         return authentication;
     }
 

@@ -5,9 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.savedsearches;
 
-import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepositoryIT;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = IdolFindApplication.class)
-public class IdolUserEntityRepositoryIT extends UserEntityRepositoryIT {}
+public class IdolUserEntityRepositoryIT extends UserEntityRepositoryIT {
+}

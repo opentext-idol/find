@@ -5,11 +5,8 @@
 
 package com.hp.autonomy.frontend.find.idol.typeahead;
 
-import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.typeahead.AbstractTypeAheadIT;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class TypeAheadIT extends AbstractTypeAheadIT {
     public TypeAheadIT() {
         super("yod", "yoda");

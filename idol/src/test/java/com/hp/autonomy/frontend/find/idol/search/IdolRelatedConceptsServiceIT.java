@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
-import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsServiceIT;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
@@ -15,7 +14,6 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -27,7 +25,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringApplicationConfiguration(classes = IdolFindApplication.class)
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsServiceIT {
     @Autowired
     private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;

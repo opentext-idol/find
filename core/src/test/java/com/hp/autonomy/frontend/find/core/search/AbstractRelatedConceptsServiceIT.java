@@ -6,9 +6,7 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -20,10 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public abstract class AbstractRelatedConceptsServiceIT extends AbstractFindIT {
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired
-    protected MvcIntegrationTestUtils mvcIntegrationTestUtils;
-
     @Test
     public void findRelatedConcepts() throws Exception {
         final MockHttpServletRequestBuilder request = get(RelatedConceptsController.RELATED_CONCEPTS_PATH)

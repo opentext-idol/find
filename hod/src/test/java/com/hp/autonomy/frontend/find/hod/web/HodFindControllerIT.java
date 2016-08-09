@@ -5,10 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.web;
 
-import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.web.AbstractFindControllerIT;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = HodFindApplication.class)
 public class HodFindControllerIT extends AbstractFindControllerIT {
 }

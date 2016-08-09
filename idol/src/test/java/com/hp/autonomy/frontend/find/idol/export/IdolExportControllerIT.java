@@ -5,10 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.export;
 
-import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.export.ExportControllerIT;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class IdolExportControllerIT extends ExportControllerIT {
 }

@@ -5,18 +5,15 @@
 
 package com.hp.autonomy.frontend.find.idol.view;
 
-import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerIT;
 import com.hp.autonomy.frontend.find.core.view.ViewController;
 import org.junit.Test;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class IdolViewControllerIT extends AbstractViewControllerIT {
     @Test
     public void viewNonExistentDocument() throws Exception {

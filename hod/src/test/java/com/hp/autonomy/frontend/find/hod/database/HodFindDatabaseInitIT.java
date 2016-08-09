@@ -5,9 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.database;
 
-import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.AbstractDatabaseInitIT;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = HodFindApplication.class)
-public class HodFindDatabaseInitIT extends AbstractDatabaseInitIT {}
+public class HodFindDatabaseInitIT extends AbstractDatabaseInitIT {
+}

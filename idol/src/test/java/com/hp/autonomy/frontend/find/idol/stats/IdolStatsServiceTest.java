@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.idol.stats;
 
 import com.autonomy.aci.client.services.AciService;
-import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -38,7 +37,6 @@ import java.io.InputStream;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -57,7 +55,7 @@ public class IdolStatsServiceTest {
     private AciResponseJaxbProcessorFactory processorFactory;
 
     @Mock
-    private AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
+    private AuthenticationInformationRetriever<?, TestPrincipal> authenticationInformationRetriever;
 
     @Mock
     private ConfigService<IdolFindConfig> configService;
@@ -82,17 +80,16 @@ public class IdolStatsServiceTest {
     }
 
     @Test
-    public void testSimpleEvent() {
+    public void testSimpleEvent() throws IOException {
         final SimpleEvent event = new SimpleEvent("Steve", 123456789L);
         final SimpleEvent event2 = new SimpleEvent("Bob", 31415926L);
 
         final String xml = submitEvent(Arrays.asList(event, event2));
 
-        final InputStream expectedStream = getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/stats/simple-events.xml");
-
-        final Source expectedFile = new WhitespaceStrippedSource(Input.fromStream(expectedStream).build());
-
-        assertThat(xml, isIdenticalTo(expectedFile));
+        try (InputStream expectedStream = getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/stats/simple-events.xml")) {
+            final Source expectedFile = new WhitespaceStrippedSource(Input.fromStream(expectedStream).build());
+            assertThat(xml, isIdenticalTo(expectedFile));
+        }
     }
 
     @Test
@@ -148,7 +145,7 @@ public class IdolStatsServiceTest {
         return submitEvent(Collections.singletonList(event));
     }
 
-    private String submitEvent(final List<? extends Event> events) {
+    private String submitEvent(final Iterable<? extends Event> events) {
         for (final Event event : events) {
             statsService.recordEvent(event);
         }
@@ -157,7 +154,7 @@ public class IdolStatsServiceTest {
 
         final ArgumentCaptor<AciParameters> captor = ArgumentCaptor.forClass(AciParameters.class);
 
-        verify(aciService).executeAction(captor.capture(), Matchers.<Processor<Object>>anyObject());
+        verify(aciService).executeAction(captor.capture(), Matchers.anyObject());
 
         return captor.getValue().get("data");
     }

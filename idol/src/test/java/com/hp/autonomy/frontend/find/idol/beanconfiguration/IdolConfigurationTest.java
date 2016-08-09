@@ -15,18 +15,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ConfigFileConfiguration.class, InMemoryConfiguration.class, IdolConfiguration.class, TestConfiguration.class, HavenSearchIdolConfiguration.class, IdolQueryRestrictionsDeserializer.class})
-@TestPropertySource(properties = "hp.find.persistentState = INMEMORY")
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {
+        ConfigFileConfiguration.class, InMemoryConfiguration.class, IdolConfiguration.class, TestConfiguration.class, HavenSearchIdolConfiguration.class, IdolQueryRestrictionsDeserializer.class
+}, value = "hp.find.persistentState = INMEMORY", webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class IdolConfigurationTest {
     private static final String TEST_DIR = "./target/test";
 
