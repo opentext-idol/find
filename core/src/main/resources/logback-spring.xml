@@ -23,7 +23,7 @@
     <appender name="AuditFileAppender"  class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${hp.find.home:-./temp}/logs/find.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${hp.find.home:-./temp}/logs/find.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${hp.find.home:-./temp}/logs/find.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>30</maxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>104857600</maxFileSize>
