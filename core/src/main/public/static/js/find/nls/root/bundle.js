@@ -26,8 +26,6 @@ define([
         'app.loading': 'Loading\u2026',
         'app.logout': 'Logout',
         'app.name': "HPE Find",
-        'app.navbar.salutation': 'Greetings {0}',
-        'app.navbar.salutation.defaultName': 'User',
         'app.ok': 'OK',
         'app.rename': 'Rename',
         'app.reset': 'Reset',

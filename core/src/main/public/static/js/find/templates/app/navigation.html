@@ -1,13 +1,13 @@
 <div class="find-navbar navbar navbar-static-top">
     <span class="find-logo-small navbar-brand m-l-sm m-t-sm"></span>
-    <span class="nav navbar-nav navbar-right navbar-username shorten">
-        <%-data.i18n['app.navbar.salutation'](data.username === null ? data.i18n['app.navbar.salutation.defaultName'] : data.username)%>
-    </span>
+    <% if (data.username !== null) { %>
+        <span class="nav navbar-nav navbar-right navbar-username shorten"><%-data.username%></span>
+    <% } %>
     <ul class="nav navbar-nav navbar-right drop-list">
         <li class="dropdown navbar-top-link">
             <a class="dropdown-toggle clickable" data-toggle="dropdown"><i class="hp-icon hp-settings hp-fw"></i></a>
             <ul class="dropdown-menu" role="menu">
-                <% if (data.username != null) { %>
+                <% if (data.username !== null) { %>
                     <li class="not-clickable">
                         <a class="bold username shorten"><%- data.username %></a>
                     </li>
