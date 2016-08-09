@@ -9,22 +9,20 @@ enum SsoMvcConstants {
     AUTHENTICATE_PATH("authenticatePath"),
     COMBINED_REQUEST_API("combinedRequestApi"),
     ERROR_PAGE("errorPage"),
-    COOKIE_ERROR_PAGE("cookieErrorPage"),
     LIST_APPLICATION_REQUEST("listApplicationRequest"),
     LOGOUT_ENDPOINT("endpoint"),
     LOGOUT_REDIRECT_URL("redirectUrl"),
+    PATCH_REQUEST_API("combinedPatchRequestApi"),
     SSO_PAGE("ssoPage"),
     SSO_ENTRY_PAGE("ssoEntryPage");
 
     private final String value;
 
-    SsoMvcConstants(final String value)
-    {
+    SsoMvcConstants(final String value) {
         this.value = value;
     }
 
-    public String value()
-    {
+    public String value() {
         return value;
     }
 }

@@ -70,8 +70,8 @@ public class SsoController {
         ssoConfig.put(SsoMvcConstants.AUTHENTICATE_PATH.value(), SSO_AUTHENTICATION_URI);
         ssoConfig.put(SsoMvcConstants.COMBINED_REQUEST_API.value(), HodCombinedRequestController.COMBINED_REQUEST);
         ssoConfig.put(SsoMvcConstants.ERROR_PAGE.value(), DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH);
-        ssoConfig.put(SsoMvcConstants.COOKIE_ERROR_PAGE.value(), DispatcherServletConfiguration.COOKIE_AUTHENTICATION_ERROR_PATH);
         ssoConfig.put(SsoMvcConstants.LIST_APPLICATION_REQUEST.value(), hodAuthenticationRequestService.getListApplicationRequest());
+        ssoConfig.put(SsoMvcConstants.PATCH_REQUEST_API.value(), HodCombinedRequestController.COMBINED_PATCH_REQUEST);
         ssoConfig.put(SsoMvcConstants.SSO_PAGE.value(), configService.getConfig().getHod().getSsoPageUrl());
         ssoConfig.put(SsoMvcConstants.SSO_ENTRY_PAGE.value(), SSO_PAGE);
 

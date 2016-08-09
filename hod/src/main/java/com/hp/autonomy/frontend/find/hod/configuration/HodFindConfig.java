@@ -32,6 +32,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jasypt.util.text.TextEncryptor;
 
+import java.net.URL;
 import java.util.Set;
 
 @SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
@@ -162,6 +163,11 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     @JsonIgnore
     public ApiKey getApiKey() {
         return hod.getApiKey();
+    }
+
+    @Override
+    public URL getSsoUrl() {
+        return hod.getSsoPageUrl();
     }
 
     @JsonPOJOBuilder(withPrefix = "set")
