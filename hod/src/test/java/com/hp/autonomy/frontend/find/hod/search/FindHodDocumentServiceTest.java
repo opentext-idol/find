@@ -83,7 +83,7 @@ public class FindHodDocumentServiceTest extends HodDocumentServiceTest {
 
         final HodError invalidIndexError = new HodError.Builder().setErrorCode(HodErrorCode.INDEX_NAME_INVALID).build();
         final HodSearchResult result = new HodSearchResult.Builder().setIndex(goodIndex.getName()).build();
-        final QueryResults<HodSearchResult> mockedResults = new QueryResults<>(Collections.singletonList(result), 1, null, null, null, Collections.EMPTY_LIST);
+        final QueryResults<HodSearchResult> mockedResults = new QueryResults<>(Collections.singletonList(result), 1, null, null, null, Collections.emptyList());
         when(queryTextIndexService.queryTextIndexWithText(anyString(), any(QueryRequestBuilder.class))).thenThrow(new HodErrorException(invalidIndexError, HttpStatus.INTERNAL_SERVER_ERROR.value())).thenReturn(mockedResults);
 
         final Database goodDatabase = new Database.Builder().setName(goodIndex.getName()).setDomain(goodIndex.getDomain()).build();
