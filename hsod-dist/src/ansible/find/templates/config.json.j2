@@ -1,9 +1,9 @@
 {
 	"login" : {{find_login | to_nice_json}},
-	"iod" : {
+	"hod" : {
 		"apiKey" : "{{find_api_key}}",
-		"domain" : "{{find_domain}}",
-		"application" : "{{find_application}}",
+		"endpointUrl": "https://api.{{find_endpoint_domain}}",
+		"ssoPage": "https://www.{{find_endpoint_domain}}/sso.html",
 		"activeIndexes" : [],
 		"publicIndexesEnabled": {{find_enable_public_indexes | to_nice_json}}
 	},

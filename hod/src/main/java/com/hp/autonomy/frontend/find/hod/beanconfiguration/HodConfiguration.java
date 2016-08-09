@@ -12,6 +12,7 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
@@ -33,7 +34,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,20 +41,16 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import java.net.URL;
+
 @Configuration
 @EnableCaching
 public class HodConfiguration {
-    public static final String SSO_PAGE_PROPERTY = "${find.hod.sso:https://www.idolondemand.com/sso.html}";
-    public static final String HOD_API_URL_PROPERTY = "${find.iod.api:https://api.havenondemand.com}";
-
     @Autowired
     private Environment environment;
 
     @Autowired
     private TokenRepository tokenRepository;
-
-    @Value(HOD_API_URL_PROPERTY)
-    private String endpoint;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
@@ -95,8 +91,14 @@ public class HodConfiguration {
     }
 
     @Bean
-    public HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder(final HttpClient httpClient, final ObjectMapper objectMapper) {
-        return new HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple>(endpoint)
+    public HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder(
+            final HttpClient httpClient,
+            final ObjectMapper objectMapper,
+            final ConfigService<HodFindConfig> configService
+    ) {
+        final URL endpoint = configService.getConfig().getHod().getEndpointUrl();
+
+        return new HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple>(endpoint.toString())
                 .setHttpClient(httpClient)
                 .setObjectMapper(objectMapper)
                 .setTokenRepository(tokenRepository);

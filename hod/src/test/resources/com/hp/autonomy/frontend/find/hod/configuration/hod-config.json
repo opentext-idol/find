@@ -1,4 +1,5 @@
 {
     "apiKey": "api-key-123",
-    "publicIndexesEnabled": false
+    "publicIndexesEnabled": false,
+    "ssoPageUrl": "https://dev.int.havenapps.io/sso.html"
 }

@@ -14,6 +14,7 @@ import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
 import com.hp.autonomy.searchcomponents.hod.test.HodTestConfiguration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -31,7 +32,9 @@ import static org.mockito.Mockito.when;
 public class HodFindMockConfigConfiguration {
     @Bean
     @Primary
-    public BaseConfigFileService<?> baseConfigFileService() throws MalformedURLException {
+    public BaseConfigFileService<?> baseConfigFileService(
+            @Value("${test.hod.endpoint:https://api.havenondemand.com}") final URL endpoint
+    ) throws MalformedURLException {
         @SuppressWarnings("unchecked") final BaseConfigFileService<HodFindConfig> baseConfigFileService = mock(BaseConfigFileService.class);
 
         final QueryManipulationConfig queryManipulationConfig = new QueryManipulationConfig(HodTestConfiguration.QUERY_PROFILE, HodTestConfiguration.QUERY_MANIPULATION_INDEX);
@@ -44,6 +47,8 @@ public class HodFindMockConfigConfiguration {
                 .setApiKey(new ApiKey("mock-api-key"))
                 .setActiveIndexes(Collections.<ResourceIdentifier>emptyList())
                 .setPublicIndexesEnabled(true)
+                .setSsoPageUrl(new URL("https://dev.havenondemand.com/sso.html"))
+                .setEndpointUrl(endpoint)
                 .build();
 
         final HodFindConfig config = new HodFindConfig.Builder()

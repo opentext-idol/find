@@ -1,4 +1,7 @@
 {
+    "allowedOrigins": ["http://localhost:8080"],
+    "minScore": 0,
+    "topicMapMaxResults": 1000,
     "login": {
         "method": "default",
         "singleUser": {
@@ -13,13 +16,14 @@
     "hod": {
         "apiKey": "",
         "activeIndexes": [],
-        "publicIndexesEnabled": false
+        "endpointUrl": "https://api.havenondemand.com",
+        "publicIndexesEnabled": false,
+        "ssoPageUrl": "https://www.havenondemand.com/sso.html"
     },
     "queryManipulation": {
         "profile": "search_default_profile",
         "index": "search_default_index"
     },
-    "allowedOrigins": [],
     "redis": {
         "address": {
             "host": "hp-find-backend",
@@ -51,7 +55,6 @@
             }
         ]
     },
-    "minScore": 0,
     "uiCustomization": {
         "options": {
             "directAccessLink": {
@@ -76,7 +79,6 @@
             "application/x-mspublisher": "ms-publisher:ofv|u|"
         }
     },
-    "topicMapMaxResults": 1000,
     "fieldsInfo": {
         "contentType": {
             "names": [

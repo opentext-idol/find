@@ -18,6 +18,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,11 +30,15 @@ public class HodConfig implements ConfigurationComponent, com.hp.autonomy.fronte
     private final ApiKey apiKey;
     private final List<ResourceIdentifier> activeIndexes;
     private final Boolean publicIndexesEnabled;
+    private final URL ssoPageUrl;
+    private final URL endpointUrl;
 
     private HodConfig(final Builder builder) {
         apiKey = builder.apiKey;
         activeIndexes = builder.activeIndexes;
         publicIndexesEnabled = builder.publicIndexesEnabled;
+        ssoPageUrl = builder.ssoPageUrl;
+        endpointUrl = builder.endpointUrl;
     }
 
     public List<ResourceIdentifier> getActiveIndexes() {
@@ -55,6 +60,8 @@ public class HodConfig implements ConfigurationComponent, com.hp.autonomy.fronte
                     .setApiKey(apiKey == null ? other.apiKey : apiKey)
                     .setActiveIndexes(activeIndexes == null ? other.activeIndexes : activeIndexes)
                     .setPublicIndexesEnabled(publicIndexesEnabled == null ? other.publicIndexesEnabled : publicIndexesEnabled)
+                    .setSsoPageUrl(ssoPageUrl == null ? other.ssoPageUrl : ssoPageUrl)
+                    .setEndpointUrl(endpointUrl == null ? other.endpointUrl : endpointUrl)
                     .build();
         }
     }
@@ -68,6 +75,14 @@ public class HodConfig implements ConfigurationComponent, com.hp.autonomy.fronte
         if (publicIndexesEnabled == null) {
             throw new ConfigException(section, "The publicIndexesEnabled option must be specified");
         }
+
+        if (ssoPageUrl == null) {
+            throw new ConfigException(section, "The URL for the SSO page must be provided");
+        }
+
+        if (endpointUrl == null) {
+            throw new ConfigException(section, "The endpoint URL must be provided");
+        }
     }
 
     @Setter
@@ -77,6 +92,8 @@ public class HodConfig implements ConfigurationComponent, com.hp.autonomy.fronte
         private ApiKey apiKey;
         private List<ResourceIdentifier> activeIndexes;
         private Boolean publicIndexesEnabled;
+        private URL ssoPageUrl;
+        public URL endpointUrl;
 
         public HodConfig build() {
             return new HodConfig(this);

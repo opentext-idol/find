@@ -9,22 +9,28 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
     @Override
     protected HodConfig constructComponent() {
-        return new HodConfig.Builder()
-                .setActiveIndexes(Collections.singletonList(ResourceIdentifier.WIKI_CHI))
-                .setPublicIndexesEnabled(true)
-                .setApiKey(new ApiKey("api-key-abc"))
-                .build();
+        try {
+            return new HodConfig.Builder()
+                    .setActiveIndexes(Collections.singletonList(ResourceIdentifier.WIKI_CHI))
+                    .setPublicIndexesEnabled(true)
+                    .setApiKey(new ApiKey("api-key-abc"))
+                    .setSsoPageUrl(new URL("https://dev.havenapps.io/sso.html"))
+                    .setEndpointUrl(new URL("https://api.int.havenondemand.com"))
+                    .build();
+        } catch (final MalformedURLException e) {
+            throw new AssertionError("Failed to parse URL", e);
+        }
     }
 
     @Override
@@ -40,6 +46,9 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
     @Override
     protected void validateJson(final String json) {
         assertThat(json, containsString("api-key-abc"));
+        assertThat(json, containsString("true"));
+        assertThat(json, containsString("https://dev.havenapps.io/sso.html"));
+        assertThat(json, containsString("https://api.int.havenondemand.com"));
     }
 
     @Override
@@ -47,6 +56,8 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
         assertThat(component.getApiKey(), is(new ApiKey("api-key-123")));
         assertThat(component.getPublicIndexesEnabled(), is(false));
         assertThat(component.getActiveIndexes(), is(empty()));
+        assertThat(component.getSsoPageUrl().toString(), is("https://dev.int.havenapps.io/sso.html"));
+        assertThat(component.getEndpointUrl(), is(nullValue()));
     }
 
     @Override
@@ -54,6 +65,8 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
         assertThat(mergedComponent.getApiKey(), is(new ApiKey("api-key-abc")));
         assertThat(mergedComponent.getPublicIndexesEnabled(), is(true));
         assertThat(mergedComponent.getActiveIndexes(), hasItem(ResourceIdentifier.WIKI_CHI));
+        assertThat(mergedComponent.getSsoPageUrl().toString(), is("https://dev.havenapps.io/sso.html"));
+        assertThat(mergedComponent.getEndpointUrl().toString(), is("https://api.int.havenondemand.com"));
     }
 
     @Override
@@ -63,19 +76,45 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
     }
 
     @Test(expected = ConfigException.class)
-    public void nullApiKeyInvalid() throws ConfigException {
+    public void nullApiKeyInvalid() throws ConfigException, MalformedURLException {
         new HodConfig.Builder()
                 .setApiKey(null)
                 .setPublicIndexesEnabled(true)
+                .setSsoPageUrl(new URL("https://dev.int.havenapps.io/sso.html"))
+                .setEndpointUrl(new URL("https://api.int.havenondemand.com"))
                 .build()
                 .basicValidate("configSection");
     }
 
     @Test(expected = ConfigException.class)
-    public void nullPublicIndexesEnabledInvalid() throws ConfigException {
+    public void nullPublicIndexesEnabledInvalid() throws ConfigException, MalformedURLException {
         new HodConfig.Builder()
                 .setApiKey(new ApiKey("my-api-key"))
                 .setPublicIndexesEnabled(null)
+                .setSsoPageUrl(new URL("https://dev.int.havenapps.io/sso.html"))
+                .setEndpointUrl(new URL("https://api.int.havenondemand.com"))
+                .build()
+                .basicValidate("configSection");
+    }
+
+    @Test(expected = ConfigException.class)
+    public void nullSsoPageUrlInvalid() throws ConfigException, MalformedURLException {
+        new HodConfig.Builder()
+                .setApiKey(new ApiKey("my-api-key"))
+                .setPublicIndexesEnabled(true)
+                .setEndpointUrl(new URL("https://api.int.havenondemand.com"))
+                .setSsoPageUrl(null)
+                .build()
+                .basicValidate("configSection");
+    }
+
+    @Test(expected = ConfigException.class)
+    public void nullEndpointUrlInvalid() throws ConfigException, MalformedURLException {
+        new HodConfig.Builder()
+                .setApiKey(new ApiKey("my-api-key"))
+                .setPublicIndexesEnabled(true)
+                .setSsoPageUrl(new URL("https://dev.int.havenapps.io/sso.html"))
+                .setEndpointUrl(null)
                 .build()
                 .basicValidate("configSection");
     }

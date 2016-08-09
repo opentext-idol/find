@@ -26,8 +26,6 @@ find_options:
   - "-Dhp.find.home='{{find_root_dir}}'"
   - "-Dserver.port=8080"
   - "-Djava.security.egd=file:/dev/./urandom"
-  - "-Dfind.iod.api=https://api.{{find_endpoint_domain}}"
-  - "-Dfind.hod.sso=https://www.{{find_endpoint_domain}}/sso.html"
   - "-Dhp.find.persistentState=REDIS"
   - "-Dendpoints.health.enabled=true"
   - "-Dmanagement.port=8085"

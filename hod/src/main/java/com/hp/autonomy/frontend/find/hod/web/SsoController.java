@@ -10,11 +10,9 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.DispatcherServletConfiguration;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
-import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.core.web.MvcConstants;
 import com.hp.autonomy.frontend.find.core.web.ViewNames;
 import com.hp.autonomy.frontend.find.hod.authentication.HodCombinedRequestController;
-import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodConfiguration;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
@@ -34,7 +32,6 @@ import java.util.Map;
 
 @Controller
 public class SsoController {
-
     public static final String SSO_PAGE = "/sso";
     public static final String SSO_AUTHENTICATION_URI = "/authenticate-sso";
     public static final String SSO_LOGOUT_PAGE = "/sso-logout";
@@ -45,8 +42,6 @@ public class SsoController {
     private final ConfigService<HodFindConfig> configService;
     private final ControllerUtils controllerUtils;
     private final String gitCommit;
-    private final String ssoPage;
-    private final String logoutEndpoint;
 
     @Autowired
     public SsoController(
@@ -54,17 +49,13 @@ public class SsoController {
             final ConfigService<HodFindConfig> configService,
             final ControllerUtils controllerUtils,
             final HodErrorController hodErrorController,
-            @Value(AppConfiguration.GIT_COMMIT_PROPERTY) final String gitCommit,
-            @Value(HodConfiguration.SSO_PAGE_PROPERTY) final String ssoPage,
-            @Value(HodConfiguration.HOD_API_URL_PROPERTY) final String logoutEndpoint
+            @Value(AppConfiguration.GIT_COMMIT_PROPERTY) final String gitCommit
     ) {
         this.hodAuthenticationRequestService = hodAuthenticationRequestService;
         this.configService = configService;
         this.controllerUtils = controllerUtils;
         this.hodErrorController = hodErrorController;
         this.gitCommit = gitCommit;
-        this.ssoPage = ssoPage;
-        this.logoutEndpoint = logoutEndpoint;
     }
 
     @RequestMapping(value = SSO_PAGE, method = RequestMethod.GET, params = HOD_SSO_ERROR_PARAM)
@@ -81,7 +72,7 @@ public class SsoController {
         ssoConfig.put(SsoMvcConstants.ERROR_PAGE.value(), DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH);
         ssoConfig.put(SsoMvcConstants.COOKIE_ERROR_PAGE.value(), DispatcherServletConfiguration.COOKIE_AUTHENTICATION_ERROR_PATH);
         ssoConfig.put(SsoMvcConstants.LIST_APPLICATION_REQUEST.value(), hodAuthenticationRequestService.getListApplicationRequest());
-        ssoConfig.put(SsoMvcConstants.SSO_PAGE.value(), ssoPage);
+        ssoConfig.put(SsoMvcConstants.SSO_PAGE.value(), configService.getConfig().getHod().getSsoPageUrl());
         ssoConfig.put(SsoMvcConstants.SSO_ENTRY_PAGE.value(), SSO_PAGE);
 
         final Map<String, Object> attributes = new HashMap<>();
@@ -97,7 +88,7 @@ public class SsoController {
         final HodFindConfig hodFindConfig = configService.getConfig();
 
         final Map<String, Object> ssoConfig = new HashMap<>();
-        ssoConfig.put(SsoMvcConstants.LOGOUT_ENDPOINT.value(), logoutEndpoint);
+        ssoConfig.put(SsoMvcConstants.LOGOUT_ENDPOINT.value(), hodFindConfig.getHod().getEndpointUrl());
         ssoConfig.put(SsoMvcConstants.LOGOUT_REDIRECT_URL.value(), hodFindConfig.getHsod().getLandingPageUrl());
 
         final Map<String, Object> attributes = new HashMap<>();
