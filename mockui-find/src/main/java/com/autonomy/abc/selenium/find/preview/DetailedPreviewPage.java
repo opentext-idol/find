@@ -45,6 +45,9 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
         return findElement(By.xpath("//span[contains(text(),'Similar documents')]"));
     }
 
+    public boolean locationTabExists() { return findElements(
+            By.xpath("//ul[contains(@class,'document-detail-tabs')]//span[contains(text(),'Location')]")).size()>0; }
+
     public WebElement ithTick(final int i){
         final String tickPercent = String.valueOf((i-1)*10);
         return findElement(By.xpath("//div[contains(@class,'slider-tick') and contains(@style,'left: "+tickPercent+"%')]"));

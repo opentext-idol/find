@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.comparison;
 
+import com.autonomy.abc.selenium.find.bi.MapView;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import org.openqa.selenium.By;
@@ -41,6 +42,12 @@ public class ResultsComparisonView {
     public void goToListView() {
         wholeContainer.findElement(By.cssSelector("[data-tab-id='list']")).click();
         new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOf(wholeContainer.findElement(By.cssSelector(".results-list-container"))));
+    }
+
+    public MapView goToMapView() {
+        wholeContainer.findElement(By.cssSelector("[data-tab-id='map']")).click();
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOf(wholeContainer.findElement(By.cssSelector(".location-comparison-map"))));
+        return new MapView(driver);
     }
 
     private static void waitForLoad(final WebDriver driver) {
