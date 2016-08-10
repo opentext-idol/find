@@ -41,7 +41,7 @@ import java.util.Collection;
 @Configuration
 @Order(99)
 public class HodSecurity extends WebSecurityConfigurerAdapter {
-    private static final String HOD_BI_ROLE = "bi_user";
+    private static final String HOD_BI_ROLE = "bi";
 
     @Value("${" + BiConfiguration.BI_PROPERTY + '}')
     private boolean enableBi;
