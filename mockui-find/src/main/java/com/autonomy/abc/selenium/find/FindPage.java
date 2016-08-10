@@ -101,7 +101,6 @@ public class FindPage extends AppElement implements AppPage,
         filters().waitForParametricFields();
     }
 
-    @Override
     public void openContainer(WebElement container) {
         WebElement list = container.findElement(By.className("collapse"));
 
@@ -122,6 +121,8 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     public WebElement originalQuery() { return findElement(By.className("original-query")); }
+
+    public String correctedQuery() { return findElement(By.className("corrected-query")).getText();}
 
     public List<String> getFilterLabels() {
         return ElementUtil.getTexts(findElements(By.className("filter-label")));

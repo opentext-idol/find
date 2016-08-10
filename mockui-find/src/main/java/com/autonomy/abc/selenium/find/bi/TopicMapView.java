@@ -22,7 +22,11 @@ public class TopicMapView {
     }
 
     public boolean topicMapVisible() {
-        return !findElements(By.cssSelector(".entity-topic-map")).isEmpty();
+        return !findElements(By.cssSelector(".entity-topic-map:not(.hide)")).isEmpty();
+    }
+
+    public WebElement emptyMessage() {
+        return findElement(By.cssSelector(".entity-topic-map-empty"));
     }
 
     public Slider speedVsAccuracySlider() {

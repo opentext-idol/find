@@ -11,7 +11,12 @@ public class SavedSearchPanel {
     private final WebElement panel;
 
     public SavedSearchPanel(final WebDriver driver) {
+        //might need to use the whole current tab thing
         this.panel = Container.LEFT.findUsing(driver);
+    }
+
+    public String queryText() {
+        return panel.findElement(By.xpath(".//p[contains(text(),'Query Text')]/following-sibling::p ")).getText();
     }
 
     public String getFirstSelectedFilterOfType(String filterType) {

@@ -49,7 +49,6 @@ public class IdolFindPage extends FindPage {
 
     public void goToTopicMap() {
         findElement(By.cssSelector("[data-tab-id='topic-map']")).click();
-        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".entity-topic-map"))));
     }
 
     public void goToMap() {
@@ -62,7 +61,6 @@ public class IdolFindPage extends FindPage {
 
     public void goToSunburst(){
         findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
-        new WebDriverWait(getDriver(),15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".sunburst"))));
     }
 
     public void goToTable(){
