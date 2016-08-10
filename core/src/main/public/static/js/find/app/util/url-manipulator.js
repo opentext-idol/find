@@ -11,7 +11,7 @@ define([
     return {
         addSpecialUrlPrefix: function (contentType, url) {
             //noinspection JSUnresolvedVariable
-            const uiCustomization = configuration().uiCustomization;
+            var uiCustomization = configuration().uiCustomization;
 
             var prefix = '';
             //noinspection JSUnresolvedVariable
