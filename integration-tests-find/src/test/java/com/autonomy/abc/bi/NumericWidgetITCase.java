@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.filters.DateOption;
 import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
-import com.autonomy.abc.selenium.find.filters.SavedSearchPanel;
+import com.autonomy.abc.selenium.find.save.SavedSearchPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
 import com.autonomy.abc.selenium.find.numericWidgets.NumericWidget;
 import com.autonomy.abc.selenium.find.results.ResultsView;
