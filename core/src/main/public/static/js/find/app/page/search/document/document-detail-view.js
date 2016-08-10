@@ -13,10 +13,11 @@ define([
     'find/app/page/search/document/document-detail-tabs',
     'find/app/configuration',
     'find/app/util/events',
+    'find/app/util/url-manipulator',
     'text!find/templates/app/page/search/document/document-detail.html',
     'text!find/templates/app/page/search/document/view-mode-document.html',
     'text!find/templates/app/page/search/document/view-media-player.html'
-], function(Backbone, _, vent, i18n, viewClient, ListView, tabs, configuration, events, template, documentTemplate, mediaTemplate) {
+], function(Backbone, _, vent, i18n, viewClient, ListView, tabs, configuration, events, urlManipulator, template, documentTemplate, mediaTemplate) {
     'use strict';
 
     return Backbone.View.extend({
@@ -47,7 +48,11 @@ define([
 
             this.tabs = this.filterTabs(tabs);
 
-            this.documentHref = this.model.get('url') || '';
+            if (this.model.get('url')) {
+                this.documentHref = urlManipulator.addSpecialUrlPrefix(this.model.get('contentType'), this.model.get('url'));
+            } else {
+                this.documentHref = '';
+            }
         },
 
         render: function() {

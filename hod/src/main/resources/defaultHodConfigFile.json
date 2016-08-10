@@ -63,6 +63,19 @@
                 "user": false,
                 "bi": true
             }
+        },
+        "specialUrlPrefixes": {
+            "application/msword": "ms-word:ofv|u|",
+            "application/mspowerpoint": "ms-powerpoint:ofv|u|",
+            "application/vnd.ms-powerpoint": "ms-powerpoint:ofv|u|",
+            "application/msexcel": "ms-excel:ofv|u|",
+            "application/vnd.ms-excel": "ms-excel:ofv|u|",
+            "application/vnd.visio": "ms-visio:ofv|u|",
+            "application/msaccess": "ms-access:ofv|u|",
+            "application/x-msaccess": "ms-access:ofv|u|",
+            "application/msproject": "ms-project:ofv|u|",
+            "application/vnd.ms-project": "ms-project:ofv|u|",
+            "application/x-mspublisher": "ms-publisher:ofv|u|"
         }
     },
     "topicMapMaxResults": 1000,

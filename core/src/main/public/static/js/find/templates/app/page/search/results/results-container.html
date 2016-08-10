@@ -13,8 +13,8 @@
             </span>
         <% } %>
         <h4 class="pull-left m-b-nil m-t-xs result-header">
-        <% if (data.directAccessLink && model.get('url')) {%>
-            <a class="pull-left m-b-nil m-t-xs result-header direct-access-title h4" href="<%= model.get('url') %>" target="_blank"><%- model.get('title') %></a>
+        <% if (data.directAccessLink && href) {%>
+            <a class="pull-left m-b-nil m-t-xs result-header direct-access-title h4" href="<%= href %>" target="_blank"><%- model.get('title') %></a>
         <% } else { %>
             <%- model.get('title') %>
         <% } %>

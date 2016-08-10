@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         final UiCustomizationOptions uiCustomizationOptions = new UiCustomizationOptions();
         uiCustomizationOptions.populateRules("option3", rule);
 
-        return new UiCustomization(uiCustomizationOptions);
+        return new UiCustomization(uiCustomizationOptions, ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"));
     }
 
     @Override
@@ -38,6 +39,8 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
     protected void validateJson(final String json) {
         assertTrue(json.contains("options"));
         assertTrue(json.contains("option3"));
+        assertTrue(json.contains("application/vnd.visio"));
+        assertTrue(json.contains("ms-visio:ofv|u|"));
     }
 
     @Override
@@ -51,5 +54,7 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         assertThat(mergedComponent.getOptions().any(), hasKey("option1"));
         assertThat(mergedComponent.getOptions().any(), hasKey("option2"));
         assertThat(mergedComponent.getOptions().any(), hasKey("option3"));
+        assertThat(mergedComponent.getSpecialUrlPrefixes(), hasKey("application/msword"));
+        assertThat(mergedComponent.getSpecialUrlPrefixes(), hasKey("application/vnd.visio"));
     }
 }
