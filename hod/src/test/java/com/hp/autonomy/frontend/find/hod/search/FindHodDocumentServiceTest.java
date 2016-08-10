@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.IodConfig;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryRequestBuilder;
+import com.hp.autonomy.hod.client.api.textindex.query.search.QueryResults;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
@@ -82,7 +83,7 @@ public class FindHodDocumentServiceTest extends HodDocumentServiceTest {
 
         final HodError invalidIndexError = new HodError.Builder().setErrorCode(HodErrorCode.INDEX_NAME_INVALID).build();
         final HodSearchResult result = new HodSearchResult.Builder().setIndex(goodIndex.getName()).build();
-        final Documents<HodSearchResult> mockedResults = new Documents<>(Collections.singletonList(result), 1, null, null, null, null);
+        final QueryResults<HodSearchResult> mockedResults = new QueryResults<>(Collections.singletonList(result), 1, null, null, null, Collections.EMPTY_LIST);
         when(queryTextIndexService.queryTextIndexWithText(anyString(), any(QueryRequestBuilder.class))).thenThrow(new HodErrorException(invalidIndexError, HttpStatus.INTERNAL_SERVER_ERROR.value())).thenReturn(mockedResults);
 
         final Database goodDatabase = new Database.Builder().setName(goodIndex.getName()).setDomain(goodIndex.getDomain()).build();

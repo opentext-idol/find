@@ -68,6 +68,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         this.parametricRequestBuilderFactory = parametricRequestBuilderFactory;
     }
 
+    @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(method = RequestMethod.GET, path = RESTRICTED_PARAMETRIC_VALUES_PATH)
     @ResponseBody
     public Set<QueryTagInfo> getRestrictedParametricValues(
@@ -84,9 +85,11 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 
+    @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = BUCKET_PARAMETRIC_PATH + "/{encodedField}", method = RequestMethod.GET)
     @ResponseBody
     public RangeInfo getNumericParametricValuesInBucketsForField(
+            @SuppressWarnings("MVCPathVariableInspection")
             @PathVariable("encodedField") final String encodedField,
             @RequestParam(TARGET_NUMBER_OF_BUCKETS_PARAM) final Integer targetNumberOfBuckets,
             @RequestParam(BUCKET_MIN_PARAM) final Double bucketMin,
@@ -114,7 +117,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         );
 
         final BucketingParams bucketingParams = new BucketingParams(targetNumberOfBuckets, bucketMin, bucketMax);
-        final Map<String, BucketingParams> bucketingParamsPerField = Collections.singletonMap(fieldName, bucketingParams);
+        final Map<String, BucketingParams>  bucketingParamsPerField = Collections.singletonMap(fieldName, bucketingParams);
         return parametricValuesService.getNumericParametricValuesInBuckets(parametricRequest, bucketingParamsPerField).get(0);
     }
 
