@@ -78,6 +78,7 @@ public class HodFilterITCase extends HsodFindTestBase {
 
     @Test
     @ResolvedBug("CCUK-3641")
+    @ActiveBug("FIND-487")
     public void testAuthor(){
         final String author = "FIFA.COM";
 

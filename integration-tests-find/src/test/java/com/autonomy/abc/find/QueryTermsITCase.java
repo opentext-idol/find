@@ -131,7 +131,8 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug({"HOD-2170", "CCUK-3634"})
+    @ResolvedBug("HOD-2170")
+    @ActiveBug("CCUK-3634")
     public void testSearchQuotationMarks() {
         new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
     }

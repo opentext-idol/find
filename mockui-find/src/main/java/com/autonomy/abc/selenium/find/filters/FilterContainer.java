@@ -7,14 +7,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public abstract class FilterContainer implements Collapsible{
+public abstract class FilterContainer extends ChevronContainer{
 
     private final WebElement container;
-    private final Collapsible collapsible;
 
     FilterContainer(final WebElement element, final WebDriver webDriver) {
-        container=element;
-        collapsible=new ChevronContainer(container, webDriver);
+        super(element,webDriver);
+        container = element;
     }
 
     WebElement getContainer(){
@@ -32,20 +31,4 @@ public abstract class FilterContainer implements Collapsible{
     public String toString(){
         return filterCategoryName();
     }
-
-    @Override
-    public void expand() {
-        collapsible.expand();
-    }
-
-    @Override
-    public void collapse(){
-        collapsible.collapse();
-    }
-
-    @Override
-    public boolean isCollapsed() {
-        return collapsible.isCollapsed();
-    }
-
 }

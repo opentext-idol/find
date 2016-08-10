@@ -19,10 +19,8 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
 
     @Override
     public String filterCategoryName(){
-        if(isCollapsed()){
-            expand();
-        }
-        return filterCategoryName().split(" \\(")[0];
+        expand();
+        return filterCategory().getText().split(" \\(")[0];
     }
 
     public String getFilterNumber() {

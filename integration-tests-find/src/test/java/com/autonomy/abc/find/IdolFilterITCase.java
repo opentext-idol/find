@@ -100,70 +100,59 @@ public class IdolFilterITCase extends IdolFindTestBase {
     @Test
     public void testParametricFiltersOpenWhenMatchingFilter() {
         search("haven");
-
         final IdolFilterPanel filterPanel = filters();
 
-        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
+        // look up filterPanel.parametricField(0) every time to avoid stale elements 
         final String firstValue = filterPanel.parametricField(0).getFilterNames().get(0);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(true));
+        
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
 
         filterPanel.filterResults(firstValue);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(false));
+        verifyThat(filterPanel.parametricField(0).isCollapsed(),is(false));
 
         filterPanel.clearFilter();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(true));
+        verifyThat(filterPanel.parametricField(0).isCollapsed(),is(true));
     }
 
     @Test
     public void testParametricFilterRemembersStateWhenMetaFiltering() {
         search("haven");
-
         final IdolFilterPanel filterPanel = filters();
 
-        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
+        // we look up filterPanel.parametricField(0) every time to avoid stale elements 
         final String firstValue = filterPanel.parametricField(0).getFilterNames().get(0);
 
         filterPanel.parametricField(0).expand();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(false));
+        verifyThat(filterPanel.parametricField(0).isCollapsed(),is(false));
 
         filterPanel.filterResults(firstValue);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(false));
+        verifyThat(filterPanel.parametricField(0).isCollapsed(),is(false));
 
         filterPanel.clearFilter();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(false));
+        verifyThat(filterPanel.parametricField(0).isCollapsed(),is(false));
     }
 
     @Test
     public void testIndexesOpenWhenMatchingMetaFilter() {
         search("haven");
-
         final IdolFilterPanel filterPanel = filters();
 
         final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
         final IndexesTree indexes = filterPanel.indexesTree();
         final String firstValue = indexes.allIndexes().getIndex(0).getName();
 
-        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(false));
+        verifyThat(indexesTreeContainer.isCollapsed(),is(false));
 
         filterPanel.filterResults(firstValue);
-
-        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(false));
+        verifyThat(indexesTreeContainer.isCollapsed(),is(false));
 
         filterPanel.clearFilter();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(false));
+        verifyThat(indexesTreeContainer.isCollapsed(),is(false));
     }
 
     @Test
     public void testIndexesRememberStateWhenMetaFiltering() {
         search("haven");
-
         final IdolFilterPanel filterPanel = filters();
 
         final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
@@ -171,16 +160,13 @@ public class IdolFilterITCase extends IdolFindTestBase {
         final String firstValue = indexes.allIndexes().getIndex(0).getName();
 
         indexesTreeContainer.collapse();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(true));
+        verifyThat(indexesTreeContainer.isCollapsed(),is(true));
 
         filterPanel.filterResults(firstValue);
-
-        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(false));
+        verifyThat(indexesTreeContainer.isCollapsed(),is(false));
 
         filterPanel.clearFilter();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(true));
+        verifyThat(indexesTreeContainer.isCollapsed(),is(true));
     }
 
     private IdolFilterPanel filters() {
