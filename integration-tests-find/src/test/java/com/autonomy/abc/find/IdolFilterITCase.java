@@ -16,9 +16,6 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 
-
-//WARNING: These tests are extremely slow when the sidebar has 1000s of filters
-
 public class IdolFilterITCase extends IdolFindTestBase {
     private FindService findService;
 
@@ -31,7 +28,6 @@ public class IdolFilterITCase extends IdolFindTestBase {
         getElementFactory().getFindPage().goToListView();
     }
 
-
     //Filters
     @Test
     @ResolvedBug("FIND-122")
@@ -41,7 +37,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
         final ListFilterContainer goodField = filters().parametricField(2);
         final String badFieldName = filters().parametricField(0).getParentName();
         final String goodFieldName = goodField.getParentName();
-        final String goodFieldValue = goodField.getChildNames().get(0);
+        final String goodFieldValue = goodField.getFilterNames().get(0);
 
         filters().collapseAll();
 
@@ -49,7 +45,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
 
         assertThat(filters().parametricField(0).getParentName(), not(badFieldName));
         assertThat(filters().parametricField(0).getParentName(), is(goodFieldName));
-        assertThat(filters().parametricField(0).getChildNames().get(0), is(goodFieldValue));
+        assertThat(filters().parametricField(0).getFilterNames().get(0), is(goodFieldValue));
     }
 
     @Test
@@ -58,14 +54,14 @@ public class IdolFilterITCase extends IdolFindTestBase {
 
         final ListFilterContainer goodField = filters().parametricField(0);
         final String goodFieldName = goodField.getParentName();
-        final String badFieldValue = goodField.getChildNames().get(0);
-        final String goodFieldValue = goodField.getChildNames().get(1);
+        final String badFieldValue = goodField.getFilterNames().get(0);
+        final String goodFieldValue = goodField.getFilterNames().get(1);
 
         filters().filterResults(goodFieldValue);
 
         assertThat(filters().parametricField(0).getParentName(), is(goodFieldName));
-        assertThat(filters().parametricField(0).getChildNames().get(0), not(badFieldValue));
-        assertThat(filters().parametricField(0).getChildNames().get(0), is(goodFieldValue));
+        assertThat(filters().parametricField(0).getFilterNames().get(0), not(badFieldValue));
+        assertThat(filters().parametricField(0).getFilterNames().get(0), is(goodFieldValue));
     }
 
     @Test

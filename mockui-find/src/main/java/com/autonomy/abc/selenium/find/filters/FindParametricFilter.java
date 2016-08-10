@@ -6,10 +6,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class FindParametricCheckbox extends Checkbox {
+public class FindParametricFilter extends Checkbox {
     private final By checkbox = By.className("parametric-value-count-cell");
 
-    FindParametricCheckbox(final WebElement element, final WebDriver driver) {
+    FindParametricFilter(final WebElement element, final WebDriver driver) {
         super(element, element.findElement(By.className("check-cell")), driver);
     }
 

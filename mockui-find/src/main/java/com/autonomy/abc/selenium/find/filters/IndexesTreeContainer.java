@@ -13,12 +13,12 @@ class IndexesTreeContainer extends ListFilterContainer {
         super(element,webDriver);
     }
 
-    public List<WebElement> getChildren(){
+    public List<WebElement> getFilters(){
         return getContainer().findElements(By.className("database-name"));
     }
 
     @Override
-    public List<String> getChildNames(){
-        return ElementUtil.getTexts(getChildren());
+    public List<String> getFilterNames(){
+        return ElementUtil.getTexts(getFilters());
     }
 }

@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
-import com.autonomy.abc.selenium.find.filters.FindParametricCheckbox;
+import com.autonomy.abc.selenium.find.filters.FindParametricFilter;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Slider;
@@ -96,7 +96,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         //checks first parametric filter of first parametric filter type
         FilterPanel filters = getElementFactory().getFilterPanel();
         filters.parametricField(0).expand();
-        final FindParametricCheckbox filter = filters.checkboxForParametricValue(0, 0);
+        final FindParametricFilter filter = filters.checkboxForParametricValue(0, 0);
         final String filterName = filter.getName();
         filter.check();
 

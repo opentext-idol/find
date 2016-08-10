@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.find.filters;
 
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
@@ -29,8 +30,6 @@ public class IdolFilterPanel extends FilterPanel{
         }
     }
 
-
-    //they might all actually be in an anon div together
     public List<GraphFilterContainer> graphContainers() {
         final List<GraphFilterContainer> containers = new ArrayList<>();
         for(final WebElement container : getGraphContainers()) {
@@ -47,4 +46,27 @@ public class IdolFilterPanel extends FilterPanel{
         return ancestors;
     }
 
+    @Override
+    protected List<FilterContainer> allFilterContainers() {
+        final List<FilterContainer> nodes = new ArrayList<>();
+        nodes.add(indexesTreeContainer());
+        nodes.add(dateFilterContainer());
+        nodes.addAll(parametricFieldContainers());
+        nodes.addAll(graphContainers());
+        return nodes;
+    }
+
+    //METAFILTERING
+    public void filterResults(final String term) {
+        // placeholder text uses ellipsis unicode character
+        final FormInput input = new FormInput(getPanel().findElement(By.cssSelector("[placeholder='Filter\u2026']")), driver);
+        input.clear();
+        input.setAndSubmit(term);
+    }
+
+    public void clearFilter() {
+        final FormInput input = new FormInput(getPanel().findElement(By.cssSelector("[placeholder='Filter\u2026']")), driver);
+        input.clear();
+        waitForIndexes();
+    }
 }

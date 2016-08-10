@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ParametricFieldContainer extends ListFilterContainer implements Iterable<FindParametricCheckbox> {
+public class ParametricFieldContainer extends ListFilterContainer implements Iterable<FindParametricFilter> {
     private final WebDriver driver;
 
     ParametricFieldContainer(final WebElement element, final WebDriver webDriver) {
@@ -29,12 +29,12 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
         return getParent().getText().split(" \\(")[1].replaceAll("[()]","");
     }
 
-    public List<WebElement> getChildren(){
+    public List<WebElement> getFilters(){
         return getContainer().findElements(By.className("parametric-value-name"));
     }
 
     @Override
-    public List<String> getChildNames() {
+    public List<String> getFilterNames() {
         final boolean startedCollapsed = this.isCollapsed();
 
         // text cannot be read if it is not visible
@@ -42,7 +42,7 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
             this.expand();
         }
 
-        final List<String> childNames = ElementUtil.getTexts(getChildren());
+        final List<String> childNames = ElementUtil.getTexts(getFilters());
 
         // restore collapsed state
         if (startedCollapsed) {
@@ -58,22 +58,19 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
     }
 
     @Override
-    public Iterator<FindParametricCheckbox> iterator() {
+    public Iterator<FindParametricFilter> iterator() {
         return values().iterator();
     }
 
-    public List<FindParametricCheckbox> values() {
-        final List<FindParametricCheckbox> boxes = new ArrayList<>();
+    public List<FindParametricFilter> values() {
+        final List<FindParametricFilter> boxes = new ArrayList<>();
         for (final WebElement el : getFullChildrenElements()) {
-            boxes.add(new FindParametricCheckbox(el, driver));
+            boxes.add(new FindParametricFilter(el, driver));
         }
         return boxes;
     }
 
     public void seeAll(){
-        //HSOD?!
         getContainer().findElement(By.cssSelector(".show-all")).click();
     }
-
-    public WebElement numberSelectedSubtitle(){return getContainer().findElement(By.cssSelector("collapsible-subtitle"));}
 }
