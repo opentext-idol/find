@@ -72,7 +72,7 @@ public class IdolPreAuthenticatedAuthenticationProvider implements Authenticatio
 
         final Collection<SimpleGrantedAuthority> grantedAuthorities = user.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toCollection(HashSet::new));
 
-        return new UsernamePasswordAuthenticationToken(new CommunityPrincipal(user.getUid(), username, user.getRoles(), user.getSecurityInfo()), null, authoritiesMapper.mapAuthorities(grantedAuthorities));
+        return new UsernamePasswordAuthenticationToken(new CommunityPrincipal(user.getUid(), username, user.getSecurityInfo()), null, authoritiesMapper.mapAuthorities(grantedAuthorities));
     }
 
     @Override

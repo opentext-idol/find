@@ -91,12 +91,12 @@ public class HodConfiguration {
     }
 
     @Bean
-    public HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder(final HttpClient httpClient, @Qualifier("hodSearchResultObjectMapper") final ObjectMapper hodSearchResultObjectMapper) {
+    public HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder(final HttpClient httpClient, final ObjectMapper objectMapper) {
         final String endpoint = environment.getProperty("find.iod.api", "https://api.havenondemand.com");
 
         return new HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple>(endpoint)
                 .setHttpClient(httpClient)
-                .setObjectMapper(hodSearchResultObjectMapper)
+                .setObjectMapper(objectMapper)
                 .setTokenRepository(tokenRepository);
     }
 
