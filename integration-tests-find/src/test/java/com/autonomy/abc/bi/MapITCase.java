@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 
+
 public class MapITCase extends IdolFindTestBase {
     private FindService findService;
     private IdolFindPage findPage;
@@ -43,17 +44,17 @@ public class MapITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-154")
     public void testMapLoads() {
         mapView = search("atrocious");
-
-        verifyThat("Map displayed",mapView.mapPresent());
+        verifyThat("Map displayed", mapView.mapPresent());
 
         mapView.waitForMarkers();
-        verifyThat("Map isn't stuck loading forever",!mapView.isLoading());
+        verifyThat("Map isn't stuck loading forever", !mapView.isLoading());
 
         search("tse");
         mapView.waitForMarkers();
 
         checkMarkersPresent(mapView);
     }
+
 
     private int checkMarkersPresent(MapView mapView) {
         int numberMarkers = mapView.markers().size() + mapView.markerClusters().size();
@@ -65,9 +66,10 @@ public class MapITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-394")
     public void testMapSummariesHaveNoPlaceholder() {
         mapView = search("saint");
-
         checkMarkersPresent(mapView);
+
         clickClustersUntilMarker();
+
         WebElement popover = mapView.popover();
         verifyThat(popover.getText(), not(containsString("QueryText-Placeholder")));
     }
@@ -75,10 +77,12 @@ public class MapITCase extends IdolFindTestBase {
     private void clickClustersUntilMarker() {
         List<WebElement> markers = mapView.markers();
         if(!markers.isEmpty()) {
-            markers.get(0).click();
+            mapView.clickMarker(markers.get(0));
             return;
         }
+
         mapView.markerClusters().get(0).click();
+        Waits.loadOrFadeWait();
         clickClustersUntilMarker();
     }
 
@@ -111,8 +115,8 @@ public class MapITCase extends IdolFindTestBase {
             savedSearchService.openNewTab();
             Waits.loadOrFadeWait();
             mapView = search("bear");
-
             mapView.waitForMarkers();
+
             int secondResults = mapView.numberResults();
 
             savedSearchService.saveCurrentAs(secondSearch, SearchType.QUERY);

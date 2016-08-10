@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find.bi;
 
 import com.autonomy.abc.selenium.find.Container;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -48,6 +49,12 @@ public class MapView {
 
     public WebElement popover() {
         return container.findElement(By.cssSelector(".leaflet-popup"));
+    }
+
+    public void clickMarker(WebElement marker) {
+        Waits.loadOrFadeWait();
+        marker.click();
+        new WebDriverWait(driver,5).until(ExpectedConditions.presenceOfElementLocated(cssSelector(".leaflet-popup")));
     }
 
     public boolean noResults() {
