@@ -1,12 +1,18 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.filters.ListFilterContainer;
+import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,6 +24,7 @@ import static org.hamcrest.core.Is.is;
 
 public class IdolFilterITCase extends IdolFindTestBase {
     private FindService findService;
+    private IdolFindPage findPage;
 
     public IdolFilterITCase(final TestConfig config) {
         super(config);}
@@ -25,7 +32,14 @@ public class IdolFilterITCase extends IdolFindTestBase {
     @Before
     public void setUp(){
         findService = getApplication().findService();
-        getElementFactory().getFindPage().goToListView();
+        findPage = getElementFactory().getFindPage();
+        findPage.goToListView();
+    }
+
+    private ResultsView search(final String searchTerm) {
+        final ResultsView results = findService.search(searchTerm);
+        findPage.waitForParametricValuesToLoad();
+        return results;
     }
 
     //Filters
@@ -82,6 +96,93 @@ public class IdolFilterITCase extends IdolFindTestBase {
         for(GraphFilterContainer container : filters().graphContainers()) {
             verifyThat("Widget is collapsed",container.isCollapsed());
         }
+    }
+
+
+    @Test
+    public void testParametricFiltersOpenWhenMatchingFilter() {
+        search("haven");
+
+        final IdolFilterPanel filterPanel = filters();
+
+        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
+        final String firstValue = filterPanel.parametricField(0).getFilterNames().get(0);
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(true));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(true));
+    }
+
+    @Test
+    public void testParametricFilterRemembersStateWhenMetaFiltering() {
+        search("haven");
+
+        final IdolFilterPanel filterPanel = filters();
+
+        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
+        final String firstValue = filterPanel.parametricField(0).getFilterNames().get(0);
+
+        filterPanel.parametricField(0).expand();
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(false));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(filterPanel.parametricField(0).isCollapsed(), Matchers.is(false));
+    }
+
+    @Test
+    public void testIndexesOpenWhenMatchingMetaFilter() {
+        search("haven");
+
+        final IdolFilterPanel filterPanel = filters();
+
+        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
+        final IndexesTree indexes = filterPanel.indexesTree();
+        final String firstValue = indexes.allIndexes().getIndex(0).getName();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(false));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(false));
+    }
+
+    @Test
+    public void testIndexesRememberStateWhenMetaFiltering() {
+        search("haven");
+
+        final IdolFilterPanel filterPanel = filters();
+
+        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
+        final IndexesTree indexes = filterPanel.indexesTree();
+        final String firstValue = indexes.allIndexes().getIndex(0).getName();
+
+        indexesTreeContainer.collapse();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(true));
+
+        filterPanel.filterResults(firstValue);
+
+        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(false));
+
+        filterPanel.clearFilter();
+
+        verifyThat(indexesTreeContainer.isCollapsed(), Matchers.is(true));
     }
 
     private IdolFilterPanel filters() {

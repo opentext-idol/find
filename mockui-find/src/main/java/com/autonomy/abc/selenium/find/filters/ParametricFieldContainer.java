@@ -29,8 +29,14 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
         return getParent().getText().split(" \\(")[1].replaceAll("[()]","");
     }
 
-    public List<WebElement> getFilters(){
-        return getContainer().findElements(By.className("parametric-value-name"));
+    public List<FindParametricFilter> getFilters() {
+        final List<FindParametricFilter> boxes = new ArrayList<>();
+        final List<WebElement> filters = getContainer().findElements(By.cssSelector(".parametric-value-element:not(.hide)"));
+
+        for (final WebElement el : filters) {
+            boxes.add(new FindParametricFilter(el, driver));
+        }
+        return boxes;
     }
 
     @Override
@@ -52,22 +58,9 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
         return childNames;
     }
 
-    //visible only
-    private List<WebElement> getFullChildrenElements(){
-        return getContainer().findElements(By.cssSelector(".parametric-value-element:not(.hide)"));
-    }
-
     @Override
     public Iterator<FindParametricFilter> iterator() {
-        return values().iterator();
-    }
-
-    public List<FindParametricFilter> values() {
-        final List<FindParametricFilter> boxes = new ArrayList<>();
-        for (final WebElement el : getFullChildrenElements()) {
-            boxes.add(new FindParametricFilter(el, driver));
-        }
-        return boxes;
+        return getFilters().iterator();
     }
 
     public void seeAll(){

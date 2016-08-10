@@ -52,94 +52,6 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    public void testParametricFiltersOpenWhenMatchingFilter() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
-        final String firstValue = filterPanel.parametricField(0).getFilterNames().get(0);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
-    }
-
-    @Test
-    public void testParametricFilterRemembersStateWhenMetaFiltering() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
-        final String firstValue = filterPanel.parametricField(0).getFilterNames().get(0);
-
-        filterPanel.parametricField(0).expand();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-    }
-
-    @Test
-    public void testIndexesOpenWhenMatchingMetaFilter() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
-        final IndexesTree indexes = filterPanel.indexesTree();
-        final String firstValue = indexes.allIndexes().getIndex(0).getName();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-    }
-
-    @Test
-    public void testIndexesRememberStateWhenMetaFiltering() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
-        final IndexesTree indexes = filterPanel.indexesTree();
-        final String firstValue = indexes.allIndexes().getIndex(0).getName();
-
-        indexesTreeContainer.collapse();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
-    }
-
-
-
-    @Test
     public void testParametricFiltersDefaultCollapsed(){
         search("knee");
 
@@ -161,7 +73,7 @@ public class FilterITCase extends FindTestBase {
 
         final ParametricFieldContainer secondContainer = filters().parametricField(1);
         secondContainer.expand();
-        final FindParametricFilter secondField = secondContainer.values().get(1);
+        final FindParametricFilter secondField = secondContainer.getFilters().get(1);
         final String filterName = secondField.getName();
         final int expectedResults = secondField.getResultsCount();
 
