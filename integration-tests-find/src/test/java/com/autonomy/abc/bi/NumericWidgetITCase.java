@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.filters.DateOption;
 import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
+import com.autonomy.abc.selenium.find.filters.SavedSearchPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
 import com.autonomy.abc.selenium.find.numericWidgets.NumericWidget;
 import com.autonomy.abc.selenium.find.results.ResultsView;
@@ -113,7 +114,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Test
     public void testSelectionRecFiltersResults() {
         MainNumericWidget mainGraph = searchAndSelectNthGraph(1, "space");
-        int beforeParametricFilters = filters().numberParametricFieldContainers();
+        int beforeParametricFilters = filters().parametricFieldContainers().size();
 
         ResultsView results = getElementFactory().getResultsPage();
         results.goToListView();
@@ -126,7 +127,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph = waitForReload();
 
         verifyThat("Filter label has appeared", findPage.getFilterLabels(), hasSize(1));
-        verifyThat("Fewer parametric filters", filters().numberParametricFieldContainers(), lessThan(beforeParametricFilters));
+        verifyThat("Fewer parametric filters", filters().parametricFieldContainers(), hasSize(lessThan(beforeParametricFilters)));
         verifyThat("Fewer results", findPage.totalResultsNum(), lessThan(beforeNumberResults));
 
         verifyThat("Min field text value changed", mainGraph.minFieldValue(), not(is(beforeMin)));
@@ -369,7 +370,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         verifyThat("End bound is correct", rightCorner, containsString(end));
     }
 
-    //TODO: FilterPanel needs to be extended/CHANGED in case of saved search
     @Test
     @ResolvedBug("FIND-389")
     public void testSnapshotDateRangesDisplayedCorrectly() {
@@ -383,7 +383,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
             saveService.saveCurrentAs("bad", SearchType.SNAPSHOT);
             searchTabs.switchTo("bad");
             Waits.loadOrFadeWait();
-            String dateRange = filters().getFirstSelectedFilterOfType(filterType);
+            String dateRange = new SavedSearchPanel(getDriver()).getFirstSelectedFilterOfType(filterType);
             verifyThat("Date range formatted like date", dateRange, allOf(containsString("/"), containsString(":")));
         } finally {
             searchTabs.switchTo("bad");

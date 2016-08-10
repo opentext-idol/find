@@ -20,19 +20,18 @@ public class GraphFilterContainer extends FilterContainer {
         return new NumericWidget(driver,container);
     }
 
-    public String filteringInfo(){
-        return getContainer().findElement(By.className("collapsible-subtitle")).getText();
+    public WebElement graph(){
+        return getContainer().findElement(By.cssSelector("div.collapse:nth-child(2)"));
     }
 
+    //REFACTOR
     //gets the graph header
     @Override
     public WebElement getParent(){
         return getContainer().findElement(By.cssSelector(".collapsible-header h4"));
     }
 
-    public WebElement graph(){
-        return getContainer().findElement(By.cssSelector("div.collapse:nth-child(2)"));
-    }
+
 
 
 }

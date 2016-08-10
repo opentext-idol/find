@@ -45,12 +45,11 @@ public class FilterPanel {
         new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
     }
 
-    //BAD
-    //should check not already selected
     public void clickFirstIndex(){
         panel.findElement(By.cssSelector(".child-categories li:first-child")).click();
     }
 
+    //REFACTOR - START
     public ListFilterContainer indexesTreeContainer() {
         final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
         final WebElement container = ElementUtil.ancestor(heading, 2);
@@ -71,31 +70,22 @@ public class FilterPanel {
         return containers;
     }
 
-    //BAD
-    public void expandParametricContainer(final String fieldName) {
-        WebElement container = panel.findElement(By.cssSelector("[data-field-display-name='"+fieldName+"'] div"));
-        (new ParametricFieldContainer(container,driver)).expand();
-    }
-
-    public ParametricFieldContainer parametricContainerOfFieldValue(final String fieldName) {
-        WebElement field = panel.findElement(By.cssSelector(".parametric-value-element[data-value='"+fieldName+"']"));
-        return new ParametricFieldContainer(ElementUtil.ancestor(field,4),driver);
-    }
-
-    public ParametricFieldContainer parametricField(final int i) {
-        return parametricFieldContainers().get(i);
-    }
-
-    public int numberParametricFieldContainers(){
-        return parametricFieldContainers().size();
-    }
-
     private List<WebElement> getParametricFilters() {
         final List<WebElement> ancestors = new ArrayList<>();
         for (final WebElement element : panel.findElements(By.className("parametric-fields-table"))) {
             ancestors.add(ElementUtil.ancestor(element, 3));
         }
         return ancestors;
+    }
+    public ParametricFieldContainer parametricContainerOfFieldValue(final String fieldName) {
+        //container could be [data-field-display-name'="+fieldName+"'] div] -> might be easier
+        WebElement field = panel.findElement(By.cssSelector(".parametric-value-element[data-value='"+fieldName+"']"));
+        return new ParametricFieldContainer(ElementUtil.ancestor(field,4),driver);
+    }
+    //REFACTOR - END
+
+    public ParametricFieldContainer parametricField(final int i) {
+        return parametricFieldContainers().get(i);
     }
 
     //DATE SPECIFIC
@@ -111,7 +101,6 @@ public class FilterPanel {
         return dateFilterContainer();
     }
 
-    //Should probably use ParametricFieldContainer
     //CHECKBOXES
     public List<FindParametricFilter> checkBoxesForParametricFieldContainer(final int i ){
         ParametricFieldContainer container = parametricField(i);
@@ -157,15 +146,5 @@ public class FilterPanel {
 
     protected WebElement getPanel(){
         return this.panel;
-    }
-
-    //BAD
-    //Shouldn't be here -> need case of panel when in saved search
-    public String getFirstSelectedFilterOfType(String filterType) {
-        return savedFilterParent(filterType).findElement(By.cssSelector("p:nth-child(2)")).getText();
-    }
-
-    private WebElement savedFilterParent(String filterType){
-        return ElementUtil.getParent(panel.findElement(By.xpath(".//p[contains(text(),'"+filterType+"')]")));
     }
 }

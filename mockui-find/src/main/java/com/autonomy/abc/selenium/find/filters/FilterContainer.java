@@ -7,7 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class FilterContainer implements Collapsible{
+public abstract class FilterContainer implements Collapsible{
 
     private final WebElement container;
     private final Collapsible collapsible;
@@ -17,6 +17,7 @@ public class FilterContainer implements Collapsible{
         collapsible=new ChevronContainer(container, webDriver);
     }
 
+    //REFACTOR START
     public String getParentName(){
         return getParent().getText();
     }
@@ -37,6 +38,7 @@ public class FilterContainer implements Collapsible{
     public String toString(){
         return findFilterType().getText();
     }
+    //REFACTOR END
 
     @Override
     public void expand() {
