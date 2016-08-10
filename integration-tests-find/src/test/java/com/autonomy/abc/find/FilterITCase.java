@@ -8,7 +8,6 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.ToolTips;
 import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.find.results.ResultsView;
-import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResult;
@@ -94,7 +93,7 @@ public class FilterITCase extends FindTestBase {
 
         final ParametricFieldContainer container = filters().parametricContainerOfFieldValue(filterName);
         final String filterNumber = container.getFilterNumber();
-        final String filterCategory = container.getParentName();
+        final String filterCategory = container.filterCategoryName();
 
         container.seeAll();
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
@@ -115,7 +114,7 @@ public class FilterITCase extends FindTestBase {
 
         //TODO: when everyone has same data, make test select across several filter categories
         final ParametricFieldContainer container = filters().parametricField(1);
-        final String filterCategory = container.getParentName();
+        final String filterCategory = container.filterCategoryName();
         FindParametricFilter checkbox = filters().checkboxForParametricValue(1, 1);
         final List<String> selectedFilter = Arrays.asList(checkbox.getName());
         checkbox.check();
@@ -141,7 +140,7 @@ public class FilterITCase extends FindTestBase {
         search("*");
         List<String> allFilterCategories = new ArrayList<>();
         for(ParametricFieldContainer container :  filters().parametricFieldContainers()) {
-            allFilterCategories.add(container.getParentName());
+            allFilterCategories.add(container.filterCategoryName());
         }
 
         filters().parametricField(0).seeAll();

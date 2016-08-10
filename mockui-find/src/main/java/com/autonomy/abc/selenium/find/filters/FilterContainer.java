@@ -17,28 +17,21 @@ public abstract class FilterContainer implements Collapsible{
         collapsible=new ChevronContainer(container, webDriver);
     }
 
-    //REFACTOR START
-    public String getParentName(){
-        return getParent().getText();
-    }
-
-    protected WebElement getParent(){
-        final WebElement filterElement = container.findElement(By.xpath(".//ancestor::div[contains(@class,'collapse')]"));
-        return ElementUtil.getFirstChild(filterElement.findElement(By.xpath(".//preceding-sibling::div")));
-    }
-
-    private WebElement findFilterType(){
-        return container.findElement(By.tagName("h4"));
-    }
-
     WebElement getContainer(){
         return container;
     }
 
-    public String toString(){
-        return findFilterType().getText();
+    public String filterCategoryName(){
+        return filterCategory().getText();
     }
-    //REFACTOR END
+
+    protected WebElement filterCategory(){
+        return container.findElement(By.tagName("h4"));
+    }
+
+    public String toString(){
+        return filterCategoryName();
+    }
 
     @Override
     public void expand() {

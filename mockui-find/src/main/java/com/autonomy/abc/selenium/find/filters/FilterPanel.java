@@ -49,7 +49,6 @@ public class FilterPanel {
         panel.findElement(By.cssSelector(".child-categories li:first-child")).click();
     }
 
-    //REFACTOR - START
     public ListFilterContainer indexesTreeContainer() {
         final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
         final WebElement container = ElementUtil.ancestor(heading, 2);
@@ -71,18 +70,13 @@ public class FilterPanel {
     }
 
     private List<WebElement> getParametricFilters() {
-        final List<WebElement> ancestors = new ArrayList<>();
-        for (final WebElement element : panel.findElements(By.className("parametric-fields-table"))) {
-            ancestors.add(ElementUtil.ancestor(element, 3));
-        }
-        return ancestors;
+        return panel.findElements(By.cssSelector("[data-field-display-name][data-field]"));
     }
+
     public ParametricFieldContainer parametricContainerOfFieldValue(final String fieldName) {
-        //container could be [data-field-display-name'="+fieldName+"'] div] -> might be easier
         WebElement field = panel.findElement(By.cssSelector(".parametric-value-element[data-value='"+fieldName+"']"));
-        return new ParametricFieldContainer(ElementUtil.ancestor(field,4),driver);
+        return new ParametricFieldContainer(ElementUtil.ancestor(field,5),driver);
     }
-    //REFACTOR - END
 
     public ParametricFieldContainer parametricField(final int i) {
         return parametricFieldContainers().get(i);

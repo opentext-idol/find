@@ -1,10 +1,8 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.IdolFindTestBase;
-import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
-import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.filters.ListFilterContainer;
@@ -49,16 +47,16 @@ public class IdolFilterITCase extends IdolFindTestBase {
         findService.search("face");
 
         final ListFilterContainer goodField = filters().parametricField(2);
-        final String badFieldName = filters().parametricField(0).getParentName();
-        final String goodFieldName = goodField.getParentName();
+        final String badFieldName = filters().parametricField(0).filterCategoryName();
+        final String goodFieldName = goodField.filterCategoryName();
         final String goodFieldValue = goodField.getFilterNames().get(0);
 
         filters().collapseAll();
 
         filters().filterResults(goodFieldName);
 
-        assertThat(filters().parametricField(0).getParentName(), not(badFieldName));
-        assertThat(filters().parametricField(0).getParentName(), is(goodFieldName));
+        assertThat(filters().parametricField(0).filterCategoryName(), not(badFieldName));
+        assertThat(filters().parametricField(0).filterCategoryName(), is(goodFieldName));
         assertThat(filters().parametricField(0).getFilterNames().get(0), is(goodFieldValue));
     }
 
@@ -67,13 +65,13 @@ public class IdolFilterITCase extends IdolFindTestBase {
         findService.search("face");
 
         final ListFilterContainer goodField = filters().parametricField(0);
-        final String goodFieldName = goodField.getParentName();
+        final String goodFieldName = goodField.filterCategoryName();
         final String badFieldValue = goodField.getFilterNames().get(0);
         final String goodFieldValue = goodField.getFilterNames().get(1);
 
         filters().filterResults(goodFieldValue);
 
-        assertThat(filters().parametricField(0).getParentName(), is(goodFieldName));
+        assertThat(filters().parametricField(0).filterCategoryName(), is(goodFieldName));
         assertThat(filters().parametricField(0).getFilterNames().get(0), not(badFieldValue));
         assertThat(filters().parametricField(0).getFilterNames().get(0), is(goodFieldValue));
     }

@@ -57,7 +57,7 @@ public class SunburstITCase extends IdolFindTestBase {
     public void testParametricSelectors(){
         search("wild horses");
 
-        final String firstParametric = filters().parametricField(0).getParentName();
+        final String firstParametric = filters().parametricField(0).filterCategoryName();
         verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(results.getSelectedFieldName(1).toUpperCase()));
 
         results.parametricSelectionDropdown(2).open();

@@ -59,7 +59,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     private String selectFilterGraph(GraphFilterContainer container) {
         container.expand();
-        String graphTitle = container.getParentName();
+        String graphTitle = container.filterCategoryName();
         container.graph().click();
         return graphTitle;
     }

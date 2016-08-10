@@ -18,15 +18,15 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
     }
 
     @Override
-    public String getParentName(){
+    public String filterCategoryName(){
         if(isCollapsed()){
             expand();
         }
-        return getParent().getText().split(" \\(")[0];
+        return filterCategoryName().split(" \\(")[0];
     }
 
     public String getFilterNumber() {
-        return getParent().getText().split(" \\(")[1].replaceAll("[()]","");
+        return filterCategoryName().split(" \\(")[1].replaceAll("[()]","");
     }
 
     public List<FindParametricFilter> getFilters() {
