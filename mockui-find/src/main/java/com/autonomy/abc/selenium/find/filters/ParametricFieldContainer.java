@@ -24,7 +24,7 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
     }
 
     public String getFilterNumber() {
-        return filterCategoryName().split(" \\(")[1].replaceAll("[()]","");
+        return filterCategory().getText().split(" \\(")[1].replaceAll("[()]","");
     }
 
     public List<FindParametricFilter> getFilters() {

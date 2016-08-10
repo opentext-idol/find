@@ -10,7 +10,6 @@ import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 

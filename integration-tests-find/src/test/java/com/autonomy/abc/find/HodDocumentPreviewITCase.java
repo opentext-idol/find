@@ -19,14 +19,11 @@ import com.hp.autonomy.frontend.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriverException;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class HodDocumentPreviewITCase extends HsodFindTestBase {

@@ -103,7 +103,7 @@ public class FilterPanel {
     }
 
     public FindParametricFilter checkboxForParametricValue(final String fieldName, final String fieldValue) {
-        final WebElement checkbox = panel.findElement(By.cssSelector("[data-field-display-name='" + fieldName.replace(" ", "_") + "'] [data-value='" + fieldValue.toUpperCase() + "']"));
+        final WebElement checkbox = panel.findElement(By.cssSelector("[data-field-display-name='" + fieldName+"'] [data-value='" + fieldValue.toUpperCase() + "']"));
         return new FindParametricFilter(checkbox, driver);
     }
 
