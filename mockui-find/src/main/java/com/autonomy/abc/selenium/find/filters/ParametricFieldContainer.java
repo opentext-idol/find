@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.filters;
 
+import com.autonomy.abc.selenium.error.Errors;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -46,14 +47,17 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
             this.expand();
         }
 
-        final List<String> childNames = ElementUtil.getTexts(getFilters());
+        List<String> filterNames = new ArrayList<>();
+        for(FindParametricFilter filter: getFilters()) {
+            filterNames.add(filter.getName());
+        }
 
         // restore collapsed state
         if (startedCollapsed) {
             this.collapse();
         }
 
-        return childNames;
+        return filterNames;
     }
 
     @Override
