@@ -96,7 +96,8 @@ public class QueryTestHelper<T extends QueryResultsPage>{
                             Errors.Search.BRACKETS,
                             Errors.Search.STOPWORDS,
                             Errors.Search.BRACKETS_BOOLEAN_OPEN,
-                            Errors.Search.BRACKETS_BOOLEAN_CLOSE
+                            Errors.Search.BRACKETS_BOOLEAN_CLOSE,
+                            Errors.Search.GENERIC_HOSTED_ERROR
                     ))
             );
         }

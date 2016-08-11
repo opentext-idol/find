@@ -44,7 +44,8 @@ public class Errors {
         NO_CONCEPTS("No related concepts found"),
         BRACKETS("Bracket Mismatch in the query"),
         BRACKETS_BOOLEAN_OPEN("more open brackets than close brackets in the boolean expression(s)"),
-        BRACKETS_BOOLEAN_CLOSE("more close brackets than open brackets in the boolean expression(s)");
+        BRACKETS_BOOLEAN_CLOSE("more close brackets than open brackets in the boolean expression(s)"),
+        GENERIC_HOSTED_ERROR("Find did not understand your search text");
 
         private final String value;
 

@@ -2,6 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.HsodFindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
+import com.autonomy.abc.selenium.element.OriginalDoc;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.results.FindResult;
@@ -10,9 +11,11 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.shared.SharedPreviewTests;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Window;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Locator;
@@ -20,10 +23,14 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.xml.ws.Action;
+
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class HodDocumentPreviewITCase extends HsodFindTestBase {
@@ -91,17 +98,21 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     }
 
     @Test
+    @ActiveBug(value="FIND-497",type= ApplicationType.HOSTED)
     public void testOpenDocumentFromSearch(){
         final Window original = getWindow();
 
-        ResultsView results = findService.search("Refuse to Feel");
+        ResultsView results = findService.search("Window");
 
         for(int i = 1; i <= 5; i++){
             final FindResult result = results.getResult(i);
             final String reference = result.getReference();
             result.title().click();
-            Waits.loadOrFadeWait();
+
             final Window newWindow = getMainSession().switchWindow(getMainSession().countWindows() - 1);
+
+            String blah = newWindow.getUrl();
+            assertThat("URL not invalid and leading nowhere",new OriginalDoc(getDriver()).hasContent());
 
             verifyThat(getDriver().getCurrentUrl(), containsString(reference));
 
