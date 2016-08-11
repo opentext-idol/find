@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -153,6 +154,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug(value="FIND-496",type=ApplicationType.HOSTED)
     public void testInfiniteScroll(){
         final ResultsView results = findService.search(new Query("blast").withFilter(IndexFilter.ALL));
 
@@ -194,6 +196,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug(value="FIND-496",type=ApplicationType.HOSTED)
     public void testDocumentPreview(){
         findService.search(new Query("stars"));
         similarDocuments = findService.goToSimilarDocuments(1);
@@ -221,6 +224,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug(value="FIND-496",type=ApplicationType.HOSTED)
     public void testDetailedDocumentPreviewFromSimilar(){
         findService.search(new Query("stars"));
         similarDocuments = findService.goToSimilarDocuments(1);

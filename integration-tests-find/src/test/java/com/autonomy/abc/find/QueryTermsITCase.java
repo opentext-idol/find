@@ -120,7 +120,6 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-151")
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-        //want to pass it resultsview
         new IdolQueryTestHelper<ResultsView>(findService).hiddenQueryOperatorText();
     }
 
