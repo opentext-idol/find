@@ -91,7 +91,7 @@ public class FilterITCase extends FindTestBase {
             LOGGER.info("Correctly threw exception as filter panel has reloaded");
         }
 
-        final ParametricFieldContainer container = filters().parametricContainerOfFieldValue(filterName);
+        final ParametricFieldContainer container = filters().parametricContainerOfFilter(filterName);
         final String filterNumber = container.getFilterNumber();
         final String filterCategory = container.filterCategoryName();
 

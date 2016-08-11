@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.DatePickerFilter;
 import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.hp.autonomy.frontend.selenium.element.Collapsible;
-import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
@@ -73,9 +72,14 @@ public class FilterPanel {
         return panel.findElements(By.cssSelector("[data-field-display-name][data-field]"));
     }
 
-    public ParametricFieldContainer parametricContainerOfFieldValue(final String fieldName) {
-        WebElement field = panel.findElement(By.cssSelector(".parametric-value-element[data-value='"+fieldName+"']"));
+    public ParametricFieldContainer parametricContainerOfFilter(final String filter) {
+        WebElement field = panel.findElement(By.cssSelector(".parametric-value-element[data-value='"+filter+"']"));
         return new ParametricFieldContainer(ElementUtil.ancestor(field,5),driver);
+    }
+
+    public ParametricFieldContainer parametricContainer(final String filterCategory) {
+        WebElement category = panel.findElement(By.cssSelector("[data-field-display-name='"+filterCategory+"']"));
+        return new ParametricFieldContainer(category,driver);
     }
 
     public ParametricFieldContainer parametricField(final int i) {
