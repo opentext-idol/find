@@ -62,7 +62,9 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     //TODO: test is bad because depends on having less than 30 of both results
     public void testBooleanOperators() {
-        final String termOne = "musketeers";
+        LOGGER.info("Test only works if query terms both have <=30 results ");
+
+        final String termOne = "brevity";
         final String termTwo = "\"dearly departed\"";
 
         ResultsView results = findService.search(termOne);
@@ -113,14 +115,15 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM, against = Deployment.DEVELOP)
     public void testCorrectErrorMessageDisplayed() {
-        new QueryTestHelper<>(findService).booleanOperatorQueryText(Errors.Search.OPERATORS, Errors.Search.OPENING_BOOL);
-        new QueryTestHelper<>(findService).emptyQueryText(Errors.Search.STOPWORDS, Errors.Search.NO_TEXT);
+        new QueryTestHelper<>(findService)
+                .booleanOperatorQueryText(Errors.Search.OPERATORS, Errors.Search.OPENING_BOOL, Errors.Search.GENERIC_HOSTED_ERROR);
+        new QueryTestHelper<>(findService)
+                .emptyQueryText(Errors.Search.STOPWORDS, Errors.Search.NO_TEXT,Errors.Search.GENERIC_HOSTED_ERROR);
     }
 
     @Test
     @ResolvedBug("FIND-151")
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-        //want to pass it resultsview
         new IdolQueryTestHelper<ResultsView>(findService).hiddenQueryOperatorText();
     }
 
