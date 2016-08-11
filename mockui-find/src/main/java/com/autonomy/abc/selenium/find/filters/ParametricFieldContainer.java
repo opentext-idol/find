@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ParametricFieldContainer extends ListFilterContainer implements Iterable<FindParametricCheckbox> {
+public class ParametricFieldContainer extends ListFilterContainer implements Iterable<FindParametricFilter> {
     private final WebDriver driver;
 
     ParametricFieldContainer(final WebElement element, final WebDriver webDriver) {
@@ -18,23 +18,27 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
     }
 
     @Override
-    public String getParentName(){
-        if(isCollapsed()){
-            expand();
-        }
-        return getParent().getText().split(" \\(")[0];
+    public String filterCategoryName(){
+        expand();
+        return filterCategory().getText().split(" \\(")[0];
     }
 
     public String getFilterNumber() {
-        return getParent().getText().split(" \\(")[1].replaceAll("[()]","");
+        return filterCategory().getText().split(" \\(")[1].replaceAll("[()]","");
     }
 
-    public List<WebElement> getChildren(){
-        return getContainer().findElements(By.className("parametric-value-name"));
+    public List<FindParametricFilter> getFilters() {
+        final List<FindParametricFilter> boxes = new ArrayList<>();
+        final List<WebElement> filters = getContainer().findElements(By.cssSelector(".parametric-value-element:not(.hide)"));
+
+        for (final WebElement el : filters) {
+            boxes.add(new FindParametricFilter(el, driver));
+        }
+        return boxes;
     }
 
     @Override
-    public List<String> getChildNames() {
+    public List<String> getFilterNames() {
         final boolean startedCollapsed = this.isCollapsed();
 
         // text cannot be read if it is not visible
@@ -42,7 +46,7 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
             this.expand();
         }
 
-        final List<String> childNames = ElementUtil.getTexts(getChildren());
+        final List<String> childNames = ElementUtil.getTexts(getFilters());
 
         // restore collapsed state
         if (startedCollapsed) {
@@ -52,28 +56,12 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
         return childNames;
     }
 
-    //visible only
-    private List<WebElement> getFullChildrenElements(){
-        return getContainer().findElements(By.cssSelector(".parametric-value-element:not(.hide)"));
-    }
-
     @Override
-    public Iterator<FindParametricCheckbox> iterator() {
-        return values().iterator();
-    }
-
-    public List<FindParametricCheckbox> values() {
-        final List<FindParametricCheckbox> boxes = new ArrayList<>();
-        for (final WebElement el : getFullChildrenElements()) {
-            boxes.add(new FindParametricCheckbox(el, driver));
-        }
-        return boxes;
+    public Iterator<FindParametricFilter> iterator() {
+        return getFilters().iterator();
     }
 
     public void seeAll(){
-        //HSOD?!
         getContainer().findElement(By.cssSelector(".show-all")).click();
     }
-
-    public WebElement numberSelectedSubtitle(){return getContainer().findElement(By.cssSelector("collapsible-subtitle"));}
 }

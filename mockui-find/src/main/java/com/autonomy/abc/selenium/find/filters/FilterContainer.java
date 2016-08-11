@@ -7,50 +7,28 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class FilterContainer implements Collapsible{
+public abstract class FilterContainer extends ChevronContainer{
 
     private final WebElement container;
-    private final Collapsible collapsible;
 
     FilterContainer(final WebElement element, final WebDriver webDriver) {
-        container=element;
-        collapsible=new ChevronContainer(container, webDriver);
-    }
-
-    public String getParentName(){
-        return getParent().getText();
-    }
-
-    protected WebElement getParent(){
-        final WebElement filterElement = container.findElement(By.xpath(".//ancestor::div[contains(@class,'collapse')]"));
-        return ElementUtil.getFirstChild(filterElement.findElement(By.xpath(".//preceding-sibling::div")));
-    }
-
-    private WebElement findFilterType(){
-        return container.findElement(By.tagName("h4"));
+        super(element,webDriver);
+        container = element;
     }
 
     WebElement getContainer(){
         return container;
     }
 
+    public String filterCategoryName(){
+        return filterCategory().getText();
+    }
+
+    protected WebElement filterCategory(){
+        return container.findElement(By.tagName("h4"));
+    }
+
     public String toString(){
-        return findFilterType().getText();
+        return filterCategoryName();
     }
-
-    @Override
-    public void expand() {
-        collapsible.expand();
-    }
-
-    @Override
-    public void collapse(){
-        collapsible.collapse();
-    }
-
-    @Override
-    public boolean isCollapsed() {
-        return collapsible.isCollapsed();
-    }
-
 }

@@ -124,8 +124,9 @@ public class DocumentPreviewITCase extends FindTestBase {
 
         checkSimilarDocuments(detailedPreviewPage);
 
-        checkSimilarDates(detailedPreviewPage);
-
+        if(!isHosted()) {
+            checkSimilarDates(detailedPreviewPage);
+        }
         detailedPreviewPage.goBackToSearch();
 
     }

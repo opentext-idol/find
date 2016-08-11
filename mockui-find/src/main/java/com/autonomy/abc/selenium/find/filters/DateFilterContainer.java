@@ -23,13 +23,13 @@ class DateFilterContainer extends ListFilterContainer implements DatePickerFilte
         driver = webDriver;
     }
 
-    public List<WebElement> getChildren(){
+    public List<WebElement> getFilters(){
         return getContainer().findElements(By.cssSelector("[data-filter-id] > td:nth-child(2)"));
     }
 
     @Override
-    public List<String> getChildNames(){
-        return ElementUtil.getTexts(getChildren());
+    public List<String> getFilterNames(){
+        return ElementUtil.getTexts(getFilters());
     }
 
     private boolean isFilteringBy(final DateOption filter) {

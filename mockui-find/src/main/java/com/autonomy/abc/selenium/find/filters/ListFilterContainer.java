@@ -7,16 +7,12 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-public class ListFilterContainer extends FilterContainer {
+public abstract class ListFilterContainer extends FilterContainer {
 
     ListFilterContainer(final WebElement element, final WebDriver webDriver) {
         super(element,webDriver);
     }
 
-    public List<String> getChildNames(){
-        final List<WebElement> children = getContainer().findElements(By.cssSelector(".parametric-value-name"));
-        children.addAll(getContainer().findElements(By.cssSelector("[data-filter-id] > td:nth-child(2)")));
-        children.addAll(getContainer().findElements(By.className("database-name")));
-        return ElementUtil.getTexts(children);
-    }
+    public abstract List<String> getFilterNames();
 }
+

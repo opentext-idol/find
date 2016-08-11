@@ -43,18 +43,24 @@ public class IdolFindPage extends FindPage {
     }
 
     public void goToListView() {
-        findElement(By.cssSelector("[data-tab-id='list']")).click();
+        mainContainer().findElement(By.cssSelector("[data-tab-id='list']")).click();
         new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".results-list-container"))));
     }
 
     public void goToTopicMap() {
         findElement(By.cssSelector("[data-tab-id='topic-map']")).click();
-        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".entity-topic-map"))));
     }
+
+    public void goToMap() {
+        mainContainer().findElement(By.cssSelector("[data-tab-id='map']")).click();
+        WebElement map = mainContainer().findElement(By.xpath(".//*[starts-with(@class,'location')]"));
+        new WebDriverWait(getDriver(), 15)
+                .until(ExpectedConditions.visibilityOf(map));
+    }
+
 
     public void goToSunburst(){
         findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
-        new WebDriverWait(getDriver(),15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".sunburst"))));
     }
 
     public void goToTable(){

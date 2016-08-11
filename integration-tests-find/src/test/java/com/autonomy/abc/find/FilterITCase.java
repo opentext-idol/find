@@ -8,7 +8,6 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.ToolTips;
 import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.find.results.ResultsView;
-import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResult;
@@ -52,94 +51,6 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    public void testParametricFiltersOpenWhenMatchingFilter() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
-        final String firstValue = filterPanel.parametricField(0).getChildNames().get(0);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
-    }
-
-    @Test
-    public void testParametricFilterRemembersStateWhenMetaFiltering() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        // we look up filterPanel.parametricField(0) every time to avoid stale elements (when the filter is changed all the views are destroyed and recreated)
-        final String firstValue = filterPanel.parametricField(0).getChildNames().get(0);
-
-        filterPanel.parametricField(0).expand();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(false));
-    }
-
-    @Test
-    public void testIndexesOpenWhenMatchingMetaFilter() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
-        final IndexesTree indexes = filterPanel.indexesTree();
-        final String firstValue = indexes.allIndexes().getIndex(0).getName();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-    }
-
-    @Test
-    public void testIndexesRememberStateWhenMetaFiltering() {
-        search("haven");
-
-        final FilterPanel filterPanel = filters();
-
-        final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
-        final IndexesTree indexes = filterPanel.indexesTree();
-        final String firstValue = indexes.allIndexes().getIndex(0).getName();
-
-        indexesTreeContainer.collapse();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
-
-        filterPanel.filterResults(firstValue);
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
-
-        filterPanel.clearFilter();
-
-        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
-    }
-
-
-
-    @Test
     public void testParametricFiltersDefaultCollapsed(){
         search("knee");
 
@@ -155,13 +66,13 @@ public class FilterITCase extends FindTestBase {
         List<ParametricFieldContainer> containers = filters().parametricFieldContainers();
         for(ParametricFieldContainer container : containers) {
             container.expand();
-            int numberFields = container.getChildren().size();
+            int numberFields = container.getFilters().size();
             verifyThat("Field values: "+numberFields + " - less than or equal to 5",numberFields,lessThanOrEqualTo(5));
         }
 
         final ParametricFieldContainer secondContainer = filters().parametricField(1);
         secondContainer.expand();
-        final FindParametricCheckbox secondField = secondContainer.values().get(1);
+        final FindParametricFilter secondField = secondContainer.getFilters().get(1);
         final String filterName = secondField.getName();
         final int expectedResults = secondField.getResultsCount();
 
@@ -173,7 +84,7 @@ public class FilterITCase extends FindTestBase {
         verifyThat("Expected number of results (according to panel) equals actual number of results",
                 results.getResultsCount(),is(expectedResults));
         try {
-            secondContainer.getChildren();
+            secondContainer.getFilters();
             fail("Filter panel did not reload after filter selection");
         }
         catch (Exception e) {
@@ -182,7 +93,7 @@ public class FilterITCase extends FindTestBase {
 
         final ParametricFieldContainer container = filters().parametricContainerOfFieldValue(filterName);
         final String filterNumber = container.getFilterNumber();
-        final String filterCategory = container.getParentName();
+        final String filterCategory = container.filterCategoryName();
 
         container.seeAll();
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
@@ -203,8 +114,8 @@ public class FilterITCase extends FindTestBase {
 
         //TODO: when everyone has same data, make test select across several filter categories
         final ParametricFieldContainer container = filters().parametricField(1);
-        final String filterCategory = container.getParentName();
-        FindParametricCheckbox checkbox = filters().checkboxForParametricValue(1, 1);
+        final String filterCategory = container.filterCategoryName();
+        FindParametricFilter checkbox = filters().checkboxForParametricValue(1, 1);
         final List<String> selectedFilter = Arrays.asList(checkbox.getName());
         checkbox.check();
 
@@ -219,7 +130,7 @@ public class FilterITCase extends FindTestBase {
         final String checkedFilterName = filterModal.checkCheckBoxInActivePane(0);
         filterModal.apply();
 
-        final FindParametricCheckbox panelBox = filters().checkboxForParametricValue(filterType,checkedFilterName);
+        final FindParametricFilter panelBox = filters().checkboxForParametricValue(filterType,checkedFilterName);
         verifyThat("Filter: "+checkedFilterName+" is now checked on panel",panelBox.isChecked());
     }
 
@@ -229,7 +140,7 @@ public class FilterITCase extends FindTestBase {
         search("*");
         List<String> allFilterCategories = new ArrayList<>();
         for(ParametricFieldContainer container :  filters().parametricFieldContainers()) {
-            allFilterCategories.add(container.getParentName());
+            allFilterCategories.add(container.filterCategoryName());
         }
 
         filters().parametricField(0).seeAll();
@@ -256,8 +167,8 @@ public class FilterITCase extends FindTestBase {
     public void testDeselectingFiltersNoFloatingTooltips(){
         search("home");
 
-        final List<FindParametricCheckbox> boxes = checkAllVisibleFiltersInFirstParametrics();
-        for(final FindParametricCheckbox checkbox:boxes){
+        final List<FindParametricFilter> boxes = checkAllVisibleFiltersInFirstParametrics();
+        for(final FindParametricFilter checkbox:boxes){
             checkbox.name().click();
         }
 
@@ -265,10 +176,10 @@ public class FilterITCase extends FindTestBase {
         verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()),not(hasSize(boxes.size())));
     }
 
-    private List<FindParametricCheckbox> checkAllVisibleFiltersInFirstParametrics(){
+    private List<FindParametricFilter> checkAllVisibleFiltersInFirstParametrics(){
         filters().parametricField(0).expand();
-        final List<FindParametricCheckbox> boxes = filters().checkBoxesForParametricFieldContainer(0);
-        for(final FindParametricCheckbox checkBox:boxes){
+        final List<FindParametricFilter> boxes = filters().checkBoxesForParametricFieldContainer(0);
+        for(final FindParametricFilter checkBox:boxes){
             checkBox.check();
         }
         return boxes;
@@ -279,8 +190,8 @@ public class FilterITCase extends FindTestBase {
     //Because filter categories all collapse after selecting 1, must be quick or throws NoSuchElement
     public void testSelectDifferentCategoryFiltersAndResultsLoad() throws  InterruptedException{
         final ResultsView results = findService.search("face");
-        final FindParametricCheckbox filter1 = filters().checkBoxesForParametricFieldContainer(0).get(0);
-        final FindParametricCheckbox filter2 = filters().checkBoxesForParametricFieldContainer(1).get(0);
+        final FindParametricFilter filter1 = filters().checkBoxesForParametricFieldContainer(0).get(0);
+        final FindParametricFilter filter2 = filters().checkBoxesForParametricFieldContainer(1).get(0);
 
         filter1.check();
         filter2.check();

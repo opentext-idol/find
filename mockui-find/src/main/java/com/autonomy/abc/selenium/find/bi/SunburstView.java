@@ -15,7 +15,6 @@ import java.util.List;
 
 
 public class SunburstView extends ParametricFieldView {
-    private static final int VISIBLE_SEGMENTS = 20;
 
     public SunburstView(final WebDriver driver) {
         super(driver);
@@ -60,7 +59,6 @@ public class SunburstView extends ParametricFieldView {
     }
 
     public String hoverOnSegmentGetCentre(final int i){
-        //DriverUtil.hover(getDriver(),getIthSunburstSegment(i));
         segmentHover(getIthSunburstSegment(i));
         return getSunburstCentreName();
     }

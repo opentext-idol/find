@@ -1,7 +1,6 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.HsodFindTestBase;
-import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
@@ -78,6 +77,7 @@ public class HodFilterITCase extends HsodFindTestBase {
 
     @Test
     @ResolvedBug("CCUK-3641")
+    @ActiveBug("FIND-487")
     public void testAuthor(){
         final String author = "FIFA.COM";
 

@@ -36,7 +36,9 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
 
     void search(final String term) {
         input.clear();
-        input.setAndSubmit(term);
+        input.setValue(term);
+        Waits.loadOrFadeWait();
+        input.submit();
     }
 
     public String getSearchBoxTerm() {

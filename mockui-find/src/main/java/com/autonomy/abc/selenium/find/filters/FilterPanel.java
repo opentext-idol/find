@@ -45,18 +45,8 @@ public class FilterPanel {
         new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
     }
 
-    //should check not already selected
     public void clickFirstIndex(){
         panel.findElement(By.cssSelector(".child-categories li:first-child")).click();
-    }
-
-    //CONTAINERS FOR FILTERS
-    private List<ListFilterContainer> allFilterContainers() {
-        final List<ListFilterContainer> nodes = new ArrayList<>();
-        nodes.add(indexesTreeContainer());
-        nodes.add(dateFilterContainer());
-        nodes.addAll(parametricFieldContainers());
-        return nodes;
     }
 
     public ListFilterContainer indexesTreeContainer() {
@@ -65,7 +55,7 @@ public class FilterPanel {
         return new IndexesTreeContainer(container, driver);
     }
 
-    private DateFilterContainer dateFilterContainer() {
+    protected DateFilterContainer dateFilterContainer() {
         final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Dates')]"));
         final WebElement container = ElementUtil.ancestor(heading, 2);
         return new DateFilterContainer(container, driver);
@@ -79,30 +69,17 @@ public class FilterPanel {
         return containers;
     }
 
-    public void expandParametricContainer(final String fieldName) {
-        WebElement container = panel.findElement(By.cssSelector("[data-field-display-name='"+fieldName+"'] div"));
-        (new ParametricFieldContainer(container,driver)).expand();
+    private List<WebElement> getParametricFilters() {
+        return panel.findElements(By.cssSelector("[data-field-display-name][data-field]"));
     }
 
     public ParametricFieldContainer parametricContainerOfFieldValue(final String fieldName) {
         WebElement field = panel.findElement(By.cssSelector(".parametric-value-element[data-value='"+fieldName+"']"));
-        return new ParametricFieldContainer(ElementUtil.ancestor(field,4),driver);
+        return new ParametricFieldContainer(ElementUtil.ancestor(field,5),driver);
     }
 
     public ParametricFieldContainer parametricField(final int i) {
         return parametricFieldContainers().get(i);
-    }
-
-    public int numberParametricFieldContainers(){
-        return parametricFieldContainers().size();
-    }
-
-    private List<WebElement> getParametricFilters() {
-        final List<WebElement> ancestors = new ArrayList<>();
-        for (final WebElement element : panel.findElements(By.className("parametric-fields-table"))) {
-            ancestors.add(ElementUtil.ancestor(element, 3));
-        }
-        return ancestors;
     }
 
     //DATE SPECIFIC
@@ -119,49 +96,29 @@ public class FilterPanel {
     }
 
     //CHECKBOXES
-    public List<FindParametricCheckbox> checkBoxesForParametricFieldContainer(final int i ){
+    public List<FindParametricFilter> checkBoxesForParametricFieldContainer(final int i ){
         ParametricFieldContainer container = parametricField(i);
         container.expand();
-        return container.values();
+        return container.getFilters();
     }
 
-    public FindParametricCheckbox checkboxForParametricValue(final String fieldName, final String fieldValue) {
-        final WebElement checkbox = panel.findElement(By.cssSelector("[data-field-display-name='" + fieldName.replace(" ", "_") + "'] [data-value='" + fieldValue.toUpperCase() + "']"));
-        return new FindParametricCheckbox(checkbox, driver);
+    public FindParametricFilter checkboxForParametricValue(final String fieldName, final String fieldValue) {
+        final WebElement checkbox = panel.findElement(By.cssSelector("[data-field-display-name='" + fieldName+"'] [data-value='" + fieldValue.toUpperCase() + "']"));
+        return new FindParametricFilter(checkbox, driver);
     }
 
-    public FindParametricCheckbox checkboxForParametricValue(final int fieldIndex, final int valueIndex) {
+    public FindParametricFilter checkboxForParametricValue(final int fieldIndex, final int valueIndex) {
         final WebElement checkbox = panel.findElement(By.cssSelector("[data-field]:nth-of-type(" + cssifyIndex(fieldIndex) +") [data-value]:nth-of-type(" + cssifyIndex(valueIndex) + ')'));
-        return new FindParametricCheckbox(checkbox, driver);
+        return new FindParametricFilter(checkbox, driver);
     }
 
-    //METAFILTERING
-    public void filterResults(final String term) {
-        // placeholder text uses ellipsis unicode character
-        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter\u2026']")), driver);
-        input.clear();
-        input.setAndSubmit(term);
-    }
-
-    public void clearFilter() {
-        final FormInput input = new FormInput(panel.findElement(By.cssSelector("[placeholder='Filter\u2026']")), driver);
-        input.clear();
-        waitForIndexes();
-    }
-
-    //SHOWING MORE
-    public void showFilters() {
-        for (final WebElement element : panel.findElements(By.cssSelector(".toggle-more-text"))) {
-            element.click();
-        }
-    }
-
-    public void expandFiltersFully() {
-        waitForIndexes();
-        for (final Collapsible collapsible : allFilterContainers()) {
-            collapsible.expand();
-        }
-        showFilters();
+    //EXPANDING AND COLLAPSING
+    protected List<FilterContainer> allFilterContainers() {
+        final List<FilterContainer> nodes = new ArrayList<>();
+        nodes.add(indexesTreeContainer());
+        nodes.add(dateFilterContainer());
+        nodes.addAll(parametricFieldContainers());
+        return nodes;
     }
 
     public void collapseAll() {
@@ -183,14 +140,5 @@ public class FilterPanel {
 
     protected WebElement getPanel(){
         return this.panel;
-    }
-
-    //Shouldn't be here -> need case of panel when in saved search
-    public String getFirstSelectedFilterOfType(String filterType) {
-        return savedFilterParent(filterType).findElement(By.cssSelector("p:nth-child(2)")).getText();
-    }
-
-    private WebElement savedFilterParent(String filterType){
-        return ElementUtil.getParent(panel.findElement(By.xpath(".//p[contains(text(),'"+filterType+"')]")));
     }
 }

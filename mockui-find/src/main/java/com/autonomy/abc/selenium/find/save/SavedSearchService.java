@@ -24,7 +24,8 @@ public class SavedSearchService {
 
     public void openNewTab() {
         elementFactory.getSearchTabBar().newTabButton().click();
-        elementFactory.getResultsPage().waitForResultsToLoad();
+        //elementFactory.getResultsPage().waitForResultsToLoad();
+        elementFactory.getTopicMap().waitForMapLoaded();
     }
 
     public void deleteAll() {

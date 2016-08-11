@@ -2,7 +2,6 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.queryHelper.IdolQueryTestHelper;
-
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
@@ -131,7 +130,8 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug({"HOD-2170", "CCUK-3634"})
+    @ResolvedBug("HOD-2170")
+    @ActiveBug("CCUK-3634")
     public void testSearchQuotationMarks() {
         new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
     }
