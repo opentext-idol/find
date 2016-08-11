@@ -154,7 +154,6 @@ public class FindPage extends AppElement implements AppPage,
         return (boolean) executor.executeScript(javaScript);
     }
 
-
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {
         @Override
         public FindPage create(final WebDriver context) {
