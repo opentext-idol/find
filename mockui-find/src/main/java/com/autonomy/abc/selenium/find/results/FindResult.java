@@ -19,6 +19,10 @@ public class FindResult extends QueryResult {
         return findElement(By.xpath(".//*[@class[contains(.,'result-header')] and text()[normalize-space()]]"));
     }
 
+    public String link() {
+        return findElement(By.cssSelector("a")).getAttribute("href");
+    }
+
     @Override
     public WebElement icon() {
         return findElement(By.cssSelector(".content-type i"));

@@ -21,11 +21,12 @@ import com.hp.autonomy.frontend.selenium.util.Locator;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.core.IsNot.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class HodDocumentPreviewITCase extends HsodFindTestBase {
@@ -95,8 +96,6 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     @Test
     @ActiveBug(value="FIND-497",type= ApplicationType.HOSTED)
     public void testOpenDocumentFromSearch(){
-        LOGGER.info("Cannot currently test for FIND-497");
-        assumeThat("Can only run if is on prem because hangs forever",!getApplication().isHosted());
         final Window original = getWindow();
 
         ResultsView results = findService.search("Window");
@@ -105,6 +104,7 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
             final FindResult result = results.getResult(i);
             final String reference = result.getReference();
             result.title().click();
+            assertThat("Link does not contain 'undefined'",result.link(),not(containsString("undefined")));
             final Window newWindow = getMainSession().switchWindow(getMainSession().countWindows() - 1);
             verifyThat(getDriver().getCurrentUrl(), containsString(reference));
 
