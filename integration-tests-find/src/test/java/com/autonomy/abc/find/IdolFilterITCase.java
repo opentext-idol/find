@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,6 +55,8 @@ public class IdolFilterITCase extends IdolFindTestBase {
 
         filters().filterResults(goodFieldName);
 
+        Waits.loadOrFadeWait();
+
         assertThat(filters().parametricField(0).filterCategoryName(), not(badFieldName));
         assertThat(filters().parametricField(0).filterCategoryName(), is(goodFieldName));
         assertThat(filters().parametricField(0).getFilterNames().get(0), is(goodFieldValue));
@@ -69,6 +72,8 @@ public class IdolFilterITCase extends IdolFindTestBase {
         final String goodFieldValue = goodField.getFilterNames().get(1);
 
         filters().filterResults(goodFieldValue);
+
+        Waits.loadOrFadeWait();
 
         assertThat(filters().parametricField(0).filterCategoryName(), is(goodFieldName));
         assertThat(filters().parametricField(0).getFilterNames().get(0), not(badFieldValue));
