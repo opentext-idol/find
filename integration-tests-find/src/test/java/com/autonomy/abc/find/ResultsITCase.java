@@ -28,6 +28,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.contain
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTagName;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class ResultsITCase extends FindTestBase {
     private FindPage findPage;
@@ -120,7 +121,7 @@ public class ResultsITCase extends FindTestBase {
         findPage.waitForParametricValuesToLoad();
 
         search("jedu");
-        verifyThat("Says it corrected query",findPage.originalQuery().isDisplayed());
+        verifyThat("Says it corrected query",findPage.originalQuery(), displayed());
 
         if(!isHosted()) {
             ((IdolFindPage) findPage).goToListView();

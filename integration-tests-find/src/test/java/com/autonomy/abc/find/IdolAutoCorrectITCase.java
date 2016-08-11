@@ -1,7 +1,6 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.IdolFindTestBase;
-import com.autonomy.abc.selenium.find.Container;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
@@ -13,15 +12,14 @@ import com.autonomy.abc.selenium.find.save.SearchTab;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
-import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebElement;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.Matchers.*;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class IdolAutoCorrectITCase extends IdolFindTestBase {
     private FindService findService;
@@ -76,14 +74,14 @@ public class IdolAutoCorrectITCase extends IdolFindTestBase {
         return correctedQuery;
     }
 
-    // Also applies to: saved searches, CSV exports
+    // Also applies to:CSV exports
     @Test
     @ActiveBug({"FIND-176","FIND-453"})
     public void testAutoCorrectAffectsAllTheThings() {
         findService.search("jedu");
         findPage.waitForParametricValuesToLoad();
 
-        assertThat("Term auto-corrected",findPage.originalQuery().isDisplayed());
+        assertThat("Term auto-corrected",findPage.originalQuery(), displayed());
 
         IdolFilterPanel filterPanel = getElementFactory().getFilterPanel();
         verifyThat("Parametric fields loaded",!filterPanel.noParametricFields());
@@ -93,9 +91,8 @@ public class IdolAutoCorrectITCase extends IdolFindTestBase {
 
         findPage.goToTopicMap();
         TopicMapView topicMap = getElementFactory().getTopicMap();
-        //should be failing RN but aren't
-        verifyThat("Error message not shown",!topicMap.emptyMessage().isDisplayed());
 
+        verifyThat("Error message not shown",topicMap.emptyMessage(), not(displayed()));
         verifyThat("Topic map shown",topicMap.topicMapVisible());
 
         findPage.goToSunburst();
