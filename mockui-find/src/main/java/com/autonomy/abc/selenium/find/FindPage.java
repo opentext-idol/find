@@ -101,6 +101,7 @@ public class FindPage extends AppElement implements AppPage,
         filters().waitForParametricFields();
     }
 
+    @Override
     public void openContainer(WebElement container) {
         WebElement list = container.findElement(By.className("collapse"));
 
