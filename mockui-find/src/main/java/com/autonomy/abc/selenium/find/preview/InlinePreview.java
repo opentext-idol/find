@@ -47,6 +47,13 @@ public class InlinePreview extends DocumentViewer {
         return findElement(By.className("view-server-loading-indicator"));
     }
 
+    @Override
+    public String getReference() {
+        if (getField("URL") == null) {
+            return getField("Reference");
+        }
+        return getField("URL");
+    }
 
     @Override
     public void next(){ throw new UnsupportedOperationException("Idol-Find DocPreview has no 'next'");}

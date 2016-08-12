@@ -15,6 +15,7 @@ import com.autonomy.abc.selenium.query.ParametricFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,6 +78,7 @@ public class HodFilterITCase extends HsodFindTestBase {
 
     @Test
     @ResolvedBug("CCUK-3641")
+    @RelatedTo("FIND-487")
     @ActiveBug("FIND-499")
     public void testAuthor(){
         final String author = "FIFA.COM";

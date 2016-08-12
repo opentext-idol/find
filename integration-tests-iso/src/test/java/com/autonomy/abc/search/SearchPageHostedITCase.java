@@ -106,6 +106,7 @@ public class SearchPageHostedITCase extends IsoHsodTestBase {
 
 
 	@Test
+	@RelatedTo("FIND-487")
 	@ActiveBug("FIND-499")
 	public void testAuthor(){
 		final String author = "FIFA.com";
