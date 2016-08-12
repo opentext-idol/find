@@ -11,6 +11,7 @@ import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.QueryResult;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.Browser;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
@@ -70,6 +71,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug(value="FIND-497",type= ApplicationType.HOSTED)
     public void testOpenOriginalDocInNewTab() {
         final Session session = getMainSession();
 
@@ -84,10 +86,12 @@ public class DocumentPreviewITCase extends FindTestBase {
             final DocumentViewer docViewer = queryResult.openDocumentPreview();
             final String reference = docViewer.getReference();
 
-            getElementFactory().getInlinePreview().openDetailedPreview();
-            final DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+            final DetailedPreviewPage detailedPreviewPage = getElementFactory().getInlinePreview().openDetailedPreview();
 
             final Window original = session.getActiveWindow();
+
+            assertThat("Link does not contain 'undefined'",detailedPreviewPage.originalDocLink(),not(containsString("undefined")));
+
             detailedPreviewPage.openOriginalDoc();
             final Window newWindow = session.switchWindow(session.countWindows() - 1);
             newWindow.activate();
@@ -111,9 +115,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         findPage.filterBy(new IndexFilter(filters().getIndex(1)));
 
         results.getResult(1).openDocumentPreview();
-        getElementFactory().getInlinePreview().openDetailedPreview();
-
-        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getInlinePreview().openDetailedPreview();
 
         //loading
         final String frameText = new Frame(getMainSession().getActiveWindow(), detailedPreviewPage.frame()).getText();
@@ -166,8 +168,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         final ResultsView results = findService.search("face");
         results.getResult(1).openDocumentPreview();
 
-        getElementFactory().getInlinePreview().openDetailedPreview();
-        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getInlinePreview().openDetailedPreview();
 
         verifyThat("Only 1 copy of that document in detailed preview", detailedPreviewPage.numberOfHeadersWithDocTitle(), lessThanOrEqualTo(1));
 

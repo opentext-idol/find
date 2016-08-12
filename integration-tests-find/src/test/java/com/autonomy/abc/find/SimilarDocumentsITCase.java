@@ -233,8 +233,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         final String title = firstSimilar.getTitleString();
 
         firstSimilar.openDocumentPreview();
-        getElementFactory().getInlinePreview().openDetailedPreview();
-        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getInlinePreview().openDetailedPreview();
 
         verifyThat("Have opened right detailed preview", detailedPreviewPage.getTitle(),equalToIgnoringCase(title));
         detailedPreviewPage.goBackToSearch();

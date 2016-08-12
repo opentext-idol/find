@@ -52,9 +52,7 @@ public abstract class FindElementFactory extends ElementFactoryBase {
         return InlinePreview.make(getDriver());
     }
 
-    public DetailedPreviewPage getDetailedPreview(){
-        return new DetailedPreviewPage.Factory().create(getDriver());
-    }
+    public DetailedPreviewPage getDetailedPreview() {return new DetailedPreviewPage.Factory().create(getDriver());}
 
     @Override
     public <T extends AppPage> T loadPage(final Class<T> type) {

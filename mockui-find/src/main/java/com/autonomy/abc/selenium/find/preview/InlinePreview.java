@@ -8,9 +8,11 @@ import java.util.List;
 
 public class InlinePreview {
     private final WebElement container;
+    private final WebDriver driver;
 
     private InlinePreview(final WebElement container, final WebDriver driver) {
         this.container = container;
+        this.driver = driver;
     }
 
     public boolean loadingIndicatorExists() {
@@ -21,8 +23,9 @@ public class InlinePreview {
         return findElement(By.className("view-server-loading-indicator"));
     }
 
-    public void openDetailedPreview(){
+    public DetailedPreviewPage openDetailedPreview(){
         findElement(By.className("preview-mode-open-detail-button")).click();
+        return new DetailedPreviewPage.Factory().create(driver);
     }
 
     private WebElement findElement(final By locator) {

@@ -2,9 +2,11 @@ package com.autonomy.abc.selenium.find.preview;
 
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * TODO: Is this needed any more? InlinePreview and DetailedPreviewPage
@@ -17,6 +19,10 @@ public class DocumentPreviewer extends DocumentViewer {
     }
 
     public static DocumentPreviewer make(final WebDriver driver){
+        new WebDriverWait(driver,5)
+                .withMessage("Preview did not open")
+                .until(ExpectedConditions.visibilityOfElementLocated(
+                        By.cssSelector(".preview-mode-wrapper:not(.hide) .preview-mode-container")));
         final DocumentPreviewer docPreviewer = new DocumentPreviewer(driver);
         docPreviewer.waitForLoad();
         return docPreviewer;
@@ -32,8 +38,9 @@ public class DocumentPreviewer extends DocumentViewer {
         Waits.loadOrFadeWait();
     }
 
-    public void openPreview(){
+    public DetailedPreviewPage openPreview(){
         findElement(By.xpath("//button[contains(text(), 'Open')]")).click();
+        return new DetailedPreviewPage.Factory().create(getDriver());
     }
 
     @Override

@@ -91,9 +91,8 @@ public class HodFilterITCase extends HsodFindTestBase {
 
         for(int i = 0; i < 6; i++){
             final DocumentPreviewer documentViewer = (DocumentPreviewer) searchResults.get(i).openDocumentPreview();
-            documentViewer.openPreview();
 
-            DetailedPreviewPage preview = getElementFactory().getDetailedPreview();
+            DetailedPreviewPage preview = documentViewer.openPreview();
             verifyThat(preview.getAuthor(), equalToIgnoringCase(author));
 
             preview.goBackToSearch();

@@ -95,8 +95,7 @@ public class MapITCase extends IdolFindTestBase {
         findPage.goToListView();
 
         getElementFactory().getResultsPage().searchResult(1).openDocumentPreview();
-        getElementFactory().getInlinePreview().openDetailedPreview();
-        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getInlinePreview().openDetailedPreview();
         verifyThat("There is no location tab",!detailedPreviewPage.locationTabExists());
     }
 
