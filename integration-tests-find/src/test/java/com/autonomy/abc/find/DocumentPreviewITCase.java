@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
-import com.autonomy.abc.selenium.find.preview.DocumentPreviewer;
+import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -50,7 +50,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         final ResultsView results = findService.search("cake");
         findPage.filterBy(new IndexFilter(filters().getIndex(1)));
 
-        final DocumentPreviewer docPreview = results.searchResult(1).openDocumentPreview();
+        final InlinePreview docPreview = results.searchResult(1).openDocumentPreview();
 
         if (docPreview.loadingIndicatorExists()) {
             assertThat("Preview not stuck loading", docPreview.loadingIndicator(), not(displayed()));
@@ -82,7 +82,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         results.waitForResultsToLoad();
 
         for (final FindResult queryResult : results.getResults(4)) {
-            final DocumentPreviewer docViewer = queryResult.openDocumentPreview();
+            final InlinePreview docViewer = queryResult.openDocumentPreview();
 
             final String reference = docViewer.getReference();
             final DetailedPreviewPage detailedPreviewPage = docViewer.openPreview();
@@ -113,8 +113,8 @@ public class DocumentPreviewITCase extends FindTestBase {
         final ResultsView results = findService.search("tragic");
         findPage.filterBy(new IndexFilter(filters().getIndex(1)));
 
-        DocumentPreviewer documentPreviewer = results.getResult(1).openDocumentPreview();
-        final DetailedPreviewPage detailedPreviewPage = documentPreviewer.openPreview();
+        InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
+        final DetailedPreviewPage detailedPreviewPage = inlinePreview.openPreview();
 
         //loading
         final String frameText = new Frame(getMainSession().getActiveWindow(), detailedPreviewPage.frame()).getText();
@@ -165,9 +165,9 @@ public class DocumentPreviewITCase extends FindTestBase {
     @ActiveBug(value = "FIND-86", browsers = Browser.FIREFOX)
     public void testOneCopyOfDocInDetailedPreview() {
         final ResultsView results = findService.search("face");
-        DocumentPreviewer documentPreviewer = results.getResult(1).openDocumentPreview();
+        InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
 
-        final DetailedPreviewPage detailedPreviewPage = documentPreviewer.openPreview();
+        final DetailedPreviewPage detailedPreviewPage = inlinePreview.openPreview();
 
         verifyThat("Only 1 copy of that document in detailed preview", detailedPreviewPage.numberOfHeadersWithDocTitle(), lessThanOrEqualTo(1));
 

@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
-import com.autonomy.abc.selenium.find.preview.DocumentPreviewer;
+import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
@@ -90,7 +90,7 @@ public class HodFilterITCase extends HsodFindTestBase {
         final List<FindResult> searchResults = results.getResults();
 
         for(int i = 0; i < 6; i++){
-            final DocumentPreviewer documentViewer = (DocumentPreviewer) searchResults.get(i).openDocumentPreview();
+            final InlinePreview documentViewer = (InlinePreview) searchResults.get(i).openDocumentPreview();
 
             DetailedPreviewPage preview = documentViewer.openPreview();
             verifyThat(preview.getAuthor(), equalToIgnoringCase(author));

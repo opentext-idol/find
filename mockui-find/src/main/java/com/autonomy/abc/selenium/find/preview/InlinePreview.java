@@ -8,18 +8,18 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class DocumentPreviewer extends DocumentViewer {
+public class InlinePreview extends DocumentViewer {
 
-    private DocumentPreviewer(final WebDriver driver){
+    private InlinePreview(final WebDriver driver){
         super(driver,driver.findElement(By.cssSelector(".preview-mode-wrapper:not(.hide) .preview-mode-container")));
     }
 
-    public static DocumentPreviewer make(final WebDriver driver){
+    public static InlinePreview make(final WebDriver driver){
         new WebDriverWait(driver,5)
                 .withMessage("Preview did not open")
                 .until(ExpectedConditions.visibilityOfElementLocated(
                         By.cssSelector(".preview-mode-wrapper:not(.hide) .preview-mode-container")));
-        final DocumentPreviewer docPreviewer = new DocumentPreviewer(driver);
+        final InlinePreview docPreviewer = new InlinePreview(driver);
         docPreviewer.waitForLoad();
         return docPreviewer;
     }

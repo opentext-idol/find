@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
-import com.autonomy.abc.selenium.find.preview.DocumentPreviewer;
+import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
@@ -233,8 +233,8 @@ public class SimilarDocumentsITCase extends FindTestBase {
         final FindResult firstSimilar =similarDocuments.getResult(1);
         final String title = firstSimilar.getTitleString();
 
-        DocumentPreviewer documentPreviewer = firstSimilar.openDocumentPreview();
-        final DetailedPreviewPage detailedPreviewPage = documentPreviewer.openPreview();
+        InlinePreview inlinePreview = firstSimilar.openDocumentPreview();
+        final DetailedPreviewPage detailedPreviewPage = inlinePreview.openPreview();
 
         verifyThat("Have opened right detailed preview", detailedPreviewPage.getTitle(),equalToIgnoringCase(title));
         detailedPreviewPage.goBackToSearch();
