@@ -6,10 +6,10 @@ import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.WebDriver;
 
 public class DetailedPreviewPage extends AppElement implements AppPage {
 
@@ -26,6 +26,10 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     public void openOriginalDoc(){
         findElement(By.className("document-detail-open-original-link")).click();
         Waits.loadOrFadeWait();
+    }
+
+    public String originalDocLink() {
+        return findElement(By.className("document-detail-open-original-link")).getAttribute("href");
     }
 
     public void goBackToSearch(){findElement(By.className("detail-view-back-button")).click();}
@@ -63,13 +67,13 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     }
 
     //metadata
+    public String getTitle(){ return getField("Title");}
     public String getReference(){ return getField("Reference");}
     public String getIndex() { return getField("Index");}
     public String getDatabase(){return getField("Database");}
-    public String getTitle(){ return getField("Title");}
     public String getSummary(){ return getField("Summary");}
     public String getDate(){ return getField("Date");}
-    public String getAuthor() { return getField("authors");}
+    public String getAuthor() { return getField("Authors");}
 
     private String getField(final String name) {
         try {

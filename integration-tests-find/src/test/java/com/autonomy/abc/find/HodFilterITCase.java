@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
-import com.autonomy.abc.selenium.find.preview.DocumentPreviewer;
+import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
@@ -15,6 +15,7 @@ import com.autonomy.abc.selenium.query.ParametricFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,7 +78,8 @@ public class HodFilterITCase extends HsodFindTestBase {
 
     @Test
     @ResolvedBug("CCUK-3641")
-    @ActiveBug("FIND-487")
+    @RelatedTo("FIND-487")
+    @ActiveBug("FIND-499")
     public void testAuthor(){
         final String author = "FIFA.COM";
 
@@ -90,10 +92,9 @@ public class HodFilterITCase extends HsodFindTestBase {
         final List<FindResult> searchResults = results.getResults();
 
         for(int i = 0; i < 6; i++){
-            final DocumentPreviewer documentViewer = (DocumentPreviewer) searchResults.get(i).openDocumentPreview();
-            documentViewer.openPreview();
+            final InlinePreview documentViewer = searchResults.get(i).openDocumentPreview();
 
-            DetailedPreviewPage preview = getElementFactory().getDetailedPreview();
+            DetailedPreviewPage preview = documentViewer.openPreview();
             verifyThat(preview.getAuthor(), equalToIgnoringCase(author));
 
             preview.goBackToSearch();

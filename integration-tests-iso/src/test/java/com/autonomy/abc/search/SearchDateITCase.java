@@ -1,7 +1,10 @@
 package com.autonomy.abc.search;
 
 import com.autonomy.abc.base.HybridIsoTestBase;
-import com.autonomy.abc.selenium.query.*;
+import com.autonomy.abc.selenium.query.DatePickerFilter;
+import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.query.SortBy;
+import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.autonomy.abc.selenium.search.IsoSearchResult;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;

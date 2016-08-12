@@ -81,15 +81,11 @@ public class DocumentViewer extends AppElement implements AppPage {
     }
 
     public String getReference() {
-        return getField("URL");
+        return getField("Reference");
     }
 
     public String getAuthor(){
         return getField("Author");
-    }
-
-    public String getContentType() {
-        return getField("Content Type");
     }
 
     public int getCurrentDocumentNumber() {

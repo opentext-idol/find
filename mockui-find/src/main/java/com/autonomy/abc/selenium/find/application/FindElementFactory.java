@@ -4,7 +4,6 @@ import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
-import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
@@ -48,13 +47,7 @@ public abstract class FindElementFactory extends ElementFactoryBase {
         return new SimilarDocumentsView.Factory().create(getDriver());
     }
 
-    public InlinePreview getInlinePreview() {
-        return InlinePreview.make(getDriver());
-    }
-
-    public DetailedPreviewPage getDetailedPreview(){
-        return new DetailedPreviewPage.Factory().create(getDriver());
-    }
+    public DetailedPreviewPage getDetailedPreview() {return new DetailedPreviewPage.Factory().create(getDriver());}
 
     @Override
     public <T extends AppPage> T loadPage(final Class<T> type) {

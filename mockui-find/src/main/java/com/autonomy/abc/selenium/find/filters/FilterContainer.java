@@ -1,8 +1,6 @@
 package com.autonomy.abc.selenium.find.filters;
 
 import com.hp.autonomy.frontend.selenium.element.ChevronContainer;
-import com.hp.autonomy.frontend.selenium.element.Collapsible;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

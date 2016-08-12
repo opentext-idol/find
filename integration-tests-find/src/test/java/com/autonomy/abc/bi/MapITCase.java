@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.bi.MapView;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
+import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -94,9 +95,8 @@ public class MapITCase extends IdolFindTestBase {
 
         findPage.goToListView();
 
-        getElementFactory().getResultsPage().searchResult(1).openDocumentPreview();
-        getElementFactory().getInlinePreview().openDetailedPreview();
-        final DetailedPreviewPage detailedPreviewPage = getElementFactory().getDetailedPreview();
+        InlinePreview documentViewer = getElementFactory().getResultsPage().searchResult(1).openDocumentPreview();
+        final DetailedPreviewPage detailedPreviewPage = documentViewer.openPreview();
         verifyThat("There is no location tab",!detailedPreviewPage.locationTabExists());
     }
 

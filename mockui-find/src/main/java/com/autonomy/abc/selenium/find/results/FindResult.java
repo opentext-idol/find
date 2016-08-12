@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.find.results;
 
-import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.autonomy.abc.selenium.find.preview.DocumentPreviewer;
+import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.query.QueryResult;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -47,14 +46,14 @@ public class FindResult extends QueryResult {
     }
 
     @Override
-    public DocumentViewer openDocumentPreview(){
+    public InlinePreview openDocumentPreview(){
         if (previewButtonExists()){
             previewButton().click();
         } else {
             title().click();
         }
 
-        return DocumentPreviewer.make(getDriver());
+        return InlinePreview.make(getDriver());
     }
 
     public String convertDate(){
