@@ -4,17 +4,16 @@ import com.autonomy.abc.base.IsoHsodTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.query.FieldTextFilter;
-import com.autonomy.abc.selenium.query.IndexFilter;
-import com.autonomy.abc.selenium.query.ParametricFilter;
-import com.autonomy.abc.selenium.query.Query;
+import com.autonomy.abc.selenium.query.*;
 import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
-import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.Waits;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,7 +24,10 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -123,7 +125,22 @@ public class SearchPageHostedITCase extends IsoHsodTestBase {
 	public void testDocumentPreview(){
 		final Index index = new Index("fifa");
 		searchService.search(new Query("document preview").withFilter(new IndexFilter(index)));
+		for(final QueryResult queryResult : searchPage.getSearchResults().subList(0,5)) {
+			final DocumentViewer documentViewer = queryResult.openDocumentPreview();
+			checkDocumentPreview(getMainSession(), documentViewer, index);
+			documentViewer.close();
+		}
+	}
 
-		SharedPreviewTests.testDocumentPreviews(getMainSession(), searchPage.getSearchResults().subList(0, 5), index);
+	private void checkDocumentPreview(Session session, DocumentViewer documentViewer, Index index) {
+		verifyThat(documentViewer.getIndex(), is(index));
+		verifyThat("Reference is displayed", documentViewer.getReference(), not(isEmptyOrNullString()));
+
+		final String frameText = new Frame(session.getActiveWindow(), documentViewer.frame()).getText();
+
+		verifyThat("Frame has content", frameText, not(isEmptyOrNullString()));
+		verifyThat(frameText, not(CoreMatchers.containsString("server error")));
+
+		//TODO Can no longer open in a new tab from document preview - should probably check whether can open full preview
 	}
 }

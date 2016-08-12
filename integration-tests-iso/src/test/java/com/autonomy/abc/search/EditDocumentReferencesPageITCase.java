@@ -12,7 +12,6 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
-import com.autonomy.abc.shared.SharedPreviewTests;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
@@ -34,7 +33,13 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.junit.Assume.assumeThat;
 
 public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
@@ -341,18 +346,32 @@ public class EditDocumentReferencesPageITCase extends HybridIsoTestBase {
         editReferencesPage.saveButton().click();
 
         List<String> promotedTitles = getElementFactory().getPromotionsDetailPage().getPromotedTitles();
+
         if(promotedTitles.contains("Unknown Document")){
             Waits.loadOrFadeWait();
             promotionsDetailPage=getElementFactory().getPromotionsDetailPage();
             promotedTitles = promotionsDetailPage.getPromotedTitles();
         }
+        Waits.loadOrFadeWait();
         verifyThat(promotedTitles, not(hasItem("Unknown Document")));
 
         if (verifyThat(promotedTitles, hasItem(title))) {
             promotionsDetailPage.viewDocument(title);
-            SharedPreviewTests.testDocumentPreview(getMainSession(), DocumentViewer.make(getDriver()));
+            DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+
+            verifyThat("Index is displayed", documentViewer.getIndexName(), not(nullValue()));
+            verifyThat("Reference is displayed", documentViewer.getReference(), not(isEmptyOrNullString()));
+
+            final String frameText = new Frame(getMainSession().getActiveWindow(), documentViewer.frame()).getText();
+
+            verifyThat("Frame has content", frameText, not(isEmptyOrNullString()));
+            verifyThat("No Server Error",frameText, not(containsString("server error")));
+
+           //TODO Can no longer open in a new tab from document preview - should probably check whether can open full preview
         }
     }
+
+
 
 
 }

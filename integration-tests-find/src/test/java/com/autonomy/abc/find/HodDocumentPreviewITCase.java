@@ -9,15 +9,17 @@ import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
-import com.autonomy.abc.shared.SharedPreviewTests;
+import com.autonomy.abc.selenium.query.QueryResult;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Locator;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +28,9 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.contain
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class HodDocumentPreviewITCase extends HsodFindTestBase {
@@ -90,7 +94,23 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
         final Index index = new Index("fifa");
         ResultsView results = findService.search(new Query("document preview").withFilter(new IndexFilter(index)));
 
-        SharedPreviewTests.testDocumentPreviews(getMainSession(), results.getResults(5), index);
+        for(final QueryResult queryResult : results.getResults(5)) {
+            final DocumentViewer documentViewer = queryResult.openDocumentPreview();
+            checkDocumentPreview(getMainSession(), documentViewer, index);
+            documentViewer.close();
+        }
+    }
+
+    private void checkDocumentPreview(final Session session, final DocumentViewer documentViewer, final Index index) {
+        verifyThat(documentViewer.getIndex(), is(index));
+        verifyThat("Reference is displayed", documentViewer.getReference(), CoreMatchers.not(isEmptyOrNullString()));
+
+        final String frameText = new Frame(session.getActiveWindow(), documentViewer.frame()).getText();
+
+        verifyThat("Frame has content", frameText, CoreMatchers.not(isEmptyOrNullString()));
+        verifyThat(frameText, CoreMatchers.not(CoreMatchers.containsString("server error")));
+
+        //TODO Can no longer open in a new tab from document preview - should probably check whether can open full preview
     }
 
     @Test
