@@ -391,7 +391,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ResolvedBug("FIND-389")
+    @ResolvedBug({"FIND-389","FIND-143"})
     public void testSnapshotDateRangesDisplayedCorrectly() {
         MainNumericWidget mainGraph = searchAndSelectNthGraph(1, "dire");
         String filterType = mainGraph.header();
@@ -408,6 +408,30 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         } finally {
             searchTabs.switchTo("bad");
             saveService.deleteCurrentSearch();
+        }
+    }
+
+    @Test
+    @ResolvedBug({"FIND-270","FIND-143"})
+    public void testFilterLabelPresentInSavedQuery() {
+        final String searchName = "meh";
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(1, "moon");
+        mainGraph.clickAndDrag(-50,mainGraph.graph());
+
+        SavedSearchService saveService = getApplication().savedSearchService();
+        SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
+
+        try{
+            saveService.saveCurrentAs(searchName, SearchType.QUERY);
+            saveService.openNewTab();
+            searchTabs.switchTo(searchName);
+
+            Waits.loadOrFadeWait();
+
+            verifyThat("Filter labels have appeared",findPage.filterLabels(),not(empty()));
+        }
+        finally {
+            saveService.deleteAll();
         }
     }
 
