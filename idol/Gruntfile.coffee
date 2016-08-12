@@ -5,12 +5,17 @@ module.exports = (grunt) ->
 
   sourcePath = 'target/classes/static/js/find/**/*.js'
 
-  testRequireConfig = [
+  browserTestRequireConfig = [
     'target/classes/static/js/require-config.js'
     'src/test/js/test-require-config.js'
   ]
 
-  specs = 'src/test/js/spec/**/*.js'
+  testRequireConfig = browserTestRequireConfig.concat([
+    'src/test/js/es5-test-require-config.js'
+  ])
+
+  specs = 'target/es5-jasmine-test-specs/spec/**/*.js'
+  browserSpecs = 'src/test/js/spec/**/*.js'
   serverPort = 8000
 
   testWatchFiles = [
@@ -20,6 +25,23 @@ module.exports = (grunt) ->
 
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
+    babel:
+      options:
+        plugins: ['transform-es2015-block-scoping']
+      transform:
+        files: [ {
+          expand: true
+          cwd: 'target/classes/static/js'
+          src: ['**/*.js']
+          dest: 'target/es5-jasmine-test'
+          ext: '.js'
+        }, {
+          expand: true
+          cwd: 'src/test/js'
+          src: ['**/*.js']
+          dest: 'target/es5-jasmine-test-specs'
+          ext: '.js'
+        } ]
     clean: [
       jasmineSpecRunner
       'bin'
@@ -40,6 +62,15 @@ module.exports = (grunt) ->
           template: jasmineRequireTemplate
           templateOptions:
             requireConfigFile: testRequireConfig
+      'browser-test':
+        src: sourcePath
+        options:
+          keepRunner: false
+          outfile: jasmineSpecRunner
+          specs: browserSpecs
+          template: jasmineRequireTemplate
+          templateOptions:
+            requireConfigFile: browserTestRequireConfig
     watch:
       buildTest:
         files: testWatchFiles
@@ -70,6 +101,7 @@ module.exports = (grunt) ->
         ]
         verbose: true
 
+  grunt.loadNpmTasks 'grunt-babel'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
@@ -77,7 +109,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-sync'
 
   grunt.registerTask 'default', ['test']
-  grunt.registerTask 'test', ['jasmine:test']
-  grunt.registerTask 'browser-test', ['jasmine:test:build', 'connect:server', 'watch:buildTest']
-  grunt.registerTask 'watch-test', ['jasmine:test', 'watch:test']
+  grunt.registerTask 'test', ['babel:transform', 'jasmine:test']
+  grunt.registerTask 'browser-test', ['jasmine:browser-test:build', 'connect:server', 'watch:buildTest']
+  grunt.registerTask 'watch-test', ['babel:transform', 'jasmine:test', 'watch:test']
   grunt.registerTask 'copy-resources', ['sync:devResources', 'watch:copyResources']
