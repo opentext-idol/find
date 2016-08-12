@@ -6,6 +6,10 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
+import com.autonomy.abc.selenium.find.save.SavedSearchPanel;
+import com.autonomy.abc.selenium.find.save.SavedSearchService;
+import com.autonomy.abc.selenium.find.save.SearchTabBar;
+import com.autonomy.abc.selenium.find.save.SearchType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
@@ -27,6 +31,8 @@ public class SunburstITCase extends IdolFindTestBase {
 
     public SunburstITCase(final TestConfig config){super(config);}
 
+    //TODO HAVE CHANGED getSunburst() IN ORDER TO GET THE ACTIVE THING
+    //NEED TO LOOK AT THE CONTAINER STUFF
     @Before
     public void setUp(){
         findPage = getElementFactory().getFindPage();
@@ -162,10 +168,45 @@ public class SunburstITCase extends IdolFindTestBase {
         assertThat("More segments with second parametric selector",segNumberAfter,greaterThan(segNumberBefore));
     }
 
+    @Test
+    @ResolvedBug("FIND-278")
+    public void testCannotChangeParametricValuesInSnapshot() {
+        search("terrible");
+
+        SavedSearchService saveService = getApplication().savedSearchService();
+        SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
+        final String searchName = "horrible";
+
+        try {
+            saveService.saveCurrentAs(searchName, SearchType.SNAPSHOT);
+            searchTabs.switchTo(searchName);
+            findPage.goToSunburst();
+
+            Waits.loadOrFadeWait();
+
+            SavedSearchPanel panel = new SavedSearchPanel(getDriver());
+            int originalCount = panel.resultCount();
+            results = getElementFactory().getSunburst();
+            results.waitForSunburst();
+            results.getIthSunburstSegment(1).click();
+            results.waitForSunburst();
+
+            verifyThat("Has not added filter",findPage.filterLabels(),hasSize(0));
+            verifyThat("Same number of results",panel.resultCount(),is(originalCount));
+        }
+        finally {
+            findService.search("back to results");
+            saveService.deleteAll();
+        }
+
+
+
+    }
+
     private void search(String searchTerm) {
         findService.search(searchTerm);
         findPage.goToSunburst();
-        results.waitForSunburst();
+        //results.waitForSunburst();
     }
 
     private FilterPanel filters() {

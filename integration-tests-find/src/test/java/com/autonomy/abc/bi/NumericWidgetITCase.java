@@ -431,6 +431,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
             verifyThat("Filter labels have appeared",findPage.filterLabels(),not(empty()));
         }
         finally {
+            findService.search("back to results");
             saveService.deleteAll();
         }
     }

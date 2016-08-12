@@ -60,7 +60,7 @@ public class IdolFindPage extends FindPage {
 
 
     public void goToSunburst(){
-        findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
+        mainContainer().findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
     }
 
     public void goToTable(){

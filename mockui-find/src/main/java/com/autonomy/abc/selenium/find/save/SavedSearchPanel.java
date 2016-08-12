@@ -19,6 +19,10 @@ public class SavedSearchPanel {
         return panel.findElement(By.xpath(".//p[contains(text(),'Query Text')]/following-sibling::p ")).getText();
     }
 
+    public int resultCount() {
+        return Integer.parseInt(panel.findElement(By.xpath(".//p[contains(text(),'Result Count')]/following-sibling::p ")).getText());
+    }
+
     public String getFirstSelectedFilterOfType(String filterType) {
         return savedFilterParent(filterType).findElement(By.cssSelector("p:nth-child(2)")).getText();
     }

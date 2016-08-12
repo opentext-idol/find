@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find.bi;
 
 
+import com.autonomy.abc.selenium.find.Container;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -26,7 +27,8 @@ public class SunburstView extends ParametricFieldView {
     }
 
     public List<WebElement> findSunburstSegments(){
-        return findElements(By.cssSelector(".sunburst path:not([fill='#f0f0f0']):not([fill='#ffffff'])"));
+        return Container.currentTabContents(getDriver())
+                .findElements(By.cssSelector(".sunburst path:not([fill='#f0f0f0']):not([fill='#ffffff'])"));
     }
 
     public int numberOfSunburstSegments(){
@@ -34,7 +36,10 @@ public class SunburstView extends ParametricFieldView {
     }
 
     public void waitForSunburst(){
-        new WebDriverWait(getDriver(),15).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".parametric-loading")));
+        WebElement element = Container.currentTabContents(getDriver()).findElement(By.cssSelector(".sunburst svg"));
+        new WebDriverWait(getDriver(),15)
+                .withMessage("Sunburst not visible")
+                .until(ExpectedConditions.visibilityOf(element));
     }
 
     public String getSunburstCentreName(){
