@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.save.*;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -51,6 +52,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
     }
 
     @Test
+    @ResolvedBug("FIND-467")
     public void testCanSaveSearch() {
         findService.search("queen");
 
@@ -131,8 +133,6 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
         assertThat(factory.getFilterPanel().checkboxForParametricValue(0, 0), checked());
     }
-
-
 
     private static Matcher<SearchTab> modified() {
         return new TypeSafeMatcher<SearchTab>() {
