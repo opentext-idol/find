@@ -13,16 +13,13 @@ import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsDeserializer;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.jackson.JsonComponent;
 
 import java.io.IOException;
+import java.util.function.Function;
 
-@Component
+@JsonComponent
 public class HodQueryRestrictionsDeserializer extends QueryRestrictionsDeserializer<ResourceIdentifier> {
-    public HodQueryRestrictionsDeserializer() {
-        super(new ResourceIdentifierNodeParser());
-    }
-
     @Override
     public QueryRestrictions<ResourceIdentifier> deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext) throws IOException {
         final ObjectMapper objectMapper = createObjectMapper();
@@ -39,10 +36,8 @@ public class HodQueryRestrictionsDeserializer extends QueryRestrictionsDeseriali
                 .build();
     }
 
-    protected static class ResourceIdentifierNodeParser implements NodeParser<ResourceIdentifier> {
-        @Override
-        public ResourceIdentifier parse(final JsonNode databaseNode) {
-            return new ResourceIdentifier(databaseNode.get("domain").asText(), databaseNode.get("name").asText());
-        }
+    @Override
+    protected Function<JsonNode, ResourceIdentifier> constructDatabaseNodeParser() {
+        return databaseNode -> new ResourceIdentifier(databaseNode.get("domain").asText(), databaseNode.get("name").asText());
     }
 }

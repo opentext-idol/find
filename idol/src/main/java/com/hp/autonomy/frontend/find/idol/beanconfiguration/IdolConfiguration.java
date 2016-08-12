@@ -57,13 +57,11 @@ public class IdolConfiguration {
     @Primary
     public ObjectMapper jacksonObjectMapper(
         final Jackson2ObjectMapperBuilder builder,
-        final QueryRestrictionsDeserializer<?> queryRestrictionsDeserializer,
         final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever
     ) {
         final ObjectMapper mapper = builder
             .createXmlMapper(false)
             .mixIn(Authentication.class, IdolAuthenticationMixins.class)
-            .deserializerByType(QueryRestrictions.class, queryRestrictionsDeserializer)
             .build();
 
         mapper.setInjectableValues(new InjectableValues.Std().addValue(AuthenticationInformationRetriever.class, authenticationInformationRetriever));

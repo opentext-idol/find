@@ -18,14 +18,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 
 public abstract class QueryRestrictionsDeserializer<S extends Serializable> extends JsonDeserializer<QueryRestrictions<S>> {
-    private final NodeParser<S> databaseNodeParser;
+    private final Function<JsonNode, S> databaseNodeParser;
 
-    protected QueryRestrictionsDeserializer(NodeParser<S> databaseNodeParser) {
-        this.databaseNodeParser = databaseNodeParser;
+    protected QueryRestrictionsDeserializer() {
+        databaseNodeParser = constructDatabaseNodeParser();
     }
+
+    protected abstract Function<JsonNode,S> constructDatabaseNodeParser();
 
     protected ObjectMapper createObjectMapper() {
         final ObjectMapper objectMapper = new ObjectMapper();
@@ -33,7 +36,7 @@ public abstract class QueryRestrictionsDeserializer<S extends Serializable> exte
         return objectMapper;
     }
 
-    protected <T> T parseAs(final ObjectMapper objectMapper, @SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName, final Class<T> type) throws JsonProcessingException {
+    private <T> T parseAs(final ObjectMapper objectMapper, @SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName, final Class<T> type) throws JsonProcessingException {
         final JsonNode childNode = node.get(fieldName);
         return childNode == null ? null : objectMapper.treeToValue(childNode, type);
     }
@@ -55,32 +58,19 @@ public abstract class QueryRestrictionsDeserializer<S extends Serializable> exte
     }
     
     protected List<String> parseStringArray(@SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName) {
-        return parseArray(node, fieldName, new StringNodeParser());
+        return parseArray(node, fieldName, JsonNode::asText);
     }
 
-    protected <T> List<T> parseArray(@SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName, final NodeParser<T> parser) {
+    private <T> List<T> parseArray(@SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName, final Function<JsonNode, T> parser) {
         final List<T> fields = new ArrayList<>();
         final JsonNode arrayNode = node.get(fieldName);
         if (arrayNode != null) {
             final Iterator<JsonNode> iterator = arrayNode.elements();
             while (iterator.hasNext()) {
-                fields.add(parser.parse(iterator.next()));
+                fields.add(parser.apply(iterator.next()));
             }
         }
 
         return fields;
-    }
-
-    protected static class StringNodeParser implements NodeParser<String> {
-        public StringNodeParser() {}
-
-        @Override
-        public String parse(final JsonNode jsonNode) {
-            return jsonNode.asText();
-        }
-    }
-
-    protected interface NodeParser<T> {
-        T parse(final JsonNode jsonNode);
     }
 }

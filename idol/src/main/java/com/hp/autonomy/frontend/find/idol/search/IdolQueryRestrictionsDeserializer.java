@@ -12,16 +12,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsDeserializer;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.jackson.JsonComponent;
 
 import java.io.IOException;
+import java.util.function.Function;
 
-@Component
+@JsonComponent
 public class IdolQueryRestrictionsDeserializer extends QueryRestrictionsDeserializer<String> {
-    public IdolQueryRestrictionsDeserializer() {
-        super(new StringNodeParser());
-    }
-
     @Override
     public QueryRestrictions<String> deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext) throws IOException {
         final ObjectMapper objectMapper = createObjectMapper();
@@ -41,11 +38,9 @@ public class IdolQueryRestrictionsDeserializer extends QueryRestrictionsDeserial
                 .build();
     }
 
-    protected class StringDatabaseNodeParser implements NodeParser<String> {
-        @Override
-        public String parse(final JsonNode databaseNode) {
-            return databaseNode.asText();
-        }
+    @Override
+    protected Function<JsonNode, String> constructDatabaseNodeParser() {
+        return JsonNode::asText;
     }
 }
 
