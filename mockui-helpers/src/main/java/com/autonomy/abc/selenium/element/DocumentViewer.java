@@ -91,10 +91,6 @@ public class DocumentViewer extends AppElement implements AppPage {
         return getField("Author");
     }
 
-    public String getContentType() {
-        return getField("Content Type");
-    }
-
     public int getCurrentDocumentNumber() {
         final String[] current = findElement(By.id("cboxCurrent")).getText().split(" ");
         return Integer.parseInt(current[current.length - 3]);

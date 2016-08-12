@@ -11,6 +11,7 @@ import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Session;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.CoreMatchers;
@@ -105,6 +106,7 @@ public class SearchPageHostedITCase extends IsoHsodTestBase {
 
 
 	@Test
+	@ActiveBug("FIND-499")
 	public void testAuthor(){
 		final String author = "FIFA.com";
 		searchPage = searchService.search(new Query("blatter").withFilter(new ParametricFilter("Author", author)));

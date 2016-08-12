@@ -77,7 +77,7 @@ public class HodFilterITCase extends HsodFindTestBase {
 
     @Test
     @ResolvedBug("CCUK-3641")
-    @ActiveBug("FIND-487")
+    @ActiveBug("FIND-499")
     public void testAuthor(){
         final String author = "FIFA.COM";
 
@@ -90,7 +90,7 @@ public class HodFilterITCase extends HsodFindTestBase {
         final List<FindResult> searchResults = results.getResults();
 
         for(int i = 0; i < 6; i++){
-            final InlinePreview documentViewer = (InlinePreview) searchResults.get(i).openDocumentPreview();
+            final InlinePreview documentViewer = searchResults.get(i).openDocumentPreview();
 
             DetailedPreviewPage preview = documentViewer.openPreview();
             verifyThat(preview.getAuthor(), equalToIgnoringCase(author));

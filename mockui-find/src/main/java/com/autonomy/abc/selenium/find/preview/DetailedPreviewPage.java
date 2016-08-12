@@ -67,13 +67,13 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
     }
 
     //metadata
+    public String getTitle(){ return getField("Title");}
     public String getReference(){ return getField("Reference");}
     public String getIndex() { return getField("Index");}
     public String getDatabase(){return getField("Database");}
-    public String getTitle(){ return getField("Title");}
     public String getSummary(){ return getField("Summary");}
     public String getDate(){ return getField("Date");}
-    public String getAuthor() { return getField("authors");}
+    public String getAuthor() { return getField("Authors");}
 
     private String getField(final String name) {
         try {
