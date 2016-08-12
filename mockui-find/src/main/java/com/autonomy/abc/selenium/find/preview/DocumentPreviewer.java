@@ -8,10 +8,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-/**
- * TODO: Is this needed any more? InlinePreview and DetailedPreviewPage
- * are both significantly different from the ISO preview...
- */
 public class DocumentPreviewer extends DocumentViewer {
 
     private DocumentPreviewer(final WebDriver driver){
@@ -39,9 +35,18 @@ public class DocumentPreviewer extends DocumentViewer {
     }
 
     public DetailedPreviewPage openPreview(){
-        findElement(By.xpath("//button[contains(text(), 'Open')]")).click();
+        findElement(By.className("preview-mode-open-detail-button")).click();
         return new DetailedPreviewPage.Factory().create(getDriver());
     }
+
+    public boolean loadingIndicatorExists() {
+        return !findElements(By.className("view-server-loading-indicator")).isEmpty();
+    }
+
+    public WebElement loadingIndicator(){
+        return findElement(By.className("view-server-loading-indicator"));
+    }
+
 
     @Override
     public void next(){ throw new UnsupportedOperationException("Idol-Find DocPreview has no 'next'");}

@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.find.results;
 
-import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.preview.DocumentPreviewer;
 import com.autonomy.abc.selenium.query.QueryResult;
 import org.openqa.selenium.By;
@@ -47,7 +46,7 @@ public class FindResult extends QueryResult {
     }
 
     @Override
-    public DocumentViewer openDocumentPreview(){
+    public DocumentPreviewer openDocumentPreview(){
         if (previewButtonExists()){
             previewButton().click();
         } else {

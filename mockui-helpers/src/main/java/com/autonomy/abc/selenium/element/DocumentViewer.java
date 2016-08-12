@@ -107,7 +107,6 @@ public class DocumentViewer extends AppElement implements AppPage {
 
     @Override
     public void waitForLoad() {
-
         Waits.loadOrFadeWait();
     }
 

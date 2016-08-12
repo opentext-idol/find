@@ -7,9 +7,6 @@ import com.autonomy.abc.selenium.users.table.UserTableRow;
 import com.hp.autonomy.frontend.selenium.users.NewUser;
 import com.hp.autonomy.frontend.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.users.User;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public abstract class UserService<T extends IsoElementFactory> extends ServiceBase<T> {
     public UserService(final IsoApplication<? extends T> application) {

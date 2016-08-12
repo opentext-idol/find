@@ -1,10 +1,8 @@
 package com.autonomy.abc.selenium.query;
 
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindAll;
 
 import java.util.HashMap;
 import java.util.List;
