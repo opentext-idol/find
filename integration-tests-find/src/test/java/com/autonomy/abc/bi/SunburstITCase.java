@@ -125,7 +125,7 @@ public class SunburstITCase extends IdolFindTestBase {
         results.getIthSunburstSegment(1).click();
         results.waitForSunburst();
         
-        verifyThat(findPage.getFilterLabels(), hasItem(containsString(fieldValue)));
+        verifyThat(findPage.filterLabelsText(), hasItem(containsString(fieldValue)));
 
         filters().parametricContainer(fieldName).expand();
         verifyThat(filters().checkboxForParametricValue(fieldName, fieldValue), checked());

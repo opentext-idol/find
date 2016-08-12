@@ -101,7 +101,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         filter.check();
 
         results.waitForMapLoaded();
-        verifyThat("The correct filter label has appeared", findPage.getFilterLabels(), hasItem(containsString(filterName)));
+        verifyThat("The correct filter label has appeared", findPage.filterLabelsText(), hasItem(containsString(filterName)));
         verifyThat("Search term still " + searchTerm, navBar.getSearchBoxTerm(), is(searchTerm));
     }
 

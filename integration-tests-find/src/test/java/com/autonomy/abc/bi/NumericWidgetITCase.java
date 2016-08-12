@@ -126,7 +126,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.selectHalfTheBars();
         mainGraph = waitForReload();
 
-        verifyThat("Filter label has appeared", findPage.getFilterLabels(), hasSize(1));
+        verifyThat("Filter label has appeared", findPage.filterLabelsText(), hasSize(1));
         verifyThat("Fewer parametric filters", filters().parametricFieldContainers(), hasSize(lessThan(beforeParametricFilters)));
         verifyThat("Fewer results", findPage.totalResultsNum(), lessThan(beforeNumberResults));
 
@@ -218,10 +218,10 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
         MainNumericWidget mainGraph = findPage.mainGraph();
         mainGraph.clickAndDrag(100, mainGraph.graph());
-        String label = findPage.getFilterLabels().get(0);
+        String label = findPage.filterLabelsText().get(0);
 
         mainGraph.clickAndDrag(-100, mainGraph.graph());
-        String changedLabel = findPage.getFilterLabels().get(0);
+        String changedLabel = findPage.filterLabelsText().get(0);
         assertThat("The label has changed", changedLabel, not(is(label)));
     }
 
@@ -232,7 +232,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         filters().waitForParametricFields();
 
         List<String> graphTitles = filterByAllGraphs();
-        List<String> labels = findPage.getFilterLabels();
+        List<String> labels = findPage.filterLabelsText();
 
         verifyThat("All filters have a label", labels, hasSize(graphTitles.size()));
 
@@ -265,9 +265,29 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.clickAndDrag(200, mainGraph.graph());
         waitForReload();
 
-        String firstLabel = findPage.getFilterLabels().get(0).split(":")[1];
+        String firstLabel = findPage.filterLabelsText().get(0).split(":")[1];
         verifyThat("Place elevation filter label doesn't have time format", firstLabel, not(containsString(":")));
     }
+
+    @Test
+    @ResolvedBug("FIND-273")
+    public void testRemovingViaFilterLabelRemovesSelection() {
+        MainNumericWidget mainGraph = searchAndSelectNthGraph(1, "space");
+        mainGraph.clickAndDrag(100, mainGraph.graph());
+
+        filters().waitForParametricFields();
+        mainGraph = findPage.mainGraph();
+        mainGraph.waitUntilRectangleBack();
+
+        List<WebElement> labels = findPage.filterLabels();
+        assertThat("Filter label appeared",labels,hasSize(1));
+        findPage.removeFilterLabel(labels.get(0));
+
+        filters().waitForParametricFields();
+        NumericWidget sidePanelChart = filters().getNthGraph(1).getChart();
+        verifyThat("Side panel chart selection rectangle gone", !sidePanelChart.selectionRectangleExists());
+    }
+
 
     @Test
     @ActiveBug("FIND-400")
