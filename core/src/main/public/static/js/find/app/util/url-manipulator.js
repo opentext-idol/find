@@ -11,11 +11,11 @@ define([
     return {
         addSpecialUrlPrefix: function (contentType, url) {
             //noinspection JSUnresolvedVariable
-            var uiCustomization = configuration().uiCustomization;
+            const uiCustomization = configuration().uiCustomization;
 
-            var prefix = '';
+            let prefix = '';
             //noinspection JSUnresolvedVariable
-            if (uiCustomization && uiCustomization.specialUrlPrefixes && contentType) {
+            if (uiCustomization && uiCustomization.specialUrlPrefixes && contentType && uiCustomization.specialUrlPrefixes[contentType]) {
                 //noinspection JSUnresolvedVariable
                 prefix = uiCustomization.specialUrlPrefixes[contentType];
             }
