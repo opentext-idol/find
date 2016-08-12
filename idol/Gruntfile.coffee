@@ -32,7 +32,7 @@ module.exports = (grunt) ->
         files: [ {
           expand: true
           cwd: 'target/classes/static/js'
-          src: ['**/*.js']
+          src: ['find/**/*.js']
           dest: 'target/es5-jasmine-test'
           ext: '.js'
         }, {
