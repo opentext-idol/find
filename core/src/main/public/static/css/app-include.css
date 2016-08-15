@@ -784,7 +784,7 @@ input.find-input {
 
 .navbar-username {
     right: 70px !important;
-    top: 11px !important;
+    top: 15px !important;
 }
 
 .navbar-username.shorten {
@@ -1291,6 +1291,12 @@ input:-moz-placeholder::before {
     bottom: 0;
     top: 70px;
     overflow: auto;
+}
+
+@media (max-width: 1190px) {
+    .navbar-username.shorten {
+        max-width: 100px;
+    }
 }
 
 @media (max-width: 991px) {
