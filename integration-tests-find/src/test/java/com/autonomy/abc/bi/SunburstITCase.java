@@ -41,11 +41,13 @@ public class SunburstITCase extends IdolFindTestBase {
     //TODO: test that checks what happens to sunburst when docs have 2 (non-mutually exclusive) fields from the same category
 
     @Test
+    @ResolvedBug("FIND-251")
     @ActiveBug("FIND-382")
     public void testSunburstTabShowsSunburstOrMessage(){
         search("shambolic");
 
         results.waitForSunburst();
+
         verifyThat("Sunburst element displayed",results.sunburstVisible());
         verifyThat("Parametric selectors appear",results.parametricSelectionDropdownsExist());
 
@@ -56,7 +58,6 @@ public class SunburstITCase extends IdolFindTestBase {
         findService.search("shouldAlsoBeNoTopicsForThis");
         findPage.goToSunburst();
         verifyThat("Message appearing when no sunburst & search from elsewhere",results.message(),displayed());
-
     }
 
     @Test
@@ -167,6 +168,25 @@ public class SunburstITCase extends IdolFindTestBase {
         final int segNumberAfter = results.numberOfSunburstSegments();
 
         assertThat("More segments with second parametric selector",segNumberAfter,greaterThan(segNumberBefore));
+    }
+
+    //v data dependent -> needs these categories to be mutually exclusive
+    @Test
+    @ActiveBug("FIND-267")
+    public void testNoOverlapParametricFields() {
+        search("*");
+        results.parametricSelectionDropdown(1).select("Person Sex");
+        results.waitForSunburst();
+        final int segNumberBefore = results.numberOfSunburstSegments();
+
+        results.parametricSelectionDropdown(2).select("Category");
+        results.waitForSunburst();
+        final int segNumberAfter = results.numberOfSunburstSegments();
+
+        verifyThat("Same number of segments after 2nd selector",segNumberAfter,is(segNumberBefore));
+        verifyThat("Message displayed",results.message(),displayed());
+        final String sensibleMessage = "no documents with values for both fields";
+        verifyThat("Message contains \""+sensibleMessage+"\"",results.message().getText(),containsString(sensibleMessage));
     }
 
     private void search(String searchTerm) {

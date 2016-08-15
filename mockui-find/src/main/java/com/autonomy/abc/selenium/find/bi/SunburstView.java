@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -36,11 +37,15 @@ public class SunburstView extends ParametricFieldView {
     }
 
     public void waitForSunburst(){
-        new WebDriverWait(getDriver(),15)
-                .withMessage("Sunburst not visible")
-                .until(ExpectedConditions.visibilityOfElementLocated(
-                        By.cssSelector(".query-service-view-container > :not(.hide)" +
-                                ":not(.search-tabs-container) .sunburst svg")));
+        new WebDriverWait(getDriver(),15).withMessage("waiting for sunburst or sunburst message")
+                .until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(final WebDriver driver) {
+                return (!driver.findElements(By.cssSelector(".query-service-view-container > :not(.hide):not(.search-tabs-container) .sunburst svg")).isEmpty()
+                        || driver.findElement(By.cssSelector(".query-service-view-container > :not(.hide):not(.search-tabs-container) .parametric-view-message")).isDisplayed())
+                        && !driver.findElement(By.cssSelector(".parametric-loading")).isDisplayed();
+            }
+        });
     }
 
     public String getSunburstCentreName(){
