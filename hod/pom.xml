@@ -136,23 +136,6 @@
             <version>${haven.search.components.version}</version>
         </dependency>
 
-        <!-- TODO: Update haven-search-components with release versions -->
-        <dependency>
-            <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>hod-sso-spring-security</artifactId>
-            <version>0.7.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>java-hod-client</artifactId>
-            <version>0.22.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend</groupId>
-            <artifactId>aci-types</artifactId>
-            <version>0.13.3</version>
-        </dependency>
-
         <!-- It's not clear why, but we need to define dependency here as well, not just at the core level.  Otherwise the hibernate classloader does not pick this up. -->
         <dependency>
             <groupId>org.jadira.usertype</groupId>
