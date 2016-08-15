@@ -17,6 +17,7 @@ class ParametricFieldView {
     ParametricFieldView(final WebDriver driver) {
         this.driver = driver;
         this.container = driver.findElement(By.className("service-view-container:not(.hide)"));
+        //this.container = driver.findElement(By.className("service-view-container"));
     }
 
     public String getSelectedFieldName(final int i){
@@ -44,6 +45,10 @@ class ParametricFieldView {
             goodFormat.add(title.toUpperCase());
         }
         return goodFormat;
+    }
+
+    public WebElement message() {
+        return findElement(By.cssSelector(".parametric-view-message"));
     }
 
     protected WebDriver getDriver() {

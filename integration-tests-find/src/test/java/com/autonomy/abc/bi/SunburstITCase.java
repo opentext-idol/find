@@ -6,10 +6,6 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
-import com.autonomy.abc.selenium.find.save.SavedSearchPanel;
-import com.autonomy.abc.selenium.find.save.SavedSearchService;
-import com.autonomy.abc.selenium.find.save.SearchTabBar;
-import com.autonomy.abc.selenium.find.save.SearchType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
@@ -23,6 +19,7 @@ import java.util.List;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.checked;
 import static org.hamcrest.Matchers.*;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SunburstITCase extends IdolFindTestBase {
     private IdolFindPage findPage;
@@ -48,14 +45,18 @@ public class SunburstITCase extends IdolFindTestBase {
     public void testSunburstTabShowsSunburstOrMessage(){
         search("shambolic");
 
-        verifyThat("Main results list hidden",getElementFactory().getResultsPage().mainResultsContainerHidden());
+        results.waitForSunburst();
         verifyThat("Sunburst element displayed",results.sunburstVisible());
         verifyThat("Parametric selectors appear",results.parametricSelectionDropdownsExist());
 
         search("shouldBeNoFieldsForThisCrazySearch");
+        verifyThat("Message appearing when no sunburst & search from Sunburst",results.message(),displayed());
+        findPage.goToListView();
 
-        //TODO: find out expected behaviour once bug is resolved
-        //verifyThat("Sensible message is appearing when there is no sunburst")
+        findService.search("shouldAlsoBeNoTopicsForThis");
+        findPage.goToSunburst();
+        verifyThat("Message appearing when no sunburst & search from elsewhere",results.message(),displayed());
+
     }
 
     @Test
@@ -127,7 +128,7 @@ public class SunburstITCase extends IdolFindTestBase {
 
         final String fieldValue = results.hoverOnSegmentGetCentre(1);
         final String fieldName = results.getSelectedFieldName(1);
-        LOGGER.info("filtering by " + fieldName + " = " + fieldValue);
+        LOGGER.info("Filtering by " + fieldName + " = " + fieldValue);
         results.getIthSunburstSegment(1).click();
         results.waitForSunburst();
         
@@ -168,45 +169,10 @@ public class SunburstITCase extends IdolFindTestBase {
         assertThat("More segments with second parametric selector",segNumberAfter,greaterThan(segNumberBefore));
     }
 
-    @Test
-    @ResolvedBug("FIND-278")
-    public void testCannotChangeParametricValuesInSnapshot() {
-        search("terrible");
-
-        SavedSearchService saveService = getApplication().savedSearchService();
-        SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
-        final String searchName = "horrible";
-
-        try {
-            saveService.saveCurrentAs(searchName, SearchType.SNAPSHOT);
-            searchTabs.switchTo(searchName);
-            findPage.goToSunburst();
-
-            Waits.loadOrFadeWait();
-
-            SavedSearchPanel panel = new SavedSearchPanel(getDriver());
-            int originalCount = panel.resultCount();
-            results = getElementFactory().getSunburst();
-            results.waitForSunburst();
-            results.getIthSunburstSegment(1).click();
-            results.waitForSunburst();
-
-            verifyThat("Has not added filter",findPage.filterLabels(),hasSize(0));
-            verifyThat("Same number of results",panel.resultCount(),is(originalCount));
-        }
-        finally {
-            findService.search("back to results");
-            saveService.deleteAll();
-        }
-
-
-
-    }
-
     private void search(String searchTerm) {
         findService.search(searchTerm);
         findPage.goToSunburst();
-        //results.waitForSunburst();
+        results.waitForSunburst();
     }
 
     private FilterPanel filters() {

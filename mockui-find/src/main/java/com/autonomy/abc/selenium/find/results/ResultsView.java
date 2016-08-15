@@ -104,10 +104,6 @@ public class ResultsView extends AppElement implements QueryResultsPage {
         return new FindResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ')')), getDriver());
     }
 
-    public boolean mainResultsContainerHidden() {
-        return !findElement(By.className("main-results-content-container")).isDisplayed();
-    }
-
     public List<WebElement> noMoreResultsMessage(){
         return findElements(By.xpath("//div[@class = 'result-message' and contains(text(),'No more results')]"));
     }

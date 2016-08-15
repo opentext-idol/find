@@ -3,8 +3,10 @@ package com.autonomy.abc.bi;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
+import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.save.*;
 import com.autonomy.abc.selenium.query.Query;
@@ -22,6 +24,7 @@ import java.util.List;
 
 import static com.autonomy.abc.matchers.ErrorMatchers.isError;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.checked;
 import static org.hamcrest.Matchers.*;
 
@@ -132,6 +135,32 @@ public class SavedSearchITCase extends IdolFindTestBase {
         factory.getFilterPanel().waitForParametricFields();
         assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
         assertThat(factory.getFilterPanel().checkboxForParametricValue(0, 0), checked());
+    }
+
+    @Test
+    @ResolvedBug("FIND-278")
+    public void testCannotChangeParametricValuesInSnapshot() {
+        findService.search("terrible");
+        final String searchName = "horrible";
+
+        saveService.saveCurrentAs(searchName, SearchType.SNAPSHOT);
+        searchTabBar.switchTo(searchName);
+
+        IdolFindPage findPage = getElementFactory().getFindPage();
+        findPage.goToSunburst();
+        Waits.loadOrFadeWait();
+
+        SavedSearchPanel panel = new SavedSearchPanel(getDriver());
+        int originalCount = panel.resultCount();
+
+        SunburstView results = getElementFactory().getSunburst();
+
+        results.waitForSunburst();
+        results.getIthSunburstSegment(1).click();
+        results.waitForSunburst();
+
+        verifyThat("Has not added filter",findPage.filterLabels(),hasSize(0));
+        verifyThat("Same number of results",panel.resultCount(),is(originalCount));
     }
 
     private static Matcher<SearchTab> modified() {

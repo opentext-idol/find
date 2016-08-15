@@ -36,10 +36,11 @@ public class SunburstView extends ParametricFieldView {
     }
 
     public void waitForSunburst(){
-        WebElement element = Container.currentTabContents(getDriver()).findElement(By.cssSelector(".sunburst svg"));
         new WebDriverWait(getDriver(),15)
                 .withMessage("Sunburst not visible")
-                .until(ExpectedConditions.visibilityOf(element));
+                .until(ExpectedConditions.visibilityOfElementLocated(
+                        By.cssSelector(".query-service-view-container > :not(.hide)" +
+                                ":not(.search-tabs-container) .sunburst svg")));
     }
 
     public String getSunburstCentreName(){
