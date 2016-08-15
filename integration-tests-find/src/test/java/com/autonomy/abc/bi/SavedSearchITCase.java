@@ -8,6 +8,8 @@ import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
+import com.autonomy.abc.selenium.find.numericWidgets.NumericWidgetService;
 import com.autonomy.abc.selenium.find.save.*;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -161,6 +163,46 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         verifyThat("Has not added filter",findPage.filterLabels(),hasSize(0));
         verifyThat("Same number of results",panel.resultCount(),is(originalCount));
+    }
+
+    @Test
+    @ResolvedBug("FIND-284")
+    public void testRenamingSnapshot() {
+        final String originalName = "originalName";
+        final String newName = "newName";
+
+        findService.search("broken");
+
+        saveService.saveCurrentAs(originalName, SearchType.SNAPSHOT);
+        searchTabBar.switchTo(originalName);
+
+        saveService.renameCurrentAs(newName);
+
+        saveService.openNewTab();
+        searchTabBar.switchTo(newName);
+        verifyThat("Saved search has content",getElementFactory().getTopicMap().topicMapVisible());
+    }
+
+    @Test
+    @ResolvedBug("FIND-269")
+    public void testSearchesWithNumericFilters() {
+        NumericWidgetService widgetService = getApplication().numericWidgetService();
+
+        MainNumericWidget mainGraph = widgetService.searchAndSelectNthGraph(1,"saint");
+        mainGraph.clickAndDrag(100, mainGraph.graph());
+
+        saveService.saveCurrentAs("saaaaved", SearchType.QUERY);
+
+        assertThat(searchTabBar.currentTab(),not(modified()));
+    }
+
+    @Test
+    @ResolvedBug("FIND-167")
+    public void testCannotSaveSearchWithWhitespaceAsName() {
+        findService.search("yolo");
+        SearchOptionsBar searchOptions = saveService.nameSavedSearch("   ", SearchType.QUERY);
+
+        assertThat("Save button is disabled",!searchOptions.saveConfirmButton().isEnabled());
     }
 
     private static Matcher<SearchTab> modified() {

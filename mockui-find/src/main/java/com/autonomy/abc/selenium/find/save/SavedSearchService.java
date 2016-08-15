@@ -15,6 +15,13 @@ public class SavedSearchService {
         nameSavedSearch(searchName,type).confirmSave();
     }
 
+    public void renameCurrentAs(final String newSearchName) {
+        final SearchOptionsBar optionsBar = elementFactory.getSearchOptionsBar();
+        optionsBar.renameButton().click();
+        optionsBar.searchTitleInput().setValue(newSearchName);
+        optionsBar.confirmSave();
+    }
+
     public SearchOptionsBar nameSavedSearch(final String searchName,final SearchType type){
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
         options.saveAsButton(type).click();
