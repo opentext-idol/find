@@ -68,6 +68,10 @@ public class IdolFindPage extends FindPage {
         new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector("table.dataTable"))));
     }
 
+    public boolean resultsComparisonVisible() {
+        return findElement(By.cssSelector(".comparison-view")).isDisplayed();
+    }
+
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {
         @Override
         public IdolFindPage create(final WebDriver context) {

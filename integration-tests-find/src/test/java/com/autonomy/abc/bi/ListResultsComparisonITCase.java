@@ -28,8 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 
@@ -222,6 +221,19 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         assertThat(getElementFactory().getResultsPage().getResult(1).getTitleString(), is(firstTitle));
         assertThat(filters.indexesTree().getSelected(), is(Collections.singletonList(expectedIndex)));
         assertThat(getElementFactory().getSearchTabBar().getCurrentTabTitle(), is(expectedTabName));
+    }
+
+    @Test
+    @ResolvedBug("FIND-239")
+    public void testComparingWhenZeroResults() {
+        searchAndSave(new Query("lsijfielsjfiesjflisejlijlij"),"contagion");
+        assumeThat("1 search has 0 results",findPage.totalResultsNum(),is(0));
+
+        savedSearchService.openNewTab();
+        searchAndSave(new Query("virus"), "ill");
+
+        savedSearchService.compareCurrentWith("contagion");
+        verifyThat("Has compared the searches",findPage.resultsComparisonVisible());
     }
 
     private void searchAndSave(final Query query, final String saveAs) {
