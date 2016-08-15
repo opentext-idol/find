@@ -60,12 +60,16 @@ public class IdolFindPage extends FindPage {
 
 
     public void goToSunburst(){
-        findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
+        mainContainer().findElement(By.cssSelector("[data-tab-id='sunburst']")).click();
     }
 
     public void goToTable(){
         findElement(By.cssSelector("[data-tab-id='table']")).click();
         new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector("table.dataTable"))));
+    }
+
+    public boolean resultsComparisonVisible() {
+        return findElement(By.cssSelector(".comparison-view")).isDisplayed();
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {

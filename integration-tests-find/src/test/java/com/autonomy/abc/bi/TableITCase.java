@@ -35,6 +35,7 @@ public class TableITCase extends IdolFindTestBase {
     }
 
     @Test
+    @ResolvedBug("FIND-251")
     public void testTableTabShowsTable(){
         init("shambolic");
 

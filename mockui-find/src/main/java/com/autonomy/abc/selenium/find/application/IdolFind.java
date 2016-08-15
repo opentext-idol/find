@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.application;
 
+import com.autonomy.abc.selenium.find.numericWidgets.NumericWidgetService;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.hp.autonomy.frontend.selenium.application.Application;
 import com.hp.autonomy.frontend.selenium.control.Window;
@@ -25,5 +26,9 @@ public class IdolFind extends FindApplication<IdolFindElementFactory> {
 
     public SavedSearchService savedSearchService() {
         return new SavedSearchService(this);
+    }
+
+    public NumericWidgetService numericWidgetService() {
+        return new NumericWidgetService(this);
     }
 }

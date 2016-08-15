@@ -44,6 +44,10 @@ public class SearchOptionsBar {
         return findElement(By.className("save-title-confirm-button"));
     }
 
+    public WebElement renameButton() {
+        return findElement(By.cssSelector(".show-rename-button"));
+    }
+
     public String getSaveErrorMessage() {
         return findElement(By.className("search-title-error-message")).getText();
     }

@@ -136,6 +136,7 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     @ActiveBug("FIND-406")
+    @ResolvedBug("FIND-242")
     public void testModalShowsALLFiltersRegardlessOfQuery() {
         search("*");
         List<String> allFilterCategories = new ArrayList<>();
@@ -146,6 +147,12 @@ public class FilterITCase extends FindTestBase {
         filters().parametricField(0).seeAll();
         ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
         final int totalNumberFilters = filterModal.allFilters().size();
+
+        filterModal.goToTab(1);
+        if(!isHosted()) {
+            LOGGER.info("Test works on basis that Category should have has >10 filters");
+            verifyThat(">10 filters shown in modal", filterModal.activePaneFilterList(), hasSize(greaterThan(10)));
+        }
         filterModal.cancel();
 
         filters().checkboxForParametricValue(0,1).check();

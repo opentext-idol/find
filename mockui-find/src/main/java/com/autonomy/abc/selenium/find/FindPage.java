@@ -125,8 +125,16 @@ public class FindPage extends AppElement implements AppPage,
 
     public String correctedQuery() { return findElement(By.className("corrected-query")).getText();}
 
-    public List<String> getFilterLabels() {
-        return ElementUtil.getTexts(findElements(By.className("filter-label")));
+    public List<String> filterLabelsText() {
+        return ElementUtil.getTexts(filterLabels());
+    }
+
+    public List<WebElement> filterLabels() {
+        return findElements(By.className("filter-label"));
+    }
+
+    public void removeFilterLabel(WebElement filter) {
+        filter.findElement(By.cssSelector(".filters-remove-icon")).click();
     }
 
     public void scrollToBottom() {

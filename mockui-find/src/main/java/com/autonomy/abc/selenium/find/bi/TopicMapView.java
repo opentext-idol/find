@@ -18,7 +18,7 @@ public class TopicMapView {
 
     public TopicMapView(final WebDriver driver) {
         this.driver = driver;
-        this.container = driver.findElement(By.className("service-view-container"));
+        this.container = driver.findElement(By.cssSelector(".service-view-container:not(.hide)"));
     }
 
     public boolean topicMapVisible() {
@@ -97,7 +97,7 @@ public class TopicMapView {
     private static class mapLoaded implements ExpectedCondition<Boolean> {
         @Override
         public Boolean apply(final WebDriver driver) {
-            return driver.findElements(By.cssSelector(".entity-topic-map > svg > text")).size()>0;
+            return driver.findElements(By.cssSelector(".service-view-container:not(.hide) .entity-topic-map > svg > text")).size()>0;
         }
     }
 
