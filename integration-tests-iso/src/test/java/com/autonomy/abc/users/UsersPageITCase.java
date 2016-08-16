@@ -306,7 +306,7 @@ public class UsersPageITCase extends HybridIsoTestBase {
 		new WebDriverWait(getDriver(), 5).until(new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver input) {
-				return usersPage.getUserCountInTitle() == 0;
+				return usersPage.getUserCountInTitle() == defaultNumberOfUsers;
 			}
 		});
 

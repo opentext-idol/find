@@ -399,21 +399,21 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	public void testRelatedConceptsLinks() {
 		String queryText = "elephant";
 		search(queryText);
-		assertThat(topNavBar.getSearchBarText(), is(queryText));
-		assertThat(searchPage.youSearchedFor(), hasItem(queryText));
-		assertThat(searchPage.getHeadingSearchTerm(), containsString(queryText));
+		assertThat("Search bar has query term",topNavBar.getSearchBarText(), is(queryText));
+		assertThat("'You searched for' has term",searchPage.youSearchedFor(), hasItem(queryText));
+		assertThat("Heading has search term",searchPage.getHeadingSearchTerm(), containsString(queryText));
 
 		for (int i = 0; i < 5; i++) {
 			searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 			searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 			final int conceptsCount = searchPage.relatedConcepts().size();
-			assertThat(conceptsCount, lessThanOrEqualTo(50));
+			assertThat("50 or fewer related concepts",conceptsCount, lessThanOrEqualTo(50));
 			final int index = new Random().nextInt(conceptsCount);
 			queryText = searchPage.relatedConcepts().get(index).getText();
 			searchPage.relatedConcept(queryText).click();
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 
-			assertThat(topNavBar.getSearchBarText(), is(queryText));
+			assertThat("Search bar still has query term",topNavBar.getSearchBarText(), is(queryText));
 			final List<String> words = new ArrayList<>();
 			// HACK: avoid stopwords
 			for (final String word : queryText.split("\\s+")) {
@@ -421,8 +421,8 @@ public class SearchPageITCase extends HybridIsoTestBase {
 					words.add(word);
 				}
 			}
-			assertThat(searchPage.youSearchedFor(), containsItems(words));
-			assertThat(searchPage.getHeadingSearchTerm(), containsString(queryText));
+			assertThat("'Your Searched For' has term",searchPage.youSearchedFor(), containsItems(words));
+			assertThat("Heading still has query term",searchPage.getHeadingSearchTerm(), containsString(queryText));
 		}
 	}
 
@@ -527,7 +527,14 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	@Test
 	@ResolvedBug("CSA-1708")
 	public void testParametricLabelsNotUndefined(){
-		searchService.search(new Query("eat").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.WIKI_ENG));
+		IndexFilter wikiEnglish;
+		if (isHosted()) {
+			wikiEnglish = IndexFilter.WIKI_ENG;
+		}
+		else{
+			wikiEnglish = new IndexFilter("WikiEnglish");
+		}
+		searchService.search(new Query("eat").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(wikiEnglish));
 		for(final String filterLabel : searchPage.filterLabelList()){
 			verifyThat("Filter label is " + filterLabel + " - not undefined",filterLabel.toLowerCase(), not(containsString("undefined")));
 		}
