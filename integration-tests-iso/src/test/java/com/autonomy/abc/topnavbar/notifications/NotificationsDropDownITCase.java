@@ -76,13 +76,13 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 			keywordService.addBlacklistTerms("one two three four five");
 			topNavBar.notificationsDropdown();
 			notifications = topNavBar.getNotifications();
-			assertThat("5 notifications before page refresh", notifications.countNotifications(), is(5));
+			assertThat("Notification before page refresh", notifications.countNotifications(), is(1));
 
 			getWindow().refresh();
 			newBody();
 			getElementFactory().getTopNavBar().notificationsDropdown();
 			notifications = topNavBar.getNotifications();
-			assertThat("5 notifications after page refresh", notifications.countNotifications(), is(5));
+			assertThat("Notification after page refresh", notifications.countNotifications(), is(1));
 		} finally {
 			keywordService.deleteAll(KeywordFilter.ALL);
 		}
@@ -108,16 +108,15 @@ public class NotificationsDropDownITCase extends HybridIsoTestBase {
 	public void testBlacklistNotifications() throws InterruptedException {
 		final String blacklistOne = "seth";
 		final String blacklistTwo = "rollins";
-		final String blacklistNotificationText = "Added \"placeholder\" to the blacklist";
 
 		keywordService.deleteAll(KeywordFilter.ALL);
 		keywordService.addBlacklistTerms(blacklistOne, blacklistTwo);
 		try {
 			getElementFactory().getTopNavBar().notificationsDropdown();
 			notifications = getElementFactory().getTopNavBar().getNotifications();
-			assertThat(notifications.notificationNumber(1).getText(), anyOf(is(blacklistNotificationText.replace("placeholder", blacklistOne)), is(blacklistNotificationText.replace("placeholder", blacklistTwo))));
-			assertThat(notifications.notificationNumber(2).getText(), anyOf(is(blacklistNotificationText.replace("placeholder", blacklistOne)), is(blacklistNotificationText.replace("placeholder", blacklistTwo))));
-			assertThat(notifications.notificationNumber(2).getText(), not(is(notifications.notificationNumber(1).getText())));
+			assertThat(notifications.notificationNumber(1).getText(),
+					anyOf(is("Added \""+blacklistOne+", "+blacklistTwo+"\" to the blacklist"),
+							is("Added \""+blacklistTwo+", "+blacklistOne+"\" to the blacklist")));
 		} finally {
 			keywordService.deleteAll(KeywordFilter.ALL);
 		}
