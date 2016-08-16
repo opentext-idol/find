@@ -1,3 +1,10 @@
+find-ansible (0.0.5) precise; urgency=low
+
+  * Added endpoint and SSO page URLs to config file.
+  * Removed redundant config file entries.
+
+ -- Matthew Gordon <matthew.gordon2@hpe.com>  Tue, 16 Aug 2016 09:30:00 +0100
+
 find-ansible (0.0.4) precise; urgency=low
 
   * Fixed permissions for PID file.
