@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
@@ -49,6 +50,7 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-112")
 	public void testSaveChangesModal() {
 		settingsPage.saveChangesClick();
 		final ModalView saveModal = ModalView.getVisibleModalView(getDriver());
@@ -72,6 +74,7 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-112")
 	public void testRevertChangesModal() {
 		settingsPage.revertChangesClick();
 		final ModalView revertModal = ModalView.getVisibleModalView(getDriver());
@@ -87,6 +90,7 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-112")
 	public void testAllSettingsPanelsPresent() {
 		for (final IsoSettingsPage.Panel panel : IsoSettingsPage.Panel.values()) {
 			if (panel == IsoSettingsPage.Panel.LOCALE) {
@@ -98,6 +102,7 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-112")
 	public void testRevertChangesPort() {
 		settingsPage.saveChanges();
 		final EnumMap<IsoSettingsPage.Panel, Integer> originalPortValues = new EnumMap<>(IsoSettingsPage.Panel.class);
@@ -120,6 +125,7 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-112")
 	public void testRevertChangesHostname() {
 		settingsPage.saveChanges();
 		final EnumMap<IsoSettingsPage.Panel, String> originalHostNames = new EnumMap<>(IsoSettingsPage.Panel.class);
@@ -143,6 +149,7 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-112")
 	public void testRevertChangesProtocol() {
 		settingsPage.saveChanges();
 		final EnumMap<IsoSettingsPage.Panel, String> originalProtocol = new EnumMap<>(IsoSettingsPage.Panel.class);
@@ -164,6 +171,7 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-112")
 	public void testRevertToNewlySaved() {
 		settingsPage.saveChanges();
 		final List<IsoSettingsPage.Panel> settingsPanels = Arrays.asList(IsoSettingsPage.Panel.COMMUNITY, IsoSettingsPage.Panel.QMS_AGENTSTORE);
@@ -195,6 +203,7 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-112")
 	public void testEnterBadHostAndPortNames() {
 		settingsPage.saveChanges();
 		settingsPage.changeHost("richard", IsoSettingsPage.Panel.CONTENT);
@@ -202,6 +211,7 @@ public class SettingsPageITCase extends IdolIsoTestBase {
 	}
 
 	@Test
+	@ActiveBug("ISO-112")
 	public void testBlankPortsAndHosts() {
 		for (final IsoSettingsPage.Panel settingsPanel : SERVER_PANELS) {
 			settingsPage.changeHost("", settingsPanel);

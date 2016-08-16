@@ -144,6 +144,7 @@ public class SearchPaginationITCase extends HybridIsoTestBase {
     }
 
     @Test
+    @ActiveBug("ISO-113")
     public void testMultiDocPromotionDrawerExpandAndPagination() {
         final Promotion promotion = new SpotlightPromotion("boat");
 
