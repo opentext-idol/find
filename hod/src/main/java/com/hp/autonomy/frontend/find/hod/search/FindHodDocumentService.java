@@ -72,7 +72,7 @@ public class FindHodDocumentService extends HodDocumentsService {
             return super.queryTextIndex(searchRequest);
         } catch (final HodErrorException e) {
             if (e.getErrorCode() == HodErrorCode.INDEX_NAME_INVALID) {
-                final Boolean publicIndexesEnabled = findConfigService.getConfig().getIod().getPublicIndexesEnabled();
+                final Boolean publicIndexesEnabled = findConfigService.getConfig().getHod().getPublicIndexesEnabled();
                 final HodDatabasesRequest databasesRequest = new HodDatabasesRequest.Builder().setPublicIndexesEnabled(publicIndexesEnabled).build();
 
                 final Cache cache = cacheManager.getCache(CacheNames.DATABASES);

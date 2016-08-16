@@ -35,8 +35,6 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
         "hp.find.home = ./target/test",
         "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
         "find.https.proxyPort: 8080",
-        "find.iod.api = https://api.havenondemand.com",
-        "find.hod.sso = https://dev.havenondemand.com/sso.html",
         "spring.datasource.url = jdbc:h2:mem:find-db;DB_CLOSE_ON_EXIT=FALSE",
         "mock.authenticationRetriever=false"
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

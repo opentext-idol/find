@@ -29,9 +29,7 @@ import java.net.URI;
 public class HodErrorController extends CustomErrorController {
     static final String STATUS_CODE_PARAM = "statusCode";
     static final String MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_MAIN = "error.clientAuthenticationErrorMain";
-    static final String MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_SUB = "error.clientAuthenticationErrorSub";
-    static final String MESSAGE_CODE_COOKIE_AUTHENTICATION_ERROR_MAIN = "error.authenticationCookieErrorMain";
-    static final String MESSAGE_CODE_COOKIE_AUTHENTICATION_ERROR_SUB = "error.authenticationCookieErrorSub";
+    private static final String MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_SUB = "error.clientAuthenticationErrorSub";
 
     private final ConfigService<HodFindConfig> configService;
 
@@ -46,11 +44,6 @@ public class HodErrorController extends CustomErrorController {
         return URI.create(configService.getConfig().getHsod().getLandingPageUrl().toString());
     }
 
-    @Override
-    protected URI getErrorUrl(final HttpServletRequest request) {
-        return URI.create(configService.getConfig().getHsod().getFindAppUrl().toString());
-    }
-
     @RequestMapping(DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH)
     public ModelAndView clientAuthenticationErrorPage(
             @RequestParam(STATUS_CODE_PARAM) final int statusCode,
@@ -62,20 +55,6 @@ public class HodErrorController extends CustomErrorController {
                 .setSubMessageCode(MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_SUB)
                 .setStatusCode(statusCode)
                 .setButtonHref(getAuthenticationErrorUrl(request))
-                .build());
-    }
-
-    @RequestMapping(DispatcherServletConfiguration.COOKIE_AUTHENTICATION_ERROR_PATH)
-    public ModelAndView cookieAuthenticationErrorPage(
-            final HttpServletRequest request
-    ) {
-        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
-                .setRequest(request)
-                .setMainMessageCode(MESSAGE_CODE_COOKIE_AUTHENTICATION_ERROR_MAIN)
-                .setSubMessageCode(MESSAGE_CODE_COOKIE_AUTHENTICATION_ERROR_SUB)
-                .setStatusCode(HttpStatus.SC_UNAUTHORIZED)
-                .setButtonHref(getAuthenticationErrorUrl(request))
-                .setContactSupport(true)
                 .build());
     }
 }

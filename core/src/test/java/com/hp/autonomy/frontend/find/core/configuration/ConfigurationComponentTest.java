@@ -76,7 +76,7 @@ public abstract class ConfigurationComponentTest<C extends ConfigurationComponen
 
     @Test
     public void validateGoodConfig() throws ConfigException {
-        component.basicValidate();
+        component.basicValidate("configSection");
     }
 
     private String writeObjectToJson(final C component) throws IOException {

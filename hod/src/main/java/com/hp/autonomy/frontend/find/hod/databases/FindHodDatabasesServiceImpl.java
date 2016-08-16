@@ -63,7 +63,7 @@ public class FindHodDatabasesServiceImpl extends HodDatabasesService implements 
 
     @Override
     public Set<Database> getDatabases(final HodDatabasesRequest request) throws HodErrorException {
-        final List<ResourceIdentifier> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
+        final List<ResourceIdentifier> activeIndexes = configService.getConfig().getHod().getActiveIndexes();
         return activeIndexes.isEmpty() ? super.getDatabases(request) : listActiveIndexes(activeIndexes);
     }
 

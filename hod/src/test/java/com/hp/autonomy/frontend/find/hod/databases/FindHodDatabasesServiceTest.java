@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.hod.databases;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
-import com.hp.autonomy.frontend.find.hod.configuration.IodConfig;
+import com.hp.autonomy.frontend.find.hod.configuration.HodConfig;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
@@ -42,8 +42,8 @@ public class FindHodDatabasesServiceTest extends HodDatabasesServiceTest {
         findDatabasesService = new FindHodDatabasesServiceImpl(resourcesService, configService, authenticationInformationRetriever);
         databasesService = findDatabasesService;
 
-        final IodConfig iodConfig = new IodConfig.Builder().build();
-        when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setIod(iodConfig).build());
+        final HodConfig hodConfig = new HodConfig.Builder().build();
+        when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setHod(hodConfig).build());
     }
 
     @Test
@@ -56,8 +56,8 @@ public class FindHodDatabasesServiceTest extends HodDatabasesServiceTest {
     @Test
     public void listActiveIndexes() throws HodErrorException {
         final ResourceIdentifier activeIndex = ResourceIdentifier.WIKI_ENG;
-        final IodConfig iodConfig = new IodConfig.Builder().setActiveIndexes(Collections.singletonList(activeIndex)).build();
-        when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setIod(iodConfig).build());
+        final HodConfig hodConfig = new HodConfig.Builder().setActiveIndexes(Collections.singletonList(activeIndex)).build();
+        when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setHod(hodConfig).build());
         final HodDatabasesRequest databasesRequest = new HodDatabasesRequest.Builder()
                 .setPublicIndexesEnabled(true)
                 .build();

@@ -33,7 +33,9 @@ public abstract class CustomErrorController {
 
     protected abstract URI getAuthenticationErrorUrl(final HttpServletRequest request);
 
-    protected abstract URI getErrorUrl(final HttpServletRequest request);
+    protected URI getErrorUrl(final HttpServletRequest request) {
+        return URI.create(request.getContextPath() + FindController.APP_PATH);
+    }
 
     @RequestMapping(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
     public ModelAndView authenticationErrorPage(final HttpServletRequest request, final HttpServletResponse response) {

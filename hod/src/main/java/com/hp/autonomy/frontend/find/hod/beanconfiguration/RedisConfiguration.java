@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.HostAndPort;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.RedisCondition;
 import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
@@ -34,7 +35,7 @@ public class RedisConfiguration {
     @Autowired
     private ConfigService<HodFindConfig> configService;
 
-    @Value("${application.commit}")
+    @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
     private String commit;
 
     @Bean

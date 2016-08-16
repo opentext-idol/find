@@ -8,12 +8,13 @@ package com.hp.autonomy.frontend.find.hod.test;
 import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HsodConfig;
-import com.hp.autonomy.frontend.find.hod.configuration.IodConfig;
+import com.hp.autonomy.frontend.find.hod.configuration.HodConfig;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
 import com.hp.autonomy.searchcomponents.hod.test.HodTestConfiguration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -31,26 +32,29 @@ import static org.mockito.Mockito.when;
 public class HodFindMockConfigConfiguration {
     @Bean
     @Primary
-    public BaseConfigFileService<?> baseConfigFileService() throws MalformedURLException {
+    public BaseConfigFileService<?> baseConfigFileService(
+            @Value("${test.hod.endpoint:https://api.havenondemand.com}") final URL endpoint
+    ) throws MalformedURLException {
         @SuppressWarnings("unchecked") final BaseConfigFileService<HodFindConfig> baseConfigFileService = mock(BaseConfigFileService.class);
 
         final QueryManipulationConfig queryManipulationConfig = new QueryManipulationConfig(HodTestConfiguration.QUERY_PROFILE, HodTestConfiguration.QUERY_MANIPULATION_INDEX);
 
         final HsodConfig hsodConfig = new HsodConfig.Builder()
                 .setLandingPageUrl(new URL("https://search.havenondemand.com"))
-                .setFindAppUrl(new URL("https://find.havenapps.io"))
                 .build();
 
-        final IodConfig iodConfig = new IodConfig.Builder()
+        final HodConfig hodConfig = new HodConfig.Builder()
                 .setApiKey(new ApiKey("mock-api-key"))
                 .setActiveIndexes(Collections.<ResourceIdentifier>emptyList())
                 .setPublicIndexesEnabled(true)
+                .setSsoPageUrl(new URL("https://dev.havenondemand.com/sso.html"))
+                .setEndpointUrl(endpoint)
                 .build();
 
         final HodFindConfig config = new HodFindConfig.Builder()
                 .setQueryManipulation(queryManipulationConfig)
                 .setHsod(hsodConfig)
-                .setIod(iodConfig)
+                .setHod(hodConfig)
                 .setFieldsInfo(new FieldsInfo.Builder().build())
                 .build();
 
