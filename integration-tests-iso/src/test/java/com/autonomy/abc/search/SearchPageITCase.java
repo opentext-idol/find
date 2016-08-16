@@ -29,6 +29,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -294,26 +295,25 @@ public class SearchPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testIdolSearchTypes() {
-		final int pickupCount = getResultCount("pickup");
-		final int truckCount = getResultCount("truck");
-		final int unquotedCount = getResultCount("pickup truck");
-		final int quotedCount = getResultCount("\"pickup truck\"");
-		final int orCount = getResultCount("pickup OR truck");
-		final int andCount = getResultCount("pickup AND truck");
-		final int pickupNotTruckCount = getResultCount("pickup NOT truck");
-		final int truckNotPickupCount = getResultCount("truck NOT pickup");
+		final int cuteCount = getResultCount("cute");
+		final int dollCount = getResultCount("doll");
+		final int unquotedCount = getResultCount("cute doll");
+		final int quotedCount = getResultCount("\"cute doll\"");
+		final int orCount = getResultCount("cute OR doll");
+		final int andCount = getResultCount("cute AND doll");
+		final int cuteNotTruckCount = getResultCount("cute NOT doll");
+		final int dollNotPickupCount = getResultCount("doll NOT cute");
 
-		verifyThat(pickupCount, lessThanOrEqualTo(unquotedCount));
+		verifyThat(cuteCount, lessThanOrEqualTo(unquotedCount));
         verifyThat(quotedCount, lessThanOrEqualTo(unquotedCount));
 
-		verifyThat(pickupNotTruckCount, lessThanOrEqualTo(pickupCount));
-		verifyThat(truckNotPickupCount, lessThanOrEqualTo(truckCount));
+		verifyThat(cuteNotTruckCount, lessThanOrEqualTo(cuteCount));
+		verifyThat(dollNotPickupCount, lessThanOrEqualTo(dollCount));
 
 		verifyThat(quotedCount, lessThanOrEqualTo(andCount));
 		verifyThat(andCount, lessThanOrEqualTo(unquotedCount));
 
-		verifyThat(orCount, lessThanOrEqualTo(pickupCount + truckCount));
-		verifyThat("Non-exclusive OR results equal to AND + A NOT B + B NOT A",andCount + pickupNotTruckCount + truckNotPickupCount, is(orCount));
+		verifyThat(orCount, lessThanOrEqualTo(cuteCount + dollCount));
 		verifyThat(orCount, is(unquotedCount));
 	}
 
@@ -323,10 +323,12 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	//Maybe IDOL not frontend -> do share results
+	@Ignore
+	//Beware sectioning! i.e. different sections of same doc can have each term.
+	//This test will then fail.
 	public void testANotBandBNotAShareNoResults(){
-		Set<String> resultsANotB = searchAndGetResultTitles("pickup NOT truck");
-		Set<String> resultsBNotA = searchAndGetResultTitles("truck NOT pickup");
+		Set<String> resultsANotB = searchAndGetResultTitles("doll NOT cute");
+		Set<String> resultsBNotA = searchAndGetResultTitles("cute NOT doll");
 
 		resultsANotB.retainAll(resultsBNotA);
 		verifyThat("\"A not B\" and \"B not A \" share no results",resultsANotB,hasSize(0));
@@ -572,7 +574,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		final List<Index> selected = new ArrayList<>();
 
 		searchService.search(
-				new Query("car")
+				new Query("doll")
 						.withFilter(new LanguageFilter(Language.ENGLISH))
 						.withFilter(IndexFilter.ALL));
 		final IndexesTree indexesTree = searchPage.indexesTree();
