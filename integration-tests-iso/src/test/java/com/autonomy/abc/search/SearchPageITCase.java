@@ -29,6 +29,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -294,26 +295,25 @@ public class SearchPageITCase extends HybridIsoTestBase {
 
 	@Test
 	public void testIdolSearchTypes() {
-		final int pickupCount = getResultCount("pickup");
-		final int truckCount = getResultCount("truck");
-		final int unquotedCount = getResultCount("pickup truck");
-		final int quotedCount = getResultCount("\"pickup truck\"");
-		final int orCount = getResultCount("pickup OR truck");
-		final int andCount = getResultCount("pickup AND truck");
-		final int pickupNotTruckCount = getResultCount("pickup NOT truck");
-		final int truckNotPickupCount = getResultCount("truck NOT pickup");
+		final int cuteCount = getResultCount("cute");
+		final int dollCount = getResultCount("doll");
+		final int unquotedCount = getResultCount("cute doll");
+		final int quotedCount = getResultCount("\"cute doll\"");
+		final int orCount = getResultCount("cute OR doll");
+		final int andCount = getResultCount("cute AND doll");
+		final int cuteNotTruckCount = getResultCount("cute NOT doll");
+		final int dollNotPickupCount = getResultCount("doll NOT cute");
 
-		verifyThat(pickupCount, lessThanOrEqualTo(unquotedCount));
+		verifyThat(cuteCount, lessThanOrEqualTo(unquotedCount));
         verifyThat(quotedCount, lessThanOrEqualTo(unquotedCount));
 
-		verifyThat(pickupNotTruckCount, lessThanOrEqualTo(pickupCount));
-		verifyThat(truckNotPickupCount, lessThanOrEqualTo(truckCount));
+		verifyThat(cuteNotTruckCount, lessThanOrEqualTo(cuteCount));
+		verifyThat(dollNotPickupCount, lessThanOrEqualTo(dollCount));
 
 		verifyThat(quotedCount, lessThanOrEqualTo(andCount));
 		verifyThat(andCount, lessThanOrEqualTo(unquotedCount));
 
-		verifyThat(orCount, lessThanOrEqualTo(pickupCount + truckCount));
-		verifyThat("Non-exclusive OR results equal to AND + A NOT B + B NOT A",andCount + pickupNotTruckCount + truckNotPickupCount, is(orCount));
+		verifyThat(orCount, lessThanOrEqualTo(cuteCount + dollCount));
 		verifyThat(orCount, is(unquotedCount));
 	}
 
@@ -323,10 +323,12 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	}
 
 	@Test
-	//Maybe IDOL not frontend -> do share results
+	@Ignore
+	//Beware sectioning! i.e. different sections of same doc can have each term.
+	//This test will then fail.
 	public void testANotBandBNotAShareNoResults(){
-		Set<String> resultsANotB = searchAndGetResultTitles("pickup NOT truck");
-		Set<String> resultsBNotA = searchAndGetResultTitles("truck NOT pickup");
+		Set<String> resultsANotB = searchAndGetResultTitles("doll NOT cute");
+		Set<String> resultsBNotA = searchAndGetResultTitles("cute NOT doll");
 
 		resultsANotB.retainAll(resultsBNotA);
 		verifyThat("\"A not B\" and \"B not A \" share no results",resultsANotB,hasSize(0));
@@ -399,21 +401,21 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	public void testRelatedConceptsLinks() {
 		String queryText = "elephant";
 		search(queryText);
-		assertThat(topNavBar.getSearchBarText(), is(queryText));
-		assertThat(searchPage.youSearchedFor(), hasItem(queryText));
-		assertThat(searchPage.getHeadingSearchTerm(), containsString(queryText));
+		assertThat("Search bar has query term",topNavBar.getSearchBarText(), is(queryText));
+		assertThat("'You searched for' has term",searchPage.youSearchedFor(), hasItem(queryText));
+		assertThat("Heading has search term",searchPage.getHeadingSearchTerm(), containsString(queryText));
 
 		for (int i = 0; i < 5; i++) {
 			searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 			searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 			final int conceptsCount = searchPage.relatedConcepts().size();
-			assertThat(conceptsCount, lessThanOrEqualTo(50));
+			assertThat("50 or fewer related concepts",conceptsCount, lessThanOrEqualTo(50));
 			final int index = new Random().nextInt(conceptsCount);
 			queryText = searchPage.relatedConcepts().get(index).getText();
 			searchPage.relatedConcept(queryText).click();
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 
-			assertThat(topNavBar.getSearchBarText(), is(queryText));
+			assertThat("Search bar still has query term",topNavBar.getSearchBarText(), is(queryText));
 			final List<String> words = new ArrayList<>();
 			// HACK: avoid stopwords
 			for (final String word : queryText.split("\\s+")) {
@@ -421,8 +423,8 @@ public class SearchPageITCase extends HybridIsoTestBase {
 					words.add(word);
 				}
 			}
-			assertThat(searchPage.youSearchedFor(), containsItems(words));
-			assertThat(searchPage.getHeadingSearchTerm(), containsString(queryText));
+			assertThat("'Your Searched For' has term",searchPage.youSearchedFor(), containsItems(words));
+			assertThat("Heading still has query term",searchPage.getHeadingSearchTerm(), containsString(queryText));
 		}
 	}
 
@@ -527,7 +529,14 @@ public class SearchPageITCase extends HybridIsoTestBase {
 	@Test
 	@ResolvedBug("CSA-1708")
 	public void testParametricLabelsNotUndefined(){
-		searchService.search(new Query("eat").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.WIKI_ENG));
+		IndexFilter wikiEnglish;
+		if (isHosted()) {
+			wikiEnglish = IndexFilter.WIKI_ENG;
+		}
+		else{
+			wikiEnglish = new IndexFilter("WikiEnglish");
+		}
+		searchService.search(new Query("eat").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(wikiEnglish));
 		for(final String filterLabel : searchPage.filterLabelList()){
 			verifyThat("Filter label is " + filterLabel + " - not undefined",filterLabel.toLowerCase(), not(containsString("undefined")));
 		}
@@ -565,7 +574,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		final List<Index> selected = new ArrayList<>();
 
 		searchService.search(
-				new Query("car")
+				new Query("doll")
 						.withFilter(new LanguageFilter(Language.ENGLISH))
 						.withFilter(IndexFilter.ALL));
 		final IndexesTree indexesTree = searchPage.indexesTree();

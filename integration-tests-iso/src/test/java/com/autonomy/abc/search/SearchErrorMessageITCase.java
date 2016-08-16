@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.shared.QueryTestHelper;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
@@ -61,6 +62,7 @@ public class SearchErrorMessageITCase extends HybridIsoTestBase {
     }
 
     @Test
+    @ActiveBug("IS0-114")
     public void testQueryAnalysisForBadQueries() {
         for (final String term : QueryTestHelper.NO_TERMS) {
             final Query query = new Query(term).withFilter(new LanguageFilter(Language.ENGLISH));

@@ -44,7 +44,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
 
 
     @Test
-    @ActiveBug(value = "HOD-1116", type = ApplicationType.HOSTED)
+    @ActiveBug({"HOD-1116","ISO-116"})
     public void testFromDateFilter() {
         final Date date = beginDateFilterTest();
         final String firstResult = searchPage.getSearchResult(1).getTitleString();
@@ -85,7 +85,7 @@ public class SearchDateITCase extends HybridIsoTestBase {
     }
 
     @Test
-    @ActiveBug(value = "HOD-1116", type = ApplicationType.HOSTED)
+    @ActiveBug({"HOD-1116","ISO-116"})
     public void testUntilDateFilter() {
         final Date date = beginDateFilterTest();
         final String firstResult = searchPage.getSearchResult(1).getTitleString();
