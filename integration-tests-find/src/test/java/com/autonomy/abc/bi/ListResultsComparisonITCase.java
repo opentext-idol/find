@@ -72,6 +72,8 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     }
 
     @After
+    //TODO: used to check hasSetUp() but something about that wasn't working
+    //Should probably check if it hasSetUp()
     public void tearDown() {
         findService.search("back to results");
         savedSearchService.deleteAll();
