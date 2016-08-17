@@ -1137,6 +1137,10 @@ input.find-input {
     color: #fff;
 }
 
+.find-navbar .dropdown-toggle {
+    float: right;
+}
+
 .find-navbar .dropdown-toggle:hover,
 .find-navbar .nav li.open a.dropdown-toggle,
 .find-navbar .settings-logout a:focus,
@@ -1147,6 +1151,9 @@ input.find-input {
 @media (max-width: 767px) {
     .navbar-nav .open .dropdown-menu {
         background-color: #fff;
+        box-shadow: 0 0 3px rgba(86, 96, 117, 0.7);
+        position: absolute;
+        top: 30px;
     }
     .navbar .navbar-nav .open .dropdown-menu > .active > a,
     .navbar .navbar-nav .open .dropdown-menu > .active > a:hover{
