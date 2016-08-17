@@ -85,6 +85,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         assertThat(findPage.compareButton(), hasClass("disabled"));
         savedSearchService.openNewTab();
         findService.search("\"Pegasus\"");
+        Waits.loadOrFadeWait();
         assertThat(findPage.compareButton(), not(hasClass("disabled")));
         elementFactory.getSearchTabBar().tabFromIndex(0);
         assertThat(findPage.compareButton(), not(hasClass("disabled")));

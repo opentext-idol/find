@@ -21,6 +21,7 @@ import com.autonomy.abc.selenium.search.SearchService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.element.Pagination;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
@@ -398,6 +399,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 
 	@Test
 	@ResolvedBug("ISO-38")
+	@ActiveBug("ISO-115")
 	public void testRelatedConceptsLinks() {
 		String queryText = "elephant";
 		search(queryText);
@@ -574,7 +576,7 @@ public class SearchPageITCase extends HybridIsoTestBase {
 		final List<Index> selected = new ArrayList<>();
 
 		searchService.search(
-				new Query("doll")
+				new Query("car")
 						.withFilter(new LanguageFilter(Language.ENGLISH))
 						.withFilter(IndexFilter.ALL));
 		final IndexesTree indexesTree = searchPage.indexesTree();

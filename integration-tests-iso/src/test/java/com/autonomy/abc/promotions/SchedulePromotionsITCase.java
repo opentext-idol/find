@@ -201,7 +201,7 @@ public class SchedulePromotionsITCase extends IdolIsoTestBase {
 		schedulePromotionService.scheduleDurationSelector(schedulePage.startDateCalendar(),startDate);
 		verifyThat(schedulePage.dateAsString(startDate), is(schedulePage.startDate()));
 
-		schedulePromotionService.resetDateToToday(schedulePage.startDateCalendar());
+		schedulePromotionService.resetDateToToday();
 		verifyThat(schedulePage.dateAndTimeAsString(schedulePage.getTodayDate()), is(schedulePage.dateText(schedulePage.startDateTextBox())));
 	}
 
