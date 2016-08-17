@@ -54,11 +54,10 @@ public class ResultsComparisonITCase extends IdolFindTestBase{
 
     @After
     public void tearDown() {
-        if (hasSetUp()) {
-            findService.search("back to results");
-            savedSearchService.deleteAll();
-        }
+        findService.search("back to results");
+        savedSearchService.deleteAll();
     }
+
 
     @Test
     @ResolvedBug("FIND-370")
