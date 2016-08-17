@@ -125,6 +125,7 @@ public class RelatedConceptsITCase extends FindTestBase {
 
     @Test
     @ResolvedBug({"CCUK-3566","FIND-109"})
+    @ActiveBug("FIND-495")
     public void testTermNotInRelatedConcepts() {
         final String query = "world cup";
         findService.search(query);
