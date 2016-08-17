@@ -81,8 +81,10 @@ public class FilterITCase extends FindTestBase {
 
         secondField.check();
         results.waitForResultsToLoad();
+
         verifyThat("Expected number of results (according to panel) equals actual number of results",
                 results.getResultsCount(),is(expectedResults));
+
         try {
             secondContainer.getFilters();
             fail("Filter panel did not reload after filter selection");
@@ -91,6 +93,7 @@ public class FilterITCase extends FindTestBase {
             LOGGER.info("Correctly threw exception as filter panel has reloaded");
         }
 
+        Waits.loadOrFadeWait();
         final ParametricFieldContainer container = filters().parametricContainerOfFilter(filterName);
         final String filterNumber = container.getFilterNumber();
         final String filterCategory = container.filterCategoryName();

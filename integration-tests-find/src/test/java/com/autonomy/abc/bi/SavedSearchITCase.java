@@ -51,9 +51,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
     @After
     public void tearDown() {
-        if (hasSetUp()) {
-            saveService.deleteAll();
-        }
+        saveService.deleteAll();
     }
 
     @Test

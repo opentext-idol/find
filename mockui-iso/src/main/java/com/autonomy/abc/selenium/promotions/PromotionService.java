@@ -79,6 +79,7 @@ public class PromotionService<T extends IsoElementFactory> extends ServiceBase<T
         final WebElement deleteButton = promotionsPage.promotionDeleteButton(element);
         deleteButton.click();
         final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
+        Waits.loadOrFadeWait();
         deleteModal.findElement(By.cssSelector(".btn-danger")).click();
         Waits.loadOrFadeWait();
         return deleteButton;

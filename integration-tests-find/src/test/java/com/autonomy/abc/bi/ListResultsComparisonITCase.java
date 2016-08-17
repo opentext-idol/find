@@ -72,11 +72,11 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     }
 
     @After
+    //TODO: used to check hasSetUp() but something about that wasn't working
+    //Should probably check if it hasSetUp()
     public void tearDown() {
-        if (hasSetUp()) {
-            findService.search("back to results");
-            savedSearchService.deleteAll();
-        }
+        findService.search("back to results");
+        savedSearchService.deleteAll();
     }
 
     @SuppressWarnings("Duplicates")
@@ -87,6 +87,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         assertThat(findPage.compareButton(), hasClass("disabled"));
         savedSearchService.openNewTab();
         findService.search("\"Pegasus\"");
+        Waits.loadOrFadeWait();
         assertThat(findPage.compareButton(), not(hasClass("disabled")));
         elementFactory.getSearchTabBar().tabFromIndex(0);
         assertThat(findPage.compareButton(), not(hasClass("disabled")));

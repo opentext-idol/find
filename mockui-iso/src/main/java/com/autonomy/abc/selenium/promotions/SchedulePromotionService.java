@@ -76,7 +76,7 @@ public class SchedulePromotionService extends ServiceBase<IdolIsoElementFactory>
         return new DatePicker(schedulePage,getDriver());
     }
 
-    public void resetDateToToday(final WebElement calendarButton){
+    public void resetDateToToday(){
         final DatePicker datePicker = new DatePicker(schedulePage,getDriver());
         datePicker.open();
         datePicker.resetDateToToday();
