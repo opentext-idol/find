@@ -61,7 +61,7 @@ public class IdolPreAuthenticatedAuthenticationProvider implements Authenticatio
 
             if(USER_NOT_FOUND_ERROR_ID.equals(e.getErrorId())) {
                 // use empty password so that auto created users cannot be authenticated against
-                this.userService.addUser(username, "", UserConfiguration.IDOL_USER_ROLE);
+                this.userService.addUser(username, "", UserConfiguration.IDOL_BI_ROLE);
 
                 user = userService.getUser(username);
             } else {
