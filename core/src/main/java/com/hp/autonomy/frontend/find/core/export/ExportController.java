@@ -14,12 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletResponse;
@@ -27,12 +22,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collection;
 
 @RequestMapping(ExportController.EXPORT_PATH)
 public abstract class ExportController<S extends Serializable, E extends Exception> {
     static final String EXPORT_PATH = "/api/bi/export";
     static final String CSV_PATH = "/csv";
-    static final String POST_DATA_PARAM = "postData";
+    static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
+    static final String SEARCH_REQUEST_PARAM = "searchRequest";
     private static final String EXPORT_FILE_NAME = "query-results";
 
     private final ExportService<S, E> exportService;
@@ -47,15 +44,20 @@ public abstract class ExportController<S extends Serializable, E extends Excepti
 
     @RequestMapping(value = CSV_PATH, method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<byte[]> exportToCsv(@RequestParam(POST_DATA_PARAM) final String json) throws IOException, E {
-        return export(json, ExportFormat.CSV);
+    public ResponseEntity<byte[]> exportToCsv(
+            @RequestParam(SEARCH_REQUEST_PARAM) final String searchRequestJSON,
+            // required = false to prevent Spring errors if the user asks for a CSV with no fields marked for export.
+            // The UI should not allow the User to send a request for a CSV with nothing in it.
+            @RequestParam(value = SELECTED_EXPORT_FIELDS_PARAM, required = false) final Collection<String> selectedFieldNames
+    ) throws IOException, E {
+        return export(searchRequestJSON, ExportFormat.CSV, selectedFieldNames);
     }
 
-    private ResponseEntity<byte[]> export(final String json, final ExportFormat exportFormat) throws IOException, E {
-        final SearchRequest<S> searchRequest = requestMapper.parseSearchRequest(json);
+    private ResponseEntity<byte[]> export(final String searchRequestJSON, final ExportFormat exportFormat, final Collection<String> selectedFieldNames) throws IOException, E {
+        final SearchRequest<S> searchRequest = requestMapper.parseSearchRequest(searchRequestJSON);
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        exportService.export(outputStream, searchRequest, ExportFormat.CSV);
+        exportService.export(outputStream, searchRequest, exportFormat, selectedFieldNames);
         final byte[] output = outputStream.toByteArray();
 
         final HttpHeaders headers = new HttpHeaders();
@@ -66,6 +68,7 @@ public abstract class ExportController<S extends Serializable, E extends Excepti
         return new ResponseEntity<>(output, headers, HttpStatus.OK);
     }
 
+    //TODO improve to inform what went wrong with export, rather than generic just error 500.
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleException(

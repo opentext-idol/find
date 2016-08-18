@@ -9,6 +9,7 @@ import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -27,16 +28,24 @@ public interface ExportStrategy {
      * Retrieves the names of all the fields to export
      *
      * @param metadataNodes hard metadata (HoD/Idol specific)
+     * @param selectedFieldIds only export fields with ids in this collection. If empty, export all fields
      * @return the names of all the metadata/fields to export
      */
-    List<String> getFieldNames(MetadataNode[] metadataNodes);
+    List<String> getFieldNames(MetadataNode[] metadataNodes, final Collection<String> selectedFieldIds);
 
     /**
-     * Returns the fields configured for export in the config file
+     * Returns the fields configured for export in the config file. Inverse lookup of getConfiguredFieldsByName().
+     *
+     * @return a map of field ID as it appears in the frontend to field information
+     */
+    Map<String, FieldInfo<?>> getConfiguredFieldsById();
+
+    /**
+     * Returns the fields configured for export in the config file. Inverse lookup of getConfiguredFieldsById().
      *
      * @return a map of field name as it appears in the server response to field information
      */
-    Map<String, FieldInfo<?>> getConfiguredFields();
+    Map<String, FieldInfo<?>> getConfiguredFieldsByName();
 
     /**
      * Exports all the data corresponding to an individual document to the given {@link OutputStream}

@@ -9,6 +9,7 @@ import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * Service for exporting search result sets to some other format.
@@ -22,7 +23,8 @@ public interface ExportService<S extends Serializable, E extends Exception> {
      * @param outputStream the output to which the resulting format is written
      * @param searchRequest the search request parameters
      * @param exportFormat the format to export to
+     * @param selectedFieldIds only export fields with ids enumerated this collection. If empty, export all fields
      * @exception E if an error is thrown by the underlying server, the corresponding thrown exception
      */
-    void export(OutputStream outputStream, SearchRequest<S> searchRequest, ExportFormat exportFormat) throws E;
+    void export(OutputStream outputStream, SearchRequest<S> searchRequest, ExportFormat exportFormat, Collection<String> selectedFieldIds) throws E;
 }

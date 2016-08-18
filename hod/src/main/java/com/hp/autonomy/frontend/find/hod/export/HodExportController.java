@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class HodExportController extends ExportController<ResourceIdentifier, HodErrorException> {
+
     @Autowired
     public HodExportController(final ExportService<ResourceIdentifier, HodErrorException> exportService,
                                final RequestMapper<ResourceIdentifier> requestMapper,
