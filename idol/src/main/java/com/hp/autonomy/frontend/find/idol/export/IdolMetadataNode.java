@@ -6,26 +6,31 @@
 package com.hp.autonomy.frontend.find.idol.export;
 
 import com.hp.autonomy.frontend.find.core.export.MetadataNode;
+import com.hp.autonomy.searchcomponents.core.config.FieldType;
 import lombok.Getter;
-import org.springframework.core.convert.converter.Converter;
 
 @SuppressWarnings("NonSerializableFieldInSerializableClass")
 @Getter
-enum IdolMetadataNode implements MetadataNode {
-    REFERENCE("Reference", "autn:reference", ExportQueryResponseProcessor.STRING_CONVERTER),
-    DATABASE("Database", "autn:database", ExportQueryResponseProcessor.STRING_CONVERTER),
-    TITLE("Title", "autn:title", ExportQueryResponseProcessor.STRING_CONVERTER),
-    SUMMARY("Summary", "autn:summary", ExportQueryResponseProcessor.STRING_CONVERTER),
-    WEIGHT("Weight", "autn:weight", ExportQueryResponseProcessor.STRING_CONVERTER),
-    DATE("Date", "autn:date", ExportQueryResponseProcessor.DATE_CONVERTER);
+public enum IdolMetadataNode implements MetadataNode {
+    REFERENCE("Reference", "autn:reference", FieldType.STRING),
+    DATABASE("Database", "autn:database", FieldType.STRING),
+    TITLE("Title", "autn:title", FieldType.STRING),
+    SUMMARY("Summary", "autn:summary", FieldType.STRING),
+    WEIGHT("Weight", "autn:weight", FieldType.NUMBER),
+    DATE("Date", "autn:date", FieldType.DATE);
 
-    private final String name;
+    private final FieldType fieldType;
+    private final String displayName;
     private final String nodeName;
-    private final Converter<String, String> converter;
 
-    IdolMetadataNode(final String name, final String nodeName, final Converter<String, String> converter) {
-        this.name = name;
+    IdolMetadataNode(final String displayName, final String nodeName, final FieldType fieldType) {
+        this.displayName = displayName;
         this.nodeName = nodeName;
-        this.converter = converter;
+        this.fieldType = fieldType;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

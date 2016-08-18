@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Collections;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -46,8 +47,8 @@ public abstract class ExportControllerTest<S extends Serializable, E extends Exc
 
     @Test
     public void exportToCsv() throws IOException, E {
-        controller.exportToCsv("{}");
-        verify(exportService).export(any(OutputStream.class), Matchers.<SearchRequest<S>>any(), eq(ExportFormat.CSV));
+        controller.exportToCsv("{}", Collections.emptyList());
+        verify(exportService).export(any(OutputStream.class), Matchers.<SearchRequest<S>>any(), eq(ExportFormat.CSV), eq(Collections.emptyList()));
     }
 
     @Test

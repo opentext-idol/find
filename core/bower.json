@@ -30,7 +30,7 @@
     "jquery": "components/jquery#1.10.2",
     "json": "json2#c98948ae19",
     "underscore": "1.8.3",
-    "hp-autonomy-js-whatever": "2.8.0",
+    "hp-autonomy-js-whatever": "2.10.1",
     "hp-autonomy-login-page": "1.2.0",
     "hp-autonomy-settings-page": "0.8.3",
     "hp-autonomy-bootstrap-2": "2.3.2",

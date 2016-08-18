@@ -5,7 +5,6 @@ define([
 
     return SaveModal.extend({
         className: 'modal fade',
-
         template: _.template(template)
     });
 });

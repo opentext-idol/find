@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.OutputStream;
+import java.util.Collections;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anySetOf;
@@ -54,7 +55,7 @@ public class IdolExportServiceTest {
 
     @Test
     public void export() {
-        idolExportService.export(outputStream, searchRequest, ExportFormat.CSV);
+        idolExportService.export(outputStream, searchRequest, ExportFormat.CSV, Collections.emptyList());
         verify(aciService).executeAction(anySetOf(AciParameter.class), any(Processor.class));
     }
 }

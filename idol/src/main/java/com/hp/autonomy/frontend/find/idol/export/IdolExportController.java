@@ -14,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class IdolExportController extends ExportController<String, AciErrorException> {
+class IdolExportController extends ExportController<String, AciErrorException> {
+
     @Autowired
     public IdolExportController(final ExportService<String, AciErrorException> exportService,
                                 final RequestMapper<String> requestMapper,

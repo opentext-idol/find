@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,22 +36,22 @@ public class IdolExportService implements ExportService<String, AciErrorExceptio
         this.aciServiceRetriever = aciServiceRetriever;
 
         this.exportStrategies = new EnumMap<>(ExportFormat.class);
-        for (final ExportStrategy exportStrategy : exportStrategies) {
+        for(final ExportStrategy exportStrategy : exportStrategies) {
             this.exportStrategies.put(exportStrategy.getExportFormat(), exportStrategy);
         }
     }
 
     @Override
-    public void export(final OutputStream outputStream, final SearchRequest<String> searchRequest, final ExportFormat exportFormat) throws AciErrorException {
+    public void export(final OutputStream outputStream, final SearchRequest<String> searchRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds) throws AciErrorException {
         final AciParameters aciParameters = new AciParameters(QueryActions.Query.name());
 
         parameterHandler.addSearchRestrictions(aciParameters, searchRequest.getQueryRestrictions());
         parameterHandler.addSearchOutputParameters(aciParameters, searchRequest);
-        if (searchRequest.getQueryType() != SearchRequest.QueryType.RAW) {
+        if(searchRequest.getQueryType() != SearchRequest.QueryType.RAW) {
             parameterHandler.addQmsParameters(aciParameters, searchRequest.getQueryRestrictions());
         }
 
         final ExportStrategy exportStrategy = exportStrategies.get(exportFormat);
-        aciServiceRetriever.getAciService(searchRequest.getQueryType()).executeAction(aciParameters, new ExportQueryResponseProcessor(exportStrategy, outputStream));
+        aciServiceRetriever.getAciService(searchRequest.getQueryType()).executeAction(aciParameters, new ExportQueryResponseProcessor(exportStrategy, outputStream, selectedFieldIds));
     }
 }

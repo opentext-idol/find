@@ -5,9 +5,9 @@
 
 package com.hp.autonomy.frontend.find.core.export;
 
+import com.google.common.base.Strings;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
-import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.core.config.HavenSearchCapable;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -18,12 +18,9 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class CsvExportStrategy implements ExportStrategy {
@@ -40,40 +37,59 @@ public class CsvExportStrategy implements ExportStrategy {
     }
 
     @Override
-    public List<String> getFieldNames(final MetadataNode[] metadataNodes) {
-        final List<String> fieldNames = new ArrayList<>(metadataNodes.length);
-        for (final MetadataNode metadataNode : metadataNodes) {
-            fieldNames.add(metadataNode.getName());
-        }
+    public List<String> getFieldNames(final MetadataNode[] metadataNodes, final Collection<String> selectedFieldIds) {
+        final Stream<String> metadataStream = Arrays.stream(metadataNodes)
+                // Filters metadata fields
+                .filter(metadataNode -> selectedFieldIds.isEmpty() || selectedFieldIds.contains(metadataNode.getName()))
+                .map(MetadataNode::getDisplayName);
 
-        fieldNames.addAll(getFieldConfig().stream().map(FieldInfo::getId).collect(Collectors.toList()));
+        final Stream<String> nonMetadataStream = getFieldConfig().stream()
+                .map(FieldInfo::getId)
+                // Filters parametric (non-metadata) fields
+                .filter(id -> selectedFieldIds.isEmpty() || selectedFieldIds.contains(id));
 
-        return fieldNames;
+        return Stream.concat(metadataStream, nonMetadataStream).collect(Collectors.toList());
     }
 
     @Override
-    public Map<String, FieldInfo<?>> getConfiguredFields() {
-        final Map<String, FieldInfo<?>> configuredFields = new LinkedHashMap<>();
+    public Map<String, FieldInfo<?>> getConfiguredFieldsById() {
+        final Map<String, FieldInfo<?>> configuredFieldIds = new LinkedHashMap<>();
+
+        getFieldConfig().forEach(field -> configuredFieldIds.put(field.getId(), field));
+
+        return configuredFieldIds;
+    }
+
+    @Override
+    public Map<String, FieldInfo<?>> getConfiguredFieldsByName() {
+        final Map<String, FieldInfo<?>> configuredFieldINames = new LinkedHashMap<>();
         final Collection<FieldInfo<?>> fieldConfig = getFieldConfig();
         for (final FieldInfo<?> field : fieldConfig) {
             for (final String name : field.getNames()) {
-                configuredFields.put(name, field);
+                configuredFieldINames.put(name, field);
             }
         }
 
-        return configuredFields;
+        return configuredFieldINames;
     }
 
     @Override
-    public void exportRecord(final OutputStream outputStream, final Iterable<String> fieldNames) throws IOException {
-        try (final CSVPrinter csvPrinter = new CSVPrinter(new OutputStreamWriter(outputStream), CSVFormat.EXCEL)) {
-            csvPrinter.printRecord(fieldNames);
+    public void exportRecord(final OutputStream outputStream, final Iterable<String> values) throws IOException {
+        // TODO: Here we are creating a disposable CSVPrinter for every. Single. Record. Would be faster to have a
+        // persistent printer as a strategy's member object and make better use of its API (flush, etc.).
+        try(final CSVPrinter csvPrinter = new CSVPrinter(new OutputStreamWriter(outputStream), CSVFormat.EXCEL)) {
+            csvPrinter.printRecord(values);
         }
     }
 
     @Override
+    // CAUTION: Method has more than one exit point.
     public String combineValues(final List<String> values) {
-        return values == null ? "" : StringUtils.join(values, ", ");
+        if(values == null) {
+            return "";
+        } else {
+            return StringUtils.join(values.stream().filter(val -> !Strings.isNullOrEmpty(val)).collect(Collectors.toList()), ", ");
+        }
     }
 
     @Override
@@ -82,7 +98,6 @@ public class CsvExportStrategy implements ExportStrategy {
     }
 
     private Collection<FieldInfo<?>> getFieldConfig() {
-        final FieldsInfo fieldsInfo = configService.getConfig().getFieldsInfo();
-        return fieldsInfo.getFieldConfig().values();
+        return configService.getConfig().getFieldsInfo().getFieldConfig().values();
     }
 }
