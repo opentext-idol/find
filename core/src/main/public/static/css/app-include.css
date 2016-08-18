@@ -1387,9 +1387,10 @@ input:-moz-placeholder::before {
     border: 1px solid #e7eaec;
 }
 
-.parametric-field-label {
-    display: list-item;
+.field-label {
+    display: inline-block;
     list-style: none;
+    margin: 2px 0;
 }
 
 .fields-list {
@@ -1427,12 +1428,12 @@ input:-moz-placeholder::before {
     white-space: nowrap;
 }
 
-.parametric-modal .modal-dialog,
-.parametric-modal .modal-content {
+.fixed-height-modal .modal-dialog,
+.fixed-height-modal .modal-content {
     height: 80%;
 }
 
-.parametric-modal .modal-body {
+.fixed-height-modal .modal-body {
     height: calc(100% - 120px);
     overflow-y: auto;
 }

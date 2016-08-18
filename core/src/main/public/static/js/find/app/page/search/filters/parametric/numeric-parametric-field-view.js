@@ -15,20 +15,23 @@ define([
     'find/app/model/bucketed-parametric-collection',
     'parametric-refinement/prettify-field-name',
     'parametric-refinement/to-field-text-node',
-    'parametric-refinement/selected-values-collection',
     'find/app/util/model-any-changed-attribute-listener',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-numeric-input.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
-], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, numericWidget, BucketedParametricCollection,
-            prettifyFieldName, toFieldTextNode, SelectedParametricValuesCollection, addChangeListener, template,
-            numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
+], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, numericWidget,
+            BucketedParametricCollection, prettifyFieldName, toFieldTextNode, addChangeListener,
+            template, numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
 
     'use strict';
 
     var DATE_WIDGET_FORMAT = 'YYYY-MM-DD HH:mm';
+
+    function plus(a, b) {
+        return a + b;
+    }
 
     function rangeModelMatching(fieldName, dataType) {
         return function(model) {
@@ -104,7 +107,7 @@ define([
 
             // Bind the selection rectangle to the selected parametric range
             this.listenTo(this.selectedParametricValues, 'add remove change', function(model) {
-                if (rangeModelMatching(this.fieldName, this.dataType)(model)) {
+                if(rangeModelMatching(this.fieldName, this.dataType)(model)) {
                     this.updateSelection();
                 }
             });
@@ -148,7 +151,7 @@ define([
                     coordinatesColumnClass: coordinatesColumnClass
                 }));
 
-            if (this.selectionEnabled) {
+            if(this.selectionEnabled) {
                 this.renderCustomFormatting(this.$el);
                 this.$minInput = this.$('.numeric-parametric-min-input');
                 this.$maxInput = this.$('.numeric-parametric-max-input');
@@ -177,7 +180,7 @@ define([
             $chartRow.find('.chart').remove();
             var width = $chartRow.width();
 
-            if (!hadError && !noValues && !showLoadingIndicator && width > 0) {
+            if(!hadError && !noValues && !showLoadingIndicator && width > 0) {
                 var $chart = $(this.svgTemplate({selectionEnabled: this.selectionEnabled}));
                 $chartRow.append($chart);
 
@@ -233,7 +236,7 @@ define([
             }
 
             this.listenTo(this.selectedParametricValues, 'remove', function(model) {
-                if (model.get('field') == this.fieldName) {
+                if(model.get('field') == this.fieldName) {
                     this.updateSelection();
                 }
             });
@@ -241,10 +244,10 @@ define([
 
         // Update the rendered selection rectangle and inputs to match the selected parametric range model
         updateSelection: function() {
-            if (this.graph) {
+            if(this.graph) {
                 var rangeModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.dataType));
 
-                if (rangeModel) {
+                if(rangeModel) {
                     var range = rangeModel.get('range');
 
                     this.updateMinInput(roundInputNumber(range[0]));
@@ -278,21 +281,21 @@ define([
 
             // Fixes error where user could manually input min > max or max < min
             if(newAttributes.range[0] > newAttributes.range[1]) {
-                if(existingRange.reduce(function(a,b){return a+b;}) - newAttributes.range.reduce(function(a,b){return a+b;}) > 0) { // if max was decreased
+                if(existingRange.reduce(plus) - newAttributes.range.reduce(plus) > 0) { // if max was decreased
                     newAttributes.range[0] = newAttributes.range[1]; //set min to equal max
-                } else { // if min was changed
+                } else { // if min was increased
                     newAttributes.range[1] = newAttributes.range[0]; //set max to equal min
                 }
             }
 
-            if (existingModel) {
+            if(existingModel) {
                 existingModel.set(newAttributes);
             } else {
                 this.selectedParametricValues.add(newAttributes);
             }
         },
 
-        clearRestrictions: function () {
+        clearRestrictions: function() {
             this.selectedParametricValues.remove(this.selectedParametricValues.filter(rangeModelMatching(this.fieldName, this.dataType)));
         },
 
@@ -300,7 +303,7 @@ define([
             var width = this.$('.numeric-parametric-chart-row').width();
 
             // If the SVG has no width or there are no values, there is no point fetching new data
-            if (width !== 0 && this.model.get('totalValues') !== 0) {
+            if(width !== 0 && this.model.get('totalValues') !== 0) {
                 // Exclude any restrictions for this field from the field text
                 var otherSelectedValues = this.selectedParametricValues
                     .reject(rangeModelMatching(this.fieldName, this.dataType))
@@ -333,13 +336,13 @@ define([
         },
 
         updateMinInput: function(newValue) {
-            if (this.selectionEnabled) {
+            if(this.selectionEnabled) {
                 this.$minInput.val(this.formatValue(newValue));
             }
         },
 
         updateMaxInput: function(newValue) {
-            if (this.selectionEnabled) {
+            if(this.selectionEnabled) {
                 this.$maxInput.val(this.formatValue(newValue));
             }
         }

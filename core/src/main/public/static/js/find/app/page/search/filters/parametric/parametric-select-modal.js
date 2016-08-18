@@ -9,7 +9,7 @@ define([
 ], function(Backbone, Modal, $, ParametricSelectView, SelectedValuesCollection, loadingSpinnerTemplate, i18n) {
 
     return Modal.extend({
-        className: 'modal fade parametric-modal',
+        className: Modal.prototype.className + ' fixed-height-modal',
 
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
 

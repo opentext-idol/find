@@ -1,3 +1,7 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 define([
     'backbone',
     'jquery',
@@ -5,10 +9,13 @@ define([
     'find/app/page/search/saved-searches/search-title-input',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/util/confirm-view',
+    'find/app/util/csv-field-selection-view',
+    'js-whatever/js/modal',
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
     'i18n!find/nls/bundle',
     'find/app/util/popover'
-], function (Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, template, i18n, popover) {
+], function(Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, CsvFieldSelectView, Modal,
+            template, i18n, popover) {
 
     'use strict';
 
@@ -46,7 +53,6 @@ define([
 
     return Backbone.View.extend({
         template: _.template(template),
-        formTemplate: _.template('<form action="../api/bi/export/csv" method="post" target="_blank"><input type="hidden" name="postData" value="<%-postData%>"/></form>'),
         titleInput: null,
 
         events: {
@@ -89,26 +95,22 @@ define([
                 });
             },
             'click .export-csv-option': function () {
-                //noinspection AmdModulesDependencies
-                var postData = JSON.stringify({
-                        queryRestrictions: {
-                            text: this.queryModel.get('queryText'),
-                            field_text: this.queryModel.get('fieldText'),
-                            indexes: this.queryModel.get('indexes'),
-                            min_date: this.queryModel.getIsoDate('minDate'),
-                            max_date: this.queryModel.getIsoDate('maxDate'),
-                            min_score: this.queryModel.get('minScore')
-                        },
-                        start: 1,
-                        max_results: 0x7fffffff, // 2^31 -1
-                        summary: 'context',
-                        sort: this.queryModel.get('sort'),
-                        highlight: false,
-                        auto_correct: false,
-                        queryType: 'MODIFIED'
-                    });
-                var $form = $(this.formTemplate({postData: postData}));
-                $form.appendTo('body').submit().remove();
+                var csvFieldSelectView = new CsvFieldSelectView({
+                    queryModel: this.queryModel
+                });
+
+                new Modal({
+                    actionButtonClass: 'button-primary',
+                    actionButtonText: i18n['app.button.exportCsv'],
+                    className: Modal.prototype.className + ' fixed-height-modal',
+                    contentView: csvFieldSelectView,
+                    secondaryButtonText: i18n['app.cancel'],
+                    title: i18n['app.exportToCsv.modal.title'],
+                    actionButtonCallback: function() {
+                        csvFieldSelectView.requestCsv();
+                        this.hide();
+                    }
+                })
             },
             'click .saved-search-delete-option': function () {
                 this.model.set('error', null);
@@ -117,7 +119,7 @@ define([
                     cancelClass: 'btn-white',
                     cancelIcon: '',
                     cancelText: i18n['app.cancel'],
-                    okText: i18n['app.delete'],
+                    okText: i18n['app.button.delete'],
                     okClass: 'btn-danger',
                     okIcon: '',
                     message: i18n['search.savedSearches.confirm.deleteMessage'](this.savedSearchModel.get('title')),

@@ -28,7 +28,7 @@ define([
         events: {
             'ifClicked .parametric-field-label': function(e) {
                 var $currentTarget = $(e.currentTarget);
-                var fieldName = $currentTarget.data('field-id');
+                var fieldName = $currentTarget.attr('data-field-id');
                 var fieldValue = $currentTarget.find('.field-value').text();
 
                 var parametricDisplayModel = this.parametricDisplayCollection.get(fieldName);
