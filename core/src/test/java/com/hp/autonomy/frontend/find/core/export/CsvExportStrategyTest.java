@@ -42,6 +42,7 @@ public class CsvExportStrategyTest {
         when(config.getFieldsInfo()).thenReturn(new FieldsInfo.Builder()
                 .populateResponseMap("authors", new FieldInfo<String>("authors", Arrays.asList("AUTHOR", "author"), FieldType.STRING, false))
                 .populateResponseMap("categories", new FieldInfo<String>("categories", Arrays.asList("CATEGORY", "category"), FieldType.STRING, false))
+                                                        .populateResponseMap("databases", new FieldInfo<String>("databases", Arrays.asList("DATABASE", "database"), FieldType.STRING, false))
                 .build());
 
         csvExportStrategy = new CsvExportStrategy(configService);
@@ -54,12 +55,17 @@ public class CsvExportStrategyTest {
 
     @Test
     public void getFieldNames() {
-        assertThat(csvExportStrategy.getFieldNames(new MetadataNode[]{mock(MetadataNode.class)}), hasSize(3));
+        assertThat(csvExportStrategy.getFieldNames(new MetadataNode[]{mock(MetadataNode.class)}, Collections.emptyList()), hasSize(4));
     }
 
     @Test
     public void getConfiguredFields() {
-        assertThat(csvExportStrategy.getConfiguredFields().keySet(), hasSize(4));
+        assertThat(csvExportStrategy.getConfiguredFieldsById().keySet(), hasSize(3));
+    }
+
+    @Test
+    public void getFilteredFields() {
+        assertThat(csvExportStrategy.getFieldNames(new MetadataNode[]{mock(MetadataNode.class)}, Arrays.asList("authors")), hasSize(1));
     }
 
     @Test

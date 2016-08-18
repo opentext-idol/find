@@ -25,7 +25,7 @@ public abstract class ExportControllerIT extends AbstractFindIT {
                 '}';
 
         final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.CSV_PATH).with(authentication(biAuth()));
-        requestBuilder.param(ExportController.POST_DATA_PARAM, json);
+        requestBuilder.param(ExportController.SEARCH_REQUEST_PARAM, json);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())

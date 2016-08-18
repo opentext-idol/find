@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.Serializable;
+import java.util.Collections;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -33,7 +34,7 @@ public abstract class ExportServiceIT<S extends Serializable, E extends Exceptio
                 .build();
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        exportService.export(outputStream, searchRequest, ExportFormat.CSV);
+        exportService.export(outputStream, searchRequest, ExportFormat.CSV, Collections.emptyList());
         assertNotNull(outputStream.toString());
     }
 }
