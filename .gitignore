@@ -1,28 +1,56 @@
-target/
-.idea*/
-**/*.iml
-*.iml
-**/*.ipr
-**/*.iws
-**/*.jar
-**/*.class
-**/*.war
-jsduck.exe
-*.ipr
-*.iws
-ui/npm-debug.log
-message.txt
-*.log
-*.lck
-*.ctrl
-*derbyDB*
+# Java
 *.class
+*.log
 *.jar
-/.project
-/.settings
-.settings
-.project
-**/.output/
-**/node_modules/
+*.war
 
+# IntelliJ
+.idea/
+*.ipr
+*.iml
+*.iws
+*.ids
 
+# Maven
+log/
+webapp/core/target/
+webapp/hod/target/
+webapp/hsod-dist/target/
+webapp/idol/target/
+webapp/mockui/target/
+webapp/on-prem-dist/target/
+webapp/selenium-tests/target/
+
+# Archetype
+filter-dev.properties
+core/src/test/js/lib/
+.vagrant/
+
+webapp/core/src/main/public/static/bower_components/
+webapp/core/node_modules/
+webapp/hod/node_modules/
+webapp/idol/node_modules/
+
+core/.grunt/
+core/spec-runner.html
+hod/.grunt/
+hod/spec-runner.html
+idol/.grunt/
+idol/spec-runner.html
+
+# Vagrant
+cookbooks/
+tmp
+
+# Git
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
+*.orig
+
+# Database
+*.db
+
+# Selenium
+webapp/selenium-tests/.output/
