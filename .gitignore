@@ -13,26 +13,29 @@
 
 # Maven
 log/
-core/target/
-hod/target/
-idol/target/
-on-prem-dist/target/
-hsod-dist/target/
+webapp/core/target/
+webapp/hod/target/
+webapp/hsod-dist/target/
+webapp/idol/target/
+webapp/mockui/target/
+webapp/on-prem-dist/target/
+webapp/selenium-tests/target/
 
 # Archetype
 filter-dev.properties
 core/src/test/js/lib/
 .vagrant/
 
+webapp/core/src/main/public/static/bower_components/
+webapp/core/node_modules/
+webapp/hod/node_modules/
+webapp/idol/node_modules/
+
 core/.grunt/
-core/node_modules/
-core/src/main/public/static/bower_components/
 core/spec-runner.html
 hod/.grunt/
-hod/node_modules/
 hod/spec-runner.html
 idol/.grunt/
-idol/node_modules/
 idol/spec-runner.html
 
 # Vagrant
@@ -48,3 +51,6 @@ tmp
 
 # Database
 *.db
+
+# Selenium
+webapp/selenium-tests/.output/

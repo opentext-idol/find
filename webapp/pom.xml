@@ -23,6 +23,8 @@
         <module>hod</module>
         <module>on-prem-dist</module>
         <module>hsod-dist</module>
+        <module>mockui</module>
+        <module>selenium-tests</module>
     </modules>
 
     <properties>
