@@ -48,7 +48,6 @@ define([
 
         events: function() {
             var events = {
-                // ToDo : Merge with changes made in FIND-229
                 'click .document-detail-mode [data-cid]': function(e) {
                     var $target = $(e.currentTarget);
                     var cid = $target.data('cid');
