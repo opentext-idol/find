@@ -114,7 +114,7 @@ public class HodDocumentPreviewITCase extends HsodFindTestBase {
     }
 
     @Test
-    @ActiveBug(value="FIND-497",type= ApplicationType.HOSTED)
+    @ResolvedBug("FIND-497")
     public void testOpenDocumentFromSearch(){
         final Window original = getWindow();
 
