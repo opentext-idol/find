@@ -8,4 +8,5 @@ branches:
   - master
   - develop
 install: true
+before_script: cd webapp
 script: mvn package -P production
