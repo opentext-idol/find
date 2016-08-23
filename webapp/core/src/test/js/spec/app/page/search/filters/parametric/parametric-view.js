@@ -12,17 +12,39 @@ define([
 
     describe('Parametric view', function() {
         beforeEach(function() {
-            var models = [
-                {id: '/DOCUMENT/WIKIPEDIA_CATEGORY', name: 'WIKIPEDIA_CATEGORY', values: [{value: 'food', count: 3}, {value: 'person', count: 5}]},
-                {id: '/DOCUMENT/PERSON_SEX', name: 'PERSON_SEX', values: [{value: 'female', count: 2}]}
-            ];
+            var models = [{
+                id: '/DOCUMENT/WIKIPEDIA_CATEGORY',
+                name: 'WIKIPEDIA_CATEGORY',
+                values: [
+                    {value: 'food', count: 3},
+                    {value: 'person', count: 5}
+                ]
+            }, {
+                id: '/DOCUMENT/PERSON_SEX',
+                name: 'PERSON_SEX',
+                values: [
+                    {value: 'female', count: 2}
+                ]
+            }];
 
-            this.restrictedParametricCollection = new Backbone.Collection(models);
+            var restrictedModels = [{
+                id: '/DOCUMENT/WIKIPEDIA_CATEGORY',
+                name: 'WIKIPEDIA_CATEGORY',
+                values: [
+                    {value: 'food', count: 2},
+                    {value: 'person', count: 5}
+                ]
+            }];
+
+            this.parametricCollection = new Backbone.Collection(models);
+            this.restrictedParametricCollection = new Backbone.Collection(restrictedModels);
+
 
             this.selectedParametricValues = new SelectedValuesCollection();
 
             var displayCollection = new DisplayCollection([], {
-                parametricCollection: this.restrictedParametricCollection,
+                parametricCollection: this.parametricCollection,
+                restrictedParametricCollection: this.restrictedParametricCollection,
                 selectedParametricValues: this.selectedParametricValues
             });
 
@@ -47,10 +69,6 @@ define([
                 expect(this.view.$('[data-field="/DOCUMENT/WIKIPEDIA_CATEGORY"] [data-value]')).toHaveLength(2);
                 expect(this.view.$('[data-field="/DOCUMENT/WIKIPEDIA_CATEGORY"] [data-value="food"]')).toHaveLength(1);
                 expect(this.view.$('[data-field="/DOCUMENT/WIKIPEDIA_CATEGORY"] [data-value="person"]')).toHaveLength(1);
-
-                expect(this.view.$('[data-field="/DOCUMENT/PERSON_SEX"]')).toHaveLength(1);
-                expect(this.view.$('[data-field="/DOCUMENT/PERSON_SEX"] [data-value]')).toHaveLength(1);
-                expect(this.view.$('[data-field="/DOCUMENT/PERSON_SEX"] [data-value="female"]')).toHaveLength(1);
             });
 
             it('hides the loading spinner', function() {
@@ -65,8 +83,9 @@ define([
                 expect(this.view.$('.parametric-empty')).toHaveClass('hide');
             });
 
-            describe('then the parametric collection is reset to empty', function() {
+            describe('then the parametric collection and restricted parametric collection are reset to empty', function() {
                 beforeEach(function() {
+                    this.parametricCollection.reset();
                     this.restrictedParametricCollection.reset();
                 });
 

@@ -217,7 +217,8 @@ define([
                 shown: true,
                 initialize: function () {
                     this.parametricDisplayCollection = new ParametricDisplayCollection([], {
-                        parametricCollection: options.restrictedParametricCollection,
+                        parametricCollection: options.parametricCollection,
+                        restrictedParametricCollection: options.restrictedParametricCollection,
                         selectedParametricValues: options.queryState.selectedParametricValues,
                         filterModel: this.filterModel
                     });
