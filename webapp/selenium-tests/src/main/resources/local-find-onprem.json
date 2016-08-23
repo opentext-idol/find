@@ -2,7 +2,7 @@
   "app": {
     "type": "On Premise",
     "deployment": "develop",
-    "find": "http://find-dev.hpswlabs.hp.com:8080"
+    "find": "http://localhost:8082"
   },
   "selenium": {
     "browsers": ["chrome"],
