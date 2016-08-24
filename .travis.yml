@@ -9,4 +9,4 @@ branches:
   - develop
 install: true
 before_script: cd webapp
-script: mvn package -P production
+script: mvn package -Pproduction -pl idol,hod -am
