@@ -9,7 +9,6 @@
 # description: Find init script
 #
 # processname: Find
-# pidfile: /var/lock/${NAME}.pid
 
 ## Installation defaults
 NAME="find"
