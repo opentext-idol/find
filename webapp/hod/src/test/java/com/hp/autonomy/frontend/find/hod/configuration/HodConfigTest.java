@@ -25,9 +25,11 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
                     .setActiveIndexes(Collections.singletonList(ResourceIdentifier.WIKI_CHI))
                     .setPublicIndexesEnabled(true)
                     .setApiKey(new ApiKey("api-key-abc"))
-                    .setSsoPageUrl(new URL("https://dev.havenapps.io/sso.html"))
+                    .setSsoPageGetUrl(new URL("https://dev.havenapps.io/sso.html"))
+                    .setSsoPagePostUrl(new URL("https://dev.havenapps.io/sso"))
                     .setEndpointUrl(new URL("https://api.int.havenondemand.com"))
                     .build();
+
         } catch (final MalformedURLException e) {
             throw new AssertionError("Failed to parse URL", e);
         }
@@ -56,7 +58,7 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
         assertThat(component.getApiKey(), is(new ApiKey("api-key-123")));
         assertThat(component.getPublicIndexesEnabled(), is(false));
         assertThat(component.getActiveIndexes(), is(empty()));
-        assertThat(component.getSsoPageUrl().toString(), is("https://dev.int.havenapps.io/sso.html"));
+        assertThat(component.getSsoPageGetUrl().toString(), is("https://dev.int.havenapps.io/sso.html"));
         assertThat(component.getEndpointUrl(), is(nullValue()));
     }
 
@@ -65,7 +67,7 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
         assertThat(mergedComponent.getApiKey(), is(new ApiKey("api-key-abc")));
         assertThat(mergedComponent.getPublicIndexesEnabled(), is(true));
         assertThat(mergedComponent.getActiveIndexes(), hasItem(ResourceIdentifier.WIKI_CHI));
-        assertThat(mergedComponent.getSsoPageUrl().toString(), is("https://dev.havenapps.io/sso.html"));
+        assertThat(mergedComponent.getSsoPageGetUrl().toString(), is("https://dev.havenapps.io/sso.html"));
         assertThat(mergedComponent.getEndpointUrl().toString(), is("https://api.int.havenondemand.com"));
     }
 
@@ -80,7 +82,7 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
         new HodConfig.Builder()
                 .setApiKey(null)
                 .setPublicIndexesEnabled(true)
-                .setSsoPageUrl(new URL("https://dev.int.havenapps.io/sso.html"))
+                .setSsoPageGetUrl(new URL("https://dev.int.havenapps.io/sso.html"))
                 .setEndpointUrl(new URL("https://api.int.havenondemand.com"))
                 .build()
                 .basicValidate("configSection");
@@ -91,7 +93,7 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
         new HodConfig.Builder()
                 .setApiKey(new ApiKey("my-api-key"))
                 .setPublicIndexesEnabled(null)
-                .setSsoPageUrl(new URL("https://dev.int.havenapps.io/sso.html"))
+                .setSsoPageGetUrl(new URL("https://dev.int.havenapps.io/sso.html"))
                 .setEndpointUrl(new URL("https://api.int.havenondemand.com"))
                 .build()
                 .basicValidate("configSection");
@@ -103,7 +105,7 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
                 .setApiKey(new ApiKey("my-api-key"))
                 .setPublicIndexesEnabled(true)
                 .setEndpointUrl(new URL("https://api.int.havenondemand.com"))
-                .setSsoPageUrl(null)
+                .setSsoPageGetUrl(null)
                 .build()
                 .basicValidate("configSection");
     }
@@ -113,7 +115,7 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
         new HodConfig.Builder()
                 .setApiKey(new ApiKey("my-api-key"))
                 .setPublicIndexesEnabled(true)
-                .setSsoPageUrl(new URL("https://dev.int.havenapps.io/sso.html"))
+                .setSsoPageGetUrl(new URL("https://dev.int.havenapps.io/sso.html"))
                 .setEndpointUrl(null)
                 .build()
                 .basicValidate("configSection");

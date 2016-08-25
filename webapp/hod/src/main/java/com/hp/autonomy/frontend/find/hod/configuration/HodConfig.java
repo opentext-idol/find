@@ -30,14 +30,16 @@ public class HodConfig implements ConfigurationComponent, com.hp.autonomy.fronte
     private final ApiKey apiKey;
     private final List<ResourceIdentifier> activeIndexes;
     private final Boolean publicIndexesEnabled;
-    private final URL ssoPageUrl;
+    private final URL ssoPageGetUrl;
+    private final URL ssoPagePostUrl;
     private final URL endpointUrl;
 
     private HodConfig(final Builder builder) {
         apiKey = builder.apiKey;
         activeIndexes = builder.activeIndexes;
         publicIndexesEnabled = builder.publicIndexesEnabled;
-        ssoPageUrl = builder.ssoPageUrl;
+        ssoPageGetUrl = builder.ssoPageGetUrl;
+        ssoPagePostUrl = builder.ssoPagePostUrl;
         endpointUrl = builder.endpointUrl;
     }
 
@@ -60,7 +62,8 @@ public class HodConfig implements ConfigurationComponent, com.hp.autonomy.fronte
                     .setApiKey(apiKey == null ? other.apiKey : apiKey)
                     .setActiveIndexes(activeIndexes == null ? other.activeIndexes : activeIndexes)
                     .setPublicIndexesEnabled(publicIndexesEnabled == null ? other.publicIndexesEnabled : publicIndexesEnabled)
-                    .setSsoPageUrl(ssoPageUrl == null ? other.ssoPageUrl : ssoPageUrl)
+                    .setSsoPageGetUrl(ssoPageGetUrl == null ? other.ssoPageGetUrl : ssoPageGetUrl)
+                    .setSsoPagePostUrl(ssoPagePostUrl == null ? other.ssoPagePostUrl : ssoPagePostUrl)
                     .setEndpointUrl(endpointUrl == null ? other.endpointUrl : endpointUrl)
                     .build();
         }
@@ -76,8 +79,8 @@ public class HodConfig implements ConfigurationComponent, com.hp.autonomy.fronte
             throw new ConfigException(section, "The publicIndexesEnabled option must be specified");
         }
 
-        if (ssoPageUrl == null) {
-            throw new ConfigException(section, "The URL for the SSO page must be provided");
+        if (ssoPageGetUrl == null || ssoPagePostUrl == null) {
+            throw new ConfigException(section, "Both URLs for the SSO page must be provided");
         }
 
         if (endpointUrl == null) {
@@ -92,8 +95,9 @@ public class HodConfig implements ConfigurationComponent, com.hp.autonomy.fronte
         private ApiKey apiKey;
         private List<ResourceIdentifier> activeIndexes;
         private Boolean publicIndexesEnabled;
-        private URL ssoPageUrl;
+        private URL ssoPageGetUrl;
         public URL endpointUrl;
+        private URL ssoPagePostUrl;
 
         public HodConfig build() {
             return new HodConfig(this);

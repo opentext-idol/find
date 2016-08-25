@@ -7,13 +7,13 @@ package com.hp.autonomy.frontend.find.hod.web;
 
 enum SsoMvcConstants {
     AUTHENTICATE_PATH("authenticatePath"),
-    COMBINED_REQUEST_API("combinedRequestApi"),
     ERROR_PAGE("errorPage"),
-    LIST_APPLICATION_REQUEST("listApplicationRequest"),
     LOGOUT_ENDPOINT("endpoint"),
     LOGOUT_REDIRECT_URL("redirectUrl"),
-    PATCH_REQUEST_API("combinedPatchRequestApi"),
-    SSO_PAGE("ssoPage"),
+    PATCH_REQUEST("patchRequest"),
+    SSO_PATCH_TOKEN_API("ssoPatchTokenApi"),
+    SSO_PAGE_GET_URL("ssoPageGetUrl"),
+    SSO_PAGE_POST_URL("ssoPagePostUrl"),
     SSO_ENTRY_PAGE("ssoEntryPage");
 
     private final String value;

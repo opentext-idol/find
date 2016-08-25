@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URL;
 
+/**
+ * Controller which signs requests needed by the SSO process frontend code.
+ */
 @RestController
 public class HodCombinedRequestController {
-    public static final String COMBINED_REQUEST = "/api/authentication/combined-request";
-    public static final String COMBINED_PATCH_REQUEST = "/api/authentication/combined-patch-request";
+    public static final String COMBINED_PATCH_REQUEST_URL = "/api/authentication/combined-patch-request";
 
     private final HodAuthenticationRequestService tokenService;
 
@@ -33,21 +35,9 @@ public class HodCombinedRequestController {
         this.tokenService = tokenService;
     }
 
-    @RequestMapping(value = COMBINED_REQUEST, method = RequestMethod.GET)
-    public SignedRequest getCombinedRequest(
-            @RequestParam("domain") final String domain,
-            @RequestParam("application") final String application,
-            @RequestParam("user-store-domain") final String userStoreDomain,
-            @RequestParam("user-store-name") final String userStoreName
-    ) throws HodErrorException {
-        return tokenService.getCombinedRequest(domain, application, userStoreDomain, userStoreName);
-    }
-
-    @RequestMapping(value = COMBINED_PATCH_REQUEST, method = RequestMethod.GET)
-    public SignedRequest getCombinedPatchRequest(
-            @RequestParam("redirect-url") final URL redirectUrl
-    ) throws InvalidOriginException, HodErrorException {
-        return tokenService.getCombinedPatchRequest(redirectUrl);
+    @RequestMapping(value = COMBINED_PATCH_REQUEST_URL, method = RequestMethod.GET)
+    public SignedRequest getCombinedPatchRequest(@RequestParam("redirect-url") final URL redirectUrl) throws InvalidOriginException, HodErrorException {
+        return tokenService.getSsoPageCombinedPatchRequest(redirectUrl);
     }
 
     @ExceptionHandler(InvalidOriginException.class)

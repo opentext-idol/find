@@ -47,7 +47,7 @@ public class HodFindMockConfigConfiguration {
                 .setApiKey(new ApiKey("mock-api-key"))
                 .setActiveIndexes(Collections.<ResourceIdentifier>emptyList())
                 .setPublicIndexesEnabled(true)
-                .setSsoPageUrl(new URL("https://dev.havenondemand.com/sso.html"))
+                .setSsoPageGetUrl(new URL("https://dev.havenondemand.com/sso.html"))
                 .setEndpointUrl(endpoint)
                 .build();
 
