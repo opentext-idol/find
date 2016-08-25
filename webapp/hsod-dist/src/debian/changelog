@@ -1,3 +1,9 @@
+find-ansible (0.0.6) precise; urgency=low
+
+  * Added SSO page POST URL to config file.
+
+ -- Matthew Gordon <matthew.gordon2@hpe.com>  Fri, 25 Aug 2016 16:00:00 +0100
+
 find-ansible (0.0.5) precise; urgency=low
 
   * Added endpoint and SSO page URLs to config file.

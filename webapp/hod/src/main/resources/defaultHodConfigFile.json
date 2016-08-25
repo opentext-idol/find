@@ -18,7 +18,8 @@
         "activeIndexes": [],
         "endpointUrl": "https://api.havenondemand.com",
         "publicIndexesEnabled": false,
-        "ssoPageUrl": "https://www.havenondemand.com/sso.html"
+        "ssoPageGetUrl": "https://www.havenondemand.com/sso.html",
+        "ssoPagePostUrl": "https://www.havenondemand.com/sso"
     },
     "queryManipulation": {
         "profile": "search_default_profile",

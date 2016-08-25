@@ -27,7 +27,6 @@ import java.net.URI;
  */
 @Controller
 public class HodErrorController extends CustomErrorController {
-    static final String STATUS_CODE_PARAM = "statusCode";
     static final String MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_MAIN = "error.clientAuthenticationErrorMain";
     private static final String MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_SUB = "error.clientAuthenticationErrorSub";
 
@@ -45,15 +44,12 @@ public class HodErrorController extends CustomErrorController {
     }
 
     @RequestMapping(DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH)
-    public ModelAndView clientAuthenticationErrorPage(
-            @RequestParam(STATUS_CODE_PARAM) final int statusCode,
-            final HttpServletRequest request
-    ) {
+    public ModelAndView clientAuthenticationErrorPage(final HttpServletRequest request) {
         return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
                 .setRequest(request)
                 .setMainMessageCode(MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_MAIN)
                 .setSubMessageCode(MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_SUB)
-                .setStatusCode(statusCode)
+                .setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
                 .setButtonHref(getAuthenticationErrorUrl(request))
                 .build());
     }

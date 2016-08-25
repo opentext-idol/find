@@ -167,7 +167,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
 
     @Override
     public URL getSsoUrl() {
-        return hod.getSsoPageUrl();
+        return hod.getSsoPageGetUrl();
     }
 
     @JsonPOJOBuilder(withPrefix = "set")

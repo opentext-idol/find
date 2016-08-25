@@ -18,10 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class HodErrorControllerIT extends AbstractFindIT {
     @Test
     public void clientAuthenticationErrorPage() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH)
-                .param(HodErrorController.STATUS_CODE_PARAM, String.valueOf(HttpStatus.SC_FORBIDDEN))
-                .with(authentication(userAuth()));
-
-        mockMvc.perform(requestBuilder).andExpect(status().isOk());
+        mockMvc.perform(get(DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH)).andExpect(status().isOk());
     }
 }

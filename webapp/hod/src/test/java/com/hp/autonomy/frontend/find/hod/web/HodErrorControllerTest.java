@@ -48,7 +48,7 @@ public class HodErrorControllerTest extends AbstractErrorControllerTest<HodError
 
     @Test
     public void clientAuthenticationErrorPage() {
-        assertNotNull(errorController.clientAuthenticationErrorPage(HttpStatus.SC_GONE, request));
+        assertNotNull(errorController.clientAuthenticationErrorPage(request));
         verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<>("mainMessageCode", is(HodErrorController.MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_MAIN))));
     }
 }

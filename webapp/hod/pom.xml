@@ -136,6 +136,13 @@
             <version>${haven.search.components.version}</version>
         </dependency>
 
+        <!-- Overriding the version supplied by haven-search-components since the ISO SSO process does not support cookie-less SSO -->
+        <dependency>
+            <groupId>com.hp.autonomy.hod</groupId>
+            <artifactId>hod-sso-spring-security</artifactId>
+            <version>0.7.1</version>
+        </dependency>
+
         <!-- It's not clear why, but we need to define dependency here as well, not just at the core level.  Otherwise the hibernate classloader does not pick this up. -->
         <dependency>
             <groupId>org.jadira.usertype</groupId>
