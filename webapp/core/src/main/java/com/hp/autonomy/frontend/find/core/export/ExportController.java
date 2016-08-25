@@ -79,13 +79,13 @@ public abstract class ExportController<S extends Serializable, E extends Excepti
         response.reset();
 
         return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
-                .setRequest(request)
-                .setMainMessageCode("error.internalServerErrorMain")
-                .setSubMessageCode("error.internalServerErrorSub")
-                .setSubMessageArguments(null)
-                .setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .setContactSupport(true)
-                .setException(e)
-                .build());
+                                                              .setRequest(request)
+                                                              .setMainMessageCode("error.internalServerErrorMain")
+                                                              .setSubMessageCode("error.internalServerErrorSub")
+                                                              .setSubMessageArguments(null)
+                                                              .setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                                                              .setContactSupport(true)
+                                                              .setException(e)
+                                                              .build());
     }
 }

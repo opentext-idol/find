@@ -25,10 +25,16 @@ import java.util.stream.Stream;
 @Component
 public class CsvExportStrategy implements ExportStrategy {
     private final ConfigService<? extends HavenSearchCapable> configService;
+    private final byte[] outputPrefix = new byte[]{(byte)0xEF, (byte)0xBB, (byte)0xBF};/*UTF-8 BOM*/
 
     @Autowired
     public CsvExportStrategy(final ConfigService<? extends HavenSearchCapable> configService) {
         this.configService = configService;
+    }
+
+    @Override
+    public boolean prependOutput() {
+        return true;
     }
 
     @Override
@@ -95,6 +101,11 @@ public class CsvExportStrategy implements ExportStrategy {
     @Override
     public ExportFormat getExportFormat() {
         return ExportFormat.CSV;
+    }
+
+    @Override
+    public byte[] getOutputPrefix() {
+        return outputPrefix;
     }
 
     private Collection<FieldInfo<?>> getFieldConfig() {

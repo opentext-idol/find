@@ -9,6 +9,7 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.transport.AciResponseInputStream;
 import com.google.common.collect.ImmutableMap;
+import com.hp.autonomy.frontend.find.core.export.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
 import com.hp.autonomy.frontend.find.core.export.MetadataNode;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
@@ -41,12 +42,12 @@ public class ExportQueryResponseProcessorTest {
 
     @Before
     public void setUp() {
+        outputStream = new ByteArrayOutputStream();
+        processor = new ExportQueryResponseProcessor(exportStrategy, outputStream, Collections.emptyList());
         fieldNames = Arrays.asList("Reference", "Database", "Summary", "Date", "categories");
         when(exportStrategy.getFieldNames(any(MetadataNode[].class), eq(Collections.emptyList()))).thenReturn(fieldNames);
         when(exportStrategy.getConfiguredFieldsById()).thenReturn(ImmutableMap.of("CATEGORY", new FieldInfo<String>("categories", Collections.singleton("CATEGORY"), FieldType.STRING, false)));
 
-        outputStream = new ByteArrayOutputStream();
-        processor = new ExportQueryResponseProcessor(exportStrategy, outputStream, Collections.emptyList());
     }
 
     @Test

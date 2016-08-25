@@ -10,7 +10,6 @@ import lombok.Getter;
 @Getter
 public enum ExportFormat {
     CSV("text/csv", "csv");
-
     private final String mimeType;
     private final String extension;
 

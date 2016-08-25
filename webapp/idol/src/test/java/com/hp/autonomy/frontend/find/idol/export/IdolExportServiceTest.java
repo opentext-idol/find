@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.idol.export;
 
-
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;

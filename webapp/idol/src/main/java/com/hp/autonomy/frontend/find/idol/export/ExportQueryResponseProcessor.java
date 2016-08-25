@@ -38,10 +38,11 @@ class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
     private final Collection<String> selectedFieldIds;
 
     ExportQueryResponseProcessor(final ExportStrategy exportStrategy, final OutputStream outputStream, final Collection<String> selectedFieldIds) {
-        this.exportStrategy = exportStrategy;
         this.outputStream = outputStream;
-        configuredFields = exportStrategy.getConfiguredFieldsByName();
         this.selectedFieldIds = selectedFieldIds;
+
+        this.exportStrategy = exportStrategy;
+        configuredFields = exportStrategy.getConfiguredFieldsByName();
     }
 
     @Override
@@ -53,6 +54,11 @@ class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
             }
 
             final Collection<String> fieldNames = exportStrategy.getFieldNames(IdolMetadataNode.values(), selectedFieldIds);
+
+            //TODO: implement code guarding against exporting to the stream before the prefix is in place.
+            if(exportStrategy.prependOutput()) {
+                outputStream.write(exportStrategy.getOutputPrefix());
+            }
 
             if(exportStrategy.writeHeader()) {
                 exportStrategy.exportRecord(outputStream, fieldNames);

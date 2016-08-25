@@ -18,9 +18,16 @@ import java.util.Map;
  */
 public interface ExportStrategy {
     /**
+     * Returns flag controlling whether to prepend the output with a format-specific prefix (e.g. UTF-8 BOM).
+     *
+     * @return true if using special prefix, false otherwise
+     */
+    boolean prependOutput();
+
+    /**
      * Whether to write a header line using field names
      *
-     * @return Whether to write a header line using field names
+     * @return true if writing a header line, false otherwise
      */
     boolean writeHeader();
 
@@ -70,4 +77,11 @@ public interface ExportStrategy {
      * @return the {@link ExportFormat} associated with this format
      */
     ExportFormat getExportFormat();
+
+    /**
+     * Retrieve the output prefix controlled by prependOutput()
+     *
+     * @return byte of sequence to write to output stream before commencing the file export (e.g. UTF-8 BOM)
+     */
+    byte[] getOutputPrefix();
 }

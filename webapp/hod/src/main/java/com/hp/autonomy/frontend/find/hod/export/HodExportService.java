@@ -49,6 +49,11 @@ public class HodExportService implements ExportService<ResourceIdentifier, HodEr
         final Documents<HodSearchResult> documents = documentsService.queryTextIndex(searchRequest);
 
         try {
+            //TODO: implement code guarding against exporting to the stream before the prefix is in place.
+            if(exportStrategy.prependOutput()) {
+                outputStream.write(exportStrategy.getOutputPrefix());
+            }
+
             if(exportStrategy.writeHeader()) {
                 exportStrategy.exportRecord(outputStream, fieldIds);
             }
