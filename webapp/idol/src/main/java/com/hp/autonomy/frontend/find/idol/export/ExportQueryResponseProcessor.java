@@ -55,10 +55,8 @@ class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
 
             final Collection<String> fieldNames = exportStrategy.getFieldNames(IdolMetadataNode.values(), selectedFieldIds);
 
-            //TODO: implement code guarding against exporting to the stream before the prefix is in place.
-            if(exportStrategy.prependOutput()) {
-                outputStream.write(exportStrategy.getOutputPrefix());
-            }
+            //Caution: outputStream should not be written to before call to prependOutput().
+            exportStrategy.prependOutput(outputStream);
 
             if(exportStrategy.writeHeader()) {
                 exportStrategy.exportRecord(outputStream, fieldNames);

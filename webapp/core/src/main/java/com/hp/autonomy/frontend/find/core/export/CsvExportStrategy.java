@@ -24,17 +24,14 @@ import java.util.stream.Stream;
 
 @Component
 public class CsvExportStrategy implements ExportStrategy {
+    // Excel can't cope with CSV files without a BOM (FIND-498)
+    private static final byte[] UTF8_BOM = new byte[]{(byte)0xEF, (byte)0xBB, (byte)0xBF};
+
     private final ConfigService<? extends HavenSearchCapable> configService;
-    private final byte[] outputPrefix = new byte[]{(byte)0xEF, (byte)0xBB, (byte)0xBF};/*UTF-8 BOM*/
 
     @Autowired
     public CsvExportStrategy(final ConfigService<? extends HavenSearchCapable> configService) {
         this.configService = configService;
-    }
-
-    @Override
-    public boolean prependOutput() {
-        return true;
     }
 
     @Override
@@ -104,8 +101,8 @@ public class CsvExportStrategy implements ExportStrategy {
     }
 
     @Override
-    public byte[] getOutputPrefix() {
-        return outputPrefix;
+    public void prependOutput(final OutputStream outputStream) throws IOException {
+        outputStream.write(UTF8_BOM);
     }
 
     private Collection<FieldInfo<?>> getFieldConfig() {
