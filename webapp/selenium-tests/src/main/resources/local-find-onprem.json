@@ -2,7 +2,7 @@
   "app": {
     "type": "On Premise",
     "deployment": "develop",
-    "find": "http://localhost:8082"
+    "find": "http://localhost:8081"
   },
   "selenium": {
     "browsers": ["chrome"],
@@ -11,8 +11,8 @@
   "users": {
     "default": {
       "role": "Admin",
-      "username": "selenium",
-      "password": "q"
+      "username": "i",
+      "password": "im"
     }
   }
 }

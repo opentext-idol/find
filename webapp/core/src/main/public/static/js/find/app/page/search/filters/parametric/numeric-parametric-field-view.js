@@ -15,6 +15,7 @@ define([
     'find/app/model/bucketed-parametric-collection',
     'parametric-refinement/prettify-field-name',
     'parametric-refinement/to-field-text-node',
+    'find/app/util/date-picker',
     'find/app/util/model-any-changed-attribute-listener',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-numeric-input.html',
@@ -22,12 +23,10 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
 ], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, numericWidget,
-            BucketedParametricCollection, prettifyFieldName, toFieldTextNode, addChangeListener,
+            BucketedParametricCollection, prettifyFieldName, toFieldTextNode, datePicker, addChangeListener,
             template, numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
 
     'use strict';
-
-    var DATE_WIDGET_FORMAT = 'YYYY-MM-DD HH:mm';
 
     function plus(a, b) {
         return a + b;
@@ -357,27 +356,22 @@ define([
         },
         dateFormatting: {
             format: function(unformattedString) {
-                return moment(unformattedString * 1000).format(DATE_WIDGET_FORMAT);
+                return moment(unformattedString * 1000).format(datePicker.DATE_WIDGET_FORMAT);
             },
             parse: function(formattedString) {
-                return moment(formattedString, DATE_WIDGET_FORMAT).unix();
+                return moment(formattedString, datePicker.DATE_WIDGET_FORMAT).unix();
             },
             parseBoundarySelection: function(input) {
                 // Epoch seconds are not decimal
                 return Math.round(input);
             },
             render: function($el) {
-                $el.find('.results-filter-date').datetimepicker({
-                    format: DATE_WIDGET_FORMAT,
-                    icons: {
-                        time: 'hp-icon hp-fw hp-clock',
-                        date: 'hp-icon hp-fw hp-calendar',
-                        up: 'hp-icon hp-fw hp-chevron-up',
-                        down: 'hp-icon hp-fw hp-chevron-down',
-                        next: 'hp-icon hp-fw hp-chevron-right',
-                        previous: 'hp-icon hp-fw hp-chevron-left'
-                    }
-                });
+                datePicker.render($el.find('.numeric-parametric-min-input'), function () {
+                    this.updateRestrictions([this.readMinInput(), null]);
+                }.bind(this));
+                datePicker.render($el.find('.numeric-parametric-max-input'), function () {
+                    this.updateRestrictions([null, this.readMaxInput()]);
+                }.bind(this));
             }
         }
     });
