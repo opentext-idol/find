@@ -3,7 +3,7 @@ define([
     'underscore'
 ], function($, _) {
     "use strict";
-    
+
     var config;
 
     var parseBooleanOption = function (config, uiCustomization, option) {
@@ -24,12 +24,13 @@ define([
                 //noinspection JSUnresolvedFunction,JSUnresolvedVariable
                 config.hasBiRole = _.contains(config.roles, 'ROLE_BI');
             }
-            
+
             //noinspection JSUnresolvedVariable
             var uiCustomization = config.uiCustomization;
             if (uiCustomization) {
                 config.directAccessLink = parseBooleanOption(config, uiCustomization, 'directAccessLink');
                 config.enableMetaFilter = parseBooleanOption(config, uiCustomization, 'enableMetaFilter');
+                config.errorCallSupportString = uiCustomization.errorCallSupportString;
             }
         }
 

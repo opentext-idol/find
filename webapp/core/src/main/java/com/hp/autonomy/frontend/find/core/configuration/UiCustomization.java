@@ -25,6 +25,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
     private final UiCustomizationOptions options;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final Map<String, String> specialUrlPrefixes;
+    private final String errorCallSupportString;
 
     @Override
     public UiCustomization merge(final UiCustomization uiCustomization) {
@@ -36,6 +37,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
             return builder()
                     .setOptions(options.merge(uiCustomization.options))
                     .setSpecialUrlPrefixes(specialUrlPrefixes)
+                    .setErrorCallSupportString(uiCustomization.errorCallSupportString)
                     .build();
         }
     }
