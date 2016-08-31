@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 define([
     'backbone',
     'jquery',
@@ -13,22 +17,24 @@ define([
     'find/app/util/events',
     'find/app/page/search/results/add-links-to-summary',
     'find/app/configuration',
+    'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/loading-spinner.html',
     'moment',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration, template,
-            loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
-
+            ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration,
+            generateErrorTemplateFunction, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
+    "use strict";
+//???rename generateerrorthingy to sth more sensible - in other files too
     var SCROLL_INCREMENT = 30;
     var INFINITE_SCROLL_POSITION_PIXELS = 500;
 
     function infiniteScroll() {
         var resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
 
-        if (resultsPresent && this.resultsFinished && !this.endOfResults) {
+        if(resultsPresent && this.resultsFinished && !this.endOfResults) {
             this.start = this.maxResults + 1;
             this.maxResults += SCROLL_INCREMENT;
 
@@ -39,12 +45,8 @@ define([
     }
 
     return Backbone.View.extend({
-        //to be overridden
-        generateErrorMessage: null,
-
-        template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
-        messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
+        messageTemplate: _.template('<div class="result-message span10"><%-message%></div>'),
 
         events: function() {
             var events = {
@@ -60,7 +62,7 @@ define([
                     event.stopPropagation();
                     var cid = $(event.target).closest('[data-cid]').data('cid');
                     var documentModel = this.documentsCollection.get(cid);
-                    if (!documentModel){
+                    if(!documentModel) {
                         documentModel = this.promotionsCollection.get(cid);
                     }
                     vent.navigateToSuggestRoute(documentModel);
@@ -86,7 +88,7 @@ define([
             // Preview mode is enabled when a preview mode model is provided
             this.previewModeModel = options.previewModeModel;
 
-            if (this.indexesCollection) {
+            if(this.indexesCollection) {
                 this.selectedIndexesCollection = options.queryState.selectedIndexes;
             }
 
@@ -94,7 +96,7 @@ define([
                 config: resultsRendererConfig
             });
 
-            if (this.showPromotions) {
+            if(this.showPromotions) {
                 this.promotionsCollection = new PromotionsCollection();
             }
 
@@ -111,18 +113,18 @@ define([
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
 
             this.listenTo(this.scrollModel, 'change', function() {
-                if (this.scrollModel.get('scrollTop') > this.scrollModel.get('scrollHeight') - INFINITE_SCROLL_POSITION_PIXELS - this.scrollModel.get('innerHeight')) {
+                if(this.scrollModel.get('scrollTop') > this.scrollModel.get('scrollHeight') - INFINITE_SCROLL_POSITION_PIXELS - this.scrollModel.get('innerHeight')) {
                     this.infiniteScroll();
                 }
             });
 
-            if (this.previewModeModel) {
+            if(this.previewModeModel) {
                 this.listenTo(this.previewModeModel, 'change:document', this.updateSelectedDocument);
             }
         },
 
         render: function() {
-            this.$el.html(this.template({i18n: i18n}));
+            this.$el.html(html);
 
             this.$loadingSpinner = $(this.loadingTemplate);
 
@@ -131,7 +133,7 @@ define([
             this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
-            if (this.showPromotions) {
+            if(this.showPromotions) {
                 this.listenTo(this.promotionsCollection, 'add', function(model) {
                     this.formatResult(model, true);
                 });
@@ -141,7 +143,10 @@ define([
                     this.clearLoadingSpinner();
                 });
 
-                this.listenTo(this.promotionsCollection, 'error', function(collection, xhr) {
+                // TODO: We're basically ignoring promotions errors here -- implement robust logging procedure.
+                // The Find User shouldn't hear about promotions, but the way we are doing it now, the DataAdmin or
+                // SysAdmin may never find out that promotions-related errors are affecting Users' searches.
+                this.listenTo(this.promotionsCollection, 'error', function() {
                     this.promotionsFinished = true;
                     this.clearLoadingSpinner();
                 });
@@ -157,9 +162,9 @@ define([
 
                 this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
 
-                if (this.endOfResults && !this.documentsCollection.isEmpty()) {
+                if(this.endOfResults && !this.documentsCollection.isEmpty()) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noMoreResults"]}));
-                } else if (this.documentsCollection.isEmpty()) {
+                } else if(this.documentsCollection.isEmpty()) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noResults"]}));
                 }
             });
@@ -167,18 +172,16 @@ define([
             this.listenTo(this.documentsCollection, 'error', function(collection, xhr) {
                 this.resultsFinished = true;
                 this.clearLoadingSpinner();
-
                 this.handleError(xhr);
             });
 
-
             this.refreshResults();
 
-            if (this.entityCollection) {
+            if(this.entityCollection) {
                 this.updateEntityHighlighting();
             }
 
-            if (this.previewModeModel) {
+            if(this.previewModeModel) {
                 this.$('.main-results-content').addClass('preview-mode');
                 this.updateSelectedDocument();
             } else {
@@ -187,8 +190,8 @@ define([
         },
 
         refreshResults: function() {
-            if (this.fetchStrategy.validateQuery(this.queryModel)) {
-                if (this.fetchStrategy.waitForIndexes(this.queryModel)) {
+            if(this.fetchStrategy.validateQuery(this.queryModel)) {
+                if(this.fetchStrategy.waitForIndexes(this.queryModel)) {
                     this.$loadingSpinner.addClass('hide');
                     this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes['search.error.noIndexes']}));
                 } else {
@@ -198,7 +201,7 @@ define([
                     this.loadData(false);
                     this.$('.main-results-content .promotions').empty();
 
-                    if (this.$loadingSpinner) {
+                    if(this.$loadingSpinner) {
                         this.$loadingSpinner.removeClass('hide');
                     }
                     this.toggleError(false);
@@ -208,7 +211,7 @@ define([
         },
 
         clearLoadingSpinner: function() {
-            if (this.resultsFinished && this.promotionsFinished || !this.showPromotions) {
+            if(this.resultsFinished && this.promotionsFinished || !this.showPromotions) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
@@ -217,7 +220,7 @@ define([
             var documentModel = this.previewModeModel.get('document');
             this.$('.main-results-container').removeClass('selected-document');
 
-            if (documentModel !== null) {
+            if(documentModel !== null) {
                 this.$('.main-results-container[data-cid="' + documentModel.cid + '"]').addClass('selected-document');
             }
         },
@@ -225,27 +228,39 @@ define([
         formatResult: function(model, isPromotion) {
             var $newResult = this.resultRenderer.getResult(model, isPromotion, Boolean(this.previewModeModel), configuration().directAccessLink);
 
-            if (isPromotion) {
+            if(isPromotion) {
                 this.$('.main-results-content .promotions').append($newResult);
             } else {
                 this.$('.main-results-content .results').append($newResult);
             }
         },
 
+        generateErrorMessage: function(xhr) {
+            if(xhr.responseJSON) {
+                var xhrError = xhr.responseJSON.hodErrorCode || xhr.responseJSON.idolErrorId;
+                return generateErrorTemplateFunction({
+                    errorDetails: xhr.responseJSON.message,
+                    errorDetailsFallback: xhr.responseJSON.uuid,
+                    errorLookup: xhrError
+                });
+            } else {
+                return generateErrorTemplateFunction();
+            }
+        },
+
         handleError: function(xhr) {
             this.toggleError(true);
-            var message = this.generateErrorMessage(xhr);
-            this.$('.main-results-content .error-message').text(message);
+            this.$('.main-results-content .results-view-error').empty().append(this.generateErrorMessage(xhr));
         },
 
         toggleError: function(on) {
             this.$('.main-results-content .promotions').toggleClass('hide', on);
             this.$('.main-results-content .results').toggleClass('hide', on);
-            this.$('.main-results-content .error').toggleClass('hide', !on);
+            this.$('.main-results-content .results-view-error').toggleClass('hide', !on);
         },
 
         loadData: function(infiniteScroll) {
-            if (this.$loadingSpinner) {
+            if(this.$loadingSpinner) {
                 this.$loadingSpinner.removeClass('hide');
             }
 
@@ -265,17 +280,17 @@ define([
                 remove: !infiniteScroll,
                 error: function(collection) {
                     // if returns an error remove previous models from documentsCollection
-                    if (collection) {
+                    if(collection) {
                         collection.reset();
                     }
                 },
                 success: function() {
-                    if (this.indexesCollection && this.documentsCollection.warnings && this.documentsCollection.warnings.invalidDatabases) {
+                    if(this.indexesCollection && this.documentsCollection.warnings && this.documentsCollection.warnings.invalidDatabases) {
                         // Invalid databases have been deleted from IDOL; mark them as such in the indexes collection
                         this.documentsCollection.warnings.invalidDatabases.forEach(function(name) {
                             var indexModel = this.indexesCollection.findWhere({name: name});
 
-                            if (indexModel) {
+                            if(indexModel) {
                                 indexModel.set('deleted', true);
                             }
 
@@ -285,10 +300,10 @@ define([
                 }.bind(this)
             });
 
-            if (!infiniteScroll && this.showPromotions) {
+            if(!infiniteScroll && this.showPromotions) {
                 this.promotionsFinished = false;
 
-                var promotionsRequestData =  _.extend({
+                var promotionsRequestData = _.extend({
                     start: this.start,
                     max_results: this.maxResults,
                     sort: this.queryModel.get('sort'),
@@ -308,7 +323,7 @@ define([
         openPreview: function(e) {
             var $target = $(e.currentTarget).closest('.main-results-container');
 
-            if ($target.hasClass('selected-document')) {
+            if($target.hasClass('selected-document')) {
                 // disable preview mode
                 this.previewModeModel.set({document: null});
             } else {
@@ -319,7 +334,7 @@ define([
                 var model = collection.get(cid);
                 this.previewModeModel.set({document: model});
 
-                if (!isPromotion) {
+                if(!isPromotion) {
                     events().preview(collection.indexOf(model) + 1);
                 }
             }
@@ -331,5 +346,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-
 });

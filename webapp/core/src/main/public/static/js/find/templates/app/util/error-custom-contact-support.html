@@ -1,0 +1,12 @@
+<!-- TOOD: Is error needed? -->
+<div class="error well">
+    <span><%- errorHeader %></span>
+    <div class="error-message-for-user"><%- messageToUser %></div>
+    <div class="error-contact-support"><%- messageContactSupport %></div>
+    <div class="error-details-for-techsupport">
+        <%- errorDetails %>
+        <% if(errorLookup) { %>
+        <%- ' (' + errorLookup + ')' %>
+        <% } %>
+    </div>
+</div>
