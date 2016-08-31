@@ -3,8 +3,13 @@
         <i class="hp-icon hp-close clickable close-preview-mode"></i>
     </span>
     <button type="button" class="preview-mode-open-detail-button btn button-primary m-b-nil m-t-xs">
-        <%- i18n['search.document.detail.open'] %>
+        <%- i18n['search.document.detail.expand'] %>
     </button>
+    <% if(href) { %>
+        <a class="document-detail-open-original-link btn button-secondary m-b-nil m-t-xs" href="<%= href %>" target="_blank">
+            <%- i18n['search.document.detail.openOriginal'] %>
+        </a>
+    <% } %>
     <% if(viewHighlighting) { %>
         <button type="button" class="preview-mode-highlight-query-terms btn button-primary m-b-nil m-t-xs">
             <%- i18n['search.document.detail.highlightQueryTerms'] %>

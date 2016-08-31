@@ -10,12 +10,13 @@ define([
     'find/app/configuration',
     'find/app/util/database-name-resolver',
     'find/app/util/events',
+    'find/app/util/url-manipulator',
     'text!find/templates/app/page/search/document/preview-mode-view.html',
     'text!find/templates/app/page/search/document/preview-mode-metadata.html',
     'text!find/templates/app/page/search/document/view-mode-document.html',
     'text!find/templates/app/page/search/document/view-media-player.html',
     'text!css/result-highlighting.css'
-], function(Backbone, _, $, i18n, i18nIndexes, vent, viewClient, DocumentModel, configuration, databaseNameResolver, events, template, metaDataTemplate,
+], function(Backbone, _, $, i18n, i18nIndexes, vent, viewClient, DocumentModel, configuration, databaseNameResolver, events, urlManipulator, template, metaDataTemplate,
             documentTemplate, mediaTemplate, highlightingRule) {
 
     'use strict';
@@ -63,8 +64,14 @@ define([
         },
 
         render: function() {
+            var href;
+            if (this.model.get('url')) {
+                href = urlManipulator.addSpecialUrlPrefix(this.model.get('contentType'), this.model.get('url'));
+            }
+
             this.$el.html(this.template({
                 i18n: i18n,
+                href: href,
                 mmapBaseUrl: configuration().mmapBaseUrl,
                 mmapUrl: this.model.get('mmapUrl'),
                 viewHighlighting: this.highlighting

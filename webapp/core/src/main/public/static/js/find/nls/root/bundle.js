@@ -86,7 +86,7 @@ define([
         'search.document.date': 'Date',
         'search.document.dateModified': 'Date Modified',
         'search.document.dateCreated': 'Date Created',
-        'search.document.detail.open': 'Open',
+        'search.document.detail.expand': 'Expand Preview',
         'search.document.detail.openOriginal': 'Open Original',
         'search.document.detail.highlightQueryTerms': 'Highlight Query Terms',
         'search.document.detail.tabs.authors': 'Authors',
