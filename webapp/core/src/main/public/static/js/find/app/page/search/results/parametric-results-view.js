@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 define([
     'backbone',
     'find/app/model/dependent-parametric-collection',
@@ -7,19 +11,19 @@ define([
     'find/app/page/search/results/field-selection-view',
     'text!find/templates/app/page/search/results/parametric-results-view.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function (Backbone, DependentParametricCollection, _, $, i18n, FieldSelectionView, template, loadingSpinnerTemplate) {
+], function(Backbone, DependentParametricCollection, _, $, i18n, FieldSelectionView, template, loadingSpinnerTemplate) {
     'use strict';
 
-    var fieldInvalid = function (field, fields) {
+    var fieldInvalid = function(field, fields) {
         return !field || !_.contains(fields, field);
     };
 
-    function getClickedParameters (data, fields, selectedParameters) {
-        if(data.depth !== 0){
+    function getClickedParameters(data, fields, selectedParameters) {
+        if(data.depth !== 0) {
             var parameter = {field: fields[data.depth - 1], value: data.text};
             selectedParameters.push(parameter);
 
-            if (data.parent && data.parent.depth !== 0) {
+            if(data.parent && data.parent.depth !== 0) {
                 getClickedParameters(data.parent, fields, selectedParameters)
             }
         }
@@ -33,7 +37,7 @@ define([
         template: _.template(template),
         loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.queryModel = options.queryModel;
             this.savedSearchModel = options.savedSearchModel;
             this.parametricCollection = options.restrictedParametricCollection;
@@ -55,7 +59,7 @@ define([
 
         update: $.noop,
 
-        render: function () {
+        render: function() {
             this.$el.html(this.template({
                 i18n: i18n,
                 loadingHtml: this.loadingHtml
@@ -66,6 +70,8 @@ define([
             this.$content = this.$('.parametric-content').addClass('invisible');
 
             this.$message = this.$('.parametric-view-message');
+
+            this.$errorMessage = this.$('.parametric-view-error-message');
 
             this.$parametricSelections = this.$('.parametric-selections').addClass('hide');
 
@@ -87,14 +93,14 @@ define([
 
             this.makeSelectionsIfData();
 
-            this.updateSelections();           
+            this.updateSelections();
 
             this.onClick = this.savedSearchModel.get('type') !== SNAPSHOT ? this.onSavedSearchClick : _.noop;
 
             this.updateParametricCollection();
         },
 
-        toggleLoading: function () {
+        toggleLoading: function() {
             this.$loadingSpinner.toggleClass('hide', !this.model.get('loading'));
             this.$content.toggleClass('invisible', this.model.get('loading'));
             this.$parametricSelections.toggleClass('hide', this.noMoreParametricFields());
@@ -102,9 +108,11 @@ define([
         },
 
         errorHandler: function(collection, event) {
-            if (event.status !== 0) {
+            // TODO: Check if one of the arguments is an xhr, pass on if so ???
+
+            if(event.status !== 0) {
                 this.model.set('loading', false);
-                this.updateMessage(this.errorMessage);
+                this.updateErrorMessage(this.errorMessage);
             }
         },
 
@@ -120,13 +128,13 @@ define([
             var selectedParameters = getClickedParameters(data, this.fieldsCollection.pluck('field'), []);
 
             // empty value means padding element was clicked on
-            if (!_.findWhere(selectedParameters, {value: ''})) {
+            if(!_.findWhere(selectedParameters, {value: ''})) {
                 this.selectedParametricValues.add(selectedParameters)
             }
         },
 
         updateParametricCollection: function() {
-            if (!this.parametricCollection.isEmpty() && !this.noMoreParametricFields()) {
+            if(!this.parametricCollection.isEmpty() && !this.noMoreParametricFields()) {
                 this.$parametricSelections.removeClass('hide');
                 this.makeSelectionsIfData();
             } else {
@@ -139,9 +147,9 @@ define([
         updateData: function() {
             this.model.set('loading', false);
 
-            if (!this.parametricCollection.fetching && !this.dependentParametricCollection.isEmpty()) {
+            if(!this.parametricCollection.fetching && !this.dependentParametricCollection.isEmpty()) {
                 this.update();
-            } else if (this.dependentParametricCollection.isEmpty()) {
+            } else if(this.dependentParametricCollection.isEmpty()) {
                 this.model.set('loading', false);
                 this.updateMessage(this.emptyDependentMessage)
             }
@@ -154,8 +162,8 @@ define([
             this.secondSelection();
         },
 
-        firstSelection: function () {
-            if (this.firstChosen) {
+        firstSelection: function() {
+            if(this.firstChosen) {
                 this.firstChosen.remove();
             }
 
@@ -170,8 +178,8 @@ define([
             this.firstChosen.render();
         },
 
-        secondSelection: function () {
-            if (this.secondChosen) {
+        secondSelection: function() {
+            if(this.secondChosen) {
                 this.secondChosen.remove();
             }
 
@@ -187,33 +195,33 @@ define([
         },
 
         makeSelectionsIfData: function() {
-            if (!this.parametricCollection.isEmpty()) {
+            if(!this.parametricCollection.isEmpty()) {
                 this.resolveFieldSelections();
                 this.updateSelections();
                 this.fetchDependentFields();
             }
         },
 
-        resolveFieldSelections: function () {
+        resolveFieldSelections: function() {
             var fields = _.difference(this.parametricCollection.pluck('name'), this.selectedParametricValues.pluck('field'));
 
             var primaryModel = this.fieldsCollection.at(0);
             var secondaryModel = this.fieldsCollection.at(1);
 
-            if (fieldInvalid(primaryModel.get('field'), fields)) {
+            if(fieldInvalid(primaryModel.get('field'), fields)) {
                 primaryModel.set('field', fields.sort()[0]);
                 secondaryModel.set('field', '');
             }
-            else if (fieldInvalid(secondaryModel.get('field'))) {
+            else if(fieldInvalid(secondaryModel.get('field'))) {
                 secondaryModel.set('field', '');
             }
         },
 
-        fetchDependentFields: function () {
+        fetchDependentFields: function() {
             var first = this.fieldsCollection.at(0).get('field');
             var second = this.fieldsCollection.at(1).get('field');
 
-            if (first) {
+            if(first) {
 
                 this.dependentParametricCollection.fetch({
                     data: {
@@ -233,25 +241,34 @@ define([
             }
         },
 
-        updateMessage: function (message) {
-            if (message) {
+        updateMessage: function(message) {
+            this.$errorMessage.empty();
+            if(message) {
                 this.$content.addClass('invisible');
-                this.$message.text(message);
+                this.$message.empty().append(message);
             } else {
                 this.$message.empty();
             }
-
         },
 
-        toggleContentDisplay: function () {
+        updateErrorMessage: function(message) {
+            this.$message.empty();
+            if(message) {
+                this.$content.addClass('invisible');
+                this.$errorMessage.empty().append(message);
+            } else {
+                this.$errorMessage.empty();
+            }
+        },
+
+        toggleContentDisplay: function() {
             this.$content.toggleClass('invisible', this.parametricCollection.isEmpty() || this.dependentParametricCollection.isEmpty() || this.noMoreParametricFields());
         },
 
-        noMoreParametricFields: function () {
-            return _.isEmpty(this.parametricCollection.reject(function (model) {
-                    return this.selectedParametricValues.findWhere({field: model.get('name')});
-                }, this), this);
+        noMoreParametricFields: function() {
+            return _.isEmpty(this.parametricCollection.reject(function(model) {
+                return this.selectedParametricValues.findWhere({field: model.get('name')});
+            }, this), this);
         }
     });
-
 });

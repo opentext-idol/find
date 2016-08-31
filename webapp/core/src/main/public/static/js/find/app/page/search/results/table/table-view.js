@@ -2,15 +2,15 @@
  * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/table/table-collection',
+    'find/app/util/generate-error-support-message',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/results/table/table-view.html',
     'datatables.net-bs',
     'datatables.net-fixedColumns'
-], function(ParametricResultsView, TableCollection, i18n, tableTemplate) {
+], function(ParametricResultsView, TableCollection, generateErrorHtml, i18n, tableTemplate) {
     'use strict';
 
     var strings = {
@@ -34,7 +34,7 @@ define([
                 dependentParametricCollection: new TableCollection(),
                 emptyDependentMessage: i18n['search.resultsView.table.error.noDependentParametricValues'],
                 emptyMessage: i18n['search.resultsView.table.error.noParametricValues'],
-                errorMessage: i18n['search.resultsView.table.error.query']
+                errorMessage: generateErrorHtml({messageToUser: i18n['search.resultsView.table.error.query']})
             }, options))
         },
 
@@ -46,8 +46,8 @@ define([
             this.$table = this.$('table');
         },
 
-        update: function () {
-            if (this.dataTable) {
+        update: function() {
+            if(this.dataTable) {
                 this.dataTable.destroy();
 
                 // DataTables doesn't like tables that already have data
@@ -55,9 +55,9 @@ define([
             }
 
             // if field is null then nothing has loaded and datatables will fail
-            if (this.fieldsCollection.at(0).get('field')) {
+            if(this.fieldsCollection.at(0).get('field')) {
                 // columnNames will be empty if only one field is selected
-                if (_.isEmpty(this.dependentParametricCollection.columnNames)) {
+                if(_.isEmpty(this.dependentParametricCollection.columnNames)) {
                     this.$table.dataTable({
                         autoWidth: false,
                         data: this.dependentParametricCollection.toJSON(),
@@ -103,7 +103,7 @@ define([
         },
 
         remove: function() {
-            if (this.dataTable) {
+            if(this.dataTable) {
                 this.dataTable.destroy();
             }
 
