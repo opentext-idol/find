@@ -29,7 +29,7 @@ public class IdolGlobalExceptionHandler extends GlobalExceptionHandler {
     private static final String SECURITY_INFO_TOKEN_EXPIRED_ID = "AXEQUERY538";
 
     //This is not an exhaustive list (if adding do not forget to add DAH versions of all AXE errors)
-    private Set<String> userErrors = new HashSet<>(Arrays.asList(
+    private final Set<String> userErrors = new HashSet<>(Arrays.asList(
             "AXEQUERY502",
             "DAHQUERY502",
             "AXEQUERY504",
@@ -103,9 +103,9 @@ public class IdolGlobalExceptionHandler extends GlobalExceptionHandler {
 
     @Getter
     private final class SpellingErrorResponse extends ErrorResponse{
-        private Spelling autoCorrection;
+        private final Spelling autoCorrection;
 
-        public SpellingErrorResponse(final String message, final Spelling autoCorrection) {
+        SpellingErrorResponse(final String message, final Spelling autoCorrection) {
             super(message);
             this.autoCorrection = autoCorrection;
         }
