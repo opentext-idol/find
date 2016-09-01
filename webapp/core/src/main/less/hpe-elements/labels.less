@@ -1,0 +1,39 @@
+.label {
+  background-color: @accent;
+  color: @white;
+  font-family: 'Metric';
+  font-size: @labelSize;
+  font-weight: 400;
+  padding: 3px 8px;
+  text-shadow: none;
+  border-radius: 1.25em;
+  text-transform:uppercase;
+}
+
+
+.label-primary{
+  .label-accent;
+}
+
+.label-accent{
+  background-color:@accent;
+  color:@white;
+}
+.label-alert{
+  .label-accent;
+}
+
+.label-secondary{
+  .label-accent;
+}
+.label-warning{
+  background-color:@warning;
+  color:@white;
+}
+.label-error{
+  .label-warning;
+}
+
+.label-default{
+  .label-accent;
+}

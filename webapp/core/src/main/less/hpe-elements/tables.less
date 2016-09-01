@@ -1,0 +1,369 @@
+.table>thead>tr>th {
+  border-bottom-width: 1px;
+  .metric-semibold;
+}
+
+.table>tbody>tr>td {
+  border-top-color: @tableBorder;
+}
+
+.table>tbody>tr>th {
+  border-top: 0;
+}
+
+//pagination
+.pagination-details {
+  margin: 20px 0;
+  padding: 6px 12px;
+  vertical-align: top;
+  display: inline-block;
+}
+
+.pagination>.disabled>span,
+.pagination>.disabled>span:hover,
+.pagination>.disabled>span:focus,
+.pagination>.disabled>a,
+.pagination>.disabled>a:hover,
+.pagination>.disabled>a:focus {
+  cursor: default;
+}
+
+.pagination>.active>a,
+.pagination>.active>span,
+.pagination>.active>a:hover,
+.pagination>.active>span:hover,
+.pagination>.active>a:focus,
+.pagination>.active>span:focus {
+  background-color: @hpegreen;
+  border-color: @hpegreen;
+  box-shadow: none;
+}
+
+.pagination > li > a {
+  color: @secondary-font-color;
+  min-width: 45px;
+  border-radius: 0px !important;
+  border-color: @secondary-border;
+  font-family: Metric;
+  text-transform: uppercase;
+  padding: 4px 15px;
+  box-shadow: 1px 1px 3px @secondary-font-color;
+  &:hover{
+    background-color: @secondary-hover;
+    border:1px solid @secondary-hover-border;
+    color:@secondary-font-color;
+    box-shadow: 1px 1px 8px @secondary-font-color;
+  }
+  &:focus{
+    background-color: @white;
+    color: @secondary-font-color;
+    outline:0;
+    box-shadow: 0px 0px 1px 1px @accent;
+    z-index: 1;
+  }
+}
+
+table.dataTable {
+  clear: both;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  max-width: none;
+}
+
+.dataTables_filter label {
+  float: right;
+  font-weight: normal;
+}
+
+.dataTables_length label {
+  float: left;
+  text-align: left;
+  font-weight: normal;
+}
+
+.dataTables_paginate {
+  float: right;
+  margin: 0;
+  ul.pagination {
+    margin: 2px 0;
+    white-space: nowrap;
+  }
+}
+
+.dataTables_info {
+  padding-top: 8px;
+}
+
+.dataTable thead .sorting_asc {
+  background: url('../img/sort_asc.png') no-repeat center right;
+}
+
+.dataTable thead .sorting_desc {
+  background: url('../img/sort_desc.png') no-repeat center right;
+}
+
+.dataTable thead .sorting {
+  background: url('../img/sort.png') no-repeat center right;
+}
+
+// Documentation Grids
+.show-grid {
+  margin: 15px 0;
+}
+
+.show-grid [class^="col-"] {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border: 1px solid #ddd;
+  background-color: #eee !important;
+}
+
+//hover actions
+@table-hover-color: #fdfdfd;
+.table>tbody>tr.hover-actions>td.item-actions {
+  position: relative;
+}
+
+.table>tbody>tr.hover-actions>td .list-hover-actions {
+  top: 0;
+  padding: 0;
+  right: 10px;
+  position: absolute;
+  border: 0;
+  opacity:0;
+  width: 100%;
+  white-space: nowrap;
+}
+.table>tbody>tr.hover-actions:focus {
+  outline:0;
+}
+
+.table>tbody>tr.hover-actions:hover,
+.table>tbody>tr.hover-actions:focus {
+  background-color: @table-hover-color;
+  &>td.listview-document-bg {
+    background-color: @table-hover-color;
+  }
+  &>td .list-hover-actions {
+    opacity: 1;
+  }
+  &.multiple-select-item--selecting{
+    &>td .list-hover-actions {
+      opacity: 0;
+    }
+  }
+}
+
+.table>tbody>tr.hover-actions:focus {
+  background-color: @table-hover-color;
+  &>td.listview-document-bg {
+    background-color: @table-hover-color;
+  }
+}
+
+.table > tbody > tr.highlight{
+  background-color: #fdfdfd;
+}
+.table > tbody > tr.hover-actions.highlight > td.listview-document-bg {
+  background-color: #fdfdfd;
+}
+
+
+.list-hover-actions {
+  position: relative;
+  margin-top: 3px;
+  background-color: @table-hover-color;
+  box-shadow: -2px 0px 4px @table-hover-color;
+  a.list-hover-action {
+    display: inline-block;
+    padding: 6px;
+    color: @text-color;
+    opacity: 0.5;
+    &:hover, &:focus, &:active {
+      opacity: 1;
+      color: @text-color;
+      .elements-outline;
+    }
+  }
+}
+
+.select-link{
+      &:link{
+      color:@hpegreen;
+      border-bottom: 1px dotted @hpegreen;
+    }
+    &:hover, &:focus{
+      color:@black;
+      border-bottom: 1px solid @hpegreen;
+      outline-color: @accent;
+    }
+    &:active{
+      color:@black;
+      border-bottom: 1px solid @black;
+    }
+    &:visited{
+      color:@hpegreen;
+      border-bottom: 1px solid @hyperlink-color;
+    }
+}
+
+//multiple-list-select styling
+.multiple-list-select-selecting
+{
+  .multiple-select-link{
+    .select-link;
+  }
+}
+
+.multiple-list-select-selecting .cancel-btn {
+  line-height: 22px;
+  .button-secondary;
+}
+
+.table > tbody > tr.hover-actions:hover > td > .listview-document-bg,
+.table > tbody > tr.hover-actions:focus > td > .listview-document-bg,
+.table > tbody > tr.highlight > td > .listview-document-bg
+{
+  background-color: #fdfdfd;
+}
+.table > tbody > tr.single-select-selected-bg > td > .listview-document-bg{
+  background-color: #fdfdfd;
+}
+.table > tbody > tr.multiple-list-select-item--selecting:hover > td.item-actions .list-hover-actions,
+.table > tbody > tr.multiple-list-select-item--selecting > td.item-actions .list-hover-actions {
+  visibility: hidden;
+  opacity: 0;
+}
+.table > tbody > tr > td > .listview-document-bg{
+
+  vertical-align: middle;
+}
+//multiple select
+.multiple-select-container {
+  .multiple-select-action {
+    margin-right: 5px;
+  }
+  .multiple-select-error {
+    background-color: darken(@hpegreen, 4%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    line-height: 34px;
+    color: @white;
+    transition: all 200ms linear;
+    overflow: hidden;
+    .error-text {
+      display: inline-block;
+      padding: 10px 20px;
+    }
+    &.show-error {
+      height: 100%;
+    }
+  }
+}
+
+.multiple-select-selecting {
+  .btn {
+    vertical-align: baseline;
+  }
+  .btn-sm {
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+  .multiple-select-link {
+    .select-link;
+    vertical-align: text-top;
+  }
+  .cancel-btn {
+    line-height: 22px;
+    .button-secondary;
+  }
+}
+
+//multiple select item
+//disable hover actions
+.table>tbody>tr.multiple-select-item--selecting {
+  td:first-child {
+    position: relative;
+    transition: padding 100ms linear;
+    padding-left: 39px;
+    .hp-icon-check();
+    &:before {
+      position: absolute;
+      background: url(../img/blue_checkboxes.png) no-repeat;
+      background-position: -120px 0;
+      height: 22px;
+      width: 22px;
+      left: 8px;
+      top: 7px;
+      display: block;
+      content: "";
+    }
+  }
+  &.multiple-select-item--selected {
+    td:first-child:before {
+      background-position: -168px 0;
+    }
+  }
+  &>td.listview-document-bg,
+  &:hover>td.listview-document-bg {
+    background-color: transparent;
+  }
+  &:hover,
+  &.multiple-select-item--selected {
+    background-color: @table-hover-color;
+    cursor: pointer;
+    &>td.item-actions .list-hover-actions {
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
+}
+
+.affix-toolbar.multiple-select-mode {
+  background: @white;
+}
+
+.affix {
+  .multiple-select-selecting {
+    .btn-sm {
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+  }
+}
+
+.multiple-select-selecting .multiple-list-select-selecting{
+  .btn{
+    vertical-align: middle;
+  }
+}
+.selecting-text{
+  vertical-align: text-top;
+}
+
+.table-responsive {
+      border: none;
+      overflow: hidden;
+}
+
+.table-header-dark {
+  th {
+    color: @black;
+    text-transform: uppercase;
+    font-size: 14px;
+  }
+}
+
+.listview-page-icon {
+    background: url('../img/page.png') no-repeat;
+    width: 20px;
+    height: 23px;
+    background-size: contain;
+}
+
+.listview-text-emphasis {
+  color: @black;
+}

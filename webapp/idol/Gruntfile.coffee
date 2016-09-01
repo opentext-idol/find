@@ -71,6 +71,14 @@ module.exports = (grunt) ->
           template: jasmineRequireTemplate
           templateOptions:
             requireConfigFile: browserTestRequireConfig
+    less:
+      build:
+        files:
+          'target/classes/static/css/compiled.css': '../core/src/main/less/app.less',
+          'target/classes/static/css/login.css': '../core/src/main/less/login.less',
+          'target/classes/static/css/result-highlighting.css': '../core/src/main/less/result-highlighting.less'
+        options:
+          strictMath: true
     watch:
       buildTest:
         files: testWatchFiles
@@ -81,10 +89,11 @@ module.exports = (grunt) ->
       copyResources:
         files: [
           '../core/src/main/public/static/**/*'
+          '../core/src/main/less/**/*.less'
           'src/main/public/static/**/*'
         ]
         spawn: false
-        tasks: ['sync:devResources']
+        tasks: ['sync:devResources', 'less:build']
     sync:
       devResources:
         files: [
@@ -104,6 +113,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-babel'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-connect'
+  grunt.loadNpmTasks 'grunt-contrib-less'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-sync'
@@ -112,4 +122,4 @@ module.exports = (grunt) ->
   grunt.registerTask 'test', ['babel:transform', 'jasmine:test']
   grunt.registerTask 'browser-test', ['jasmine:browser-test:build', 'connect:server', 'watch:buildTest']
   grunt.registerTask 'watch-test', ['babel:transform', 'jasmine:test', 'watch:test']
-  grunt.registerTask 'copy-resources', ['sync:devResources', 'watch:copyResources']
+  grunt.registerTask 'copy-resources', ['sync:devResources', 'less:build', 'watch:copyResources']

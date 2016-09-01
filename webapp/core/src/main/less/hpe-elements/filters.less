@@ -1,0 +1,123 @@
+//============================
+//Filter Button Styles --- Start
+//============================
+.btn-group .filter-dropdown {
+  padding: 6px;
+}
+.btn-group .filter-dropdown, .btn-clear {
+  font-size: 12px;
+  border: 0;
+  background: none;
+  padding-right: 10px;
+  text-transform: none;
+  box-shadow: none;
+  font-size: @fontSizeMedium;
+}
+
+.filter-dropdown:focus,.filter-dropdown:hover{
+  background-color:@secondary-active;
+  border-radius:0px;
+  border-color:@accent-focus;
+  text-decoration:none;
+}
+.filter .dropdown-menu>li {
+  &>a {
+     padding: 3px;
+  span {
+    margin-left: 10px;
+  }
+  &:focus, &:hover {
+    color: inherit;
+   }
+  }
+}
+.filter-selected {
+  font-family: Metric-Semibold;
+}
+.filter-selected, .filter .dropdown-menu>li>a:focus, .filter .dropdown-menu>li>a:hover {
+  text-decoration: none;
+  background-color: #f5f5f5;
+}
+.sorter-container{
+  white-space: nowrap;
+}
+.sorter-title {
+  vertical-align: middle;
+  padding-left: 6px;
+}
+.form-control.filter-text {
+  opacity: 0.9;
+  font-size: @fontSizeLarge;
+  line-height: normal;
+}
+
+.expand-input-close{
+  color: @text-color;
+  font-family: Metric-Light;
+  font-size: @fontSizeMedium;
+}
+
+.btn-clear {
+  &:focus {
+    outline: 0;
+  }
+  &:hover {
+    outline: 0;
+    color: #0096d6;
+  }
+}
+
+.btn {
+  &.listview_clear {
+    background: url(../img/filter_clear.png) no-repeat;
+    width: 22px;
+    height: 12px;
+    margin-top: 2px;
+    display: none;
+    padding-right: 22px;
+    &:active {
+      background: url(../img/filter_clear.png) no-repeat;
+    }
+    &:hover{
+      
+    }
+    &:focus{
+      .elements-outline;
+    }
+    &.clear-selected {
+      outline: 0;
+      color: #0096d6;
+      font-weight: bold;
+      display: inline-block;
+    }
+  }
+}
+
+.dynamic-filter{
+  width: 220px;
+  .input-container{
+    padding: 10px;
+    border-top: 1px solid #f5f5f5;
+  }
+  .default-container{
+    span{
+      margin-left: 10px;
+    }
+  }
+  input + ul{
+    position: static;
+    box-shadow: none;
+    li.active > a{
+      background-color: #f5f5f5;
+      color:inherit;
+    }
+  }
+  a{
+      padding: 3px;
+      text-transform: uppercase;
+  }
+}
+
+//============================
+//Filter Button Styles --- End
+//============================
