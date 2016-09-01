@@ -4,13 +4,14 @@
  */
 
 define([
+    'find/app/page/search/filters/parametric/numeric-range-rounder',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'i18n!find/idol/nls/snapshots',
     'parametric-refinement/prettify-field-name',
     'underscore',
     'moment'
-], function(i18n, indexesI18n, snapshotsI18n, prettifyFieldName, _, moment) {
+], function(rounder, i18n, indexesI18n, snapshotsI18n, prettifyFieldName, _, moment) {
 
     var DATE_FORMAT = 'YYYY/MM/DD HH:mm';
 
@@ -24,11 +25,6 @@ define([
 
     function relatedConcepts(concepts) {
         return concepts.length ? {title: snapshotsI18n['restrictions.relatedConcepts'], content: concepts.join(', ')} : null;
-    }
-
-    //TODO: Implement rounding based on significant figures.
-    function roundNumericBoundary(x) {
-        return Math.round(x * 10) / 10;
     }
 
     /**
@@ -59,11 +55,11 @@ define([
             });
 
             var numericRestrictions = _.map(attributes.parametricRanges, function(range) {
-                var formatFunction = range.type === 'Date' ? formatEpoch : roundNumericBoundary;
+                var formatFunction = range.type === 'Date' ? formatEpoch : rounder().round;
 
                 return {
                     title: prettifyFieldName(range.field),
-                    content:  formatFunction(range.min) + ' \u2013 ' + formatFunction(range.max)
+                    content:  formatFunction(range.min, range.min, range.max) + ' \u2013 ' + formatFunction(range.max, range.min, range.max)
                 };
             });
 

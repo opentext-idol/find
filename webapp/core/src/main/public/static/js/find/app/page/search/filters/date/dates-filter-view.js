@@ -6,12 +6,11 @@ define([
     'i18n!find/nls/bundle',
     'find/app/model/dates-filter-model',
     'find/app/model/saved-searches/saved-search-model',
+    'find/app/util/date-picker',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/filters/date/dates-filter-view.html',
     'bootstrap-datetimepicker'
-], function(Backbone, $, _, moment, i18n, DatesFilterModel, SavedSearchModel, ListView, template) {
-
-    var DATES_DISPLAY_FORMAT = 'YYYY/MM/DD HH:mm';
+], function(Backbone, $, _, moment, i18n, DatesFilterModel, SavedSearchModel, datePicker, ListView, template) {
 
     function dateUpdater(attribute) {
         return function() {
@@ -19,7 +18,7 @@ define([
             var value = this.datesFilterModel.get(attribute);
 
             if (value) {
-                display = value.format(DATES_DISPLAY_FORMAT);
+                display = value.format(datePicker.DATE_WIDGET_FORMAT);
             }
 
             this.$('[data-date-attribute="' + attribute + '"]').find('input').val(display);
@@ -74,17 +73,18 @@ define([
                 filters: this.getFilters()
             }));
 
-            this.$('.results-filter-date').datetimepicker({
-                format: DATES_DISPLAY_FORMAT,
-                icons: {
-                    time: 'hp-icon hp-fw hp-clock',
-                    date: 'hp-icon hp-fw hp-calendar',
-                    up: 'hp-icon hp-fw hp-chevron-up',
-                    down: 'hp-icon hp-fw hp-chevron-down',
-                    next: 'hp-icon hp-fw hp-chevron-right',
-                    previous: 'hp-icon hp-fw hp-chevron-left'
-                }
-            });
+            const generateDatePickerCallback = function (attribute) {
+                return function () {
+                    var attributes = {dateRange: DatesFilterModel.DateRange.CUSTOM};
+                    //noinspection JSUnresolvedFunction
+                    const stringValue = this.$('[data-date-attribute="' + attribute + '"]').find('input').val();
+                    attributes[attribute] = moment(stringValue, datePicker.DATE_WIDGET_FORMAT);
+                    this.datesFilterModel.set(attributes);
+                }.bind(this)
+            }.bind(this);
+
+            datePicker.render(this.$el.find('.results-filter-date[data-date-attribute="customMinDate"]'), generateDatePickerCallback('customMinDate'));
+            datePicker.render(this.$el.find('.results-filter-date[data-date-attribute="customMaxDate"]'), generateDatePickerCallback('customMaxDate'));
 
             this.$('.date-filters-list [data-filter-id="' +  DatesFilterModel.DateRange.NEW + '"]').tooltip({
                 title: i18n['search.dates.timeInterval.new.description'],

@@ -270,7 +270,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
 
     @Test
-    @ActiveBug("FIND-400")
+    @ResolvedBug("FIND-400")
     public void testInputDateBoundsAsText() throws Exception {
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(2, "red");
         final String startDate = "1976-10-22 08:46";
