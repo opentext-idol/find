@@ -10,5 +10,6 @@
   },
   "specialUrlPrefixes": {
     "application/msword": "ms-word:ofv|u|"
-  }
+  },
+  "errorCallSupportString": "Custom technical support message"
 }

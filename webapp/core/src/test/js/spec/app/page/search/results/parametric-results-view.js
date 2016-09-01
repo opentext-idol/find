@@ -2,12 +2,12 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'find/app/page/search/results/parametric-results-view',
     'backbone',
+    'find/app/configuration',
     'jasmine-ajax'
-], function (ParametricResultsView, Backbone) {
+], function(ParametricResultsView, Backbone, configuration) {
 
     var DEPENDENT_EMPTY_MESSAGE = 'No dependent fields';
     var EMPTY_MESSAGE = 'No fields';
@@ -32,6 +32,10 @@ define([
                 savedSearchModel: this.savedSearchModel
 
             };
+
+            configuration.and.returnValue({
+                errorCallSupportString: 'Custom call support message'
+            });
 
             this.view = new ParametricResultsView(viewConstructorArguments);
             this.view.render();
@@ -77,21 +81,21 @@ define([
                     });
                 });
 
-                describe('then the parametric collection syncs and has errored', function() {
-                    beforeEach(function () {
+                describe('then the parametric collection syncs with errors', function() {
+                    beforeEach(function() {
                         this.parametricCollection.fetching = false;
                         this.parametricCollection.error = true;
                         this.parametricCollection.trigger('error', null, {status: 1});
                     });
 
-                    it('should not display a loading spinner, content view or field selections', function () {
+                    it('should not display a loading spinner, content view, or field selections', function() {
                         expect(this.view.$loadingSpinner).toHaveClass('hide');
                         expect(this.view.$content).toHaveClass('invisible');
                         expect(this.view.$parametricSelections).toHaveClass('hide');
                     });
 
-                    it('should display the no parametric values for current search message', function () {
-                        expect(this.view.$message).toHaveText(ERROR_MESSAGE);
+                    it('should display the "No parametric values for current search" message', function() {
+                        expect(this.view.$errorMessage).toContainText('error');
                     });
                 });
 

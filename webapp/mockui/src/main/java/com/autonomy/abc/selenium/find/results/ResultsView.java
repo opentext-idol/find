@@ -32,16 +32,16 @@ public class ResultsView extends AppElement implements QueryResultsPage {
         return Integer.valueOf(findElement(By.className("total-results-number")).getText());
     }
 
-    public WebElement correctedQuery(){ return findElement(By.className("corrected-query"));}
+    public WebElement correctedQuery() { return findElement(By.className("corrected-query"));}
 
     @Override
     public WebElement errorContainer() {
-        return findElement(By.cssSelector(".error.well"));
+        return findElement(By.cssSelector(".well"));
     }
 
     public List<String> getResultTitles() {
         final List<String> titles = new ArrayList<>();
-        for (final FindResult result : getResults()) {
+        for(final FindResult result : getResults()) {
             titles.add(result.getTitleString());
         }
         return titles;
@@ -51,13 +51,13 @@ public class ResultsView extends AppElement implements QueryResultsPage {
         return getDriver().findElement(By.className("results"));
     }
 
-    public boolean loadingIndicatorPresent(){
+    public boolean loadingIndicatorPresent() {
         return !findElements(By.cssSelector(".main-results-content .loading-spinner:not(.hide)")).isEmpty();
     }
 
     public List<FindResult> getResults() {
         final List<FindResult> results = new ArrayList<>();
-        for (final WebElement result : findElements(By.className("main-results-container"))) {
+        for(final WebElement result : findElements(By.className("main-results-container"))) {
             results.add(new FindResult(result, getDriver()));
         }
         return results;
@@ -74,37 +74,34 @@ public class ResultsView extends AppElement implements QueryResultsPage {
 
     public List<String> getDisplayedDocumentsDocumentTypes() {
         final List<String> documentTypes = new ArrayList<>();
-        for (final FindResult result : getResults()) {
+        for(final FindResult result : getResults()) {
             documentTypes.add(result.icon().getAttribute("class"));
         }
         return documentTypes;
     }
 
     public void waitForResultsToLoad() {
-        new WebDriverWait(getDriver(),50).until(new LoadedCondition());
-    }
-
-    private static class LoadedCondition implements ExpectedCondition<Boolean> {
-        @Override
-        public Boolean apply(final WebDriver input) {
-            if (resultsLoaded(input)) {
-                return true;
-            }
-            return false;
-        }
-
-        private boolean resultsLoaded(final WebDriver driver) {
-            return !driver.findElements(By.cssSelector(".error.well:not(.hide)")).isEmpty()
-                    || !driver.findElements(By.xpath("//div[contains(@class,'result-message') and contains(text(),'No results found')]")).isEmpty()
-                    || !driver.findElements(By.cssSelector(".results-contents")).isEmpty();
-        }
+        new WebDriverWait(getDriver(), 50).until(new LoadedCondition());
     }
 
     public FindResult searchResult(final int searchResultNumber) {
         return new FindResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ')')), getDriver());
     }
 
-    public List<WebElement> noMoreResultsMessage(){
+    public List<WebElement> noMoreResultsMessage() {
         return findElements(By.xpath("//div[@class = 'result-message' and contains(text(),'No more results')]"));
+    }
+
+    private static class LoadedCondition implements ExpectedCondition<Boolean> {
+        @Override
+        public Boolean apply(final WebDriver input) {
+            return resultsLoaded(input);
+        }
+
+        private boolean resultsLoaded(final WebDriver driver) {
+            return !driver.findElements(By.cssSelector(".well:not(.hide)")).isEmpty()
+                    || !driver.findElements(By.xpath("//div[contains(@class,'result-message') and contains(text(),'No results found')]")).isEmpty()
+                    || !driver.findElements(By.cssSelector(".results-contents")).isEmpty();
+        }
     }
 }
