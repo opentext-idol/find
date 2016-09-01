@@ -1,0 +1,85 @@
+// Progress Bars
+.progress-bar-secondary,
+.progress-bar-accent {
+  background-color: @accent;
+  font-size: @fontSizeMedium;
+}
+
+.progress-bar-width {
+ width: 35%;
+}
+
+.progress-static-text {
+    margin-bottom: 0px;
+    text-align: center;
+    color: @text-color;
+}
+
+.body-dark {
+  .progress-static-text{
+    color: @white;
+  }
+}
+
+.indicator.ng-animate{ 
+  -webkit-animation: none 0s;
+}
+
+.indicator-alt{
+  height:40px
+}
+
+.indicator {
+  font-size: 0.2em;
+  position: relative;
+  text-indent: -9999em;
+  border-top: 1.1em solid @accent;
+  border-right: 1.1em solid @accent;
+  border-bottom: 1.1em solid @accent;
+  border-left: 1.1em solid rgba(0, 0, 0, 0);
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation: load8 1.1s infinite linear;
+  animation: load8 1.1s infinite linear;
+}
+.indicator,
+.indicator:after {
+  border-radius: 50%;
+  width: 10em;
+  height: 10em;
+}
+@-webkit-keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.indicator-green{
+    .indicator;
+    border-top: 1.1em solid @hpegreen;
+    border-right: 1.1em solid @hpegreen;
+    border-bottom: 1.1em solid @hpegreen;
+}
+.indicator-large{
+    .indicator;
+    font-size: 0.4em;
+}
+.indicator-green-large{
+  .indicator-green;
+  font-size: 0.4em;
+}
