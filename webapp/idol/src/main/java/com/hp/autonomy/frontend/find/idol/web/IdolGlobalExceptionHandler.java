@@ -2,7 +2,6 @@
  * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 package com.hp.autonomy.frontend.find.idol.web;
 
 import com.autonomy.aci.client.services.AciErrorException;
@@ -76,15 +75,15 @@ public class IdolGlobalExceptionHandler extends GlobalExceptionHandler {
 
     @ExceptionHandler(AciErrorException.class)
     @ResponseBody
-    public ErrorResponse authenticationFailedHandler(final AciErrorException exception, final HttpServletResponse response) {
+    public IdolErrorResponse handleAciError(final AciErrorException exception, final HttpServletResponse response) {
         if (SECURITY_INFO_TOKEN_EXPIRED_ID.equals(exception.getErrorId())) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return new ErrorResponse("Security Info has expired");
+            return new IdolErrorResponse("Security Info has expired", exception.getErrorId());
         }
 
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        final IdolErrorResponse errorResponse = new IdolErrorResponse(exception.getMessage(), exception.getErrorId());
 
         if (!userErrors.contains(exception.getErrorId())) {
             log.error("Unhandled Idol Error with uuid {}", errorResponse.getUuid());
