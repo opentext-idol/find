@@ -8,12 +8,13 @@ define([
     'underscore',
     'moment',
     'find/app/model/dates-filter-model',
+    'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/util/database-name-resolver',
     'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/prettify-field-name',
     'find/app/configuration',
     'i18n!find/nls/bundle'
-], function(Backbone, _, moment, DatesFilterModel, databaseNameResolver, addChangeListener, prettifyFieldName, configuration, i18n) {
+], function(Backbone, _, moment, DatesFilterModel, rounder, databaseNameResolver, addChangeListener, prettifyFieldName, configuration, i18n) {
     "use strict";
 
     var DATE_FORMAT = "YYYY-MM-DD HH:mm";
@@ -49,11 +50,6 @@ define([
 
     // Get the display text for the given parametric field name and array of selected parametric values
     function parametricFilterText(field, values, ranges, numeric) {
-        var round = function (x) {
-            // TODO: implement significant figures---e.g. using toPrecision()---instead of simple rounding
-            return Math.round(x * 10) / 10;
-        };
-
         var fieldMap = _.findWhere(configuration().parametricDisplayValues, {name: field});
 
         var displayName = fieldMap ? fieldMap.displayName : prettifyFieldName(field);
@@ -74,7 +70,8 @@ define([
             valueText = ranges.map(function (range) {
                 //Discard time of day if range greater than 1 week
                 if (numeric) {
-                    return round(range[0]) + ' \u2013 ' + round(range[1]);
+                    const round = rounder().round;
+                    return round(range[0], range[0], range[1]) + ' \u2013 ' + round(range[1], range[0], range[1]);
                 } else if (range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
                     return formatDate(range[0], DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], DATE_FORMAT);
                 } else {

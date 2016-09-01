@@ -9,11 +9,12 @@ define([
     'underscore',
     'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
+    'find/app/page/search/filters/parametric/numeric-range-rounder',
     'parametric-refinement/prettify-field-name',
     'find/app/util/collapsible',
     'find/app/vent',
     'find/app/configuration'
-], function(Backbone, $, _, i18n, NumericParametricFieldView, prettifyFieldName, Collapsible, vent, configuration) {
+], function(Backbone, $, _, i18n, NumericParametricFieldView, rounder, prettifyFieldName, Collapsible, vent, configuration) {
 
     'use strict';
 
@@ -22,13 +23,13 @@ define([
 
         if(model) {
             var range;
+            const rangeArray = model.get('range');
             if(this.dataType === 'numeric') {
-                range = _.map(model.get('range'), function(entry) {
-                    // TODO: implement proper rounding to significant figures, rather than decimal places
-                    return Math.round(entry * 10) / 10;
+                range = _.map(rangeArray, function(entry) {
+                    return rounder().round(entry, rangeArray[0], rangeArray[1]);
                 });
             } else if (this.dataType === 'date') {
-                range = _.map(model.get('range'), function(entry) {
+                range = _.map(rangeArray, function(entry) {
                     return NumericParametricFieldView.dateFormatting.format(entry);
                 });
             }

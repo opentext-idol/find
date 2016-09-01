@@ -11,6 +11,7 @@ define([
     'find/app/vent',
     'find/app/model/find-base-collection',
     'find/app/page/search/filters/parametric/calibrate-buckets',
+    'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/page/search/filters/parametric/numeric-widget',
     'find/app/model/bucketed-parametric-collection',
     'parametric-refinement/prettify-field-name',
@@ -22,7 +23,7 @@ define([
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
-], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, numericWidget,
+], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, rounder, numericWidget,
             BucketedParametricCollection, prettifyFieldName, toFieldTextNode, datePicker, addChangeListener,
             template, numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
 
@@ -36,10 +37,6 @@ define([
         return function(model) {
             return model.get('field') === fieldName && model.get('range') && model.get('dataType') === dataType;
         };
-    }
-
-    function roundInputNumber(input) {
-        return Math.round(input * 10) / 10;
     }
 
     // This view must be visible before it is rendered
@@ -94,7 +91,9 @@ define([
             this.fieldName = this.model.id;
 
             var formatting = options.formatting || NumericParametricFieldView.defaultFormatting;
-            this.formatValue = formatting.format;
+            this.formatValue = function (value) {
+                return formatting.format(value, this.model.get('currentMin'), this.model.get('currentMax'));
+            }.bind(this);
             this.parseValue = formatting.parse;
             this.renderCustomFormatting = formatting.render;
             this.parseBoundarySelection = formatting.parseBoundarySelection;
@@ -189,8 +188,8 @@ define([
                 // does not depend on just the selected parametric range model.
                 var updateCallback = function(x1, x2) {
                     // rounding to one decimal place
-                    this.updateMinInput(roundInputNumber(x1));
-                    this.updateMaxInput(roundInputNumber(x2));
+                    this.updateMinInput(x1);
+                    this.updateMaxInput(x2);
                 }.bind(this);
 
                 var selectionCallback = function(x1, x2) {
@@ -200,7 +199,7 @@ define([
                 }.bind(this);
 
                 var mouseMoveCallback = function(x) {
-                    this.$('.numeric-parametric-co-ordinates').text(this.formatValue(roundInputNumber(x)));
+                    this.$('.numeric-parametric-co-ordinates').text(this.formatValue(x));
                 }.bind(this);
 
                 var mouseLeaveCallback = function() {
@@ -249,8 +248,8 @@ define([
                 if(rangeModel) {
                     var range = rangeModel.get('range');
 
-                    this.updateMinInput(roundInputNumber(range[0]));
-                    this.updateMaxInput(roundInputNumber(range[1]));
+                    this.updateMinInput(range[0]);
+                    this.updateMaxInput(range[1]);
 
                     this.graph.setSelection(range);
                 } else {
@@ -349,14 +348,14 @@ define([
         dateInputTemplate: _.template(dateInputTemplate),
         numericInputTemplate: _.template(numericInputTemplate),
         defaultFormatting: {
-            format: _.identity,
+            format: rounder().round,
             parse: _.identity,
             parseBoundarySelection: _.identity,
             render: _.noop
         },
         dateFormatting: {
             format: function(unformattedString) {
-                return moment(unformattedString * 1000).format(datePicker.DATE_WIDGET_FORMAT);
+                return moment(Math.round(unformattedString * 1000)).format(datePicker.DATE_WIDGET_FORMAT);
             },
             parse: function(formattedString) {
                 return moment(formattedString, datePicker.DATE_WIDGET_FORMAT).unix();
