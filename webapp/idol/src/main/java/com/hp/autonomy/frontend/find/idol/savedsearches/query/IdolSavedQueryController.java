@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.idol.savedsearches.query;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
-import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;

@@ -2,6 +2,8 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.hp.autonomy.frontend.find.core.fields.FieldAndValue;
+import com.hp.autonomy.frontend.find.core.fields.ParametricRange;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

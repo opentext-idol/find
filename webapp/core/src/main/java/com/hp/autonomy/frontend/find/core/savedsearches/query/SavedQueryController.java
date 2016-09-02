@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
-import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;

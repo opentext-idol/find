@@ -6,6 +6,10 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.google.common.collect.ImmutableSet;
+import com.hp.autonomy.frontend.find.core.fields.FieldAndValue;
+import com.hp.autonomy.frontend.find.core.fields.ParametricRange;
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParserImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

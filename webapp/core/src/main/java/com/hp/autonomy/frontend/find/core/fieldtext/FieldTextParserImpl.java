@@ -3,13 +3,15 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.savedsearches;
+package com.hp.autonomy.frontend.find.core.fieldtext;
 
 import com.hp.autonomy.aci.content.fieldtext.FieldText;
-import com.hp.autonomy.aci.content.fieldtext.FieldTexts;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.aci.content.fieldtext.NRANGE;
 import com.hp.autonomy.aci.content.fieldtext.RANGE;
+import com.hp.autonomy.frontend.find.core.fields.FieldAndValue;
+import com.hp.autonomy.frontend.find.core.fields.ParametricRange;
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
