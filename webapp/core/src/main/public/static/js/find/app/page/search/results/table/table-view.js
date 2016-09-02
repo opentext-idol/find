@@ -34,7 +34,7 @@ define([
                 dependentParametricCollection: new TableCollection(),
                 emptyDependentMessage: i18n['search.resultsView.table.error.noDependentParametricValues'],
                 emptyMessage: i18n['search.resultsView.table.error.noParametricValues'],
-                errorMessage: generateErrorHtml({messageToUser: i18n['search.resultsView.table.error.query']})
+                errorMessageArguments: {messageToUser: i18n['search.resultsView.table.error.query']}
             }, options))
         },
 
@@ -109,7 +109,5 @@ define([
 
             ParametricResultsView.prototype.remove.apply(this, arguments);
         }
-
     })
-
 });

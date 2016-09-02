@@ -13,7 +13,6 @@ define([
         // generate-error-support-message.js. This is used on the frontend to decide if it is
         // a user error and if a 'contact support' message should be displayed. Establish what these errors mean and
         // provide prettified user mesages.
-        // 'error.code.DAHQUERY502': '',
         // 'error.code.AXEQUERY504': '',
         // 'error.code.DAHQUERY504': '',
         // 'error.code.AXEQUERY505': '',
@@ -26,11 +25,8 @@ define([
         // 'error.code.DAHQUERY509': '',
         // 'error.code.AXEQUERY511': '',
         // 'error.code.DAHQUERY511': '',
-        // 'error.code.DAHQUERY512': '',
         // 'error.code.AXEQUERY513': '',
         // 'error.code.DAHQUERY513': '',
-        // 'error.code.AXEGETQUERYTAGVALUES502': '',
-        // 'error.code.DAHGETQUERYTAGVALUES502': '',
         // 'error.code.AXEGETQUERYTAGVALUES507': '',
         // 'error.code.DAHGETQUERYTAGVALUES507': '',
         // 'error.code.AXEGETQUERYTAGVALUES508': '',
@@ -49,11 +45,15 @@ define([
         // 'error.code.DAHGETQUERYTAGVALUES504': '',
         // 'error.code.AXEGETQUERYTAGVALUES509': '',
         // 'error.code.DAHGETQUERYTAGVALUES509': '',
-        // 'error.code.AXEGETQUERYTAGVALUES512': '',
-        // 'error.code.DAHGETQUERYTAGVALUES512': '',
         // 'error.code.AXEGETQUERYTAGVALUES513': '',
         // 'error.code.DAHGETQUERYTAGVALUES513': '',
+        'error.code.DAHGETQUERYTAGVALUES502': 'Invalid query text: all terms were stopwords, too short, or incorrectly formatted',
+        'error.code.AXEGETQUERYTAGVALUES502': 'Invalid query text: all terms were stopwords, too short, or incorrectly formatted',
+        'error.code.DAHQUERY502': 'Invalid query text: all terms were stopwords, too short, or incorrectly formatted',
         'error.code.AXEQUERY502': 'Invalid query text: all terms were stopwords, too short, or incorrectly formatted',
+        'error.code.DAHGETQUERYTAGVALUES512': 'Find did not understand your search text',
+        'error.code.AXEGETQUERYTAGVALUES512': 'Find did not understand your search text',
+        'error.code.DAHQUERY512': 'Find did not understand your search text',
         'error.code.AXEQUERY512': 'Find did not understand your search text'
     });
 });

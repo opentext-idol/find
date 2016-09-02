@@ -25,9 +25,9 @@ define([
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
             ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration,
-            generateErrorTemplateFunction, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
+            generateErrorHtml, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
     "use strict";
-//???rename generateerrorthingy to sth more sensible - in other files too
+
     var SCROLL_INCREMENT = 30;
     var INFINITE_SCROLL_POSITION_PIXELS = 500;
 
@@ -237,14 +237,13 @@ define([
 
         generateErrorMessage: function(xhr) {
             if(xhr.responseJSON) {
-                var xhrError = xhr.responseJSON.hodErrorCode || xhr.responseJSON.idolErrorId;
-                return generateErrorTemplateFunction({
+                return generateErrorHtml({
                     errorDetails: xhr.responseJSON.message,
-                    errorDetailsFallback: xhr.responseJSON.uuid,
-                    errorLookup: xhrError
+                    errorUUID: xhr.responseJSON.uuid,
+                    errorLookup: xhr.responseJSON.backendErrorCode
                 });
             } else {
-                return generateErrorTemplateFunction();
+                return generateErrorHtml();
             }
         },
 

@@ -8,9 +8,8 @@ define([
     'jquery',
     'i18n!find/nls/bundle',
     'sunburst/js/sunburst',
-    'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/sunburst/sunburst-label.html'
-], function(ParametricResultsView, _, $, i18n, Sunburst, generateErrorHtml, labelTemplate) {
+], function(ParametricResultsView, _, $, i18n, Sunburst, labelTemplate) {
     'use strict';
 
     var SUNBURST_NAME_ATTR = 'text';
@@ -101,9 +100,7 @@ define([
             ParametricResultsView.prototype.initialize.call(this, _.defaults({
                 emptyDependentMessage: i18n['search.resultsView.sunburst.error.noDependentParametricValues'],
                 emptyMessage: i18n['search.resultsView.sunburst.error.noParametricValues'],
-                errorMessage: generateErrorHtml({
-                    messageToUser: i18n['search.resultsView.sunburst.error.query']
-                })
+                errorMessageArguments: {messageToUser: i18n['search.resultsView.sunburst.error.query']}
             }, options));
         },
 

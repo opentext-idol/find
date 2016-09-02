@@ -10,8 +10,9 @@ define([
     'i18n!find/nls/bundle',
     'find/app/page/search/results/field-selection-view',
     'text!find/templates/app/page/search/results/parametric-results-view.html',
+    'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, DependentParametricCollection, _, $, i18n, FieldSelectionView, template, loadingSpinnerTemplate) {
+], function(Backbone, DependentParametricCollection, _, $, i18n, FieldSelectionView, template, generateErrorHtml, loadingSpinnerTemplate) {
     'use strict';
 
     var fieldInvalid = function(field, fields) {
@@ -45,7 +46,7 @@ define([
 
             this.emptyDependentMessage = options.emptyDependentMessage;
             this.emptyMessage = options.emptyMessage;
-            this.errorMessage = options.errorMessage;
+            this.errorMessageArguments = options.errorMessageArguments;
 
             this.dependentParametricCollection = options.dependentParametricCollection || new DependentParametricCollection();
             this.fieldsCollection = new Backbone.Collection([{field: ''}, {field: ''}]);
@@ -107,12 +108,20 @@ define([
             this.updateMessage();
         },
 
-        errorHandler: function(collection, event) {
-            // TODO: Check if one of the arguments is an xhr, pass on if so ???
-
-            if(event.status !== 0) {
+        errorHandler: function(collection, xhr) {
+            if(xhr.status !== 0) {
                 this.model.set('loading', false);
-                this.updateErrorMessage(this.errorMessage);
+                if(xhr.responseJSON) {
+                    var messageArguments = _.extend({
+                        errorDetails: xhr.responseJSON.message,
+                        errorLookup: xhr.responseJSON.backendErrorCode,
+                        errorUUID: xhr.responseJSON.uuid
+                    }, this.errorMessageArguments);
+
+                    this.updateErrorMessage(generateErrorHtml(messageArguments));
+                } else {
+                    this.updateErrorMessage(generateErrorHtml(this.errorMessageArguments));
+                }
             }
         },
 

@@ -10,5 +10,6 @@ define([
     return substitution({
         // Do not use this file: it will be overwritten by its analogue from the hod or idol modules.
         // Its presence here is required by tests.
+        'error.code.DUMMYERRORCODE123': 'Prettified dummy error message'// Dummy error for jasmine tests
     });
 });

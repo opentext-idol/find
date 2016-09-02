@@ -156,6 +156,7 @@ define([
                     messageToUser: i18n['search.topicMap.error'],
                     errorDetails: xhr.responseJSON.message,
                     errorDetailsFallback: xhr.responseJSON.uuid,
+                    errorUUID: xhr.responseJSON.uuid,
                     errorLookup: xhr.responseJSON.backendErrorCode
                 });
             } else {

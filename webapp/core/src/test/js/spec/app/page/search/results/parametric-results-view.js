@@ -25,12 +25,11 @@ define([
             var viewConstructorArguments = {
                 emptyDependentMessage: DEPENDENT_EMPTY_MESSAGE,
                 emptyMessage: EMPTY_MESSAGE,
-                errorMessage: ERROR_MESSAGE,
+                errorMessageArguments: {messageToUser: ERROR_MESSAGE},
                 restrictedParametricCollection: this.parametricCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
                 savedSearchModel: this.savedSearchModel
-
             };
 
             configuration.and.returnValue({
@@ -95,7 +94,7 @@ define([
                     });
 
                     it('should display the "No parametric values for current search" message', function() {
-                        expect(this.view.$errorMessage).toContainText('error');
+                        expect(this.view.$errorMessage).toContainText(ERROR_MESSAGE);
                     });
                 });
 
