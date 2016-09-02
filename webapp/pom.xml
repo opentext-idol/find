@@ -37,6 +37,7 @@
         <mariaClient.version>1.4.2</mariaClient.version>
         <npm.binExtension/>
         <skipTests/>
+        <selenium.version>2.46.0</selenium.version>
     </properties>
 
     <build>
@@ -76,6 +77,11 @@
                 <groupId>org.mariadb.jdbc</groupId>
                 <artifactId>mariadb-java-client</artifactId>
                 <version>${mariaClient.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-java</artifactId>
+                <version>${selenium.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
