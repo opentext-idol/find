@@ -290,7 +290,7 @@ define([
             });
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
-            this.listenTo(this.queryModel, 'change', this.fetchRestrictedParametricCollection);
+
             this.fetchParametricFields(this.parametricFieldsCollection, _.bind(this.fetchParametricValueCollections, this));
             this.fetchParametricFields(this.numericParametricFieldsCollection);
             this.fetchParametricFields(this.dateParametricFieldsCollection);
@@ -380,7 +380,7 @@ define([
 
         fetchData: function() {
             this.fetchEntities();
-            this.fetchParametricValues();
+            this.fetchRestrictedParametricCollection();
         },
 
         fetchEntities: function() {
