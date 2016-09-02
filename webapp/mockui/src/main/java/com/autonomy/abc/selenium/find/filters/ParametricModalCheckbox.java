@@ -7,7 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class ParametricModalCheckbox extends Checkbox {
-    private final By count = By.tagName("label");
 
     ParametricModalCheckbox(final WebElement element, final WebDriver driver) {
         super(element, element.findElement(By.cssSelector(".icheckbox-hp")), driver);
@@ -17,7 +16,8 @@ public class ParametricModalCheckbox extends Checkbox {
     public String getName(){return findElement(By.cssSelector(".field-value")).getText();}
 
     public int getResultsCount() {
-        return getResultCount(count);
+        String spanResultCount = $el().getText().split("\\(")[1];
+        return Integer.parseInt(spanResultCount.substring(0, spanResultCount.length() - 1));
 }
 
     @Override
