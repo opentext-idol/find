@@ -28,7 +28,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
     public static ParametricFilterModal getParametricModal(final WebDriver driver) {
         final WebElement $el = new WebDriverWait(driver, 30)
                 .withMessage("Parametric filter modal did not open within 30 seconds ")
-                .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".parametric-modal")));
+                .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
         return new ParametricFilterModal($el, driver);
     }
 
@@ -41,7 +41,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
             .withTagName("button")
             .containingText("Cancel")
         ).click();
-        new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".parametric-modal")));
+        new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
     }
 
     public void apply() {
@@ -49,7 +49,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
             .withTagName("button")
             .containingText("Apply")
         ).click();
-        new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".parametric-modal")));
+        new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
 
     }
 

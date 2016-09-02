@@ -100,13 +100,18 @@ public class FilterITCase extends FindTestBase {
 
         container.seeAll();
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
-        verifyThat("Filter category title shows the number of filters chosen from total",filterNumber,is("1 / "+filterModal.filtersWithResultsForCurrentSearch()));
+        verifyThat("Filter category title shows the number of filters chosen from total", filterNumber, is( "1 / " + filterModal.filtersWithResultsForCurrentSearch()));
 
         filters().checkboxForParametricValue(WordUtils.capitalize(filterCategory.toLowerCase()),filterName).uncheck();
+        findPage.waitForParametricValuesToLoad();
+        int totalParametricFields = filters().parametricFieldContainers().size();
+
         search("shouldhavenoresultsprobably");
         findPage.originalQuery().click();
         findPage.waitForParametricValuesToLoad();
-        verifyThat("Filters changed: no results -> no parametric fields",filters().noParametricFields());
+        int noResultsParametricFields = filters().parametricFieldContainers().size();
+
+        verifyThat("Filters changed: no results -> parametric fields remain",noResultsParametricFields, is(totalParametricFields));
     }
 
 
