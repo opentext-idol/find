@@ -2,7 +2,6 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'backbone',
     'underscore',
@@ -10,7 +9,6 @@ define([
     'i18n!find/nls/bundle',
     'topicmap/js/topicmap'
 ], function(Backbone, _, vent, i18n) {
-
     /**
      * Wraps the topic map in a resize-aware Backbone view. If the view element is not visible when resized, draw must be
      * called when the view is visible to update the SVG size.
@@ -72,5 +70,4 @@ define([
             });
         }
     });
-
 });

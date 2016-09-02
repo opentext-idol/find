@@ -2,11 +2,13 @@
  * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +26,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -31,13 +34,23 @@ public class ControllerUtilsTest {
     @Mock
     private MessageSource messageSource;
 
+    @Mock
+    private ConfigService<FindConfig> configService;
+
+    @Mock
+    private UiCustomization uiCustomisation;
+
     private ControllerUtils controllerUtils;
 
     @Before
     public void setUp() {
-        controllerUtils = new ControllerUtilsImpl(new ObjectMapper(), messageSource, "dev");
+        controllerUtils = new ControllerUtilsImpl(new ObjectMapper(), messageSource, "dev", configService);
 
         when(messageSource.getMessage(anyString(), any(Object[].class), any(Locale.class))).thenReturn("Some Message");
+
+        final FindConfig config = mock(FindConfig.class);
+        when(configService.getConfig()).thenReturn(config);
+        when(config.getUiCustomization()).thenReturn(uiCustomisation);
     }
 
     @Test

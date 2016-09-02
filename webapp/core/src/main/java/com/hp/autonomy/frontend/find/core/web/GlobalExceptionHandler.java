@@ -2,7 +2,6 @@
  * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 package com.hp.autonomy.frontend.find.core.web;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +46,7 @@ public abstract class GlobalExceptionHandler {
     @ResponseBody
     public <E extends Exception> ErrorResponse handler(final E exception) throws E {
         // boilerplate - see http://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc
-        if (AnnotationUtils.findAnnotation(exception.getClass(), ResponseStatus.class) != null) {
+        if(AnnotationUtils.findAnnotation(exception.getClass(), ResponseStatus.class) != null) {
             throw exception;
         }
 

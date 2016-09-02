@@ -30,7 +30,7 @@ public class HodGlobalExceptionHandler extends GlobalExceptionHandler {
             HodErrorCode.INVALID_FIELD_VALUE,
             HodErrorCode.INPUT_TOO_LONG,
             HodErrorCode.REACHED_MAXIMUM_RUNS_IN_24_HOURS,
-            HodErrorCode.QUERY_PROFILE_NAME_INVALID
+            HodErrorCode.QUERY_PROFILE_NAME_INVALID //TODO: Is this really a User error? Verify.
     );
 
     @ExceptionHandler(HodAuthenticationFailedException.class)
@@ -45,7 +45,7 @@ public class HodGlobalExceptionHandler extends GlobalExceptionHandler {
     public ResponseEntity<HodErrorResponse> hodErrorHandler(final HodErrorException exception) {
         final HodErrorResponse hodErrorResponse = new HodErrorResponse("HOD Error", exception.getErrorCode());
 
-        if (!userErrors.contains(exception.getErrorCode())) {
+        if(!userErrors.contains(exception.getErrorCode())) {
             log.error("Unhandled HodErrorException with uuid {}", hodErrorResponse.getUuid());
             log.error("Stack trace", exception);
         }

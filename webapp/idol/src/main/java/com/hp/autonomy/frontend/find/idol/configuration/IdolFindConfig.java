@@ -2,7 +2,6 @@
  * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
@@ -10,17 +9,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.hp.autonomy.frontend.configuration.AbstractConfig;
-import com.hp.autonomy.frontend.configuration.Authentication;
-import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
-import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
-import com.hp.autonomy.frontend.configuration.ConfigException;
-import com.hp.autonomy.frontend.configuration.ServerConfig;
-import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
-import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
-import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
-import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
-import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
+import com.hp.autonomy.frontend.configuration.*;
+import com.hp.autonomy.frontend.find.core.configuration.*;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
@@ -193,5 +183,4 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             return new IdolFindConfig(this);
         }
     }
-
 }

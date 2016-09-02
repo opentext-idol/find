@@ -1,134 +1,137 @@
 {
-    "allowedOrigins": ["http://localhost:8080"],
-    "minScore": 0,
-    "topicMapMaxResults": 1000,
-    "login": {
-        "method": "default",
-        "singleUser": {
-            "username": "admin",
-            "hashedPassword": ""
-        },
-        "name": "SingleUserAuthentication"
+  "allowedOrigins": [
+    "http://localhost:8080"
+  ],
+  "minScore": 0,
+  "topicMapMaxResults": 1000,
+  "login": {
+    "method": "default",
+    "singleUser": {
+      "username": "admin",
+      "hashedPassword": ""
     },
-    "hsod": {
-        "landingPageUrl": "https://search.havenondemand.com"
+    "name": "SingleUserAuthentication"
+  },
+  "hsod": {
+    "landingPageUrl": "https://search.havenondemand.com"
+  },
+  "hod": {
+    "apiKey": "",
+    "activeIndexes": [],
+    "endpointUrl": "https://api.havenondemand.com",
+    "publicIndexesEnabled": false,
+    "ssoPageGetUrl": "https://www.havenondemand.com/sso.html",
+    "ssoPagePostUrl": "https://www.havenondemand.com/sso"
+  },
+  "queryManipulation": {
+    "profile": "search_default_profile",
+    "index": "search_default_index"
+  },
+  "redis": {
+    "address": {
+      "host": "hp-find-backend",
+      "port": 6379
     },
-    "hod": {
-        "apiKey": "",
-        "activeIndexes": [],
-        "endpointUrl": "https://api.havenondemand.com",
-        "publicIndexesEnabled": false,
-        "ssoPageGetUrl": "https://www.havenondemand.com/sso.html",
-        "ssoPagePostUrl": "https://www.havenondemand.com/sso"
+    "autoConfigure": true,
+    "database": 0,
+    "password": null,
+    "sentinels": []
+  },
+  "savedSearches": {
+    "pollForUpdates": true,
+    "pollingInterval": 5
+  },
+  "map": {
+    "enabled": false,
+    "attribution": null,
+    "initialLocation": {
+      "latitude": 51.5074,
+      "longitude": 0.1278
     },
-    "queryManipulation": {
-        "profile": "search_default_profile",
-        "index": "search_default_index"
+    "tileUrlTemplate": null,
+    "resultsStep": 2500,
+    "locationFields": [
+      {
+        "displayName": "DefaultLocation",
+        "latitudeField": "latitude",
+        "longitudeField": "longitude"
+      }
+    ]
+  },
+  "uiCustomization": {
+    "options": {
+      "directAccessLink": {
+        "user": true
+      },
+      "enableMetaFilter": {
+        "user": false,
+        "bi": true
+      }
     },
-    "redis": {
-        "address": {
-            "host": "hp-find-backend",
-            "port": 6379
-        },
-        "autoConfigure": true,
-        "database": 0,
-        "password": null,
-        "sentinels": []
+    "specialUrlPrefixes": {
+      "application/msword": "ms-word:ofv|u|",
+      "application/mspowerpoint": "ms-powerpoint:ofv|u|",
+      "application/vnd.ms-powerpoint": "ms-powerpoint:ofv|u|",
+      "application/msexcel": "ms-excel:ofv|u|",
+      "application/vnd.ms-excel": "ms-excel:ofv|u|",
+      "application/vnd.visio": "ms-visio:ofv|u|",
+      "application/msaccess": "ms-access:ofv|u|",
+      "application/x-msaccess": "ms-access:ofv|u|",
+      "application/msproject": "ms-project:ofv|u|",
+      "application/vnd.ms-project": "ms-project:ofv|u|",
+      "application/x-mspublisher": "ms-publisher:ofv|u|"
     },
-    "savedSearches": {
-        "pollForUpdates": true,
-        "pollingInterval": 5
+    "errorCallSupportString": null
+  },
+  "fieldsInfo": {
+    "contentType": {
+      "names": [
+        "content_type"
+      ]
     },
-    "map": {
-        "enabled": false,
-        "attribution": null,
-        "initialLocation": {
-            "latitude": 51.5074,
-            "longitude":  0.1278
-        },
-        "tileUrlTemplate": null,
-        "resultsStep": 2500,
-        "locationFields": [
-            {
-                "displayName": "DefaultLocation",
-                "latitudeField": "latitude",
-                "longitudeField": "longitude"
-            }
-        ]
+    "url": {
+      "names": [
+        "url"
+      ]
     },
-    "uiCustomization": {
-        "options": {
-            "directAccessLink": {
-                "user": true
-            },
-            "enableMetaFilter": {
-                "user": false,
-                "bi": true
-            }
-        },
-        "specialUrlPrefixes": {
-            "application/msword": "ms-word:ofv|u|",
-            "application/mspowerpoint": "ms-powerpoint:ofv|u|",
-            "application/vnd.ms-powerpoint": "ms-powerpoint:ofv|u|",
-            "application/msexcel": "ms-excel:ofv|u|",
-            "application/vnd.ms-excel": "ms-excel:ofv|u|",
-            "application/vnd.visio": "ms-visio:ofv|u|",
-            "application/msaccess": "ms-access:ofv|u|",
-            "application/x-msaccess": "ms-access:ofv|u|",
-            "application/msproject": "ms-project:ofv|u|",
-            "application/vnd.ms-project": "ms-project:ofv|u|",
-            "application/x-mspublisher": "ms-publisher:ofv|u|"
-        }
+    "offset": {
+      "names": [
+        "offset"
+      ],
+      "advanced": true
     },
-    "fieldsInfo": {
-        "contentType": {
-            "names": [
-                "content_type"
-            ]
-        },
-        "url": {
-            "names": [
-                "url"
-            ]
-        },
-        "offset": {
-            "names": [
-                "offset"
-            ],
-            "advanced": true
-        },
-        "categories": {
-            "names": [
-                "category"
-            ]
-        },
-        "dateCreated": {
-            "names": [
-                "date_created",
-                "created_date"
-            ],
-            "type": "Date"
-        },
-        "dateModified": {
-            "names": [
-                "date_modified",
-                "modified_date"
-            ],
-            "type": "Date"
-        },
-        "latitude": {
-            "names": [
-                "lat"
-            ],
-            "type": "NUMBER",
-            "advanced": true
-        },
-        "longitude": {
-            "names": [
-                "lon"
-            ],
-            "type": "NUMBER",
-            "advanced": true
-        }
+    "categories": {
+      "names": [
+        "category"
+      ]
+    },
+    "dateCreated": {
+      "names": [
+        "date_created",
+        "created_date"
+      ],
+      "type": "Date"
+    },
+    "dateModified": {
+      "names": [
+        "date_modified",
+        "modified_date"
+      ],
+      "type": "Date"
+    },
+    "latitude": {
+      "names": [
+        "lat"
+      ],
+      "type": "NUMBER",
+      "advanced": true
+    },
+    "longitude": {
+      "names": [
+        "lon"
+      ],
+      "type": "NUMBER",
+      "advanced": true
     }
+  }
 }

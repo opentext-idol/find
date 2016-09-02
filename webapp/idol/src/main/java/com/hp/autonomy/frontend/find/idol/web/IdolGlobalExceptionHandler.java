@@ -2,7 +2,6 @@
  * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 package com.hp.autonomy.frontend.find.idol.web;
 
 import com.autonomy.aci.client.services.AciErrorException;
@@ -29,7 +28,7 @@ public class IdolGlobalExceptionHandler extends GlobalExceptionHandler {
     private static final String SECURITY_INFO_TOKEN_EXPIRED_ID = "AXEQUERY538";
 
     //This is not an exhaustive list (if adding do not forget to add DAH versions of all AXE errors)
-    private Set<String> userErrors = new HashSet<>(Arrays.asList(
+    private final Set<String> userErrors = new HashSet<>(Arrays.asList(
             "AXEQUERY502",
             "DAHQUERY502",
             "AXEQUERY504",
@@ -76,15 +75,15 @@ public class IdolGlobalExceptionHandler extends GlobalExceptionHandler {
 
     @ExceptionHandler(AciErrorException.class)
     @ResponseBody
-    public ErrorResponse authenticationFailedHandler(final AciErrorException exception, final HttpServletResponse response) {
+    public IdolErrorResponse handleAciError(final AciErrorException exception, final HttpServletResponse response) {
         if (SECURITY_INFO_TOKEN_EXPIRED_ID.equals(exception.getErrorId())) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return new ErrorResponse("Security Info has expired");
+            return new IdolErrorResponse("Security Info has expired", exception.getErrorId());
         }
 
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-        final ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        final IdolErrorResponse errorResponse = new IdolErrorResponse(exception.getMessage(), exception.getErrorId());
 
         if (!userErrors.contains(exception.getErrorId())) {
             log.error("Unhandled Idol Error with uuid {}", errorResponse.getUuid());
@@ -103,9 +102,9 @@ public class IdolGlobalExceptionHandler extends GlobalExceptionHandler {
 
     @Getter
     private final class SpellingErrorResponse extends ErrorResponse{
-        private Spelling autoCorrection;
+        private final Spelling autoCorrection;
 
-        public SpellingErrorResponse(final String message, final Spelling autoCorrection) {
+        SpellingErrorResponse(final String message, final Spelling autoCorrection) {
             super(message);
             this.autoCorrection = autoCorrection;
         }

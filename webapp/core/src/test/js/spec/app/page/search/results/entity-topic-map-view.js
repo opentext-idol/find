@@ -2,17 +2,18 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'backbone',
     'find/app/configuration',
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/util/topic-map-view'
 ], function(Backbone, configuration, EntityTopicMapView, TopicMapView) {
+    "use strict";
 
     describe('EntityTopicMapView', function() {
         beforeEach(function() {
             configuration.and.returnValue({
+                errorCallSupportString: 'Custom call support message',
                 topicMapMaxResults: 1000
             });
 
@@ -68,9 +69,7 @@ define([
                 this.entityCollection.currentRequest = true;
 
                 // Populate the collection to test that the current request overrides the empty condition
-                this.entityCollection.set([{
-                    text: 'gin', occurrences: 12, docsWithPhrase: 7}
-                ]);
+                this.entityCollection.set([{text: 'gin', occurrences: 12, docsWithPhrase: 7}]);
 
                 this.createView();
             });
@@ -120,13 +119,8 @@ define([
                 expect(this.topicMap.draw).toHaveBeenCalled();
 
                 expect(this.topicMap.setData.calls.mostRecent().args[0]).toEqual([
-                    {name: 'gin', size: 8, children: [
-                        {name: 'gin', size: 7},
-                        {name: 'siege', size: 1}
-                    ]},
-                    {name: 'pneumatic', size: 2, children: [
-                        {name: 'pneumatic', size: 2}
-                    ]}
+                    {name: 'gin', size: 8, children: [{name: 'gin', size: 7}, {name: 'siege', size: 1}]},
+                    {name: 'pneumatic', size: 2, children: [{name: 'pneumatic', size: 2}]}
                 ]);
 
                 expect(this.view.$('.entity-topic-map')).not.toHaveClass('hide');
@@ -187,8 +181,14 @@ define([
                         expect(this.view.$('.entity-topic-map-loading')).toHaveClass('hide');
                     });
 
-                    it('shows the error message', function() {
-                        expect(this.view.$('.entity-topic-map-error')).not.toHaveClass('hide');
+                    describe('then the error message', function() {
+                        it('is displayed', function() {
+                            expect(this.view.$('.entity-topic-map-error')).not.toHaveClass('hide');
+                        });
+
+                        it('contains the custom "call support string"', function() {
+                            expect(this.view.$('.entity-topic-map-error')).toContainText(configuration().errorCallSupportString);
+                        });
                     });
 
                     it('does not show the empty message', function() {
@@ -225,5 +225,4 @@ define([
             });
         });
     });
-
 });

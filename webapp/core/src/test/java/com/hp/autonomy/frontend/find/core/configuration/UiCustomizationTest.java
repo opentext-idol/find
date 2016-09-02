@@ -22,7 +22,7 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         final UiCustomizationOptions uiCustomizationOptions = new UiCustomizationOptions();
         uiCustomizationOptions.populateRules("option3", rule);
 
-        return new UiCustomization(uiCustomizationOptions, ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"));
+        return new UiCustomization(uiCustomizationOptions, ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"), "Custom technical support message");
     }
 
     @Override
@@ -41,6 +41,7 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         assertTrue(json.contains("option3"));
         assertTrue(json.contains("application/vnd.visio"));
         assertTrue(json.contains("ms-visio:ofv|u|"));
+        assertTrue(json.contains("Custom technical support message"));
     }
 
     @Override

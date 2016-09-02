@@ -1,0 +1,14 @@
+<div class="well">
+    <div><%- errorHeader %></div>
+    <div class="error-message-for-user"><%- messageToUser %></div>
+    <div class="error-contact-support"><%- messageContactSupport %></div>
+    <div class="error-details-for-techsupport">
+        <%- errorDetails %>
+        <% if(errorLookup) { %>
+        <%- ' (' + errorLookup + ')' %>
+        <% } %>
+    </div>
+    <% if(errorUUID) { %>
+    <div class="error-details-uuid"><%- errorUUID %></div>
+    <% } %>
+</div>

@@ -2,7 +2,6 @@
  * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'backbone',
     'jquery',
@@ -31,12 +30,11 @@ define([
     'parametric-refinement/prettify-field-name',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection, 
-            ParametricFieldsCollection, NumericParametricFieldsCollection, queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
-            RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView, SunburstView,
+], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
+            ParametricFieldsCollection, NumericParametricFieldsCollection, queryStrategy, stateTokenStrategy, ResultsViewContainer,
+            ResultsViewSelection, RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView, SunburstView,
             MapResultsView, TableView, TimeBarView, configuration, prettifyFieldName, i18n, templateString) {
-
-    'use strict';
+    "use strict";
 
     var $window = $(window);
     var template = _.template(templateString);
@@ -142,7 +140,7 @@ define([
 
             // Tracks the document model which is currently shown in the preview
             this.previewModeModel = new Backbone.Model({document: null});
-            
+
             var subViewArguments = {
                 dateParametricFieldsCollection: this.dateParametricFieldsCollection,
                 delayedIndexesSelection: options.delayedIndexesSelection,
@@ -461,5 +459,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-
 });
