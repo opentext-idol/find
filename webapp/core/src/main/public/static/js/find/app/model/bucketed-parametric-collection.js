@@ -9,7 +9,7 @@ define([
 
     'use strict';
 
-    var URL_ROOT = '../api/public/parametric/buckets';
+    var URL_ROOT = 'api/public/parametric/buckets';
 
     var Model = FindBaseCollection.Model.extend({
         urlRoot: URL_ROOT,

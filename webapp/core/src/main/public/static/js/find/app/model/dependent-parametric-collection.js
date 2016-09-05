@@ -63,7 +63,7 @@ define([
     }
 
     return BaseCollection.extend({
-        url: '../api/public/parametric/dependent-values',
+        url: 'api/public/parametric/dependent-values',
 
         parse: function (results) {
             var totalCount = getArrayTotal(results);

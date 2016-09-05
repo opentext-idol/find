@@ -96,19 +96,19 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
 
         final LogoutSuccessHandler logoutSuccessHandler = new HodTokenLogoutSuccessHandler(SsoController.SSO_LOGOUT_PAGE, tokenRepository);
 
-        http.regexMatcher("/public/.*|/sso|/authenticate-sso|/api/authentication/.*|/logout")
-                .csrf()
+        http.regexMatcher("/public(/.*)?|/sso|/authenticate-sso|/api/authentication/.*|/logout")
+            .csrf()
                 .disable()
-                .exceptionHandling()
+            .exceptionHandling()
                 .authenticationEntryPoint(ssoEntryPoint)
                 .accessDeniedPage(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
                 .and()
-                .authorizeRequests()
-                .antMatchers(FindController.APP_PATH + "**").hasRole(FindRole.USER.name())
+            .authorizeRequests()
+                .antMatchers(FindController.APP_PATH + "/**").hasRole(FindRole.USER.name())
                 .and()
-                .logout()
+            .logout()
                 .logoutSuccessHandler(logoutSuccessHandler)
                 .and()
-                .addFilterAfter(ssoAuthenticationFilter, AbstractPreAuthenticatedProcessingFilter.class);
+            .addFilterAfter(ssoAuthenticationFilter, AbstractPreAuthenticatedProcessingFilter.class);
     }
 }

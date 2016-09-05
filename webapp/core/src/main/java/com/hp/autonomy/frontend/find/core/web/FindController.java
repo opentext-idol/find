@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class FindController<C extends FindConfig> {
-    public static final String APP_PATH = "/public/";
+    public static final String APP_PATH = "/public";
     public static final String LOGIN_PATH = "/login";
     public static final String DEFAULT_LOGIN_PAGE = "/loginPage";
     public static final String CONFIG_PATH = "/config";
@@ -69,13 +69,14 @@ public abstract class FindController<C extends FindConfig> {
         }
     }
 
-    @RequestMapping(value = APP_PATH, method = RequestMethod.GET)
-    public ModelAndView mainPage() throws JsonProcessingException {
+    @RequestMapping(value = APP_PATH + "/**", method = RequestMethod.GET)
+    public ModelAndView mainPage(final HttpServletRequest request) throws JsonProcessingException {
         final String username = authenticationInformationRetriever.getAuthentication().getName();
 
         final Collection<String> roles = authenticationInformationRetriever.getAuthentication().getAuthorities().stream().map((Function<GrantedAuthority, String>) GrantedAuthority::getAuthority).collect(Collectors.toCollection(LinkedList::new));
 
         final Map<String, Object> config = new HashMap<>();
+        config.put(MvcConstants.APPLICATION_PATH.value(), APP_PATH);
         config.put(MvcConstants.USERNAME.value(), username);
         config.put(MvcConstants.ROLES.value(), roles);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
@@ -93,6 +94,7 @@ public abstract class FindController<C extends FindConfig> {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(config));
+        attributes.put(MvcConstants.BASE_URL.value(), RequestUtils.buildBaseUrl(request));
 
         return new ModelAndView(ViewNames.APP.viewName(), attributes);
     }

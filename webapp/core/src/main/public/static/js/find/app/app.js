@@ -10,6 +10,7 @@ define([
     'find/app/util/test-browser',
     'find/app/model/window-scroll-model',
     'find/app/model/saved-searches/saved-query-collection',
+    'find/app/util/parse-url',
     './model-registry',
     'find/app/navigation',
     'find/app/configuration',
@@ -18,7 +19,7 @@ define([
     'find/app/vent',
     'find/app/router',
     'text!find/templates/app/app.html'
-], function($, Backbone, _, testBrowser, WindowScrollModel, SavedQueryCollection, ModelRegistry,
+], function($, Backbone, _, testBrowser, WindowScrollModel, SavedQueryCollection, parseUrl, ModelRegistry,
             Navigation, configuration, Pages, logout, vent, router, template) {
 
     return Backbone.View.extend({
@@ -35,7 +36,7 @@ define([
 
         events: {
             'click .navigation-logout': function() {
-                logout('../logout');
+                logout('logout');
             }
         },
 
@@ -63,7 +64,10 @@ define([
 
                 this.render();
 
-                var matchedRoute = Backbone.history.start();
+                var matchedRoute = Backbone.history.start({
+                    pushState: true,
+                    root: parseUrl(document.body.baseURI).pathname + configuration().applicationPath.replace(/^\//, '')
+                });
 
                 if (!matchedRoute) {
                     vent.navigate(configuration().hasBiRole ? 'find/search/query/*' : 'find/search/splash');

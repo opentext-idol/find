@@ -49,7 +49,7 @@ define([
 
     // Model representing a document in an HOD text index
     return Backbone.Model.extend({
-        url: '../api/public/search/get-document-content',
+        url: 'api/public/search/get-document-content',
 
         defaults: {
             authors: [],

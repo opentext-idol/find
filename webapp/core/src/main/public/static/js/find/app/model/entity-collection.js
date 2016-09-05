@@ -9,7 +9,7 @@ define([
 ], function(FindBaseCollection, _) {
 
     return FindBaseCollection.extend({
-        url: '../api/public/search/find-related-concepts',
+        url: 'api/public/search/find-related-concepts',
 
         initialize: function(models, options){
             this.getSelectedRelatedConcepts = options.getSelectedRelatedConcepts;
