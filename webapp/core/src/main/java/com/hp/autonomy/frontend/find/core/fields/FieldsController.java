@@ -131,13 +131,19 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
                 .stream()
                 .map(fieldName -> normaliseFieldName(fieldName, additionalFields))
                 .collect(Collectors.toList());
+        final Collection<String> parametricBlacklist = uiCustomization == null || uiCustomization.getParametricBlacklist() == null
+                ? Collections.emptyList()
+                : uiCustomization.getParametricBlacklist()
+                .stream()
+                .map(fieldName -> normaliseFieldName(fieldName, additionalFields))
+                .collect(Collectors.toList());
 
         return fieldsService.getFields(request, fieldTypeParams)
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()
                         .stream()
-                        .filter(tagName -> parametricWhitelist.isEmpty() || parametricWhitelist.contains(tagName.getId()))
+                        .filter(tagName -> (parametricWhitelist.isEmpty() || parametricWhitelist.contains(tagName.getId())) && !parametricBlacklist.contains(tagName.getId()))
                         .collect(Collectors.toList()))
                 );
     }

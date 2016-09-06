@@ -80,18 +80,51 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
 
     @Test
     public void getParametricFieldsWithWhitelist() throws E {
-        final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
-        response.put(FieldTypeParam.Numeric, Collections.emptyList());
-        response.put(FieldTypeParam.NumericDate, Collections.emptyList());
-        response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("DOCUMENT/ParametricField1"), new TagName("DOCUMENT/ParametricField2"), new TagName("DOCUMENT/ParametricField3")));
-        when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
+        mockSimpleParametricResponse();
 
-        when(config.getUiCustomization()).thenReturn(UiCustomization.builder().setParametricWhitelist(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2")).build());
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .setParametricWhitelist(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .build());
 
         final List<TagName> fields = controller.getParametricFields(createRequest());
         assertThat(fields, hasSize(2));
         assertThat(fields, hasItem(is(new TagName("/DOCUMENT/ParametricField1"))));
         assertThat(fields, hasItem(is(new TagName("/DOCUMENT/ParametricField2"))));
+    }
+
+    @Test
+    public void getParametricFieldsWithBlacklist() throws E {
+        mockSimpleParametricResponse();
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .setParametricBlacklist(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .build());
+
+        final List<TagName> fields = controller.getParametricFields(createRequest());
+        assertThat(fields, hasSize(1));
+        assertThat(fields, hasItem(is(new TagName("/DOCUMENT/ParametricField3"))));
+    }
+
+    @Test
+    public void getParametricFieldsWithWhitelistAndBlacklist() throws E {
+        mockSimpleParametricResponse();
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .setParametricWhitelist(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .setParametricBlacklist(Collections.singletonList("ParametricField1"))
+                .build());
+
+        final List<TagName> fields = controller.getParametricFields(createRequest());
+        assertThat(fields, hasSize(1));
+        assertThat(fields, hasItem(is(new TagName("/DOCUMENT/ParametricField2"))));
+    }
+
+    private void mockSimpleParametricResponse() throws E {
+        final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
+        response.put(FieldTypeParam.Numeric, Collections.emptyList());
+        response.put(FieldTypeParam.NumericDate, Collections.emptyList());
+        response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("DOCUMENT/ParametricField1"), new TagName("DOCUMENT/ParametricField2"), new TagName("DOCUMENT/ParametricField3")));
+        when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
     }
 
     @Test

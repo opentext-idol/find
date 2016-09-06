@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import lombok.Getter;
 import lombok.experimental.Builder;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,6 +24,7 @@ import java.util.Map;
 @JsonDeserialize(builder = UiCustomization.UiCustomizationBuilder.class)
 public class UiCustomization implements ConfigurationComponent<UiCustomization> {
     private final UiCustomizationOptions options;
+    private final Collection<String> parametricBlacklist;
     private final Collection<String> parametricWhitelist;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final Map<String, String> specialUrlPrefixes;
@@ -39,7 +39,8 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
             specialUrlPrefixes.putAll(this.specialUrlPrefixes);
             return builder()
                     .setOptions(options.merge(uiCustomization.options))
-                    .setParametricWhitelist(CollectionUtils.isNotEmpty(parametricWhitelist) ? parametricWhitelist : uiCustomization.parametricWhitelist)
+                    .setParametricBlacklist(parametricBlacklist != null ? parametricBlacklist : uiCustomization.parametricBlacklist)
+                    .setParametricWhitelist(parametricWhitelist != null ? parametricWhitelist : uiCustomization.parametricWhitelist)
                     .setSpecialUrlPrefixes(specialUrlPrefixes)
                     .setErrorCallSupportString(uiCustomization.errorCallSupportString)
                     .build();

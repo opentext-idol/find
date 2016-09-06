@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -23,7 +22,7 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         final UiCustomizationOptions uiCustomizationOptions = new UiCustomizationOptions();
         uiCustomizationOptions.populateRules("option3", rule);
 
-        return new UiCustomization(uiCustomizationOptions, Collections.emptyList(), ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"), "Custom technical support message");
+        return new UiCustomization(uiCustomizationOptions, null, null, ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"), "Custom technical support message");
     }
 
     @Override
@@ -49,6 +48,7 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
     protected void validateParsedComponent(final UiCustomization component) {
         assertNotNull(component.getOptions());
         assertFalse(component.getOptions().any().isEmpty());
+        assertThat(component.getParametricBlacklist(), not(empty()));
         assertThat(component.getParametricWhitelist(), not(empty()));
     }
 
@@ -57,6 +57,7 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         assertThat(mergedComponent.getOptions().any(), hasKey("option1"));
         assertThat(mergedComponent.getOptions().any(), hasKey("option2"));
         assertThat(mergedComponent.getOptions().any(), hasKey("option3"));
+        assertThat(mergedComponent.getParametricBlacklist(), hasItem(is("A_CLEAN_NUMERIC_FIELD")));
         assertThat(mergedComponent.getParametricWhitelist(), hasItem(is("AUTN_DATE")));
         assertThat(mergedComponent.getSpecialUrlPrefixes(), hasKey("application/msword"));
         assertThat(mergedComponent.getSpecialUrlPrefixes(), hasKey("application/vnd.visio"));

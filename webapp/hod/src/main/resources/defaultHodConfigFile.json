@@ -66,6 +66,7 @@
                 "bi": true
             }
         },
+        "parametricBlacklist": [],
         "parametricWhitelist": [],
         "specialUrlPrefixes": {
             "application/msword": "ms-word:ofv|u|",
