@@ -12,7 +12,7 @@ define([
             var domain = encodeURIComponent(resultNode.attr('data-domain'));
             var index = encodeURIComponent(resultNode.attr('data-index'));
             var reference = encodeURIComponent(resultNode.attr('data-reference'));
-            return 'find/search/suggest/' + domain + '/' + index + '/' + reference;
+            return 'search/suggest/' + domain + '/' + index + '/' + reference;
         }
     });
 });

@@ -27,11 +27,11 @@ define([
         constructor: HodVent,
 
         navigateToDetailRoute: function(model) {
-            this.navigate('find/search/document/' + suffixForDocument(model));
+            this.navigate('search/document/' + suffixForDocument(model));
         },
 
         navigateToSuggestRoute: function(model) {
-            this.navigate('find/search/suggest/' + suffixForDocument(model));
+            this.navigate('search/suggest/' + suffixForDocument(model));
         },
 
         addSuffixForDocument: function(model) {

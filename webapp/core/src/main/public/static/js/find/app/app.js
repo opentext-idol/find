@@ -94,7 +94,7 @@ define([
                 });
 
                 if (!matchedRoute) {
-                    vent.navigate(configuration().hasBiRole ? 'find/search/query/*' : 'find/search/splash');
+                    vent.navigate(configuration().hasBiRole ? 'search/query/*' : 'search/splash');
                 }
             }.bind(this));
         },

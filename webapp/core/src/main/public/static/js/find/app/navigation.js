@@ -21,7 +21,7 @@ define([
 
         initialize: function(options) {
             this.pageData = options.pageData;
-            this.listenTo(options.router, 'route:find', this.selectPage);
+            this.listenTo(options.router, 'route:page', this.selectPage);
         },
 
         render: function() {
