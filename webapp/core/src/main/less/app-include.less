@@ -504,7 +504,7 @@ fieldset.radio-fieldset > label {
         &:extend(.break-all);
 
         color: @color21;
-        font-size: @custom3;
+        font-size: @fontSizeLarge;
         font-weight: bold;
         width: @custom0;
     }
@@ -697,22 +697,22 @@ fieldset.radio-fieldset > label {
     vertical-align: middle;
     width: 240px;
 }
+
 .find-logo-small {
-    background-size: 100px 20px;
-    background: url('../img/Find_Logo_sml.png') no-repeat;
-    display: none;
+    background: url('../img/Find_Logo_sml.png') no-repeat 0 0/100px 20px;
     height: 20px;
     width: @width2;
 }
+
 .hp-logo-footer {
-    background-size: 140px 55px;
-    background: url('../img/HPE_logo.png') no-repeat center;
+    background: url('../img/HPE_logo.png') no-repeat center/140px 55px;
     bottom: 20px;
     height: @height23;
     left: calc(50% - @custom8);
     position: fixed;
     width: 140px;
 }
+
 a.unstyled {
     &:extend(.text-decoration-none);
 
@@ -954,7 +954,7 @@ input.find-input {
 
     .find-input {
         border-bottom: none;
-        font-size: @custom3;
+        font-size: @fontSizeLarge;
         transition: @transitAll;
     }
 }
@@ -1058,7 +1058,7 @@ input.find-input {
 .loading-spinner {
     &:extend(.text-center);
 
-    font-size: @custom3;
+    font-size: @fontSizeLarge;
     margin-bottom: @custom5;
 }
 
@@ -1082,7 +1082,7 @@ input.find-input {
 }
 
 .result-summary {
-    &:extend(.text-right);
+    &:extend(.text-justify);
 
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -1266,7 +1266,7 @@ input.find-input {
 .drop-list {
     &:extend(.absolute);
 
-    font-size: @custom3;
+    font-size: @fontSizeLarge;
     right: 20px;
     z-index: @zindex1;
 
@@ -1816,7 +1816,8 @@ input::-moz-placeholder {
     }
 }
 
-.slider-track-low, .slider-track-high {
+.slider-track-low,
+.slider-track-high {
     background: @color47;
 }
 
