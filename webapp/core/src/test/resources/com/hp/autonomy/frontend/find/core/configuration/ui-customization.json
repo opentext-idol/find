@@ -8,6 +8,7 @@
       "bi": true
     }
   },
+  "parametricWhitelist": ["AUTN_DATE", "A_CLEAN_NUMERIC_FIELD", "DOCUMENT/SOME_DATE"],
   "specialUrlPrefixes": {
     "application/msword": "ms-word:ofv|u|"
   },
