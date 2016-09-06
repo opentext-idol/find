@@ -2,7 +2,6 @@
  * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 package com.hp.autonomy.frontend.find.core.export;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
@@ -18,14 +17,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public abstract class ExportControllerIT extends AbstractFindIT {
     @Test
     public void exportAsCsv() throws Exception {
-        final String json = '{' +
-                "\"queryRestrictions\": { \"text\": \"*\", \"indexes\": " + mvcIntegrationTestUtils.getDatabasesAsJson() + "}," +
+        final String json = "{\"queryRestrictions\": {" +
+                "\"text\": \"*\", \"indexes\": " + mvcIntegrationTestUtils.getDatabasesAsJson() +
+                "}," +
                 "\"max_results\": 5," +
-                "\"summary\": \"off\" " +
-                '}';
+                "\"summary\": \"off\"}";
+
+        final String selectedField1 = "dateCreated";
+        final String selectedField2 = "WEIGHT";
 
         final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.CSV_PATH).with(authentication(biAuth()));
         requestBuilder.param(ExportController.SEARCH_REQUEST_PARAM, json);
+        requestBuilder.param(ExportController.SELECTED_EXPORT_FIELDS_PARAM, selectedField1);
+        requestBuilder.param(ExportController.SELECTED_EXPORT_FIELDS_PARAM, selectedField2);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())

@@ -86,7 +86,10 @@ public class HodExportService implements ExportService<ResourceIdentifier, HodEr
     private List<String> getValuesAsStrings(final FieldInfo<?> fieldInfo) {
         final List<String> stringList;
         if(fieldInfo != null) {
-            stringList = fieldInfo.getValues().stream().map(Object::toString).collect(Collectors.toList());
+            stringList = fieldInfo.getValues().stream()
+                    // prevents NullPointerException if the data set contains an incorrectly formatted date
+                    .filter(Objects::nonNull)
+                    .map(Object::toString).collect(Collectors.toList());
         } else {
             stringList = Collections.emptyList();
         }
