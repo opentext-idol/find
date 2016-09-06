@@ -81,9 +81,9 @@ module.exports = (grunt) ->
       options:
         strictMath: true
     watch:
-      buildTest:
+      buildBrowserTest:
         files: watchFiles
-        tasks: ['jasmine:test:build']
+        tasks: ['jasmine:browser-test:build']
       test:
         files: watchFiles
         tasks: ['babel:transform', 'jasmine:test']
@@ -97,5 +97,5 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'default', ['test']
   grunt.registerTask 'test', ['babel:transform', 'jasmine:test']
-  grunt.registerTask 'browser-test', ['jasmine:browser-test:build', 'connect:server', 'watch:buildTest']
+  grunt.registerTask 'browser-test', ['jasmine:browser-test:build', 'connect:server', 'watch:buildBrowserTest']
   grunt.registerTask 'watch-test', ['babel:transform', 'jasmine:test', 'watch:test']
