@@ -18,9 +18,14 @@ define([
     'find/app/util/logout',
     'find/app/vent',
     'find/app/router',
+    'js-whatever/js/escape-regex',
     'text!find/templates/app/app.html'
 ], function($, Backbone, _, testBrowser, WindowScrollModel, SavedQueryCollection, parseUrl, ModelRegistry,
-            Navigation, configuration, Pages, logout, vent, router, template) {
+            Navigation, configuration, Pages, logout, vent, router, escapeRegex, template) {
+
+    function removeTrailingSlash(string) {
+        return string.replace(/\/$/, '');
+    }
 
     return Backbone.View.extend({
         el: '.page',
@@ -37,6 +42,19 @@ define([
         events: {
             'click .navigation-logout': function() {
                 logout('logout');
+            },
+            'click a[href]': function(event) {
+                // If not left click (event.which === 1) without the control key, continue with full page redirect
+                if (event.which === 1 && !(event.ctrlKey || event.metaKey)) {
+                    var href = $(event.currentTarget).prop('href');
+
+                    // If not an internal route, continue with full page redirect
+                    if (this.internalHrefRegexp.test(href)) {
+                        event.preventDefault();
+                        var route = href.replace(this.internalHrefRegexp, '');
+                        vent.navigate(route);
+                    }
+                }
             }
         },
 
@@ -44,7 +62,12 @@ define([
             $.ajaxSetup({cache: false});
 
             // disable Datatables alerting behaviour
-            if ($.fn.dataTableExt) { $.fn.dataTableExt.sErrMode = 'throw'; }
+            if ($.fn.dataTableExt) {
+                $.fn.dataTableExt.sErrMode = 'throw';
+            }
+
+            const applicationPath = configuration().applicationPath;
+            this.internalHrefRegexp = new RegExp('^' + escapeRegex(removeTrailingSlash(document.body.baseURI) + applicationPath));
 
             testBrowser().done(function() {
                 var modelRegistry = new ModelRegistry(this.getModelData());
@@ -66,7 +89,8 @@ define([
 
                 var matchedRoute = Backbone.history.start({
                     pushState: true,
-                    root: parseUrl(document.body.baseURI).pathname + configuration().applicationPath.replace(/^\//, '')
+                    // Application path must have a leading slash
+                    root: removeTrailingSlash(parseUrl(document.body.baseURI).pathname) + applicationPath
                 });
 
                 if (!matchedRoute) {
