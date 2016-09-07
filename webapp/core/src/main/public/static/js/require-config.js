@@ -18,7 +18,7 @@ require.config({
         'datatables.net-fixedColumns': '../bower_components/datatables.net-fixedcolumns/js/dataTables.fixedColumns',
         'd3': '../bower_components/d3/d3',
         i18n: '../bower_components/requirejs-i18n/i18n',
-        'peg': '../bower_components/pegjs/peg-0.8.0',
+        'peg': '../bower_components/pegjs/peg-0.10.0',
         'fieldtext': '../bower_components/hp-autonomy-fieldtext-js/src',
         'parametric-refinement': '../bower_components/hp-autonomy-js-parametric-refinement/src',
         iCheck: '../bower_components/iCheck/icheck',
