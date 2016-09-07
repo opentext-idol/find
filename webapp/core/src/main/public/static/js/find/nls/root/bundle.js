@@ -98,6 +98,7 @@ define([
         'search.document.detail.tabs.location.latitude': 'Latitude',
         'search.document.detail.tabs.location.longitude': 'Longitude',
         'search.document.detail.tabs.metadata': 'Metadata',
+        'search.document.detail.tabs.metadata.noAdvanced': 'This document has no advanced metadata fields',
         'search.document.detail.tabs.metadata.showAdvanced': 'Show advanced',
         'search.document.detail.tabs.metadata.hideAdvanced': 'Hide advanced',
         'search.document.detail.tabs.similarDocuments': 'Similar documents',

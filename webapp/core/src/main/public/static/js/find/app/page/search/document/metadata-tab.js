@@ -13,17 +13,17 @@ define([
         template: _.template(template),
 
         events: {
-            'click .metadata-tab-see-more': function () {
+            'click .metadata-tab-see-more': function() {
                 //noinspection JSUnresolvedFunction
                 this.toggleAdvancedMetadata(true);
             },
-            'click .metadata-tab-see-less': function () {
+            'click .metadata-tab-see-less': function() {
                 //noinspection JSUnresolvedFunction
                 this.toggleAdvancedMetadata(false);
             }
         },
 
-        toggleAdvancedMetadata: function (showAllMetadata) {
+        toggleAdvancedMetadata: function(showAllMetadata) {
             //noinspection JSUnresolvedFunction
             this.$('.advanced-field').toggleClass('hide', !showAllMetadata);
             //noinspection JSUnresolvedFunction
@@ -31,8 +31,8 @@ define([
             //noinspection JSUnresolvedFunction
             this.$('.metadata-tab-see-less').toggleClass('hide', !showAllMetadata);
         },
-        
-        initialize: function (options) {
+
+        initialize: function(options) {
             //noinspection JSUnresolvedVariable
             this.indexesCollection = options.indexesCollection
         },
@@ -42,31 +42,31 @@ define([
             var importantFields = [{
                 key: 'title',
                 value: this.model.get('title')
-            },{
+            }, {
                 key: 'url',
                 value: this.model.get('url')
-            },{
+            }, {
                 key: 'reference',
                 value: this.model.get('reference')
-            },{
+            }, {
                 key: 'index',
                 value: databaseNameResolver.getDatabaseDisplayNameFromDocumentModel(this.indexesCollection, this.model)
-            },{
+            }, {
                 key: 'summary',
                 value: this.model.get('summary')
-            },{
+            }, {
                 key: 'contentType',
                 value: this.model.get('contentType')
             }];
 
             //noinspection JSUnresolvedFunction
             var ignoreFields = ['thumbnail', 'DRECONTENT', 'DREDATE', 'DRETITLE', 'DREREFERENCE'].concat(_.pluck(importantFields, 'key'));
-            var fields = this.model.get('fields').filter(function (field) {
+            var fields = this.model.get('fields').filter(function(field) {
                 //noinspection JSUnresolvedFunction
                 return !_.contains(ignoreFields, field.id);
             });
             //noinspection JSUnresolvedFunction
-            var partitionedFields = _.partition(fields, function (field) {
+            var partitionedFields = _.partition(fields, function(field) {
                 //noinspection JSUnresolvedVariable
                 return field.advanced;
             });
@@ -82,9 +82,15 @@ define([
                 advancedFields: advancedFields
             }));
 
-            if (advancedFields.length === 0) {
+            if(advancedFields.length === 0) {
                 //noinspection JSUnresolvedFunction
-                this.$('.metadata-tab-see-more').prop('disabled', true);
+                this.$('.metadata-tab-see-more')
+                    .prop('disabled', true)
+                    .tooltip({
+                        placement: 'top',
+                        title: i18n['search.document.detail.tabs.metadata.noAdvanced'],
+                        container: 'body'
+                    });
             }
         }
     });
