@@ -15,7 +15,9 @@ define([
         events: {
             'click .metadata-tab-see-more': function() {
                 //noinspection JSUnresolvedFunction
-                this.toggleAdvancedMetadata(true);
+                if(!this.$('.metadata-tab-see-more').hasClass('disabled')) {
+                    this.toggleAdvancedMetadata(true);
+                }
             },
             'click .metadata-tab-see-less': function() {
                 //noinspection JSUnresolvedFunction
@@ -85,7 +87,7 @@ define([
             if(advancedFields.length === 0) {
                 //noinspection JSUnresolvedFunction
                 this.$('.metadata-tab-see-more')
-                    .prop('disabled', true)
+                    .toggleClass('disabled', true)
                     .tooltip({
                         placement: 'top',
                         title: i18n['search.document.detail.tabs.metadata.noAdvanced'],
