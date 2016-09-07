@@ -17,7 +17,7 @@ define([
             var display = '';
             var value = this.datesFilterModel.get(attribute);
 
-            if (value) {
+            if(value) {
                 display = value.format(datePicker.DATE_WIDGET_FORMAT);
             }
 
@@ -32,7 +32,7 @@ define([
                 var selected = $targetRow.attr('data-filter-id');
                 var previous = this.datesFilterModel.get('dateRange');
 
-                if (selected === previous) {
+                if(selected === previous) {
                     this.datesFilterModel.set('dateRange', null);
                 } else {
                     this.datesFilterModel.set('dateRange', selected);
@@ -73,8 +73,8 @@ define([
                 filters: this.getFilters()
             }));
 
-            const generateDatePickerCallback = function (attribute) {
-                return function () {
+            const generateDatePickerCallback = function(attribute) {
+                return function() {
                     var attributes = {dateRange: DatesFilterModel.DateRange.CUSTOM};
                     //noinspection JSUnresolvedFunction
                     const stringValue = this.$('[data-date-attribute="' + attribute + '"]').find('input').val();
@@ -86,7 +86,7 @@ define([
             datePicker.render(this.$el.find('.results-filter-date[data-date-attribute="customMinDate"]'), generateDatePickerCallback('customMinDate'));
             datePicker.render(this.$el.find('.results-filter-date[data-date-attribute="customMaxDate"]'), generateDatePickerCallback('customMaxDate'));
 
-            this.$('.date-filters-list [data-filter-id="' +  DatesFilterModel.DateRange.NEW + '"]').tooltip({
+            this.$('.date-filters-list [data-filter-id="' + DatesFilterModel.DateRange.NEW + '"]').tooltip({
                 title: i18n['search.dates.timeInterval.new.description'],
                 placement: 'right'
             });

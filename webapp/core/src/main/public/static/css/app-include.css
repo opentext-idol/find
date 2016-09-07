@@ -18,11 +18,13 @@ body {
 .chart rect {
     fill: #01A982;
 }
+
 .chart rect:hover {
-    fill: rgba(1,169,130,0.50);
+    fill: rgba(1, 169, 130, 0.50);
 }
+
 .chart rect.selection {
-    fill: rgba(97,71,103,0.3);
+    fill: rgba(97, 71, 103, 0.3);
 }
 
 .numeric-parametric-inputs {
@@ -54,11 +56,13 @@ body {
     position: relative;
     display: inline-block;
 }
+
 .date > input {
     padding: 8px 42px 8px 8px;
     padding-left: 30px;
     font-size: 13px;
 }
+
 .date > .date-select {
     position: absolute;
     top: 0;
@@ -217,11 +221,11 @@ dt,
 }
 
 .bootstrap-datetimepicker-widget.dropdown-menu {
-    width:auto;
+    width: auto;
 }
 
 .bootstrap-datetimepicker-widget .timepicker td {
-    border:none;
+    border: none;
 }
 
 .bootstrap-datetimepicker-widget .timepicker .btn {
@@ -230,7 +234,7 @@ dt,
 
 .bootstrap-datetimepicker-widget a[data-action] {
     padding: 0;
-    color:#676a6c;
+    color: #676a6c;
 }
 
 .bootstrap-datetimepicker-widget table td span {
@@ -240,7 +244,7 @@ dt,
 }
 
 .datepicker-days td {
-    padding:0 !important;
+    padding: 0 !important;
 }
 
 .bootstrap-datetimepicker-widget table td {
@@ -250,7 +254,7 @@ dt,
 }
 
 .bootstrap-datetimepicker-widget .separator {
-    padding:0;
+    padding: 0;
 }
 
 .input-append.date .add-on i {
@@ -354,7 +358,7 @@ fieldset.radio-fieldset > label {
 }
 
 .left-side-container {
-    font-size:13px;
+    font-size: 13px;
 }
 
 .right-side-container {
@@ -597,18 +601,18 @@ fieldset.radio-fieldset > label {
 }
 
 a.unstyled {
-    color:#fff;
+    color: #fff;
     text-decoration: none;
 }
 
 a.unstyled:hover {
-    color:#fff !important;
+    color: #fff !important;
     text-decoration: none !important;
 }
 
 input.find-input {
-    padding-right:26px;
-    width:100%;
+    padding-right: 26px;
+    width: 100%;
     line-height: initial;
     text-indent: 3px
 }
@@ -616,14 +620,17 @@ input.find-input {
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
     color: #a9a9a9;
 }
+
 :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
     color: #a9a9a9;
-    opacity:  1;
+    opacity: 1;
 }
+
 ::-moz-placeholder { /* Mozilla Firefox 19+ */
     color: #a9a9a9;
-    opacity:  1;
+    opacity: 1;
 }
+
 :-ms-input-placeholder { /* Internet Explorer 10-11 */
     color: #a9a9a9;
 }
@@ -763,6 +770,7 @@ input.find-input {
     width: 100%;
     margin-bottom: 5px;
 }
+
 .find-form .tt-menu {
     background: white;
     border: 2px solid #CCC;
@@ -770,9 +778,11 @@ input.find-input {
     padding: 8px 0;
     margin-top: 3px;
 }
+
 .find-form .tt-suggestion {
     padding: 0 8px;
 }
+
 .find-form .tt-suggestion.tt-cursor {
     background: #E7E7E7;
 }
@@ -800,7 +810,7 @@ input.find-input {
 
 .animated-container .find-form {
     transition: all 1s ease;
-    transition-property:width;
+    transition-property: width;
 }
 
 .animated-container .find-input {
@@ -808,6 +818,7 @@ input.find-input {
     border-bottom: none;
     transition: all 1s ease;
 }
+
 /* fancy reverse animation */
 .reverse-animated-container {
     margin-top: 15%;
@@ -816,7 +827,7 @@ input.find-input {
 
 .reverse-animated-container .find-form {
     transition: all 1s ease;
-    transition-property:width;
+    transition-property: width;
 }
 
 .reverse-animated-container .find-input {
@@ -835,6 +846,7 @@ input.find-input {
 .animated-container .find-input:focus {
     outline: 0;
 }
+
 /* end of fancy animation */
 
 .main-content h5,
@@ -885,11 +897,13 @@ input.find-input {
         height: 750px;
     }
 }
+
 @media (max-height: 800px) {
     .entity-topic-map {
         height: 500px;
     }
 }
+
 @media (max-height: 550px) {
     .entity-topic-map {
         height: 300px;
@@ -956,7 +970,7 @@ input.find-input {
 }
 
 .popover-content a {
-    margin:0;
+    margin: 0;
 }
 
 .results-popover-title {
@@ -969,7 +983,7 @@ input.find-input {
 
 .also-searching-for {
     float: left;
-    color:#fff;
+    color: #fff;
     padding: 0 3px;
     font-weight: lighter;
     vertical-align: top;
@@ -1112,7 +1126,7 @@ input.find-input {
 
 @media only screen and (max-width: 1210px) {
     .find-input {
-        height:25px;
+        height: 25px;
         font-size: 24px;
     }
 }
@@ -1155,8 +1169,9 @@ input.find-input {
         position: absolute;
         top: 30px;
     }
+
     .navbar .navbar-nav .open .dropdown-menu > .active > a,
-    .navbar .navbar-nav .open .dropdown-menu > .active > a:hover{
+    .navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
         background-color: #425563;
         background-image: none;
     }
@@ -1259,7 +1274,7 @@ input:-moz-placeholder::before {
     z-index: 1;
 }
 
-.popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 , .popover a{
+.popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6, .popover a {
     color: #00b388;
 }
 
@@ -1310,9 +1325,11 @@ input:-moz-placeholder::before {
     .reverse-animated-container .find-form {
         width: 100%;
     }
+
     .find-logo-small {
         display: none;
     }
+
     .navbar-username { /* hackish, minimise overlap of navbar username with See all docs link. See [FIND-450] */
         display: none;
     }
@@ -1612,7 +1629,7 @@ input:-moz-placeholder::before {
     color: #D33D2A;
 }
 
-.comparison-view.results-view-container{
+.comparison-view.results-view-container {
     padding: 0 25px;
 }
 
@@ -1690,11 +1707,12 @@ input:-moz-placeholder::before {
     margin-top: 2px;
 }
 
-.slider-track-low, .slider-track-high{
-    background: rgba(1,169,130,0.1);
+.slider-track-low, .slider-track-high {
+    background: rgba(1, 169, 130, 0.1);
 }
+
 .slider-selection {
-    background: rgba(1,169,130,0.2);
+    background: rgba(1, 169, 130, 0.2);
 }
 
 .slider-handle {
@@ -1739,7 +1757,7 @@ h4.similar-dates-message {
     background: rgb(68, 85, 95) none;
 }
 
-.after-slider-div .slider.slider-horizontal .slider-track .slider-tick.round{
+.after-slider-div .slider.slider-horizontal .slider-track .slider-tick.round {
     opacity: 1;
 }
 
@@ -1751,16 +1769,15 @@ h4.similar-dates-message {
     background: rgb(219, 219, 219) none;
 }
 
-.before-slider-div .slider.slider-horizontal .slider-track .slider-tick.round{
+.before-slider-div .slider.slider-horizontal .slider-track .slider-tick.round {
     opacity: 1;
 }
-
 
 .numeric-parametric-slider-block {
     width: 100%;
 }
 
-.numeric-parametric-slider-block > .slider{
+.numeric-parametric-slider-block > .slider {
     width: 100%;
 }
 
@@ -1768,7 +1785,6 @@ h4.similar-dates-message {
 .dataTables_paginate ul.pagination li.active {
     transition: none;
 }
-
 
 .leaflet-container {
     font-family: Metric;
