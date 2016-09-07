@@ -148,7 +148,7 @@ body {
 }
 
 .numeric-parametric-inputs {
-    min-height: @custom3;
+    min-height: 18px;
 }
 
 .numeric-parametric-chart-row,
@@ -163,10 +163,6 @@ body {
 .date {
     &:extend(.inline-block);
     position: relative;
-
-    input {
-        &:extend(.p-r-nil);
-    }
 }
 
 .input-append.date {
@@ -188,7 +184,7 @@ body {
 
 .date > input {
     font-size: @fontSize0;
-    padding: @custom6 42px @custom6 @custom6;
+    padding: @custom6 @nil @custom6 30px;
 }
 
 .date > .date-select {
@@ -390,7 +386,7 @@ dt {
 
 .datepicker-days {
     td {
-        &:extend(.p-nil);
+        padding: @nil !important;
     }
 }
 
@@ -422,12 +418,15 @@ dt {
 }
 
 .flex-row {
-    &:extend(.flex-column);
+    &:extend(.flex);
+
+    flex-direction: row;
     flex-wrap: wrap;
 }
 
 .flex-column {
     &:extend(.flex);
+
     flex-direction: column;
 }
 

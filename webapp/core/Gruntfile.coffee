@@ -74,6 +74,7 @@ module.exports = (grunt) ->
     less:
       build:
         files:
+          'target/classes/static/css/bootstrap.css': 'src/main/less/bootstrap.less',
           'target/classes/static/css/compiled.css': 'src/main/less/app.less',
           'target/classes/static/css/login.css': 'src/main/less/login.less',
           'target/classes/static/css/result-highlighting.css': 'src/main/less/result-highlighting.less'
