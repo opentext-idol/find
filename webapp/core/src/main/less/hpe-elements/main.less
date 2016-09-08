@@ -1,0 +1,173 @@
+html {
+  height: 100%;
+  -ms-overflow-style: scrollbar;
+}
+
+body {
+  background: @gray;
+  color: @text-color;
+  font-size: @fontSize;
+  font-family: Metric;
+  position: relative;
+  font-weight: 400;
+}
+
+html,
+body,
+.wrapper {
+  min-height: 100%;
+}
+
+code {
+ font-size: 75%;
+}
+
+td > code {
+  word-break: break-word;
+}
+
+a:hover,
+a:focus {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.page-content {
+  background: @gray;
+  margin-left: @sidebar-width;
+  min-height: 100%;
+}
+
+.container-max {
+  max-width: 1000px;
+}
+
+.container-left {
+  margin-left: 0;
+}
+
+.container-right {
+  margin-right: 0;
+}
+
+.row-divider {
+  height: 1px;
+  margin: 9px 0px;
+  overflow: hidden;
+  background-color: @border-color;
+}
+
+.form-control,
+.form-control:focus,
+.has-error .form-control:focus,
+.has-success .form-control:focus,
+.has-warning .form-control:focus,
+.navbar-collapse,
+.navbar-form,
+.navbar-form-custom .form-control:focus,
+.navbar-form-custom .form-control:hover,
+.open .btn.dropdown-toggle,
+.panel,
+.popover,
+.progress,
+.progress-bar {
+  box-shadow: none;
+}
+
+.ui-draggable .hpebox-title {
+  cursor: move;
+}
+
+.breadcrumb {
+  background-color: transparent;
+  padding: 0px 0px;
+  margin-bottom: 0;
+  font-family: Metric;
+  font-size: 14px;
+  font-weight: 400;
+  li {
+    .opacity(0.7);
+  }
+  height: 100%;
+  min-height: 22px;
+}
+
+.breadcrumb > li a,
+.breadcrumb>li:after {
+  color: inherit;
+}
+.breadcrumb > li:before,
+.breadcrumb > li:last-child:after{
+  display:none;
+}
+
+.breadcrumb > li:after {
+  content: "\f131";
+  padding: 5px 2px 0px 0px;
+  font-size: 11px;
+  color: inherit;
+  font-family: "HPEIcons";
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 11px;
+  .rotate(90deg);
+  .opacity(0.6);
+}
+
+.breadcrumb-inverse {
+  background-color: @white;
+  color: @black;
+}
+
+.border-bottom {
+  border-bottom: 1px solid @border-color !important;
+}
+
+// HP Content Wrappers
+.wrapper-content {
+  padding: 20px 20px 40px;
+}
+
+.page-wrapper-cover {
+  margin: 0px !important;
+}
+
+.page-heading {
+  width: 100%;
+  padding: 9px 0px 2px 23px;
+  z-index: 0;
+}
+
+ul.unstyled,
+ol.unstyled {
+  list-style: none outside none;
+  margin-left: 0;
+}
+
+.no-overflow
+{
+  overflow: hidden !important;
+}
+
+.full-height
+{
+  height: 100%;
+}
+
+.full-width
+{
+  width: 100%;
+}
+
+
+.footer.condensed-panel .page-heading{
+  margin-top:-8px;
+}
+
+.footer.condensed-panel.hidden-navbar .page-heading{
+  margin-top:-8px;
+}
+
+.footer.condensed-panel.hide-navbar .page-heading{
+  margin-top:-8px;
+}

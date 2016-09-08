@@ -1,10 +1,4 @@
-/*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
- */
-
-@import '../lib/bootstrap/css/bootstrap.css';
-@import '../lib/bootstrap/css/bootstrap-theme.css';
+@import "bootstrap.css";
 @import '../bower_components/fontawesome/css/font-awesome.css';
 @import "../bower_components/hp-autonomy-settings-page/src/css/settings.css";
 @import "../bower_components/hp-autonomy-js-whatever/src/css/javascript-utils.css";
@@ -18,7 +12,5 @@
 @import "../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css";
 @import "../bower_components/leaflet.markercluster/dist/MarkerCluster.css";
 @import "../bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css";
-@import 'HPEElements.css';
-@import 'app-include.css';
-@import "result-highlighting.css";
-@import 'icons.css';
+@import "compiled.css";
+@import "icons.css";
