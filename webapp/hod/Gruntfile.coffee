@@ -71,16 +71,15 @@ module.exports = (grunt) ->
           template: jasmineRequireTemplate
           templateOptions:
             requireConfigFile: browserTestRequireConfig
-    less: {
-      build: {
-        files: {
+    less:
+      build:
+        files:
           'target/classes/static/css/bootstrap.css': '../core/src/main/less/bootstrap.less',
-          'target/classes/static/css/app.css': '../core/src/main/less/app.less',
+          'target/classes/static/css/compiled.css': '../core/src/main/less/app.less',
           'target/classes/static/css/login.css': '../core/src/main/less/login.less',
           'target/classes/static/css/result-highlighting.css': '../core/src/main/less/result-highlighting.less'
-        }
-      }
-    }
+        options:
+          strictMath: true
     watch:
       buildTest:
         files: testWatchFiles
@@ -91,7 +90,7 @@ module.exports = (grunt) ->
       copyResources:
         files: [
           '../core/src/main/public/static/**/*'
-          '../core/src/less/**/*.less'
+          '../core/src/main/less/**/*.less'
           'src/main/public/static/**/*'
         ]
         spawn: false
