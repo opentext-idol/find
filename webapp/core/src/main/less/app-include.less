@@ -78,9 +78,8 @@
 @transitAllFast: all 0.5s ease;
 
 /*------Z-index variables------*/
-@zindex0: 1;
-@zindex1: 1000;
-@zindex2: 1020;
+@dateSelectZIndex: 1000;
+@findInputZIndex: 1020;
 
 
 /*------Selectors and declarations-------*/
@@ -182,7 +181,7 @@ body {
     padding: @custom6;
     top: @nil;
     width: 33px;
-    z-index: @zindex1;
+    z-index: @dateSelectZIndex;
 }
 .cursor-not-allowed {
     cursor: not-allowed !important;
@@ -661,7 +660,7 @@ fieldset.radio-fieldset > label {
 .find {
     &:extend(.text-center);
 
-    z-index: @zindex2;
+    z-index: @findInputZIndex;
 }
 
 .find-logo {
@@ -1250,7 +1249,7 @@ input.find-input {
 
     font-size: @fontSizeLarge;
     right: 20px;
-    z-index: @zindex1;
+    z-index: @zindex-dropdown;
 
     .dropdown-toggle {
         padding: 5px 7px 5px 13px;
@@ -1375,7 +1374,6 @@ input::-moz-placeholder {
 .find-banner-container {
     background: @color29 url('../img/Find_banner.png');
     height: 125px;
-    z-index: @zindex0;
 }
 
 .popover h1,
