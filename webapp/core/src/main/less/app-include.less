@@ -67,8 +67,8 @@
 
 /*------Custom numeric variables------*/
 @nil:      0;
-@custom0:  100%;
-@custom1:  100vh;
+@100percent:  100%;
+@100vh:  100vh;
 @custom3:  50px;
 @custom4:  300px;
 @custom5:  10px;
@@ -76,7 +76,7 @@
 @custom7:  32px;
 @custom8:  70px;
 @custom9:  30px;
-@custom10: 250px;
+@errorBodyMarginTop: 250px;
 @custom11: 15px;
 
 /*------Custom text variables------*/
@@ -108,7 +108,7 @@ body {
 
 .page {
     .header {
-        min-height: @custom3;
+        min-height: @navbar-height;
     }
 
     .body {
@@ -225,20 +225,12 @@ body {
     margin-bottom: 60px;
 }
 
-.m-l-sm {
-    margin-left: @custom5;
-}
-
-.m-r-sm {
-    margin-right: @custom5;
-}
-
 .full-width {
-    width: @custom0;
+    width: @100percent;
 }
 
 .full-height-viewport {
-    height: @custom1;
+    height: @100vh;
 }
 
 dl.dl-inline > dt,
@@ -313,15 +305,20 @@ dt {
 }
 
 .side-container {
+    &:extend(.p-t-sm);
+    &:extend(.p-b-sm);
+    &:extend(.p-l);
+    &:extend(.p-r);
+
     background-color: @color5;
     flex: @nil @nil auto;
     overflow-y: auto;
-    padding: @custom5 @custom11;
     width: 20%;
 
     td {
-        border-bottom: 1px solid @color7;
         &:extend(.break-all);
+
+        border-bottom: 1px solid @color7;
     }
 
     h4 {
@@ -400,7 +397,7 @@ dt {
 
 .input-append,
 .input-prepend .date {
-    font-size: @custom0;
+    font-size: @100percent;
 }
 
 .centre {
@@ -428,9 +425,9 @@ fieldset.radio-fieldset > legend {
 }
 
 fieldset.radio-fieldset > label {
-    margin-right: @custom5;
-    margin-top: @nil;
-    padding-left: @nil;
+    &:extend(.m-t-nil);
+    &:extend(.m-r-sm);
+    &:extend(.p-l-nil);
 }
 
 .middle-box-wrapper {
@@ -440,11 +437,11 @@ fieldset.radio-fieldset > label {
 
 .main-content {
     background-color: @white;
-    height: @custom0;
+    height: @100percent;
     overflow-x: hidden;
 
     .container-fluid {
-        height: calc(@custom0 - @custom8);
+        height: calc(@100percent - @custom8);
     }
 
     .container-fluid.reduced {
@@ -455,7 +452,7 @@ fieldset.radio-fieldset > label {
 .find-main-subcontainer,
 .main-content .content,
 .content > div {
-    height: @custom0;
+    height: @100percent;
 }
 
 .left-side-container {
@@ -495,19 +492,23 @@ fieldset.radio-fieldset > label {
         color: @hpegreen-hover;
         font-size: @fontSizeLarge;
         font-weight: bold;
-        width: @custom0;
+        width: @100percent;
     }
 }
 
 .middle-container-contents {
-    height: @custom0;
+    &:extend(.p-t-sm);
+    &:extend(.p-b-sm);
+    &:extend(.p-l);
+    &:extend(.p-r);
+
+    height: @100percent;
     overflow-y: auto;
-    padding: @custom5 @custom11;
 }
 
 .middle-container.middle-container-with-time-bar {
     .middle-container-contents {
-        height: calc(@custom0 - 240px);
+        height: calc(@100percent - 240px);
     }
 }
 
@@ -526,11 +527,12 @@ fieldset.radio-fieldset > label {
 }
 
 .middle-container-time-bar-content {
+    &:extend(.p-t-sm);
+
     height: 190px;
     background-color: @color42;
     border-top: 1px solid @color30;
     margin: @nil;
-    padding-top: @custom5;
 }
 
 .time-bar-container-toggle {
@@ -538,8 +540,11 @@ fieldset.radio-fieldset > label {
 
     h4.time-bar-header {
         &:extend(.inline-block);
+        &:extend(.m-t);
+        &:extend(.m-b-nil);
+        &:extend(.m-l-nil);
+        &:extend(.m-r);
 
-        margin: @custom11 @nil @nil @custom11;
         width: auto;
     }
 }
@@ -551,13 +556,15 @@ fieldset.radio-fieldset > label {
 .time-bar-container-icon {
     &:extend(.inline-block);
     &:extend(.pull-right);
-
-    margin: @custom11 @custom11 @nil @nil;
+    &:extend(.m-t);
+    &:extend(.m-b-nil);
+    &:extend(.m-l);
+    &:extend(.m-r-nil);
 }
 
 .middle-container.shorten {
     h4 {
-        width: @custom0;
+        width: @100percent;
     }
 }
 
@@ -718,7 +725,7 @@ input.find-input {
     line-height: initial;
     padding-right:26px;
     text-indent: 3px;
-    width:@custom0;
+    width: @100percent;
 }
 
 
@@ -752,13 +759,17 @@ input.find-input {
 }
 
 .selector-list {
-    margin-bottom: @custom5;
+    &:extend(.m-b-sm);
 }
 
 .main-results-container {
+    &:extend(.p-t-nil);
+    &:extend(.p-b-nil);
+    &:extend(.p-l-sm);
+    &:extend(.p-r-sm);
+
     border-bottom: 1px solid @secondary-hover;
-    padding: @nil @custom5;
-    width: @custom0;
+    width: @100percent;
 }
 
 .document-thumbnail {
@@ -785,7 +796,7 @@ input.find-input {
 }
 
 .preview-link {
-    margin-left: @custom5;
+    &:extend(.m-l-sm);
 }
 
 .direct-access-title {
@@ -808,7 +819,7 @@ input.find-input {
 }
 
 .document-reference.shorten {
-    width: @custom0;
+    width: @100percent;
 }
 
 .selected-document {
@@ -817,7 +828,7 @@ input.find-input {
 
 .preview-mode-metadata {
     td {
-        padding-left: @custom5;
+        &:extend(.p-l-sm);
     }
 }
 
@@ -892,7 +903,7 @@ input.find-input {
 
     .twitter-typeahead {
         margin-bottom: 5px;
-        width: @custom0;
+        width: @100percent;
     }
 
     .tt-menu {
@@ -900,7 +911,7 @@ input.find-input {
         border: 2px solid @grey;
         margin-top: 3px;
         padding: @custom6 @nil;
-        width: @custom0;
+        width: @100percent;
     }
 
     .tt-suggestion {
@@ -955,12 +966,12 @@ input.find-input {
 
     .find-input {
         &:extend(.italic);
+        &:extend(.p-l-sm);
 
         border: 2px solid @grey !important;
         font-family: inherit;
         font-size: 23px !important;
         height: @findInputHeight !important;
-        padding-left: @custom5;
         transition: @transitAll;
     }
 
@@ -984,7 +995,7 @@ input.find-input {
 
 .error-body {
     &:extend(.text-center);
-    margin-top: @custom10;
+    margin-top: @errorBodyMarginTop;
 }
 
 .error.well {
@@ -1015,12 +1026,12 @@ input.find-input {
 
 .entity-topic-map {
     max-width: 1250px;
-    width: @custom0;
+    width: @100percent;
 }
 
 .sunburst {
     height: @sunburstHeight;
-    width: @custom0;
+    width: @100percent;
 }
 
 .sunburst-sector-name {
@@ -1042,9 +1053,9 @@ input.find-input {
 
 .loading-spinner {
     &:extend(.text-center);
+    &:extend(.m-b-sm);
 
     font-size: @fontSizeLarge;
-    margin-bottom: @custom5;
 }
 
 .loading-spinner,
@@ -1088,10 +1099,10 @@ input.find-input {
 }
 
 .popover-content {
-    padding: @custom11 14px 9px;
+    padding: @spacing 14px 9px;
 
     a {
-        margin:@nil;
+        &:extend(.m-nil);
     }
 
     p {
@@ -1121,7 +1132,7 @@ input.find-input {
     border-radius: @nil;
     border: solid 2px @white;
     color: @white;
-    font-size: @custom0;
+    font-size: @100percent;
     font-weight: normal;
     height: 22px;
     line-height: @custom11;
@@ -1161,7 +1172,7 @@ input.find-input {
 
     overflow: hidden;
     white-space: nowrap;
-    width: calc(@custom0 - 206px);
+    width: calc(@100percent - 206px);
 }
 
 .selected-related-concept-dropdown-container {
@@ -1217,8 +1228,8 @@ input.find-input {
 }
 
 .service-view-container {
-    height: calc(@custom1 - @custom8);
-    width: @custom0;
+    height: calc(@100vh - @custom8);
+    width: @100percent;
 
     .hp-check {
         color: @color2;
@@ -1228,11 +1239,11 @@ input.find-input {
 .query-service-view {
     &:extend(.flex);
 
-    height: calc(@custom1 - @custom8);
+    height: calc(@100vh - @custom8);
 }
 
 .query-service-view.bi-query-service-view {
-    height: calc(@custom1 - @custom8 - 65px - 58px);
+    height: calc(@100vh - @custom8 - 65px - 58px);
 }
 
 .top-options-container {
@@ -1285,7 +1296,8 @@ input.find-input {
     }
 
     .settings-logout-icon {
-        margin-right: @custom5;
+        &:extend(.m-r-sm);
+
         vertical-align: middle;
     }
 }
@@ -1404,7 +1416,7 @@ input::-moz-placeholder {
 }
 
 .filter-checkbox {
-    margin-right: @custom5;
+    &:extend(.m-r-sm);
 }
 
 .filter-display-view {
@@ -1480,13 +1492,13 @@ input::-moz-placeholder {
 }
 
 .fields-list {
-    height: @custom0;
+    height: @100percent;
     overflow: auto;
 }
 
 .values-list {
     border-left: 1px solid @tableBorder;
-    height: @custom0;
+    height: @100percent;
 
     .tab-pane {
         .full-height {
@@ -1499,7 +1511,7 @@ input::-moz-placeholder {
 .tab-content,
 .tab-pane,
 .full-height {
-    height: @custom0;
+    height: @100percent;
 }
 
 .parametric-fields-table {
@@ -1526,7 +1538,7 @@ input::-moz-placeholder {
 
 .fixed-height-modal {
     .modal-body {
-        height: calc(@custom0 - 120px);
+        height: calc(@100percent - 120px);
         overflow-y: auto;
     }
 }
@@ -1615,7 +1627,7 @@ input::-moz-placeholder {
     &:extend(.text-center);
     color: @color2;
     font-size: @custom7;
-    width: @custom0;
+    width: @100percent;
 }
 
 .view-server-button,
@@ -1637,12 +1649,12 @@ input::-moz-placeholder {
 
     border: @nil;
     display: block;
-    width: @custom0;
+    width: @100percent;
 }
 .preview-media-player {
     &:extend(.m-t-sm);
 
-    width: @custom0;
+    width: @100percent;
 }
 
 .preview-media-player-audio {
@@ -1676,7 +1688,7 @@ input::-moz-placeholder {
 .service-view-flex-container {
     &:extend(.flex);
 
-    min-height: @custom0;
+    min-height: @100percent;
 }
 
 .document-detail-tabs-content {
@@ -1692,9 +1704,9 @@ input::-moz-placeholder {
 }
 
 .location-comparison-map {
-    height: @custom0;
+    height: @100percent;
     min-height: @locationMapMinHeight;
-    width: @custom0;
+    width: @100percent;
 }
 
 .location-comparison-label {
@@ -1751,14 +1763,14 @@ input::-moz-placeholder {
 }
 
 .location-comparison-show-more {
-    margin-bottom: @custom5;
-    margin-left: @custom5;
+    &:extend(.m-b-sm);
+    &:extend(.m-l-sm);
 }
 
 .location-results-map {
-    height: @custom0;
+    height: @100percent;
     min-height: @locationMapMinHeight;
-    width: @custom0;
+    width: @100percent;
 }
 
 .map-show-more {
@@ -1776,10 +1788,10 @@ input::-moz-placeholder {
 }
 
 .location-tab-map {
-    height: @custom0;
+    height: @100percent;
     max-height: @locationTabMaxHeight;
     min-height: @locationTabMinHeight;
-    width: @custom0;
+    width: @100percent;
 }
 
 #cboxLoadedContent .table > tbody > tr > th,
@@ -1844,7 +1856,7 @@ h4.similar-dates-message {
 .date-slider-div > label {
     color: @text-color;
     display: block;
-    margin-left: -@custom5;
+    margin-left: -@spacing-sm;
 }
 
 .after-slider-div .slider.slider-horizontal .slider-track .slider-selection.tick-slider-selection,
@@ -1885,7 +1897,7 @@ h4.similar-dates-message {
 
 .numeric-parametric-slider-block,
 .numeric-parametric-slider-block > .slider {
-    width: @custom0;
+    width: @100percent;
 }
 
 .dataTables_paginate {
@@ -1922,7 +1934,7 @@ h4.similar-dates-message {
 
 @media @xsmWidthScreen {
     .reverse-animated-container .find-form {
-        width: @custom0;
+        width: @100percent;
     }
 
     .find-logo-small,
