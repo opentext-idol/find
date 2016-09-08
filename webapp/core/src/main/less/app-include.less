@@ -6,47 +6,32 @@
 /*------Colour variables------*/
 @color27: #5c5959;
 @color22: #5e5e5e;
-@color3:  #676a6c;
 @color25: #8e8e8e;
 @color28: #8d9092;
 @color36: #949494;
-@color6:  #a9a9a9;
 @color19: #aaaaaa;
 @color11: #aeaeae;
 @color24: #bbbbbb;
 @color9:  #c0c0c0;
 @color7:  #c9c9c9;
-@color4:  #cccccc;
 @color35: #dadada;
 @color30: #dfdfdf;
 @color26: #dbdbdb;
 @color23: #dddddd;
 @color42: rgba(239, 239, 239, 0.46);
-@color12: #e5e5e5;
 @color37: #e7e7e7;
-@color10: #e7eaec;
 @color31: #eaeaea;
 @color38: #ececec;
 @color5:  #efefef;
-@color17: #f2f2f2;
-@color0:  #ffffff;
 
 @color15: #44555F;
 @color1:  #425563;
-@color33: #60798d;
 @color43: rgba(86, 96, 117, 0.7);
-@color18: #614767;
-@color41: rgba(97,71,103,0.3);
 @color32: #035b44;
-@color20: #018062;
-@color21: #018f6e;
-@color8:  #01a982;
 @color2:  #00b388;
 @color29: #49b59b;
 @color40: rgba(1,169,130,0.50);
-@color47: rgba(1,169,130,0.1);
 @color13: #70ad25;
-@color48: rgba(1,169,130,0.2);
 @color39: #d70b50;
 @color14: #d33d2a;
 @color34: #ff8c6d;
@@ -70,14 +55,12 @@
 @height26: 45px;
 
 /*------Font variables------*/
-@fontSize0: 13px;
 @fontSize1: 28px;
 
 /*------Custom numeric variables------*/
 @nil:      0;
 @custom0:  100%;
 @custom1:  100vh;
-@custom2:  18px;
 @custom3:  50px;
 @custom4:  300px;
 @custom5:  10px;
@@ -107,7 +90,7 @@ body  {
 }
 
 body {
-    background-color: @color0;
+    background-color: @white;
 }
 
 .body,
@@ -135,7 +118,7 @@ body {
 
 .chart {
     rect {
-        fill: @color8;
+        fill: @hpegreen;
 
         &:hover {
             fill: @color40;
@@ -143,7 +126,7 @@ body {
     }
 
     rect.selection {
-        fill: @color41;
+        fill: @secondaryFillHover2;
     }
 }
 
@@ -183,7 +166,7 @@ body {
 }
 
 .date > input {
-    font-size: @fontSize0;
+    font-size: @baseFontSize - 1;
     padding: @custom6 @nil @custom6 30px;
 }
 
@@ -271,10 +254,10 @@ dt {
 
 .active {
     .label-secondary {
-        background-color: @color18;
+        background-color: @purple;
     }
     .search-tab-title {
-        color: @color18;
+        color: @purple;
     }
 }
 
@@ -299,10 +282,10 @@ dt {
 }
 
 .button-primary:focus.pressed-down, .pressed-down  {
-    background-color: @color20;
-    border-color: @color20;
+    background-color: @hpegreen-active;
+    border-color: @hpegreen-active;
     box-shadow: inset @nil 3px 5px rgba(@nil, @nil, @nil, 0.125);
-    color: @color0;
+    color: @white;
     outline: @nil;
 }
 
@@ -344,7 +327,7 @@ dt {
 }
 
 .bootstrap-datetimepicker-widget {
-    font-size: @fontSize0;
+    font-size: @baseFontSize - 1;;
 
     .timepicker {
         td {
@@ -357,7 +340,7 @@ dt {
     }
 
     a[data-action] {
-        color:@color3;
+        color:@text-color;
         padding: @nil;
     }
 
@@ -449,7 +432,7 @@ fieldset.radio-fieldset > label {
 }
 
 .main-content {
-    background-color: @color0;
+    background-color: @white;
     height: @custom0;
     overflow-x: hidden;
 
@@ -469,7 +452,7 @@ fieldset.radio-fieldset > label {
 }
 
 .left-side-container {
-    font-size: @fontSize0;
+    font-size: @baseFontSize - 1;
 }
 
 .right-side-container {
@@ -492,7 +475,7 @@ fieldset.radio-fieldset > label {
 .rotating-chevron {
     &:extend(.inline-block);
 
-    color: @color3;
+    color: @text-color;
 }
 .middle-container {
     flex: 1 1 auto;
@@ -502,7 +485,7 @@ fieldset.radio-fieldset > label {
         &:extend(.shorten);
         &:extend(.break-all);
 
-        color: @color21;
+        color: @hpegreen-hover;
         font-size: @fontSizeLarge;
         font-weight: bold;
         width: @custom0;
@@ -581,7 +564,7 @@ fieldset.radio-fieldset > label {
 }
 
 .search-tabs-container {
-    background-color: @color0;
+    background-color: @white;
     min-height: @nil;
 
     .nav-tabs {
@@ -602,7 +585,7 @@ fieldset.radio-fieldset > label {
         background-image: none;
         border-radius: @custom3;
         border: 2px solid;
-        color: @color33;
+        color: @accent;
         height: @custom9;
         line-height: @custom5;
         padding: 5px;
@@ -715,12 +698,12 @@ fieldset.radio-fieldset > label {
 a.unstyled {
     &:extend(.text-decoration-none);
 
-    color:@color0;
+    color:@white;
 
     &:hover {
         &:extend(.text-decoration-none);
 
-        color:@color0 !important;
+        color:@white !important;
     }
 }
 
@@ -733,21 +716,21 @@ input.find-input {
 
 
 ::-webkit-input-placeholder {
-    color: @color6;
+    color: @darkgray;
 }
 
 :-moz-placeholder {
-    color: @color6;
+    color: @darkgray;
     opacity: 1;
 }
 
 ::-moz-placeholder {
-    color: @color6;
+    color: @darkgray;
     opacity: 1;
 }
 
 :-ms-input-placeholder {
-    color: @color6;
+    color: @darkgray;
 }
 
 
@@ -766,7 +749,7 @@ input.find-input {
 }
 
 .main-results-container {
-    border-bottom: 1px solid @color17;
+    border-bottom: 1px solid @secondary-hover;
     padding: @nil @custom5;
     width: @custom0;
 }
@@ -800,7 +783,7 @@ input.find-input {
 
 .direct-access-title {
     &:hover {
-        color: #035b44;
+        color: @color32;
     }
 }
 
@@ -814,7 +797,7 @@ input.find-input {
     &:extend(.inline-block);
 
     color: @color11;
-    font-size: @fontSize0;
+    font-size: @baseFontSize - 1;
 }
 
 .document-reference.shorten {
@@ -822,7 +805,7 @@ input.find-input {
 }
 
 .selected-document {
-    background-color: @color17;
+    background-color: @secondary-hover;
 }
 
 .preview-mode-metadata {
@@ -841,7 +824,7 @@ input.find-input {
     .hpebox-content {
         &:extend(.text-center);
 
-        border: 1px solid @color10;
+        border: 1px solid @border-color;
         width: @width2;
     }
 
@@ -853,7 +836,7 @@ input.find-input {
 .selected-saved-search {
     .hpebox-content {
         background-color: @color2;
-        color: @color0;
+        color: @white;
     }
 }
 
@@ -910,8 +893,8 @@ input.find-input {
     }
 
     .tt-menu {
-        background: @color0;
-        border: 2px solid @color4;
+        background: @white;
+        border: 2px solid @grey;
         margin-top: 3px;
         padding: @custom6 @nil;
         width: @custom0;
@@ -970,7 +953,7 @@ input.find-input {
     .find-input {
         &:extend(.italic);
 
-        border: 2px solid @color4 !important;
+        border: 2px solid @grey !important;
         font-family: inherit;
         font-size: 23px !important;
         height: @height26 !important;
@@ -1122,7 +1105,7 @@ input.find-input {
 .also-searching-for {
     &:extend(.pull-left);
 
-    color:@color0;
+    color:@white;
     font-weight: lighter;
     padding: @nil 3px;
     vertical-align: top;
@@ -1133,8 +1116,8 @@ input.find-input {
     &:extend(.m-l-xs);
 
     border-radius: @nil;
-    border: solid 2px @color0;
-    color: @color0;
+    border: solid 2px @white;
+    color: @white;
     font-size: @custom0;
     font-weight: normal;
     height: 22px;
@@ -1200,7 +1183,7 @@ input.find-input {
 .selected-related-concept-cluster {
     &:extend(.inline);
 
-    background-color: @color0;
+    background-color: @white;
     border-left: @nil;
     border-right: @nil;
     color: @color1;
@@ -1227,7 +1210,7 @@ input.find-input {
 
 .animated-container .see-all-documents,
 .animated-container .see-all-documents:hover {
-    color: @color0;
+    color: @white;
 }
 
 .service-view-container {
@@ -1276,13 +1259,13 @@ input.find-input {
 
 .dropdown-menu {
     li > a {
-        color: @color3;
+        color: @text-color;
     }
 }
 
 .find-navbar .dropdown-toggle,
 .find-navbar a {
-    color: @color0;
+    color: @white;
 }
 
 .find-navbar {
@@ -1290,7 +1273,7 @@ input.find-input {
 
     -webkit-transition: @transitAllFast;
     background-color: @color1;
-    color: @color0;
+    color: @white;
     height: @custom8;
     transition: @transitAllFast;
 
@@ -1381,16 +1364,16 @@ input::-moz-placeholder {
 .find-input-button:hover {
     &:extend(.no-box-shadow);
 
-    border-left: 1px solid @color4;
+    border-left: 1px solid @grey;
     border: @nil;
 }
 .reverse-animated-container .find-input-button,
 .reverse-animated-container .find-input-button:hover {
-    border: 2px solid @color4;
+    border: 2px solid @grey;
 }
 
 .find-banner-container {
-    background: #49B59B url('../img/Find_banner.png');
+    background: @color29 url('../img/Find_banner.png');
     height: 125px;
     z-index: @zindex0;
 }
@@ -1471,7 +1454,7 @@ input::-moz-placeholder {
 .filter-label {
     &:extend(.p-xs);
 
-    background-color: @color0 !important;
+    background-color: @white !important;
     border-radius: @nil;
     border: solid 1px @color23;
     color: @color22;
@@ -1484,7 +1467,7 @@ input::-moz-placeholder {
 }
 
 .label-white.border {
-    border: 1px solid @color10;
+    border: 1px solid @border-color;
 }
 
 .field-label {
@@ -1500,7 +1483,7 @@ input::-moz-placeholder {
 }
 
 .values-list {
-    border-left: 1px solid @color12;
+    border-left: 1px solid @tableBorder;
     height: @custom0;
 
     .tab-pane {
@@ -1607,7 +1590,7 @@ input::-moz-placeholder {
 
 .category-input {
     border-bottom: none !important;
-    border-top: 1px solid @color12;
+    border-top: 1px solid @tableBorder;
 }
 
 .child-categories {
@@ -1643,7 +1626,7 @@ input::-moz-placeholder {
     background-image: none;
     border-color: @color1;
     border-radius: 3px;
-    color: @color0;
+    color: @white;
 }
 
 .preview-document-frame {
@@ -1663,7 +1646,7 @@ input::-moz-placeholder {
 .preview-media-player-audio {
     &:extend(.text-center);
 
-    color: @color8;
+    color: @hpegreen;
     font-size: @custom9;
     position: relative;
     top: 50%;
@@ -1672,7 +1655,7 @@ input::-moz-placeholder {
 .preview-mode-document-title {
     &:extend(.break-all);
 
-    color: @color3 !important;
+    color: @text-color !important;
     white-space: normal !important;
 }
 
@@ -1743,7 +1726,7 @@ input::-moz-placeholder {
 
     div {
         background-color: @color16;
-        color: @color0;
+        color: @white;
     }
 }
 
@@ -1752,7 +1735,7 @@ input::-moz-placeholder {
 
     div {
         background-color: @color13;
-        color: @color0;
+        color: @white;
     }
 }
 
@@ -1761,7 +1744,7 @@ input::-moz-placeholder {
 
     div {
         background-color: @color14;
-        color: @color0;
+        color: @white;
     }
 }
 
@@ -1817,25 +1800,25 @@ input::-moz-placeholder {
 
 .slider-track-low,
 .slider-track-high {
-    background: @color47;
+    background: @primaryFill;
 }
 
 .slider-selection {
-    background: @color48;
+    background: @primaryFillHover;
 }
 
 .slider-handle {
-    background: @color8;
+    background: @hpegreen;
 }
 
 h4.similar-dates-message {
-    color: @color3;
+    color: @text-color;
 }
 
 .similar-dates-summary {
     &:extend(.inline-block);
 
-    color: @color3;
+    color: @text-color;
 }
 
 .date-slider-div {
@@ -1849,7 +1832,7 @@ h4.similar-dates-message {
 
         .slider-track {
             .slider-handle.min-slider-handle.round {
-                background: @color0 none;
+                background: @white none;
                 border: 2px solid @color15;
             }
         }
@@ -1857,7 +1840,7 @@ h4.similar-dates-message {
 }
 
 .date-slider-div > label {
-    color: @color3;
+    color: @text-color;
     display: block;
     margin-left: -@custom5;
 }
@@ -1922,7 +1905,7 @@ h4.similar-dates-message {
 
 @media @xxsmWidthScreen {
     .navbar-nav .open .dropdown-menu {
-        background-color: @color0;
+        background-color: @white;
         box-shadow: @nil @nil 3px @color43;
         position: absolute;
         top: @custom9;
