@@ -78,6 +78,8 @@ module.exports = (grunt) ->
           'target/classes/static/css/compiled.css': 'src/main/less/app.less',
           'target/classes/static/css/login.css': 'src/main/less/login.less',
           'target/classes/static/css/result-highlighting.css': 'src/main/less/result-highlighting.less'
+      options:
+        strictMath: true
     watch:
       buildTest:
         files: watchFiles
