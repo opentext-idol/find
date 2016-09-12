@@ -21,7 +21,8 @@ public enum MvcConstants {
     PARAMETRIC_DISPLAY_VALUES("parametricDisplayValues"),
     FIELDS_INFO("fieldsInfo"),
     TOPIC_MAP_MAX_RESULTS("topicMapMaxResults"),
-    METADATA_FIELD_IDS("metadataFieldIds");
+    METADATA_FIELD_IDS("metadataFieldIds"),
+    PUBLIC_INDEXES_ENABLED("publicIndexesEnabled");
 
     private final String value;
 

@@ -31,7 +31,6 @@ public class IdolFindController extends FindController<IdolFindConfig> {
         super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService);
     }
 
-
     @Override
     protected Map<String, Object> getPublicConfig() {
         final Map<String, Object> publicConfig = new HashMap<>();
@@ -39,7 +38,7 @@ public class IdolFindController extends FindController<IdolFindConfig> {
 
         final MMAP mmap = config.getMmap();
 
-        if (mmap.isEnabled()) {
+        if(mmap.isEnabled()) {
             publicConfig.put(MMAP_BASE_URL, mmap.getBaseUrl());
         }
 

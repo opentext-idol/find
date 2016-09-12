@@ -40,7 +40,7 @@ define([
                 var dataTarget = $(e.target).attr('data-target');
 
                 // data-target means they've clicked a chevron, so we want to collapse stuff
-                if (dataTarget) {
+                if(dataTarget) {
                     var $target = this.$(dataTarget);
                     $target.collapse('toggle');
                 }
@@ -69,11 +69,12 @@ define([
         },
 
         initialize: function(options) {
+            var indexCategories = this.getIndexCategories();
             DatabasesView.prototype.initialize.call(this, _.extend({
                 databasesCollection: options.indexesCollection,
                 emptyMessage: i18n['search.indexes.empty'],
                 topLevelDisplayName: i18n['search.indexes.all'],
-                childCategories: this.getIndexCategories(),
+                childCategories: indexCategories.length < 2 ? null : indexCategories,
                 databaseHelper: this.databaseHelper,
                 listViewOptions: {
                     ItemView: IndexItemView,

@@ -33,8 +33,6 @@ define([
                 config.errorCallSupportString = uiCustomization.errorCallSupportString;
             }
         }
-
         return config;
     }
-
 });

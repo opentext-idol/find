@@ -32,12 +32,10 @@ public abstract class FindController<C extends FindConfig> {
     public static final String LOGIN_PATH = "/login";
     public static final String DEFAULT_LOGIN_PAGE = "/loginPage";
     public static final String CONFIG_PATH = "/config";
-
+    protected final ConfigService<C> configService;
     private final ControllerUtils controllerUtils;
     private final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever;
     private final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
-    protected final ConfigService<C> configService;
-
     @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
     private String gitCommit;
 
@@ -62,7 +60,7 @@ public abstract class FindController<C extends FindConfig> {
     public void index(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         final String contextPath = request.getContextPath();
 
-        if (LoginTypes.DEFAULT.equals(authenticationConfigService.getConfig().getAuthentication().getMethod())) {
+        if(LoginTypes.DEFAULT.equals(authenticationConfigService.getConfig().getAuthentication().getMethod())) {
             response.sendRedirect(contextPath + DEFAULT_LOGIN_PAGE);
         } else {
             response.sendRedirect(contextPath + APP_PATH);
@@ -73,7 +71,9 @@ public abstract class FindController<C extends FindConfig> {
     public ModelAndView mainPage(final HttpServletRequest request) throws JsonProcessingException {
         final String username = authenticationInformationRetriever.getAuthentication().getName();
 
-        final Collection<String> roles = authenticationInformationRetriever.getAuthentication().getAuthorities().stream().map((Function<GrantedAuthority, String>) GrantedAuthority::getAuthority).collect(Collectors.toCollection(LinkedList::new));
+        final Collection<String> roles = authenticationInformationRetriever.getAuthentication().getAuthorities().stream().map((Function<GrantedAuthority, String>)GrantedAuthority::getAuthority).collect(Collectors.toCollection(LinkedList::new));
+
+        final FindConfig findConfig = configService.getConfig();
 
         final Map<String, Object> config = new HashMap<>();
         config.put(MvcConstants.APPLICATION_PATH.value(), APP_PATH);
@@ -81,13 +81,13 @@ public abstract class FindController<C extends FindConfig> {
         config.put(MvcConstants.ROLES.value(), roles);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
-        config.put(MvcConstants.MAP.value(), configService.getConfig().getMap());
-        config.put(MvcConstants.UI_CUSTOMIZATION.value(), configService.getConfig().getUiCustomization());
-        config.put(MvcConstants.SAVED_SEARCH_CONFIG.value(), configService.getConfig().getSavedSearchConfig());
-        config.put(MvcConstants.MIN_SCORE.value(), configService.getConfig().getMinScore());
-        config.put(MvcConstants.FIELDS_INFO.value(), configService.getConfig().getFieldsInfo().getFieldConfig());
-        config.put(MvcConstants.PARAMETRIC_DISPLAY_VALUES.value(), configService.getConfig().getParametricDisplayValues());
-        config.put(MvcConstants.TOPIC_MAP_MAX_RESULTS.value(), configService.getConfig().getTopicMapMaxResults());
+        config.put(MvcConstants.MAP.value(), findConfig.getMap());
+        config.put(MvcConstants.UI_CUSTOMIZATION.value(), findConfig.getUiCustomization());
+        config.put(MvcConstants.SAVED_SEARCH_CONFIG.value(), findConfig.getSavedSearchConfig());
+        config.put(MvcConstants.MIN_SCORE.value(), findConfig.getMinScore());
+        config.put(MvcConstants.FIELDS_INFO.value(), findConfig.getFieldsInfo().getFieldConfig());
+        config.put(MvcConstants.PARAMETRIC_DISPLAY_VALUES.value(), findConfig.getParametricDisplayValues());
+        config.put(MvcConstants.TOPIC_MAP_MAX_RESULTS.value(), findConfig.getTopicMapMaxResults());
         config.put(MvcConstants.METADATA_FIELD_IDS.value(), getMetadataNodes());
         config.putAll(getPublicConfig());
 
