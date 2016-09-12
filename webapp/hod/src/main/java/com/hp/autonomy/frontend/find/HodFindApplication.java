@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find;
 
+import com.hp.autonomy.frontend.find.core.web.server.TomcatSettings;
 import com.hp.autonomy.hod.caching.CachingConfiguration;
 import com.hp.autonomy.searchcomponents.hod.beanconfiguration.HavenSearchHodConfiguration;
 import org.springframework.boot.SpringApplication;
@@ -31,15 +32,8 @@ import org.springframework.web.WebApplicationInitializer;
 })
 @Import({HavenSearchHodConfiguration.class, CachingConfiguration.class})
 public class HodFindApplication extends SpringBootServletInitializer implements WebApplicationInitializer {
-    private static final String ALLOW_ENCODED_SLASHES_PROPERTY = "org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH";
-
     public static void main(final String[] args) {
-        // By default, Tomcat does not allow encoded slashes in URLs to prevent directory traversal attacks.
-        // Find has nothing which can be attacked in this way, so it is safe to remove this.
-        if (System.getProperty(ALLOW_ENCODED_SLASHES_PROPERTY) == null) {
-            System.setProperty(ALLOW_ENCODED_SLASHES_PROPERTY, "true");
-        }
-
+        TomcatSettings.apply();
         SpringApplication.run(HodFindApplication.class, args);
     }
 }
