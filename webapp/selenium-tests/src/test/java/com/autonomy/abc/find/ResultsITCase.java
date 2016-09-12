@@ -27,6 +27,8 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.contain
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTagName;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class ResultsITCase extends FindTestBase {
@@ -129,6 +131,16 @@ public class ResultsITCase extends FindTestBase {
         verifyThat("There are results in list view",findPage.totalResultsNum(),greaterThan(0));
     }
 
+    @Test
+    public void testRefreshWithSlash() {
+        final String query = "foo/bar";
+        search(query);
+
+        getDriver().navigate().refresh();
+
+        // This could fail because %2F can be blocked by Tomcat
+        assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(query));
+    }
 
     private void search(String term) {
         findService.search(term);

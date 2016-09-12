@@ -204,7 +204,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         testDocPreview(similarDocuments.getResults(5));
     }
 
-    private void testDocPreview(final List<FindResult> results) {
+    private void testDocPreview(final Iterable<FindResult> results) {
         for (final FindResult result : results) {
             final DocumentViewer docPreview = result.openDocumentPreview();
 
@@ -233,7 +233,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         final FindResult firstSimilar =similarDocuments.getResult(1);
         final String title = firstSimilar.getTitleString();
 
-        InlinePreview inlinePreview = firstSimilar.openDocumentPreview();
+        final InlinePreview inlinePreview = firstSimilar.openDocumentPreview();
         final DetailedPreviewPage detailedPreviewPage = inlinePreview.openPreview();
 
         verifyThat("Have opened right detailed preview", detailedPreviewPage.getTitle(),equalToIgnoringCase(title));
@@ -243,5 +243,15 @@ public class SimilarDocumentsITCase extends FindTestBase {
         similarDocuments = getElementFactory().getSimilarDocumentsView();
         verifyThat("Back button still exists because on similar documents",similarDocuments.backButton().isDisplayed());
 
+    }
+
+    @Test
+    public void testNavigateBackFromSimilarDocuments() {
+        findService.search("stars");
+        similarDocuments = findService.goToSimilarDocuments(1);
+
+        getDriver().navigate().back();
+
+        verifyThat("Returned to the search page", !similarDocuments.backButton().isDisplayed());
     }
 }
