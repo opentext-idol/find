@@ -24,7 +24,7 @@
     "backbone": "1.2.3",
     "bjoska.bowser": "1.0.0",
     "chosen": "1.5.1",
-    "corejs-typeahead": "#3d2a7eb",
+    "corejs-typeahead": "#d60aed0",
     "fontawesome": "components-font-awesome#4.5.0",
     "iCheck": "1.0.1",
     "jquery": "components/jquery#1.10.2",
