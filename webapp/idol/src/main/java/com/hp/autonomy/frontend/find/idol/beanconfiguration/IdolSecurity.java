@@ -74,7 +74,7 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl(FindController.DEFAULT_LOGIN_PAGE)
                 .and()
             .authorizeRequests()
-                .antMatchers(FindController.APP_PATH + "**").hasAnyRole(FindRole.USER.name())
+                .antMatchers(FindController.APP_PATH + "/**").hasAnyRole(FindRole.USER.name())
                 .antMatchers(FindController.CONFIG_PATH).hasRole(FindRole.CONFIG.name())
                 .antMatchers("/api/public/**").hasRole(FindRole.USER.name())
                 .antMatchers("/api/bi/**").hasRole(FindRole.BI.name())

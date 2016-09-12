@@ -23,7 +23,7 @@ define([
                 };
             });
 
-            this.listenTo(options.router, 'route:find', function(name) {
+            this.listenTo(options.router, 'route:page', function(name) {
                 var pageName = this.pages[name] ? name : options.defaultPage;
 
                 if (pageName && this.currentPage !== pageName) {

@@ -8,6 +8,10 @@ import com.autonomy.abc.selenium.query.AggregateQueryFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryService;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 public class FindService implements QueryService<ResultsView> {
     private final FindElementFactory elementFactory;
     private final FindPage findPage;
@@ -37,4 +41,15 @@ public class FindService implements QueryService<ResultsView> {
         return elementFactory.getSimilarDocumentsView();
     }
 
+    /**
+     * @param query The query text
+     * @return The URL of the search page for the given query text, relative to the application context path
+     */
+    public String getQueryUrl(final String query) {
+        try {
+            return "public/search/query/" + URLEncoder.encode(query, StandardCharsets.UTF_8.name());
+        } catch (final UnsupportedEncodingException e) {
+            throw new IllegalStateException("UTF-8 not supported", e);
+        }
+    }
 }

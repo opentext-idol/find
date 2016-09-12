@@ -30,7 +30,7 @@ define([
     // displayed on the numeric widget.
     return FindBaseCollection.extend({
         url: function() {
-            return '../api/public/fields/parametric-' + this.dataType;
+            return 'api/public/fields/parametric-' + this.dataType;
         },
 
         initialize: function(models, options) {

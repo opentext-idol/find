@@ -9,13 +9,13 @@ define([
 ], function(_, Backbone) {
     var oldSync = Backbone.sync;
 
-    Backbone.sync = _.wrap(oldSync, function(original, method, model, options) {
-        options = options || {};
+    Backbone.sync = _.wrap(oldSync, function(original, method, model, originalOptions) {
+        const options = originalOptions || {};
         var error = options.error;
 
         options.error = function (jqXHR, status, message) {
             if (jqXHR.status === 401) {
-                window.location = "../sso"
+                location.assign('sso');
             }
             else if (jqXHR.status === 403) {
                 // refresh the page - the filters should then redirect to the login screen

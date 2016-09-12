@@ -129,7 +129,7 @@ define([
                     if (stringBlank(query)) {
                         sync([]);
                     } else {
-                        $.get('../api/public/typeahead', {
+                        $.get('api/public/typeahead', {
                             text: query
                         }, function(results) {
                             async(results);

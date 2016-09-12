@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find;
 
+import com.hp.autonomy.frontend.find.core.web.server.TomcatSettings;
 import com.hp.autonomy.hod.caching.CachingConfiguration;
 import com.hp.autonomy.searchcomponents.hod.beanconfiguration.HavenSearchHodConfiguration;
 import org.springframework.boot.SpringApplication;
@@ -32,6 +33,7 @@ import org.springframework.web.WebApplicationInitializer;
 @Import({HavenSearchHodConfiguration.class, CachingConfiguration.class})
 public class HodFindApplication extends SpringBootServletInitializer implements WebApplicationInitializer {
     public static void main(final String[] args) {
+        TomcatSettings.apply();
         SpringApplication.run(HodFindApplication.class, args);
     }
 }

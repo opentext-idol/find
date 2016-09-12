@@ -62,7 +62,7 @@ public class ControllerUtilsImpl implements ControllerUtils {
         final ModelAndView modelAndView = new ModelAndView(ViewNames.ERROR.viewName());
         modelAndView.addObject(ErrorAttributes.MAIN_MESSAGE.value(), getMessage(errorInfo.getMainMessageCode(), null));
         modelAndView.addObject(ErrorAttributes.SUB_MESSAGE.value(), getMessage(errorInfo.getSubMessageCode(), errorInfo.getSubMessageArguments()));
-        modelAndView.addObject(ErrorAttributes.BASE_URL.value(), getBaseUrl(errorInfo.getRequest()));
+        modelAndView.addObject(ErrorAttributes.BASE_URL.value(), RequestUtils.buildBaseUrl(errorInfo.getRequest()));
         modelAndView.addObject(ErrorAttributes.STATUS_CODE.value(), errorInfo.getStatusCode());
         modelAndView.addObject(ErrorAttributes.AUTH_ERROR.value(), errorInfo.isAuthError());
 
@@ -90,14 +90,5 @@ public class ControllerUtilsImpl implements ControllerUtils {
         modelAndView.addObject(MvcConstants.GIT_COMMIT.value(), commit);
 
         return modelAndView;
-    }
-
-    private String getBaseUrl(final HttpServletRequest request) {
-        final String originalUri = (String)request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
-        final String requestUri = originalUri != null ? originalUri : request.getRequestURI();
-        final String path = requestUri.replaceFirst(request.getContextPath(), "");
-        final int depth = StringUtils.countMatches(path, "/") - 1;
-
-        return depth <= 0 ? "." : StringUtils.repeat("../", depth);
     }
 }

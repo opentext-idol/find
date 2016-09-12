@@ -429,17 +429,17 @@ define([
 
             if (this.searchModel.isEmpty()) {
                 if (this.selectedTabModel.get('selectedSearchCid')) {
-                    return 'find/search/query';
+                    return 'search/query';
                 } else {
-                    return 'find/search/splash';
+                    return 'search/splash';
                 }
             } else {
-                return 'find/search/query/' + encodeURIComponent(inputText);
+                return 'search/query/' + encodeURIComponent(inputText);
             }
         },
 
         generateSuggestURL: function (model) {
-            return 'find/search/suggest/' + vent.addSuffixForDocument(model);
+            return 'search/suggest/' + vent.addSuffixForDocument(model);
         },
 
         // Run fancy animation from large central search bar to main search page

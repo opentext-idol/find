@@ -8,11 +8,12 @@ define([
 ], function (PreviewViewMode) {
     'use strict';
 
+
     return PreviewViewMode.extend({
         generateDetailRoute: function () {
             var database = encodeURIComponent(this.model.get('index'));
             var reference = encodeURIComponent(this.model.get('reference'));
-            return 'find/search/document/' + database + '/' + reference;
+            return 'search/document/' + database + '/' + reference;
         }
     });
 });

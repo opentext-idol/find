@@ -14,7 +14,7 @@ define([
     'text!find/templates/app/page/settings-page.html'
 ], function(SettingsPage, ValidateOnSaveModal, Confirm, configModel, vent, router, i18n, template) {
 
-    var urlRoot = /\bconfig$/.test(window.location.pathname) ? '../api/config/config/' : '../api/admin/config/';
+    var urlRoot = /\bconfig$/.test(window.location.pathname) ? '../api/config/config/' : 'api/admin/config/';
 
     return SettingsPage.extend({
         className: 'container-fluid',
@@ -22,7 +22,7 @@ define([
         configModel: configModel,
         groupClass: 'col-md-4',
         router: router,
-        routeRoot: 'find/settings',
+        routeRoot: 'settings',
         scrollSelector: '.body',
         template: _.template(template),
         urlRoot: urlRoot,

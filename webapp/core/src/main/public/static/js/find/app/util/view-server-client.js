@@ -14,7 +14,7 @@ define([
         getHref: function(reference, model, highlightExpressions) {
             var database = databaseNameResolver.resolveDatabaseNameForDocumentModel(model);
             
-            return '../api/public/view/viewDocument?' + $.param({
+            return 'api/public/view/viewDocument?' + $.param({
                     reference: reference,
                     index: database,
                     highlightExpressions: highlightExpressions || null
@@ -27,7 +27,7 @@ define([
          * @return {String}
          */
         getStaticContentPromotionHref: function(reference) {
-            return '../api/public/view/viewStaticContentPromotion?' + $.param({
+            return 'api/public/view/viewStaticContentPromotion?' + $.param({
                     reference: reference
                 });
         }

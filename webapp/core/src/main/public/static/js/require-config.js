@@ -31,7 +31,7 @@ require.config({
         'Leaflet.awesome-markers': '../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers',
         'leaflet.markercluster': '../bower_components/leaflet.markercluster/dist/leaflet.markercluster-src',
         moment: '../bower_components/moment/moment',
-        raphael: '../bower_components/raphael/raphael',
+        Raphael: '../bower_components/raphael/raphael',
         settings: '../bower_components/hp-autonomy-settings-page/src',
         slider: '../bower_components/seiyria-bootstrap-slider/dist',
         text: '../bower_components/requirejs-text/text',
