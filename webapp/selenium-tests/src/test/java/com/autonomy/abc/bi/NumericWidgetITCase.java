@@ -21,6 +21,7 @@ import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
@@ -94,7 +95,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Test
     public void testSelectionRecFiltersResults() {
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "space");
-        int beforeParametricFilters = filters().parametricFieldContainers().size();
 
         ResultsView results = getElementFactory().getResultsPage();
         results.goToListView();
@@ -107,7 +107,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph = numericService.waitForReload();
 
         verifyThat("Filter label has appeared", findPage.filterLabelsText(), hasSize(1));
-        verifyThat("Fewer parametric filters", filters().parametricFieldContainers(), hasSize(lessThan(beforeParametricFilters)));
         verifyThat("Fewer results", findPage.totalResultsNum(), lessThan(beforeNumberResults));
 
         verifyThat("Min field text value changed", mainGraph.minFieldValue(), not(is(beforeMin)));
@@ -140,6 +139,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
 
     @Test
+    @Ignore
     public void testMinAndMaxReflectCurrentSearch() {
         //currently 0th graph is place elevation (i.e. non-date)
         numericService.searchAndSelectNthGraph(0, "*");
@@ -276,6 +276,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         final String startDate = "1976-10-22 08:46";
         final String endDate = "2012-10-10 21:49";
 
+        LOGGER.info("Currently fails due to reloading of numeric widget");
         mainGraph = setMinAndMax(startDate, endDate, mainGraph);
 
         mainGraph.waitUntilWidgetLoaded();
