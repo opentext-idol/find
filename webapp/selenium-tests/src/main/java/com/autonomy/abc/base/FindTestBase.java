@@ -11,7 +11,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 @RunWith(Parameterized.class)
-public abstract class FindTestBase extends HybridAppTestBase<FindApplication<? extends FindElementFactory>, FindElementFactory> {
+public abstract class FindTestBase extends TestBase<FindApplication<? extends FindElementFactory>, FindElementFactory> {
+
     protected FindTestBase(final TestConfig config) {
         super(config, FindApplication.ofType(config.getType()));
     }

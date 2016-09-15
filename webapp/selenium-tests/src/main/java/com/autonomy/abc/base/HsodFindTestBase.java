@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 @RunWith(Parameterized.class)
-public abstract class HsodFindTestBase extends HybridAppTestBase<HsodFind, HsodFindElementFactory> {
+public abstract class HsodFindTestBase extends TestBase<HsodFind, HsodFindElementFactory> {
     protected HsodFindTestBase(final TestConfig config) {
         super(config, new HsodFind());
     }
