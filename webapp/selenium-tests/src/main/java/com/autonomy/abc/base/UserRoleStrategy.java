@@ -10,7 +10,9 @@ public class UserRoleStrategy implements RunOnlyIfDescription.Acceptable {
     private final UserRole configUserRole;
 
     public UserRoleStrategy() {
-        this.configUserRole = UserRole.fromString(System.getProperty("userRole"));
+        String userRole = System.getProperty("userRole");
+
+        configUserRole = userRole == null ? null : UserRole.fromString(userRole);
     }
 
     @Override
@@ -28,7 +30,7 @@ public class UserRoleStrategy implements RunOnlyIfDescription.Acceptable {
 
             @Override
             public void describeTo(org.hamcrest.Description description) {
-                description.appendText("User Role correct within Config");
+                description.appendText("Tests run against User Role specified");
             }
         };
     }
