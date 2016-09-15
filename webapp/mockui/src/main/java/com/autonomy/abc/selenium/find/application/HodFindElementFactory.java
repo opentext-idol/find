@@ -5,8 +5,8 @@ import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
 
-public class HsodFindElementFactory extends FindElementFactory {
-    HsodFindElementFactory(final WebDriver driver) {
+public class HodFindElementFactory extends FindElementFactory {
+    HodFindElementFactory(final WebDriver driver) {
         super(driver);
     }
 

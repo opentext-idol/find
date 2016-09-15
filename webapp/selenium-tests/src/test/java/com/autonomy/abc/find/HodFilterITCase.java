@@ -1,6 +1,6 @@
 package com.autonomy.abc.find;
 
-import com.autonomy.abc.base.HsodFindTestBase;
+import com.autonomy.abc.base.HodFindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
@@ -28,7 +28,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.contain
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 
-public class HodFilterITCase extends HsodFindTestBase {
+public class HodFilterITCase extends HodFindTestBase {
     private FindPage findPage;
     private FindService findService;
 

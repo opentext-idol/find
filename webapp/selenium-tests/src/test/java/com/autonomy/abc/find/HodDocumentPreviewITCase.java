@@ -1,6 +1,6 @@
 package com.autonomy.abc.find;
 
-import com.autonomy.abc.base.HsodFindTestBase;
+import com.autonomy.abc.base.HodFindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
@@ -33,7 +33,7 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class HodDocumentPreviewITCase extends HsodFindTestBase {
+public class HodDocumentPreviewITCase extends HodFindTestBase {
     private FindPage findPage;
     private FindService findService;
 
