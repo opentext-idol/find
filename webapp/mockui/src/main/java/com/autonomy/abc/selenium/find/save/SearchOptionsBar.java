@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.stalenessOf;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
@@ -37,7 +38,7 @@ public class SearchOptionsBar {
         confirmButton.click();
         new WebDriverWait(driver, 20)
                 .withMessage("saving a search")
-                .until(stalenessOf(confirmButton));
+                .until(invisibilityOfElementLocated(By.className("save-title-confirm-button")));
     }
 
     public WebElement saveConfirmButton() {

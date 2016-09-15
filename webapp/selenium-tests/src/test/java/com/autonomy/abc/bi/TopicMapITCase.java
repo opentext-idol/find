@@ -12,6 +12,7 @@ import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Slider;
 import com.hp.autonomy.frontend.selenium.util.Waits;
+import org.apache.bcel.generic.LOOKUPSWITCH;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
@@ -95,8 +96,9 @@ public class TopicMapITCase extends IdolFindTestBase {
 
         //checks first parametric filter of first parametric filter type
         FilterPanel filters = getElementFactory().getFilterPanel();
-        filters.parametricField(0).expand();
-        final FindParametricFilter filter = filters.checkboxForParametricValue(0, 0);
+        int index = filters.nonZeroParaFieldContainer(0);
+        filters.parametricField(index).expand();
+        final FindParametricFilter filter = filters.checkboxForParametricValue(index, 0);
         final String filterName = filter.getName();
         filter.check();
 
@@ -120,7 +122,8 @@ public class TopicMapITCase extends IdolFindTestBase {
         addedConcepts.add(results.clickChildEntityAndAddText(clusterNames.size()));
         results.waitForMapLoaded();
         addedConcepts.add(results.clickChildEntityAndAddText(results.returnParentEntityNames().size()));
-        
+
+        LOGGER.info("This is currently brittle and frequently breaks.");
         verifyThat("All " + addedConcepts.size() + " added concept terms added to search", alsoSearchingFor(),containsItems(addedConcepts));
     }
 

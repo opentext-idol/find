@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
@@ -65,7 +66,8 @@ public class SunburstITCase extends IdolFindTestBase {
     public void testParametricSelectors(){
         search("wild horses");
 
-        final String firstParametric = filters().parametricField(0).filterCategoryName();
+        int index = filters().nonZeroParaFieldContainer(0);
+        final String firstParametric = filters().parametricField(index).filterCategoryName();
         verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(results.getSelectedFieldName(1).toUpperCase()));
 
         results.parametricSelectionDropdown(2).open();
@@ -146,9 +148,12 @@ public class SunburstITCase extends IdolFindTestBase {
     public void testSideBarFiltersChangeSunburst(){
         search("lashing");
 
+        FilterPanel filters = filters();
         final String parametricSelectionFirst= results.getSelectedFieldName(1);
-        filters().parametricField(0).expand();
-        filters().checkboxForParametricValue(0, 0).check();
+
+        ParametricFieldContainer container = filters.parametricContainer(parametricSelectionFirst);
+        container.expand();
+        container.getFilters().get(0).check();
 
         results.waitForSunburst();
         assertThat("Parametric selection changed",results.getSelectedFieldName(1),not(is(parametricSelectionFirst)));

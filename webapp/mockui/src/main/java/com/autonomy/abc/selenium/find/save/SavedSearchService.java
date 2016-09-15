@@ -3,9 +3,13 @@ package com.autonomy.abc.selenium.find.save;
 import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
+import com.hp.autonomy.frontend.selenium.util.Waits;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SavedSearchService {
     private final IdolFindElementFactory elementFactory;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SavedSearchService.class);
 
     public SavedSearchService(final IdolFind find) {
         elementFactory = find.elementFactory();
@@ -36,6 +40,7 @@ public class SavedSearchService {
     }
 
     public void deleteAll() {
+        LOGGER.info("Deleting all tabs");
         for (final SearchTab tab : elementFactory.getSearchTabBar()) {
             tab.activate();
             deleteCurrentSearch();
@@ -46,6 +51,7 @@ public class SavedSearchService {
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
         options.openDeleteModal();
         options.confirmDelete();
+        Waits.loadOrFadeWait();
     }
 
     public void compareCurrentWith(final String savedSearchName) {
