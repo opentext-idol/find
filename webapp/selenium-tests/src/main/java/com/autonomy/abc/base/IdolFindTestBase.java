@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 @RunWith(Parameterized.class)
-public abstract class IdolFindTestBase extends HybridAppTestBase<IdolFind, IdolFindElementFactory> {
+public abstract class IdolFindTestBase extends TestBase<IdolFind, IdolFindElementFactory> {
     protected IdolFindTestBase(final TestConfig config) {
         super(config, new IdolFind());
     }
