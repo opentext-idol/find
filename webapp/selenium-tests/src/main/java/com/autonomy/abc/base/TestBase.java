@@ -3,30 +3,19 @@ package com.autonomy.abc.base;
 import com.hp.autonomy.frontend.selenium.application.Application;
 import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import org.junit.Before;
-import org.junit.Rule;
+import com.hp.autonomy.frontend.selenium.framework.inclusion.RunOnlyIfDescription;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class TestBase<A extends Application<? extends F>, F extends ElementFactoryBase> extends HybridAppTestBase<A, F> {
 
-    @Rule
-    public TestApplication annotation = new TestApplication();
-
-    private final Type application;
-
     protected TestBase(TestConfig config, A appUnderTest) {
         super(config, appUnderTest);
-
-        application = Type.valueOf(System.getProperty("application"));
     }
 
-    @Before
-    public void before(){
-        if(application != null) {
-            assumeThat(annotation.getApplicationValue(), anyOf(is(Type.ALL), is(application)));
-        }
+    @Override
+    protected List<RunOnlyIfDescription.Acceptable> rules() {
+        return Collections.singletonList(new UserRoleStrategy());
     }
 }

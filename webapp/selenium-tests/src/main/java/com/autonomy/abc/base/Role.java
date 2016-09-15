@@ -4,6 +4,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Application {
-    Type value() default Type.ALL;
+public @interface Role {
+    UserRole value() default UserRole.ALL;
 }
