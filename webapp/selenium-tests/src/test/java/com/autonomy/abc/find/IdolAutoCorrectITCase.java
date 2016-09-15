@@ -3,6 +3,7 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
@@ -38,14 +39,14 @@ public class IdolAutoCorrectITCase extends IdolFindTestBase {
     public void tearDown() {
         if (hasSetUp()) {
             findService.search("back to results");
-            getApplication().savedSearchService().deleteAll();
+            ((BIIdolFind)getApplication()).savedSearchService().deleteAll();
         }
     }
 
     @Test
     @ActiveBug("FIND-357")
     public void testSavingAutoCorrectedSearch() {
-        SavedSearchService savedSearchService = getApplication().savedSearchService();
+        SavedSearchService savedSearchService = ((BIIdolFind)getApplication()).savedSearchService();
         final String searchName = "SaveMcSave";
 
         String correctedQuery = saveAndVerify(savedSearchService, searchName, SearchType.SNAPSHOT);

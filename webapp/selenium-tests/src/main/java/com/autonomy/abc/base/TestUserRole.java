@@ -17,11 +17,12 @@ public class TestUserRole extends TestWatcher {
         }
     }
 
+    //Is this  misnamed?
     public UserRole getApplicationValue() {
-        if (userRole == null) {
-            return UserRole.ALL;
-        }
-
         return userRole.value();
+    }
+
+    public boolean isNull() {
+        return userRole == null;
     }
 }

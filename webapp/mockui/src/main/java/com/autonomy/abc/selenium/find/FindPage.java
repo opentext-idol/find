@@ -39,6 +39,7 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     public void unhover() {
+        //TODO: this isn't a safe place to hover -> it's gone
         /* click somewhere not important to remove hover -
         * clicking the user's username seems safe... */
         getDriver().findElement(By.className("navbar-username")).click();

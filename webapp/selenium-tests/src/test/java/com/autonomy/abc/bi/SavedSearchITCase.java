@@ -4,6 +4,7 @@ import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
@@ -39,9 +40,16 @@ public class SavedSearchITCase extends IdolFindTestBase {
         super(config);
     }
 
+    @Override
+    public BIIdolFind getApplication() {
+        return (BIIdolFind) super.getApplication();
+    }
+
     @Before
     public void setUp() {
         findService = getApplication().findService();
+
+
         saveService = getApplication().savedSearchService();
 
         findService.search("*");
@@ -127,7 +135,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         saveService.saveCurrentAs("oasis", SearchType.QUERY);
 
-        final IdolFind other = new IdolFind();
+        final BIIdolFind other = new BIIdolFind();
         launchInNewSession(other);
         other.loginService().login(getConfig().getDefaultUser());
         other.findService().search("blur");

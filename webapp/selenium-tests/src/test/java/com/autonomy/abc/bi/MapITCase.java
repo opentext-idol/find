@@ -3,6 +3,7 @@ package com.autonomy.abc.bi;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.bi.MapView;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
@@ -32,6 +33,11 @@ public class MapITCase extends IdolFindTestBase {
 
     public MapITCase(final TestConfig config) {
         super(config);
+    }
+
+    @Override
+    public BIIdolFind getApplication() {
+        return (BIIdolFind) super.getApplication();
     }
 
     @Before

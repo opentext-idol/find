@@ -3,6 +3,7 @@ package com.autonomy.abc.bi;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.filters.DateOption;
 import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
@@ -45,6 +46,11 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     public NumericWidgetITCase(final TestConfig config) {
         super(config);
+    }
+
+    @Override
+    public BIIdolFind getApplication() {
+        return (BIIdolFind) super.getApplication();
     }
 
     @Before

@@ -2,8 +2,7 @@ package com.autonomy.abc.selenium.find.application;
 
 public enum UserRole {
     BIFHI,
-    FIND,
-    ALL;
+    FIND;
 
     public static UserRole fromString(String value) {
         for(UserRole userRole : UserRole.values()) {
@@ -12,6 +11,7 @@ public enum UserRole {
             }
         }
 
-        return ALL;
+        //Maybe should be null
+        return BIFHI;
     }
 }

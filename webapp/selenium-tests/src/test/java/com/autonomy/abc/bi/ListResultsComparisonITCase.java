@@ -3,6 +3,7 @@ package com.autonomy.abc.bi;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.comparison.AppearsIn;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
@@ -52,6 +53,10 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         super(config);
     }
 
+    @Override
+    public BIIdolFind getApplication() {
+        return (BIIdolFind) super.getApplication();
+    }
     @Before
     public void setUp() {
         findService = getApplication().findService();
