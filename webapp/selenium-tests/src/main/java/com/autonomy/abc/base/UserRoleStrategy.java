@@ -1,5 +1,6 @@
 package com.autonomy.abc.base;
 
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.hp.autonomy.frontend.selenium.framework.inclusion.RunOnlyIfDescription;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;

@@ -1,5 +1,6 @@
 package com.autonomy.abc.base;
 
+import com.autonomy.abc.selenium.find.application.UserRole;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 

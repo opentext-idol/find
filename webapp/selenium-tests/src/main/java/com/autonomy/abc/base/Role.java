@@ -1,5 +1,7 @@
 package com.autonomy.abc.base;
 
+import com.autonomy.abc.selenium.find.application.UserRole;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
