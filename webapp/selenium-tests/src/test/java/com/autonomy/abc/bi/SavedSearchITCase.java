@@ -120,8 +120,10 @@ public class SavedSearchITCase extends IdolFindTestBase {
         findService.search(new Query("live forever"));
         FilterPanel filterPanel = getElementFactory().getFilterPanel();
         filterPanel.waitForParametricFields();
-        filterPanel.parametricField(0).expand();
-        filterPanel.checkboxForParametricValue(0,0).check();
+
+        int index = filterPanel.nonZeroParaFieldContainer(0);
+        filterPanel.parametricField(index).expand();
+        filterPanel.checkboxForParametricValue(index,0).check();
 
         saveService.saveCurrentAs("oasis", SearchType.QUERY);
 
@@ -134,7 +136,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         factory.getSearchTabBar().switchTo("oasis");
         factory.getFilterPanel().waitForParametricFields();
         assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
-        assertThat(factory.getFilterPanel().checkboxForParametricValue(0, 0), checked());
+        assertThat(factory.getFilterPanel().checkboxForParametricValue(index, 0), checked());
     }
 
     @Test

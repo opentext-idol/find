@@ -66,7 +66,8 @@ public class IdolFilterITCase extends IdolFindTestBase {
     public void testSearchForParametricFieldValue(){
         findService.search("face");
 
-        final ListFilterContainer goodField = filters().parametricField(0);
+        int index = filters().nonZeroParaFieldContainer(0);
+        final ListFilterContainer goodField = filters().parametricField(index);
         final String goodFieldName = goodField.filterCategoryName();
         final String badFieldValue = goodField.getFilterNames().get(0);
         final String goodFieldValue = goodField.getFilterNames().get(1);
@@ -105,17 +106,17 @@ public class IdolFilterITCase extends IdolFindTestBase {
     public void testParametricFiltersOpenWhenMatchingFilter() {
         search("haven");
         final IdolFilterPanel filterPanel = filters();
+        int index = filterPanel.nonZeroParaFieldContainer(0);
 
-        // look up filterPanel.parametricField(0) every time to avoid stale elements 
-        final String firstValue = filterPanel.parametricField(0).getFilterNames().get(0);
+        final String firstValue = filterPanel.parametricField(index).getFilterNames().get(0);
         
-        verifyThat(filterPanel.parametricField(0).isCollapsed(), is(true));
+        verifyThat(filterPanel.parametricField(index).isCollapsed(), is(true));
 
         filterPanel.filterResults(firstValue);
-        verifyThat(filterPanel.parametricField(0).isCollapsed(),is(false));
+        verifyThat(filterPanel.parametricField(index).isCollapsed(),is(false));
 
         filterPanel.clearFilter();
-        verifyThat(filterPanel.parametricField(0).isCollapsed(),is(true));
+        verifyThat(filterPanel.parametricField(index).isCollapsed(),is(true));
     }
 
     @Test
@@ -123,17 +124,17 @@ public class IdolFilterITCase extends IdolFindTestBase {
         search("haven");
         final IdolFilterPanel filterPanel = filters();
 
-        // we look up filterPanel.parametricField(0) every time to avoid stale elements 
-        final String firstValue = filterPanel.parametricField(0).getFilterNames().get(0);
+        int index = filterPanel.nonZeroParaFieldContainer(0);
+        final String firstValue = filterPanel.parametricField(index).getFilterNames().get(0);
 
-        filterPanel.parametricField(0).expand();
-        verifyThat(filterPanel.parametricField(0).isCollapsed(),is(false));
+        filterPanel.parametricField(index).expand();
+        verifyThat(filterPanel.parametricField(index).isCollapsed(),is(false));
 
         filterPanel.filterResults(firstValue);
-        verifyThat(filterPanel.parametricField(0).isCollapsed(),is(false));
+        verifyThat(filterPanel.parametricField(index).isCollapsed(),is(false));
 
         filterPanel.clearFilter();
-        verifyThat(filterPanel.parametricField(0).isCollapsed(),is(false));
+        verifyThat(filterPanel.parametricField(index).isCollapsed(),is(false));
     }
 
     @Test

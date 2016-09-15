@@ -86,6 +86,25 @@ public class FilterPanel {
         return parametricFieldContainers().get(i);
     }
 
+    //gets the index of the nth non-empty filter container
+    public int nonZeroParaFieldContainer(int n) {
+        int index = 0;
+        int nonZeroCount = 0;
+        for (WebElement container: getParametricFilters()) {
+            ParametricFieldContainer candidate = new ParametricFieldContainer(container,driver);
+            if(!candidate.getFilterNumber().equals("0")) {
+                if(nonZeroCount >=n) {
+                    return index;
+                }
+                else{
+                    nonZeroCount++;
+                }
+            }
+            index++;
+        }
+        return -1;
+    }
+
     //DATE SPECIFIC
     public void toggleFilter(final DateOption filter) {
         dateFilterContainer().toggleFilter(filter);
@@ -101,7 +120,8 @@ public class FilterPanel {
 
     //CHECKBOXES
     public List<FindParametricFilter> checkBoxesForParametricFieldContainer(final int i ){
-        ParametricFieldContainer container = parametricField(i);
+        int index = nonZeroParaFieldContainer(i);
+        ParametricFieldContainer container = parametricField(index);
         container.expand();
         return container.getFilters();
     }

@@ -4,6 +4,7 @@ import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.bi.TableView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.hamcrest.Matchers;
@@ -146,10 +147,13 @@ public class TableITCase extends IdolFindTestBase {
 
         tableView.waitForTable();
 
-        final String parametricSelectionFirst = tableView.getSelectedFieldName(1);
-        filters().parametricField(0).expand();
-        filters().checkboxForParametricValue(0, 0).check();
+        FilterPanel filters = filters();
+        final String parametricSelectionFirst= tableView.getSelectedFieldName(1);
 
+        ParametricFieldContainer container = filters.parametricContainer(parametricSelectionFirst);
+        container.expand();
+        container.getFilters().get(0).check();
+        
         tableView.waitForTable();
         assertThat("Parametric selection changed", tableView.getSelectedFieldName(1), not(Matchers.is(parametricSelectionFirst)));
     }
@@ -159,7 +163,8 @@ public class TableITCase extends IdolFindTestBase {
     public void testParametricSelectors(){
         init("wild horses");
 
-        final String firstParametric = filters().parametricField(0).filterCategoryName();
+        int index = filters().nonZeroParaFieldContainer(0);
+        final String firstParametric = filters().parametricField(index).filterCategoryName();
         verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(tableView.getSelectedFieldName(1).toUpperCase()));
 
         tableView.parametricSelectionDropdown(2).open();
