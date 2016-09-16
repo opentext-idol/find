@@ -25,7 +25,8 @@ require.config({
             'find/app/util/confirm-view': 'mock/util/confirm-view',
             'find/app/page/search/document/location-tab': 'mock/page/search/document/location-tab',
             'find/app/util/topic-map-view': 'mock/util/topic-map-view',
-            'find/app/model/bucketed-parametric-collection': 'mock/model/bucketed-parametric-collection'
+            'find/app/model/bucketed-parametric-collection': 'mock/model/bucketed-parametric-collection',
+            'css/result-highlighting.css': 'mock/css/result-highlighting.css'
         },
         'find/app/page/search/related-concepts/related-concepts-view': {
             'find/app/model/documents-collection': 'mock/model/documents-collection'
