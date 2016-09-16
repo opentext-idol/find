@@ -44,10 +44,8 @@ define([
     }
 
     return Backbone.View.extend({
-        // Abstract
-        IndexesView: null,
-
         initialize: function(options) {
+            const IndexesView = options.IndexesView;
             this.collapsed = {};
 
             var views = [{
@@ -94,7 +92,7 @@ define([
                     this.collapsed.indexes = false;
 
                     //noinspection JSUnresolvedFunction
-                    var indexesView = new this.IndexesView({
+                    var indexesView = new IndexesView({
                         delayedSelection: options.delayedIndexesSelection,
                         filterModel: this.filterModel,
                         indexesCollection: options.indexesCollection,

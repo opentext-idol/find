@@ -5,19 +5,25 @@
 
 define([
     'underscore',
-    'find/app/page/search/abstract-query-left-side-view',
+    'find/app/page/search/filter-view',
     'find/app/configuration',
     'backbone',
     'i18n!find/nls/bundle',
     'js-testing/backbone-mock-factory'
-], function (_, AbstractQueryLeftSideView, configuration, Backbone, i18n, backboneMockFactory) {
-    "use strict";
+], function (_, FilterView, configuration, Backbone, i18n, backboneMockFactory) {
+    'use strict';
 
     var MATCH_NOTHING = 'y54u65u4w5uy654u5eureuy654yht754wy54euy45';
 
     var types = ['parametric', 'numeric parametric', 'date parametric'];
 
-    describe("Abstract Query Left Side View", function () {
+    const MockIndexesView = Backbone.View.extend({
+        initialize: function (options) {
+            this.visibleIndexesCallback = options.visibleIndexesCallback;
+        }
+    });
+
+    describe("Filter View", function () {
 
         beforeEach(function () {
             configuration.and.callFake(function () {
@@ -26,14 +32,8 @@ define([
                 };
             });
 
-            this.view = new (AbstractQueryLeftSideView.extend({
-                IndexesView: Backbone.View.extend({
-                    initialize: function (options) {
-                        this.visibleIndexesCallback = options.visibleIndexesCallback;
-                    }
-                }),
-                getBucketingRequestData: _.constant({})
-            }))({
+            this.view = new FilterView({
+                IndexesView: MockIndexesView,
                 queryState: {},
                 numericParametricFieldsCollection: new (backboneMockFactory.getCollection())(),
                 dateParametricFieldsCollection: new (backboneMockFactory.getCollection())()
@@ -119,7 +119,7 @@ define([
                         this.view.filterModel.set('text', MATCH_NOTHING);
 
                         expect(this.parametricInfo[type].view.$el).toHaveClass('hide');
-                    })
+                    });
                 });
 
                 describe('with no parametric values', function () {
@@ -135,7 +135,7 @@ define([
 
                         expect(this.parametricInfo[type].view.$el).toHaveClass('hide');
                     });
-                })
+                });
             });
         }, this);
 
