@@ -1,5 +1,6 @@
 package com.autonomy.abc.base;
 
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.hp.autonomy.frontend.selenium.framework.inclusion.RunOnlyIfDescription;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -23,14 +24,21 @@ public class UserRoleStrategy implements RunOnlyIfDescription.Acceptable {
             protected boolean matchesSafely(Description item) {
                 TestUserRole userRole = new TestUserRole();
                 userRole.starting(item);
-                UserRole testUserRole = userRole.getApplicationValue();
 
-                return configUserRole == null || configUserRole.equals(UserRole.ALL) || configUserRole.equals(testUserRole);
+                //Test not annotated
+                if(userRole.isNull()){
+                    return true;
+                }
+                UserRole testUserRole = userRole.getUserRoleValue();
+
+                return (configUserRole==null && testUserRole.equals(UserRole.BIFHI)) ||
+                        (configUserRole!=null && configUserRole.equals(testUserRole)) ||
+                        testUserRole.equals(UserRole.BOTH);
             }
 
             @Override
             public void describeTo(org.hamcrest.Description description) {
-                description.appendText("Tests run against User Role specified");
+                description.appendText("match between current user role and test");
             }
         };
     }

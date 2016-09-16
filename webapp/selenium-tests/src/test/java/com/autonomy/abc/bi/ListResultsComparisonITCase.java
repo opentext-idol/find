@@ -1,9 +1,12 @@
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.comparison.AppearsIn;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
@@ -37,6 +40,7 @@ import static org.hamcrest.Matchers.*;
  * to ensure few results. You may need to tweak the searches to get
  * them working on your local machine
  */
+@Role(UserRole.BIFHI)
 public class ListResultsComparisonITCase extends IdolFindTestBase {
     private static final Index SOME_INDEX = new Index("AmericanNews");
     private static final Index OTHER_INDEX = new Index("Wookiepedia");

@@ -1,5 +1,6 @@
 package com.autonomy.abc.base;
 
+import com.autonomy.abc.selenium.find.application.UserRole;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
@@ -16,11 +17,11 @@ public class TestUserRole extends TestWatcher {
         }
     }
 
-    public UserRole getApplicationValue() {
-        if (userRole == null) {
-            return UserRole.ALL;
-        }
-
+    public UserRole getUserRoleValue() {
         return userRole.value();
+    }
+
+    public boolean isNull() {
+        return userRole == null;
     }
 }

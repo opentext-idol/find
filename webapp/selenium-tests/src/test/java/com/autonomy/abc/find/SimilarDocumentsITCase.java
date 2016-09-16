@@ -151,7 +151,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
             previousTitle = docTitle;
         }
-        //TODO what is meant to happen when clicking back
+        //TODO: routing is better now -> check where should go
     }
 
     @Test

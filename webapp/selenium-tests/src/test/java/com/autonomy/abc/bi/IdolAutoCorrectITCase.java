@@ -1,8 +1,11 @@
-package com.autonomy.abc.find;
+package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
@@ -21,6 +24,8 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
+//TODO: PROBABLY NEEDS TO BE SPLIT UP INTO OTHER CLASSES & AUTOCORRECT MIGHT BE TURNED OFF FOR BIFHI USERS SOON
+@Role(UserRole.BIFHI)
 public class IdolAutoCorrectITCase extends IdolFindTestBase {
     private FindService findService;
     private IdolFindPage findPage;
@@ -38,14 +43,14 @@ public class IdolAutoCorrectITCase extends IdolFindTestBase {
     public void tearDown() {
         if (hasSetUp()) {
             findService.search("back to results");
-            getApplication().savedSearchService().deleteAll();
+            ((BIIdolFind) getApplication()).savedSearchService().deleteAll();
         }
     }
 
     @Test
     @ActiveBug("FIND-357")
     public void testSavingAutoCorrectedSearch() {
-        SavedSearchService savedSearchService = getApplication().savedSearchService();
+        SavedSearchService savedSearchService = ((BIIdolFind)getApplication()).savedSearchService();
         final String searchName = "SaveMcSave";
 
         String correctedQuery = saveAndVerify(savedSearchService, searchName, SearchType.SNAPSHOT);
