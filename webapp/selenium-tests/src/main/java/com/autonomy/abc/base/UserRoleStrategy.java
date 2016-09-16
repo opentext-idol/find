@@ -25,20 +25,13 @@ public class UserRoleStrategy implements RunOnlyIfDescription.Acceptable {
                 TestUserRole userRole = new TestUserRole();
                 userRole.starting(item);
 
+                //Test not annotated
                 if(userRole.isNull()){
                     return true;
                 }
-                UserRole testUserRole = userRole.getApplicationValue();
+                UserRole testUserRole = userRole.getUserRoleValue();
 
-                //Test has no annotation or System Variable not set thus created BIIdolFind (see FindApplication)
-                if(configUserRole==null){
-                    if(testUserRole.equals(UserRole.BIFHI)){
-                        return true;
-                    }
-                    return false;
-                }
-                //System variable equals testUserRole
-                return configUserRole.equals(testUserRole);
+                return (configUserRole==null && testUserRole.equals(UserRole.BIFHI)) || (configUserRole!=null && configUserRole.equals(testUserRole));
             }
 
             @Override

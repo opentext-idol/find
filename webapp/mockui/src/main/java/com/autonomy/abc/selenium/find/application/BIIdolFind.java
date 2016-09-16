@@ -15,5 +15,4 @@ public class BIIdolFind extends IdolFind<BIIdolFindElementFactory>{
     public SavedSearchService savedSearchService() {
         return new SavedSearchService(this);
     }
-
 }

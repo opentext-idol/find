@@ -17,8 +17,7 @@ public class TestUserRole extends TestWatcher {
         }
     }
 
-    //Is this  misnamed?
-    public UserRole getApplicationValue() {
+    public UserRole getUserRoleValue() {
         return userRole.value();
     }
 

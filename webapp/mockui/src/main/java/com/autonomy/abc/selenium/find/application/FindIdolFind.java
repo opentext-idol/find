@@ -10,6 +10,5 @@ public class FindIdolFind extends IdolFind<FindIdolFindElementFactory>{
         setElementFactory(new FindIdolFindElementFactory(window.getSession().getDriver()));
         return this;
     }
-
 }
 

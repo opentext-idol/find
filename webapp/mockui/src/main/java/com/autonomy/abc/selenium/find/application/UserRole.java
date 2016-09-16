@@ -5,13 +5,14 @@ public enum UserRole {
     FIND;
 
     public static UserRole fromString(String value) {
+        if (value == null){
+            return null;
+        }
         for(UserRole userRole : UserRole.values()) {
             if (userRole.toString().toLowerCase().equals(value.toLowerCase())) {
                 return userRole;
             }
         }
-
-        //Maybe should be null
         return BIFHI;
     }
 }

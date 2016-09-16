@@ -3,7 +3,6 @@ package com.autonomy.abc.base;
 import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
-import com.hp.autonomy.frontend.selenium.application.Application;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.junit.runner.RunWith;

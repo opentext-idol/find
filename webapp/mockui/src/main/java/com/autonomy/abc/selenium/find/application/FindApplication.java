@@ -30,9 +30,6 @@ public abstract class FindApplication<T extends FindElementFactory> implements A
             case HOSTED:
                 return new HodFind();
             case ON_PREM:
-                if(System.getProperty("userRole") == null){
-                    return IdolFind.withRole(null);
-                }
                 return IdolFind.withRole(UserRole.fromString(System.getProperty("userRole")));
             default:
                 throw new IllegalStateException("Unsupported app type: " + type);

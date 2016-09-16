@@ -22,6 +22,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
+//TODO: PROBABLY NEEDS TO BE SPLIT UP INTO
 public class IdolAutoCorrectITCase extends IdolFindTestBase {
     private FindService findService;
     private IdolFindPage findPage;
@@ -39,7 +40,9 @@ public class IdolAutoCorrectITCase extends IdolFindTestBase {
     public void tearDown() {
         if (hasSetUp()) {
             findService.search("back to results");
-            ((BIIdolFind)getApplication()).savedSearchService().deleteAll();
+            if( getApplication() instanceof BIIdolFind) {
+                ((BIIdolFind) getApplication()).savedSearchService().deleteAll();
+            }
         }
     }
 
