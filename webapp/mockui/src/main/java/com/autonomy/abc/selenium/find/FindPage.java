@@ -51,10 +51,6 @@ public class FindPage extends AppElement implements AppPage,
         return filters().indexesTree();
     }
 
-    public void sortBy(final SortBy sortBy) {
-        sortDropdown().select(sortBy.toString());
-    }
-
     private Dropdown sortDropdown() {
         final WebElement dropdownContainer = findElement(By.cssSelector(".sort-container"));
         return new Dropdown(dropdownContainer, getDriver());

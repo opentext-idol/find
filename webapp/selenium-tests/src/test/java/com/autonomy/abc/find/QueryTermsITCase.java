@@ -45,7 +45,7 @@ public class QueryTermsITCase extends FindTestBase {
         findPage = getElementFactory().getFindPage();
         navBar = getElementFactory().getTopNavBar();
         findService = getApplication().findService();
-        if(!isHosted()) {
+        if(!findPage.footerLogo().isDisplayed()) {
             ((IdolFindPage) findPage).goToListView();
         }
     }

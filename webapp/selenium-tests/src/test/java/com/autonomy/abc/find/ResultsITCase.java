@@ -43,7 +43,7 @@ public class ResultsITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
-        if(!isHosted()) {
+        if(!findPage.footerLogo().isDisplayed()) {
             ((IdolFindPage) findPage).goToListView();
         }
     }

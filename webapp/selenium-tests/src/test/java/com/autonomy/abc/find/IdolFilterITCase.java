@@ -34,7 +34,9 @@ public class IdolFilterITCase extends IdolFindTestBase {
     public void setUp(){
         findService = getApplication().findService();
         findPage = getElementFactory().getFindPage();
-        findPage.goToListView();
+        if(!findPage.footerLogo().isDisplayed()) {
+            findPage.goToListView();
+        }
     }
 
     private ResultsView search(final String searchTerm) {
