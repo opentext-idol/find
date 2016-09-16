@@ -2,7 +2,8 @@ package com.autonomy.abc.selenium.find.application;
 
 public enum UserRole {
     BIFHI,
-    FIND;
+    FIND,
+    BOTH;
 
     public static UserRole fromString(String value) {
         if (value == null){

@@ -1,9 +1,11 @@
-package com.autonomy.abc.find;
+package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFind;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
@@ -22,7 +24,8 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-//TODO: PROBABLY NEEDS TO BE SPLIT UP INTO
+//TODO: PROBABLY NEEDS TO BE SPLIT UP INTO OTHER CLASSES & AUTOCORRECT MIGHT BE TURNED OFF FOR BIFHI USERS SOON
+@Role(UserRole.BIFHI)
 public class IdolAutoCorrectITCase extends IdolFindTestBase {
     private FindService findService;
     private IdolFindPage findPage;
@@ -40,9 +43,7 @@ public class IdolAutoCorrectITCase extends IdolFindTestBase {
     public void tearDown() {
         if (hasSetUp()) {
             findService.search("back to results");
-            if( getApplication() instanceof BIIdolFind) {
-                ((BIIdolFind) getApplication()).savedSearchService().deleteAll();
-            }
+            ((BIIdolFind) getApplication()).savedSearchService().deleteAll();
         }
     }
 

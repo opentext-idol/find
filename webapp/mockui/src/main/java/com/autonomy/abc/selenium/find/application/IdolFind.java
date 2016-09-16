@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.application;
 import com.autonomy.abc.selenium.find.numericWidgets.NumericWidgetService;
+import com.autonomy.abc.selenium.find.save.SavedSearchService;
 
 public abstract class IdolFind<T extends IdolFindElementFactory> extends FindApplication<T> {
     private T elementFactory;
@@ -21,6 +22,8 @@ public abstract class IdolFind<T extends IdolFindElementFactory> extends FindApp
     public NumericWidgetService numericWidgetService() {
         return new NumericWidgetService(this);
     }
+
+    public abstract SavedSearchService savedSearchService();
 
     public static IdolFind<? extends IdolFindElementFactory> withRole(final UserRole role) {
         if(role == null){

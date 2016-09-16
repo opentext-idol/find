@@ -1,9 +1,11 @@
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFind;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.filters.DateOption;
 import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
@@ -39,6 +41,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
 //NB: FIND-399 -> these tests will stop needing to re-assign MainGraph every minute once stops reloading
+@Role(UserRole.BIFHI)
 public class NumericWidgetITCase extends IdolFindTestBase {
     private FindService findService;
     private IdolFindPage findPage;
@@ -46,11 +49,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     public NumericWidgetITCase(final TestConfig config) {
         super(config);
-    }
-
-    @Override
-    public BIIdolFind getApplication() {
-        return (BIIdolFind) super.getApplication();
     }
 
     @Before

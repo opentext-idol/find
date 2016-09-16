@@ -31,12 +31,14 @@ public class UserRoleStrategy implements RunOnlyIfDescription.Acceptable {
                 }
                 UserRole testUserRole = userRole.getUserRoleValue();
 
-                return (configUserRole==null && testUserRole.equals(UserRole.BIFHI)) || (configUserRole!=null && configUserRole.equals(testUserRole));
+                return (configUserRole==null && testUserRole.equals(UserRole.BIFHI)) ||
+                        (configUserRole!=null && configUserRole.equals(testUserRole)) ||
+                        testUserRole.equals(UserRole.BOTH);
             }
 
             @Override
             public void describeTo(org.hamcrest.Description description) {
-                description.appendText("Tests run against User Role specified");
+                description.appendText("match between current user role and test");
             }
         };
     }

@@ -1,12 +1,13 @@
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFind;
-import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
@@ -31,6 +32,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.checked;
 import static org.hamcrest.Matchers.*;
 
+@Role(UserRole.BIFHI)
 public class SavedSearchITCase extends IdolFindTestBase {
     private SearchTabBar searchTabBar;
     private FindService findService;
@@ -40,16 +42,9 @@ public class SavedSearchITCase extends IdolFindTestBase {
         super(config);
     }
 
-    @Override
-    public BIIdolFind getApplication() {
-        return (BIIdolFind) super.getApplication();
-    }
-
     @Before
     public void setUp() {
         findService = getApplication().findService();
-
-
         saveService = getApplication().savedSearchService();
 
         findService.search("*");
