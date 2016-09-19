@@ -91,6 +91,25 @@ define([
         QueryLeftSideView: null,
 
         initialize: function (options) {
+            this.configuration = config();
+            const optionalViews = [{
+                enabled: !this.configuration.hasBiRole,
+                selector: '.input-view-container',
+                construct: function () {
+                    return new InputView({
+                        model: this.searchModel
+                    });
+                }.bind(this),
+                onExpand: function (instance) {
+                    instance.unFocus();
+                },
+                onReduce: function (instance) {
+                    instance.focus();
+                }
+            }];
+            //noinspection JSUnresolvedFunction
+            this.optionalViews = _.where(optionalViews, {enabled: true});
+
             this.savedQueryCollection = options.savedQueryCollection;
             this.indexesCollection = options.indexesCollection;
             this.windowScrollModel = options.windowScrollModel;
@@ -154,8 +173,9 @@ define([
                 }
             });
 
-            this.inputView = new InputView({
-                model: this.searchModel
+            //noinspection JSUnresolvedFunction
+            this.optionalViews.forEach(function (view) {
+                view.instance = view.construct();
             });
 
             if (config().hasBiRole) {
@@ -169,13 +189,13 @@ define([
                 this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
 
                 var savedSearchConfig = config().savedSearchConfig;
-                if(savedSearchConfig.pollForUpdates) {
-                    this.listenToOnce(this.savedQueryCollection, 'sync', function() {
+                if (savedSearchConfig.pollForUpdates) {
+                    this.listenToOnce(this.savedQueryCollection, 'sync', function () {
                         this.savedQueryResultPoller = new SavedQueryResultPoller({
                             config: savedSearchConfig,
                             savedQueryCollection: this.savedQueryCollection,
                             queryStates: this.queryStates,
-                            onSuccess: _.bind(function(savedQueryModelId, newResults) {
+                            onSuccess: _.bind(function (savedQueryModelId, newResults) {
                                 this.savedQueryCollection.get(savedQueryModelId).set({
                                     newDocuments: newResults
                                 });
@@ -255,7 +275,9 @@ define([
         render: function () {
             this.$el.html(html);
 
-            this.inputView.setElement(this.$('.input-view-container')).render();
+            this.optionalViews.forEach(function (view) {
+                view.instance.setElement(this.$(view.selector)).render();
+            }, this);
 
             if (this.tabView) {
                 this.tabView.setElement(this.$('.search-tabs-container')).render();
@@ -453,7 +475,9 @@ define([
             this.removeDocumentDetailView();
             this.removeSuggestView();
 
-            this.inputView.unFocus();
+            this.optionalViews.forEach(function (view) {
+                view.onExpand(view.instance)
+            });
             this.$('.find-banner-container').addClass('hide');
 
             // TODO: somebody else needs to own this
@@ -471,7 +495,9 @@ define([
             this.removeDocumentDetailView();
             this.removeSuggestView();
 
-            this.inputView.focus();
+            this.optionalViews.forEach(function (view) {
+                view.onReduce(view.instance)
+            });
             this.$('.find-banner-container').removeClass('hide');
 
             // TODO: somebody else needs to own this
@@ -499,6 +525,9 @@ define([
         },
 
         remove: function () {
+            //noinspection JSUnresolvedFunction
+            _.chain(this.optionalViews).pluck('instance').invoke('remove');
+
             this.savedQueryResultPoller.destroy();
             this.removeDocumentDetailView();
             Backbone.View.prototype.remove.call(this);
