@@ -54,9 +54,12 @@ define([
             });
 
             this.queryTextModel = new Backbone.Model({
-                inputText: INPUT_TEXT,
-                relatedConcepts: RELATED_CONCEPTS
+                inputText: INPUT_TEXT
             });
+
+            this.conceptGroups = new Backbone.Collection(RELATED_CONCEPTS.map(function(concepts) {
+                return {concepts: concepts};
+            }));
 
             this.datesFilterModel = new DatesFilterModel({
                 dateRange: DatesFilterModel.DateRange.CUSTOM,
@@ -81,6 +84,7 @@ define([
             }));
 
             this.queryState = {
+                conceptGroups: this.conceptGroups,
                 queryTextModel: this.queryTextModel,
                 datesFilterModel: this.datesFilterModel,
                 selectedIndexes: this.selectedIndexes,
@@ -101,7 +105,7 @@ define([
             });
 
             it('returns false when the related concepts are different', function() {
-                this.queryTextModel.set('relatedConcepts', [['pirate']].concat(RELATED_CONCEPTS));
+                this.conceptGroups.unshift({concepts: ['pirate']});
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });
@@ -150,7 +154,7 @@ define([
                 this.minScoreModel.set('minScore', 45);
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
-            })
+            });
         });
 
         describe('attributesFromQueryState', function() {
@@ -158,9 +162,12 @@ define([
                 this.attributes = SavedSearchModel.attributesFromQueryState(this.queryState);
             });
 
-            it('returns the input text and related concepts from the query text model', function() {
+            it('returns the input text from the query text model', function() {
                 expect(this.attributes.queryText).toBe(INPUT_TEXT);
-                expect(this.attributes.relatedConcepts).toBe(RELATED_CONCEPTS);
+            });
+
+            it('returns the related concepts from the concept groups collection', function() {
+                expect(this.attributes.relatedConcepts).toEqual(RELATED_CONCEPTS);
             });
 
             it('returns the min and max dates from the dates filter model model', function() {
@@ -178,6 +185,14 @@ define([
 
             it('returns the min score from the min score model', function() {
                 expect(this.attributes.minScore).toBe(MIN_SCORE);
+            });
+        });
+
+        describe('toConceptGroups', function() {
+            it('maps the relatedConcepts to concept group model attributes', function() {
+                expect(this.model.toConceptGroups()).toEqual([
+                    {concepts: RELATED_CONCEPTS[0]}
+                ]);
             });
         });
     });

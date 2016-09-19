@@ -39,7 +39,6 @@ define([
 
     var reducedClasses = 'reverse-animated-container col-md-offset-1 col-lg-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8';
     var expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-3 col-lg-offset-3 col-md-6 col-lg-6 col-xs-9 col-sm-9';
-    var QUERY_TEXT_MODEL_ATTRIBUTES = ['inputText', 'relatedConcepts'];
 
     var html = _.template(template)({i18n: i18n});
 
@@ -110,7 +109,7 @@ define([
                 selectedSearchCid: null
             });
 
-            // Model representing search bar text and related concepts
+            // Model representing search bar text
             this.searchModel = new QueryTextModel();
 
             // Model mapping saved search cids to query state
@@ -193,10 +192,7 @@ define([
             this.listenTo(router, 'route:searchSplash', function () {
                 this.selectedTabModel.set('selectedSearchCid', null);
 
-                this.searchModel.set({
-                    inputText: '',
-                    relatedConcepts: []
-                });
+                this.searchModel.set({inputText: ''});
 
                 this.reducedState();
             }, this);
@@ -303,16 +299,16 @@ define([
                         edit: i18n['search.savedSearchControl.openEdit.edit']
                     },
                     createSearchModelAttributes: function (queryTextModel) {
-                        return queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES);
+                        return queryTextModel.attributes;
                     },
                     queryTextModelChange: function (options) {
                         return function () {
-                            options.searchModel.set(options.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                            options.searchModel.set(options.queryTextModel.attributes);
                         };
                     },
                     searchModelChange: function (options) {
                         return function () {
-                            options.queryTextModel.set(options.searchModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                            options.queryTextModel.set(options.searchModel.attributes);
                         };
                     }
                 }
@@ -364,13 +360,6 @@ define([
                     var minScore = new MinScoreModel({minScore: 0});
                     var documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
 
-                    var queryState = {
-                        queryTextModel: queryTextModel,
-                        minScoreModel: minScore,
-                        datesFilterModel: new DatesFilterModel(savedSearchModel.toDatesFilterModelAttributes()),
-                        selectedParametricValues: new SelectedParametricValuesCollection(savedSearchModel.toSelectedParametricValues())
-                    };
-
                     var initialSelectedIndexes;
                     var savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
 
@@ -384,7 +373,17 @@ define([
                         initialSelectedIndexes = savedSelectedIndexes;
                     }
 
-                    queryState.selectedIndexes = new this.IndexesCollection(initialSelectedIndexes);
+                    /**
+                     * @type {QueryState}
+                     */
+                    var queryState = {
+                        conceptGroups: new Backbone.Collection(savedSearchModel.toConceptGroups()),
+                        queryTextModel: queryTextModel,
+                        minScoreModel: minScore,
+                        datesFilterModel: new DatesFilterModel(savedSearchModel.toDatesFilterModelAttributes()),
+                        selectedIndexes: new this.IndexesCollection(initialSelectedIndexes),
+                        selectedParametricValues: new SelectedParametricValuesCollection(savedSearchModel.toSelectedParametricValues())
+                    };
 
                     this.queryStates.set(cid, queryState);
 
@@ -418,8 +417,11 @@ define([
                     queryTextModel: viewData.queryTextModel
                 };
 
-                this.queryTextCallback = addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, this.searchTypes[searchType].queryTextModelChange(changeListenerOptions));
-                this.searchChangeCallback = addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, this.searchTypes[searchType].searchModelChange(changeListenerOptions));
+                this.queryTextCallback = this.searchTypes[searchType].queryTextModelChange(changeListenerOptions);
+                this.listenTo(this.queryTextModel, 'change', this.queryTextCallback);
+
+                this.searchChangeCallback = this.searchTypes[searchType].searchModelChange(changeListenerOptions);
+                this.listenTo(this.searchModel, 'change', this.searchChangeCallback);
 
                 viewData.view.$el.removeClass('hide');
             }
@@ -428,14 +430,14 @@ define([
         generateURL: function () {
             var inputText = this.searchModel.get('inputText');
 
-            if (this.searchModel.isEmpty()) {
+            if (inputText) {
+                return 'search/query/' + encodeURIComponent(inputText);
+            } else {
                 if (this.selectedTabModel.get('selectedSearchCid')) {
                     return 'search/query';
                 } else {
                     return 'search/splash';
                 }
-            } else {
-                return 'search/query/' + encodeURIComponent(inputText);
             }
         },
 

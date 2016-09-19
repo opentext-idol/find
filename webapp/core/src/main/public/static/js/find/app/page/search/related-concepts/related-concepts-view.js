@@ -44,7 +44,7 @@ define([
     function popoverHandler($content, $target) {
         var entityCluster = $target.data('entityCluster');
         var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : this.entityCollection.getClusterEntities(entityCluster);
-        var relatedConcepts = _.union(this.queryTextModel.get('relatedConcepts'), clusterEntities);
+        var relatedConcepts = _.union(this.conceptGroups.pluck('concepts'), clusterEntities);
 
         var queryText = searchDataUtil.makeQueryText(this.queryTextModel.get('inputText'), relatedConcepts);
 
@@ -105,6 +105,7 @@ define([
         initialize: function (options) {
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryState.queryTextModel;
+            this.conceptGroups = options.queryState.conceptGroups;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
             this.clickHandler = options.clickHandler;

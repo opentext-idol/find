@@ -54,7 +54,7 @@ define([
                             edit: snapshotsI18n['openEdit.edit']
                         },
                         createSearchModelAttributes: function() {
-                            return {inputText: '', relatedConcepts: []};
+                            return {inputText: ''};
                         },
                         searchModelChange: function(options) {
                             return function() {
