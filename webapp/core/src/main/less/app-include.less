@@ -1158,7 +1158,6 @@ input.find-input {
 
 .selected-related-concept {
     &:extend(.inline-flex);
-    &:extend(.m-l-xs);
 
     border-radius: @nil;
     border: solid 2px @white;
@@ -1169,8 +1168,8 @@ input.find-input {
     line-height: @custom11;
     padding: 1px 6px;
 
-    &:not(first-child) {
-        &:extend(.m-l-xs);
+    &:not(last-child) {
+        &:extend(.m-r-xs);
     }
 }
 

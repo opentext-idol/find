@@ -75,6 +75,8 @@ define([
         'placeholder.ip': 'IP',
         'placeholder.port': 'port',
         'search.alsoSearchingFor': 'Also searching for',
+        'search.concepts': 'Concepts',
+        'search.concepts.empty': 'No concepts selected',
         'search.databases': 'Databases',
         'search.dates': 'Dates',
         'search.dates.timeInterval.CUSTOM': 'Custom',
