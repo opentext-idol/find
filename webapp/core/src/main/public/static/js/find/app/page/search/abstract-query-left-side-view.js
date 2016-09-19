@@ -7,9 +7,10 @@ define([
     'backbone',
     'underscore',
     './filter-view',
+    './selected-concepts/concept-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/abstract-query-left-side-view.html'
-], function(Backbone, _, FilterView, i18n, template) {
+], function(Backbone, _, FilterView, ConceptView, i18n, template) {
 
     'use strict';
 
@@ -20,6 +21,10 @@ define([
         html: _.template(template)({i18n: i18n}),
 
         initialize: function(options) {
+            this.conceptView = new ConceptView({
+                queryState: options.queryState
+            });
+
             this.filterView = new FilterView(_.extend({
                 IndexesView: this.IndexesView
             }, options));
@@ -30,6 +35,10 @@ define([
 
             this.filterView
                 .setElement(this.$('.left-side-filters-view'))
+                .render();
+
+            this.conceptView
+                .setElement(this.$('.left-side-concepts-view'))
                 .render();
         },
 
