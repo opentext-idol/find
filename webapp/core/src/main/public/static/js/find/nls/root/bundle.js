@@ -216,7 +216,6 @@ define([
         'search.savedSearches.confirm.resetMessage': 'Are you sure you want to reset {0} saved search?',
         'search.savedSearches.confirm.resetMessage.title': 'Reset saved search',
         'search.savedSearches.deleteFailed': 'Error: could not delete the saved search',
-        'search.seeAllDocuments': 'See all docs',
         'search.selected': 'Selected',
         'search.similarDocuments': 'Similar documents',
         'search.similarDocuments.error': 'Error: could not fetch similar documents',

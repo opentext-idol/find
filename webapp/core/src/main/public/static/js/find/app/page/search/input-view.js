@@ -21,58 +21,15 @@ define([
             },
             'typeahead:select': function() {
                 this.search(this.$input.typeahead('val'));
-            },
-            'click .see-all-documents': function() {
-                var queryState = this.queryStates.get(this.selectedTabModel.get('selectedSearchCid'));
-
-                if (queryState) {
-                    queryState.datesFilterModel.clear().set(queryState.datesFilterModel.defaults);
-                    queryState.selectedParametricValues.reset();
-                    queryState.selectedIndexes.set(databaseNameResolver.getDatabaseInfoFromCollection(this.indexesCollection));
-                }
-
-                this.search('*');
             }
         },
 
         initialize: function(options) {
-            this.queryStates = options.queryStates;
-            this.selectedTabModel = options.selectedTabModel;
-            this.indexesCollection = options.indexesCollection;
-            this.hasBiRole = options.hasBiRole;
-
             this.listenTo(this.model, 'change:inputText', this.updateText);
-
-            if (!this.hasBiRole) {
-                this.listenTo(this.queryStates, 'change', function() {
-                    // listen to the new query state(s)
-                    var changed = this.queryStates.changed[this.selectedTabModel.get('selectedSearchCid')];
-
-                    if (changed) {
-                        var update = _.bind(function() {
-                            // all selected indexes is the default
-                            var hasSelectedIndexes = changed.selectedIndexes.length < this.indexesCollection.length;
-                            var hasSelectedParametricValues = changed.selectedParametricValues.length > 0;
-
-                            // if a date range is not selected the query model attributes will only contain null values
-                            var hasSelectedDates = _.chain(changed.datesFilterModel.toQueryModelAttributes())
-                                .values()
-                                .any()
-                                .value();
-
-                            this.updateSeeAllDocumentsLink(hasSelectedIndexes || hasSelectedParametricValues || hasSelectedDates);
-                        }, this);
-
-                        this.listenTo(changed.selectedIndexes, 'add remove', update);
-                        this.listenTo(changed.selectedParametricValues, 'add remove', update);
-                        this.listenTo(changed.datesFilterModel, 'change', update);
-                    }
-                });
-            }
         },
 
         render: function() {
-            this.$el.html(this.template({i18n: i18n, hasBiRole: this.hasBiRole}));
+            this.$el.html(this.template({i18n: i18n}));
             this.$input = this.$('.find-input');
 
             this.$input.typeahead({
@@ -118,14 +75,6 @@ define([
         updateText: function() {
             if (this.$input) {
                 this.$input.typeahead('val', this.model.get('inputText'));
-                this.updateSeeAllDocumentsLink();
-            }
-        },
-
-        updateSeeAllDocumentsLink: function(queryStateChanged) {
-            if (this.hasBiRole) {
-                var disableLink = this.model.get('inputText') === '*' && !queryStateChanged;
-                this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', disableLink);
             }
         }
     });

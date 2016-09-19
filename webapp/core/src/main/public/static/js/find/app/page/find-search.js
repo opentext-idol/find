@@ -155,11 +155,7 @@ define([
             });
 
             this.inputView = new InputView({
-                model: this.searchModel,
-                queryStates: this.queryStates,
-                selectedTabModel: this.selectedTabModel,
-                hasBiRole: config().hasBiRole,
-                indexesCollection: this.indexesCollection
+                model: this.searchModel
             });
 
             if (config().hasBiRole) {
@@ -454,10 +450,6 @@ define([
             this.$('.app-logo').addClass('hide');
             this.$('.hp-logo-footer').addClass('hide');
 
-            if(config().hasBiRole) {
-                this.$('.see-all-documents').addClass('hide');
-            }
-
             this.removeDocumentDetailView();
             this.removeSuggestView();
 
@@ -475,7 +467,6 @@ define([
             this.$('.service-view-container').addClass('hide');
             this.$('.app-logo').removeClass('hide');
             this.$('.hp-logo-footer').removeClass('hide');
-            this.$('.see-all-documents').removeClass('hide');
 
             this.removeDocumentDetailView();
             this.removeSuggestView();
