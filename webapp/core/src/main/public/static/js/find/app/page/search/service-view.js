@@ -142,6 +142,7 @@ define([
             this.previewModeModel = new Backbone.Model({document: null});
 
             var subViewArguments = {
+                configuration: configuration(),
                 dateParametricFieldsCollection: this.dateParametricFieldsCollection,
                 delayedIndexesSelection: options.delayedIndexesSelection,
                 documentsCollection: this.documentsCollection,

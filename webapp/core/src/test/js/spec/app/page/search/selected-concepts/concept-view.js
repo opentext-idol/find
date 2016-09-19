@@ -6,30 +6,46 @@
 define([
     'find/app/page/search/selected-concepts/concept-view',
     'backbone'
-], function(ConceptView, Backbone) {
+], function (ConceptView, Backbone) {
 
-    describe('Concept View', function() {
-        beforeEach(function() {
-            this.conceptGroups = new Backbone.Collection([
-                {concepts: ['cat']},
-                {concepts: ['monkey', 'ape']}
-            ]);
+    describe('Concept View', function () {
+        const configurations = [{
+            description: 'with User configuration',
+            options: {}
+        }, {
+            description: 'with BI configuration',
+            options: {
+                hasBiRole: true
+            }
+        }];
 
-            this.view = new ConceptView({
-                queryState: {
-                    conceptGroups: this.conceptGroups
-                }
+        configurations.forEach(function (configuration) {
+            describe(configuration.description, function () {
+                beforeEach(function () {
+                    this.conceptGroups = new Backbone.Collection([
+                        {concepts: ['cat']},
+                        {concepts: ['monkey', 'ape']}
+                    ]);
+
+                    this.view = new ConceptView({
+                        configuration: configuration.options,
+                        queryState: {
+                            conceptGroups: this.conceptGroups,
+                            queryTextModel: new Backbone.Model()
+                        }
+                    });
+
+                    this.view.render();
+                });
+
+                it('displays the first concept in each group in the conceptGroups collection', function () {
+                    const $selectedConcepts = this.view.$('.selected-related-concept');
+                    expect($selectedConcepts).toHaveLength(2);
+
+                    expect($selectedConcepts).toContainText('cat');
+                    expect($selectedConcepts).toContainText('monkey');
+                });
             });
-
-            this.view.render();
-        });
-
-        it('displays the first concept in each group in the conceptGroups collection', function() {
-            const $selectedConcepts = this.view.$('.selected-related-concept');
-            expect($selectedConcepts).toHaveLength(2);
-
-            expect($selectedConcepts).toContainText('cat');
-            expect($selectedConcepts).toContainText('monkey');
         });
 
         it('does not display the empty message when there are concepts', function() {

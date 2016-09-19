@@ -11,7 +11,6 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/abstract-query-left-side-view.html'
 ], function(Backbone, _, FilterView, ConceptView, i18n, template) {
-
     'use strict';
 
     return Backbone.View.extend({
@@ -22,6 +21,7 @@ define([
 
         initialize: function(options) {
             this.conceptView = new ConceptView({
+                configuration: options.configuration,
                 queryState: options.queryState
             });
 
