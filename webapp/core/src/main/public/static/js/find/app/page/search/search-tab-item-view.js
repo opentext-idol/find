@@ -8,7 +8,8 @@ define([
     'underscore',
     'i18n!find/nls/bundle',
     'find/app/model/saved-searches/saved-search-model',
-    'text!find/templates/app/page/search/search-tab-item-view.html'
+    'text!find/templates/app/page/search/search-tab-item-view.html',
+    'bootstrap'
 ], function(ListItemView, _, i18n, SavedSearchModel, template) {
 
     'use strict';
@@ -49,6 +50,13 @@ define([
 
             this.updateSavedness();
             this.updateTabBadge();
+            
+            this.$tooltip = this.$('[data-toggle="tooltip"]');
+
+            this.$tooltip.tooltip({
+                container: 'body',
+                placement: 'bottom'
+            });
         },
 
         updateTabBadge: function() {

@@ -593,8 +593,8 @@ fieldset.radio-fieldset > label {
     }
 
     .nav-tabs > li > a {
-        height: 60px;
-        line-height: 22px;
+        border: 1px solid @color31;
+        border-bottom: none;
     }
 
     .nav-tabs > li.active > a {
@@ -614,10 +614,26 @@ fieldset.radio-fieldset > label {
 }
 .tab-dropdown {
     padding-right: 16px;
-    padding-top: 16px;
+    padding-top: 12px;
 
     .dropdown-menu {
         margin-left: -115px;
+
+        .search-tab-anchor {
+            padding: 8px 20px;
+        }
+
+        .search-tab-title {
+            .hp-new {
+                top: 5px;
+            }
+        }
+
+        .new-document-label {
+            left: 5px;
+            top: 5px;
+        }
+
     }
 
     .tab-drop > i {
@@ -626,7 +642,7 @@ fieldset.radio-fieldset > label {
 }
 
 .search-tabs-list {
-    height: 65px;
+    height: 44px;
     overflow: hidden;
     padding-top: 5px;
 }
@@ -634,7 +650,12 @@ fieldset.radio-fieldset > label {
 .search-tab-title {
     i {
         font-size: 12px;
-        vertical-align: super;
+    }
+    .hp-new {
+        &:extend(.absolute);
+
+        top: @nil;
+        right: 3px;
     }
 }
 
@@ -644,8 +665,10 @@ fieldset.radio-fieldset > label {
     background-color: @color39;
     display: block;
     font-size: @custom5;
-    right: @nil;
+    left: @nil;
     top: @nil;
+    border-radius: 3px;
+    padding: 1px 3px !important;
 }
 
 .compare-modal-error-spinner {
