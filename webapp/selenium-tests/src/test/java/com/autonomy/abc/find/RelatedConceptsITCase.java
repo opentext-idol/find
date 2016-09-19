@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
 @RelatedTo("CSA-2091")
+@Role(UserRole.FIND)
 public class RelatedConceptsITCase extends FindTestBase {
     private FindService findService;
     private FindTopNavBar navBar;
