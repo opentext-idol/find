@@ -79,6 +79,7 @@
 @custom9:  30px;
 @errorBodyMarginTop: 250px;
 @custom11: 15px;
+@selectedRelatedConceptsLineHeight: 14px;
 
 /*------Custom text variables------*/
 
@@ -1160,12 +1161,12 @@ input.find-input {
     &:extend(.inline-flex);
 
     border-radius: @nil;
-    border: solid 2px @white;
-    color: @white;
+    border: solid 2px @color1;
+    color: @color1;
     font-size: @100percent;
     font-weight: normal;
     height: 22px;
-    line-height: @custom11;
+    line-height: @selectedRelatedConceptsLineHeight;
     padding: 1px 6px;
 
     &:not(last-child) {
@@ -1194,6 +1195,8 @@ input.find-input {
 }
 
 .selected-related-concept-text {
+    &:extend(.m-r-xs);
+
     max-width: @selectedRelatedConceptsMaxWidth;
 }
 
@@ -1220,10 +1223,8 @@ input.find-input {
     &:extend(.inline);
 
     background-color: @white;
-    border-left: @nil;
-    border-right: @nil;
     color: @color1;
-    line-height: 14px;
+    line-height: @selectedRelatedConceptsLineHeight;
 }
 
 .selected-related-concept-cluster > .btn-group {
