@@ -163,7 +163,7 @@ define([
             };
 
             var clickHandlerArguments = {
-                queryTextModel: this.queryState.queryTextModel,
+                conceptGroups: this.queryState.conceptGroups,
                 savedQueryCollection: this.searchCollections.QUERY,
                 savedSearchModel: this.savedSearchModel,
                 selectedTabModel: this.selectedTabModel

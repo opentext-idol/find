@@ -75,7 +75,6 @@ define([
         'placeholder.ip': 'IP',
         'placeholder.port': 'port',
         'search.alsoSearchingFor': 'Also searching for',
-        'search.newTab.tooltip': 'Create a new tab showing all documents',
         'search.databases': 'Databases',
         'search.dates': 'Dates',
         'search.dates.timeInterval.CUSTOM': 'Custom',

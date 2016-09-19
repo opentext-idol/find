@@ -4,22 +4,12 @@
  */
 
 define([
-    'backbone',
-    'find/app/util/search-data-util'
-], function (Backbone, searchDataUtil) {
+    'backbone'
+], function (Backbone) {
 
     return Backbone.Model.extend({
         defaults: {
-            inputText: '',
-            relatedConcepts: []
-        },
-
-        makeQueryText: function () {
-            return searchDataUtil.makeQueryText(this.get('inputText'), this.get('relatedConcepts'));
-        },
-
-        isEmpty: function() {
-            return !this.get('inputText') && !this.get('relatedConcepts').length
+            inputText: ''
         }
     });
 
