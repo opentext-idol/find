@@ -3,6 +3,7 @@ package com.autonomy.abc.bi;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TableView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
@@ -34,7 +35,7 @@ public class TableITCase extends IdolFindTestBase {
 
     @Before
     public void setUp() {
-        tableView = getElementFactory().getTableView();
+        tableView = ((BIIdolFindElementFactory) getElementFactory()).getTableView();
         findService = getApplication().findService();
     }
 

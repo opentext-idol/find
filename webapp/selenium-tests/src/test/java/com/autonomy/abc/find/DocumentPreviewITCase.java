@@ -4,6 +4,7 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
@@ -125,7 +126,7 @@ public class DocumentPreviewITCase extends FindTestBase {
 
         checkSimilarDocuments(detailedPreviewPage);
 
-        if(!isHosted()) {
+        if(getApplication().getClass() == BIIdolFind.class) {
             checkSimilarDates(detailedPreviewPage);
         }
         detailedPreviewPage.goBackToSearch();
