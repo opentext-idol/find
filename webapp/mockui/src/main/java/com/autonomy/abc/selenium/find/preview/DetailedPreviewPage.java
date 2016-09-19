@@ -24,7 +24,7 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
 
     //navigation
     public void openOriginalDoc(){
-        findElement(By.className("document-detail-open-original-link")).click();
+        findElement(By.cssSelector(".document-detail-service-view-container .document-detail-open-original-link")).click();
         Waits.loadOrFadeWait();
     }
 

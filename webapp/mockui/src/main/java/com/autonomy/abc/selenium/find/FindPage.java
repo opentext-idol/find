@@ -38,25 +38,9 @@ public class FindPage extends AppElement implements AppPage,
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container")));
     }
 
-    public void unhover() {
-        /* click somewhere not important to remove hover -
-        * clicking the user's username seems safe... */
-        getDriver().findElement(By.className("navbar-username")).click();
-        new WebDriverWait(getDriver(), 2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
-    }
-
     @Override
     public IndexesTree indexesTree() {
         return filters().indexesTree();
-    }
-
-    public void sortBy(final SortBy sortBy) {
-        sortDropdown().select(sortBy.toString());
-    }
-
-    private Dropdown sortDropdown() {
-        final WebElement dropdownContainer = findElement(By.cssSelector(".sort-container"));
-        return new Dropdown(dropdownContainer, getDriver());
     }
 
     @Override

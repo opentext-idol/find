@@ -39,6 +39,11 @@ public class ResultsView extends AppElement implements QueryResultsPage {
         return findElement(By.cssSelector(".well"));
     }
 
+    public boolean errorContainerShown() {
+        List<WebElement> errorWells = findElements(By.cssSelector(".well"));
+        return errorWells.size()>0 && errorWells.get(0).isDisplayed();
+    }
+
     public List<String> getResultTitles() {
         final List<String> titles = new ArrayList<>();
         for(final FindResult result : getResults()) {

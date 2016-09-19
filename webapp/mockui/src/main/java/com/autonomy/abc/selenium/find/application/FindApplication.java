@@ -28,9 +28,9 @@ public abstract class FindApplication<T extends FindElementFactory> implements A
     public static FindApplication<?> ofType(final ApplicationType type) {
         switch (type) {
             case HOSTED:
-                return new HsodFind();
+                return new HodFind();
             case ON_PREM:
-                return new IdolFind();
+                return IdolFind.withRole(UserRole.fromString(System.getProperty("userRole")));
             default:
                 throw new IllegalStateException("Unsupported app type: " + type);
         }

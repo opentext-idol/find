@@ -1,9 +1,13 @@
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
@@ -21,11 +25,11 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.junit.Assert.fail;
 
 //The result comparisons for non-list view
+@Role(UserRole.BIFHI)
 public class ResultsComparisonITCase extends IdolFindTestBase{
-
     private FindService findService;
     private SavedSearchService savedSearchService;
-    private IdolFindElementFactory elementFactory;
+    private BIIdolFindElementFactory elementFactory;
 
     private ResultsComparisonView resultsComparison;
     private IdolFindPage findPage;
@@ -34,12 +38,11 @@ public class ResultsComparisonITCase extends IdolFindTestBase{
         super(config);
     }
 
-
     @Before
     public void setUp() {
         findService = getApplication().findService();
         savedSearchService = getApplication().savedSearchService();
-        elementFactory = getApplication().elementFactory();
+        elementFactory = (BIIdolFindElementFactory) getElementFactory();
         findPage = getElementFactory().getFindPage();
         findService.search("careful now");
 
@@ -71,7 +74,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase{
 
         Waits.loadOrFadeWait();
 
-        TopicMapView mapView = getElementFactory().getTopicMap();
+        TopicMapView mapView = elementFactory.getTopicMap();
         mapView.waitForMapLoaded();
         WebElement mapEntity = mapView.mapEntities().get(0);
         mapView.speedVsAccuracySlider().dragBy(100);
@@ -87,7 +90,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase{
 
     private void search(final String query, final String saveAs, final SearchType saveType) {
         findService.search(query);
-        getElementFactory().getTopicMap().waitForMapLoaded();
+        elementFactory.getTopicMap().waitForMapLoaded();
         savedSearchService.saveCurrentAs(saveAs, saveType);
     }
 }

@@ -16,6 +16,7 @@ public class IdolQueryTermResult extends SharedResult {
 
     public WebElement correctedQuery(){return ((ResultsView)getPage()).correctedQuery();}
 
+    public boolean errorWellExists() {return ((ResultsView)getPage()).errorContainerShown();}
 
     protected static Iterable<IdolQueryTermResult> idolResultsFor(final Iterable<String> queries, final QueryService service) {
         return new Iterable<IdolQueryTermResult>() {

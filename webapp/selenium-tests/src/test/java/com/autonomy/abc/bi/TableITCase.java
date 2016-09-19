@@ -1,7 +1,10 @@
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TableView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
@@ -20,6 +23,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
+@Role(UserRole.BIFHI)
 public class TableITCase extends IdolFindTestBase {
 
     private TableView tableView;
@@ -31,7 +35,7 @@ public class TableITCase extends IdolFindTestBase {
 
     @Before
     public void setUp() {
-        tableView = getElementFactory().getTableView();
+        tableView = ((BIIdolFindElementFactory) getElementFactory()).getTableView();
         findService = getApplication().findService();
     }
 

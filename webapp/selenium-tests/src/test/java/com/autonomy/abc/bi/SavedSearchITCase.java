@@ -1,11 +1,14 @@
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
-import com.autonomy.abc.selenium.find.application.IdolFind;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
@@ -30,10 +33,12 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.checked;
 import static org.hamcrest.Matchers.*;
 
+@Role(UserRole.BIFHI)
 public class SavedSearchITCase extends IdolFindTestBase {
     private SearchTabBar searchTabBar;
     private FindService findService;
     private SavedSearchService saveService;
+    private BIIdolFindElementFactory elementFactory;
 
     public SavedSearchITCase(final TestConfig config) {
         super(config);
@@ -45,8 +50,8 @@ public class SavedSearchITCase extends IdolFindTestBase {
         saveService = getApplication().savedSearchService();
 
         findService.search("*");
-        getElementFactory().getFindPage().goToListView();
-        searchTabBar = getElementFactory().getSearchTabBar();
+        elementFactory.getFindPage().goToListView();
+        searchTabBar = elementFactory.getSearchTabBar();
     }
 
     @After
@@ -88,7 +93,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         findService.search("no longer open");
         searchTabBar.switchTo("sesame");
 
-        getElementFactory().getSearchOptionsBar().openSnapshotAsQuery();
+        elementFactory.getSearchOptionsBar().openSnapshotAsQuery();
 
         assertThat(searchTabBar.currentTab().getTitle(), is("New Search"));
         assertThat(searchTabBar.currentTab().getType(), is(SearchType.QUERY));
@@ -127,12 +132,12 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         saveService.saveCurrentAs("oasis", SearchType.QUERY);
 
-        final IdolFind other = new IdolFind();
+        final BIIdolFind other = new BIIdolFind();
         launchInNewSession(other);
         other.loginService().login(getConfig().getDefaultUser());
         other.findService().search("blur");
 
-        final IdolFindElementFactory factory = other.elementFactory();
+        final BIIdolFindElementFactory factory = other.elementFactory();
         factory.getSearchTabBar().switchTo("oasis");
         factory.getFilterPanel().waitForParametricFields();
         assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
@@ -155,7 +160,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         SavedSearchPanel panel = new SavedSearchPanel(getDriver());
         int originalCount = panel.resultCount();
 
-        SunburstView results = getElementFactory().getSunburst();
+        SunburstView results = elementFactory.getSunburst();
 
         results.waitForSunburst();
         results.getIthSunburstSegment(1).click();
@@ -180,7 +185,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         saveService.openNewTab();
         searchTabBar.switchTo(newName);
-        verifyThat("Saved search has content",getElementFactory().getTopicMap().topicMapVisible());
+        verifyThat("Saved search has content",elementFactory.getTopicMap().topicMapVisible());
     }
 
     @Test

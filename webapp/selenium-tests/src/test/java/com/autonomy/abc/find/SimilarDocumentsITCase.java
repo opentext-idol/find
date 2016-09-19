@@ -2,6 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
@@ -40,7 +41,6 @@ import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 @RelatedTo("CSA-2090")
-//TODO have this extend FindITCase but change the setUp()?
 public class SimilarDocumentsITCase extends FindTestBase {
     private FindService findService;
     private SimilarDocumentsView similarDocuments;
@@ -52,8 +52,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
     @Before
     public void setUp(){
         findService = getApplication().findService();
-        if(!isHosted()) {
-            ((IdolFindPage) getElementFactory().getFindPage()).goToListView();
+        FindPage findPage = getElementFactory().getFindPage();
+        if(!findPage.footerLogo().isDisplayed()) {
+            ((IdolFindPage) findPage).goToListView();
         }
     }
 
@@ -151,7 +152,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
             previousTitle = docTitle;
         }
-        //TODO what is meant to happen when clicking back
+        //TODO: routing is better now -> check where should go
     }
 
     @Test
@@ -252,6 +253,6 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         getDriver().navigate().back();
 
-        verifyThat("Returned to the search page", !similarDocuments.backButton().isDisplayed());
+        verifyThat("Returned to the search page", getDriver().getCurrentUrl(), allOf(containsString("search"), not(containsString("suggest"))));
     }
 }

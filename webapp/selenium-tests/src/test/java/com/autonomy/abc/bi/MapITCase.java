@@ -1,8 +1,12 @@
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.MapView;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
@@ -23,7 +27,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 
-
+@Role(UserRole.BIFHI)
 public class MapITCase extends IdolFindTestBase {
     private FindService findService;
     private IdolFindPage findPage;
@@ -32,6 +36,11 @@ public class MapITCase extends IdolFindTestBase {
 
     public MapITCase(final TestConfig config) {
         super(config);
+    }
+
+    @Override
+    public BIIdolFindElementFactory getElementFactory() {
+        return (BIIdolFindElementFactory) super.getElementFactory();
     }
 
     @Before

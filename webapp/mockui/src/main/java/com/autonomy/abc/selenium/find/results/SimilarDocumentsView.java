@@ -25,7 +25,7 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     public WebElement backButton() {
-        return findElement(By.xpath("//button[contains(text(),'Back')]"));
+        return findElement(By.xpath("//button[contains(text(),'Back to search')]"));
     }
 
     public WebElement seedLink() {

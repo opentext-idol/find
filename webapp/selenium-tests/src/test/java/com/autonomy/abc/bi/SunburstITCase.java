@@ -1,8 +1,11 @@
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
@@ -22,6 +25,7 @@ import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.checked
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
+@Role(UserRole.BIFHI)
 public class SunburstITCase extends IdolFindTestBase {
     private IdolFindPage findPage;
     private SunburstView results;
@@ -34,7 +38,7 @@ public class SunburstITCase extends IdolFindTestBase {
     @Before
     public void setUp(){
         findPage = getElementFactory().getFindPage();
-        results = getElementFactory().getSunburst();
+        results = ((BIIdolFindElementFactory) getElementFactory()).getSunburst();
         findService = getApplication().findService();
     }
 

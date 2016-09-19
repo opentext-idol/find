@@ -1,8 +1,10 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.filters.ListFilterContainer;
@@ -20,6 +22,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 
+@Role(UserRole.BIFHI)
 public class IdolFilterITCase extends IdolFindTestBase {
     private FindService findService;
     private IdolFindPage findPage;
@@ -31,7 +34,9 @@ public class IdolFilterITCase extends IdolFindTestBase {
     public void setUp(){
         findService = getApplication().findService();
         findPage = getElementFactory().getFindPage();
-        findPage.goToListView();
+        if(!findPage.footerLogo().isDisplayed()) {
+            findPage.goToListView();
+        }
     }
 
     private ResultsView search(final String searchTerm) {
@@ -40,11 +45,12 @@ public class IdolFilterITCase extends IdolFindTestBase {
         return results;
     }
 
-    //Filters
+    //META-FILTERING
     @Test
     @ResolvedBug("FIND-122")
     public void testSearchForParametricFieldName(){
         findService.search("face");
+        findPage.waitForParametricValuesToLoad();
 
         final ListFilterContainer goodField = filters().parametricField(2);
         final String badFieldName = filters().parametricField(0).filterCategoryName();
@@ -93,6 +99,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
     }
 
     @Test
+    @Role(UserRole.BOTH)
     public void testNumericWidgetsDefaultCollapsed() {
         findService.search("swim");
 
@@ -100,7 +107,6 @@ public class IdolFilterITCase extends IdolFindTestBase {
             verifyThat("Widget is collapsed",container.isCollapsed());
         }
     }
-
 
     @Test
     public void testParametricFiltersOpenWhenMatchingFilter() {

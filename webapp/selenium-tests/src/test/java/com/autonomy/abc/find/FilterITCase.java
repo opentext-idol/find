@@ -1,6 +1,7 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
@@ -39,7 +40,7 @@ public class FilterITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
-        if(!isHosted()) {
+        if(!findPage.footerLogo().isDisplayed()) {
             ((IdolFindPage) findPage).goToListView();
         }
     }
@@ -47,6 +48,7 @@ public class FilterITCase extends FindTestBase {
     private ResultsView search(final String searchTerm) {
         final ResultsView results = findService.search(searchTerm);
         findPage.waitForParametricValuesToLoad();
+        results.waitForResultsToLoad();
         return results;
     }
 
@@ -219,12 +221,12 @@ public class FilterITCase extends FindTestBase {
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
         final ResultsView results = findService.search("wolf");
 
-        final FilterPanel panel = filters();
-        panel.clickFirstIndex();
-        panel.clickFirstIndex();
+        FindParametricFilter filter = filters().checkBoxesForParametricFieldContainer(0).get(0);
+        filter.check();
+        filter.uncheck();
 
         results.waitForResultsToLoad();
-        assertThat("No error message",!results.errorContainer().isDisplayed());
+        assertThat("No error message",!results.errorContainerShown());
     }
 
     @Test
