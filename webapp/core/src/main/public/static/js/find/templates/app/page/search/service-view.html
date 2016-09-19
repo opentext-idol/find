@@ -16,12 +16,14 @@
             <div class="results-view-container"></div>
         </div>
     </div>
-    <div class="right-side-container side-container">
-        <div class="right-container-icon">
-            <i class="hp-icon hp-next-chapter hp-lg container-toggle clickable"></i>
+    <% if (relatedConcepts) { %>
+        <div class="right-side-container side-container">
+            <div class="right-container-icon">
+                <i class="hp-icon hp-next-chapter hp-lg container-toggle clickable"></i>
+            </div>
+            <div class="side-panel-content">
+                <div class="related-concepts-container"></div>
+            </div>
         </div>
-        <div class="side-panel-content">
-            <div class="related-concepts-container"></div>
-        </div>
-    </div>
+    <% } %>
 </div>

@@ -64,6 +64,10 @@
             "enableMetaFilter": {
                 "user": false,
                 "bi": true
+            },
+            "enableRelatedConcepts": {
+                "user": true,
+                "bi": false
             }
         },
         "parametricBlacklist": [],

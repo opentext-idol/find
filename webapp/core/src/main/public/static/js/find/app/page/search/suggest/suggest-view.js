@@ -37,6 +37,7 @@ define([
             this.backUrl = options.backUrl;
             this.documentModel = options.documentModel;
             this.scrollModel = options.scrollModel;
+            this.configuration = options.configuration;
 
             this.queryModel = new Backbone.Model({
                 reference: this.documentModel.get('reference'),
@@ -68,7 +69,8 @@ define([
         render: function() {
             this.$el.html(this.template({
                 i18n: i18n,
-                title: this.documentModel.get('title')
+                title: this.documentModel.get('title'),
+                relatedConcepts: this.configuration.enableRelatedConcepts
             }));
 
             this.resultsViewAugmentation.setElement(this.$('.suggest-view-results')).render();

@@ -250,7 +250,8 @@ define([
                         backUrl: this.generateURL(),
                         documentModel: documentModel,
                         indexesCollection: this.indexesCollection,
-                        scrollModel: this.windowScrollModel
+                        scrollModel: this.windowScrollModel,
+                        configuration: config()
                     });
 
                     this.$('.suggest-service-view-container').append(this.suggestView.$el);

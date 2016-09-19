@@ -189,9 +189,12 @@ define([
 
             var relatedConceptsClickHandler = this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments);
 
-            this.relatedConceptsView = new RelatedConceptsView(_.extend({
-                clickHandler: relatedConceptsClickHandler
-            }, subViewArguments));
+            // TODO: genericise removal of feature (FIND-245)
+            if (configuration().enableRelatedConcepts) {
+                this.relatedConceptsView = new RelatedConceptsView(_.extend({
+                    clickHandler: relatedConceptsClickHandler
+                }, subViewArguments));
+            }
 
             this.middleColumnScrollModel = new Backbone.Model();
 
@@ -306,6 +309,7 @@ define([
 
             this.$el.html(template({
                 headerControlsHtml: this.headerControlsHtml,
+                relatedConcepts: configuration().enableRelatedConcepts,
                 hasBiRole: hasBiRole
             }));
 
@@ -319,9 +323,11 @@ define([
                 this.savedSearchControlView.setElement($searchOptionContainer).render();
             }
 
-            this.relatedConceptsView.render();
-
-            this.$('.related-concepts-container').append(this.relatedConceptsView.$el);
+            // TODO: genericise removal of feature (FIND-245)
+            if (configuration().enableRelatedConcepts) {
+                this.relatedConceptsView.render();
+                this.$('.related-concepts-container').append(this.relatedConceptsView.$el);
+            }
 
             if (this.resultsViewSelection) {
                 this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
