@@ -253,6 +253,6 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         getDriver().navigate().back();
 
-        verifyThat("Returned to the search page", !similarDocuments.backButton().isDisplayed());
+        verifyThat("Returned to the search page", getDriver().getCurrentUrl(), allOf(containsString("search"), not(containsString("suggest"))));
     }
 }
