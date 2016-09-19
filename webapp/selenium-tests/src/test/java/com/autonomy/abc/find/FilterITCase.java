@@ -47,6 +47,7 @@ public class FilterITCase extends FindTestBase {
     private ResultsView search(final String searchTerm) {
         final ResultsView results = findService.search(searchTerm);
         findPage.waitForParametricValuesToLoad();
+        results.waitForResultsToLoad();
         return results;
     }
 

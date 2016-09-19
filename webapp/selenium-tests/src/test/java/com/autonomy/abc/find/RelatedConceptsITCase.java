@@ -83,7 +83,6 @@ public class RelatedConceptsITCase extends FindTestBase {
         verifyThat(popover, not(isEmptyOrNullString()));
         verifyThat(popover, not(containsString("QueryText-Placeholder")));
         verifyThat(popover, not(containsString(Errors.Search.RELATED_CONCEPTS)));
-        getElementFactory().getFindPage().unhover();
     }
 
     @Test

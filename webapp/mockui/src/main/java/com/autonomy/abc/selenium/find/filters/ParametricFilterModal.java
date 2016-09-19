@@ -67,7 +67,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
     //input 0-indexed like panel
     public void goToTab(final int tabNumber) {
-        findElement(By.cssSelector(".category-title:nth-child(" + CssUtil.cssifyIndex(tabNumber) + ')'));
+        findElement(By.cssSelector(".category-title:nth-child(" + CssUtil.cssifyIndex(tabNumber) + ") a")).click();
     }
 
     public WebElement activePane() {

@@ -93,6 +93,7 @@ public class ResultsITCase extends FindTestBase {
     @ResolvedBug("CCUK-3647")
     public void testNoMoreResultsFoundAtEnd() {
         ResultsView results = findService.search(new Query("Cheese AND Onion"));
+        results.waitForResultsToLoad();
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
@@ -105,7 +106,7 @@ public class ResultsITCase extends FindTestBase {
     public void testNoResults() {
         ResultsView results = findService.search("thissearchwillalmostcertainlyreturnnoresults");
 
-        Waits.loadOrFadeWait();
+        findPage.waitForParametricValuesToLoad();
         verifyThat(results.resultsDiv(), containsText("No results found"));
 
         findPage.scrollToBottom();

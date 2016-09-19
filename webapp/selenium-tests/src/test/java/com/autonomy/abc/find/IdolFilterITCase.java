@@ -50,6 +50,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-122")
     public void testSearchForParametricFieldName(){
         findService.search("face");
+        findPage.waitForParametricValuesToLoad();
 
         final ListFilterContainer goodField = filters().parametricField(2);
         final String badFieldName = filters().parametricField(0).filterCategoryName();
