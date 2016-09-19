@@ -303,12 +303,13 @@ define([
                     },
                     queryTextModelChange: function (options) {
                         return function () {
-                            options.searchModel.set(options.queryTextModel.attributes);
+                            options.searchModel.set(options.queryState.queryTextModel.attributes);
                         };
                     },
                     searchModelChange: function (options) {
                         return function () {
-                            options.queryTextModel.set(options.searchModel.attributes);
+                            options.queryState.queryTextModel.set(options.searchModel.attributes);
+                            options.queryState.conceptGroups.reset();
                         };
                     }
                 }
@@ -414,7 +415,7 @@ define([
                     savedQueryCollection: this.savedQueryCollection,
                     selectedTabModel: this.selectedTabModel,
                     searchModel: this.searchModel,
-                    queryTextModel: viewData.queryTextModel
+                    queryState: queryState
                 };
 
                 this.queryTextCallback = this.searchTypes[searchType].queryTextModelChange(changeListenerOptions);
