@@ -13,6 +13,10 @@ define([
     'text!find/templates/app/page/search/concept-view.html'
 ], function(Backbone, $, _, ConceptClusterView, i18n, ListView, template) {
 
+    /**
+     * View for displaying the selected concept groups eg in the left side panel.
+     * Expects to be given the queryState on construction.
+     */
     return Backbone.View.extend({
         html: _.template(template)({i18n: i18n}),
 

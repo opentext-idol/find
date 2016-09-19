@@ -5,8 +5,9 @@
 
 define([
     'find/app/page/search/selected-concepts/concept-cluster-view',
-    'backbone'
-], function(ConceptClusterView, Backbone) {
+    'backbone',
+    'jquery'
+], function(ConceptClusterView, Backbone, $) {
 
     describe('ConceptClusterView', function() {
         beforeEach(function() {
@@ -23,6 +24,44 @@ define([
 
         it('displays the concept in the model', function() {
             expect(this.view.$el).toContainText('cat');
+        });
+
+        describe('when the model is changed and the view is rendered', function() {
+            beforeEach(function() {
+                this.conceptModel.set({
+                    concepts: ['dog']
+                });
+
+                this.view.render();
+            });
+
+            it('displays the new concept', function() {
+                expect(this.view.$el).not.toContainText('cat');
+                expect(this.view.$el).toContainText('dog');
+            });
+        });
+
+        describe('if the model contains multiple concepts', function() {
+            beforeEach(function() {
+                this.conceptModel.set({
+                    concepts: ['dog', 'canine', 'wolf']
+                });
+
+                this.view.render();
+            });
+
+            it('displays the first concept in the model', function() {
+                expect(this.view.$el).toContainText('dog');
+            });
+
+            it('displays every concept in a dropdown', function() {
+                const dropdownConcepts = this.view.$('.selected-related-concept-dropdown > li > a')
+                    .map(function(index, el) {
+                        return $(el).text();
+                    });
+
+                expect(dropdownConcepts).toEqual(['dog', 'canine', 'wolf']);
+            });
         });
     });
 
