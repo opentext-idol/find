@@ -321,9 +321,16 @@ dt {
         border-bottom: 1px solid @color7;
     }
 
-    h4 {
+    h3, h4 {
         &:extend(.uppercase);
+        &:extend(.metric-regular);
+    }
 
+    h3 {
+        font-size: 22px;
+    }
+
+    h4 {
         .rotating-chevron {
             font-weight: bold;
         }
