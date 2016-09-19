@@ -21,7 +21,7 @@ public class IdolQueryTestHelper<T> extends QueryTestHelper{
     @Override
     public void hiddenQueryOperatorText() {
         for (IdolQueryTermResult result : IdolQueryTermResult.idolResultsFor(getHiddenBooleans(),getService())) {
-            if (result.errorContainer().isDisplayed()) {
+            if (result.errorWellExists() && result.errorContainer().isDisplayed()) {
                 if(!result.correctedQuery().isDisplayed()){
                     verifyThat("Query not auto-corrected thus error is for no results",
                             result.errorContainer(),

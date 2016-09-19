@@ -5,6 +5,7 @@ import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFind;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.MapView;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
@@ -35,6 +36,11 @@ public class MapITCase extends IdolFindTestBase {
 
     public MapITCase(final TestConfig config) {
         super(config);
+    }
+
+    @Override
+    public BIIdolFindElementFactory getElementFactory() {
+        return (BIIdolFindElementFactory) super.getElementFactory();
     }
 
     @Before

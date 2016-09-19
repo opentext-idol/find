@@ -3,6 +3,7 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.IdolFindPage;
@@ -46,8 +47,9 @@ public class RelatedConceptsITCase extends FindTestBase {
     public void setUp() {
         findService = getApplication().findService();
         navBar = getElementFactory().getTopNavBar();
-        if(!isHosted()) {
-            ((IdolFindPage) getElementFactory().getFindPage()).goToListView();
+        FindPage findPage = getElementFactory().getFindPage();
+        if(!findPage.footerLogo().isDisplayed()) {
+            ((IdolFindPage) findPage).goToListView();
         }
     }
 
@@ -81,7 +83,6 @@ public class RelatedConceptsITCase extends FindTestBase {
         verifyThat(popover, not(isEmptyOrNullString()));
         verifyThat(popover, not(containsString("QueryText-Placeholder")));
         verifyThat(popover, not(containsString(Errors.Search.RELATED_CONCEPTS)));
-        getElementFactory().getFindPage().unhover();
     }
 
     @Test

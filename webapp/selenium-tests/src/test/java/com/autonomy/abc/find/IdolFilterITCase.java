@@ -34,7 +34,9 @@ public class IdolFilterITCase extends IdolFindTestBase {
     public void setUp(){
         findService = getApplication().findService();
         findPage = getElementFactory().getFindPage();
-        findPage.goToListView();
+        if(!findPage.footerLogo().isDisplayed()) {
+            findPage.goToListView();
+        }
     }
 
     private ResultsView search(final String searchTerm) {
@@ -48,6 +50,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-122")
     public void testSearchForParametricFieldName(){
         findService.search("face");
+        findPage.waitForParametricValuesToLoad();
 
         final ListFilterContainer goodField = filters().parametricField(2);
         final String badFieldName = filters().parametricField(0).filterCategoryName();

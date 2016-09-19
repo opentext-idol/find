@@ -6,6 +6,7 @@ import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
@@ -38,6 +39,11 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     public TopicMapITCase(final TestConfig config) {
         super(config);
+    }
+
+    @Override
+    public BIIdolFindElementFactory getElementFactory() {
+        return (BIIdolFindElementFactory) super.getElementFactory();
     }
 
     @Before
