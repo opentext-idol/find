@@ -75,6 +75,18 @@ public class TopicMapView {
         return clusterNames;
     }
 
+    /**
+     * Click one of the cluster headings in the topic map.
+     * @return The text of the clicked heading
+     */
+    public String clickClusterHeading() {
+        final WebElement clusterHeading = findElements(By.cssSelector(".entity-topic-map > svg > text[font-size='50px']")).get(0);
+        final String text = clusterHeading.getText();
+        clusterHeading.click();
+        Waits.loadOrFadeWait();
+        return text;
+    }
+
     public String clickChildEntityAndAddText(int noOfClusters) {
         waitForMapLoaded();
         final int maxIndex = mapEntities().size() - 1;

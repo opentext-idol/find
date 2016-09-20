@@ -9,13 +9,13 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
+import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.FindParametricFilter;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Slider;
 import com.hp.autonomy.frontend.selenium.util.Waits;
-import org.apache.bcel.generic.LOOKUPSWITCH;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
@@ -24,6 +24,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
@@ -32,10 +36,13 @@ import static org.hamcrest.Matchers.*;
 
 @Role(UserRole.BIFHI)
 public class TopicMapITCase extends IdolFindTestBase {
+    private static final Pattern SPACE_PATTERN = Pattern.compile(" ", Pattern.LITERAL);
+
     private IdolFindPage findPage;
     private TopicMapView results;
     private FindService findService;
     private FindTopNavBar navBar;
+    private ConceptsPanel conceptsPanel;
 
     public TopicMapITCase(final TestConfig config) {
         super(config);
@@ -48,10 +55,12 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Before
     public void setUp() {
-        findPage = getElementFactory().getFindPage();
-        results = getElementFactory().getTopicMap();
+        final BIIdolFindElementFactory elementFactory = getElementFactory();
+        findPage = elementFactory.getFindPage();
+        results = elementFactory.getTopicMap();
         findService = getApplication().findService();
-        navBar = getElementFactory().getTopNavBar();
+        navBar = elementFactory.getTopNavBar();
+        conceptsPanel = elementFactory.getConceptsPanel();
     }
 
     @Test
@@ -104,8 +113,8 @@ public class TopicMapITCase extends IdolFindTestBase {
         findService.search(searchTerm);
 
         //checks first parametric filter of first parametric filter type
-        FilterPanel filters = getElementFactory().getFilterPanel();
-        int index = filters.nonZeroParaFieldContainer(0);
+        final FilterPanel filters = getElementFactory().getFilterPanel();
+        final int index = filters.nonZeroParaFieldContainer(0);
         filters.parametricField(index).expand();
         final FindParametricFilter filter = filters.checkboxForParametricValue(index, 0);
         final String filterName = filter.getName();
@@ -123,36 +132,23 @@ public class TopicMapITCase extends IdolFindTestBase {
         Waits.loadOrFadeWait();
 
         final List<String> clusterNames = results.returnParentEntityNames();
-        for (String cluster: clusterNames) {
-            verifyThat("The cluster " + cluster + " is in the right hand side", formattedRelatedConcepts() ,hasItem(cluster));
-        }
-
         final List<String> addedConcepts = new ArrayList<>();
         addedConcepts.add(results.clickChildEntityAndAddText(clusterNames.size()));
         results.waitForMapLoaded();
         addedConcepts.add(results.clickChildEntityAndAddText(results.returnParentEntityNames().size()));
 
         LOGGER.info("This is currently brittle and frequently breaks.");
-        verifyThat("All " + addedConcepts.size() + " added concept terms added to search", alsoSearchingFor(),containsItems(addedConcepts));
+        verifyThat("All " + addedConcepts.size() + " added concept terms added to search", selectedConcepts(),containsItems(addedConcepts));
     }
 
-    private List<String> alsoSearchingFor(){
-        final List<String> termsNoSpaces = new ArrayList<>();
-        for(final String term: navBar.getAlsoSearchingForTerms()){
-            termsNoSpaces.add(term.replace(" ",""));
-        }
-        return termsNoSpaces;
+    private String stripSpaces(final CharSequence term) {
+        return SPACE_PATTERN.matcher(term).replaceAll(Matcher.quoteReplacement(""));
     }
 
-    private List<String> formattedRelatedConcepts() {
-        final List<String> allRelatedConcepts = new ArrayList<>();
-        for (String concept : conceptsPanel().getRelatedConcepts()) {
-            allRelatedConcepts.add(concept.replace(" ", "").toLowerCase());
-        }
-        return allRelatedConcepts;
+    private List<String> selectedConcepts(){
+        return conceptsPanel.selectedConceptHeaders().stream()
+                .map(this::stripSpaces)
+                .collect(Collectors.toList());
     }
 
-    private RelatedConceptsPanel conceptsPanel() {
-        return getElementFactory().getRelatedConceptsPanel();
-    }
 }
