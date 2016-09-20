@@ -2,8 +2,6 @@ package com.autonomy.abc.selenium.find.save;
 
 import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
-import com.autonomy.abc.selenium.find.application.IdolFind;
-import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.slf4j.Logger;
@@ -37,7 +35,6 @@ public class SavedSearchService {
 
     public void openNewTab() {
         elementFactory.getSearchTabBar().newTabButton().click();
-        //elementFactory.getResultsPage().waitForResultsToLoad();
         elementFactory.getTopicMap().waitForMapLoaded();
     }
 
@@ -52,7 +49,7 @@ public class SavedSearchService {
     public void deleteCurrentSearch() {
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
         options.openDeleteModal();
-        options.confirmDelete();
+        options.confirmModalOperation();
         Waits.loadOrFadeWait();
     }
 
@@ -61,5 +58,15 @@ public class SavedSearchService {
         modal.select(savedSearchName);
         modal.compareButton().click();
         modal.waitForComparisonToLoad();
+    }
+
+    /**
+     * Click the reset button for the current query, then click to confirm in the modal.
+     */
+    public void resetCurrentQuery() {
+        final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
+        options.openResetModal();
+        options.confirmModalOperation();
+        Waits.loadOrFadeWait();
     }
 }
