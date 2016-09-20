@@ -60,6 +60,7 @@
 @middleBoxWrapperHeight: 400px;
 @thumbnailHeight: 55px;
 @findInputHeight: 45px;
+@searchTabsHeight: 44px;
 
 /*------Font variables------*/
 @errorMessageFontSize: 28px;
@@ -642,7 +643,7 @@ fieldset.radio-fieldset > label {
 }
 
 .search-tabs-list {
-    height: 44px;
+    height: @searchTabsHeight;
     overflow: hidden;
     padding-top: 5px;
 }
@@ -1273,7 +1274,7 @@ input.find-input {
 }
 
 .query-service-view.bi-query-service-view {
-    height: calc(@100vh - @custom8 - 65px - 58px);
+    height: calc(@100vh - @custom8 - @searchTabsHeight - 58px);
 }
 
 .top-options-container {
