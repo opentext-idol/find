@@ -12,6 +12,7 @@ define([
         url: 'api/public/search/find-related-concepts',
 
         initialize: function(models, options){
+            // Returns an array of strings representing the currently selected concepts
             this.getSelectedRelatedConcepts = options.getSelectedRelatedConcepts;
         },
 
@@ -55,7 +56,7 @@ define([
 
             // check to ensure each related concept are not the same as the query text or in the selected related concepts
             return _.every(selectedRelatedConcepts, function (string) {
-                return concept.text.toLowerCase() !== string.toLowerCase()
+                return concept.text.toLowerCase() !== string.toLowerCase();
             });
         }
     });
