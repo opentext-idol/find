@@ -47,7 +47,7 @@ define([
 
             var queryState = {
                 queryTextModel: new Backbone.Model({inputText: 'Unicorns'}),
-                relatedConcepts: null,
+                conceptGroups: new Backbone.Collection(),
                 selectedIndexes: [],
                 parametricValues: null,
                 parametricRanges: null,
