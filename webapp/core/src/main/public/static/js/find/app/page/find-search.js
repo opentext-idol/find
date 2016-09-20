@@ -334,7 +334,7 @@ define([
 
             _.each(this.serviceViews, function (data) {
                 data.view.$el.addClass('hide');
-                this.stopListening(data.queryTextModel);
+                this.stopListening(data.queryState.queryTextModel);
             }, this);
 
             if (this.searchChangeCallback !== null) {
@@ -348,21 +348,21 @@ define([
             }
 
             if (cid) {
-                var viewData;
-                var savedSearchModel = this.savedSearchCollection.get(cid);
-                var searchType = savedSearchModel.get('type');
+                let viewData;
+                const savedSearchModel = this.savedSearchCollection.get(cid);
+                const searchType = savedSearchModel.get('type');
 
                 events(cid);
 
                 if (this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
                 } else {
-                    var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
-                    var minScore = new MinScoreModel({minScore: 0});
-                    var documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
+                    const queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
+                    const minScore = new MinScoreModel({minScore: 0});
+                    const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
 
-                    var initialSelectedIndexes;
-                    var savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
+                    let initialSelectedIndexes;
+                    const savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
 
                     if (savedSelectedIndexes.length === 0) {
                         if (this.indexesCollection.isEmpty()) {
@@ -377,7 +377,7 @@ define([
                     /**
                      * @type {QueryState}
                      */
-                    var queryState = {
+                    const queryState = {
                         conceptGroups: new Backbone.Collection(savedSearchModel.toConceptGroups()),
                         queryTextModel: queryTextModel,
                         minScoreModel: minScore,
@@ -389,7 +389,7 @@ define([
                     this.queryStates.set(cid, queryState);
 
                     this.serviceViews[cid] = viewData = {
-                        queryTextModel: queryTextModel,
+                        queryState: queryState,
                         documentsCollection: documentsCollection,
                         view: new this.ServiceView(_.extend({
                             delayedIndexesSelection: selectInitialIndexes,
@@ -401,7 +401,6 @@ define([
                             searchCollections: this.searchCollections,
                             searchTypes: this.searchTypes,
                             selectedTabModel: this.selectedTabModel                            
-                            
                         }, this.serviceViewOptions(cid)))
                     };
 
@@ -409,17 +408,17 @@ define([
                     viewData.view.render();
                 }
 
-                this.searchModel.set(this.searchTypes[searchType].createSearchModelAttributes(viewData.queryTextModel));
+                this.searchModel.set(this.searchTypes[searchType].createSearchModelAttributes(viewData.queryState.queryTextModel));
 
-                var changeListenerOptions = {
+                const changeListenerOptions = {
                     savedQueryCollection: this.savedQueryCollection,
                     selectedTabModel: this.selectedTabModel,
                     searchModel: this.searchModel,
-                    queryState: queryState
+                    queryState: viewData.queryState
                 };
 
                 this.queryTextCallback = this.searchTypes[searchType].queryTextModelChange(changeListenerOptions);
-                this.listenTo(this.queryTextModel, 'change', this.queryTextCallback);
+                this.listenTo(viewData.queryState.queryTextModel, 'change', this.queryTextCallback);
 
                 this.searchChangeCallback = this.searchTypes[searchType].searchModelChange(changeListenerOptions);
                 this.listenTo(this.searchModel, 'change', this.searchChangeCallback);
