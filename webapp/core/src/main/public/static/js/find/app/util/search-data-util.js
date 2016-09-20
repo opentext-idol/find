@@ -38,7 +38,9 @@ define([
      */
     function buildIndexes(selectedIndexesArray) {
         return _.map(selectedIndexesArray, function(index) {
-            return index.domain ? encodeURIComponent(index.domain) + ':' + encodeURIComponent(index.name) : encodeURIComponent(index.name);
+            return index.domain
+                ? encodeURIComponent(index.domain) + ':' + encodeURIComponent(index.name)
+                : encodeURIComponent(index.name);
         });
     }
 

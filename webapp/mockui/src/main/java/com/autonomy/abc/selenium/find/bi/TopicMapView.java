@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 package com.autonomy.abc.selenium.find.bi;
 
 import com.hp.autonomy.frontend.selenium.element.Slider;
@@ -52,14 +56,14 @@ public class TopicMapView {
 
     public void clickParentEntities() {
         final List<WebElement> webElements = topLevelMapEntities();
-        for (WebElement cluster: webElements){
+        for(WebElement cluster : webElements) {
             offCentreClick(cluster);
         }
     }
 
     public void offCentreClick(WebElement element) {
-        int xOffset = element.getSize().getWidth()/8;
-        int yOffset = element.getSize().getHeight()/8;
+        int xOffset = element.getSize().getWidth() / 8;
+        int yOffset = element.getSize().getHeight() / 8;
         Actions build = new Actions(driver);
         build.moveToElement(element, xOffset, yOffset).click().build().perform();
     }
@@ -69,7 +73,7 @@ public class TopicMapView {
         final int numberOfClusters = topLevelMapEntities().size();
         final List<WebElement> mapEntities = mapEntityTextElements();
         final int max = mapEntities.size() - 1;
-        for (int i = 0; i < numberOfClusters; i++) {
+        for(int i = 0; i < numberOfClusters; i++) {
             clusterNames.add(mapEntities.get(max - i).getText().replace(" ", "").toLowerCase());
         }
         return clusterNames;
@@ -106,13 +110,6 @@ public class TopicMapView {
         new WebDriverWait(driver, 30).until(new mapLoaded());
     }
 
-    private static class mapLoaded implements ExpectedCondition<Boolean> {
-        @Override
-        public Boolean apply(final WebDriver driver) {
-            return driver.findElements(By.cssSelector(".service-view-container:not(.hide) .entity-topic-map > svg > text")).size()>0;
-        }
-    }
-
     private WebElement findElement(final By locator) {
         return container.findElement(locator);
     }
@@ -120,5 +117,11 @@ public class TopicMapView {
     private List<WebElement> findElements(final By locator) {
         return container.findElements(locator);
     }
-}
 
+    private static class mapLoaded implements ExpectedCondition<Boolean> {
+        @Override
+        public Boolean apply(final WebDriver driver) {
+            return driver.findElements(By.cssSelector(".service-view-container:not(.hide) .entity-topic-map > svg > text")).size() > 0;
+        }
+    }
+}
