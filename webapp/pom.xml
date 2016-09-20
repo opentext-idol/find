@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -29,7 +29,7 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.27.0</haven.search.components.version>
+        <haven.search.components.version>0.26.1</haven.search.components.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <!-- Disabling integration tests by default until we figure out how to run them on the build servers (CCUK-3480) -->
         <skipITs>true</skipITs>
@@ -65,7 +65,7 @@
         </plugins>
     </build>
 
-     <dependencyManagement>
+    <dependencyManagement>
         <dependencies>
             <!-- Adding dependency management section to ensure stable version of H2 used (flyway declares dependency without version) -->
             <dependency>
