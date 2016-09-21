@@ -27,6 +27,19 @@ define([
         return string.replace(/\/$/, '');
     }
 
+    /**
+     * Determine the current document's base URI.
+     * @return {string} A fully qualified URI
+     */
+    function determineBaseURI() {
+        if (document.body.baseURI) {
+            return document.body.baseURI;
+        } else {
+            // IE11 does not have Node.baseURI so parse the <base> element's href directly
+            return $('base').prop('href');
+        }
+    }
+
     return Backbone.View.extend({
         el: '.page',
         template: _.template(template),
@@ -66,8 +79,9 @@ define([
                 $.fn.dataTableExt.sErrMode = 'throw';
             }
 
+            const baseURI = determineBaseURI();
             const applicationPath = configuration().applicationPath;
-            this.internalHrefRegexp = new RegExp('^' + escapeRegex(removeTrailingSlash(document.body.baseURI) + applicationPath));
+            this.internalHrefRegexp = new RegExp('^' + escapeRegex(removeTrailingSlash(baseURI) + applicationPath));
 
             testBrowser().done(function() {
                 var modelRegistry = new ModelRegistry(this.getModelData());
@@ -90,7 +104,7 @@ define([
                 var matchedRoute = Backbone.history.start({
                     pushState: true,
                     // Application path must have a leading slash
-                    root: removeTrailingSlash(parseUrl(document.body.baseURI).pathname) + applicationPath
+                    root: removeTrailingSlash(parseUrl(baseURI).pathname) + applicationPath
                 });
 
                 if (!matchedRoute) {
