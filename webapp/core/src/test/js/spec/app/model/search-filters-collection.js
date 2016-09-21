@@ -99,6 +99,11 @@ define([
             expect(model.get('text')).toContain('4');
         });
 
+        it('sets the prettified field name for the heading of the parametric field', function() {
+            const model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC});
+            expect(model.get('heading')).toBe('Age');
+        });
+
         describe('after datesFilterModel has a maxDate set', function() {
             beforeEach(function() {
                 this.maxDate = moment(INITIAL_MIN_DATE).add(2, 'days');

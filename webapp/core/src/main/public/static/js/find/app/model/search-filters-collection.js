@@ -13,8 +13,9 @@ define([
     'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/prettify-field-name',
     'find/app/configuration',
-    'i18n!find/nls/bundle'
-], function(Backbone, _, moment, DatesFilterModel, rounder, databaseNameResolver, addChangeListener, prettifyFieldName, configuration, i18n) {
+    'i18n!find/nls/bundle',
+    'i18n!find/nls/indexes'
+], function(Backbone, _, moment, DatesFilterModel, rounder, databaseNameResolver, addChangeListener, prettifyFieldName, configuration, i18n, i18nIndexes) {
     "use strict";
 
     var DATE_FORMAT = "YYYY-MM-DD HH:mm";
@@ -52,8 +53,6 @@ define([
     function parametricFilterText(field, values, ranges, numeric) {
         var fieldMap = _.findWhere(configuration().parametricDisplayValues, {name: field});
 
-        var displayName = fieldMap ? fieldMap.displayName : prettifyFieldName(field);
-
         var valueText;
 
         if (!_.isEmpty(values)) {
@@ -80,7 +79,7 @@ define([
             }).join(', ');
         }
 
-        return displayName + ': ' + valueText;
+        return valueText;
     }
 
     // Get an array of filter model attributes from the selected parametric values collection
@@ -89,6 +88,7 @@ define([
             return {
                 id: parametricFilterId(field),
                 field: field,
+                heading: prettifyFieldName(field),
                 text: parametricFilterText(field, data.values, data.range ? [data.range] : [], data.dataType),                
                 type: FilterType.PARAMETRIC
             };
@@ -188,7 +188,12 @@ define([
                     filterModel.set('text', filterText);
                 } else {
                     // The databases filter model has equal id and type since only one filter of this type can be present
-                    this.add({id: FilterType.INDEXES, type: FilterType.INDEXES, text: filterText});
+                    this.add({
+                        id: FilterType.INDEXES,
+                        type: FilterType.INDEXES,
+                        text: filterText,
+                        heading: i18nIndexes['search.indexes']
+                    });
                 }
             } else if (this.contains(filterModel)) {
                 this.remove(filterModel);
@@ -209,7 +214,8 @@ define([
                     id: id,
                     field: field,
                     text: parametricFilterText(field, values, ranges, selectionModel.get('numeric')),
-                    type: FilterType.PARAMETRIC
+                    type: FilterType.PARAMETRIC,
+                    heading: prettifyFieldName(field)
                 }, {
                     // Merge true to overwrite the text for any existing model for this field name
                     merge: true
@@ -241,7 +247,8 @@ define([
                                 this.add({
                                     id: filterData.type,
                                     type: filterData.type,
-                                    text: filterText
+                                    text: filterText,
+                                    heading: null
                                 });
                             }
                         } else {
@@ -263,7 +270,8 @@ define([
                         this.add({
                             id: FilterType.DATE_RANGE,
                             type: FilterType.DATE_RANGE,
-                            text: filterText
+                            text: filterText,
+                            heading: i18n['search.dates']
                         });
                     }
                 }
