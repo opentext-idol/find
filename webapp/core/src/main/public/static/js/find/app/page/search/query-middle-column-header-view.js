@@ -15,10 +15,12 @@ define([
         SearchFiltersCollection: SearchFiltersCollection,
 
         initialize: function(options) {
-            this.spellCheckView = new SpellCheckView({
-                documentsCollection: options.documentsCollection,
-                queryModel: options.queryModel
-            });
+            if (!options.configuration.hasBiRole) {
+                this.spellCheckView = new SpellCheckView({
+                    documentsCollection: options.documentsCollection,
+                    queryModel: options.queryModel
+                });
+            }
 
             this.filtersCollection = new this.SearchFiltersCollection([], {
                 queryState: options.queryState,
@@ -30,11 +32,14 @@ define([
 
         render: function() {
             this.$el.empty()
-                .append(this.spellCheckView.$el)
                 .append(this.filterDisplayView.$el);
 
-            this.spellCheckView.render();
             this.filterDisplayView.render();
+
+            if(this.spellCheckView) {
+                this.$el.append(this.spellCheckView.$el);
+                this.spellCheckView.render();
+            }
 
             return this;
         },
@@ -42,7 +47,9 @@ define([
         remove: function() {
             this.filtersCollection.stopListening();
             this.filterDisplayView.remove();
-            this.spellCheckView.remove();
+            if(this.spellCheckView) {
+                this.spellCheckView.remove();
+            }
 
             Backbone.View.prototype.remove.call(this);
         }

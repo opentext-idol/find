@@ -288,7 +288,7 @@ define([
             return {
                 QUERY: {
                     cssClass: 'query',
-                    autoCorrect: true,
+                    autoCorrect: !config().hasBiRole,
                     collection: 'savedQueryCollection',
                     fetchStrategy: queryStrategy,
                     icon: 'hp-search',
@@ -452,7 +452,7 @@ define([
             this.$('.app-logo').addClass('hide');
             this.$('.hp-logo-footer').addClass('hide');
 
-            if(config.hasBiRole) {
+            if(config().hasBiRole) {
                 this.$('.see-all-documents').addClass('hide');
             }
 
