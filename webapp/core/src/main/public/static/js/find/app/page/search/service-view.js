@@ -82,7 +82,7 @@ define([
 
             this.entityCollection = new EntityCollection([], {
                 getSelectedRelatedConcepts: function() {
-                    return _.flatten(this.queryState.queryTextModel.get('relatedConcepts')).concat([this.queryState.queryTextModel.get('inputText')]);
+                    return _.flatten(this.queryState.conceptGroups.pluck('concepts')).concat([this.queryState.queryTextModel.get('inputText')]);
                 }.bind(this)
             });
 
@@ -164,7 +164,7 @@ define([
             };
 
             var clickHandlerArguments = {
-                queryTextModel: this.queryState.queryTextModel,
+                conceptGroups: this.queryState.conceptGroups,
                 savedQueryCollection: this.searchCollections.QUERY,
                 savedSearchModel: this.savedSearchModel,
                 selectedTabModel: this.selectedTabModel

@@ -40,6 +40,10 @@
 @color45: rgba(132, 197, 55, 0.6);
 @color46: rgba(225, 97, 85, 0.6);
 
+// Colours for side panel labels (eg concepts and selected filters)
+@sidePanelLabelColour: #435663;
+@sidePanelLabelBorderColour: #676a6d;
+
 /*------Width variables------*/
 @pageContainerMinWidth:               640px;
 @shortUsernameMaxWidth:               250px;
@@ -48,7 +52,7 @@
 @searchTabTitleMaxWidth:              150px;
 @hpeBoxContentWidth:                  100px;
 @smWidthScreenNavbarUsernameMaxWidth: 100px;
-@selectedRelatedConceptsMaxWidth:     100px;
+@selectedConceptsMaxWidth:            100px;
 @settingsIndexesWidth:                100px;
 
 /*------Height variables------*/
@@ -60,6 +64,7 @@
 @middleBoxWrapperHeight: 400px;
 @thumbnailHeight: 55px;
 @findInputHeight: 45px;
+@navBarHeight: 50px;
 @searchTabsHeight: 44px;
 
 /*------Font variables------*/
@@ -79,6 +84,7 @@
 @custom9:  30px;
 @errorBodyMarginTop: 250px;
 @custom11: 15px;
+@selectedConceptsLineHeight: 14px;
 
 /*------Custom text variables------*/
 
@@ -449,7 +455,7 @@ fieldset.radio-fieldset > label {
     overflow-x: hidden;
 
     .container-fluid {
-        height: calc(@100percent - @custom8);
+        height: calc(@100percent - @navBarHeight);
     }
 
     .container-fluid.reduced {
@@ -972,7 +978,7 @@ input.find-input {
 .animated-container {
     &:extend(.absolute);
 
-    top: -60px;
+    top: (10px - @navBarHeight);
     transition: @transitAll;
 
     .find-form {
@@ -1156,96 +1162,84 @@ input.find-input {
     vertical-align: top;
 }
 
-.selected-related-concept {
-    &:extend(.inline-flex);
-    &:extend(.m-l-xs);
-
-    border-radius: @nil;
-    border: solid 2px @white;
-    color: @white;
-    font-size: @100percent;
-    font-weight: normal;
-    height: 22px;
-    line-height: @custom11;
-    padding: 1px 6px;
-
-    &:not(first-child) {
-        &:extend(.m-l-xs);
-    }
-}
-
 .database-name {
     max-width: 110px;
 }
 
-.concept-remove-icon {
-    line-height: inherit;
-}
-
-.left-scroll,
-.right-scroll,
-.left-scroll:hover,
-.right-scroll:hover {
-    &:extend(.no-box-shadow);
-}
-
-.scrolling-buttons {
+.selected-concept-container {
     &:extend(.inline-block);
-    &:extend(.pull-right);
-}
+    &:extend(.m-b-xs);
 
-.selected-related-concept-text {
-    max-width: @selectedRelatedConceptsMaxWidth;
-}
+    &:not(last-child) {
+        &:extend(.m-r-xs);
+    }
 
-.additional-concepts {
-    &:extend(.pull-left);
+    .selected-related-concept {
+        &:extend(.inline-flex);
 
-    overflow: hidden;
-    white-space: nowrap;
-    width: calc(@100percent - 206px);
-}
+        border-radius: @nil;
+        border: solid 1px @sidePanelLabelBorderColour;
+        color: @sidePanelLabelColour;
+        font-size: @labelSize;
+        font-weight: normal;
+        height: 19px;
+        line-height: @selectedConceptsLineHeight;
+        padding: 1px 6px;
 
-.selected-related-concept-dropdown-container {
-    &:extend(.inline);
-    &:extend(.absolute);
+        i:before {
+            color: @sidePanelLabelColour;
+        }
 
-    ul {
-        a {
-            &:hover {
-                background: inherit;
-                color: inherit;
-                cursor: default;
+        .concept-remove-icon {
+            line-height: inherit;
+        }
+
+        .selected-related-concept-text {
+            &:extend(.m-r-xs);
+
+            max-width: @selectedConceptsMaxWidth;
+        }
+
+        &.selected-related-concept-cluster {
+            background-color: @white;
+
+            .selected-related-concept-dropdown-trigger-container, .selected-related-concept-dropdown-trigger  {
+                &:extend(.inline-flex);
+            }
+
+            .btn-group {
+                vertical-align: inherit;
+
+                .dropdown-toggle {
+                    box-shadow: inset @nil @nil @nil @nil;
+                }
+            }
+
+            .selected-related-concept-cluster-chevron {
+                line-height: 12px;
             }
         }
     }
-}
 
-.selected-related-concept-dropdown-trigger-container, .selected-related-concept-dropdown-trigger  {
-    &:extend(.inline-flex);
-}
+    .selected-related-concept-dropdown-container {
+        &:extend(.absolute);
 
-.selected-related-concept-cluster {
-    &:extend(.inline);
+        ul {
+            min-width: 100px;
 
-    background-color: @white;
-    border-left: @nil;
-    border-right: @nil;
-    color: @color1;
-    line-height: 14px;
-}
+            a {
+                font-size: @labelSize;
+                line-height: 20px;
+                padding: 1px 10px;
 
-.selected-related-concept-cluster > .btn-group {
-    vertical-align: inherit;
-
-    .dropdown-toggle {
-        box-shadow: inset @nil @nil @nil @nil;
+                &:hover {
+                    background: inherit;
+                    color: inherit;
+                    cursor: default;
+                }
+            }
+        }
     }
-}
-
-.selected-related-concept-cluster-chevron {
-    font-weight: bold;
-    line-height: 12px;
 }
 
 .reverse-animated-container .see-all-documents,
@@ -1259,7 +1253,7 @@ input.find-input {
 }
 
 .service-view-container {
-    height: calc(@100vh - @custom8);
+    height: calc(@100vh - @navBarHeight);
     width: @100percent;
 
     .hp-check {
@@ -1270,11 +1264,11 @@ input.find-input {
 .query-service-view {
     &:extend(.flex);
 
-    height: calc(@100vh - @custom8);
+    height: calc(@100vh - @navBarHeight);
 }
 
 .query-service-view.bi-query-service-view {
-    height: calc(@100vh - @custom8 - @searchTabsHeight - 58px);
+    height: calc(@100vh - @navBarHeight - @searchTabsHeight - 58px);
 }
 
 .top-options-container {
@@ -1319,7 +1313,7 @@ input.find-input {
     -webkit-transition: @transitAllFast;
     background-color: @color1;
     color: @white;
-    height: @custom8;
+    height: @navBarHeight;
     transition: @transitAllFast;
 
     .dropdown-toggle {

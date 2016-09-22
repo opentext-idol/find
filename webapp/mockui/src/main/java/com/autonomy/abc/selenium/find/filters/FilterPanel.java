@@ -28,7 +28,7 @@ public class FilterPanel {
     public FilterPanel(final ParametrizedFactory<IndexCategoryNode, IndexesTree> indexesTreeFactory, final WebDriver driver) {
         this.indexesTreeFactory = indexesTreeFactory;
         this.driver = driver;
-        this.panel = Container.LEFT.findUsing(driver);
+        panel = Container.LEFT.findUsing(driver).findElement(By.xpath(".//h3[contains(text(), 'Filters')]/.."));
     }
 
     //INDEX/DATABASE RELATED
@@ -64,17 +64,17 @@ public class FilterPanel {
         return containers;
     }
 
-    private List<WebElement> getParametricFilters() {
+    private Iterable<WebElement> getParametricFilters() {
         return panel.findElements(By.cssSelector("[data-field-display-name][data-field]"));
     }
 
     public ParametricFieldContainer parametricContainerOfFilter(final String filter) {
-        WebElement field = panel.findElement(By.cssSelector(".parametric-value-element[data-value='"+filter+"']"));
+        final WebElement field = panel.findElement(By.cssSelector(".parametric-value-element[data-value='"+filter+"']"));
         return new ParametricFieldContainer(ElementUtil.ancestor(field,5),driver);
     }
 
     public ParametricFieldContainer parametricContainer(final String filterCategory) {
-        WebElement category = panel.findElement(By.cssSelector("[data-field-display-name='"+filterCategory+"']"));
+        final WebElement category = panel.findElement(By.cssSelector("[data-field-display-name='"+filterCategory+"']"));
         return new ParametricFieldContainer(category,driver);
     }
 
@@ -83,12 +83,12 @@ public class FilterPanel {
     }
 
     //gets the index of the nth non-empty filter container
-    public int nonZeroParaFieldContainer(int n) {
+    public int nonZeroParaFieldContainer(final int n) {
         int index = 0;
         int nonZeroCount = 0;
-        for (WebElement container: getParametricFilters()) {
-            ParametricFieldContainer candidate = new ParametricFieldContainer(container,driver);
-            if(!candidate.getFilterNumber().equals("0")) {
+        for (final WebElement container: getParametricFilters()) {
+            final ParametricFieldContainer candidate = new ParametricFieldContainer(container,driver);
+            if(!"0".equals(candidate.getFilterNumber())) {
                 if(nonZeroCount >=n) {
                     return index;
                 }
@@ -116,8 +116,8 @@ public class FilterPanel {
 
     //CHECKBOXES
     public List<FindParametricFilter> checkBoxesForParametricFieldContainer(final int i ){
-        int index = nonZeroParaFieldContainer(i);
-        ParametricFieldContainer container = parametricField(index);
+        final int index = nonZeroParaFieldContainer(i);
+        final ParametricFieldContainer container = parametricField(index);
         container.expand();
         return container.getFilters();
     }
@@ -159,6 +159,6 @@ public class FilterPanel {
     }
 
     protected WebElement getPanel(){
-        return this.panel;
+        return panel;
     }
 }

@@ -9,22 +9,33 @@ define([
     'underscore'
 ], function(SavedSearchModel, i18n, _) {
 
+    'use strict';
+
     /**
      * @callback RelatedConceptsClickHandler
      * @param {String[]} newConcepts
      */
 
+    /**
+     * Clone an array of arrays of strings, _.clone does NOT do this.
+     * @param {Array.<Array.<string>>} conceptGroups
+     * @return {Array.<Array.<string>>}
+     */
+    function cloneConceptGroups(conceptGroups) {
+        return conceptGroups.map(function(concepts) {
+            return concepts.map(_.identity);
+        });
+    }
+
     return {
         /**
-         * Create a click handler which updates the given query text model.
-         * @param {{queryTextModel: *}} options
+         * Create a click handler which updates the related concept collection
+         * @param {{conceptGroups: Backbone.Collection}} options
          * @return {RelatedConceptsClickHandler}
          */
         updateQuery: function(options) {
             return function(newConcepts) {
-                var concepts = _.clone(options.queryTextModel.get('relatedConcepts'));
-                concepts.push(newConcepts);
-                options.queryTextModel.set('relatedConcepts', concepts);
+                options.conceptGroups.push({concepts: newConcepts});
             };
         },
 
@@ -35,10 +46,9 @@ define([
          */
         newQuery: function(options) {
             return function(newConcepts) {
-                var concepts = _.clone(options.savedSearchModel.get('relatedConcepts'));
-                concepts.push(newConcepts);
+                const concepts = cloneConceptGroups(options.savedSearchModel.get('relatedConcepts')).concat([newConcepts]);
 
-                var newSearch = new SavedSearchModel(_.defaults({
+                const newSearch = new SavedSearchModel(_.defaults({
                     id: null,
                     title: i18n['search.newSearch'],
                     type: SavedSearchModel.Type.QUERY,

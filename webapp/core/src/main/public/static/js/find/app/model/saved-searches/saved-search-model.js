@@ -12,7 +12,8 @@ define([
      * Models representing the state of a search.
      * @typedef {Object} QueryState
      * @property {DatesFilterModel} datesFilterModel Contains the date restrictions
-     * @property {Backbone.Model} queryTextModel Contains the input text and related concepts
+     * @property {Backbone.Model} queryTextModel Contains the input text
+     * @property {Backbone.Collection} conceptGroups
      * @property {Backbone.Collection} selectedIndexes
      * @property {Backbone.Collection} selectedParametricValues
      */
@@ -186,7 +187,7 @@ define([
             var parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
             return this.get('queryText') === queryState.queryTextModel.get('inputText')
                     && this.equalsQueryStateDateFilters(queryState)
-                    && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'), arrayEqualityPredicate)
+                    && arraysEqual(this.get('relatedConcepts'), queryState.conceptGroups.pluck('concepts'), arrayEqualityPredicate)
                     && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                     && this.get('minScore') === queryState.minScoreModel.get('minScore')
                     && arraysEqual(this.get('parametricValues'), parametricRestrictions.parametricValues, _.isEqual)
@@ -219,9 +220,14 @@ define([
 
         toQueryTextModelAttributes: function() {
             return {
-                inputText: this.get('queryText'),
-                relatedConcepts: this.get('relatedConcepts')
+                inputText: this.get('queryText')
             };
+        },
+
+        toConceptGroups: function() {
+            return this.get('relatedConcepts').map(function(concepts) {
+                return {concepts: concepts};
+            });
         },
 
         toMinScoreModelAttributes: function() {
@@ -258,7 +264,7 @@ define([
             return _.extend(
                 {
                     queryText: queryState.queryTextModel.get('inputText'),
-                    relatedConcepts: queryState.queryTextModel.get('relatedConcepts'),
+                    relatedConcepts: queryState.conceptGroups.pluck('concepts'),
                     indexes: indexes,
                     parametricValues: parametricRestrictions.parametricValues,
                     parametricRanges: parametricRestrictions.parametricRanges,
