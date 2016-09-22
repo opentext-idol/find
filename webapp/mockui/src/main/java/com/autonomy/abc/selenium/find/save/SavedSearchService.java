@@ -16,11 +16,14 @@ public class SavedSearchService {
     }
 
     public void saveCurrentAs(final String searchName, final SearchType type){
+        Waits.loadOrFadeWait();
         nameSavedSearch(searchName,type).confirmSave();
     }
 
     public void renameCurrentAs(final String newSearchName) {
         final SearchOptionsBar optionsBar = elementFactory.getSearchOptionsBar();
+        Waits.loadOrFadeWait();
+
         optionsBar.renameButton().click();
         optionsBar.searchTitleInput().setValue(newSearchName);
         optionsBar.confirmSave();
@@ -36,10 +39,12 @@ public class SavedSearchService {
     public void openNewTab() {
         elementFactory.getSearchTabBar().newTabButton().click();
         elementFactory.getTopicMap().waitForMapLoaded();
+        elementFactory.getSearchTabBar().hoverOnTab(0);
     }
 
     public void deleteAll() {
         LOGGER.info("Deleting all tabs");
+
         for (final SearchTab tab : elementFactory.getSearchTabBar()) {
             tab.activate();
             deleteCurrentSearch();

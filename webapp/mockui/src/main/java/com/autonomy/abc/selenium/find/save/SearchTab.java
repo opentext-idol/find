@@ -25,4 +25,8 @@ public class SearchTab {
     public SearchType getType() {
         return SearchType.valueOf(tab.findElement(By.className("search-type")).getText());
     }
+
+    public WebElement getTab() {
+        return tab;
+    }
 }

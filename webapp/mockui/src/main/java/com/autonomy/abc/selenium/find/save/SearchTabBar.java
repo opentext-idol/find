@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.save;
 
+import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -11,9 +12,11 @@ import java.util.List;
 
 public class SearchTabBar implements Iterable<SearchTab> {
     private final WebElement bar;
+    private final WebDriver driver;
 
     public SearchTabBar(final WebDriver driver) {
         bar = driver.findElement(By.className("search-tabs-list"));
+        this.driver = driver;
     }
 
     @Override
@@ -57,4 +60,9 @@ public class SearchTabBar implements Iterable<SearchTab> {
     WebElement newTabButton() {
         return bar.findElement(By.className("start-new-search"));
     }
+
+    public void hoverOnTab(final int i){
+        DriverUtil.hover(driver, tabFromIndex(i).getTab());
+    }
+
 }
