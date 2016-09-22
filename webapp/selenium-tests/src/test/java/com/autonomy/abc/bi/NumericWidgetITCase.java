@@ -4,7 +4,6 @@ import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
-import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.filters.DateOption;
@@ -27,12 +26,14 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
@@ -79,7 +80,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
             verifyThat("Main graph now shown", findPage.mainGraphDisplayed());
 
             mainGraph = findPage.mainGraph();
-            verifyThat("Correct graph is open", mainGraph.header(),equalToIgnoringCase(graphTitle));
+            verifyThat("Correct graph is open", mainGraph.header(), equalToIgnoringCase(graphTitle));
         }
 
         findPage.mainGraph().closeWidget();
@@ -217,18 +218,23 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-282")
-    public void testFilterLabelsHaveTitle() {
+    @ActiveBug("FIND-417")
+    public void testFilterLabelsHaveTitleOnTooltip() {
         findService.search("ball");
         filters().waitForParametricFields();
 
-        List<String> graphTitles = filterByAllGraphs();
-        List<String> labels = findPage.filterLabelsText();
+        final List<String> graphTitles = filterByAllGraphs();
+        final List<WebElement> webElements = findPage.filterLabels();
 
-        verifyThat("All filters have a label", labels, hasSize(graphTitles.size()));
+        verifyThat("All filters have a label", webElements, hasSize(graphTitles.size()));
+
+        final List<String> tooltipsText = webElements.stream()
+                .map(labelElement -> labelElement.findElement(By.cssSelector(".filter-display-text")).getAttribute("data-original-title"))
+                .collect(Collectors.toList());
 
         for (int i = 0; i < graphTitles.size(); i++) {
             String title = graphTitles.get(i);
-            verifyThat("Title " + title + " is in filter label", labels.get(i), containsString(title));
+            verifyThat("Title " + title.toLowerCase() + " is in filter tooltip", tooltipsText.get(i).toLowerCase(), containsString(title.toLowerCase()));
         }
     }
 
@@ -270,7 +276,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.waitUntilRectangleBack();
 
         List<WebElement> labels = findPage.filterLabels();
-        assertThat("Filter label appeared",labels,hasSize(1));
+        assertThat("Filter label appeared", labels, hasSize(1));
         findPage.removeFilterLabel(labels.get(0));
 
         filters().waitForParametricFields();
@@ -291,7 +297,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
         mainGraph.waitUntilWidgetLoaded();
 
-        dateRectangleHover(mainGraph,"1976","2012");
+        dateRectangleHover(mainGraph, "1976", "2012");
     }
 
     @Test
@@ -330,14 +336,14 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "red");
 
         mainGraph = setMinAndMax(highNum, lowNum, mainGraph);
-        verifyThat("Min bound re-set to value of max",mainGraph.minFieldValue(),is(lowNum));
+        verifyThat("Min bound re-set to value of max", mainGraph.minFieldValue(), is(lowNum));
 
         mainGraph.setMaxValueViaText(lowNum);
         Waits.loadOrFadeWait();
         mainGraph = findPage.mainGraph();
         mainGraph.setMinValueViaText(highNum);
 
-        verifyThat("Max bound re-set to value of min",mainGraph.maxFieldValue(),is(highNum));
+        verifyThat("Max bound re-set to value of min", mainGraph.maxFieldValue(), is(highNum));
     }
 
 
@@ -368,10 +374,10 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.messageRow().click();
         mainGraph.waitUntilDatePickerGone();
 
-        dateRectangleHover(mainGraph,"1976","2101");
+        dateRectangleHover(mainGraph, "1976", "2101");
     }
 
-    private void dateRectangleHover(MainNumericWidget mainGraph,String start, String end) {
+    private void dateRectangleHover(MainNumericWidget mainGraph, String start, String end) {
         mainGraph.rectangleHoverRight();
         String rightCorner = mainGraph.hoverMessage().split(" ")[0];
         mainGraph.rectangleHoverLeft();
@@ -382,11 +388,11 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ResolvedBug({"FIND-389","FIND-143"})
+    @ResolvedBug({"FIND-389", "FIND-143"})
     public void testSnapshotDateRangesDisplayedCorrectly() {
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "dire");
         String filterType = mainGraph.header();
-        mainGraph.clickAndDrag(-50,mainGraph.graph());
+        mainGraph.clickAndDrag(-50, mainGraph.graph());
 
         SavedSearchService saveService = getApplication().savedSearchService();
         SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
@@ -403,25 +409,24 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ResolvedBug({"FIND-270","FIND-143"})
+    @ResolvedBug({"FIND-270", "FIND-143"})
     public void testFilterLabelPresentInSavedQuery() {
         final String searchName = "meh";
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "moon");
-        mainGraph.clickAndDrag(-50,mainGraph.graph());
+        mainGraph.clickAndDrag(-50, mainGraph.graph());
 
         SavedSearchService saveService = getApplication().savedSearchService();
         SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
 
-        try{
+        try {
             saveService.saveCurrentAs(searchName, SearchType.QUERY);
             saveService.openNewTab();
             searchTabs.switchTo(searchName);
 
             Waits.loadOrFadeWait();
 
-            verifyThat("Filter labels have appeared",findPage.filterLabels(),not(empty()));
-        }
-        finally {
+            verifyThat("Filter labels have appeared", findPage.filterLabels(), not(empty()));
+        } finally {
             findService.search("back to results");
             saveService.deleteAll();
         }
@@ -465,7 +470,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         //Applies zooming to side panel
     }*/
     //FIND-323 -> zoom in zoom out
-
 
 
     private IdolFilterPanel filters() {
