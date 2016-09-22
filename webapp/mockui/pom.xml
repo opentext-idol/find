@@ -21,4 +21,20 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <repository>
+            <id>cmbg-maven-releases</id>
+            <url>
+                http://cmbg-maven.autonomy.com/nexus/content/repositories/releases
+            </url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>cmbg-maven-snapshots</id>
+            <url>
+                http://cmbg-maven.autonomy.com/nexus/content/repositories/snapshots
+            </url>
+            <uniqueVersion>true</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
