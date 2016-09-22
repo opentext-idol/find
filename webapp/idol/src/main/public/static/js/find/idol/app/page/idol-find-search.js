@@ -2,7 +2,6 @@
  * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'find/app/page/find-search',
     'underscore',
@@ -34,7 +33,7 @@ define([
         getSearchTypes: function() {
             var searchTypes = FindSearch.prototype.getSearchTypes.call(this);
 
-            if (configuration().hasBiRole) {
+            if(configuration().hasBiRole) {
                 searchTypes = _.extend({
                     SNAPSHOT: {
                         cssClass: 'snapshot',
@@ -107,14 +106,14 @@ define([
             };
         },
 
-        documentDetailOptions: function (database, reference) {
+        documentDetailOptions: function(database, reference) {
             return {
                 reference: reference,
                 database: database
             };
         },
 
-        suggestOptions: function (database, reference) {
+        suggestOptions: function(database, reference) {
             return {
                 database: database,
                 reference: reference
@@ -122,7 +121,7 @@ define([
         },
 
         removeComparisonView: function() {
-            if (this.comparisonView) {
+            if(this.comparisonView) {
                 // Setting the element to nothing prevents the containing element from being removed when the view is removed
                 this.comparisonView.setElement();
                 this.comparisonView.remove();

@@ -2,7 +2,6 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'i18n!find/nls/bundle',
@@ -24,7 +23,10 @@ define([
     }
 
     function relatedConcepts(concepts) {
-        return concepts.length ? {title: snapshotsI18n['restrictions.relatedConcepts'], content: concepts.join(', ')} : null;
+        return concepts.length ? {
+            title: snapshotsI18n['restrictions.relatedConcepts'],
+            content: concepts.join(', ')
+        } : null;
     }
 
     /**
@@ -59,7 +61,7 @@ define([
 
                 return {
                     title: prettifyFieldName(range.field),
-                    content:  formatFunction(range.min, range.min, range.max) + ' \u2013 ' + formatFunction(range.max, range.min, range.max)
+                    content: formatFunction(range.min, range.min, range.max) + ' \u2013 ' + formatFunction(range.max, range.min, range.max)
                 };
             });
 
@@ -80,5 +82,4 @@ define([
                 numericRestrictions);
         }
     };
-
 });

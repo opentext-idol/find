@@ -78,8 +78,6 @@ public class CsvExportStrategy implements ExportStrategy {
 
     @Override
     public void exportRecord(final OutputStream outputStream, final Iterable<String> values) throws IOException {
-        // TODO: Here we are creating a disposable CSVPrinter for every. Single. Record. Would be faster to have a
-        // persistent printer as a strategy's member object and make better use of its API (flush, etc.).
         try(final CSVPrinter csvPrinter = new CSVPrinter(new OutputStreamWriter(outputStream), CSVFormat.EXCEL)) {
             csvPrinter.printRecord(values);
         }

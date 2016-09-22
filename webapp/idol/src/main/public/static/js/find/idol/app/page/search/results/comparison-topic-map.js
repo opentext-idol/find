@@ -1,3 +1,7 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 define([
     'backbone',
     'i18n!find/nls/bundle',
@@ -10,13 +14,13 @@ define([
     'find/app/util/results-view-selection',
     'text!find/idol/templates/comparison/topic-map-comparison-view.html'
 
-], function (Backbone, i18n, comparisonsI18n, stateTokenStrategy, searchDataUtil, EntityCollection, TopicMapView, 
-             ResultsViewContainer, ResultsViewSelection, html) {
+], function(Backbone, i18n, comparisonsI18n, stateTokenStrategy, searchDataUtil, EntityCollection, TopicMapView,
+            ResultsViewContainer, ResultsViewSelection, html) {
 
     return Backbone.View.extend({
         className: 'service-view-container',
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.searchModels = options.searchModels;
 
             var bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
@@ -26,7 +30,7 @@ define([
             var bothCollection = new EntityCollection([], {
                 getSelectedRelatedConcepts: _.constant([])
             });
-            var firstCollection =  new EntityCollection([], {
+            var firstCollection = new EntityCollection([], {
                 getSelectedRelatedConcepts: _.constant([])
             });
             var secondCollection = new EntityCollection([], {
@@ -117,7 +121,7 @@ define([
             this.fetchRelatedConcepts();
         },
 
-        render: function () {
+        render: function() {
             this.$el.html(html);
 
             this.resultsViewSelection.setElement(this.$('.topic-map-comparison-selection')).render();
@@ -125,9 +129,9 @@ define([
             this.resultsViewContainer.setElement(this.$('.topic-map-comparison-container')).render();
         },
 
-        createQueryModel: function (queryText, stateTokens, searchModels) {
+        createQueryModel: function(queryText, stateTokens, searchModels) {
             var indexes = _.chain(searchModels)
-                .map(function (model) {
+                .map(function(model) {
                     return searchDataUtil.buildIndexes(model.get('indexes'));
                 })
                 .flatten()
@@ -140,16 +144,16 @@ define([
             }, stateTokens));
         },
 
-        fetchRelatedConcepts: function () {
+        fetchRelatedConcepts: function() {
             _.forEach(this.comparisons, function(comparison) {
                 comparison.collection.fetch({
                     data: _.extend({
                         queryText: comparison.model.get('queryText'),
                         databases: comparison.model.get('indexes'),
-                        fieldText: comparison.model.get('fieldText')                                            
+                        fieldText: comparison.model.get('fieldText')
                     }, stateTokenStrategy.requestParams(comparison.model))
                 })
             })
-        }        
+        }
     })
 });

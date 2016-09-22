@@ -1,7 +1,11 @@
+/*
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 define([
     'underscore',
     'parametric-refinement/to-field-text-node'
-], function (_, toFieldTextNode) {
+], function(_, toFieldTextNode) {
 
     function wrapQuotes(concept) {
         return '"' + concept + '"';
@@ -15,16 +19,16 @@ define([
      * @return {string}
      */
     function makeQueryText(inputText, concepts) {
-        if (!inputText){
+        if(!inputText) {
             return '';
         }
 
-        if (_.isEmpty(concepts)){
+        if(_.isEmpty(concepts)) {
             return inputText;
         }
 
-        var tail = _.map(_.flatten(_.uniq(concepts)), wrapQuotes).join(' ');
-        return inputText === '*' ? tail : '(' + inputText + ') ' + tail;
+        var tail = _.map(_.flatten(_.uniq(concepts)), wrapQuotes).join(' AND ');
+        return inputText === '*' ? tail : '(' + inputText + ') AND ' + tail;
     }
 
     /**
@@ -34,7 +38,9 @@ define([
      */
     function buildIndexes(selectedIndexesArray) {
         return _.map(selectedIndexesArray, function(index) {
-            return index.domain ? encodeURIComponent(index.domain) + ':' + encodeURIComponent(index.name) : encodeURIComponent(index.name);
+            return index.domain
+                ? encodeURIComponent(index.domain) + ':' + encodeURIComponent(index.name)
+                : encodeURIComponent(index.name);
         });
     }
 

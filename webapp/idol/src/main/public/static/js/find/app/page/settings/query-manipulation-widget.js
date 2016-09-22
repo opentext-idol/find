@@ -2,7 +2,6 @@
  * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'settings/js/widgets/query-manipulation-widget',
     'find/app/page/settings/enable-view',
@@ -74,5 +73,4 @@ define([
             return this.enableView.getConfig();
         }
     });
-
 });

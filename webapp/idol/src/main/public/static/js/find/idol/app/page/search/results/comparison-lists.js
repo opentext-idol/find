@@ -1,3 +1,7 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 define([
     'backbone',
     'jquery',
@@ -8,7 +12,7 @@ define([
     'find/app/util/search-data-util',
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/comparisons'
-], function(Backbone, $, ComparisonDocumentsCollection, ResultsView,  stateTokenStrategy, comparisonListContainer,
+], function(Backbone, $, ComparisonDocumentsCollection, ResultsView, stateTokenStrategy, comparisonListContainer,
             searchDataUtil, i18n, comparisonsI18n) {
 
     return Backbone.View.extend({
@@ -21,9 +25,21 @@ define([
             this.scrollModel = options.scrollModel;
 
             this.resultsLists = {
-                both: this.constructComparisonResultsView(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]),
-                first: this.constructComparisonResultsView(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]),
-                second: this.constructComparisonResultsView(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second])
+                both: this.constructComparisonResultsView(
+                    this.model.get('bothText'),
+                    this.model.get('inBoth'),
+                    [this.searchModels.first, this.searchModels.second]
+                ),
+                first: this.constructComparisonResultsView(
+                    this.model.get('firstText'),
+                    this.model.get('onlyInFirst'),
+                    [this.searchModels.first]
+                ),
+                second: this.constructComparisonResultsView(
+                    this.model.get('secondText'),
+                    this.model.get('onlyInSecond'),
+                    [this.searchModels.second]
+                )
             };
         },
 
@@ -75,5 +91,4 @@ define([
             });
         }
     });
-
 });

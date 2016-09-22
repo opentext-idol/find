@@ -11,19 +11,32 @@ define([
     describe('Search Data Utils', function() {
 
         describe('makeQueryText', function() {
+            it('called with no inputText and invalid relatedConcepts returns the empty string', function() {
+                expect(searchDataUtil.makeQueryText(null, null)).toEqual('');
+            });
+
+            it('called with inputText and invalid relatedConcepts returns the inputText', function() {
+                expect(searchDataUtil.makeQueryText('"chlorine fluoride"', null)).toEqual('"chlorine fluoride"');
+                expect(searchDataUtil.makeQueryText('"chlorine fluoride"', undefined)).toEqual('"chlorine fluoride"');
+            });
+
             it('called with inputText and empty relatedConcepts returns the inputText', function() {
                 expect(searchDataUtil.makeQueryText('"chlorine fluoride"',[])).toEqual('"chlorine fluoride"');
             });
 
             it('called with no inputText and some relatedConcepts returns the empty string', function() {
+                expect(searchDataUtil.makeQueryText('', [['activated carbon'], ['mercury', 'bromine', 'ammonia']]))
+                    .toEqual('');
+                expect(searchDataUtil.makeQueryText(null, [['activated carbon'], ['mercury', 'bromine', 'ammonia']]))
+                    .toEqual('');
                 expect(searchDataUtil.makeQueryText(undefined, [['activated carbon'], ['mercury', 'bromine', 'ammonia']]))
-                    .toEqual('')
+                    .toEqual('');
             });
 
             it('called with inputText and some relatedConcepts returns the inputText wrapped in brackets ' +
                 'followed by each word in the related concept array separated by spaces', function() {
                 expect(searchDataUtil.makeQueryText('"chlorine fluoride"', [['activated carbon'], ['mercury', 'bromine', 'ammonia']]))
-                    .toEqual('("chlorine fluoride") "activated carbon" "mercury" "bromine" "ammonia"');
+                    .toEqual('("chlorine fluoride") AND "activated carbon" AND "mercury" AND "bromine" AND "ammonia"');
             });
         });
 

@@ -40,7 +40,7 @@ define([
     var template = _.template(templateString);
 
     function updateScrollParameters() {
-        if (this.$middleContainerContents) {
+        if(this.$middleContainerContents) {
             this.middleColumnScrollModel.set({
                 innerHeight: this.$middleContainerContents.innerHeight(),
                 scrollTop: this.$middleContainerContents.scrollTop(),
@@ -107,7 +107,7 @@ define([
             // Either:
             //      We have a change in the query model that is not related to the date filters
             this.listenTo(this.queryModel, 'change', function(model) {
-                if (!_.has(model.changed, 'minDate') && !_.has(model.changed, 'maxDate')) {
+                if(!_.has(model.changed, 'minDate') && !_.has(model.changed, 'maxDate')) {
                     this.queryState.datesFilterModel.resetDateLastFetched();
                 }
             });
@@ -118,7 +118,7 @@ define([
                 var changeToNewDocFilter = value === DatesFilterModel.DateRange.NEW;
                 var removeNewDocFilter = !value && model.previous('dateRange') === DatesFilterModel.DateRange.NEW;
 
-                if (!changeToNewDocFilter && !removeNewDocFilter) {
+                if(!changeToNewDocFilter && !removeNewDocFilter) {
                     this.queryState.datesFilterModel.resetDateLastFetched();
                 }
             });
@@ -127,7 +127,7 @@ define([
             this.listenTo(this.documentsCollection, 'sync', function() {
                 var changed = this.queryState ? !this.savedSearchModel.equalsQueryState(this.queryState) : false;
 
-                if (!changed && !this.savedSearchModel.isNew()) {
+                if(!changed && !this.savedSearchModel.isNew()) {
                     this.savedSearchModel.save({dateDocsLastFetched: moment()});
                 }
             });
@@ -170,10 +170,10 @@ define([
                 selectedTabModel: this.selectedTabModel
             };
 
-            if (hasBiRole) {
+            if(hasBiRole) {
                 this.savedSearchControlView = new SavedSearchControlView(_.extend(this.getSavedSearchControlViewOptions(), subViewArguments));
 
-                if (this.searchTypes[searchType].showTimeBar) {
+                if(this.searchTypes[searchType].showTimeBar) {
                     this.timeBarModel = new Backbone.Model({
                         graphedFieldName: null,
                         graphedDataType: null
@@ -191,7 +191,7 @@ define([
             var relatedConceptsClickHandler = this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments);
 
             // TODO: genericise removal of feature (FIND-245)
-            if (configuration().enableRelatedConcepts) {
+            if(configuration().enableRelatedConcepts) {
                 this.relatedConceptsView = new RelatedConceptsView(_.extend({
                     clickHandler: relatedConceptsClickHandler
                 }, subViewArguments));
@@ -279,7 +279,7 @@ define([
             });
 
             // need a selector if multiple active views
-            if (this.resultsViews.length > 1) {
+            if(this.resultsViews.length > 1) {
                 this.resultsViewSelection = new ResultsViewSelection({
                     views: this.resultsViews,
                     model: resultsViewSelectionModel
@@ -317,7 +317,7 @@ define([
             this.$middleContainer = this.$('.middle-container');
             this.renderTimeBar();
 
-            if (this.savedSearchControlView) {
+            if(this.savedSearchControlView) {
                 // the padding looks silly if we don't have the view so add it here
                 var $searchOptionContainer = this.$('.search-options-container').addClass('p-sm');
 
@@ -325,12 +325,12 @@ define([
             }
 
             // TODO: genericise removal of feature (FIND-245)
-            if (configuration().enableRelatedConcepts) {
+            if(configuration().enableRelatedConcepts) {
                 this.relatedConceptsView.render();
                 this.$('.related-concepts-container').append(this.relatedConceptsView.$el);
             }
 
-            if (this.resultsViewSelection) {
+            if(this.resultsViewSelection) {
                 this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
             }
 
@@ -338,7 +338,7 @@ define([
 
             this.leftSideFooterView.setElement(this.$('.left-side-footer')).render();
 
-            if (this.middleColumnHeaderView) {
+            if(this.middleColumnHeaderView) {
                 this.middleColumnHeaderView.setElement(this.$('.middle-column-header')).render();
             }
 
@@ -349,7 +349,7 @@ define([
         },
 
         renderTimeBar: function() {
-            if (this.timeBarView && this.$middleContainer) {
+            if(this.timeBarView && this.$middleContainer) {
                 this.$middleContainer.append(this.timeBarView.$el);
                 this.timeBarView.render();
             }
@@ -360,16 +360,16 @@ define([
             var graphedDataType = this.timeBarModel.get('graphedDataType');
             var collapsed = graphedFieldName === null;
 
-            if (this.$middleContainer) {
+            if(this.$middleContainer) {
                 this.$middleContainer.toggleClass('middle-container-with-time-bar', !collapsed);
             }
 
-            if (this.timeBarView) {
+            if(this.timeBarView) {
                 this.timeBarView.remove();
                 this.timeBarView = null;
             }
 
-            if (!collapsed) {
+            if(!collapsed) {
                 this.timeBarView = new TimeBarView({
                     queryModel: this.queryModel,
                     queryState: this.queryState,
@@ -389,7 +389,7 @@ define([
         },
 
         fetchEntities: function() {
-            if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+            if(this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
                     databases: this.queryModel.get('indexes'),
                     queryText: this.queryModel.get('queryText'),
@@ -424,7 +424,7 @@ define([
 
             var fieldNames = this.parametricFieldsCollection.pluck('id');
 
-            if (fieldNames.length > 0 && this.queryModel.get('indexes').length !== 0) {
+            if(fieldNames.length > 0 && this.queryModel.get('indexes').length !== 0) {
                 this.restrictedParametricCollection.fetch({
                     data: {
                         fieldNames: fieldNames,
