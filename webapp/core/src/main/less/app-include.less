@@ -40,6 +40,10 @@
 @color45: rgba(132, 197, 55, 0.6);
 @color46: rgba(225, 97, 85, 0.6);
 
+// Colours for side panel labels (eg concepts and selected filters)
+@sidePanelLabelColour: #435663;
+@sidePanelLabelBorderColour: #676a6d;
+
 /*------Width variables------*/
 @pageContainerMinWidth:               640px;
 @shortUsernameMaxWidth:               250px;
@@ -48,7 +52,7 @@
 @searchTabTitleMaxWidth:              150px;
 @hpeBoxContentWidth:                  100px;
 @smWidthScreenNavbarUsernameMaxWidth: 100px;
-@selectedRelatedConceptsMaxWidth:     100px;
+@selectedConceptsMaxWidth:            100px;
 @settingsIndexesWidth:                100px;
 
 /*------Height variables------*/
@@ -80,7 +84,7 @@
 @custom9:  30px;
 @errorBodyMarginTop: 250px;
 @custom11: 15px;
-@selectedRelatedConceptsLineHeight: 14px;
+@selectedConceptsLineHeight: 14px;
 
 /*------Custom text variables------*/
 
@@ -1158,55 +1162,73 @@ input.find-input {
     vertical-align: top;
 }
 
-.selected-related-concept {
-    &:extend(.inline-flex);
-
-    border-radius: @nil;
-    border: solid 2px @color1;
-    color: @color1;
-    font-size: @100percent;
-    font-weight: normal;
-    height: 22px;
-    line-height: @selectedRelatedConceptsLineHeight;
-    padding: 1px 6px;
-
-    &:not(last-child) {
-        &:extend(.m-r-xs);
-    }
-}
-
 .database-name {
     max-width: 110px;
 }
 
-.concept-remove-icon {
-    line-height: inherit;
-}
+.selected-related-concept {
+    &:extend(.inline-flex);
 
-.left-scroll,
-.right-scroll,
-.left-scroll:hover,
-.right-scroll:hover {
-    &:extend(.no-box-shadow);
-}
+    border-radius: @nil;
+    border: solid 1px @sidePanelLabelBorderColour;
+    color: @sidePanelLabelColour;
+    font-size: @labelSize;
+    font-weight: normal;
+    height: 19px;
+    line-height: @selectedConceptsLineHeight;
+    padding: 1px 6px;
 
-.scrolling-buttons {
-    &:extend(.inline-block);
-    &:extend(.pull-right);
-}
+    i:before {
+        color: @sidePanelLabelColour;
+    }
 
-.selected-related-concept-text {
-    &:extend(.m-r-xs);
+    .concept-remove-icon {
+        line-height: inherit;
+    }
 
-    max-width: @selectedRelatedConceptsMaxWidth;
+    .selected-related-concept-text {
+        &:extend(.m-r-xs);
+
+        max-width: @selectedConceptsMaxWidth;
+    }
+
+    // TODO: This does not work now each .selected-related-concept is wrapped in another element
+    &:not(last-child) {
+        &:extend(.m-r-xs);
+    }
+
+    &.selected-related-concept-cluster {
+        background-color: @white;
+
+        .selected-related-concept-dropdown-trigger-container, .selected-related-concept-dropdown-trigger  {
+            &:extend(.inline-flex);
+        }
+
+        .btn-group {
+            vertical-align: inherit;
+
+            .dropdown-toggle {
+                box-shadow: inset @nil @nil @nil @nil;
+            }
+        }
+
+        .selected-related-concept-cluster-chevron {
+            line-height: 12px;
+        }
+    }
 }
 
 .selected-related-concept-dropdown-container {
-    &:extend(.inline);
     &:extend(.absolute);
 
     ul {
+        min-width: 100px;
+
         a {
+            font-size: @labelSize;
+            line-height: 20px;
+            padding: 1px 10px;
+
             &:hover {
                 background: inherit;
                 color: inherit;
@@ -1214,31 +1236,6 @@ input.find-input {
             }
         }
     }
-}
-
-.selected-related-concept-dropdown-trigger-container, .selected-related-concept-dropdown-trigger  {
-    &:extend(.inline-flex);
-}
-
-.selected-related-concept-cluster {
-    &:extend(.inline);
-
-    background-color: @white;
-    color: @color1;
-    line-height: @selectedRelatedConceptsLineHeight;
-}
-
-.selected-related-concept-cluster > .btn-group {
-    vertical-align: inherit;
-
-    .dropdown-toggle {
-        box-shadow: inset @nil @nil @nil @nil;
-    }
-}
-
-.selected-related-concept-cluster-chevron {
-    font-weight: bold;
-    line-height: 12px;
 }
 
 .reverse-animated-container .see-all-documents,
