@@ -1166,73 +1166,77 @@ input.find-input {
     max-width: 110px;
 }
 
-.selected-related-concept {
-    &:extend(.inline-flex);
+.selected-concept-container {
+    &:extend(.inline-block);
+    &:extend(.m-b-xs);
 
-    border-radius: @nil;
-    border: solid 1px @sidePanelLabelBorderColour;
-    color: @sidePanelLabelColour;
-    font-size: @labelSize;
-    font-weight: normal;
-    height: 19px;
-    line-height: @selectedConceptsLineHeight;
-    padding: 1px 6px;
-
-    i:before {
-        color: @sidePanelLabelColour;
-    }
-
-    .concept-remove-icon {
-        line-height: inherit;
-    }
-
-    .selected-related-concept-text {
-        &:extend(.m-r-xs);
-
-        max-width: @selectedConceptsMaxWidth;
-    }
-
-    // TODO: This does not work now each .selected-related-concept is wrapped in another element
     &:not(last-child) {
         &:extend(.m-r-xs);
     }
 
-    &.selected-related-concept-cluster {
-        background-color: @white;
+    .selected-related-concept {
+        &:extend(.inline-flex);
 
-        .selected-related-concept-dropdown-trigger-container, .selected-related-concept-dropdown-trigger  {
-            &:extend(.inline-flex);
+        border-radius: @nil;
+        border: solid 1px @sidePanelLabelBorderColour;
+        color: @sidePanelLabelColour;
+        font-size: @labelSize;
+        font-weight: normal;
+        height: 19px;
+        line-height: @selectedConceptsLineHeight;
+        padding: 1px 6px;
+
+        i:before {
+            color: @sidePanelLabelColour;
         }
 
-        .btn-group {
-            vertical-align: inherit;
+        .concept-remove-icon {
+            line-height: inherit;
+        }
 
-            .dropdown-toggle {
-                box-shadow: inset @nil @nil @nil @nil;
+        .selected-related-concept-text {
+            &:extend(.m-r-xs);
+
+            max-width: @selectedConceptsMaxWidth;
+        }
+
+        &.selected-related-concept-cluster {
+            background-color: @white;
+
+            .selected-related-concept-dropdown-trigger-container, .selected-related-concept-dropdown-trigger  {
+                &:extend(.inline-flex);
+            }
+
+            .btn-group {
+                vertical-align: inherit;
+
+                .dropdown-toggle {
+                    box-shadow: inset @nil @nil @nil @nil;
+                }
+            }
+
+            .selected-related-concept-cluster-chevron {
+                line-height: 12px;
             }
         }
-
-        .selected-related-concept-cluster-chevron {
-            line-height: 12px;
-        }
     }
-}
 
-.selected-related-concept-dropdown-container {
-    &:extend(.absolute);
+    .selected-related-concept-dropdown-container {
+        &:extend(.absolute);
 
-    ul {
-        min-width: 100px;
+        ul {
+            min-width: 100px;
 
-        a {
-            font-size: @labelSize;
-            line-height: 20px;
-            padding: 1px 10px;
+            a {
+                font-size: @labelSize;
+                line-height: 20px;
+                padding: 1px 10px;
 
-            &:hover {
-                background: inherit;
-                color: inherit;
-                cursor: default;
+                &:hover {
+                    background: inherit;
+                    color: inherit;
+                    cursor: default;
+                }
             }
         }
     }

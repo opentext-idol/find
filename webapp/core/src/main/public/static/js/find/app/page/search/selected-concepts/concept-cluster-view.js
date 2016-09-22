@@ -24,7 +24,7 @@ define([
     return Backbone.View.extend({
         conceptTemplate: _.template(conceptTemplate),
         clusterTemplate: _.template(conceptClusterTemplate),
-        className: 'inline-block m-b-xs',
+        className: 'selected-concept-container',
 
         events: {
             'hide.bs.dropdown .selected-related-concept-dropdown-container': function() {
