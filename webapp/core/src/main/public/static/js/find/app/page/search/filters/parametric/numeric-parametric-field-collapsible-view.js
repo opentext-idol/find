@@ -44,7 +44,7 @@ define([
     return Backbone.View.extend({
         initialize: function (options) {
             this.selectedParametricValues = options.selectedParametricValues;
-            this.dataType = options.dataType;
+            this.dataType = this.model.get('dataType');
             this.timeBarModel = options.timeBarModel;
             this.filterModel = options.filterModel;
             this.collapsed = true;
@@ -56,7 +56,7 @@ define([
                     var isCurrentField = this.isCurrentField();
 
                     this.timeBarModel.set({
-                        graphedDataType: isCurrentField ? null : options.dataType,
+                        graphedDataType: isCurrentField ? null : this.dataType,
                         graphedFieldName: isCurrentField ? null : this.model.id
                     });
                 }.bind(this);
@@ -64,7 +64,8 @@ define([
 
             this.fieldView = new NumericParametricFieldView(_.extend({
                 hideTitle: true,
-                clickCallback: clickCallback
+                clickCallback: clickCallback,
+                dataType: this.dataType
             }, options));
 
             var paramMap = _.findWhere(configuration().parametricDisplayValues, {name: this.model.id});

@@ -4,8 +4,9 @@
  */
 
 define([
+    'underscore',
     'find/app/model/find-base-collection'
-], function(FindBaseCollection) {
+], function (_, FindBaseCollection) {
 
     function defaultCurrentRangeAttributes(absoluteRange) {
         if (absoluteRange.max === absoluteRange.min) {
@@ -29,11 +30,11 @@ define([
     // Models represent numeric or date parametric fields. The currentMin and currentMax attributes are the current range
     // displayed on the numeric widget.
     return FindBaseCollection.extend({
-        url: function() {
+        url: function () {
             return 'api/public/fields/parametric-' + this.dataType;
         },
 
-        initialize: function(models, options) {
+        initialize: function (models, options) {
             this.dataType = options.dataType;
         },
 
@@ -43,6 +44,12 @@ define([
                 max: 0,
                 totalValues: 0
             }, defaultCurrentRangeAttributes({min: 0, max: 0})),
+
+            initialize: function(attributes) {
+                if (!attributes.dataType) {
+                    this.set('dataType', this.collection.dataType);
+                }
+            },
 
             parse: function(response) {
                 return _.defaults(defaultCurrentRangeAttributes(response), response);

@@ -9,7 +9,6 @@ define([
     'find/app/page/search/abstract-section-view',
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/filters/parametric/parametric-view',
-    'find/app/page/search/filters/parametric/numeric-parametric-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'find/app/util/text-input',
     'find/app/util/collapsible',
@@ -18,9 +17,10 @@ define([
     'parametric-refinement/display-collection',
     'find/app/configuration',
     'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes'
-], function(Backbone, $, _, AbstractSectionView, DateView, ParametricView, NumericParametricView, NumericParametricFieldView,
-            TextInput, Collapsible, FilteringCollection, prettifyFieldName, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
+    'i18n!find/nls/indexes',
+    'find/app/util/merge-collection'
+], function(Backbone, $, _, AbstractSectionView, DateView, ParametricView, NumericParametricFieldView,
+            TextInput, Collapsible, FilteringCollection, prettifyFieldName, ParametricDisplayCollection, configuration, i18n, i18nIndexes, MergeCollection) {
     'use strict';
 
     var datesTitle = i18n['search.dates'];
@@ -163,78 +163,37 @@ define([
             }, {
                 shown: true,
                 initialize: function() {
-                    this.numericParametricFieldsCollection = options.numericParametricFieldsCollection;
-                    this.filteredNumericCollection = createFilteringCollection(this.numericParametricFieldsCollection, this.filterModel);
-
-                    this.numericParametricView = new NumericParametricView({
-                        filterModel: this.filterModel,
-                        queryModel: options.queryModel,
-                        queryState: options.queryState,
-                        timeBarModel: options.timeBarModel,
-                        dataType: 'numeric',
-                        collection: this.filteredNumericCollection,
-                        numericRestriction: true
-                    });
-                }.bind(this),
-                get$els: function() {
-                    return [this.numericParametricView.$el];
-                }.bind(this),
-                render: function() {
-                    this.numericParametricView.render();
-                }.bind(this),
-                postRender: $.noop,
-                remove: function() {
-                    this.numericParametricView.remove();
-                }.bind(this)
-            }, {
-                shown: true,
-                initialize: function() {
-                    this.dateParametricFieldsCollection = options.dateParametricFieldsCollection;
-                    this.filteredDateCollection = createFilteringCollection(this.dateParametricFieldsCollection, this.filterModel);
-
-                    this.dateParametricView = new NumericParametricView({
-                        filterModel: this.filterModel,
-                        queryModel: options.queryModel,
-                        queryState: options.queryState,
-                        timeBarModel: options.timeBarModel,
-                        dataType: 'date',
-                        collection: this.filteredDateCollection,
-                        inputTemplate: NumericParametricFieldView.dateInputTemplate,
-                        formatting: NumericParametricFieldView.dateFormatting
-                    });
-                }.bind(this),
-                get$els: function() {
-                    return [this.dateParametricView.$el];
-                }.bind(this),
-                render: function() {
-                    this.dateParametricView.render();
-                }.bind(this),
-                postRender: $.noop,
-                remove: function() {
-                    this.dateParametricView.remove();
-                }.bind(this)
-            }, {
-                shown: true,
-                initialize: function() {
                     this.parametricDisplayCollection = new ParametricDisplayCollection([], {
                         parametricCollection: options.parametricCollection,
                         restrictedParametricCollection: options.restrictedParametricCollection,
                         selectedParametricValues: options.queryState.selectedParametricValues,
                         filterModel: this.filterModel
                     });
+                    this.mergedParametricCollection = new MergeCollection([], {
+                        comparator: function(model) {
+                            console.log(model.get('displayName'));
+                            return model.get('displayName');
+                        },
+                        collections: [this.numericParametricFieldsCollection, this.dateParametricFieldsCollection, this.parametricDisplayCollection],
+                        typeAttribute: 'dataType'
+                    });
 
                     if(this.filterModel) {
                         //noinspection JSUnresolvedFunction
-                        this.listenTo(this.parametricDisplayCollection, 'update reset', function() {
+                        this.listenTo(this.mergedParametricCollection, 'update reset', function () {
                             this.updateParametricVisibility();
                             this.updateEmptyMessage();
                         });
                     }
 
                     this.parametricView = new ParametricView({
+                        filterModel: this.filterModel,
                         queryModel: options.queryModel,
                         queryState: options.queryState,
-                        filterModel: this.filterModel,
+                        timeBarModel: options.timeBarModel,
+                        collection: this.mergedParametricCollection,
+                        inputTemplate: NumericParametricFieldView.dateInputTemplate,
+                        formatting: NumericParametricFieldView.dateFormatting,
                         indexesCollection: options.indexesCollection,
                         parametricCollection: options.parametricCollection,
                         restrictedParametricCollection: options.restrictedParametricCollection,
@@ -250,6 +209,10 @@ define([
                 postRender: $.noop,
                 remove: function() {
                     this.parametricView.remove();
+                    this.numericParametricFieldsCollection.stopListening();
+                    this.dateParametricFieldsCollection.stopListening();
+                    this.parametricDisplayCollection.stopListening();
+                    this.mergedParametricCollection.stopListening();
                 }.bind(this)
             }];
 
@@ -288,22 +251,17 @@ define([
         },
 
         updateEmptyMessage: function() {
-            var noFiltersMatched = !(this.indexesEmpty && this.hideDates && this.parametricDisplayCollection.length === 0 && this.filteredNumericCollection.length === 0 && this.filteredDateCollection.length === 0);
+            var noFiltersMatched = !(this.indexesEmpty && this.hideDates && this.mergedParametricCollection.length === 0);
 
             this.$emptyMessage.toggleClass('hide', noFiltersMatched);
         },
 
         updateParametricVisibility: function() {
+           
             var filterModelSwitch = Boolean(this.filterModel.get('text'));
 
-            this.numericParametricView.$el.toggleClass('hide',
-                this.numericParametricFieldsCollection.length === 0 && filterModelSwitch);
-
-            this.dateParametricView.$el.toggleClass('hide',
-                this.dateParametricFieldsCollection.length === 0 && filterModelSwitch);
-
             this.parametricView.$el.toggleClass('hide',
-                this.parametricDisplayCollection.length === 0 && filterModelSwitch);
+                this.mergedParametricCollection.length === 0 && filterModelSwitch);
         },
 
         updateDatesVisibility: function() {

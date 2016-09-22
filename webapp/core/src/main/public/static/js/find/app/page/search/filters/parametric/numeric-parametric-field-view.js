@@ -83,14 +83,13 @@ define([
             this.zoomEnabled = options.zoomEnabled;
             this.buttonsEnabled = options.selectionEnabled && options.buttonsEnabled;
             this.coordinatesEnabled = options.coordinatesEnabled === undefined ? true : options.coordinatesEnabled;
-            this.numericRestriction = options.numericRestriction || false;
             this.hideTitle = options.hideTitle;
             this.dataType = options.dataType;
             this.clickCallback = options.clickCallback;
 
             this.fieldName = this.model.id;
 
-            var formatting = options.formatting || NumericParametricFieldView.defaultFormatting;
+            var formatting = this.dataType === 'date' ? options.formatting : NumericParametricFieldView.defaultFormatting;
             this.formatValue = function (value) {
                 return formatting.format(value, this.model.get('currentMin'), this.model.get('currentMax'));
             }.bind(this);
