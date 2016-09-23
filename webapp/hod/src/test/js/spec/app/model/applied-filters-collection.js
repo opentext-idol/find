@@ -2,11 +2,10 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
-    'find/app/model/search-filters-collection',
+    'find/app/model/applied-filters-collection',
     'parametric-refinement/selected-values-collection',
     'databases-view/js/hod-databases-collection',
     'i18n!find/nls/bundle',
@@ -14,7 +13,7 @@ define([
     'find/app/configuration',
     'backbone',
     'moment'
-], function (mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, configuration, Backbone, moment) {
+], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, configuration, Backbone, moment) {
 
     var WOOKIEPEDIA = {
         id: 'TESTDOMAIN:wookiepedia',
@@ -32,8 +31,8 @@ define([
 
     var INITIAL_MIN_DATE = moment();
 
-    describe('Search filters collection initialised with an indexes filter, a DatesFilterModel with a min date set and a selected parametric value on the AGE field', function () {
-        beforeEach(function () {
+    describe('Search filters collection initialised with an indexes filter, a DatesFilterModel with a min date set and a selected parametric value on the AGE field', function() {
+        beforeEach(function() {
             configuration.and.returnValue({
                 parametricDisplayValues: [{
                     name: "FELINES",
@@ -71,7 +70,7 @@ define([
             });
         });
 
-        it('contains a databases filter model', function () {
+        it('contains a databases filter model', function() {
             var model = this.collection.get(FiltersCollection.FilterType.INDEXES);
             expect(model).toBeDefined();
             expect(model.get('text')).toContain(WIKI_ENG.displayName);

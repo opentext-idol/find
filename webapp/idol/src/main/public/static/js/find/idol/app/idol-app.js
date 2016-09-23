@@ -2,7 +2,6 @@
  * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'find/app/app',
     'underscore',
@@ -14,8 +13,8 @@ define([
     'find/idol/app/page/find-about-page',
     'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
-], function(BaseApp, _, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage, SettingsPage, i18n) {
-
+], function(BaseApp, _, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage,
+            SettingsPage, i18n) {
     'use strict';
 
     return BaseApp.extend({
@@ -25,7 +24,7 @@ define([
         getModelData: function() {
             var modelData = BaseApp.prototype.getModelData.call(this);
 
-            if (configuration().hasBiRole) {
+            if(configuration().hasBiRole) {
                 modelData = _.extend({
                     savedSnapshotCollection: {
                         Constructor: SavedSnapshotCollection,
@@ -54,7 +53,7 @@ define([
                 }
             };
 
-            if (_.contains(configuration().roles, 'ROLE_ADMIN')) {
+            if(_.contains(configuration().roles, 'ROLE_ADMIN')) {
                 pageData.settings = {
                     Constructor: SettingsPage,
                     icon: 'hp-icon hp-fw hp-settings',
@@ -66,5 +65,4 @@ define([
             return pageData;
         }
     });
-
 });

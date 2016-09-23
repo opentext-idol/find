@@ -7,10 +7,10 @@ define([
     'underscore',
     './filter-view',
     './selected-concepts/concept-view',
-    'find/app/model/search-filters-collection',
-    'find/app/page/search/filter-display/filter-display-view',
+    'find/app/model/applied-filters-collection',
+    'find/app/page/search/filter-display/applied-filters-view',
     'i18n!find/nls/bundle'
-], function(Backbone, _, FilterView, ConceptView, AppliedFiltersCollection, FilterDisplayView, i18n) {
+], function(Backbone, _, FilterView, ConceptView, AppliedFiltersCollection, AppliedFiltersView, i18n) {
     'use strict';
 
     /**
@@ -24,39 +24,41 @@ define([
 
         initialize: function(options) {
             this.appliedFiltersCollection = new AppliedFiltersCollection([], {
-                indexesCollection: options.indexesCollection,
-                queryState: options.queryState
+                queryState: options.queryState,
+                indexesCollection: options.indexesCollection
             });
 
-            this.views = [
+            this.sections = [
                 new ConceptView({
                     queryState: options.queryState,
-                    title: i18n['search.concepts']
+                    title: i18n['search.concepts'],
+                    containerClass: 'left-side-concepts-view'
                 }),
-                new FilterDisplayView({
+                new AppliedFiltersView({
                     collection: this.appliedFiltersCollection,
                     title: i18n['search.filters.applied'],
+                    containerClass: 'left-side-applied-filters-view',
                     titleClass: 'inline-block'
                 }),
                 new FilterView(_.extend({
                     IndexesView: this.IndexesView,
-                    title: i18n['search.filters']
+                    title: i18n['search.filters'],
+                    containerClass: 'left-side-filters-view'
                 }, options))
-            ]
+            ];
         },
 
         render: function() {
-            _.each(this.views, function(view) {
-                this.$el.append(view.$el);
-
-                view.render();
+            _.each(this.sections, function(section) {
+                this.$el.append(section.$el);
+                section.render();
             }, this);
         },
 
         remove: function() {
             this.appliedFiltersCollection.stopListening();
 
-            _.chain(this.views)
+            _.chain(this.sections)
                 .invoke('remove');
 
             Backbone.View.prototype.remove.call(this);

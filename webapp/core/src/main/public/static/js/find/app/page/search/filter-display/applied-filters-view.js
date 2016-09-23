@@ -7,10 +7,11 @@ define([
     'js-whatever/js/list-view',
     'js-whatever/js/list-item-view',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/filter-display/filter-display.html',
-    'text!find/templates/app/page/search/filter-display/filter-display-item.html',
+    'text!find/templates/app/page/search/filter-display/applied-filters-view.html',
+    'text!find/templates/app/page/search/filter-display/applied-filters-view-item.html',
     'bootstrap'
 ], function(AbstractSectionView, ListView, ListItemView, i18n, template, itemTemplate) {
+    'use strict';
 
     var html = _.template(template)({i18n: i18n});
 
@@ -46,6 +47,7 @@ define([
                 this.collection.remove(id);
             },
             'click .remove-all-filters': function() {
+                // get ids as an array so we don't modify the collection while iterating
                 _.chain(this.collection.models)
                     .map(function(model) {
                         return model.id;
@@ -69,7 +71,7 @@ define([
                 }
             });
 
-            this.listenTo(this.collection, 'reset update', this.updateVisibility);
+            this.listenTo(this.collection, 'reset update', this.updateView);
         },
 
         render: function() {
@@ -79,7 +81,7 @@ define([
 
             this.getViewContainer().html(html);
 
-            this.updateVisibility();
+            this.updateView();
 
             this.listView.render();
             this.$('.filters-labels').append(this.listView.$el);
@@ -88,7 +90,17 @@ define([
         },
 
         updateVisibility: function() {
-            this.$el.toggleClass('hide', this.collection.isEmpty());
+            this.getViewContainer().toggleClass('hide', this.collection.isEmpty());
+            this.getSectionControls().toggleClass('hide', this.collection.isEmpty());
+        },
+
+        updateHeaderCounter: function() {
+            this.getHeaderCounter().text('(' + this.collection.length + ')');
+        },
+
+        updateView: function() {
+            this.updateVisibility();
+            this.updateHeaderCounter();
         }
     });
 });

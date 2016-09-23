@@ -2,11 +2,10 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
-    'find/app/model/search-filters-collection',
+    'find/app/model/applied-filters-collection',
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
@@ -47,7 +46,7 @@ define([
 
             this.indexesCollection = new Backbone.Collection([WOOKIEPEDIA, WIKI_ENG]);
             this.selectedIndexesCollection = new Backbone.Collection([WIKI_ENG]);
-            databaseNameResolver.getDatabaseDisplayNameFromDatabaseModel.and.callFake(function () {
+            databaseNameResolver.getDatabaseDisplayNameFromDatabaseModel.and.callFake(function() {
                 return WIKI_ENG.name;
             });
 
@@ -209,7 +208,7 @@ define([
 
             describe('then a database is deselected', function() {
                 beforeEach(function() {
-                    databaseNameResolver.getDatabaseDisplayNameFromDatabaseModel.and.callFake(function () {
+                    databaseNameResolver.getDatabaseDisplayNameFromDatabaseModel.and.callFake(function() {
                         return WOOKIEPEDIA.name;
                     });
                     this.selectedIndexesCollection.set([WOOKIEPEDIA]);
@@ -255,7 +254,7 @@ define([
 
         describe('after the indexes filter model is removed', function() {
             beforeEach(function() {
-                databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function () {
+                databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function() {
                     return [WOOKIEPEDIA, WIKI_ENG];
                 });
                 this.collection.remove(this.collection.where({type: FiltersCollection.FilterType.INDEXES}));
@@ -267,14 +266,17 @@ define([
         });
 
         describe('after adding a selected parametric value with a displayName in the configuration', function() {
-            beforeEach(function () {
+            beforeEach(function() {
                 this.selectedParametricValues.add([
                     {field: 'FELINES', fieldDisplayName: 'cats', value: 'MR_MISTOFFELEES'}
                 ]);
             });
 
-            it('uses the display names from the configuration', function () {
-                var model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC,  field: 'FELINES'});
+            it('uses the display names from the configuration', function() {
+                var model = this.collection.findWhere({
+                    type: FiltersCollection.FilterType.PARAMETRIC,
+                    field: 'FELINES'
+                });
                 expect(model).toBeDefined();
                 expect(model.get('text')).toContain('Mr. Mistoffelees, the magical cat');
             });
@@ -293,7 +295,7 @@ define([
             });
 
             it('contains a NAME parametric filter model', function() {
-                var model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC,  field: 'NAME'});
+                var model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'NAME'});
                 expect(model).toBeDefined();
                 expect(model.get('text')).toContain('bobby');
                 expect(model.get('text')).toContain('penny');
@@ -301,7 +303,10 @@ define([
 
             describe('then one of the NAME values is deselected', function() {
                 beforeEach(function() {
-                    this.selectedParametricValues.remove(this.selectedParametricValues.findWhere({field: 'NAME', value: 'penny'}));
+                    this.selectedParametricValues.remove(this.selectedParametricValues.findWhere({
+                        field: 'NAME',
+                        value: 'penny'
+                    }));
                 });
 
                 it('contains four models', function() {
@@ -309,7 +314,10 @@ define([
                 });
 
                 it('removes the deselected field value from the NAME parametric filter model', function() {
-                    var model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'NAME'});
+                    var model = this.collection.findWhere({
+                        type: FiltersCollection.FilterType.PARAMETRIC,
+                        field: 'NAME'
+                    });
                     expect(model.get('text')).toContain('bobby');
                     expect(model.get('text')).not.toContain('penny');
                 });
@@ -317,7 +325,10 @@ define([
 
             describe('then the AGE parametric value is deselected', function() {
                 beforeEach(function() {
-                    this.selectedParametricValues.remove(this.selectedParametricValues.findWhere({field: 'AGE', value: '4'}));
+                    this.selectedParametricValues.remove(this.selectedParametricValues.findWhere({
+                        field: 'AGE',
+                        value: '4'
+                    }));
                 });
 
                 it('contains three models', function() {
@@ -325,7 +336,10 @@ define([
                 });
 
                 it('removes the AGE filter model', function() {
-                    expect(this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'AGE'})).toBeUndefined();
+                    expect(this.collection.findWhere({
+                        type: FiltersCollection.FilterType.PARAMETRIC,
+                        field: 'AGE'
+                    })).toBeUndefined();
                 });
             });
 
@@ -341,10 +355,19 @@ define([
                 });
 
                 it('replaces all parametric filter models with one representing the new field', function() {
-                    expect(this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'AGE'})).toBeUndefined();
-                    expect(this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'NAME'})).toBeUndefined();
+                    expect(this.collection.findWhere({
+                        type: FiltersCollection.FilterType.PARAMETRIC,
+                        field: 'AGE'
+                    })).toBeUndefined();
+                    expect(this.collection.findWhere({
+                        type: FiltersCollection.FilterType.PARAMETRIC,
+                        field: 'NAME'
+                    })).toBeUndefined();
 
-                    var vehicleModel = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'VEHICLE'});
+                    var vehicleModel = this.collection.findWhere({
+                        type: FiltersCollection.FilterType.PARAMETRIC,
+                        field: 'VEHICLE'
+                    });
                     expect(vehicleModel).toBeDefined();
                     expect(vehicleModel.get('text')).toContain('car');
                 });
@@ -352,7 +375,10 @@ define([
 
             describe('then the AGE filter model is removed', function() {
                 beforeEach(function() {
-                    this.collection.remove(this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'AGE'}));
+                    this.collection.remove(this.collection.findWhere({
+                        type: FiltersCollection.FilterType.PARAMETRIC,
+                        field: 'AGE'
+                    }));
                 });
 
                 it('contains three models', function() {
@@ -360,10 +386,12 @@ define([
                 });
 
                 it('still contains the NAME parametric filter model', function() {
-                    expect(this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'NAME'})).toBeDefined();
+                    expect(this.collection.findWhere({
+                        type: FiltersCollection.FilterType.PARAMETRIC,
+                        field: 'NAME'
+                    })).toBeDefined();
                 });
             });
         });
     });
-
 });

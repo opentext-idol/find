@@ -1,5 +1,6 @@
-<section>
-    <h3 class="<%-titleClass ? titleClass : ''%>"><%- title %></h3>
+<section class="<%- section.containerClass + '-section' %>">
+    <h3 class="<%-section.containerClass + '-title'%> <%-section.titleClass ? section.titleClass : ''%>">
+        <%- section.title %> <span class="section-title-counter"></span></h3>
     <span class="section-controls"></span>
-    <div class="left-view-container"></div>
+    <div class="left-view-container <%-section.containerClass%>"></div>
 </section>
