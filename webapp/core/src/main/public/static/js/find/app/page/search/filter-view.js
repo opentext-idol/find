@@ -2,7 +2,6 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'backbone',
     'jquery',
@@ -50,7 +49,7 @@ define([
 
             var views = [{
                 shown: configuration().enableMetaFilter,
-                initialize: function () {
+                initialize: function() {
                     this.filterModel = new Backbone.Model();
 
                     this.filterInput = new TextInput({
@@ -70,24 +69,24 @@ define([
                         this.updateEmptyMessage();
                     });
                 }.bind(this),
-                get$els: function () {
+                get$els: function() {
                     return [this.filterInput.$el, this.$emptyMessage];
                 }.bind(this),
-                render: function () {
+                render: function() {
                     this.filterInput.render();
                 }.bind(this),
-                postRender: function () {
+                postRender: function() {
                     this.updateParametricVisibility();
                     this.updateDatesVisibility();
                     this.updateIndexesVisibility();
                     this.updateEmptyMessage();
                 }.bind(this),
-                remove: function () {
+                remove: function() {
                     this.filterInput.remove();
                 }.bind(this)
             }, {
                 shown: true,
-                initialize: function () {
+                initialize: function() {
                     this.indexesEmpty = false;
                     this.collapsed.indexes = false;
 
@@ -117,19 +116,19 @@ define([
                         this.collapsed.indexes = newState;
                     });
                 }.bind(this),
-                get$els: function () {
+                get$els: function() {
                     return [this.indexesViewWrapper.$el];
                 }.bind(this),
-                render: function () {
+                render: function() {
                     this.indexesViewWrapper.render();
                 }.bind(this),
                 postRender: $.noop,
-                remove: function () {
+                remove: function() {
                     this.indexesViewWrapper.remove();
                 }.bind(this)
             }, {
                 shown: true,
-                initialize: function () {
+                initialize: function() {
                     this.collapsed.dates = false;
 
                     var dateView = new DateView({
@@ -148,19 +147,19 @@ define([
                         this.collapsed.dates = newState;
                     });
                 }.bind(this),
-                get$els: function () {
+                get$els: function() {
                     return [this.dateViewWrapper.$el];
                 }.bind(this),
-                render: function () {
+                render: function() {
                     this.dateViewWrapper.render();
                 }.bind(this),
                 postRender: $.noop,
-                remove: function () {
+                remove: function() {
                     this.dateViewWrapper.remove();
                 }.bind(this)
             }, {
                 shown: true,
-                initialize: function () {
+                initialize: function() {
                     this.numericParametricFieldsCollection = options.numericParametricFieldsCollection;
                     this.filteredNumericCollection = createFilteringCollection(this.numericParametricFieldsCollection, this.filterModel);
 
@@ -174,19 +173,19 @@ define([
                         numericRestriction: true
                     });
                 }.bind(this),
-                get$els: function () {
+                get$els: function() {
                     return [this.numericParametricView.$el];
                 }.bind(this),
-                render: function () {
+                render: function() {
                     this.numericParametricView.render();
                 }.bind(this),
                 postRender: $.noop,
-                remove: function () {
+                remove: function() {
                     this.numericParametricView.remove();
                 }.bind(this)
             }, {
                 shown: true,
-                initialize: function () {
+                initialize: function() {
                     this.dateParametricFieldsCollection = options.dateParametricFieldsCollection;
                     this.filteredDateCollection = createFilteringCollection(this.dateParametricFieldsCollection, this.filterModel);
 
@@ -201,19 +200,19 @@ define([
                         formatting: NumericParametricFieldView.dateFormatting
                     });
                 }.bind(this),
-                get$els: function () {
+                get$els: function() {
                     return [this.dateParametricView.$el];
                 }.bind(this),
-                render: function () {
+                render: function() {
                     this.dateParametricView.render();
                 }.bind(this),
                 postRender: $.noop,
-                remove: function () {
+                remove: function() {
                     this.dateParametricView.remove();
                 }.bind(this)
             }, {
                 shown: true,
-                initialize: function () {
+                initialize: function() {
                     this.parametricDisplayCollection = new ParametricDisplayCollection([], {
                         parametricCollection: options.parametricCollection,
                         restrictedParametricCollection: options.restrictedParametricCollection,
@@ -221,9 +220,9 @@ define([
                         filterModel: this.filterModel
                     });
 
-                    if (this.filterModel) {
+                    if(this.filterModel) {
                         //noinspection JSUnresolvedFunction
-                        this.listenTo(this.parametricDisplayCollection, 'update reset', function () {
+                        this.listenTo(this.parametricDisplayCollection, 'update reset', function() {
                             this.updateParametricVisibility();
                             this.updateEmptyMessage();
                         });
@@ -239,14 +238,14 @@ define([
                         displayCollection: this.parametricDisplayCollection
                     });
                 }.bind(this),
-                get$els: function () {
+                get$els: function() {
                     return [this.parametricView.$el];
                 }.bind(this),
-                render: function () {
+                render: function() {
                     this.parametricView.render();
                 }.bind(this),
                 postRender: $.noop,
-                remove: function () {
+                remove: function() {
                     this.parametricView.remove();
                 }.bind(this)
             }];
@@ -261,8 +260,8 @@ define([
         render: function() {
             //noinspection JSUnresolvedVariable
             this.$el.empty();
-            this.views.forEach(function (view) {
-                view.get$els().forEach(function ($el) {
+            this.views.forEach(function(view) {
+                view.get$els().forEach(function($el) {
                     //noinspection JSUnresolvedVariable
                     this.$el.append($el);
                 }.bind(this));
@@ -290,9 +289,16 @@ define([
         },
 
         updateParametricVisibility: function() {
-            this.numericParametricView.$el.toggleClass('hide', this.numericParametricFieldsCollection.length === 0 && Boolean(this.filterModel.get('text')));
-            this.dateParametricView.$el.toggleClass('hide', this.dateParametricFieldsCollection.length === 0 && Boolean(this.filterModel.get('text')));
-            this.parametricView.$el.toggleClass('hide', this.parametricDisplayCollection.length === 0 && Boolean(this.filterModel.get('text')));
+            var filterModelSwitch = Boolean(this.filterModel.get('text'));
+
+            this.numericParametricView.$el.toggleClass('hide',
+                this.numericParametricFieldsCollection.length === 0 && filterModelSwitch);
+
+            this.dateParametricView.$el.toggleClass('hide',
+                this.dateParametricFieldsCollection.length === 0 && filterModelSwitch);
+
+            this.parametricView.$el.toggleClass('hide',
+                this.parametricDisplayCollection.length === 0 && filterModelSwitch);
         },
 
         updateDatesVisibility: function() {
@@ -309,5 +315,4 @@ define([
             this.indexesViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.indexes);
         }
     });
-
 });

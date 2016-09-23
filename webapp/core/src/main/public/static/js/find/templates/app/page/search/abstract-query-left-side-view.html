@@ -1,8 +1,6 @@
+<%_.each(sections, function(section) {%>
 <section>
-    <h3><%- i18n['search.concepts'] %></h3>
-    <div class="left-side-concepts-view"></div>
+    <h3><%- section.title %></h3>
+    <div class="<%-section.containerClass%>"></div>
 </section>
-<section>
-    <h3><%- i18n['search.filters'] %></h3>
-    <div class="left-side-filters-view"></div>
-</section>
+<%})%>
