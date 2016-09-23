@@ -29,7 +29,7 @@ class CustomisationAdminController extends AbstractCustomisationController {
 
     static final String CUSTOMISATIONS_PATH = "/api/admin/customisation";
     static final String ASSETS_PATH = "/assets";
-    static final String TYPED_ASSETS_PATH = ASSETS_PATH + "/{type}";
+    private static final String TYPED_ASSETS_PATH = ASSETS_PATH + "/{type}";
     private static final String ASSET_ID_PATH = TYPED_ASSETS_PATH + "/{name:.+}";
 
     private static final MediaType IMAGE_MEDIA_TYPE = new MediaType("image");
