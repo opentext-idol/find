@@ -14,6 +14,7 @@ define([
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/concept-view.html'
 ], function (Backbone, $, _, ConceptClusterView, InputView, conceptStrategy, i18n, ListView, template) {
+    "use strict";
 
     /**
      * View for displaying the selected concept groups eg in the left side panel.
@@ -39,6 +40,9 @@ define([
                     return new InputView({
                         strategy: conceptStrategy(options.queryState.conceptGroups)
                     });
+                },
+                onRender: function (view) {
+                    view.focus();
                 }
             }];
             //noinspection JSUnresolvedFunction
@@ -63,6 +67,7 @@ define([
 
             this.optionalViews.forEach(function (view) {
                 view.instance.setElement(this.$(view.selector)).render();
+                view.onRender(view.instance);
             }, this);
 
             this.listView.setElement(this.$('.concept-view-concepts')).render();

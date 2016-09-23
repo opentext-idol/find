@@ -34,7 +34,7 @@ define([
 
             this.$input.typeahead({
                 hint: false,
-                hightlight: true,
+                highlight: true,
                 minLength: 1
             }, {
                 async: true,
@@ -57,15 +57,15 @@ define([
         },
 
         focus: function() {
-            _.defer(_.bind(function() {
+            _.defer(function() {
                 this.$input.focus();
-            }, this));
+            }.bind(this));
         },
 
         unFocus: function() {
-            _.defer(_.bind(function() {
+            _.defer(function() {
                 this.$input.blur();
-            }, this));
+            }.bind(this));
         },
 
         search: function(query) {
