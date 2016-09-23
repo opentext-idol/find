@@ -13,8 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,7 +21,7 @@ import java.util.List;
 public class CustomisationServiceImpl implements CustomisationService {
 
     private static final String CUSTOMIZATIONS_DIRECTORY = "customizations";
-    private static final String LOGO_DIRECTORY = "logos";
+    private static final String ASSETS_DIRECTORY = "assets";
 
     private final String homeDirectory;
 
@@ -33,10 +31,10 @@ public class CustomisationServiceImpl implements CustomisationService {
     }
 
     @Override
-    public void saveLogo(final MultipartFile file, final boolean overwrite) throws CustomisationException {
-        checkLogoDirectory();
+    public void saveAsset(final AssetType assetType, final MultipartFile file, final boolean overwrite) throws CustomisationException {
+        checkAssetsDirectory(assetType);
 
-        final File outputFile = getLogo(file.getOriginalFilename());
+        final File outputFile = getAsset(assetType, file.getOriginalFilename());
 
         if (!overwrite && outputFile.exists()) {
             throw new CustomisationException(Status.FILE_EXISTS, "Logo file already exists");
@@ -53,12 +51,12 @@ public class CustomisationServiceImpl implements CustomisationService {
     }
 
     @Override
-    public List<String> getLogos() throws CustomisationException {
-        checkLogoDirectory();
+    public List<String> getAssets(final AssetType assetType) throws CustomisationException {
+        checkAssetsDirectory(assetType);
 
-        final File logoDirectory = new File(getLogoDirectoryPath());
+        final File assetsDirectory = new File(getAssetDirectoryPath(assetType));
 
-        final String[] list = logoDirectory.list();
+        final String[] list = assetsDirectory.list();
 
         if (list == null) {
             throw new CustomisationException(Status.DIRECTORY_ERROR, "Error listing customisations directory");
@@ -70,36 +68,36 @@ public class CustomisationServiceImpl implements CustomisationService {
     }
 
     @Override
-    public File getLogo(final String name) {
-        return new File(getLogoDirectoryPath() + File.separator + name);
+    public File getAsset(final AssetType assetType, final String name) {
+        return new File(getAssetDirectoryPath(assetType) + File.separator + name);
     }
 
     @Override
-    public boolean deleteLogo(final String name) {
-        return getLogo(name).delete();
+    public boolean deleteAsset(final AssetType assetType, final String name) {
+        return getAsset(assetType, name).delete();
     }
 
-    private boolean ensureLogoDirectory() {
-        final File logoDirectory = new File(getLogoDirectoryPath());
+    private boolean ensureAssetsDirectory(final AssetType assetType) {
+        final File assetsDirectory = new File(getAssetDirectoryPath(assetType));
 
-        if(!logoDirectory.exists()) {
-            return logoDirectory.mkdirs();
+        if(!assetsDirectory.exists()) {
+            return assetsDirectory.mkdirs();
         }
-        else if (!logoDirectory.isDirectory()) {
+        else if (!assetsDirectory.isDirectory()) {
             return false;
         }
 
         return true;
     }
 
-    private void checkLogoDirectory() throws CustomisationException {
-        if (!ensureLogoDirectory()) {
+    private void checkAssetsDirectory(final AssetType assetType) throws CustomisationException {
+        if (!ensureAssetsDirectory(assetType)) {
             throw new CustomisationException(Status.DIRECTORY_ERROR, "Error with customisations directory");
         }
     }
 
-    private String getLogoDirectoryPath() {
-        return homeDirectory + File.separator + CUSTOMIZATIONS_DIRECTORY + File.separator + LOGO_DIRECTORY;
+    private String getAssetDirectoryPath(final AssetType assetType) {
+        return homeDirectory + File.separator + CUSTOMIZATIONS_DIRECTORY + File.separator + ASSETS_DIRECTORY + File.separator + assetType.getDirectory();
     }
 
 }

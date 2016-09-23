@@ -27,18 +27,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class CustomisationAdminControllerIT extends AbstractFindIT {
 
+    private static final AssetType ASSET_TYPE = AssetType.BIG_LOGO;
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @After
     public void tearDown() throws IOException {
         // remove the test files after each test
-        new File(AbstractFindIT.TEST_DIR + "/customizations/logos/logo.png").delete();
+        new File(AbstractFindIT.TEST_DIR + "/customizations/assets/" + ASSET_TYPE.getDirectory() + "/logo.png").delete();
     }
 
     @Test
     public void postLogo() throws Exception {
         final MockMultipartFile multipartFile = new MockMultipartFile("file", "logo.png", "image/png", "foo".getBytes());
 
-        final RequestBuilder requestBuilder = fileUpload(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.LOGO_PATH)
+        final RequestBuilder requestBuilder = fileUpload(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
             .file(multipartFile)
             .with(authentication(adminAuth()));
 
@@ -52,7 +54,7 @@ public class CustomisationAdminControllerIT extends AbstractFindIT {
     public void cannotUploadNonImageFiles() throws Exception {
         final MockMultipartFile multipartFile = new MockMultipartFile("file", "logo.png", "text/plain", "foo".getBytes());
 
-        final RequestBuilder requestBuilder = fileUpload(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.LOGO_PATH)
+        final RequestBuilder requestBuilder = fileUpload(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
             .file(multipartFile)
             .with(authentication(adminAuth()));
 
@@ -64,7 +66,7 @@ public class CustomisationAdminControllerIT extends AbstractFindIT {
 
     @Test
     public void errorWithNoFile() throws Exception {
-        final RequestBuilder requestBuilder = fileUpload(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.LOGO_PATH)
+        final RequestBuilder requestBuilder = fileUpload(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
             .with(authentication(adminAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -74,7 +76,7 @@ public class CustomisationAdminControllerIT extends AbstractFindIT {
 
     @Test
     public void logos() throws Exception {
-        final RequestBuilder requestBuilder = get(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.LOGO_PATH)
+        final RequestBuilder requestBuilder = get(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
             .with(authentication(adminAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -88,14 +90,14 @@ public class CustomisationAdminControllerIT extends AbstractFindIT {
         final byte[] fileContent = "foo".getBytes();
         final MockMultipartFile multipartFile = new MockMultipartFile("file", "logo.png", "image/png", fileContent);
 
-        final RequestBuilder postRequest = fileUpload(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.LOGO_PATH)
+        final RequestBuilder postRequest = fileUpload(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
             .file(multipartFile)
             .with(authentication(adminAuth()));
 
         mockMvc.perform(postRequest)
             .andExpect(status().isCreated());
 
-        final RequestBuilder getRequest = get(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.LOGO_PATH + "/logo.png")
+        final RequestBuilder getRequest = get(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.ASSETS_PATH + '/' + ASSET_TYPE + '/' + "/logo.png")
             .with(authentication(adminAuth()));
 
         mockMvc.perform(getRequest)
@@ -108,14 +110,14 @@ public class CustomisationAdminControllerIT extends AbstractFindIT {
     public void deleteLogo() throws Exception {
         final MockMultipartFile multipartFile = new MockMultipartFile("file", "logo.png", "image/png", "foo".getBytes());
 
-        final RequestBuilder postRequest = fileUpload(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.LOGO_PATH)
+        final RequestBuilder postRequest = fileUpload(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
             .file(multipartFile)
             .with(authentication(adminAuth()));
 
         mockMvc.perform(postRequest)
             .andExpect(status().isCreated());
 
-        final RequestBuilder delete = delete(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.LOGO_PATH + "/logo.png")
+        final RequestBuilder delete = delete(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.ASSETS_PATH + '/' + ASSET_TYPE + '/' + "/logo.png")
             .with(authentication(adminAuth()));
 
         mockMvc.perform(delete)

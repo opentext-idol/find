@@ -7,7 +7,6 @@ package com.hp.autonomy.frontend.find.idol.customisations;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
@@ -20,38 +19,39 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class CustomisationServiceImplIT extends AbstractFindIT {
+
+    private static final AssetType ASSET_TYPE = AssetType.BIG_LOGO;
 
     @Autowired
     private CustomisationServiceImpl customisationService;
 
     @After
     public void tearDown() {
-        customisationService.deleteLogo("aardvark.png");
-        customisationService.deleteLogo("bee.png");
-        customisationService.deleteLogo("logo.png");
-        customisationService.deleteLogo("sea.png");
+        customisationService.deleteAsset(ASSET_TYPE, "aardvark.png");
+        customisationService.deleteAsset(ASSET_TYPE, "bee.png");
+        customisationService.deleteAsset(ASSET_TYPE, "logo.png");
+        customisationService.deleteAsset(ASSET_TYPE, "sea.png");
     }
 
     @Test
     public void testSaveLogo() throws CustomisationException {
         final MultipartFile multipartFile = new MockMultipartFile("file", "logo.png", "image/png", "foo".getBytes());
 
-        customisationService.saveLogo(multipartFile, false);
+        customisationService.saveAsset(ASSET_TYPE, multipartFile, false);
 
-        final File logo = customisationService.getLogo("logo.png");
+        final File logo = customisationService.getAsset(ASSET_TYPE, "logo.png");
 
         assertThat(logo.length(), is(3L));
     }
 
     @Test
     public void testGetLogos() throws CustomisationException {
-        final List<String> logos = customisationService.getLogos();
+        final List<String> logos = customisationService.getAssets(ASSET_TYPE);
 
         assertThat(logos, is(empty()));
     }
@@ -65,17 +65,17 @@ public class CustomisationServiceImplIT extends AbstractFindIT {
         );
 
         for (final MultipartFile file : files) {
-            customisationService.saveLogo(file, false);
+            customisationService.saveAsset(ASSET_TYPE, file, false);
         }
 
-        final List<String> logos = customisationService.getLogos();
+        final List<String> logos = customisationService.getAssets(ASSET_TYPE);
 
         assertThat(logos, contains("aardvark.png", "bee.png", "sea.png"));
     }
 
     @Test
     public void testGetLogo() {
-        final File logo = customisationService.getLogo("fake.png");
+        final File logo = customisationService.getAsset(ASSET_TYPE, "fake.png");
 
         assertThat(logo.exists(), is(false));
     }
@@ -84,13 +84,13 @@ public class CustomisationServiceImplIT extends AbstractFindIT {
     public void testDeleteLogo() throws CustomisationException {
         final MultipartFile multipartFile = new MockMultipartFile("file", "logo.png", "image/png", "foo".getBytes());
 
-        customisationService.saveLogo(multipartFile, false);
+        customisationService.saveAsset(ASSET_TYPE, multipartFile, false);
 
-        final boolean deleted = customisationService.deleteLogo("logo.png");
+        final boolean deleted = customisationService.deleteAsset(ASSET_TYPE, "logo.png");
 
         assertThat(deleted, is(true));
 
-        final File logo = customisationService.getLogo("logo.png");
+        final File logo = customisationService.getAsset(ASSET_TYPE, "logo.png");
 
         assertThat(logo.exists(), is(false));
     }
@@ -105,7 +105,7 @@ public class CustomisationServiceImplIT extends AbstractFindIT {
         };
 
         try {
-            customisationService.saveLogo(multipartFile, false);
+            customisationService.saveAsset(ASSET_TYPE, multipartFile, false);
 
             fail("CustomisationException not thrown");
         } catch (final CustomisationException e) {
@@ -118,7 +118,7 @@ public class CustomisationServiceImplIT extends AbstractFindIT {
         final MultipartFile file1 = new MockMultipartFile("file", "logo.png", "image/png", "foo".getBytes());
 
         try {
-            customisationService.saveLogo(file1, false);
+            customisationService.saveAsset(ASSET_TYPE, file1, false);
         } catch (final CustomisationException e) {
             fail("File should not exist yet");
         }
@@ -126,7 +126,7 @@ public class CustomisationServiceImplIT extends AbstractFindIT {
         final MultipartFile file2 = new MockMultipartFile("file", "logo.png", "image/png", "barr".getBytes());
 
         try {
-            customisationService.saveLogo(file2, false);
+            customisationService.saveAsset(ASSET_TYPE, file2, false);
 
             fail();
         } catch (final CustomisationException e) {
@@ -134,12 +134,12 @@ public class CustomisationServiceImplIT extends AbstractFindIT {
         }
 
         try {
-            customisationService.saveLogo(file2, true);
+            customisationService.saveAsset(ASSET_TYPE, file2, true);
         } catch (final CustomisationException e) {
             fail("File should have been overwritten");
         }
 
-        assertThat(customisationService.getLogo("logo.png").length(), is(4L));
+        assertThat(customisationService.getAsset(ASSET_TYPE, "logo.png").length(), is(4L));
     }
 
 }

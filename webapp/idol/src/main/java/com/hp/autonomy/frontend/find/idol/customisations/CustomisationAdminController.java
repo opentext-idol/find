@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,8 +28,9 @@ import java.util.List;
 class CustomisationAdminController extends AbstractCustomisationController {
 
     static final String CUSTOMISATIONS_PATH = "/api/admin/customisation";
-    static final String LOGO_PATH = "/logo";
-    private static final String LOGO_ID_PATH = LOGO_PATH + "/{name:.+}";
+    static final String ASSETS_PATH = "/assets";
+    static final String TYPED_ASSETS_PATH = ASSETS_PATH + "/{type}";
+    private static final String ASSET_ID_PATH = TYPED_ASSETS_PATH + "/{name:.+}";
 
     private static final MediaType IMAGE_MEDIA_TYPE = new MediaType("image");
 
@@ -43,39 +43,45 @@ class CustomisationAdminController extends AbstractCustomisationController {
         this.customisationService = customisationService;
     }
 
-    @RequestMapping(value = LOGO_PATH, method = RequestMethod.POST)
+    @RequestMapping(value = TYPED_ASSETS_PATH, method = RequestMethod.POST)
     public ResponseEntity<Status> postLogo(
+        @PathVariable("type") final AssetType assetType,
         @RequestPart("file") final MultipartFile file
     ) throws CustomisationException {
-        return saveLogo(file, false);
+        return saveLogo(assetType, file, false);
     }
 
-    @RequestMapping(value = LOGO_PATH, method = RequestMethod.PUT)
+    @RequestMapping(value = TYPED_ASSETS_PATH, method = RequestMethod.PUT)
     public ResponseEntity<Status> putLogo(
+        @PathVariable("type") final AssetType assetType,
         @RequestPart("file") final MultipartFile file
     ) throws CustomisationException {
-        return saveLogo(file, true);
+        return saveLogo(assetType, file, true);
     }
 
-    @RequestMapping(value = LOGO_PATH, method = RequestMethod.GET)
-    public List<String> logos() throws CustomisationException {
-        return customisationService.getLogos();
+    @RequestMapping(value = TYPED_ASSETS_PATH, method = RequestMethod.GET)
+    public List<String> logos(
+        @PathVariable("type") final AssetType assetType
+    ) throws CustomisationException {
+        return customisationService.getAssets(assetType);
     }
 
     @Override
-    @RequestMapping(value = LOGO_ID_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = ASSET_ID_PATH, method = RequestMethod.GET)
     public ResponseEntity<FileSystemResource> logo(
+        @PathVariable("type") final AssetType assetType,
         @PathVariable("name") final String name
     ) {
-        return super.logo(name);
+        return super.logo(assetType, name);
     }
 
-    @RequestMapping(value = LOGO_ID_PATH, method = RequestMethod.DELETE)
+    @RequestMapping(value = ASSET_ID_PATH, method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteLogo(
+        @PathVariable("type") final AssetType assetType,
         @PathVariable("name") final String name
     ) {
-        customisationService.deleteLogo(name);
+        customisationService.deleteAsset(assetType, name);
     }
 
     @ExceptionHandler(CustomisationException.class)
@@ -83,7 +89,7 @@ class CustomisationAdminController extends AbstractCustomisationController {
         return new ResponseEntity<>(e.getStatus(), e.getStatus().getHttpStatus());
     }
 
-    private ResponseEntity<Status> saveLogo(final MultipartFile file, final boolean overwrite) throws CustomisationException {
+    private ResponseEntity<Status> saveLogo(final AssetType assetType, final MultipartFile file, final boolean overwrite) throws CustomisationException {
         if (file == null) {
             return new ResponseEntity<>(Status.INVALID_FILE, Status.INVALID_FILE.getHttpStatus());
         }
@@ -94,7 +100,7 @@ class CustomisationAdminController extends AbstractCustomisationController {
             return new ResponseEntity<>(Status.INVALID_FILE, Status.INVALID_FILE.getHttpStatus());
         }
 
-        customisationService.saveLogo(file, overwrite);
+        customisationService.saveAsset(assetType, file, overwrite);
 
         return new ResponseEntity<>(Status.SUCCESS, HttpStatus.CREATED);
     }

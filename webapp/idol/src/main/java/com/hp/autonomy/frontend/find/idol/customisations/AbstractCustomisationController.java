@@ -17,8 +17,8 @@ abstract class AbstractCustomisationController {
         this.customisationService = customisationService;
     }
 
-    protected ResponseEntity<FileSystemResource> logo(final String name) {
-        final FileSystemResource fileSystemResource = new FileSystemResource(customisationService.getLogo(name));
+    protected ResponseEntity<FileSystemResource> logo(final AssetType assetType, final String name) {
+        final FileSystemResource fileSystemResource = new FileSystemResource(customisationService.getAsset(assetType, name));
 
         if (!fileSystemResource.exists()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -12,12 +12,12 @@ import java.util.List;
 
 interface CustomisationService {
 
-    void saveLogo(MultipartFile file, final boolean overwrite) throws CustomisationException;
+    void saveAsset(final AssetType assetType, MultipartFile file, final boolean overwrite) throws CustomisationException;
 
-    List<String> getLogos() throws CustomisationException;
+    List<String> getAssets(final AssetType assetType) throws CustomisationException;
 
-    File getLogo(final String name);
+    File getAsset(final AssetType assetType, final String name);
 
-    boolean deleteLogo(final String name);
+    boolean deleteAsset(final AssetType assetType, final String name);
 
 }
