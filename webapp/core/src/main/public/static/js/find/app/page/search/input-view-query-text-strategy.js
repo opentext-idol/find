@@ -5,7 +5,9 @@ define([
 
     return function (model) {
         return {
+            inputClass: 'search-controls',
             placeholder: i18n['app.searchPlaceholder'],
+
             initialize: function (view) {
                 view.listenTo(model, 'change:inputText', view.updateText);
             },
@@ -14,7 +16,9 @@ define([
             },
             onExternalUpdate: function () {
                 return model.get('inputText');
-            }
+            },
+            inFocus: $.noop(),
+            onBlur: $.noop()
         }
     }
 });

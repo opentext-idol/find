@@ -1013,7 +1013,7 @@ input.find-input {
         transition: @transitAll;
     }
 
-    .find-input-button {
+    .search-controls .find-input-button {
         height: @findInputHeight;
     }
 }
@@ -1359,37 +1359,88 @@ input.find-input {
     }
 }
 
-input.find-input[type="text"],
-input.find-input[type="text"]:focus {
-    &:extend(.no-box-shadow);
+.search-controls {
+    .find-input[type="text"],
+    .find-input[type="text"]:focus {
+        &:extend(.no-box-shadow);
 
-    border-color: transparent;
-    border-radius: @nil;
-    height: @custom9;
-    padding-right: @custom3;
+        border-color: transparent;
+        border-radius: @nil;
+        height: @custom9;
+        padding-right: @custom3;
+    }
+
+    input::-webkit-input-placeholder,
+    input::-moz-placeholder {
+        color: @color1;
+        opacity: 0.5;
+    }
+
+    .find-input-button {
+        &:extend(.absolute);
+
+        height: @custom9;
+        right: @nil;
+        top: @nil;
+    }
+
+    .find-input-button,
+    .find-input-button:hover {
+        &:extend(.no-box-shadow);
+
+        border-left: 1px solid @grey;
+        border: @nil;
+    }
 }
 
-input::-webkit-input-placeholder,
-input::-moz-placeholder {
-    color: @color1;
-    opacity: 0.5;
+.concepts-controls {
+    .find-input[type="text"] {
+        &:extend(.no-box-shadow);
+        &:extend(.form-control);
+
+        border-radius: @nil;
+        color: inherit;
+        transition: border-color 0s ease-in-out 0s;
+
+        &:focus {
+            &:extend(.form-control:focus);
+        }
+    }
+
+    .find-input-button {
+        &:extend(.absolute);
+        &:extend(.no-box-shadow);
+
+        &:hover {
+            background-color: @white;
+        }
+
+        &:focus {
+            outline: 0;
+        }
+
+        height: 34px;
+        right: @nil;
+        top: @nil;
+        border-top: 1px solid #e5e6e7;
+        border-right: 1px solid #e5e6e7;
+        border-bottom: 1px solid #e5e6e7;
+        border-left: 0;
+    }
+
+    .find-input-button.in-focus {
+        border-top: 1px solid #60798d;
+        border-right: 1px solid #60798d;
+        border-bottom: 1px solid #60798d;
+    }
+
+    input::-webkit-input-placeholder,
+    input::-moz-placeholder {
+        color: @color1;
+        opacity: 0.5;
+    }
 }
 
-.find-input-button {
-    &:extend(.absolute);
-
-    height: @custom9;
-    right: @nil;
-    top: @nil;
-}
-
-.find-input-button,
-.find-input-button:hover {
-    &:extend(.no-box-shadow);
-
-    border-left: 1px solid @grey;
-    border: @nil;
-}
 .reverse-animated-container .find-input-button,
 .reverse-animated-container .find-input-button:hover {
     border: 2px solid @grey;

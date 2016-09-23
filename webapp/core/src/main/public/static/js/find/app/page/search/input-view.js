@@ -20,7 +20,20 @@ define([
             },
             'typeahead:select': function() {
                 this.search(this.$input.typeahead('val'));
+            },
+            'focus .find-input': function() {
+                this.inFocus();
+            },
+            'blur .find-input': function() {
+                this.onBlur();
             }
+        },
+
+        inFocus: function () {
+            this.strategy.inFocus(this.$('.find-input-button'))
+        },
+        onBlur: function () {
+            this.strategy.onBlur(this.$('.find-input-button'))
         },
 
         initialize: function(options) {
@@ -29,7 +42,10 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({placeholder: this.strategy.placeholder}));
+            this.$el.html(this.template({
+                placeholder: this.strategy.placeholder,
+                inputClass: this.strategy.inputClass
+            }));
             this.$input = this.$('.find-input');
 
             this.$input.typeahead({
