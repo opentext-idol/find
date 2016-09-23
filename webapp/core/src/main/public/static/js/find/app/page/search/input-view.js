@@ -4,11 +4,10 @@ define([
     'underscore',
     'find/app/util/database-name-resolver',
     'find/app/util/string-blank',
-    'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/input-view.html',
     'typeahead',
     'bootstrap'
-], function(Backbone, $, _, databaseNameResolver, stringBlank, i18n, template) {
+], function(Backbone, $, _, databaseNameResolver, stringBlank, template) {
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -30,7 +29,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({i18n: i18n}));
+            this.$el.html(this.template({placeholder: this.strategy.placeholder}));
             this.$input = this.$('.find-input');
 
             this.$input.typeahead({

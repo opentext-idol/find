@@ -20,6 +20,7 @@ define([
         'app.backToSearch': 'Back to search',
         'app.cancel': 'Cancel',
         'app.compare': 'Compare',
+        'app.conceptBoxPlaceholder': 'Add a Concept',
         'app.delete': 'Delete\u2026',
         'app.button.delete': 'Delete',
         'app.exportToCsv': 'Export Results to CSV\u2026',

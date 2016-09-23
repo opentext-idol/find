@@ -1,8 +1,11 @@
-define([], function () {
+define([
+    'i18n!find/nls/bundle'
+], function (i18n) {
     "use strict";
 
     return function (model) {
         return {
+            placeholder: i18n['app.searchPlaceholder'],
             initialize: function (view) {
                 view.listenTo(model, 'change:inputText', view.updateText);
             },
