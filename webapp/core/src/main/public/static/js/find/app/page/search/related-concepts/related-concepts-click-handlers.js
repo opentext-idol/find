@@ -26,6 +26,10 @@ define([
             return concepts.map(_.identity);
         });
     }
+    
+    function wrapQuotes(concept) {
+        return '"' + concept + '"';
+    }
 
     return {
         /**
@@ -35,7 +39,7 @@ define([
          */
         updateQuery: function(options) {
             return function(newConcepts) {
-                options.conceptGroups.push({concepts: newConcepts});
+                options.conceptGroups.push({concepts: newConcepts.map(wrapQuotes)});
             };
         },
 
@@ -46,7 +50,7 @@ define([
          */
         newQuery: function(options) {
             return function(newConcepts) {
-                const concepts = cloneConceptGroups(options.savedSearchModel.get('relatedConcepts')).concat([newConcepts]);
+                const concepts = cloneConceptGroups(options.savedSearchModel.get('relatedConcepts')).concat([newConcepts.map(wrapQuotes)]);
 
                 const newSearch = new SavedSearchModel(_.defaults({
                     id: null,

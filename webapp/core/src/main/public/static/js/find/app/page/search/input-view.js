@@ -24,8 +24,9 @@ define([
             }
         },
 
-        initialize: function() {
-            this.listenTo(this.model, 'change:inputText', this.updateText);
+        initialize: function(options) {
+            this.strategy = options.strategy;
+            this.strategy.initialize(this);
         },
 
         render: function() {
@@ -69,12 +70,12 @@ define([
         },
 
         search: function(query) {
-            this.model.set({inputText: $.trim(query)});
+            this.strategy.onTextUpdate($.trim(query));
         },
 
         updateText: function() {
             if (this.$input) {
-                this.$input.typeahead('val', this.model.get('inputText'));
+                this.$input.typeahead('val', this.strategy.onExternalUpdate());
             }
         }
     });

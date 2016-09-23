@@ -5,30 +5,25 @@
 define([
     'underscore',
     'parametric-refinement/to-field-text-node'
-], function(_, toFieldTextNode) {
+], function (_, toFieldTextNode) {
 
-    function wrapQuotes(concept) {
-        return '"' + concept + '"';
+    function wrapInBrackets(concept) {
+        return '(' + concept + ')';
     }
 
     // WARNING: This logic is duplicated in the server-side SavedSearch class
     /**
-     * Build query text from the text in the search bar and an array of concept groups.
-     * @param {string} inputText
+     * Build query text from the text in the search bar and an array of concept groups (none of which are *).
      * @param {Array.<Array.<string>>} concepts
      * @return {string}
      */
-    function makeQueryText(inputText, concepts) {
-        if(!inputText) {
-            return '';
+    function makeQueryText(concepts) {
+        if (!concepts || concepts.length < 1){
+            return '*';
         }
 
-        if(_.isEmpty(concepts)) {
-            return inputText;
-        }
-
-        var tail = _.map(_.flatten(_.uniq(concepts)), wrapQuotes).join(' AND ');
-        return inputText === '*' ? tail : '(' + inputText + ') AND ' + tail;
+        //noinspection JSUnresolvedFunction
+        return _.flatten(concepts).map(wrapInBrackets).join(' AND ');
     }
 
     /**

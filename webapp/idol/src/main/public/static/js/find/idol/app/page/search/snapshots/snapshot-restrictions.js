@@ -66,10 +66,6 @@ define([
             });
 
             return [
-                {
-                    title: snapshotsI18n['restrictions.queryText'],
-                    content: attributes.queryText
-                },
                 relatedConcepts(attributes.relatedConcepts),
                 {
                     title: indexesI18n['search.indexes'],

@@ -9,10 +9,11 @@ define([
     'underscore',
     './concept-cluster-view',
     'find/app/page/search/input-view',
+    'find/app/page/search/input-view-concept-strategy',
     'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/concept-view.html'
-], function (Backbone, $, _, ConceptClusterView, InputView, i18n, ListView, template) {
+], function (Backbone, $, _, ConceptClusterView, InputView, conceptStrategy, i18n, ListView, template) {
 
     /**
      * View for displaying the selected concept groups eg in the left side panel.
@@ -36,7 +37,7 @@ define([
                 selector: '.concept-view-container',
                 construct: function () {
                     return new InputView({
-                        model: options.queryState.queryTextModel
+                        strategy: conceptStrategy(options.queryState.conceptGroups)
                     });
                 }
             }];

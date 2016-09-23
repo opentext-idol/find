@@ -82,7 +82,7 @@ define([
 
             this.entityCollection = new EntityCollection([], {
                 getSelectedRelatedConcepts: function() {
-                    return _.flatten(this.queryState.conceptGroups.pluck('concepts')).concat([this.queryState.queryTextModel.get('inputText')]);
+                    return _.flatten(this.queryState.conceptGroups.pluck('concepts'));
                 }.bind(this)
             });
 

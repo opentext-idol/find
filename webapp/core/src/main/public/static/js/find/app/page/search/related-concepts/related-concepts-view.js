@@ -50,7 +50,7 @@ define([
         var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : this.entityCollection.getClusterEntities(entityCluster);
         var relatedConcepts = _.union(this.conceptGroups.pluck('concepts'), clusterEntities);
 
-        var queryText = searchDataUtil.makeQueryText(this.queryTextModel.get('inputText'), relatedConcepts);
+        var queryText = searchDataUtil.makeQueryText(relatedConcepts);
 
         var topResultsCollection = new DocumentsCollection([], {
             indexesCollection: this.indexesCollection
@@ -108,7 +108,6 @@ define([
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
-            this.queryTextModel = options.queryState.queryTextModel;
             this.conceptGroups = options.queryState.conceptGroups;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;

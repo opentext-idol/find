@@ -30,8 +30,7 @@ define([
                     this.view = new ConceptView({
                         configuration: configuration.options,
                         queryState: {
-                            conceptGroups: this.conceptGroups,
-                            queryTextModel: new Backbone.Model()
+                            conceptGroups: this.conceptGroups
                         }
                     });
 
@@ -45,42 +44,42 @@ define([
                     expect($selectedConcepts).toContainText('cat');
                     expect($selectedConcepts).toContainText('monkey');
                 });
-            });
-        });
 
-        it('does not display the empty message when there are concepts', function() {
-            expect(this.view.$('.concept-view-empty-message')).toHaveClass('hide');
-        });
+                it('does not display the empty message when there are concepts', function() {
+                    expect(this.view.$('.concept-view-empty-message')).toHaveClass('hide');
+                });
 
-        describe('when a remove button is clicked', function() {
-            beforeEach(function() {
-                this.view.$('[data-cluster-cid="' + this.conceptGroups.at(0).cid +'"] .concept-remove-icon').click();
-            });
+                describe('when a remove button is clicked', function() {
+                    beforeEach(function() {
+                        this.view.$('[data-cluster-cid="' + this.conceptGroups.at(0).cid +'"] .concept-remove-icon').click();
+                    });
 
-            it('removes the corresponding cluster model from the collection', function() {
-                expect(this.conceptGroups.length).toBe(1);
-                expect(this.conceptGroups.at(0).get('concepts')).toEqual(['monkey', 'ape']);
-            });
-        });
-
-        describe('when the collection is reset', function() {
-            beforeEach(function() {
-                this.conceptGroups.reset();
-            });
-
-            it('displays the empty message', function() {
-                expect(this.view.$('.concept-view-empty-message')).not.toHaveClass('hide');
-            });
-
-            describe('then a new cluster is added', function() {
-                beforeEach(function() {
-                    this.conceptGroups.add({
-                        concepts: ['cat', 'kitten', 'lion']
+                    it('removes the corresponding cluster model from the collection', function() {
+                        expect(this.conceptGroups.length).toBe(1);
+                        expect(this.conceptGroups.at(0).get('concepts')).toEqual(['monkey', 'ape']);
                     });
                 });
 
-                it('hides the empty message', function() {
-                    expect(this.view.$('.concept-view-empty-message')).toHaveClass('hide');
+                describe('when the collection is reset', function() {
+                    beforeEach(function() {
+                        this.conceptGroups.reset();
+                    });
+
+                    it('displays the empty message', function() {
+                        expect(this.view.$('.concept-view-empty-message')).not.toHaveClass('hide');
+                    });
+
+                    describe('then a new cluster is added', function() {
+                        beforeEach(function() {
+                            this.conceptGroups.add({
+                                concepts: ['cat', 'kitten', 'lion']
+                            });
+                        });
+
+                        it('hides the empty message', function() {
+                            expect(this.view.$('.concept-view-empty-message')).toHaveClass('hide');
+                        });
+                    });
                 });
             });
         });
