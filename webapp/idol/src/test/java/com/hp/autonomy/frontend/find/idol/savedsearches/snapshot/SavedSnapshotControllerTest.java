@@ -6,11 +6,11 @@
 package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
@@ -49,6 +49,7 @@ public class SavedSnapshotControllerTest {
     private final SavedSnapshot savedSnapshot = new SavedSnapshot.Builder()
             .setTitle("Any old saved search")
             .setIndexes(Collections.singleton(new EmbeddableIndex("index", "domain")))
+            .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("*", true, -1)))
             .build();
 
     @Before
@@ -59,7 +60,7 @@ public class SavedSnapshotControllerTest {
     @Test
     public void create() throws Exception {
         final StateTokenAndResultCount stateTokenAndResultCount = new StateTokenAndResultCount(stateToken, 123);
-        when(documentsService.getStateTokenAndResultCount(Matchers.<QueryRestrictions<String>>any(), any(Integer.class), any(Boolean.class))).thenReturn(stateTokenAndResultCount);
+        when(documentsService.getStateTokenAndResultCount(any(), any(Integer.class), any(Boolean.class))).thenReturn(stateTokenAndResultCount);
 
         savedSnapshotController.create(savedSnapshot);
         verify(savedSnapshotService).create(any(SavedSnapshot.class));

@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ComparisonServiceIT extends AbstractFindIT {
+    private static final String EMPTY_RESULT_SET_TOKEN = "NULL-0";
     private final ObjectMapper mapper = new ObjectMapper();
     private final QueryRestrictions<String> queryRestrictions = new IdolQueryRestrictions.Builder()
             .setQueryText("*")
@@ -79,7 +81,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", isEmptyOrNullString()))
+                .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", is(EMPTY_RESULT_SET_TOKEN)))
                 .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", not(isEmptyOrNullString())));
     }
 
@@ -99,7 +101,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", not(isEmptyOrNullString())))
-                .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", isEmptyOrNullString()));
+                .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", is(EMPTY_RESULT_SET_TOKEN)));
     }
 
     @Test
@@ -117,7 +119,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", isEmptyOrNullString()))
+                .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", is(EMPTY_RESULT_SET_TOKEN)))
                 .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", not(isEmptyOrNullString())));
     }
 
@@ -136,8 +138,8 @@ public class ComparisonServiceIT extends AbstractFindIT {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", isEmptyOrNullString()))
-                .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", isEmptyOrNullString()));
+                .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", is(EMPTY_RESULT_SET_TOKEN)))
+                .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", is(EMPTY_RESULT_SET_TOKEN)));
     }
 
     @Test
