@@ -263,8 +263,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.clickAndDrag(200, mainGraph.graph());
         numericService.waitForReload();
 
-        final String firstLabel = findPage.filterLabelsText().get(0).split(":")[1];
-        verifyThat("Place elevation filter label doesn't have time format", firstLabel, not(containsString(":")));
+        verifyThat("Place elevation filter label doesn't have time format", findPage.filterLabelsText().get(0), not(containsString(":")));
     }
 
     @Test
@@ -288,6 +287,8 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-400")
+    @Ignore
+    //Ignoring because widget reloading makes it impossible for seleniumt to test this
     public void testInputDateBoundsAsText() throws Exception {
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(2, "red");
         final String startDate = "1976-10-22 08:46";
@@ -360,6 +361,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-633")
     public void testInputDateBoundsWithCalendar() {
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "tragedy");
         final DatePicker startCalendar = mainGraph.openCalendar(mainGraph.startCalendar());

@@ -8,9 +8,9 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.stalenessOf;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
@@ -40,7 +40,12 @@ public class SearchOptionsBar {
         confirmButton.click();
         new WebDriverWait(driver, 20)
                 .withMessage("saving a search")
-                .until(invisibilityOfElementLocated(By.className("save-title-confirm-button")));
+                .until(new ExpectedCondition<Boolean>() {
+                @Override
+                public Boolean apply(final WebDriver driver) {
+                    return bar.findElements(By.cssSelector(".search-title-input-container")).isEmpty();
+                }
+                });
     }
 
     public WebElement saveConfirmButton() {

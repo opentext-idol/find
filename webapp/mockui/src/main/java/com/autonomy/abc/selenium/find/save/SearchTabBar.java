@@ -8,6 +8,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,6 +18,8 @@ import java.util.List;
 public class SearchTabBar implements Iterable<SearchTab> {
     private final WebElement bar;
     private final WebDriver driver;
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
 
     public SearchTabBar(final WebDriver driver) {
         bar = driver.findElement(By.className("search-tabs-list"));
@@ -55,6 +59,7 @@ public class SearchTabBar implements Iterable<SearchTab> {
     }
 
     public void switchTo(final String title) {
+        LOGGER.info("Trying to switch to another tab");
         tab(title).activate();
     }
 
