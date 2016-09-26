@@ -5,6 +5,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,6 +33,17 @@ public class SearchTabBar implements Iterable<SearchTab> {
             tabs.add(new SearchTab(tab));
         }
         return tabs;
+    }
+
+    public List<String> savedTabTitles() {
+        final List<String> tabTitles = new ArrayList<>();
+
+        for(SearchTab tab : tabs()){
+            if(!tab.getTitle().equals("New Search")){
+                tabTitles.add(tab.getTitle());
+            }
+        }
+        return tabTitles;
     }
 
     public String getCurrentTabTitle() {
@@ -65,4 +79,16 @@ public class SearchTabBar implements Iterable<SearchTab> {
         DriverUtil.hover(driver, tabFromIndex(i).getTab());
     }
 
+    public void waitUntilTabGone(final String title) {
+        new WebDriverWait(driver, 10).withMessage("deleted tab to disappear").until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(final WebDriver driver) {
+                return bar.findElements(By.xpath(".//*[contains(normalize-space(),'"+title+"')]")).isEmpty();
+            }
+        });
+    }
+
+    public void waitUntilMoreThanOneTab() {
+        new WebDriverWait(driver,20).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".search-tab:nth-child(2)")));
+    }
 }

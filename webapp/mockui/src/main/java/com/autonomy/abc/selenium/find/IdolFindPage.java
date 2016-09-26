@@ -77,6 +77,10 @@ public class IdolFindPage extends FindPage {
         return findElement(By.cssSelector(".comparison-view")).isDisplayed();
     }
 
+    public void refresh() {
+        getDriver().navigate().refresh();
+    }
+
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {
         @Override
         public IdolFindPage create(final WebDriver context) {

@@ -19,7 +19,7 @@ public class SearchTab {
     }
 
     void activate() {
-        tab.click();
+        tab.findElement(By.tagName("a")).click();
     }
 
     public SearchType getType() {

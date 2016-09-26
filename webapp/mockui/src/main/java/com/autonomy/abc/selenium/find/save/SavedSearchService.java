@@ -7,6 +7,8 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class SavedSearchService {
     private final BIIdolFindElementFactory elementFactory;
     private static final Logger LOGGER = LoggerFactory.getLogger(SavedSearchService.class);
@@ -44,17 +46,21 @@ public class SavedSearchService {
 
     public void deleteAll() {
         LOGGER.info("Deleting all tabs");
+        SearchTabBar tabBar = elementFactory.getSearchTabBar();
 
-        for (final SearchTab tab : elementFactory.getSearchTabBar()) {
-            tab.activate();
+        final List<String> savedTitles = tabBar.savedTabTitles();
+
+        for(String title: savedTitles) {
+            elementFactory.getSearchTabBar().tab(title).activate();
             deleteCurrentSearch();
         }
+        elementFactory.getFindPage().refresh();
+        elementFactory.getFindPage().waitForLoad();
     }
 
     public void deleteCurrentSearch() {
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
-        options.openDeleteModal();
-        options.confirmModalOperation();
+        options.delete();
         Waits.loadOrFadeWait();
     }
 

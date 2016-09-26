@@ -4,6 +4,7 @@ import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.Menu;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -58,7 +59,13 @@ public class SearchOptionsBar {
         return ElementUtil.ancestor(findElement(By.cssSelector("input[type='radio'][value='" + type + "']")), 2);
     }
 
-    void openDeleteModal() {
+    public void delete() {
+        openDeleteModal();
+        confirmModalOperation();
+        Waits.loadOrFadeWait();
+    }
+
+    private void openDeleteModal() {
         extraOptions().select("Delete");
     }
 
