@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
@@ -55,7 +59,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     @Override
     public BIIdolFindElementFactory getElementFactory() {
-        return (BIIdolFindElementFactory) super.getElementFactory();
+        return (BIIdolFindElementFactory)super.getElementFactory();
     }
 
     @Before
@@ -64,7 +68,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         findService = getApplication().findService();
         numericService = getApplication().numericWidgetService();
     }
-
 
     @Test
     @ActiveBug("FIND-417")
@@ -75,7 +78,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         assertThat("Default: main graph not shown", !findPage.mainGraphDisplayed());
 
         MainNumericWidget mainGraph;
-        for (GraphFilterContainer container : filters().graphContainers()) {
+        for(GraphFilterContainer container : filters().graphContainers()) {
             String graphTitle = numericService.selectFilterGraph(container);
             verifyThat("Main graph now shown", findPage.mainGraphDisplayed());
 
@@ -148,7 +151,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         verifyThat("There are results present", findPage.totalResultsNum(), greaterThan(0));
     }
 
-
     @Test
     @Ignore
     public void testMinAndMaxReflectCurrentSearch() {
@@ -179,7 +181,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         findService.search("George Orwell");
         List<Date> newD = findPage.mainGraph().getDates();
 
-        if (newD.get(0).after(oldD.get(0))) {
+        if(newD.get(0).after(oldD.get(0))) {
             verifyThat("Bounds are determined by current query for date widget", newD.get(0).after(oldD.get(0)));
         } else {
             verifyThat("Bounds are determined by current query for date widget", newD.get(1).before(oldD.get(1)));
@@ -232,7 +234,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
                 .map(labelElement -> labelElement.findElement(By.cssSelector(".filter-display-text")).getAttribute("data-original-title"))
                 .collect(Collectors.toList());
 
-        for (int i = 0; i < graphTitles.size(); i++) {
+        for(int i = 0; i < graphTitles.size(); i++) {
             String title = graphTitles.get(i);
             verifyThat("Title " + title.toLowerCase() + " is in filter tooltip", tooltipsText.get(i).toLowerCase(), containsString(title.toLowerCase()));
         }
@@ -242,7 +244,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         List<String> titles = new ArrayList<>();
         MainNumericWidget mainGraph;
 
-        for (GraphFilterContainer container : filters().graphContainers()) {
+        for(GraphFilterContainer container : filters().graphContainers()) {
             titles.add(numericService.selectFilterGraph(container));
             mainGraph = findPage.mainGraph();
             mainGraph.clickAndDrag(100, mainGraph.graph());
@@ -284,7 +286,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         verifyThat("Side panel chart selection rectangle gone", !sidePanelChart.selectionRectangleExists());
     }
 
-
     @Test
     @ResolvedBug("FIND-400")
     public void testInputDateBoundsAsText() throws Exception {
@@ -303,8 +304,8 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Test
     public void testInputNumericBoundsAsText() throws Exception {
         final int range = 250;
-        int rangeMinusDelta = (int) (range * 0.98);
-        int rangePlusDelta = (int) (range * 1.02);
+        int rangeMinusDelta = (int)(range * 0.98);
+        int rangePlusDelta = (int)(range * 1.02);
 
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "red");
         int numericUnitsPerChartWidth = mainGraph.getRange() / mainGraph.graphWidth();
@@ -324,7 +325,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.rectangleHoverLeft();
         String leftCorner = mainGraph.hoverMessage();
 
-        int rectangleRange = (int) (Double.parseDouble(rightCorner) - Double.parseDouble(leftCorner));
+        int rectangleRange = (int)(Double.parseDouble(rightCorner) - Double.parseDouble(leftCorner));
         verifyThat("Edges of rectangle reflect bounds correctly", rectangleRange, allOf(greaterThanOrEqualTo(rangeMinusDelta), lessThanOrEqualTo(rangePlusDelta)));
     }
 
@@ -345,7 +346,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
         verifyThat("Max bound re-set to value of min", mainGraph.maxFieldValue(), is(highNum));
     }
-
 
     private MainNumericWidget setMinAndMax(String min, String max, MainNumericWidget mainGraph) throws Exception {
         Waits.loadOrFadeWait();
@@ -470,7 +470,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         //Applies zooming to side panel
     }*/
     //FIND-323 -> zoom in zoom out
-
 
     private IdolFilterPanel filters() {
         return getElementFactory().getFilterPanel();
