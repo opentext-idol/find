@@ -54,6 +54,7 @@
 @smWidthScreenNavbarUsernameMaxWidth: 100px;
 @selectedConceptsMaxWidth:            100px;
 @settingsIndexesWidth:                100px;
+@filterDisplayLabelWidth:             120px;
 
 /*------Height variables------*/
 @lgHeightScreenTopicMapHeight:  750px;
@@ -1456,8 +1457,9 @@ input::-moz-placeholder {
 
 .filter-display-text {
     line-height: 1.2em;
-    max-width: @custom4;
+    max-width: @filterDisplayLabelWidth;
     vertical-align: middle;
+    font-size: @labelSize;
 }
 
 .filters-margin {
