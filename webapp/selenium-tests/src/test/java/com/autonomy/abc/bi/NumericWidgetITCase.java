@@ -434,45 +434,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         }
     }
 
-    @Test
-    @ResolvedBug("FIND-304")
-    //Not sure how this will work remotely
-    public void testTimeBarSelectionScalesWithWindow() {
-        final MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "face");
-        mainGraph.clickAndDrag(-100, mainGraph.graph());
-
-        final Dimension dimension = new Dimension(800, 600);
-        getDriver().manage().window().setSize(dimension);
-
-        //check if some body element is greater than window.width()
-        //TODO: get clarification from Matt G on what should do
-    }
-
-    //TODO: this is proving tricky -> have already tried several ways
-    /*@Test
-    @ActiveBug("FIND-336")
-    public void testZoomingOutFar(){
-        //test doesn't crash if zoom out really far
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(1,"politics");
-
-        mainGraph.graph().click();
-
-        mainGraph.simulateZoomingIn();
-
-        //need to check the little text boxes are changing
-        //need to check the bottom date when you hover over the bar is sensible -> not negative
-    }
-
-    @Test
-    @ActiveBug("FIND-300")
-    public void testZooming() {
-        //test range of purple remains the same
-        //the selection rec moves independently of x axis -> range changes
-
-        //Applies zooming to side panel
-    }*/
-    //FIND-323 -> zoom in zoom out
-
     private IdolFilterPanel filters() {
         return getElementFactory().getFilterPanel();
     }
