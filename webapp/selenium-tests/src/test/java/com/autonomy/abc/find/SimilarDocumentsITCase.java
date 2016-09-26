@@ -157,8 +157,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value = "FIND-496", type = ApplicationType.HOSTED)
-    public void testInfiniteScroll() {
+    @ResolvedBug("FIND-496")
+    @ActiveBug(value = "FIND-626", type = ApplicationType.HOSTED)
+    public void testInfiniteScroll(){
         final ResultsView results = findService.search(new Query("blast").withFilter(IndexFilter.ALL));
 
         similarDocuments = findService.goToSimilarDocuments(1);
@@ -199,8 +200,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value = "FIND-496", type = ApplicationType.HOSTED)
-    public void testDocumentPreview() {
+    @ResolvedBug("FIND-496")
+    @ActiveBug(value = "FIND-626", type = ApplicationType.HOSTED)
+    public void testDocumentPreview(){
         findService.search(new Query("stars"));
         similarDocuments = findService.goToSimilarDocuments(1);
         testDocPreview(similarDocuments.getResults(5));
@@ -227,8 +229,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value = "FIND-496", type = ApplicationType.HOSTED)
-    public void testDetailedDocumentPreviewFromSimilar() {
+    @ResolvedBug("FIND-496")
+    @ActiveBug(value = "FIND-626", type = ApplicationType.HOSTED)
+    public void testDetailedDocumentPreviewFromSimilar(){
         findService.search(new Query("stars"));
         similarDocuments = findService.goToSimilarDocuments(1);
 

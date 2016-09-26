@@ -169,7 +169,7 @@ public class QueryTermsITCase extends FindTestBase {
         new QueryTestHelper<>(findService)
                 .booleanOperatorQueryText(Errors.Search.OPERATORS, Errors.Search.OPENING_BOOL, Errors.Search.GENERIC_HOSTED_ERROR);
         new QueryTestHelper<>(findService)
-                .emptyQueryText(Errors.Search.STOPWORDS, Errors.Search.NO_TEXT, Errors.Search.GENERIC_HOSTED_ERROR);
+                .emptyQueryText(Errors.Search.STOPWORDS, Errors.Search.NO_TEXT,Errors.Search.GENERIC_HOSTED_ERROR, Errors.Search.HOSTED_INVALID);
     }
 
     @Test
