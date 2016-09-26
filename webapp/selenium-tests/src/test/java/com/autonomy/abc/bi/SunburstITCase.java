@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -91,12 +92,11 @@ public class SunburstITCase extends IdolFindTestBase {
     public void testParametricSelectorsChangeDisplay() {
         search("cricket");
 
-        //only works if you have at least 2 parametric types
-        results.parametricSelectionDropdown(1).selectItem(1);
+        final String filterCategory = filters().formattedNameOfNonZeroField(1);
+        results.parametricSelectionDropdown(1).select(filterCategory);
         Waits.loadOrFadeWait();
 
-        final int correctNumberSegments = getFilterResultsBigEnoughToDisplay(1).size();
-
+        final int correctNumberSegments = getFilterResultsBigEnoughToDisplay(filterCategory).size();
         assertThat("Correct number (" + correctNumberSegments + ") of sunburst segments ", results.numberOfSunburstSegments(), is(correctNumberSegments));
     }
 
@@ -104,7 +104,8 @@ public class SunburstITCase extends IdolFindTestBase {
     public void testHoveringOverSegmentCausesTextToChange() {
         search("elephant");
 
-        final List<String> bigEnough = getFilterResultsBigEnoughToDisplay(0);
+        final String filterCategory = filters().formattedNameOfNonZeroField(0);
+        final List<String> bigEnough = getFilterResultsBigEnoughToDisplay(filterCategory);
 
         for (final WebElement segment : results.findSunburstSegments()) {
             results.segmentHover(segment);
@@ -114,10 +115,10 @@ public class SunburstITCase extends IdolFindTestBase {
         }
     }
 
-    //TODO: seeAll should create a modal!!!!
-    private List<String> getFilterResultsBigEnoughToDisplay(final int filterContainerIndex) {
-        filters().parametricField(filterContainerIndex).expand();
-        filters().parametricField(filterContainerIndex).seeAll();
+    private List<String> getFilterResultsBigEnoughToDisplay(final String filterCategory){
+        ParametricFieldContainer filterContainer = filters().parametricContainer(filterCategory);
+        filterContainer.expand();
+        filterContainer.seeAll();
 
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
         final List<String> bigEnough = filterModal.expectedParametricValues();
@@ -212,7 +213,7 @@ public class SunburstITCase extends IdolFindTestBase {
         results.waitForSunburst();
     }
 
-    private FilterPanel filters() {
+    private IdolFilterPanel filters() {
         return getElementFactory().getFilterPanel();
     }
 }

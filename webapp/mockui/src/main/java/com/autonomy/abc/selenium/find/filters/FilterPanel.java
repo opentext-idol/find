@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.hp.autonomy.frontend.selenium.element.Collapsible;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import org.apache.commons.lang3.text.WordUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -104,6 +105,12 @@ public class FilterPanel {
             index++;
         }
         return -1;
+    }
+
+    public String formattedNameOfNonZeroField(final int n) {
+        return WordUtils.capitalize(parametricField(nonZeroParamFieldContainer(n))
+                .filterCategoryName()
+                .toLowerCase());
     }
 
     //DATE SPECIFIC
