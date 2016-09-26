@@ -3,20 +3,20 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 define([
-    'backbone',
+    'find/app/page/search/abstract-section-view',
     'jquery',
     'underscore',
     './concept-cluster-view',
     'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/concept-view.html'
-], function(Backbone, $, _, ConceptClusterView, i18n, ListView, template) {
+], function(AbstractSectionView, $, _, ConceptClusterView, i18n, ListView, template) {
 
     /**
      * View for displaying the selected concept groups eg in the left side panel.
      * Expects to be given the queryState on construction.
      */
-    return Backbone.View.extend({
+    return AbstractSectionView.extend({
         html: _.template(template)({i18n: i18n}),
 
         events: {
@@ -27,6 +27,8 @@ define([
         },
 
         initialize: function(options) {
+            AbstractSectionView.prototype.initialize.apply(this, arguments);
+
             this.conceptGroups = options.queryState.conceptGroups;
 
             this.listView = new ListView({
@@ -38,7 +40,9 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.html);
+            AbstractSectionView.prototype.render.apply(this, arguments);
+
+            this.getViewContainer().html(this.html);
             this.listView.setElement(this.$('.concept-view-concepts')).render();
             this.updateEmpty();
         },
@@ -51,7 +55,7 @@ define([
 
         remove: function() {
             this.listView.remove();
-            Backbone.View.prototype.remove.call(this);
+            AbstractSectionView.prototype.remove.call(this);
         }
     });
 });

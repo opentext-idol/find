@@ -6,6 +6,7 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/page/search/abstract-section-view',
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filters/parametric/numeric-parametric-view',
@@ -18,7 +19,7 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(Backbone, $, _, DateView, ParametricView, NumericParametricView, NumericParametricFieldView,
+], function(Backbone, $, _, AbstractSectionView, DateView, ParametricView, NumericParametricView, NumericParametricFieldView,
             TextInput, Collapsible, FilteringCollection, prettifyFieldName, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
     "use strict";
 
@@ -42,8 +43,10 @@ define([
         return text.toLowerCase().indexOf(search.toLowerCase()) > -1;
     }
 
-    return Backbone.View.extend({
+    return AbstractSectionView.extend({
         initialize: function(options) {
+            AbstractSectionView.prototype.initialize.apply(this, arguments);
+
             const IndexesView = options.IndexesView;
             this.collapsed = {};
 
@@ -258,12 +261,14 @@ define([
         },
 
         render: function() {
+            AbstractSectionView.prototype.render.apply(this, arguments);
+
             //noinspection JSUnresolvedVariable
-            this.$el.empty();
+            this.getViewContainer().empty();
             this.views.forEach(function(view) {
                 view.get$els().forEach(function($el) {
                     //noinspection JSUnresolvedVariable
-                    this.$el.append($el);
+                    this.getViewContainer().append($el);
                 }.bind(this));
             }.bind(this));
 
@@ -279,7 +284,7 @@ define([
             //noinspection JSUnresolvedFunction
             _.invoke(this.views, 'remove');
 
-            Backbone.View.prototype.remove.call(this);
+            AbstractSectionView.prototype.remove.call(this);
         },
 
         updateEmptyMessage: function() {
