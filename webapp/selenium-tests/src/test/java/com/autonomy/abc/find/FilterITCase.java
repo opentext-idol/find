@@ -65,7 +65,7 @@ public class FilterITCase extends FindTestBase {
     public void testParametricFiltersDefaultCollapsed() {
         searchAndWait("knee");
 
-        for(ParametricFieldContainer container : filters().parametricFieldContainers()) {
+        for(ParametricFieldContainer container : filterPanel.parametricFieldContainers()) {
             verifyThat("Container is collapsed", container.isCollapsed());
         }
     }
@@ -74,14 +74,14 @@ public class FilterITCase extends FindTestBase {
     public void testParametricFiltersResults() {
         ResultsView results = searchAndWait("*");
 
-        List<ParametricFieldContainer> containers = filters().parametricFieldContainers();
+        List<ParametricFieldContainer> containers = filterPanel.parametricFieldContainers();
         for(ParametricFieldContainer container : containers) {
             container.expand();
             int numberFields = container.getFilters().size();
             verifyThat("Field values: " + numberFields + " - less than or equal to 5", numberFields, lessThanOrEqualTo(5));
         }
 
-        final ParametricFieldContainer secondContainer = filters().parametricField(1);
+        final ParametricFieldContainer secondContainer = filterPanel.parametricField(1);
         secondContainer.expand();
         final FindParametricFilter secondField = secondContainer.getFilters().get(1);
         final String filterName = secondField.getName();
@@ -104,7 +104,7 @@ public class FilterITCase extends FindTestBase {
         }
 
         Waits.loadOrFadeWait();
-        final ParametricFieldContainer container = filters().parametricContainerOfFilter(filterName);
+        final ParametricFieldContainer container = filterPanel.parametricContainerOfFilter(filterName);
         final String filterNumber = container.getFilterNumber();
         final String filterCategory = container.filterCategoryName();
 
@@ -112,14 +112,14 @@ public class FilterITCase extends FindTestBase {
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
         verifyThat("Filter category title shows the number of filters chosen from total", filterNumber, is("1 / " + filterModal.filtersWithResultsForCurrentSearch()));
 
-        filters().checkboxForParametricValue(WordUtils.capitalize(filterCategory.toLowerCase()), filterName).uncheck();
+        filterPanel.checkboxForParametricValue(WordUtils.capitalize(filterCategory.toLowerCase()), filterName).uncheck();
         findPage.waitForParametricValuesToLoad();
-        int totalParametricFields = filters().parametricFieldContainers().size();
+        int totalParametricFields = filterPanel.parametricFieldContainers().size();
 
         searchAndWait("shouldhavenoresultsprobably");
         findPage.originalQuery().click();
         findPage.waitForParametricValuesToLoad();
-        int noResultsParametricFields = filters().parametricFieldContainers().size();
+        int noResultsParametricFields = filterPanel.parametricFieldContainers().size();
 
         verifyThat("Filters changed: no results -> parametric fields remain", noResultsParametricFields, is(totalParametricFields));
     }
@@ -130,9 +130,9 @@ public class FilterITCase extends FindTestBase {
         searchAndWait("cats");
 
         //TODO: when everyone has same data, make test select across several filter categories
-        final ParametricFieldContainer container = filters().parametricField(1);
+        final ParametricFieldContainer container = filterPanel.parametricField(1);
         final String filterCategory = container.filterCategoryName();
-        FindParametricFilter checkbox = filters().checkboxForParametricValue(1, 1);
+        FindParametricFilter checkbox = filterPanel.checkboxForParametricValue(1, 1);
         final List<String> selectedFilter = Arrays.asList(checkbox.getName());
         checkbox.check();
 
@@ -147,7 +147,7 @@ public class FilterITCase extends FindTestBase {
         final String checkedFilterName = filterModal.checkCheckBoxInActivePane(0);
         filterModal.apply();
 
-        final FindParametricFilter panelBox = filters().checkboxForParametricValue(filterType, checkedFilterName);
+        final FindParametricFilter panelBox = filterPanel.checkboxForParametricValue(filterType, checkedFilterName);
         verifyThat("Filter: " + checkedFilterName + " is now checked on panel", panelBox.isChecked());
     }
 
@@ -157,11 +157,11 @@ public class FilterITCase extends FindTestBase {
     public void testModalShowsALLFiltersRegardlessOfQuery() {
         searchAndWait("*");
         List<String> allFilterCategories = new ArrayList<>();
-        for(ParametricFieldContainer container : filters().parametricFieldContainers()) {
+        for(ParametricFieldContainer container : filterPanel.parametricFieldContainers()) {
             allFilterCategories.add(container.filterCategoryName());
         }
 
-        filters().parametricField(0).seeAll();
+        filterPanel.parametricField(0).seeAll();
         ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
         final int totalNumberFilters = filterModal.allFilters().size();
 
@@ -172,10 +172,10 @@ public class FilterITCase extends FindTestBase {
         }
         filterModal.cancel();
 
-        filters().checkboxForParametricValue(0, 1).check();
+        filterPanel.checkboxForParametricValue(0, 1).check();
 
-        filters().waitForParametricFields();
-        filters().parametricField(0).seeAll();
+        filterPanel.waitForParametricFields();
+        filterPanel.parametricField(0).seeAll();
         filterModal = ParametricFilterModal.getParametricModal(getDriver());
 
         assertThat("Modal shows all filter categories", filterModal.tabs(), hasSize(allFilterCategories.size()));
@@ -201,8 +201,8 @@ public class FilterITCase extends FindTestBase {
     }
 
     private List<FindParametricFilter> checkAllVisibleFiltersInFirstParametrics() {
-        filters().parametricField(0).expand();
-        final List<FindParametricFilter> boxes = filters().checkBoxesForParametricFieldContainer(0);
+        filterPanel.parametricField(0).expand();
+        final List<FindParametricFilter> boxes = filterPanel.checkBoxesForParametricFieldContainer(0);
         for(final FindParametricFilter checkBox : boxes) {
             checkBox.check();
         }
@@ -214,8 +214,8 @@ public class FilterITCase extends FindTestBase {
     //Because filter categories all collapse after selecting 1, must be quick or throws NoSuchElement
     public void testSelectDifferentCategoryFiltersAndResultsLoad() throws InterruptedException {
         final ResultsView results = findService.search("face");
-        final FindParametricFilter filter1 = filters().checkBoxesForParametricFieldContainer(0).get(0);
-        final FindParametricFilter filter2 = filters().checkBoxesForParametricFieldContainer(1).get(0);
+        final FindParametricFilter filter1 = filterPanel.checkBoxesForParametricFieldContainer(0).get(0);
+        final FindParametricFilter filter2 = filterPanel.checkBoxesForParametricFieldContainer(1).get(0);
 
         filter1.check();
         filter2.check();
@@ -228,7 +228,7 @@ public class FilterITCase extends FindTestBase {
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
         final ResultsView results = findService.search("wolf");
 
-        FindParametricFilter filter = filters().checkBoxesForParametricFieldContainer(0).get(0);
+        FindParametricFilter filter = filterPanel.checkBoxesForParametricFieldContainer(0).get(0);
         filter.check();
         filter.uncheck();
 
@@ -254,17 +254,17 @@ public class FilterITCase extends FindTestBase {
     public void testFilterByMultipleIndexes() {
         findService.search("unbelievable");
 
-        final IndexFilter filter = new IndexFilter(filters().getIndex(2));
+        final IndexFilter filter = new IndexFilter(filterPanel.getIndex(2));
         findPage.filterBy(filter);
         Waits.loadOrFadeWait();
         final int firstFilterResults = findPage.totalResultsNum();
 
-        filter.add(filters().getIndex(3));
+        filter.add(filterPanel.getIndex(3));
         findPage.filterBy(filter);
         Waits.loadOrFadeWait();
         final int bothFilterResults = findPage.totalResultsNum();
 
-        findPage.filterBy(new IndexFilter(filters().getIndex(3)));
+        findPage.filterBy(new IndexFilter(filterPanel.getIndex(3)));
         final int secondFilterResults = findPage.totalResultsNum();
 
         assertThat("Both filter indexes thus both results", firstFilterResults + secondFilterResults, is(bothFilterResults));
@@ -373,24 +373,113 @@ public class FilterITCase extends FindTestBase {
         }
     }
 
-    private FilterPanel filters() {
-        return getElementFactory().getFilterPanel();
-    }
-
     private void toggleDateSelection(final DateOption date) {
-        filters().toggleFilter(date);
+        filterPanel.toggleFilter(date);
         getElementFactory().getResultsPage().waitForResultsToLoad();
     }
 
     // Filters Applied section
     @Test
     public void filtersAppearInFiltersAppliedSection() {
-        List<WebElement> appliedFiltersPanel = this.appliedFiltersPanel.getPanel().findElements(By.cssSelector(".filter-label"));
+        final ResultsView results = findService.search("truth");
+
+        List<WebElement> appliedFiltersPanel = getFilterLabels();
+
         assumeThat("No filter present", appliedFiltersPanel, empty());
 
         filterPanel.toggleFilter(DateOption.WEEK);
-        appliedFiltersPanel = this.appliedFiltersPanel.getPanel().findElements(By.cssSelector(".filter-label"));
+        results.waitForResultsToLoad();
+        appliedFiltersPanel = getFilterLabels();
 
         assertThat("Filter label is in the Applied Filters Panel", appliedFiltersPanel, not(empty()));
+    }
+
+    private List<WebElement> getFilterLabels() {
+        return this.appliedFiltersPanel
+                .getPanel()
+                .findElements(By.cssSelector(".filter-label"));
+    }
+
+    @Test
+    public void appliedFiltersCounterDefaultsToZero() {
+        final List<WebElement> appliedFilters = appliedFiltersPanel.getAppliedFilters();
+        assertThat("By default there are no filters present", appliedFilters, is(empty()));
+
+        final String headerText = appliedFiltersPanel.getHeader().getText();
+        assertThat("The header reports zero filters", headerText, endsWith("(" + appliedFilters.size() + ")"));
+    }
+
+    @SuppressWarnings("FeatureEnvy")
+    @Test
+    public void applyingFiltersIncrementsTheHeaderCounter() {
+        final ResultsView results = findService.search("truth");
+
+        List<WebElement> appliedFilters = appliedFiltersPanel.getAppliedFilters();
+        assertThat("By default there are no filters present", appliedFilters, is(empty()));
+
+        filterPanel.toggleFilter(DateOption.WEEK);
+        results.waitForResultsToLoad();
+
+        appliedFilters = appliedFiltersPanel.getAppliedFilters();
+        assertThat("A filter label appears", appliedFilters, hasSize(1));
+
+        String headerText = appliedFiltersPanel.getHeader().getText();
+        assertThat("The header reports the number of filter labels", headerText, endsWith("(" + appliedFilters.size() + ")"));
+
+        filterPanel.toggleFilter(DateOption.WEEK);
+        results.waitForResultsToLoad();
+
+        appliedFilters = appliedFiltersPanel.getAppliedFilters();
+        assertThat("The filter label disappears", appliedFilters, is(empty()));
+
+        headerText = appliedFiltersPanel.getHeader().getText();
+        assertThat("The header again reports no filters", headerText, endsWith("(" + appliedFilters.size() + ")"));
+    }
+
+    @SuppressWarnings("FeatureEnvy")
+    @Test
+    public void theRemoveAllFiltersButtonIsHiddenWhenThereAreNoFilters() {
+        final ResultsView results = findService.search("truth");
+
+        final WebElement removeAllButton = appliedFiltersPanel.getRemoveAllFiltersButton();
+        assertThat("Button is hidden at startup", !removeAllButton.isDisplayed());
+
+        filterPanel.toggleFilter(DateOption.WEEK);
+        results.waitForResultsToLoad();
+        assertThat("Button is displayed when filter is present", removeAllButton.isDisplayed());
+
+        filterPanel.toggleFilter(DateOption.WEEK);
+        results.waitForResultsToLoad();
+        assertThat("Button disappears after removing filter", !removeAllButton.isDisplayed());
+    }
+
+    @SuppressWarnings("FeatureEnvy")
+    @Test
+    public void clickingTheRemoveAllButtonRemovesAllFilters() {
+        final ResultsView results = findService.search("truth");
+        results.waitForResultsToLoad();
+
+        List<WebElement> appliedFilters = appliedFiltersPanel.getAppliedFilters();
+        assertThat("By default there are no filters present", appliedFilters, is(empty()));
+
+        final int index = filterPanel.nonZeroParamFieldContainer(0);
+        assumeThat("There are non-zero parametric filters", index > -1);
+
+        final ParametricFieldContainer parametricFilterContainer = filterPanel.parametricField(index);
+        parametricFilterContainer.expand();
+        final FindParametricFilter parametricFilter = parametricFilterContainer.getFilters().get(0);
+
+        parametricFilter.check();
+        results.waitForResultsToLoad();
+
+        filterPanel.toggleFilter(DateOption.YEAR);
+        results.waitForResultsToLoad();
+
+        appliedFilters = appliedFiltersPanel.getAppliedFilters();
+        assertThat("Two filters are applied", appliedFilters, hasSize(2));
+
+        appliedFiltersPanel.getRemoveAllFiltersButton().click();
+        appliedFilters = appliedFiltersPanel.getAppliedFilters();
+        assertThat("All filters are removed", appliedFilters, is(empty()));
     }
 }
