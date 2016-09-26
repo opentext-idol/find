@@ -53,7 +53,6 @@ define([
 
     return Backbone.View.extend({
         // Can be overridden
-        headerControlsHtml: '',
         displayDependentParametricViews: true,
 
         getSavedSearchControlViewOptions: function() {
@@ -309,7 +308,6 @@ define([
             var hasBiRole = configuration().hasBiRole;
 
             this.$el.html(template({
-                headerControlsHtml: this.headerControlsHtml,
                 relatedConcepts: configuration().enableRelatedConcepts,
                 hasBiRole: hasBiRole
             }));
