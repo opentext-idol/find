@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.find.application;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
+import com.autonomy.abc.selenium.find.filters.AppliedFiltersPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
@@ -53,6 +54,10 @@ public abstract class FindElementFactory extends ElementFactoryBase {
     }
 
     public DetailedPreviewPage getDetailedPreview() {return new DetailedPreviewPage.Factory().create(getDriver());}
+
+    public AppliedFiltersPanel getAppliedFiltersPanel() {
+        return new AppliedFiltersPanel(getDriver());
+    }
 
     @Override
     public <T extends AppPage> T loadPage(final Class<T> type) {

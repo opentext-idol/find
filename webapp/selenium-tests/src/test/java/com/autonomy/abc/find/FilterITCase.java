@@ -1,7 +1,10 @@
+/*
+ * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
-import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
@@ -20,6 +23,8 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.text.WordUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import java.util.*;
 
@@ -31,6 +36,8 @@ import static org.junit.Assert.fail;
 public class FilterITCase extends FindTestBase {
     private FindPage findPage;
     private FindService findService;
+    private FilterPanel filterPanel;
+    private AppliedFiltersPanel appliedFiltersPanel;
 
     public FilterITCase(final TestConfig config) {
         super(config);
@@ -40,12 +47,14 @@ public class FilterITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
+        appliedFiltersPanel = getElementFactory().getAppliedFiltersPanel();
+        filterPanel = getElementFactory().getFilterPanel();
         if(!findPage.footerLogo().isDisplayed()) {
-            ((IdolFindPage) findPage).goToListView();
+            ((IdolFindPage)findPage).goToListView();
         }
     }
 
-    private ResultsView search(final String searchTerm) {
+    private ResultsView searchAndWait(final String searchTerm) {
         final ResultsView results = findService.search(searchTerm);
         findPage.waitForParametricValuesToLoad();
         results.waitForResultsToLoad();
@@ -53,23 +62,23 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    public void testParametricFiltersDefaultCollapsed(){
-        search("knee");
+    public void testParametricFiltersDefaultCollapsed() {
+        searchAndWait("knee");
 
         for(ParametricFieldContainer container : filters().parametricFieldContainers()) {
-            verifyThat("Container is collapsed",container.isCollapsed());
+            verifyThat("Container is collapsed", container.isCollapsed());
         }
     }
 
     @Test
     public void testParametricFiltersResults() {
-        ResultsView results = search("*");
+        ResultsView results = searchAndWait("*");
 
         List<ParametricFieldContainer> containers = filters().parametricFieldContainers();
         for(ParametricFieldContainer container : containers) {
             container.expand();
             int numberFields = container.getFilters().size();
-            verifyThat("Field values: "+numberFields + " - less than or equal to 5",numberFields,lessThanOrEqualTo(5));
+            verifyThat("Field values: " + numberFields + " - less than or equal to 5", numberFields, lessThanOrEqualTo(5));
         }
 
         final ParametricFieldContainer secondContainer = filters().parametricField(1);
@@ -79,19 +88,18 @@ public class FilterITCase extends FindTestBase {
         final int expectedResults = secondField.getResultsCount();
 
         final int originalNumberOfResults = findPage.totalResultsNum();
-        assumeThat("Fewer results predicted w/ this filter",expectedResults,lessThan(originalNumberOfResults));
+        assumeThat("Fewer results predicted w/ this filter", expectedResults, lessThan(originalNumberOfResults));
 
         secondField.check();
         results.waitForResultsToLoad();
 
         verifyThat("Expected number of results (according to panel) equals actual number of results",
-                results.getResultsCount(),is(expectedResults));
+                   results.getResultsCount(), is(expectedResults));
 
         try {
             secondContainer.getFilters();
             fail("Filter panel did not reload after filter selection");
-        }
-        catch (Exception e) {
+        } catch(Exception e) {
             LOGGER.info("Correctly threw exception as filter panel has reloaded");
         }
 
@@ -102,25 +110,24 @@ public class FilterITCase extends FindTestBase {
 
         container.seeAll();
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
-        verifyThat("Filter category title shows the number of filters chosen from total", filterNumber, is( "1 / " + filterModal.filtersWithResultsForCurrentSearch()));
+        verifyThat("Filter category title shows the number of filters chosen from total", filterNumber, is("1 / " + filterModal.filtersWithResultsForCurrentSearch()));
 
-        filters().checkboxForParametricValue(WordUtils.capitalize(filterCategory.toLowerCase()),filterName).uncheck();
+        filters().checkboxForParametricValue(WordUtils.capitalize(filterCategory.toLowerCase()), filterName).uncheck();
         findPage.waitForParametricValuesToLoad();
         int totalParametricFields = filters().parametricFieldContainers().size();
 
-        search("shouldhavenoresultsprobably");
+        searchAndWait("shouldhavenoresultsprobably");
         findPage.originalQuery().click();
         findPage.waitForParametricValuesToLoad();
         int noResultsParametricFields = filters().parametricFieldContainers().size();
 
-        verifyThat("Filters changed: no results -> parametric fields remain",noResultsParametricFields, is(totalParametricFields));
+        verifyThat("Filters changed: no results -> parametric fields remain", noResultsParametricFields, is(totalParametricFields));
     }
-
 
     @Test
     @ActiveBug("FIND-463")
     public void testFilterPanelAndModalLinked() {
-        search("cats");
+        searchAndWait("cats");
 
         //TODO: when everyone has same data, make test select across several filter categories
         final ParametricFieldContainer container = filters().parametricField(1);
@@ -132,25 +139,25 @@ public class FilterITCase extends FindTestBase {
         container.seeAll();
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
         //TODO: once loading forever bug fixed check that this passes -> may need to do a time-out w/ message
-        assertThat("Modal not loading forever",!filterModal.loadingIndicatorPresent());
-        verifyThat("Correct tab is active",filterModal.activeTabName(),equalToIgnoringCase(filterCategory));
-        verifyThat("Same fields selected in modal as panel",filterModal.checkedFiltersAllPanes(),is(selectedFilter));
+        assertThat("Modal not loading forever", !filterModal.loadingIndicatorPresent());
+        verifyThat("Correct tab is active", filterModal.activeTabName(), equalToIgnoringCase(filterCategory));
+        verifyThat("Same fields selected in modal as panel", filterModal.checkedFiltersAllPanes(), is(selectedFilter));
 
         final String filterType = filterModal.activeTabName();
         final String checkedFilterName = filterModal.checkCheckBoxInActivePane(0);
         filterModal.apply();
 
-        final FindParametricFilter panelBox = filters().checkboxForParametricValue(filterType,checkedFilterName);
-        verifyThat("Filter: "+checkedFilterName+" is now checked on panel",panelBox.isChecked());
+        final FindParametricFilter panelBox = filters().checkboxForParametricValue(filterType, checkedFilterName);
+        verifyThat("Filter: " + checkedFilterName + " is now checked on panel", panelBox.isChecked());
     }
 
     @Test
     @ActiveBug("FIND-406")
     @ResolvedBug("FIND-242")
     public void testModalShowsALLFiltersRegardlessOfQuery() {
-        search("*");
+        searchAndWait("*");
         List<String> allFilterCategories = new ArrayList<>();
-        for(ParametricFieldContainer container :  filters().parametricFieldContainers()) {
+        for(ParametricFieldContainer container : filters().parametricFieldContainers()) {
             allFilterCategories.add(container.filterCategoryName());
         }
 
@@ -165,38 +172,38 @@ public class FilterITCase extends FindTestBase {
         }
         filterModal.cancel();
 
-        filters().checkboxForParametricValue(0,1).check();
+        filters().checkboxForParametricValue(0, 1).check();
 
         filters().waitForParametricFields();
         filters().parametricField(0).seeAll();
         filterModal = ParametricFilterModal.getParametricModal(getDriver());
 
-        assertThat("Modal shows all filter categories",filterModal.tabs(),hasSize(allFilterCategories.size()));
+        assertThat("Modal shows all filter categories", filterModal.tabs(), hasSize(allFilterCategories.size()));
         verifyThat("Shows all filters for restricted search (some filters may have 0 docs)"
-                ,filterModal.allFilters()
-                ,hasSize(totalNumberFilters));
+                , filterModal.allFilters()
+                , hasSize(totalNumberFilters));
 
         filterModal.cancel();
     }
 
     @Test
     @ResolvedBug("FIND-231")
-    public void testDeselectingFiltersNoFloatingTooltips(){
-        search("home");
+    public void testDeselectingFiltersNoFloatingTooltips() {
+        searchAndWait("home");
 
         final List<FindParametricFilter> boxes = checkAllVisibleFiltersInFirstParametrics();
-        for(final FindParametricFilter checkbox:boxes){
+        for(final FindParametricFilter checkbox : boxes) {
             checkbox.name().click();
         }
 
         Waits.loadOrFadeWait();
-        verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()),not(hasSize(boxes.size())));
+        verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()), not(hasSize(boxes.size())));
     }
 
-    private List<FindParametricFilter> checkAllVisibleFiltersInFirstParametrics(){
+    private List<FindParametricFilter> checkAllVisibleFiltersInFirstParametrics() {
         filters().parametricField(0).expand();
         final List<FindParametricFilter> boxes = filters().checkBoxesForParametricFieldContainer(0);
-        for(final FindParametricFilter checkBox:boxes){
+        for(final FindParametricFilter checkBox : boxes) {
             checkBox.check();
         }
         return boxes;
@@ -205,7 +212,7 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-247")
     //Because filter categories all collapse after selecting 1, must be quick or throws NoSuchElement
-    public void testSelectDifferentCategoryFiltersAndResultsLoad() throws  InterruptedException{
+    public void testSelectDifferentCategoryFiltersAndResultsLoad() throws InterruptedException {
         final ResultsView results = findService.search("face");
         final FindParametricFilter filter1 = filters().checkBoxesForParametricFieldContainer(0).get(0);
         final FindParametricFilter filter2 = filters().checkBoxesForParametricFieldContainer(1).get(0);
@@ -214,7 +221,7 @@ public class FilterITCase extends FindTestBase {
         filter2.check();
 
         results.waitForResultsToLoad();
-        verifyThat("Loading indicator not present",!results.loadingIndicatorPresent());
+        verifyThat("Loading indicator not present", !results.loadingIndicatorPresent());
     }
 
     @Test
@@ -226,7 +233,7 @@ public class FilterITCase extends FindTestBase {
         filter.uncheck();
 
         results.waitForResultsToLoad();
-        assertThat("No error message",!results.errorContainerShown());
+        assertThat("No error message", !results.errorContainerShown());
     }
 
     @Test
@@ -273,7 +280,7 @@ public class FilterITCase extends FindTestBase {
 
         findPage.filterBy(new IndexFilter(chosenIndex));
         //weirdly failing to open the 2nd result (subsequent okay)
-        for (int i = 1; i < 6; i++) {
+        for(int i = 1; i < 6; i++) {
             final DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
             assertThat(docPreview.getIndexName(), is(chosenIndex));
             docViewer.close();
@@ -321,8 +328,8 @@ public class FilterITCase extends FindTestBase {
     private Date getDate(final DateOption period) {
         final Calendar cal = Calendar.getInstance();
 
-        if (period != null) {
-            switch (period) {
+        if(period != null) {
+            switch(period) {
                 case WEEK:
                     cal.add(Calendar.DATE, -7);
                     break;
@@ -344,10 +351,10 @@ public class FilterITCase extends FindTestBase {
         final Date end = getDate(DateOption.WEEK);
 
         findService.search(new Query("Corbyn")
-                .withFilter(new StringDateFilter().from(start).until(end)));
+                                   .withFilter(new StringDateFilter().from(start).until(end)));
 
         Waits.loadOrFadeWait();
-        for (int unused = 0; unused < 3; unused++) {
+        for(int unused = 0; unused < 3; unused++) {
             toggleDateSelection(DateOption.CUSTOM);
             Waits.loadOrFadeWait();
         }
@@ -360,7 +367,7 @@ public class FilterITCase extends FindTestBase {
     public void testClickingCustomDateFilterDoesNotRefreshResults() {
         final ResultsView results = findService.search("O Captain! My Captain!");
         // may not happen the first time
-        for (int unused = 0; unused < 5; unused++) {
+        for(int unused = 0; unused < 5; unused++) {
             toggleDateSelection(DateOption.CUSTOM);
             assertThat(results.resultsDiv().getText(), not(containsString("Loading")));
         }
@@ -373,5 +380,17 @@ public class FilterITCase extends FindTestBase {
     private void toggleDateSelection(final DateOption date) {
         filters().toggleFilter(date);
         getElementFactory().getResultsPage().waitForResultsToLoad();
+    }
+
+    // Filters Applied section
+    @Test
+    public void filtersAppearInFiltersAppliedSection() {
+        List<WebElement> appliedFiltersPanel = this.appliedFiltersPanel.getPanel().findElements(By.cssSelector(".filter-label"));
+        assumeThat("No filter present", appliedFiltersPanel, empty());
+
+        filterPanel.toggleFilter(DateOption.WEEK);
+        appliedFiltersPanel = this.appliedFiltersPanel.getPanel().findElements(By.cssSelector(".filter-label"));
+
+        assertThat("Filter label is in the Applied Filters Panel", appliedFiltersPanel, not(empty()));
     }
 }
