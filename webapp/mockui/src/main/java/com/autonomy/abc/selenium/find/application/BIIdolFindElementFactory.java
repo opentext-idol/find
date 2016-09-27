@@ -11,12 +11,18 @@ import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
 import com.autonomy.abc.selenium.find.save.SearchOptionsBar;
 import com.autonomy.abc.selenium.find.save.SearchTabBar;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import org.openqa.selenium.WebDriver;
 
 public class BIIdolFindElementFactory extends IdolFindElementFactory {
 
     BIIdolFindElementFactory(final WebDriver driver) {
         super(driver);
+    }
+
+    @Override
+    public FormInput getSearchBox() {
+        return getConceptsPanel().getConceptBoxInput();
     }
 
     public SearchTabBar getSearchTabBar() {

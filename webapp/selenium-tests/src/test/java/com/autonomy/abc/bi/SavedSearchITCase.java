@@ -30,6 +30,9 @@ import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
@@ -146,7 +149,6 @@ public class SavedSearchITCase extends IdolFindTestBase {
         final BIIdolFindElementFactory factory = other.elementFactory();
         factory.getSearchTabBar().switchTo("oasis");
         factory.getFilterPanel().waitForParametricFields();
-        assertThat(factory.getTopNavBar().getSearchBoxTerm(), is("live forever"));
         assertThat(factory.getFilterPanel().checkboxForParametricValue(index, 0), checked());
     }
 
@@ -216,7 +218,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         // Select a concept and save the search
         final String selectedConcept = topicMap.clickClusterHeading();
-        topicMap.waitForMapLoaded();
+        new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active").until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
         saveService.saveCurrentAs("Conceptual Search", SearchType.QUERY);
 
         // Remove the selected concept
@@ -232,7 +234,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat(searchTabBar.currentTab(), not(modified()));
         final List<String> finalConceptHeaders = conceptsPanel.selectedConceptHeaders();
         assertThat(finalConceptHeaders, hasSize(1));
-        assertThat(finalConceptHeaders, hasItem(selectedConcept));
+        assertThat(finalConceptHeaders, hasItem('"' + selectedConcept + '"'));
     }
 
     @Test

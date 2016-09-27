@@ -4,7 +4,6 @@ package com.autonomy.abc.bi;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
@@ -12,7 +11,6 @@ import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.FindParametricFilter;
-import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Slider;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -24,7 +22,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,7 +38,6 @@ public class TopicMapITCase extends IdolFindTestBase {
     private IdolFindPage findPage;
     private TopicMapView results;
     private FindService findService;
-    private FindTopNavBar navBar;
     private ConceptsPanel conceptsPanel;
 
     public TopicMapITCase(final TestConfig config) {
@@ -59,7 +55,6 @@ public class TopicMapITCase extends IdolFindTestBase {
         findPage = elementFactory.getFindPage();
         results = elementFactory.getTopicMap();
         findService = getApplication().findService();
-        navBar = elementFactory.getTopNavBar();
         conceptsPanel = elementFactory.getConceptsPanel();
     }
 
@@ -122,11 +117,10 @@ public class TopicMapITCase extends IdolFindTestBase {
 
         results.waitForMapLoaded();
         verifyThat("The correct filter label has appeared", findPage.filterLabelsText(), hasItem(containsString(filterName)));
-        verifyThat("Search term still " + searchTerm, navBar.getSearchBoxTerm(), is(searchTerm));
     }
 
     @Test
-    public void testClickingOnMapEntities(){
+    public void testClickingOnMapEntities() {
         findService.search("rubbish");
         results.waitForMapLoaded();
         Waits.loadOrFadeWait();
@@ -138,14 +132,14 @@ public class TopicMapITCase extends IdolFindTestBase {
         addedConcepts.add(results.clickChildEntityAndAddText(results.returnParentEntityNames().size()));
 
         LOGGER.info("This is currently brittle and frequently breaks.");
-        verifyThat("All " + addedConcepts.size() + " added concept terms added to search", selectedConcepts(),containsItems(addedConcepts));
+        verifyThat("All " + addedConcepts.size() + " added concept terms added to search", selectedConcepts(), containsItems(addedConcepts));
     }
 
     private String stripSpaces(final CharSequence term) {
         return SPACE_PATTERN.matcher(term).replaceAll(Matcher.quoteReplacement(""));
     }
 
-    private List<String> selectedConcepts(){
+    private List<String> selectedConcepts() {
         return conceptsPanel.selectedConceptHeaders().stream()
                 .map(this::stripSpaces)
                 .collect(Collectors.toList());

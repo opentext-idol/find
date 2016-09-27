@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
+import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
@@ -30,16 +31,20 @@ public class SunburstITCase extends IdolFindTestBase {
     private IdolFindPage findPage;
     private SunburstView results;
     private FindService findService;
+    private ConceptsPanel conceptsPanel;
 
-    public SunburstITCase(final TestConfig config){super(config);}
+    public SunburstITCase(final TestConfig config) {
+        super(config);
+    }
 
     //TODO HAVE CHANGED getSunburst() IN ORDER TO GET THE ACTIVE THING
     //NEED TO LOOK AT THE CONTAINER STUFF
     @Before
-    public void setUp(){
+    public void setUp() {
         findPage = getElementFactory().getFindPage();
         results = ((BIIdolFindElementFactory) getElementFactory()).getSunburst();
         findService = getApplication().findService();
+        conceptsPanel = getElementFactory().getConceptsPanel();
     }
 
     //TODO: test that checks the total doc number against what's in sunburst centre
@@ -48,54 +53,58 @@ public class SunburstITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-251")
     @ActiveBug("FIND-382")
-    public void testSunburstTabShowsSunburstOrMessage(){
+    public void testSunburstTabShowsSunburstOrMessage() {
         search("shambolic");
 
         results.waitForSunburst();
 
-        verifyThat("Sunburst element displayed",results.sunburstVisible());
-        verifyThat("Parametric selectors appear",results.parametricSelectionDropdownsExist());
+        verifyThat("Sunburst element displayed", results.sunburstVisible());
+        verifyThat("Parametric selectors appear", results.parametricSelectionDropdownsExist());
+
+        conceptsPanel.removeAllConcepts();
 
         search("shouldBeNoFieldsForThisCrazySearch");
-        verifyThat("Message appearing when no sunburst & search from Sunburst",results.message(),displayed());
+        verifyThat("Message appearing when no sunburst & search from Sunburst", results.message(), displayed());
         findPage.goToListView();
+
+        conceptsPanel.removeAllConcepts();
 
         findService.search("shouldAlsoBeNoTopicsForThis");
         findPage.goToSunburst();
-        verifyThat("Message appearing when no sunburst & search from elsewhere",results.message(),displayed());
+        verifyThat("Message appearing when no sunburst & search from elsewhere", results.message(), displayed());
     }
 
     @Test
     @ResolvedBug("FIND-405")
-    public void testParametricSelectors(){
+    public void testParametricSelectors() {
         search("wild horses");
 
-        int index = filters().nonZeroParaFieldContainer(0);
+        final int index = filters().nonZeroParaFieldContainer(0);
         final String firstParametric = filters().parametricField(index).filterCategoryName();
         verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(results.getSelectedFieldName(1).toUpperCase()));
 
         results.parametricSelectionDropdown(2).open();
-        verifyThat("1st selected parametric does not appear as choice in 2nd",results.getParametricDropdownItems(2),not(contains(firstParametric)));
+        verifyThat("1st selected parametric does not appear as choice in 2nd", results.getParametricDropdownItems(2), not(contains(firstParametric)));
     }
 
     @Test
-    public void testParametricSelectorsChangeDisplay(){
+    public void testParametricSelectorsChangeDisplay() {
         search("cricket");
 
         //only works if you have at least 2 parametric types
         results.parametricSelectionDropdown(1).selectItem(1);
         Waits.loadOrFadeWait();
 
-        int correctNumberSegments = getFilterResultsBigEnoughToDisplay(1).size();
+        final int correctNumberSegments = getFilterResultsBigEnoughToDisplay(1).size();
 
-        assertThat("Correct number ("+correctNumberSegments+") of sunburst segments ",results.numberOfSunburstSegments(),is(correctNumberSegments));
+        assertThat("Correct number (" + correctNumberSegments + ") of sunburst segments ", results.numberOfSunburstSegments(), is(correctNumberSegments));
     }
 
     @Test
-    public void testHoveringOverSegmentCausesTextToChange(){
+    public void testHoveringOverSegmentCausesTextToChange() {
         search("elephant");
 
-        List<String> bigEnough = getFilterResultsBigEnoughToDisplay(0);
+        final List<String> bigEnough = getFilterResultsBigEnoughToDisplay(0);
 
         for (final WebElement segment : results.findSunburstSegments()) {
             results.segmentHover(segment);
@@ -106,7 +115,7 @@ public class SunburstITCase extends IdolFindTestBase {
     }
 
     //TODO: seeAll should create a modal!!!!
-    private List<String> getFilterResultsBigEnoughToDisplay(int filterContainerIndex){
+    private List<String> getFilterResultsBigEnoughToDisplay(final int filterContainerIndex) {
         filters().parametricField(filterContainerIndex).expand();
         filters().parametricField(filterContainerIndex).seeAll();
 
@@ -119,17 +128,17 @@ public class SunburstITCase extends IdolFindTestBase {
     }
 
     @Test
-    public void testHoveringOnGreySegmentGivesMessage(){
+    public void testHoveringOnGreySegmentGivesMessage() {
         search("elephant");
 
-        assumeThat("Some segments not displayable",results.greySunburstAreaExists());
+        assumeThat("Some segments not displayable", results.greySunburstAreaExists());
         results.hoverOverTooFewToDisplaySegment();
 
-        verifyThat("Hovering on greyed segment explains why grey",results.getSunburstCentreName(),allOf(containsString("Please refine your search"),containsString("too small to display")));
+        verifyThat("Hovering on greyed segment explains why grey", results.getSunburstCentreName(), allOf(containsString("Please refine your search"), containsString("too small to display")));
     }
 
     @Test
-    public void testClickingSunburstSegmentFiltersTheSearch(){
+    public void testClickingSunburstSegmentFiltersTheSearch() {
         //needs to search something that only has 2 parametric filter types
         search("churchill");
 
@@ -138,34 +147,34 @@ public class SunburstITCase extends IdolFindTestBase {
         LOGGER.info("Filtering by " + fieldName + " = " + fieldValue);
         results.getIthSunburstSegment(1).click();
         results.waitForSunburst();
-        
+
         verifyThat(findPage.filterLabelsText(), hasItem(containsString(fieldValue)));
 
         filters().parametricContainer(fieldName).expand();
         verifyThat(filters().checkboxForParametricValue(fieldName, fieldValue), checked());
-        verifyThat("Parametric selection name has changed to another type of filter",results.getSelectedFieldName(1),not(fieldName));
+        verifyThat("Parametric selection name has changed to another type of filter", results.getSelectedFieldName(1), not(fieldName));
 
     }
 
     @Test
     @ResolvedBug("FIND-379")
-    public void testSideBarFiltersChangeSunburst(){
+    public void testSideBarFiltersChangeSunburst() {
         search("lashing");
 
-        FilterPanel filters = filters();
-        final String parametricSelectionFirst= results.getSelectedFieldName(1);
+        final FilterPanel filters = filters();
+        final String parametricSelectionFirst = results.getSelectedFieldName(1);
 
-        ParametricFieldContainer container = filters.parametricContainer(parametricSelectionFirst);
+        final ParametricFieldContainer container = filters.parametricContainer(parametricSelectionFirst);
         container.expand();
         container.getFilters().get(0).check();
 
         results.waitForSunburst();
-        assertThat("Parametric selection changed",results.getSelectedFieldName(1),not(is(parametricSelectionFirst)));
+        assertThat("Parametric selection changed", results.getSelectedFieldName(1), not(is(parametricSelectionFirst)));
     }
 
     //will probably fail if your databases are different to the testing ones
     @Test
-    public void testTwoParametricSelectorSunburst(){
+    public void testTwoParametricSelectorSunburst() {
         search("cameron");
 
         results.parametricSelectionDropdown(1).select("Category");
@@ -176,7 +185,7 @@ public class SunburstITCase extends IdolFindTestBase {
         results.waitForSunburst();
         final int segNumberAfter = results.numberOfSunburstSegments();
 
-        assertThat("More segments with second parametric selector",segNumberAfter,greaterThan(segNumberBefore));
+        assertThat("More segments with second parametric selector", segNumberAfter, greaterThan(segNumberBefore));
     }
 
     //v data dependent -> needs these categories to be mutually exclusive
@@ -192,13 +201,13 @@ public class SunburstITCase extends IdolFindTestBase {
         results.waitForSunburst();
         final int segNumberAfter = results.numberOfSunburstSegments();
 
-        verifyThat("Same number of segments after 2nd selector",segNumberAfter,is(segNumberBefore));
-        verifyThat("Message displayed",results.message(),displayed());
+        verifyThat("Same number of segments after 2nd selector", segNumberAfter, is(segNumberBefore));
+        verifyThat("Message displayed", results.message(), displayed());
         final String sensibleMessage = "no documents with values for both fields";
-        verifyThat("Message contains \""+sensibleMessage+"\"",results.message().getText(),containsString(sensibleMessage));
+        verifyThat("Message contains \"" + sensibleMessage + "\"", results.message().getText(), containsString(sensibleMessage));
     }
 
-    private void search(String searchTerm) {
+    private void search(final String searchTerm) {
         findService.search(searchTerm);
         findPage.goToSunburst();
         results.waitForSunburst();

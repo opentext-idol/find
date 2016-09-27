@@ -50,10 +50,10 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         findService = getApplication().findService();
         FindPage findPage = getElementFactory().getFindPage();
-        if(!findPage.footerLogo().isDisplayed()) {
+        if (!findPage.footerLogo().isDisplayed()) {
             ((IdolFindPage) findPage).goToListView();
         }
     }
@@ -68,7 +68,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
             verifyThat(getWindow(), urlContains("suggest"));
 
-            verifyThat(similarDocuments.getTitle(),allOf(containsIgnoringCase("Similar results"),containsIgnoringCase('"' + title + '"')));
+            verifyThat(similarDocuments.getTitle(), allOf(containsIgnoringCase("Similar results"), containsIgnoringCase('"' + title + '"')));
             verifyThat(similarDocuments.getTotalResults(), greaterThan(0));
             verifyThat(similarDocuments.getResults(1), not(empty()));
 
@@ -78,15 +78,16 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     @ResolvedBug("CCUK-3678")
-    public void testTitle(){
+    public void testTitle() {
         findService.search(new Query("Bill Murray"));
 
-        for(int i = 1; i <= 5; i++){
+        for (int i = 1; i <= 5; i++) {
             similarDocuments = findService.goToSimilarDocuments(i);
             final WebElement seedLink = similarDocuments.seedLink();
             verifyThat(seedLink, displayed());
             verifyThat(seedLink.getText(), not(isEmptyOrNullString()));
             similarDocuments.backButton().click();
+            getElementFactory().getConceptsPanel().removeAllConcepts();
         }
     }
 
@@ -97,28 +98,28 @@ public class SimilarDocumentsITCase extends FindTestBase {
         for (int i = 1; i <= 5; i++) {
             Waits.loadOrFadeWait();
             similarDocuments = findService.goToSimilarDocuments(i);
-            final WebElement seedLink  = similarDocuments.seedLink();
+            final WebElement seedLink = similarDocuments.seedLink();
 
             previewSeed(seedLink);
             similarDocuments.backButton().click();
         }
     }
 
-    private void previewSeed(final WebElement seedLink){
+    private void previewSeed(final WebElement seedLink) {
         seedLink.click();
-        verifyThat("SeedLink goes to detailed document preview",getDriver().getCurrentUrl(),containsString("document"));
+        verifyThat("SeedLink goes to detailed document preview", getDriver().getCurrentUrl(), containsString("document"));
         getElementFactory().getDetailedPreview().goBackToSearch();
 
     }
 
     @Test
     @ResolvedBug("CCUK-3676")
-    public void testPublicIndexesSimilarDocs(){
+    public void testPublicIndexesSimilarDocs() {
         assumeThat(getConfig().getType(), Matchers.is(ApplicationType.HOSTED));
 
         findService.search(new Query("Hammertime").withFilter(IndexFilter.PUBLIC));
 
-        for(int i = 1; i <= 5; i++){
+        for (int i = 1; i <= 5; i++) {
             verifySimilarDocsNotEmpty(i);
         }
     }
@@ -130,14 +131,14 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    public void testSimilarDocumentsFromSimilarDocuments(){
+    public void testSimilarDocumentsFromSimilarDocuments() {
         findService.search("Self Defence Family");
 
         similarDocuments = findService.goToSimilarDocuments(1);
         assumeThat(similarDocuments.getResults().size(), not(0));
 
         String previousTitle = similarDocuments.seedLink().getText();
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             //Generate a random number between 1 and 5
             final int number = (int) (Math.random() * 5 + 1);
 
@@ -148,7 +149,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
             Waits.loadOrFadeWait();
             similarDocuments = getElementFactory().getSimilarDocumentsView();
 
-            verifyThat("Going from " + previousTitle + " to " + docTitle + " worked successfully",similarDocuments.seedLink(), containsText(docTitle));
+            verifyThat("Going from " + previousTitle + " to " + docTitle + " worked successfully", similarDocuments.seedLink(), containsText(docTitle));
 
             previousTitle = docTitle;
         }
@@ -156,19 +157,19 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value="FIND-496",type=ApplicationType.HOSTED)
-    public void testInfiniteScroll(){
+    @ActiveBug(value = "FIND-496", type = ApplicationType.HOSTED)
+    public void testInfiniteScroll() {
         final ResultsView results = findService.search(new Query("blast").withFilter(IndexFilter.ALL));
 
         similarDocuments = findService.goToSimilarDocuments(1);
         assumeThat(similarDocuments.getResults().size(), is(30));
 
-        for(int i = 30; i <= 150; i += 30) {
+        for (int i = 30; i <= 150; i += 30) {
             verifyThat(similarDocuments.getVisibleResultsCount(), is(i));
             final DocumentViewer documentViewer = similarDocuments.getResult(i).openDocumentPreview();
-            assertThat("Have opened preview container",documentViewer.previewPresent());
+            assertThat("Have opened preview container", documentViewer.previewPresent());
             documentViewer.close();
-            verifyThat(similarDocuments.getVisibleResultsCount(),is(i+30));
+            verifyThat(similarDocuments.getVisibleResultsCount(), is(i + 30));
             results.waitForResultsToLoad();
         }
     }
@@ -185,11 +186,11 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         Date previousDate = null;
 
-        for(int i = 0; i <= 10; i++){
+        for (int i = 0; i <= 10; i++) {
             final String date = searchResults.get(i).convertDate();
             final Date currentDate = SimilarDocumentsView.DATE_FORMAT.parse(date);
 
-            if(previousDate != null){
+            if (previousDate != null) {
                 verifyThat(currentDate, lessThanOrEqualTo(previousDate));
             }
 
@@ -198,8 +199,8 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value="FIND-496",type=ApplicationType.HOSTED)
-    public void testDocumentPreview(){
+    @ActiveBug(value = "FIND-496", type = ApplicationType.HOSTED)
+    public void testDocumentPreview() {
         findService.search(new Query("stars"));
         similarDocuments = findService.goToSimilarDocuments(1);
         testDocPreview(similarDocuments.getResults(5));
@@ -209,7 +210,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         for (final FindResult result : results) {
             final DocumentViewer docPreview = result.openDocumentPreview();
 
-            assertThat("Have opened preview container",docPreview.previewPresent());
+            assertThat("Have opened preview container", docPreview.previewPresent());
             verifyThat("Preview not stuck loading", !similarDocuments.loadingIndicator().isDisplayed());
             verifyThat("There is content in preview", similarDocuments.previewContents().getText(), not(isEmptyOrNullString()));
             verifyThat("Index displayed", docPreview.getIndexName(), not(nullValue()));
@@ -226,23 +227,23 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value="FIND-496",type=ApplicationType.HOSTED)
-    public void testDetailedDocumentPreviewFromSimilar(){
+    @ActiveBug(value = "FIND-496", type = ApplicationType.HOSTED)
+    public void testDetailedDocumentPreviewFromSimilar() {
         findService.search(new Query("stars"));
         similarDocuments = findService.goToSimilarDocuments(1);
 
-        final FindResult firstSimilar =similarDocuments.getResult(1);
+        final FindResult firstSimilar = similarDocuments.getResult(1);
         final String title = firstSimilar.getTitleString();
 
         final InlinePreview inlinePreview = firstSimilar.openDocumentPreview();
         final DetailedPreviewPage detailedPreviewPage = inlinePreview.openPreview();
 
-        verifyThat("Have opened right detailed preview", detailedPreviewPage.getTitle(),equalToIgnoringCase(title));
+        verifyThat("Have opened right detailed preview", detailedPreviewPage.getTitle(), equalToIgnoringCase(title));
         detailedPreviewPage.goBackToSearch();
 
-        verifyThat("'Similar documents' results' url",getDriver().getCurrentUrl(),containsString("suggest"));
+        verifyThat("'Similar documents' results' url", getDriver().getCurrentUrl(), containsString("suggest"));
         similarDocuments = getElementFactory().getSimilarDocumentsView();
-        verifyThat("Back button still exists because on similar documents",similarDocuments.backButton().isDisplayed());
+        verifyThat("Back button still exists because on similar documents", similarDocuments.backButton().isDisplayed());
 
     }
 

@@ -28,6 +28,11 @@ public class IdolFindPage extends FindPage {
         return ComparisonModal.make(getDriver());
     }
 
+    public void goBackToSearch() {
+        findElement(By.cssSelector(".comparison-view-back-button")).click();
+        waitForLoad();
+    }
+
     public WebElement compareButton() {
         return mainContainer().findElement(By.className("compare-modal-button"));
     }

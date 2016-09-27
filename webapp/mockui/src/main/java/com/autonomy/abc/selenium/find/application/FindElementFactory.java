@@ -11,9 +11,11 @@ import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
+@SuppressWarnings("WeakerAccess")
 public abstract class FindElementFactory extends ElementFactoryBase {
     protected FindElementFactory(final WebDriver driver) {
         super(driver, null);
@@ -58,4 +60,6 @@ public abstract class FindElementFactory extends ElementFactoryBase {
     public <T extends AppPage> T loadPage(final Class<T> type) {
         throw new UnsupportedOperationException("loadPage does not make sense for a single page application");
     }
+
+    public abstract FormInput getSearchBox();
 }

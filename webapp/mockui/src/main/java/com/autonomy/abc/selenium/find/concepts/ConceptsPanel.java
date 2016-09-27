@@ -6,6 +6,7 @@
 package com.autonomy.abc.selenium.find.concepts;
 
 import com.autonomy.abc.selenium.find.Container;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.HPRemovable;
 import com.hp.autonomy.frontend.selenium.element.Removable;
 import org.openqa.selenium.By;
@@ -21,18 +22,25 @@ import java.util.stream.Collectors;
  * Represents the concept view in the left side panel.
  */
 public class ConceptsPanel {
-    static final String SELECTED_RELATED_CONCEPT_CLASS = "selected-related-concept";
+    private static final String SELECTED_RELATED_CONCEPT_CLASS = "selected-related-concept";
 
     private final WebElement panel;
+    private final FormInput input;
     private final WebDriver driver;
 
     public ConceptsPanel(final WebDriver driver) {
         panel = Container.LEFT.findUsing(driver).findElement(By.xpath(".//h3[contains(text(), 'Concepts')]/.."));
+        input = new FormInput(Container.LEFT.findUsing(driver).findElement(By.cssSelector(".concept-view-container .find-input")), driver);
         this.driver = driver;
+    }
+
+    public FormInput getConceptBoxInput() {
+        return input;
     }
 
     /**
      * Get a WebElement for each selected concept cluster, including both single concepts and clusters.
+     *
      * @return Selected concept elements
      */
     public List<WebElement> selectedConceptElements() {
@@ -41,6 +49,7 @@ public class ConceptsPanel {
 
     /**
      * Get the first word in each selected concept cluster in lower case.
+     *
      * @return Lower-cased primary selected concepts
      */
     public List<String> selectedConceptHeaders() {
@@ -52,7 +61,7 @@ public class ConceptsPanel {
     /**
      * @return A removable for each of the {@link #selectedConceptElements()}
      */
-    public List<Removable> selectedConceptRemovables() {
+    private List<Removable> selectedConceptRemovables() {
         return selectedConceptElements().stream()
                 .map(concept -> new HPRemovable(concept, driver))
                 .collect(Collectors.toList());
@@ -79,7 +88,7 @@ public class ConceptsPanel {
     /**
      * Remove the first concept cluster.
      */
-    public void removeFirstConceptCluster(){
+    public void removeFirstConceptCluster() {
         final List<Removable> removables = selectedConceptRemovables();
 
         if (removables.isEmpty()) {
@@ -87,5 +96,9 @@ public class ConceptsPanel {
         } else {
             removables.get(0).removeAndWait();
         }
+    }
+
+    public void removeAllConcepts() {
+        selectedConceptRemovables().stream().forEach(Removable::removeAndWait);
     }
 }
