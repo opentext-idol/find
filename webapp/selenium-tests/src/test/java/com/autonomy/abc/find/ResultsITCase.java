@@ -119,6 +119,7 @@ public class ResultsITCase extends FindTestBase {
 
     @Test
     @ActiveBug("FIND-350")
+    @Role(UserRole.FIND)
     public void testDecliningAutoCorrectNotPermanent() {
         search("blarf");
 
