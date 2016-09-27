@@ -172,8 +172,29 @@ define([
                         filterModel: this.filterModel
                     });
                     this.mergedParametricCollection = new MergeCollection([], {
-                        comparator: function(model) {
-                            return model.get('displayName');
+                        comparator: function (aModel, bModel) {
+                            var configArray = [];
+                            var aIndex = configArray.indexOf(aModel.id);
+                            var bIndex = configArray.indexOf(bModel.id);
+
+                            // Sort initially to match the parametric order as defined in the config
+                            if (aIndex > bIndex) {
+                                if (bIndex < 0) {
+                                    return -1;
+                                }
+                                return 1;
+                            }
+                            if (aIndex < bIndex) {
+                                if (aIndex < 0) {
+                                    return 1;
+                                }
+                                return -1;
+                            }
+
+                            // And any fields not given a predefined order then sort lexicographically
+                            var aDisplayName = aModel.get('displayName').toLowerCase();
+                            var bDisplayName = bModel.get('displayName').toLowerCase();
+                            return aDisplayName < bDisplayName ? -1 : aDisplayName > bDisplayName ? 1 : 0;
                         },
                         collections: [this.filteredNumericParametricFieldsCollection, this.filteredDateParametricFieldsCollection, this.parametricDisplayCollection],
                         typeAttribute: 'dataType'
