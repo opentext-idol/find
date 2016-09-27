@@ -22,7 +22,11 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         final UiCustomizationOptions uiCustomizationOptions = new UiCustomizationOptions();
         uiCustomizationOptions.populateRules("option3", rule);
 
-        return new UiCustomization(uiCustomizationOptions, null, null, ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"), "Custom technical support message");
+        return UiCustomization.builder()
+                .setOptions(uiCustomizationOptions)
+                .setSpecialUrlPrefixes(ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"))
+                .setErrorCallSupportString("Custom technical support message")
+                .build();
     }
 
     @Override

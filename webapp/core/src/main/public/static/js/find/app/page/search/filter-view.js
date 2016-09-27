@@ -173,7 +173,7 @@ define([
                     });
                     this.mergedParametricCollection = new MergeCollection([], {
                         comparator: function (aModel, bModel) {
-                            var configArray = [];
+                            var configArray = configuration().uiCustomization.parametricOrder;
                             var aIndex = configArray.indexOf(aModel.id);
                             var bIndex = configArray.indexOf(bModel.id);
 

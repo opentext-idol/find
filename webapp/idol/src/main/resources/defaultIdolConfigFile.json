@@ -112,6 +112,7 @@
       },
       "parametricBlacklist": [],
       "parametricWhitelist": [],
+      "parametricOrder": [],
       "specialUrlPrefixes": {
         "application/msword": "ms-word:ofv|u|",
         "application/mspowerpoint": "ms-powerpoint:ofv|u|",

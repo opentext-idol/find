@@ -10,6 +10,7 @@
   },
   "parametricBlacklist": ["A_CLEAN_NUMERIC_FIELD"],
   "parametricWhitelist": ["AUTN_DATE", "A_CLEAN_NUMERIC_FIELD", "DOCUMENT/SOME_DATE"],
+  "parametricOrder": [],
   "specialUrlPrefixes": {
     "application/msword": "ms-word:ofv|u|"
   },
