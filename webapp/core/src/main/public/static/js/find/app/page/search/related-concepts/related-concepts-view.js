@@ -19,7 +19,8 @@ define([
     'text!find/templates/app/page/loading-spinner.html'
 ], function(Backbone, $, _, i18n, DocumentsCollection, popover, searchDataUtil, viewStateSelector, addLinksToSummary, viewTemplate, clusterTemplate,
             popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
-
+    "use strict";
+    
     var html = _.template(viewTemplate)({
         i18n: i18n,
         loadingSpinnerHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false})
@@ -47,7 +48,9 @@ define([
 
     function popoverHandler($content, $target) {
         var entityCluster = $target.data('entityCluster');
-        var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : this.entityCollection.getClusterEntities(entityCluster);
+        var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : _.flatten(this.entityCollection.getClusterEntities(entityCluster)).map(function (concept) {
+            return '"' + concept + '"';
+        });
         var relatedConcepts = _.union(this.conceptGroups.pluck('concepts'), clusterEntities);
 
         var queryText = searchDataUtil.makeQueryText(relatedConcepts);
