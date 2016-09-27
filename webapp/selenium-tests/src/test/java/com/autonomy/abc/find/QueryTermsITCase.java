@@ -8,7 +8,6 @@ import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.UserRole;
-import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResultsPage;
@@ -39,7 +38,6 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 public class QueryTermsITCase extends FindTestBase {
     private FindPage findPage;
     private FindService findService;
-    private ConceptsPanel conceptsPanel;
 
     public QueryTermsITCase(final TestConfig config) {
         super(config);
@@ -49,7 +47,6 @@ public class QueryTermsITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
-        conceptsPanel = getElementFactory().getConceptsPanel();
     }
 
     @Test
@@ -62,6 +59,20 @@ public class QueryTermsITCase extends FindTestBase {
         final ResultsView results = findService.search(searchTerm);
         assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(searchTerm));
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
+        assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
+    }
+
+    @Test
+    @Category(CoreFeature.class)
+    @Role(UserRole.FIND)
+    public void searchForAll() {
+        goToListView();
+
+        final String searchTerm = "*";
+        final ResultsView results = findService.search(searchTerm);
+        assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(searchTerm));
+        assertThat(results.getText().toLowerCase(), not(containsString("error")));
+        assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
     }
 
     @Test
@@ -73,6 +84,18 @@ public class QueryTermsITCase extends FindTestBase {
         final String searchTerm = "chimpanzee";
         final ResultsView results = findService.search(searchTerm);
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
+        assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), contains(searchTerm));
+    }
+
+    @Test
+    @Category(CoreFeature.class)
+    @Role(UserRole.BIFHI)
+    public void implicitSearchForAll() throws InterruptedException {
+        goToListView();
+
+        assertThat(getElementFactory().getResultsPage().getResults(), not(empty()));
+        findService.search("*");
+        assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
     }
 
     @Test
@@ -87,14 +110,14 @@ public class QueryTermsITCase extends FindTestBase {
         final ResultsView results = findService.search(termOne);
         final List<String> musketeersSearchResults = results.getResultTitles();
         final int numberOfMusketeersResults = musketeersSearchResults.size();
-        conceptsPanel.removeAllConcepts();
+        removeAllConcepts();
 
         final String termTwo = "\"dearly departed\"";
 
         findService.search(termTwo);
         final List<String> dearlyDepartedSearchResults = results.getResultTitles();
         final int numberOfDearlyDepartedResults = dearlyDepartedSearchResults.size();
-        conceptsPanel.removeAllConcepts();
+        removeAllConcepts();
 
         findService.search(termOne + " AND " + termTwo);
         final List<String> andResults = results.getResultTitles();
@@ -105,21 +128,21 @@ public class QueryTermsITCase extends FindTestBase {
         final String[] andResultsArray = andResults.toArray(new String[andResults.size()]);
         assertThat(musketeersSearchResults, hasItems(andResultsArray));
         assertThat(dearlyDepartedSearchResults, hasItems(andResultsArray));
-        conceptsPanel.removeAllConcepts();
+        removeAllConcepts();
 
         findService.search(termOne + " OR " + termTwo);
         final List<String> orResults = results.getResultTitles();
         final Set<String> concatenatedResults = new HashSet<>(ListUtils.union(musketeersSearchResults, dearlyDepartedSearchResults));
         assertThat(orResults.size(), is(concatenatedResults.size()));
         assertThat(orResults, containsInAnyOrder(concatenatedResults.toArray()));
-        conceptsPanel.removeAllConcepts();
+        removeAllConcepts();
 
         findService.search(termOne + " XOR " + termTwo);
         final List<String> xorResults = results.getResultTitles();
         concatenatedResults.removeAll(andResults);
         assertThat(xorResults.size(), is(concatenatedResults.size()));
         assertThat(xorResults, containsInAnyOrder(concatenatedResults.toArray()));
-        conceptsPanel.removeAllConcepts();
+        removeAllConcepts();
 
         findService.search(termOne + " NOT " + termTwo);
         final List<String> notTermTwo = results.getResultTitles();
@@ -127,7 +150,7 @@ public class QueryTermsITCase extends FindTestBase {
         t1NotT2.removeAll(dearlyDepartedSearchResults);
         assertThat(notTermTwo.size(), is(t1NotT2.size()));
         assertThat(notTermTwo, containsInAnyOrder(t1NotT2.toArray()));
-        conceptsPanel.removeAllConcepts();
+        removeAllConcepts();
 
         findService.search(termTwo + " NOT " + termOne);
         final List<String> notTermOne = results.getResultTitles();
@@ -135,7 +158,7 @@ public class QueryTermsITCase extends FindTestBase {
         t2NotT1.removeAll(musketeersSearchResults);
         assertThat(notTermOne.size(), is(t2NotT1.size()));
         assertThat(notTermOne, containsInAnyOrder(t2NotT1.toArray()));
-        conceptsPanel.removeAllConcepts();
+        removeAllConcepts();
     }
 
     @Test
@@ -146,7 +169,7 @@ public class QueryTermsITCase extends FindTestBase {
         new QueryTestHelper<>(findService)
                 .booleanOperatorQueryText(Errors.Search.OPERATORS, Errors.Search.OPENING_BOOL, Errors.Search.GENERIC_HOSTED_ERROR);
         new QueryTestHelper<>(findService)
-                .emptyQueryText(Errors.Search.STOPWORDS, Errors.Search.NO_TEXT,Errors.Search.GENERIC_HOSTED_ERROR);
+                .emptyQueryText(Errors.Search.STOPWORDS, Errors.Search.NO_TEXT, Errors.Search.GENERIC_HOSTED_ERROR);
     }
 
     @Test
@@ -157,6 +180,7 @@ public class QueryTermsITCase extends FindTestBase {
 
     @Test
     public void testSearchParentheses() {
+        findService.search("Remove splash page");
         //noinspection AnonymousInnerClassWithTooManyMethods
         new QueryTestHelper<>(new QueryService<QueryResultsPage>() {
             @Override
@@ -166,7 +190,7 @@ public class QueryTermsITCase extends FindTestBase {
 
             @Override
             public QueryResultsPage search(final Query query) {
-                conceptsPanel.removeAllConcepts();
+                removeAllConcepts();
                 return findService.search(query);
             }
         }).mismatchedBracketQueryText();
@@ -218,9 +242,13 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     private void goToListView() {
-        if(!findPage.footerLogo().isDisplayed()) {
+        if (!findPage.footerLogo().isDisplayed()) {
             ((IdolFindPage) findPage).goToListView();
         }
+    }
+
+    private void removeAllConcepts() {
+        getElementFactory().getConceptsPanel().removeAllConcepts();
     }
 
 }
