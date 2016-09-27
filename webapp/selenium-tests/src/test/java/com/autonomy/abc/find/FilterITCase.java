@@ -71,6 +71,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-638")
     public void testParametricFiltersResults() {
         ResultsView results = searchAndWait("*");
 
@@ -81,8 +82,8 @@ public class FilterITCase extends FindTestBase {
             verifyThat("Field values: " + numberFields + " - less than or equal to 5", numberFields, lessThanOrEqualTo(5));
         }
 
-        final ParametricFieldContainer secondContainer = filterPanel.parametricField(1);
-        secondContainer.expand();
+        final ParametricFieldContainer secondContainer = filterPanel.parametricField(filterPanel.nonZeroParamFieldContainer(1));
+
         final FindParametricFilter secondField = secondContainer.getFilters().get(1);
         final String filterName = secondField.getName();
         final int expectedResults = secondField.getResultsCount();
@@ -117,7 +118,6 @@ public class FilterITCase extends FindTestBase {
         int totalParametricFields = filterPanel.parametricFieldContainers().size();
 
         searchAndWait("shouldhavenoresultsprobably");
-        findPage.originalQuery().click();
         findPage.waitForParametricValuesToLoad();
         int noResultsParametricFields = filterPanel.parametricFieldContainers().size();
 
@@ -129,6 +129,7 @@ public class FilterITCase extends FindTestBase {
     public void testFilterPanelAndModalLinked() {
         searchAndWait("cats");
 
+        findPage.waitForParametricValuesToLoad();
         //TODO: when everyone has same data, make test select across several filter categories
         final ParametricFieldContainer container = filterPanel.parametricField(1);
         final String filterCategory = container.filterCategoryName();
@@ -138,8 +139,9 @@ public class FilterITCase extends FindTestBase {
 
         container.seeAll();
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
-        //TODO: once loading forever bug fixed check that this passes -> may need to do a time-out w/ message
-        assertThat("Modal not loading forever", !filterModal.loadingIndicatorPresent());
+
+        filterModal.waitForLoad();
+        verifyThat("Modal not loading forever", !filterModal.loadingIndicatorPresent());
         verifyThat("Correct tab is active", filterModal.activeTabName(), equalToIgnoringCase(filterCategory));
         verifyThat("Same fields selected in modal as panel", filterModal.checkedFiltersAllPanes(), is(selectedFilter));
 
@@ -157,6 +159,7 @@ public class FilterITCase extends FindTestBase {
     public void testModalShowsALLFiltersRegardlessOfQuery() {
         searchAndWait("*");
         List<String> allFilterCategories = new ArrayList<>();
+        findPage.waitForParametricValuesToLoad();
         for(ParametricFieldContainer container : filterPanel.parametricFieldContainers()) {
             allFilterCategories.add(container.filterCategoryName());
         }

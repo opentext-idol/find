@@ -7,6 +7,7 @@ import com.hp.autonomy.frontend.selenium.util.Locator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -36,6 +37,15 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         return !findElements(By.cssSelector(".loading-spinner")).isEmpty();
     }
 
+    public void waitForLoad() {
+        new WebDriverWait(getDriver(),15).withMessage("loading indicator to disappear").until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(final WebDriver driver) {
+                return !loadingIndicatorPresent();
+            }
+        });
+    }
+
     public void cancel() {
         findElement(new Locator()
             .withTagName("button")
@@ -55,10 +65,6 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
     public List<WebElement> tabs() {
         return findElements(By.cssSelector(".category-title"));
-    }
-
-    public WebElement activeTab() {
-        return findElement(By.cssSelector(".category-title .active"));
     }
 
     public String activeTabName() {
