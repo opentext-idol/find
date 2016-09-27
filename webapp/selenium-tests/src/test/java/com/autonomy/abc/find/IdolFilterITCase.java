@@ -28,10 +28,11 @@ public class IdolFilterITCase extends IdolFindTestBase {
     private IdolFindPage findPage;
 
     public IdolFilterITCase(final TestConfig config) {
-        super(config);}
+        super(config);
+    }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         findService = getApplication().findService();
         findPage = getElementFactory().getFindPage();
         if(!findPage.footerLogo().isDisplayed()) {
@@ -39,7 +40,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
         }
     }
 
-    private ResultsView search(final String searchTerm) {
+    private ResultsView searchAndWait(final String searchTerm) {
         final ResultsView results = findService.search(searchTerm);
         findPage.waitForParametricValuesToLoad();
         return results;
@@ -48,7 +49,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
     //META-FILTERING
     @Test
     @ResolvedBug("FIND-122")
-    public void testSearchForParametricFieldName(){
+    public void testSearchForParametricFieldName() {
         findService.search("face");
         findPage.waitForParametricValuesToLoad();
 
@@ -59,7 +60,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
 
         filters().collapseAll();
 
-        filters().filterResults(goodFieldName);
+        filters().searchFilters(goodFieldName);
 
         Waits.loadOrFadeWait();
 
@@ -69,16 +70,16 @@ public class IdolFilterITCase extends IdolFindTestBase {
     }
 
     @Test
-    public void testSearchForParametricFieldValue(){
+    public void testSearchForParametricFieldValue() {
         findService.search("face");
 
-        int index = filters().nonZeroParaFieldContainer(0);
+        int index = filters().nonZeroParamFieldContainer(0);
         final ListFilterContainer goodField = filters().parametricField(index);
         final String goodFieldName = goodField.filterCategoryName();
         final String badFieldValue = goodField.getFilterNames().get(0);
         final String goodFieldValue = goodField.getFilterNames().get(1);
 
-        filters().filterResults(goodFieldValue);
+        filters().searchFilters(goodFieldValue);
 
         Waits.loadOrFadeWait();
 
@@ -91,10 +92,10 @@ public class IdolFilterITCase extends IdolFindTestBase {
     public void testSearchForNonExistentFilter() {
         findService.search("face");
 
-        filters().filterResults("garbageasfsefeff");
+        filters().searchFilters("garbageasfsefeff");
         assertThat(filters().getErrorMessage(), is("No filters matched"));
 
-        filters().clearFilter();
+        filters().clearMetaFilter();
         assertThat(filters().getErrorMessage(), isEmptyOrNullString());
     }
 
@@ -104,66 +105,66 @@ public class IdolFilterITCase extends IdolFindTestBase {
         findService.search("swim");
 
         for(GraphFilterContainer container : filters().graphContainers()) {
-            verifyThat("Widget is collapsed",container.isCollapsed());
+            verifyThat("Widget is collapsed", container.isCollapsed());
         }
     }
 
     @Test
     public void testParametricFiltersOpenWhenMatchingFilter() {
-        search("haven");
+        searchAndWait("haven");
         final IdolFilterPanel filterPanel = filters();
-        int index = filterPanel.nonZeroParaFieldContainer(0);
+        int index = filterPanel.nonZeroParamFieldContainer(0);
 
         final String firstValue = filterPanel.parametricField(index).getFilterNames().get(0);
-        
+
         verifyThat(filterPanel.parametricField(index).isCollapsed(), is(true));
 
-        filterPanel.filterResults(firstValue);
-        verifyThat(filterPanel.parametricField(index).isCollapsed(),is(false));
+        filterPanel.searchFilters(firstValue);
+        verifyThat(filterPanel.parametricField(index).isCollapsed(), is(false));
 
-        filterPanel.clearFilter();
-        verifyThat(filterPanel.parametricField(index).isCollapsed(),is(true));
+        filterPanel.clearMetaFilter();
+        verifyThat(filterPanel.parametricField(index).isCollapsed(), is(true));
     }
 
     @Test
     public void testParametricFilterRemembersStateWhenMetaFiltering() {
-        search("haven");
+        searchAndWait("haven");
         final IdolFilterPanel filterPanel = filters();
 
-        int index = filterPanel.nonZeroParaFieldContainer(0);
+        int index = filterPanel.nonZeroParamFieldContainer(0);
         final String firstValue = filterPanel.parametricField(index).getFilterNames().get(0);
 
         filterPanel.parametricField(index).expand();
-        verifyThat(filterPanel.parametricField(index).isCollapsed(),is(false));
+        verifyThat(filterPanel.parametricField(index).isCollapsed(), is(false));
 
-        filterPanel.filterResults(firstValue);
-        verifyThat(filterPanel.parametricField(index).isCollapsed(),is(false));
+        filterPanel.searchFilters(firstValue);
+        verifyThat(filterPanel.parametricField(index).isCollapsed(), is(false));
 
-        filterPanel.clearFilter();
-        verifyThat(filterPanel.parametricField(index).isCollapsed(),is(false));
+        filterPanel.clearMetaFilter();
+        verifyThat(filterPanel.parametricField(index).isCollapsed(), is(false));
     }
 
     @Test
     public void testIndexesOpenWhenMatchingMetaFilter() {
-        search("haven");
+        searchAndWait("haven");
         final IdolFilterPanel filterPanel = filters();
 
         final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
         final IndexesTree indexes = filterPanel.indexesTree();
         final String firstValue = indexes.allIndexes().getIndex(0).getName();
 
-        verifyThat(indexesTreeContainer.isCollapsed(),is(false));
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
 
-        filterPanel.filterResults(firstValue);
-        verifyThat(indexesTreeContainer.isCollapsed(),is(false));
+        filterPanel.searchFilters(firstValue);
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
 
-        filterPanel.clearFilter();
-        verifyThat(indexesTreeContainer.isCollapsed(),is(false));
+        filterPanel.clearMetaFilter();
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
     }
 
     @Test
     public void testIndexesRememberStateWhenMetaFiltering() {
-        search("haven");
+        searchAndWait("haven");
         final IdolFilterPanel filterPanel = filters();
 
         final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
@@ -171,13 +172,13 @@ public class IdolFilterITCase extends IdolFindTestBase {
         final String firstValue = indexes.allIndexes().getIndex(0).getName();
 
         indexesTreeContainer.collapse();
-        verifyThat(indexesTreeContainer.isCollapsed(),is(true));
+        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
 
-        filterPanel.filterResults(firstValue);
-        verifyThat(indexesTreeContainer.isCollapsed(),is(false));
+        filterPanel.searchFilters(firstValue);
+        verifyThat(indexesTreeContainer.isCollapsed(), is(false));
 
-        filterPanel.clearFilter();
-        verifyThat(indexesTreeContainer.isCollapsed(),is(true));
+        filterPanel.clearMetaFilter();
+        verifyThat(indexesTreeContainer.isCollapsed(), is(true));
     }
 
     private IdolFilterPanel filters() {

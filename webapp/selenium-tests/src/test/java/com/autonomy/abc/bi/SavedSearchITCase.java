@@ -14,12 +14,7 @@ import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
 import com.autonomy.abc.selenium.find.numericWidgets.NumericWidgetService;
-import com.autonomy.abc.selenium.find.save.SavedSearchPanel;
-import com.autonomy.abc.selenium.find.save.SavedSearchService;
-import com.autonomy.abc.selenium.find.save.SearchOptionsBar;
-import com.autonomy.abc.selenium.find.save.SearchTab;
-import com.autonomy.abc.selenium.find.save.SearchTabBar;
-import com.autonomy.abc.selenium.find.save.SearchType;
+import com.autonomy.abc.selenium.find.save.*;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
@@ -48,6 +43,10 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
     public SavedSearchITCase(final TestConfig config) {
         super(config);
+    }
+
+    private static Matcher<SearchTab> modified() {
+        return ModifiedMatcher.INSTANCE;
     }
 
     @Before
@@ -132,7 +131,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         final FilterPanel filterPanel = getElementFactory().getFilterPanel();
         filterPanel.waitForParametricFields();
 
-        final int index = filterPanel.nonZeroParaFieldContainer(0);
+        final int index = filterPanel.nonZeroParamFieldContainer(0);
         filterPanel.parametricField(index).expand();
         filterPanel.checkboxForParametricValue(index, 0).check();
 
@@ -242,10 +241,6 @@ public class SavedSearchITCase extends IdolFindTestBase {
         final SearchOptionsBar searchOptions = saveService.nameSavedSearch("   ", SearchType.QUERY);
 
         assertThat("Save button is disabled", !searchOptions.saveConfirmButton().isEnabled());
-    }
-
-    private static Matcher<SearchTab> modified() {
-        return ModifiedMatcher.INSTANCE;
     }
 
     private static class ModifiedMatcher extends TypeSafeMatcher<SearchTab> {

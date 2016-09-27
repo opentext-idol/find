@@ -12,7 +12,6 @@ import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.FindParametricFilter;
-import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Slider;
 import com.hp.autonomy.frontend.selenium.util.Waits;
@@ -24,7 +23,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -114,7 +112,7 @@ public class TopicMapITCase extends IdolFindTestBase {
 
         //checks first parametric filter of first parametric filter type
         final FilterPanel filters = getElementFactory().getFilterPanel();
-        final int index = filters.nonZeroParaFieldContainer(0);
+        final int index = filters.nonZeroParamFieldContainer(0);
         filters.parametricField(index).expand();
         final FindParametricFilter filter = filters.checkboxForParametricValue(index, 0);
         final String filterName = filter.getName();

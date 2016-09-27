@@ -21,7 +21,7 @@ define([
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, AbstractSectionView, DateView, ParametricView, NumericParametricView, NumericParametricFieldView,
             TextInput, Collapsible, FilteringCollection, prettifyFieldName, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
-    "use strict";
+    'use strict';
 
     var datesTitle = i18n['search.dates'];
 

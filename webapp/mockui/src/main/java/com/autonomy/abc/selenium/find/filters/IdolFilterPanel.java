@@ -58,7 +58,7 @@ public class IdolFilterPanel extends FilterPanel{
     }
 
     //METAFILTERING
-    public void filterResults(final String term) {
+    public void searchFilters(final String term) {
         // placeholder text uses ellipsis unicode character
         final FormInput input = new FormInput(getPanel().findElement(By.cssSelector("[placeholder='Filter\u2026']")), driver);
         input.clear();
@@ -66,7 +66,7 @@ public class IdolFilterPanel extends FilterPanel{
         Waits.loadOrFadeWait();
     }
 
-    public void clearFilter() {
+    public void clearMetaFilter() {
         final FormInput input = new FormInput(getPanel().findElement(By.cssSelector("[placeholder='Filter\u2026']")), driver);
         input.clear();
         waitForIndexes();
