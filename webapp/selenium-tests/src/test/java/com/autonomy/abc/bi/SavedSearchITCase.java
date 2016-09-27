@@ -15,6 +15,7 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
 import com.autonomy.abc.selenium.find.numericWidgets.NumericWidgetService;
 import com.autonomy.abc.selenium.find.save.*;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
@@ -97,6 +98,8 @@ public class SavedSearchITCase extends IdolFindTestBase {
     @Test
     public void testOpenSnapshotAsQuery() {
         findService.search("open");
+        getElementFactory().getResultsPage().waitForResultsToLoad();
+
         saveService.saveCurrentAs("sesame", SearchType.SNAPSHOT);
         findService.search("no longer open");
         searchTabBar.switchTo("sesame");
@@ -131,6 +134,9 @@ public class SavedSearchITCase extends IdolFindTestBase {
     @Test
     public void testSavedSearchVisibleInNewSession() {
         findService.search(new Query("live forever"));
+        ResultsView results = getElementFactory().getResultsPage();
+        results.waitForResultsToLoad();
+
         final FilterPanel filterPanel = getElementFactory().getFilterPanel();
         filterPanel.waitForParametricFields();
 
@@ -138,6 +144,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         filterPanel.parametricField(index).expand();
         filterPanel.checkboxForParametricValue(index, 0).check();
 
+        results.waitForResultsToLoad();
         saveService.saveCurrentAs("oasis", SearchType.QUERY);
 
         final BIIdolFind other = new BIIdolFind();
@@ -202,6 +209,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         final MainNumericWidget mainGraph = widgetService.searchAndSelectNthGraph(1, "saint");
         mainGraph.clickAndDrag(100, mainGraph.graph());
 
+        getElementFactory().getResultsPage().waitForResultsToLoad();
         saveService.saveCurrentAs("saaaaved", SearchType.QUERY);
 
         assertThat(searchTabBar.currentTab(), not(modified()));

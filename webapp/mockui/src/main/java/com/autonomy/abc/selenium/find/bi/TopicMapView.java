@@ -50,7 +50,7 @@ public class TopicMapView {
     }
 
     public void waitForTopLevelEntities() {
-        new WebDriverWait(driver,10)
+        new WebDriverWait(driver,25)
                 .withMessage("top level entities to reach the right opacity")
                 .until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.2']")));
     }
@@ -122,7 +122,7 @@ public class TopicMapView {
     }
 
     public void waitForMapLoaded() {
-        new WebDriverWait(driver, 30).until(new mapLoaded());
+        waitForTopLevelEntities();
     }
 
     private WebElement findElement(final By locator) {

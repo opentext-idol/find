@@ -28,7 +28,7 @@ public class SearchTab {
     }
 
     public SearchType getType() {
-        return SearchType.valueOf(tab.findElement(By.className("search-type")).getText());
+        return SearchType.valueOf(tab.findElement(By.cssSelector(".hp-icon:not(.hide):not(.hp-new)")).getAttribute("data-original-title"));
     }
 
     public WebElement getTab() {
