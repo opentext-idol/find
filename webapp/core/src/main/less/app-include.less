@@ -1006,9 +1006,9 @@ input.find-input {
     transition: @transitAll;
   }
 
-  .find-input-button {
-    height: @findInputHeight;
-  }
+    .search-controls .find-input-button {
+        height: @findInputHeight;
+    }
 }
 
 .reverse-animated-container .find-form:focus,
@@ -1235,16 +1235,6 @@ input.find-input {
   }
 }
 
-.reverse-animated-container .see-all-documents,
-.reverse-animated-container .see-all-documents:hover {
-  color: inherit;
-}
-
-.animated-container .see-all-documents,
-.animated-container .see-all-documents:hover {
-  color: @white;
-}
-
 .service-view-container {
   height: calc(@100vh - @navBarHeight);
   width: @100percent;
@@ -1362,43 +1352,86 @@ input.find-input {
   }
 }
 
-input.find-input[type="text"],
-input.find-input[type="text"]:focus {
-  &:extend(.no-box-shadow);
+.search-controls {
+    .find-input[type="text"],
+    .find-input[type="text"]:focus {
+        &:extend(.no-box-shadow);
 
-  border-color: transparent;
-  border-radius: @nil;
-  height: @custom9;
-  padding-right: @custom3;
+        border-color: transparent;
+        border-radius: @nil;
+        height: @custom9;
+        padding-right: @custom3;
+    }
+
+    input::-webkit-input-placeholder,
+    input::-moz-placeholder {
+        color: @color1;
+        opacity: 0.5;
+    }
+
+    .find-input-button {
+        &:extend(.absolute);
+
+        height: @custom9;
+        right: @nil;
+        top: @nil;
+    }
+
+    .find-input-button,
+    .find-input-button:hover {
+        &:extend(.no-box-shadow);
+
+        border-left: 1px solid @grey;
+        border: @nil;
+    }
 }
 
-input::-webkit-input-placeholder,
-input::-moz-placeholder {
-  color: @color1;
-  opacity: 0.5;
-}
+.concepts-controls {
+    .find-input[type="text"] {
+        &:extend(.no-box-shadow);
+        &:extend(.form-control);
 
-.see-all-documents {
-  &:extend(.absolute);
+        border-radius: @nil;
+        color: inherit;
+        transition: border-color 0s ease-in-out 0s;
 
-  right: -85px;
-  top: 5px;
-}
+        &:focus {
+            &:extend(.form-control:focus);
+        }
+    }
 
-.find-input-button {
-  &:extend(.absolute);
+    .find-input-button {
+        &:extend(.absolute);
+        &:extend(.no-box-shadow);
 
-  height: @custom9;
-  right: @nil;
-  top: @nil;
-}
+        &:hover {
+            background-color: @white;
+        }
 
-.find-input-button,
-.find-input-button:hover {
-  &:extend(.no-box-shadow);
+        &:focus {
+            outline: 0;
+        }
 
-  border-left: 1px solid @grey;
-  border: @nil;
+        height: 34px;
+        right: @nil;
+        top: @nil;
+        border-top: 1px solid #e5e6e7;
+        border-right: 1px solid #e5e6e7;
+        border-bottom: 1px solid #e5e6e7;
+        border-left: 0;
+    }
+
+    .find-input-button.in-focus {
+        border-top: 1px solid #60798d;
+        border-right: 1px solid #60798d;
+        border-bottom: 1px solid #60798d;
+    }
+
+    input::-webkit-input-placeholder,
+    input::-moz-placeholder {
+        color: @color1;
+        opacity: 0.5;
+    }
 }
 
 .reverse-animated-container .find-input-button,

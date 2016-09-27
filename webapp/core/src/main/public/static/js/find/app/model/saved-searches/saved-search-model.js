@@ -12,7 +12,6 @@ define([
      * Models representing the state of a search.
      * @typedef {Object} QueryState
      * @property {DatesFilterModel} datesFilterModel Contains the date restrictions
-     * @property {Backbone.Model} queryTextModel Contains the input text
      * @property {Backbone.Collection} conceptGroups
      * @property {Backbone.Collection} selectedIndexes
      * @property {Backbone.Collection} selectedParametricValues
@@ -22,7 +21,6 @@ define([
      * The attributes saved on a saved search model.
      * @typedef {Object} SavedSearchModelAttributes
      * @property {String} title
-     * @property {String} queryText
      * @property {String[][]} relatedConcepts
      * @property {{name: String, domain: String}[]} indexes
      * @property {{field: String, value: String}[]} parametricValues
@@ -121,7 +119,6 @@ define([
 
     return Backbone.Model.extend({
         defaults: {
-            queryText: null,
             title: null,
             indexes: [],
             parametricValues: [],
@@ -185,8 +182,7 @@ define([
             var selectedIndexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
 
             var parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
-            return this.get('queryText') === queryState.queryTextModel.get('inputText')
-                    && this.equalsQueryStateDateFilters(queryState)
+            return this.equalsQueryStateDateFilters(queryState)
                     && arraysEqual(this.get('relatedConcepts'), queryState.conceptGroups.pluck('concepts'), arrayEqualityPredicate)
                     && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                     && this.get('minScore') === queryState.minScoreModel.get('minScore')
@@ -215,12 +211,6 @@ define([
                 customMinDate: minDate,
                 customMaxDate: maxDate,
                 dateNewDocsLastFetched: this.get('dateNewDocsLastFetched')
-            };
-        },
-
-        toQueryTextModelAttributes: function() {
-            return {
-                inputText: this.get('queryText')
             };
         },
 
@@ -263,7 +253,6 @@ define([
 
             return _.extend(
                 {
-                    queryText: queryState.queryTextModel.get('inputText'),
                     relatedConcepts: queryState.conceptGroups.pluck('concepts'),
                     indexes: indexes,
                     parametricValues: parametricRestrictions.parametricValues,

@@ -26,12 +26,10 @@ define([
                 parametricValues: []
             });
 
-            expect(output.length).toBe(2);
-            expect(output[0].title).toBe(snapshotsI18n['restrictions.queryText']);
-            expect(output[0].content).toBe('cat');
-            expect(output[1].title).toBe(indexesI18n['search.indexes']);
-            expect(output[1].content).toContain('Wikipedia');
-            expect(output[1].content).toContain('Admissions');
+            expect(output.length).toBe(1);
+            expect(output[0].title).toBe(indexesI18n['search.indexes']);
+            expect(output[0].content).toContain('Wikipedia');
+            expect(output[0].content).toContain('Admissions');
         });
 
         it('returns related concepts if they are present in the attributes', function() {
@@ -42,10 +40,10 @@ define([
                 parametricValues: []
             });
 
-            expect(output.length).toBe(3);
-            expect(output[1].title).toBe(snapshotsI18n['restrictions.relatedConcepts']);
-            expect(output[1].content).toContain('Copenhagen');
-            expect(output[1].content).toContain('Quantum');
+            expect(output.length).toBe(2);
+            expect(output[0].title).toBe(snapshotsI18n['restrictions.relatedConcepts']);
+            expect(output[0].content).toContain('Copenhagen');
+            expect(output[0].content).toContain('Quantum');
         });
 
         it('formats and returns a minimum date if present in the attributes', function() {
@@ -57,9 +55,9 @@ define([
                 minDate: moment(1455026659454)
             });
 
-            expect(output.length).toBe(3);
-            expect(output[2].title).toBe(snapshotsI18n['restrictions.minDate']);
-            expect(output[2].content).toContain('2016/02/09');
+            expect(output.length).toBe(2);
+            expect(output[1].title).toBe(snapshotsI18n['restrictions.minDate']);
+            expect(output[1].content).toContain('2016/02/09');
         });
 
         it('formats and returns a maximum date if present in the attributes', function() {
@@ -71,9 +69,9 @@ define([
                 maxDate: moment(1455026659454)
             });
 
-            expect(output.length).toBe(3);
-            expect(output[2].title).toBe(snapshotsI18n['restrictions.maxDate']);
-            expect(output[2].content).toContain('2016/02/09');
+            expect(output.length).toBe(2);
+            expect(output[1].title).toBe(snapshotsI18n['restrictions.maxDate']);
+            expect(output[1].content).toContain('2016/02/09');
         });
 
         it('groups, prettifies and returns parametric values present in the attributes', function() {
@@ -88,12 +86,12 @@ define([
                 ]
             });
 
-            expect(output.length).toBe(4);
-            expect(output[2].title).toBe('Animal');
-            expect(output[2].content).toContain('cat');
-            expect(output[3].title).toBe('Primary Colour');
-            expect(output[3].content).toContain('ginger');
-            expect(output[3].content).toContain('black');
+            expect(output.length).toBe(3);
+            expect(output[1].title).toBe('Animal');
+            expect(output[1].content).toContain('cat');
+            expect(output[2].title).toBe('Primary Colour');
+            expect(output[2].content).toContain('ginger');
+            expect(output[2].content).toContain('black');
         });
     });
 

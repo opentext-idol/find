@@ -23,7 +23,7 @@ define([
 
                 expect(this.conceptGroups.pluck('concepts')).toEqual([
                     ['baz'],
-                    ['foo', 'bar']
+                    ['"foo"', '"bar"']
                 ]);
             });
         });
@@ -52,7 +52,7 @@ define([
 
                 expect(newSearch.get('relatedConcepts')).toEqual([
                     ['baz'],
-                    ['foo', 'bar']
+                    ['"foo"', '"bar"']
                 ]);
             });
         });

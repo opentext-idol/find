@@ -2,17 +2,10 @@ package com.autonomy.abc.selenium.find;
 
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
-import com.hp.autonomy.frontend.selenium.element.HPRemovable;
-import com.hp.autonomy.frontend.selenium.element.Removable;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.Locator;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FindTopNavBar implements LoginService.LogoutHandler {
     private final WebElement header;
@@ -30,15 +23,12 @@ public class FindTopNavBar implements LoginService.LogoutHandler {
         Waits.loadOrFadeWait();
     }
 
-    void search(final String term) {
-        input.clear();
-        input.setValue(term);
-        Waits.loadOrFadeWait();
-        input.submit();
-    }
-
     public String getSearchBoxTerm() {
         return input.getValue();
+    }
+
+    public FormInput getSearchBoxInput() {
+        return input;
     }
 
     public String getCurrentUsername() {

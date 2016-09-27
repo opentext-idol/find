@@ -20,8 +20,7 @@ define([
                 queryModel: this.queryModel,
                 clickHandler: this.clickHandler,
                 queryState: {
-                    conceptGroups: this.conceptGroups,
-                    queryTextModel: this.queryTextModel
+                    conceptGroups: this.conceptGroups
                 }
             });
 
@@ -32,11 +31,8 @@ define([
             this.indexesCollection = new Backbone.Collection();
             this.queryModel = new Backbone.Model();
 
-            this.queryTextModel = new Backbone.Model({
-                inputText: 'orange'
-            });
-
             this.conceptGroups = new Backbone.Collection([
+                {concepts: ['orange']},
                 {concepts: ['blood']}
             ]);
             

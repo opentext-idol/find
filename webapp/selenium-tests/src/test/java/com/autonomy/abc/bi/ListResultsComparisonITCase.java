@@ -4,9 +4,7 @@ import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
-import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
-import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.comparison.AppearsIn;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
@@ -26,7 +24,10 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -73,8 +74,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         try {
             findPage.waitUntilSearchTabsLoaded();
             savedSearchService.deleteAll();
-        }
-        catch (TimeoutException e) {
+        } catch (final TimeoutException ignored) {
             //no-op
         }
 
@@ -85,7 +85,6 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     //TODO: used to check hasSetUp() but something about that wasn't working
     //Should probably check if it hasSetUp()
     public void tearDown() {
-        findService.search("back to results");
         savedSearchService.deleteAll();
     }
 
@@ -120,6 +119,8 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
 
         assertThat(resultsView.getResults(), empty());
         assertThat(resultsView, containsText("No results found"));
+
+        findPage.goBackToSearch();
     }
 
     @Test
@@ -147,6 +148,8 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         verifyThat(resultsComparison.getResultsCountFor(AppearsIn.THIS_ONLY), is(0));
         verifyThat(resultsComparison.getResultsCountFor(AppearsIn.BOTH), is(innerCount));
         verifyThat(resultsComparison.getResultsCountFor(AppearsIn.OTHER_ONLY), is(outerCount - innerCount));
+
+        findPage.goBackToSearch();
     }
 
     private int getTotalResults() {
@@ -172,6 +175,8 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
             thrown = e;
         }
         assertThat(thrown, nullValue());
+
+        findPage.goBackToSearch();
     }
 
     @Test
@@ -237,14 +242,16 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-239")
     public void testComparingWhenZeroResults() {
-        searchAndSave(new Query("lsijfielsjfiesjflisejlijlij"),"contagion");
-        assumeThat("1 search has 0 results",findPage.totalResultsNum(),is(0));
+        searchAndSave(new Query("lsijfielsjfiesjflisejlijlij"), "contagion");
+        assumeThat("1 search has 0 results", findPage.totalResultsNum(), is(0));
 
         savedSearchService.openNewTab();
         searchAndSave(new Query("virus"), "ill");
 
         savedSearchService.compareCurrentWith("contagion");
-        verifyThat("Has compared the searches",findPage.resultsComparisonVisible());
+        verifyThat("Has compared the searches", findPage.resultsComparisonVisible());
+
+        findPage.goBackToSearch();
     }
 
     private void searchAndSave(final Query query, final String saveAs) {
@@ -253,7 +260,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
 
     private void searchAndSave(final Query query, final String saveAs, final SearchType saveType) {
         findService.search(query);
-        getElementFactory().getTopicMap().waitForMapLoaded();
+        new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active").until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
         savedSearchService.saveCurrentAs(saveAs, saveType);
     }
 }

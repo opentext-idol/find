@@ -83,7 +83,6 @@ define([
 
             if (this.queryState) {
                 this.stopListening(this.queryState.selectedIndexes);
-                this.stopListening(this.queryState.queryTextModel);
                 this.stopListening(this.queryState.conceptGroups);
                 this.stopListening(this.queryState.selectedParametricValues);
                 this.stopListening(this.queryState.datesFilterModel);
@@ -94,7 +93,6 @@ define([
             if (this.queryState) {
                 this.listenTo(this.queryState.selectedIndexes, 'add remove', this.updateSavedness);
                 this.listenTo(this.queryState.conceptGroups, 'update change', this.updateSavedness);
-                this.listenTo(this.queryState.queryTextModel, 'change', this.updateSavedness);
                 this.listenTo(this.queryState.selectedParametricValues, 'add remove', this.updateSavedness);
                 this.listenTo(this.queryState.datesFilterModel, 'change', this.updateSavedness);
             }

@@ -368,7 +368,6 @@ define([
         },
 
         resetQueryState: function () {
-            this.queryState.queryTextModel.set(this.savedSearchModel.toQueryTextModelAttributes());
             this.queryState.datesFilterModel.set(this.savedSearchModel.toDatesFilterModelAttributes());
             this.queryState.conceptGroups.set(this.savedSearchModel.toConceptGroups());
             this.queryState.selectedIndexes.set(this.savedSearchModel.toSelectedIndexes());

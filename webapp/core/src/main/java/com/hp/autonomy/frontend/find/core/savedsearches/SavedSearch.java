@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -21,7 +20,24 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -54,9 +70,6 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     private UserEntity user;
 
     private String title;
-
-    @Column(name = Table.Column.QUERY_TEXT)
-    private String queryText;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = IndexesTable.NAME, joinColumns = @JoinColumn(name = IndexesTable.Column.SEARCH_ID))
@@ -105,7 +118,6 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     protected SavedSearch(final Builder<?> builder) {
         id = builder.id;
         title = builder.title;
-        queryText = builder.queryText;
         indexes = builder.indexes;
         parametricValues = builder.parametricValues;
         parametricRanges = builder.parametricRanges;
@@ -129,11 +141,10 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
      */
     @SuppressWarnings("OverlyComplexMethod")
     public void merge(final T other) {
-        if(other != null) {
+        if (other != null) {
             mergeInternal(other);
 
             title = other.getTitle() == null ? title : other.getTitle();
-            queryText = other.getQueryText() == null ? queryText : other.getQueryText();
             minDate = other.getMinDate() == null ? minDate : other.getMinDate();
             maxDate = other.getMaxDate() == null ? maxDate : other.getMaxDate();
             minScore = other.getMinScore() == null ? minScore : other.getMinScore();
@@ -143,7 +154,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
             parametricRanges = other.getParametricRanges() == null ? parametricRanges : other.getParametricRanges();
 
-            if(other.getConceptClusterPhrases() != null) {
+            if (other.getConceptClusterPhrases() != null) {
                 conceptClusterPhrases.clear();
                 conceptClusterPhrases.addAll(other.getConceptClusterPhrases());
             }
@@ -165,87 +176,19 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
 
     // WARNING: This logic is duplicated in the client-side QueryTextModel
     public String toQueryText() {
-        if(CollectionUtils.isEmpty(conceptClusterPhrases)) {
-            return queryText;
+        final String queryText;
+        if (conceptClusterPhrases.isEmpty()) {
+            queryText = "*";
         } else {
-            final Collection<String> quotedConcepts = conceptClusterPhrases.stream()
-                    .map(clusterPhrase -> wrapQuotes(clusterPhrase.getPhrase()))
-                    .collect(Collectors.toCollection(LinkedList::new));
-
-            return '(' + queryText + ") AND " + StringUtils.join(quotedConcepts, " AND ");
+            final Collection<String> quotedConcepts = conceptClusterPhrases.stream().map(clusterPhrase -> wrapInBrackets(clusterPhrase.getPhrase())).collect(Collectors.toCollection(LinkedList::new));
+            queryText = StringUtils.join(quotedConcepts, " AND ");
         }
+
+        return queryText;
     }
 
-    private String wrapQuotes(final String input) {
-        return input.isEmpty() ? "" : '"' + input + '"';
-    }
-
-    protected interface Table {
-        String NAME = "searches";
-
-        @SuppressWarnings("InnerClassTooDeeplyNested")
-        interface Column {
-            String ID = "search_id";
-            String USER_ID = "user_id";
-            String QUERY_TEXT = "query_text";
-            String START_DATE = "start_date";
-            String END_DATE = "end_date";
-            String CREATED_DATE = "created_date";
-            String MODIFIED_DATE = "modified_date";
-            String ACTIVE = "active";
-            String TOTAL_RESULTS = "total_results";
-            String DATE_RANGE_TYPE = "date_range_type";
-            String MIN_SCORE = "min_score";
-        }
-    }
-
-    private interface IndexesTable {
-        String NAME = "search_indexes";
-
-        @SuppressWarnings("InnerClassTooDeeplyNested")
-        interface Column {
-            String SEARCH_ID = "search_id";
-        }
-    }
-
-    private interface ParametricValuesTable {
-        String NAME = "search_parametric_values";
-
-        @SuppressWarnings("InnerClassTooDeeplyNested")
-        interface Column {
-            String SEARCH_ID = "search_id";
-        }
-    }
-
-    private interface ParametricRangesTable {
-        String NAME = "search_parametric_ranges";
-
-        @SuppressWarnings("InnerClassTooDeeplyNested")
-        interface Column {
-            String SEARCH_ID = "search_id";
-        }
-    }
-
-    protected interface StoredStateTable {
-        String NAME = "search_stored_state";
-
-        @SuppressWarnings("InnerClassTooDeeplyNested")
-        interface Column {
-            String SEARCH_ID = "search_id";
-        }
-    }
-
-    interface ConceptClusterPhraseTable {
-        String NAME = "search_concept_cluster_phrases";
-
-        @SuppressWarnings("InnerClassTooDeeplyNested")
-        interface Column {
-            String ID = "search_concept_cluster_phrase_id";
-            String SEARCH_ID = "search_id";
-            String PHRASE = "phrase";
-            String PRIMARY = "primary_phrase";
-            String CLUSTER_ID = "cluster_id";
-        }
+    private String wrapInBrackets(final String input) {
+        return '(' + input + ')';
     }
 
     @NoArgsConstructor
@@ -253,7 +196,6 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     public abstract static class Builder<T extends SavedSearch<T>> {
         private Long id;
         private String title;
-        private String queryText;
         private Set<EmbeddableIndex> indexes;
         private Set<FieldAndValue> parametricValues;
         private Set<ParametricRange> parametricRanges;
@@ -269,7 +211,6 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         protected Builder(final SavedSearch<T> search) {
             id = search.id;
             title = search.title;
-            queryText = search.queryText;
             indexes = search.indexes;
             parametricValues = search.parametricValues;
             parametricRanges = search.parametricRanges;
@@ -292,11 +233,6 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
 
         public Builder<T> setTitle(final String title) {
             this.title = title;
-            return this;
-        }
-
-        public Builder<T> setQueryText(final String queryText) {
-            this.queryText = queryText;
             return this;
         }
 
@@ -355,6 +291,73 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         public Builder<T> setMinScore(final Integer minScore) {
             this.minScore = minScore;
             return this;
+        }
+    }
+
+    protected interface Table {
+        String NAME = "searches";
+
+        @SuppressWarnings("InnerClassTooDeeplyNested")
+        interface Column {
+            String ID = "search_id";
+            String USER_ID = "user_id";
+            String START_DATE = "start_date";
+            String END_DATE = "end_date";
+            String CREATED_DATE = "created_date";
+            String MODIFIED_DATE = "modified_date";
+            String ACTIVE = "active";
+            String TOTAL_RESULTS = "total_results";
+            String DATE_RANGE_TYPE = "date_range_type";
+            String MIN_SCORE = "min_score";
+        }
+    }
+
+    private interface IndexesTable {
+        String NAME = "search_indexes";
+
+        @SuppressWarnings("InnerClassTooDeeplyNested")
+        interface Column {
+            String SEARCH_ID = "search_id";
+        }
+    }
+
+    private interface ParametricValuesTable {
+        String NAME = "search_parametric_values";
+
+        @SuppressWarnings("InnerClassTooDeeplyNested")
+        interface Column {
+            String SEARCH_ID = "search_id";
+        }
+    }
+
+    private interface ParametricRangesTable {
+        String NAME = "search_parametric_ranges";
+
+        @SuppressWarnings("InnerClassTooDeeplyNested")
+        interface Column {
+            String SEARCH_ID = "search_id";
+        }
+    }
+
+    protected interface StoredStateTable {
+        String NAME = "search_stored_state";
+
+        @SuppressWarnings("InnerClassTooDeeplyNested")
+        interface Column {
+            String SEARCH_ID = "search_id";
+        }
+    }
+
+    interface ConceptClusterPhraseTable {
+        String NAME = "search_concept_cluster_phrases";
+
+        @SuppressWarnings("InnerClassTooDeeplyNested")
+        interface Column {
+            String ID = "search_concept_cluster_phrase_id";
+            String SEARCH_ID = "search_id";
+            String PHRASE = "phrase";
+            String PRIMARY = "primary_phrase";
+            String CLUSTER_ID = "cluster_id";
         }
     }
 }

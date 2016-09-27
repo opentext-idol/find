@@ -11,6 +11,7 @@ define([
     'parametric-refinement/selected-values-collection',
     'find/app/model/documents-collection',
     'find/app/page/search/input-view',
+    'find/app/page/search/input-view-query-text-strategy',
     'find/app/page/search/tabbed-search-view',
     'find/app/util/model-any-changed-attribute-listener',
     'find/app/util/merge-collection',
@@ -32,7 +33,7 @@ define([
     'underscore',
     'text!find/templates/app/page/find-search.html'
 ], function (BasePage, Backbone, config, DatesFilterModel, SelectedParametricValuesCollection, DocumentsCollection,
-             InputView, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel,
+             InputView, queryTextStrategy, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel,
              QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, events, router, vent, i18n, $, _, template) {
 
     'use strict';
@@ -91,6 +92,42 @@ define([
         QueryLeftSideView: null,
 
         initialize: function (options) {
+            this.configuration = config();
+            const optionalViews = [{
+                enabled: !this.configuration.hasBiRole,
+                selector: '.input-view-container',
+                construct: function () {
+                    // Model representing search bar text
+                    this.searchModel = new QueryTextModel();
+
+                    this.listenTo(this.searchModel, 'change', function () {
+                        // Bind search model to routing
+                        vent.navigate(this.generateURL(), {trigger: false});
+
+                        if (this.searchModel.get('inputText')) {
+                            this.expandedState();
+
+                            // Create a tab if the user has run a search but has no open tabs
+                            if (this.selectedTabModel.get('selectedSearchCid') === null) {
+                                this.createNewTab(this.searchModel.get('inputText'));
+                            }
+                        }
+                    });
+
+                    return new InputView({
+                        strategy: queryTextStrategy(this.searchModel)
+                    });
+                }.bind(this),
+                onExpand: function (instance) {
+                    instance.unFocus();
+                },
+                onReduce: function (instance) {
+                    instance.focus();
+                }
+            }];
+            //noinspection JSUnresolvedFunction
+            this.optionalViews = _.where(optionalViews, {enabled: true});
+
             this.savedQueryCollection = options.savedQueryCollection;
             this.indexesCollection = options.indexesCollection;
             this.windowScrollModel = options.windowScrollModel;
@@ -109,9 +146,6 @@ define([
                 selectedSearchCid: null
             });
 
-            // Model representing search bar text
-            this.searchModel = new QueryTextModel();
-
             // Model mapping saved search cids to query state
             this.queryStates = new Backbone.Model();
 
@@ -119,20 +153,6 @@ define([
             this.serviceViews = {};
 
             this.listenTo(this.selectedTabModel, 'change', this.selectContentView);
-
-            this.listenTo(this.searchModel, 'change', function () {
-                // Bind search model to routing
-                vent.navigate(this.generateURL(), {trigger: false});
-
-                if (this.searchModel.get('inputText')) {
-                    this.expandedState();
-
-                    // Create a tab if the user has run a search but has no open tabs
-                    if (this.selectedTabModel.get('selectedSearchCid') === null) {
-                        this.createNewTab(this.searchModel.get('inputText'));
-                    }
-                }
-            });
 
             this.listenTo(this.savedSearchCollection, 'remove', function (savedSearch) {
                 var cid = savedSearch.cid;
@@ -154,12 +174,9 @@ define([
                 }
             });
 
-            this.inputView = new InputView({
-                model: this.searchModel,
-                queryStates: this.queryStates,
-                selectedTabModel: this.selectedTabModel,
-                hasBiRole: config().hasBiRole,
-                indexesCollection: this.indexesCollection
+            //noinspection JSUnresolvedFunction
+            this.optionalViews.forEach(function (view) {
+                view.instance = view.construct();
             });
 
             if (config().hasBiRole) {
@@ -173,13 +190,13 @@ define([
                 this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
 
                 var savedSearchConfig = config().savedSearchConfig;
-                if(savedSearchConfig.pollForUpdates) {
-                    this.listenToOnce(this.savedQueryCollection, 'sync', function() {
+                if (savedSearchConfig.pollForUpdates) {
+                    this.listenToOnce(this.savedQueryCollection, 'sync', function () {
                         this.savedQueryResultPoller = new SavedQueryResultPoller({
                             config: savedSearchConfig,
                             savedQueryCollection: this.savedQueryCollection,
                             queryStates: this.queryStates,
-                            onSuccess: _.bind(function(savedQueryModelId, newResults) {
+                            onSuccess: _.bind(function (savedQueryModelId, newResults) {
                                 this.savedQueryCollection.get(savedQueryModelId).set({
                                     newDocuments: newResults
                                 });
@@ -192,7 +209,9 @@ define([
             this.listenTo(router, 'route:searchSplash', function () {
                 this.selectedTabModel.set('selectedSearchCid', null);
 
-                this.searchModel.set({inputText: ''});
+                if (this.searchModel) {
+                    this.searchModel.set({inputText: ''});
+                }
 
                 this.reducedState();
             }, this);
@@ -202,9 +221,11 @@ define([
                 this.removeDocumentDetailView();
                 this.removeSuggestView();
 
-                this.searchModel.set({
-                    inputText: text || ''
-                });
+                if (this.searchModel) {
+                    this.searchModel.set({
+                        inputText: text || ''
+                    });
+                }
 
                 if (this.isExpanded()) {
                     this.$('.service-view-container').addClass('hide');
@@ -259,13 +280,15 @@ define([
         render: function () {
             this.$el.html(html);
 
-            this.inputView.setElement(this.$('.input-view-container')).render();
+            this.optionalViews.forEach(function (view) {
+                view.instance.setElement(this.$(view.selector)).render();
+            }, this);
 
             if (this.tabView) {
                 this.tabView.setElement(this.$('.search-tabs-container')).render();
             }
 
-            if (this.selectedTabModel.get('selectedSearchCid') === null) {
+            if (this.selectedTabModel.get('selectedSearchCid') === null && !config().hasBiRole) {
                 this.reducedState();
             } else {
                 this.expandedState();
@@ -275,8 +298,12 @@ define([
                 this.$('.query-service-view-container').append(data.view.$el);
                 data.view.render();
             }, this);
-
-            this.selectContentView();
+            
+            if (config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
+                this.createNewTab();
+            } else {
+                this.selectContentView();
+            }
         },
 
         // Can be overridden
@@ -298,18 +325,19 @@ define([
                         create: i18n['search.savedSearchControl.openEdit.create'],
                         edit: i18n['search.savedSearchControl.openEdit.edit']
                     },
-                    createSearchModelAttributes: function (queryTextModel) {
-                        return queryTextModel.attributes;
-                    },
-                    queryTextModelChange: function (options) {
-                        return function () {
-                            options.searchModel.set(options.queryState.queryTextModel.attributes);
+                    createSearchModelAttributes: function (conceptGroups) {
+                        return {
+                            inputString: conceptGroups.length > 0 ? conceptGroups.first().get('concepts')[0] : '*'
                         };
                     },
                     searchModelChange: function (options) {
                         return function () {
-                            options.queryState.queryTextModel.set(options.searchModel.attributes);
-                            options.queryState.conceptGroups.reset();
+                            const inputText = options.searchModel.get('inputText');
+                            if (inputText && inputText !== '*') {
+                                options.queryState.conceptGroups.set([{concepts: [inputText], hidden: true}]);
+                            } else {
+                                options.queryState.conceptGroups.reset();
+                            }
                         };
                     }
                 }
@@ -318,8 +346,7 @@ define([
 
         createNewTab: function (queryText) {
             var newSearch = new SavedSearchModel({
-                queryText: queryText || '*',
-                relatedConcepts: [],
+                relatedConcepts: queryText ? [[queryText]] : [],
                 title: i18n['search.newSearch'],
                 type: SavedSearchModel.Type.QUERY,
                 minScore: config().minScore
@@ -334,17 +361,11 @@ define([
 
             _.each(this.serviceViews, function (data) {
                 data.view.$el.addClass('hide');
-                this.stopListening(data.queryState.queryTextModel);
             }, this);
 
-            if (this.searchChangeCallback !== null) {
+            if (this.searchModel && this.searchChangeCallback !== null) {
                 this.stopListening(this.searchModel, 'change', this.searchChangeCallback);
                 this.searchChangeCallback = null;
-            }
-
-            if (this.queryTextCallback !== null) {
-                this.stopListening(this.searchModel, 'change', this.queryTextCallback);
-                this.queryTextCallback = null;
             }
 
             if (cid) {
@@ -357,7 +378,6 @@ define([
                 if (this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
                 } else {
-                    const queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
                     const minScore = new MinScoreModel({minScore: 0});
                     const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
 
@@ -379,7 +399,6 @@ define([
                      */
                     const queryState = {
                         conceptGroups: new Backbone.Collection(savedSearchModel.toConceptGroups()),
-                        queryTextModel: queryTextModel,
                         minScoreModel: minScore,
                         datesFilterModel: new DatesFilterModel(savedSearchModel.toDatesFilterModelAttributes()),
                         selectedIndexes: new this.IndexesCollection(initialSelectedIndexes),
@@ -388,7 +407,7 @@ define([
 
                     this.queryStates.set(cid, queryState);
 
-                    this.serviceViews[cid] = viewData = {
+                    viewData = {
                         queryState: queryState,
                         documentsCollection: documentsCollection,
                         view: new this.ServiceView(_.extend({
@@ -400,40 +419,39 @@ define([
                             savedSearchModel: savedSearchModel,
                             searchCollections: this.searchCollections,
                             searchTypes: this.searchTypes,
-                            selectedTabModel: this.selectedTabModel                            
+                            selectedTabModel: this.selectedTabModel                           
                         }, this.serviceViewOptions(cid)))
                     };
+                    this.serviceViews[cid] = viewData;
 
                     this.$('.query-service-view-container').append(viewData.view.$el);
                     viewData.view.render();
                 }
 
-                this.searchModel.set(this.searchTypes[searchType].createSearchModelAttributes(viewData.queryState.queryTextModel));
+                if (this.searchModel) {
+                    this.searchModel.set(this.searchTypes[searchType].createSearchModelAttributes(viewData.queryState.conceptGroups));
 
-                const changeListenerOptions = {
-                    savedQueryCollection: this.savedQueryCollection,
-                    selectedTabModel: this.selectedTabModel,
-                    searchModel: this.searchModel,
-                    queryState: viewData.queryState
-                };
+                    const changeListenerOptions = {
+                        savedQueryCollection: this.savedQueryCollection,
+                        selectedTabModel: this.selectedTabModel,
+                        searchModel: this.searchModel,
+                        queryState: viewData.queryState
+                    };
 
-                this.queryTextCallback = this.searchTypes[searchType].queryTextModelChange(changeListenerOptions);
-                this.listenTo(viewData.queryState.queryTextModel, 'change', this.queryTextCallback);
-
-                this.searchChangeCallback = this.searchTypes[searchType].searchModelChange(changeListenerOptions);
-                this.listenTo(this.searchModel, 'change', this.searchChangeCallback);
+                    this.searchChangeCallback = this.searchTypes[searchType].searchModelChange(changeListenerOptions);
+                    this.listenTo(this.searchModel, 'change', this.searchChangeCallback);
+                }
 
                 viewData.view.$el.removeClass('hide');
             }
         },
 
         generateURL: function () {
-            var inputText = this.searchModel.get('inputText');
-
-            if (inputText) {
+            if (this.searchModel && this.searchModel.get('inputText')) {
+                var inputText = this.searchModel.get('inputText');
                 return 'search/query/' + encodeURIComponent(inputText);
             } else {
-                if (this.selectedTabModel.get('selectedSearchCid')) {
+                if (this.selectedTabModel.get('selectedSearchCid') || config().hasBiRole) {
                     return 'search/query';
                 } else {
                     return 'search/splash';
@@ -454,14 +472,12 @@ define([
             this.$('.app-logo').addClass('hide');
             this.$('.hp-logo-footer').addClass('hide');
 
-            if(config().hasBiRole) {
-                this.$('.see-all-documents').addClass('hide');
-            }
-
             this.removeDocumentDetailView();
             this.removeSuggestView();
 
-            this.inputView.unFocus();
+            this.optionalViews.forEach(function (view) {
+                view.onExpand(view.instance)
+            });
             this.$('.find-banner-container').addClass('hide');
 
             // TODO: somebody else needs to own this
@@ -475,12 +491,13 @@ define([
             this.$('.service-view-container').addClass('hide');
             this.$('.app-logo').removeClass('hide');
             this.$('.hp-logo-footer').removeClass('hide');
-            this.$('.see-all-documents').removeClass('hide');
 
             this.removeDocumentDetailView();
             this.removeSuggestView();
 
-            this.inputView.focus();
+            this.optionalViews.forEach(function (view) {
+                view.onReduce(view.instance)
+            });
             this.$('.find-banner-container').removeClass('hide');
 
             // TODO: somebody else needs to own this
@@ -508,6 +525,9 @@ define([
         },
 
         remove: function () {
+            //noinspection JSUnresolvedFunction
+            _.chain(this.optionalViews).pluck('instance').invoke('remove');
+
             this.savedQueryResultPoller.destroy();
             this.removeDocumentDetailView();
             Backbone.View.prototype.remove.call(this);

@@ -1,8 +1,10 @@
 package com.autonomy.abc.session;
 
 import com.autonomy.abc.base.FindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
@@ -44,7 +46,7 @@ public class FindSessionITCase extends FindTestBase {
         deleteCookies();
         try {
             findService.search("XYZ");
-        } catch (final NoSuchElementException | StaleElementReferenceException | TimeoutException e) {
+        } catch (final NoSuchElementException | StaleElementReferenceException | TimeoutException ignored) {
             /* Probably refreshed page quicker than .search could complete */
         }
         verifyRefreshedSession();
@@ -73,6 +75,7 @@ public class FindSessionITCase extends FindTestBase {
     }
 
     @Test
+    @Role(UserRole.FIND)
     public void testRelatedConcepts(){
         findService.search("Come and Gone");
 
@@ -85,6 +88,7 @@ public class FindSessionITCase extends FindTestBase {
     }
 
     @Test
+    @Role(UserRole.FIND)
     public void testSearchSurvivesLogin() {
         final LoginService loginService = getApplication().loginService();
         loginService.logout();

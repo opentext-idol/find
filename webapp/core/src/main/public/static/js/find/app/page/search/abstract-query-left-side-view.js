@@ -30,6 +30,7 @@ define([
 
             this.sections = [
                 new ConceptView({
+                    configuration: options.configuration,
                     queryState: options.queryState,
                     title: i18n['search.concepts'],
                     containerClass: 'left-side-concepts-view'

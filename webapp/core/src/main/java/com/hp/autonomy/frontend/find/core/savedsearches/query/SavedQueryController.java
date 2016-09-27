@@ -84,7 +84,7 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
         final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
         if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
             final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                    .setQueryText(savedQuery.getQueryText())
+                    .setQueryText(savedQuery.getConceptClusterPhrases().isEmpty() ? "*" : savedQuery.getConceptClusterPhrases().iterator().next().getPhrase())
                     .setFieldText(fieldTextParser.toFieldText(savedQuery))
                     .setDatabases(convertEmbeddableIndexes(savedQuery.getIndexes()))
                     .setMinDate(dateDocsLastFetched)

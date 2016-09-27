@@ -13,8 +13,7 @@ define([
     'moment'
 ], function(Backbone, _, SavedSearchModel, DatesFilterModel, MinScoreModel, databaseNameResolver, moment) {
 
-    var INPUT_TEXT = 'johnny';
-    var RELATED_CONCEPTS = [['depp']];
+    var RELATED_CONCEPTS = [['johnny'], ['depp']];
     var MAX_DATE = 555555555;
     var MIN_DATE = 444444444;
     var MIN_SCORE = 0;
@@ -42,7 +41,6 @@ define([
         beforeEach(function() {
             this.model = new SavedSearchModel({
                 title: 'Johnny Depp',
-                queryText: INPUT_TEXT,
                 maxDate: moment(MAX_DATE),
                 minDate: moment(MIN_DATE),
                 minScore: MIN_SCORE,
@@ -51,10 +49,6 @@ define([
                 indexes: BASE_INDEXES,
                 parametricValues: PARAMETRIC_VALUES,
                 parametricRanges: PARAMETRIC_RANGES_SERVER
-            });
-
-            this.queryTextModel = new Backbone.Model({
-                inputText: INPUT_TEXT
             });
 
             this.conceptGroups = new Backbone.Collection(RELATED_CONCEPTS.map(function(concepts) {
@@ -85,7 +79,6 @@ define([
 
             this.queryState = {
                 conceptGroups: this.conceptGroups,
-                queryTextModel: this.queryTextModel,
                 datesFilterModel: this.datesFilterModel,
                 selectedIndexes: this.selectedIndexes,
                 selectedParametricValues: this.selectedParametricValues,
@@ -96,12 +89,6 @@ define([
         describe('equalsQueryState', function() {
             it('returns true when the query state matches', function() {
                 expect(this.model.equalsQueryState(this.queryState)).toBe(true);
-            });
-
-            it('returns false when the input text is different', function() {
-                this.queryTextModel.set('inputText', 'cat');
-
-                expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });
 
             it('returns false when the related concepts are different', function() {
@@ -162,10 +149,6 @@ define([
                 this.attributes = SavedSearchModel.attributesFromQueryState(this.queryState);
             });
 
-            it('returns the input text from the query text model', function() {
-                expect(this.attributes.queryText).toBe(INPUT_TEXT);
-            });
-
             it('returns the related concepts from the concept groups collection', function() {
                 expect(this.attributes.relatedConcepts).toEqual(RELATED_CONCEPTS);
             });
@@ -191,7 +174,8 @@ define([
         describe('toConceptGroups', function() {
             it('maps the relatedConcepts to concept group model attributes', function() {
                 expect(this.model.toConceptGroups()).toEqual([
-                    {concepts: RELATED_CONCEPTS[0]}
+                    {concepts: RELATED_CONCEPTS[0]},
+                    {concepts: RELATED_CONCEPTS[1]}
                 ]);
             });
         });

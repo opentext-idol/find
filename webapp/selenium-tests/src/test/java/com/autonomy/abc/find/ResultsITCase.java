@@ -1,9 +1,11 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.Query;
@@ -15,6 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,7 +46,7 @@ public class ResultsITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
-        if(!findPage.footerLogo().isDisplayed()) {
+        if (!findPage.footerLogo().isDisplayed()) {
             ((IdolFindPage) findPage).goToListView();
         }
     }
@@ -65,7 +69,7 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("CSA-2082")
     public void testAutoScroll() {
-        ResultsView results = findService.search("nightmare");
+        final ResultsView results = findService.search("nightmare");
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
@@ -75,13 +79,13 @@ public class ResultsITCase extends FindTestBase {
         findPage.scrollToBottom();
         verifyThat(results.getResults(), hasSize(allOf(greaterThanOrEqualTo(60), lessThanOrEqualTo(90))));
 
-        List<String> references = new ArrayList<>();
+        final List<String> references = new ArrayList<>();
 
-        for(FindResult result : results.getResults()){
+        for (final FindResult result : results.getResults()) {
             references.add(result.getReference());
         }
 
-        Set<String> referencesSet = new HashSet<>(references);
+        final Set<String> referencesSet = new HashSet<>(references);
 
         /* References apparently may not be unique, but they're definitely ~more unique
                 than titles within our data set  */
@@ -91,7 +95,7 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("CCUK-3647")
     public void testNoMoreResultsFoundAtEnd() {
-        ResultsView results = findService.search(new Query("Cheese AND Onion"));
+        final ResultsView results = findService.search(new Query("Cheese AND Onion"));
         results.waitForResultsToLoad();
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
@@ -103,10 +107,9 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-93")
     public void testNoResults() {
-        ResultsView results = findService.search("thissearchwillalmostcertainlyreturnnoresults");
+        final ResultsView results = findService.search("thissearchwillalmostcertainlyreturnnoresults");
 
-        findPage.waitForParametricValuesToLoad();
-        verifyThat(results.resultsDiv(), containsText("No results found"));
+        new WebDriverWait(getDriver(), 60L).withMessage("No results message should appear").until(ExpectedConditions.textToBePresentInElement(results.resultsDiv(), "No results found"));
 
         findPage.scrollToBottom();
 
@@ -123,15 +126,16 @@ public class ResultsITCase extends FindTestBase {
         findPage.waitForParametricValuesToLoad();
 
         search("jedu");
-        verifyThat("Says it corrected query",findPage.originalQuery(), displayed());
+        verifyThat("Says it corrected query", findPage.originalQuery(), displayed());
 
-        if(!isHosted()) {
+        if (!isHosted()) {
             ((IdolFindPage) findPage).goToListView();
         }
-        verifyThat("There are results in list view",findPage.totalResultsNum(),greaterThan(0));
+        verifyThat("There are results in list view", findPage.totalResultsNum(), greaterThan(0));
     }
 
     @Test
+    @Role(UserRole.FIND)
     public void testRefreshWithSlash() {
         final String query = "foo/bar";
         search(query);
@@ -142,7 +146,7 @@ public class ResultsITCase extends FindTestBase {
         assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(query));
     }
 
-    private void search(String term) {
+    private void search(final String term) {
         findService.search(term);
         findPage.waitForParametricValuesToLoad();
     }

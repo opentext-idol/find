@@ -140,11 +140,8 @@ define([
                 queryText: 'cat AND Copenhagen'
             });
 
-            const queryTextModel = new Backbone.Model({
-                inputText: 'cat'
-            });
-
             const conceptGroups = new Backbone.Collection([
+                {concepts: ['cat']},
                 {concepts: ['Copenhagen']}
             ]);
 
@@ -176,7 +173,6 @@ define([
             this.queryState = {
                 conceptGroups: conceptGroups,
                 datesFilterModel: datesFilterModel,
-                queryTextModel: queryTextModel,
                 selectedIndexes: selectedIndexes,
                 selectedParametricValues: selectedParametricValues,
                 minScoreModel: minScoreModel
@@ -185,7 +181,7 @@ define([
             this.savedSearchModel = new SavedSearchModel({
                 title: 'New Search',
                 type: SavedSearchModel.Type.QUERY,
-                queryText: '*'
+                relatedConcepts: [['*']]
             });
 
             spyOn(this.savedSearchModel, 'destroy');
@@ -409,7 +405,7 @@ define([
 
                 it('copies the query restriction parameters to the new model', function() {
                     var model = this.savedQueryCollection.at(0);
-                    expect(model.get('queryText')).toBe('cat');
+                    expect(model.get('relatedConcepts')[0][0]).toBe('cat');
                     expect(model.get('indexes').length).toBe(1);
                     expect(model.get('minScore')).toBe(20);
                 });
@@ -743,7 +739,7 @@ define([
 
             describe('then the query is changed', function() {
                 beforeEach(function() {
-                    this.queryState.queryTextModel.set({inputText: 'archipelago'});
+                    this.queryState.conceptGroups.set([{concepts: ['archipelago']}]);
                     this.queryModel.set('queryText', 'archipelago');
                 });
 
@@ -768,7 +764,7 @@ define([
                         expect(this.savedSearchModel.save).toHaveBeenCalled();
 
                         var savedAttributes = this.savedSearchModel.save.calls.argsFor(0)[0];
-                        expect(savedAttributes.queryText).toBe('archipelago');
+                        expect(savedAttributes.relatedConcepts[0][0]).toBe('archipelago');
                     });
 
                     it('disables the save button', function() {
@@ -823,9 +819,9 @@ define([
                         });
 
                         it('restores the original query state', function() {
-                            expect(this.queryState.queryTextModel.get('inputText')).toBe('cat');
-                            expect(this.queryState.conceptGroups.length).toBe(1);
-                            expect(this.queryState.conceptGroups.at(0).get('concepts')).toEqual(['Copenhagen']);
+                            expect(this.queryState.conceptGroups.length).toBe(2);
+                            expect(this.queryState.conceptGroups.at(0).get('concepts')).toEqual(['cat']);
+                            expect(this.queryState.conceptGroups.at(1).get('concepts')).toEqual(['Copenhagen']);
                         });
                     });
                 });
@@ -842,7 +838,7 @@ define([
                         });
 
                         it('does not revert the search', function() {
-                            expect(this.queryState.queryTextModel.get('inputText')).toBe('archipelago');
+                            expect(this.queryState.conceptGroups.at(0).get('concepts')).toEqual(['archipelago']);
                         });
                     });
 
@@ -855,7 +851,7 @@ define([
                         });
 
                         it('reverts the search', function() {
-                            expect(this.queryState.queryTextModel.get('inputText')).toBe('cat');
+                            expect(this.queryState.conceptGroups.at(0).get('concepts')).toEqual(['cat']);
                         });
                     });
                 });
