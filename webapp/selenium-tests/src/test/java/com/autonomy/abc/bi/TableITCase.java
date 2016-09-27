@@ -157,7 +157,7 @@ public class TableITCase extends IdolFindTestBase {
         ParametricFieldContainer container = filters.parametricContainer(parametricSelectionFirst);
         container.expand();
         container.getFilters().get(0).check();
-        
+
         tableView.waitForTable();
         assertThat("Parametric selection changed", tableView.getSelectedFieldName(1), not(Matchers.is(parametricSelectionFirst)));
     }
@@ -167,7 +167,7 @@ public class TableITCase extends IdolFindTestBase {
     public void testParametricSelectors(){
         init("wild horses");
 
-        int index = filters().nonZeroParaFieldContainer(0);
+        int index = filters().nonZeroParamFieldContainer(0);
         final String firstParametric = filters().parametricField(index).filterCategoryName();
         verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(tableView.getSelectedFieldName(1).toUpperCase()));
 

@@ -125,6 +125,7 @@ define([
         'search.error.relatedConcepts': 'Error: could not retrieve Related Concepts',
         'search.error.parametric': 'An error occurred while retrieving additional filters',
         'search.filters': 'Filters',
+        'search.filters.applied': 'Filters applied',
         'search.filters.filter': 'Filter\u2026',
         'search.filters.empty': 'No filters matched',
         'search.indexes': 'Indexes',

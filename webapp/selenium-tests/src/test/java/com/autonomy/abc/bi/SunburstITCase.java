@@ -70,7 +70,7 @@ public class SunburstITCase extends IdolFindTestBase {
     public void testParametricSelectors(){
         search("wild horses");
 
-        int index = filters().nonZeroParaFieldContainer(0);
+        int index = filters().nonZeroParamFieldContainer(0);
         final String firstParametric = filters().parametricField(index).filterCategoryName();
         verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(results.getSelectedFieldName(1).toUpperCase()));
 
@@ -138,7 +138,7 @@ public class SunburstITCase extends IdolFindTestBase {
         LOGGER.info("Filtering by " + fieldName + " = " + fieldValue);
         results.getIthSunburstSegment(1).click();
         results.waitForSunburst();
-        
+
         verifyThat(findPage.filterLabelsText(), hasItem(containsString(fieldValue)));
 
         filters().parametricContainer(fieldName).expand();

@@ -2,50 +2,66 @@
  * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'backbone',
     'underscore',
     './filter-view',
     './selected-concepts/concept-view',
-    'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/abstract-query-left-side-view.html'
-], function(Backbone, _, FilterView, ConceptView, i18n, template) {
-
+    'find/app/model/applied-filters-collection',
+    'find/app/page/search/filter-display/applied-filters-view',
+    'i18n!find/nls/bundle'
+], function(Backbone, _, FilterView, ConceptView, AppliedFiltersCollection, AppliedFiltersView, i18n) {
     'use strict';
 
+    /**
+     * View for displaying the filters currently applied to the search.
+     *
+     * Expected constructor arguments: queryState, indexesCollection
+     */
     return Backbone.View.extend({
         // Abstract
         IndexesView: null,
 
-        html: _.template(template)({i18n: i18n}),
-
         initialize: function(options) {
-            this.conceptView = new ConceptView({
-                queryState: options.queryState
+            this.appliedFiltersCollection = new AppliedFiltersCollection([], {
+                queryState: options.queryState,
+                indexesCollection: options.indexesCollection
             });
 
-            this.filterView = new FilterView(_.extend({
-                IndexesView: this.IndexesView
-            }, options));
+            this.sections = [
+                new ConceptView({
+                    queryState: options.queryState,
+                    title: i18n['search.concepts'],
+                    containerClass: 'left-side-concepts-view'
+                }),
+                new AppliedFiltersView({
+                    collection: this.appliedFiltersCollection,
+                    title: i18n['search.filters.applied'],
+                    containerClass: 'left-side-applied-filters-view',
+                    titleClass: 'inline-block'
+                }),
+                new FilterView(_.extend({
+                    IndexesView: this.IndexesView,
+                    title: i18n['search.filters'],
+                    containerClass: 'left-side-filters-view'
+                }, options))
+            ];
         },
 
         render: function() {
-            this.$el.html(this.html);
-
-            this.filterView
-                .setElement(this.$('.left-side-filters-view'))
-                .render();
-
-            this.conceptView
-                .setElement(this.$('.left-side-concepts-view'))
-                .render();
+            _.each(this.sections, function(section) {
+                this.$el.append(section.$el);
+                section.render();
+            }, this);
         },
 
         remove: function() {
-            this.filterView.remove();
+            this.appliedFiltersCollection.stopListening();
+
+            _.chain(this.sections)
+                .invoke('remove');
+
             Backbone.View.prototype.remove.call(this);
         }
     });
-
 });

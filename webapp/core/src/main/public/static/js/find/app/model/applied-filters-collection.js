@@ -2,7 +2,6 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'backbone',
     'underscore',
@@ -20,7 +19,7 @@ define([
 
     var DATE_FORMAT = "YYYY-MM-DD HH:mm";
     var SHORT_DATE_FORMAT = "YYYY-MM-DD";
-    var DATE_SHORTEN_CUTOFF =  7 * 24 * 3600; // interval in seconds at which date format changes to short
+    var DATE_SHORTEN_CUTOFF = 7 * 24 * 3600; // interval in seconds at which date format changes to short
 
     var FilterType = {
         INDEXES: 'INDEXES',
@@ -55,9 +54,9 @@ define([
 
         var valueText;
 
-        if (!_.isEmpty(values)) {
+        if(!_.isEmpty(values)) {
             valueText = _.map(values, function(value) {
-                if (fieldMap) {
+                if(fieldMap) {
                     var param = _.findWhere(fieldMap.values, {name: value});
                     return param ? param.displayName : value;
                 }
@@ -66,12 +65,12 @@ define([
                 }
             }).join(', ');
         } else {
-            valueText = ranges.map(function (range) {
+            valueText = ranges.map(function(range) {
                 //Discard time of day if range greater than 1 week
-                if (numeric) {
+                if(numeric) {
                     const round = rounder().round;
                     return round(range[0], range[0], range[1]) + ' \u2013 ' + round(range[1], range[0], range[1]);
-                } else if (range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
+                } else if(range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
                     return formatDate(range[0], DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], DATE_FORMAT);
                 } else {
                     return formatDate(range[0], SHORT_DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], SHORT_DATE_FORMAT);
@@ -89,7 +88,7 @@ define([
                 id: parametricFilterId(field),
                 field: field,
                 heading: prettifyFieldName(field),
-                text: parametricFilterText(field, data.values, data.range ? [data.range] : [], data.dataType),                
+                text: parametricFilterText(field, data.values, data.range ? [data.range] : [], data.dataType),
                 type: FilterType.PARAMETRIC
             };
         });
@@ -115,30 +114,30 @@ define([
             this.on('remove', function(model) {
                 var type = model.get('type');
 
-                if (type === FilterType.PARAMETRIC) {
+                if(type === FilterType.PARAMETRIC) {
                     var field = model.get('field');
                     this.selectedParametricValues.remove(this.selectedParametricValues.where({field: field}));
-                } else if (type === FilterType.INDEXES) {
+                } else if(type === FilterType.INDEXES) {
                     this.selectedIndexesCollection.set(databaseNameResolver.getDatabaseInfoFromCollection(this.indexesCollection));
-                } else if (type === FilterType.DATE_RANGE) {
-                    if (this.datesFilterModel.get('dateRange') !== DatesFilterModel.DateRange.CUSTOM) {
+                } else if(type === FilterType.DATE_RANGE) {
+                    if(this.datesFilterModel.get('dateRange') !== DatesFilterModel.DateRange.CUSTOM) {
                         this.datesFilterModel.set('dateRange', null);
                     }
-                } else if (type === FilterType.MAX_DATE) {
+                } else if(type === FilterType.MAX_DATE) {
                     this.datesFilterModel.set('customMaxDate', null);
-                } else if (type === FilterType.MIN_DATE) {
+                } else if(type === FilterType.MIN_DATE) {
                     this.datesFilterModel.set('customMinDate', null);
                 }
             });
 
             var dateRange = this.datesFilterModel.get('dateRange');
 
-            if (dateRange) {
-                if (dateRange === DatesFilterModel.DateRange.CUSTOM) {
+            if(dateRange) {
+                if(dateRange === DatesFilterModel.DateRange.CUSTOM) {
                     _.each(customDatesFilters, function(filterData) {
                         var currentValue = this.datesFilterModel.get(filterData.attribute);
 
-                        if (currentValue) {
+                        if(currentValue) {
                             models.push({
                                 id: filterData.type,
                                 type: filterData.type,
@@ -155,7 +154,7 @@ define([
                 }
             }
 
-            if (!this.allIndexesSelected()) {
+            if(!this.allIndexesSelected()) {
                 models.push({
                     id: FilterType.INDEXES,
                     type: FilterType.INDEXES,
@@ -167,7 +166,7 @@ define([
         },
 
         getDatabasesFilterText: function() {
-            var selectedIndexNames = this.selectedIndexesCollection.map(function (model) {
+            var selectedIndexNames = this.selectedIndexesCollection.map(function(model) {
                 //noinspection JSUnresolvedFunction
                 return databaseNameResolver.getDatabaseDisplayNameFromDatabaseModel(this.indexesCollection, model);
             }.bind(this));
@@ -181,10 +180,10 @@ define([
         updateDatabases: function() {
             var filterModel = this.get(FilterType.INDEXES);
 
-            if (!this.allIndexesSelected()) {
+            if(!this.allIndexesSelected()) {
                 var filterText = this.getDatabasesFilterText();
 
-                if (filterModel) {
+                if(filterModel) {
                     filterModel.set('text', filterText);
                 } else {
                     // The databases filter model has equal id and type since only one filter of this type can be present
@@ -195,7 +194,7 @@ define([
                         heading: i18nIndexes['search.indexes']
                     });
                 }
-            } else if (this.contains(filterModel)) {
+            } else if(this.contains(filterModel)) {
                 this.remove(filterModel);
             }
         },
@@ -206,7 +205,7 @@ define([
             var id = parametricFilterId(field);
             var modelsForField = this.selectedParametricValues.where({field: field});
 
-            if (modelsForField.length) {
+            if(modelsForField.length) {
                 var values = _.chain(modelsForField).invoke('get', 'value').compact().value();
                 var ranges = _.chain(modelsForField).invoke('get', 'range').compact().value();
 
@@ -229,19 +228,19 @@ define([
         updateDateFilters: function() {
             var dateRange = this.datesFilterModel.get('dateRange');
 
-            if (dateRange) {
-                if (dateRange === DatesFilterModel.DateRange.CUSTOM) {
+            if(dateRange) {
+                if(dateRange === DatesFilterModel.DateRange.CUSTOM) {
                     // Remove any last <period> date filter
                     this.remove(this.where({id: FilterType.DATE_RANGE}));
 
                     _.each(customDatesFilters, function(filterData) {
                         var currentValue = this.datesFilterModel.get(filterData.attribute);
 
-                        if (currentValue) {
+                        if(currentValue) {
                             var existingModel = this.get(filterData.type);
                             var filterText = getDateFilterText(filterData.type, currentValue.format('LLL'));
 
-                            if (existingModel) {
+                            if(existingModel) {
                                 existingModel.set('text', filterText);
                             } else {
                                 this.add({
@@ -264,7 +263,7 @@ define([
                     var existingDateRangeModel = this.get(FilterType.DATE_RANGE);
                     var filterText = i18n['search.dates.timeInterval.' + dateRange];
 
-                    if (existingDateRangeModel) {
+                    if(existingDateRangeModel) {
                         existingDateRangeModel.set('text', filterText);
                     } else {
                         this.add({
@@ -290,5 +289,4 @@ define([
     }, {
         FilterType: FilterType
     });
-
 });

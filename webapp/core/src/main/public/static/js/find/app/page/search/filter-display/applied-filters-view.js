@@ -1,14 +1,21 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 define([
-    'backbone',
+    'find/app/page/search/abstract-section-view',
     'js-whatever/js/list-view',
     'js-whatever/js/list-item-view',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/filter-display/filter-display.html',
-    'text!find/templates/app/page/search/filter-display/filter-display-item.html',
+    'text!find/templates/app/page/search/filter-display/applied-filters-view.html',
+    'text!find/templates/app/page/search/filter-display/applied-filters-view-item.html',
     'bootstrap'
-], function(Backbone, ListView, ListItemView, i18n, template, itemTemplate) {
+], function(AbstractSectionView, ListView, ListItemView, i18n, template, itemTemplate) {
+    'use strict';
 
     var html = _.template(template)({i18n: i18n});
+
+    var removeAllButton = '<span class="inline clickable remove-all-filters text-muted"><i class="fa fa-ban"></i></span>';
 
     var FilterListItemView = ListItemView.extend({
         render: function() {
@@ -30,7 +37,7 @@ define([
     });
 
     // Each of the collection's models should have an id and a text attribute
-    return Backbone.View.extend({
+    return AbstractSectionView.extend({
         template: _.template(template),
         itemTemplate: _.template(itemTemplate),
 
@@ -40,18 +47,20 @@ define([
                 this.collection.remove(id);
             },
             'click .remove-all-filters': function() {
-                // Separate picking attributes from calling removeFilter so we don't modify the collection while iterating
+                // get cids as an array so we don't modify the collection while iterating
                 _.chain(this.collection.models)
                     .map(function(model) {
-                        return model.id;
+                        return model.cid;
                     })
-                    .each(function(id) {
-                        this.collection.remove(id);
+                    .each(function(cid) {
+                        this.collection.remove(cid);
                     }, this);
             }
         },
 
         initialize: function() {
+            AbstractSectionView.prototype.initialize.apply(this, arguments);
+
             this.listView = new ListView({
                 collection: this.collection,
                 ItemView: FilterListItemView,
@@ -62,13 +71,17 @@ define([
                 }
             });
 
-            this.listenTo(this.collection, 'reset update', this.updateVisibility);
+            this.listenTo(this.collection, 'reset update', this.updateView);
         },
 
         render: function() {
-            this.$el.html(html);
+            AbstractSectionView.prototype.render.apply(this, arguments);
 
-            this.updateVisibility();
+            this.getSectionControls().html(removeAllButton);
+
+            this.getViewContainer().html(html);
+
+            this.updateView();
 
             this.listView.render();
             this.$('.filters-labels').append(this.listView.$el);
@@ -77,8 +90,17 @@ define([
         },
 
         updateVisibility: function() {
-            this.$el.toggleClass('hide', this.collection.isEmpty());
+            this.getViewContainer().toggleClass('hide', this.collection.isEmpty());
+            this.getSectionControls().toggleClass('hide', this.collection.isEmpty());
+        },
+
+        updateHeaderCounter: function() {
+            this.getHeaderCounter().text('(' + this.collection.length + ')');
+        },
+
+        updateView: function() {
+            this.updateVisibility();
+            this.updateHeaderCounter();
         }
     });
-
 });
