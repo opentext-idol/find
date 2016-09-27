@@ -6,7 +6,7 @@
 -- Target Version: 11.2.0.0
 --------------------------------------------*/
 
-SET SCHEMA find;
+USE find;
 
 -- Add quotes to old related concepts, as we no longer want to add quotes to all concepts when generating query text
 UPDATE search_concept_cluster_phrases
