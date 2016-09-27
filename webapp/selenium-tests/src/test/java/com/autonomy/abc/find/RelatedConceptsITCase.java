@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
@@ -77,7 +78,7 @@ public class RelatedConceptsITCase extends FindTestBase {
         final String concept = topRelatedConcept.getText();
 
         topRelatedConcept.click();
-        assertThat(conceptsPanel.selectedConceptHeaders(), hasItem(equalToIgnoringCase(concept)));
+        assertThat(conceptsPanel.selectedConceptHeaders(), hasItem(equalToIgnoringCase('"' + concept + '"')));
         assertThat(navBar.getSearchBoxTerm(), is(query));
     }
 
@@ -100,7 +101,7 @@ public class RelatedConceptsITCase extends FindTestBase {
             final List<WebElement> newRelatedConcepts = relatedConceptsPanel().relatedConcepts();
             if(!newRelatedConcepts.isEmpty()) {
                 final String newConcept = clickFirstNewConcept(relatedConcepts, newRelatedConcepts);
-                verifyThat(conceptsPanel.selectedConceptHeaders(), hasItem(equalToIgnoringCase(newConcept)));
+                verifyThat(conceptsPanel.selectedConceptHeaders(), hasItem(equalToIgnoringCase('"' + newConcept + '"')));
             }
         }
 
@@ -108,7 +109,7 @@ public class RelatedConceptsITCase extends FindTestBase {
 
         final List<String> selectedConceptHeaders = conceptsPanel.selectedConceptHeaders();
         verifyThat(selectedConceptHeaders, hasSize(relatedConcepts.size()));
-        verifyThat(selectedConceptHeaders, containsItems(relatedConcepts));
+        verifyThat(selectedConceptHeaders, containsItems(relatedConcepts.stream().map(s -> '"' + s + '"').collect(Collectors.toList())));
     }
 
     @Test
@@ -126,8 +127,8 @@ public class RelatedConceptsITCase extends FindTestBase {
         final List<String> moreConcepts = conceptsPanel.selectedConceptHeaders();
 
         verifyThat(moreConcepts, hasSize(1));
-        verifyThat(moreConcepts, not(hasItem(equalToIgnoringCase(secondConcept))));
-        verifyThat(moreConcepts, hasItem(equalToIgnoringCase(firstConcept)));
+        verifyThat(moreConcepts, not(hasItem(equalToIgnoringCase('"' + secondConcept + '"'))));
+        verifyThat(moreConcepts, hasItem(equalToIgnoringCase('"' + firstConcept + '"')));
         verifyThat(navBar.getSearchBoxTerm(), is("jungle"));
     }
 
@@ -139,12 +140,12 @@ public class RelatedConceptsITCase extends FindTestBase {
         searchAndWait(findService, query);
         final RelatedConceptsPanel panel = relatedConceptsPanel();
 
-        verifyThat(panel.getRelatedConcepts(), not(hasItem(equalToIgnoringCase(query))));
+        verifyThat(panel.getRelatedConcepts(), not(hasItem(equalToIgnoringCase('"' + query + '"'))));
 
         final Collection<String> addedConcepts = new ArrayList<>();
         for(int i = 0; i < 5; i++) {
             clickFirstNewConcept(addedConcepts, relatedConceptsPanel().relatedConcepts());
-            verifyThat(panel.getRelatedConcepts(), not(hasItem(equalToIgnoringCase(query))));
+            verifyThat(panel.getRelatedConcepts(), not(hasItem(equalToIgnoringCase('"' + query + '"'))));
         }
     }
 
@@ -159,7 +160,7 @@ public class RelatedConceptsITCase extends FindTestBase {
             final List<String> relatedConcepts = relatedConceptsPanel().getRelatedConcepts();
 
             for(final String addedConcept : addedConcepts) {
-                verifyThat(relatedConcepts, not(hasItem(equalToIgnoringCase(addedConcept))));
+                verifyThat(relatedConcepts, not(hasItem(equalToIgnoringCase('"' + addedConcept + '"'))));
             }
         }
     }

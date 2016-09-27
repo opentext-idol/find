@@ -25,17 +25,18 @@ public class ConceptsPanel {
     private static final String SELECTED_RELATED_CONCEPT_CLASS = "selected-related-concept";
 
     private final WebElement panel;
-    private final FormInput input;
     private final WebDriver driver;
 
     public ConceptsPanel(final WebDriver driver) {
         panel = Container.LEFT.findUsing(driver).findElement(By.xpath(".//h3[contains(text(), 'Concepts')]/.."));
-        input = new FormInput(Container.LEFT.findUsing(driver).findElement(By.cssSelector(".concept-view-container .find-input")), driver);
         this.driver = driver;
     }
 
     public FormInput getConceptBoxInput() {
-        return input;
+        // Not in constructor as it does not exist for non-BI user
+        // We should find a better way of dealing with this sort of problem
+        // Sub-classing does not really make sense as it is not extensible to the fully granular functionality model
+        return new FormInput(Container.LEFT.findUsing(driver).findElement(By.cssSelector(".concept-view-container .find-input")), driver);
     }
 
     /**
