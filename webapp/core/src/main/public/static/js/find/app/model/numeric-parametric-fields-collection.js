@@ -5,8 +5,10 @@
 
 define([
     'underscore',
-    'find/app/model/find-base-collection'
-], function (_, FindBaseCollection) {
+    'find/app/model/find-base-collection',
+    'parametric-refinement/prettify-field-name',
+    'find/app/configuration'
+], function (_, FindBaseCollection, prettifyFieldName, configuration) {
 
     function defaultCurrentRangeAttributes(absoluteRange) {
         if (absoluteRange.max === absoluteRange.min) {
@@ -52,6 +54,8 @@ define([
             },
 
             parse: function(response) {
+                var paramMap = _.findWhere(configuration().parametricDisplayValues, {name: response.id});
+                _.extend(response, {displayName: paramMap ? paramMap.displayName : prettifyFieldName(response.id)});
                 return _.defaults(defaultCurrentRangeAttributes(response), response);
             },
 

@@ -41,12 +41,15 @@ define([
         },
 
         initialize: function (options) {
+            this.restrictedParametricCollection = options.restrictedParametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.displayCollection = options.displayCollection;
             this.filterModel = options.filterModel;
 
+            
+            //ToDo : We are currently only monitoring restrictedParametricCollection for loading and error. Need to fix as part of FIND-618.
             this.model = new Backbone.Model({
-                processing: Boolean(this.collection.currentRequest),
+                processing: Boolean(this.restrictedParametricCollection.currentRequest),
                 error: false,
                 empty: this.collection.isEmpty()
             });
@@ -59,14 +62,14 @@ define([
             this.listenTo(this.model, 'change', this.updateEmpty);
 
             //noinspection JSUnresolvedFunction
-            this.listenTo(this.collection, 'request', function() {
+            this.listenTo(this.restrictedParametricCollection, 'request', function() {
                 this.model.set({processing: true, error: false});
             });
 
             //noinspection JSUnresolvedFunction
-            this.listenTo(this.collection, 'error', function(collection, xhr) {
+            this.listenTo(this.restrictedParametricCollection, 'error', function(collection, xhr) {
                 if (xhr.status === 0) {
-                    this.model.set({processing: Boolean(collection.currentRequest)});
+                    this.model.set({processing: Boolean(this.restrictedParametricCollection.currentRequest)});
                 } else {
                     // The request was not aborted, so there isn't another request in flight
                     this.model.set({error: true, processing: false});
@@ -74,7 +77,7 @@ define([
             });
 
             //noinspection JSUnresolvedFunction
-            this.listenTo(this.collection, 'sync', function() {
+            this.listenTo(this.restrictedParametricCollection, 'sync', function() {
                 this.model.set({processing: false});
             });
 
@@ -158,9 +161,7 @@ define([
             //noinspection JSUnresolvedFunction
             this.$processing = this.$('.parametric-processing-indicator');
 
-            this.updateEmpty();
-            this.updateError();
-            this.updateProcessing();
+            this.model.set({processing: true, error: false});
 
             return this;
         },
@@ -173,13 +174,9 @@ define([
 
         updateEmpty: function () {
             if (this.$emptyMessage) {
-                var showEmptyMessage = this.model.get('empty') && this.displayCollection.isEmpty() && !(this.model.get('error') || this.model.get('processing'));
+                var showEmptyMessage = this.model.get('empty') && this.collection.isEmpty() && !(this.model.get('error') || this.model.get('processing'));
                 this.$emptyMessage.toggleClass('hide', !showEmptyMessage);
             }
-        },
-
-        monitorCollection: function(collection) {
-
         },
 
         updateProcessing: function() {

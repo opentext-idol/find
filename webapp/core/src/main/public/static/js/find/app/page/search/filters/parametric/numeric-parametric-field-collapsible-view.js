@@ -10,11 +10,9 @@ define([
     'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
-    'parametric-refinement/prettify-field-name',
     'find/app/util/collapsible',
-    'find/app/vent',
-    'find/app/configuration'
-], function(Backbone, $, _, i18n, NumericParametricFieldView, rounder, prettifyFieldName, Collapsible, vent, configuration) {
+    'find/app/vent'
+], function(Backbone, $, _, i18n, NumericParametricFieldView, rounder, Collapsible, vent) {
 
     'use strict';
 
@@ -67,9 +65,6 @@ define([
                 clickCallback: clickCallback,
                 dataType: this.dataType
             }, options));
-
-            var paramMap = _.findWhere(configuration().parametricDisplayValues, {name: this.model.id});
-            this.model.set('displayName', paramMap ? paramMap.displayName : prettifyFieldName(this.model.id));
 
             this.collapsible = new Collapsible({
                 title: this.model.get('displayName'),
