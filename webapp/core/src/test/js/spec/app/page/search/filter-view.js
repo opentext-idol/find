@@ -14,8 +14,6 @@ define([
 
     var MATCH_NOTHING = 'y54u65u4w5uy654u5eureuy654yht754wy54euy45';
 
-    var types = ['parametric', 'numeric parametric', 'date parametric'];
-
     const MockIndexesView = Backbone.View.extend({
         initialize: function(options) {
             this.visibleIndexesCallback = options.visibleIndexesCallback;
@@ -38,21 +36,9 @@ define([
             });
 
             this.parametricInfo = {
-                parametric: {
-                    description: 'parametric',
-                    collection: this.view.parametricDisplayCollection,
-                    view: this.view.numericParametricView
-                },
-                'numeric parametric': {
-                    description: 'numeric parametric',
-                    collection: this.view.numericParametricFieldsCollection,
-                    view: this.view.parametricView
-                },
-                'date parametric': {
-                    description: 'date parametric',
-                    collection: this.view.dateParametricFieldsCollection,
-                    view: this.view.dateParametricView
-                }
+                description: 'parametric',
+                collection: this.view.mergedParametricCollection,
+                view: this.view.parametricView
             };
         });
 
@@ -94,47 +80,44 @@ define([
             });
         });
 
-        types.forEach(function(type) {
-            describe(type + ' values filter', function() {
-                beforeEach(function() {
-                    this.parametricInfo[type].collection.reset();
+        describe('Parametric values filter', function () {
+            beforeEach(function () {
+                this.parametricInfo.collection.reset();
+            });
+
+            describe('with parametric values and the filter set to the empty string', function () {
+                beforeEach(function () {
                 });
 
-                describe('with parametric values and the filter set to the empty string', function() {
-                    beforeEach(function() {
-                        this.view.filterModel.set('');
-                    });
+                it('should display when the displayCollection is not empty', function () {
+                    this.parametricInfo.collection.add({fakeAttribute: true});
 
-                    it('should display when the displayCollection is not empty', function() {
-                        this.parametricInfo[type].collection.add({fakeAttribute: true});
-
-                        expect(this.parametricInfo[type].view.$el).not.toHaveClass('hide');
-                        expect(this.view.$emptyMessage).toHaveClass('hide');
-                    });
-
-                    it('should not be displayed when there are no parametric values matching the filter', function() {
-                        this.view.filterModel.set('text', MATCH_NOTHING);
-
-                        expect(this.parametricInfo[type].view.$el).toHaveClass('hide');
-                    });
+                    expect(this.parametricInfo.view.$el).not.toHaveClass('hide');
+                    expect(this.view.$emptyMessage).toHaveClass('hide');
                 });
 
-                describe('with no parametric values', function() {
-                    it('should display when the filter is empty', function() {
-                        this.view.filterModel.set('text', '');
+                it('should not be displayed when there are no parametric values matching the filter', function () {
+                    this.view.filterModel.set('text', MATCH_NOTHING);
 
-                        expect(this.parametricInfo[type].view.$el).not.toHaveClass('hide');
-                        expect(this.view.$emptyMessage).toHaveClass('hide');
-                    });
-
-                    it('should not display when the filter is non-empty', function() {
-                        this.view.filterModel.set('text', MATCH_NOTHING);
-
-                        expect(this.parametricInfo[type].view.$el).toHaveClass('hide');
-                    });
+                    expect(this.parametricInfo.view.$el).toHaveClass('hide');
                 });
             });
-        }, this);
+
+            describe('with no parametric values', function () {
+                it('should display when the filter is empty', function () {
+                    this.view.filterModel.set('text', '');
+
+                    expect(this.parametricInfo.view.$el).not.toHaveClass('hide');
+                    expect(this.view.$emptyMessage).toHaveClass('hide');
+                });
+
+                it('should not display when the filter is non-empty', function () {
+                    this.view.filterModel.set('text', MATCH_NOTHING);
+
+                    expect(this.parametricInfo.view.$el).toHaveClass('hide');
+                });
+            });
+        });
 
         it('should display the no filters matched message and hide everything when no filters are matched', function() {
             this.view.indexesViewWrapper.view.visibleIndexesCallback([]);
@@ -146,7 +129,7 @@ define([
             expect(this.view.$emptyMessage).not.toHaveClass('hide');
         });
 
-        it('should track the collapsible state of the indexes view', function() {
+        it('should track the collapsible state of the indexes view', function () {
             spyOn(this.view.indexesViewWrapper, 'toggle');
 
             expect(this.view.collapsed.indexes).toBe(false);
@@ -168,7 +151,7 @@ define([
             expect(this.view.indexesViewWrapper.toggle.calls.argsFor(1)[0]).toBe(false);
         });
 
-        it('should track the collapsible state of the date view', function() {
+        it('should track the collapsible state of the date view', function () {
             spyOn(this.view.dateViewWrapper, 'toggle');
 
             expect(this.view.collapsed.dates).toBe(false);
