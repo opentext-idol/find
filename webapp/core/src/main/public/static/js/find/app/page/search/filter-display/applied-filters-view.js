@@ -47,13 +47,13 @@ define([
                 this.collection.remove(id);
             },
             'click .remove-all-filters': function() {
-                // get ids as an array so we don't modify the collection while iterating
+                // get cids as an array so we don't modify the collection while iterating
                 _.chain(this.collection.models)
                     .map(function(model) {
-                        return model.id;
+                        return model.cid;
                     })
-                    .each(function(id) {
-                        this.collection.remove(id);
+                    .each(function(cid) {
+                        this.collection.remove(cid);
                     }, this);
             }
         },

@@ -14,7 +14,7 @@ define([
     'backbone',
     'moment'
 ], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, i18n, fieldTextParser, configuration, databaseNameResolver, Backbone, moment) {
-    "use strict";
+    'use strict';
 
     var WOOKIEPEDIA = {
         id: 'TESTDOMAIN:wookiepedia',
