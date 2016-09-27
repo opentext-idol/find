@@ -26,10 +26,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 @Role(UserRole.BIFHI)
 public class TopicMapITCase extends IdolFindTestBase {
@@ -121,18 +123,19 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Test
     public void testClickingOnMapEntities() {
-        findService.search("rubbish");
+        findService.search("m");
         results.waitForMapLoaded();
         Waits.loadOrFadeWait();
 
-        final List<String> clusterNames = results.returnParentEntityNames();
+        assumeThat("Search has results for this data", results.emptyMessage(), not(displayed()));
+        final List<String> clusterNames = results.parentEntityNames();
         final List<String> addedConcepts = new ArrayList<>();
+
         addedConcepts.add(results.clickChildEntityAndAddText(clusterNames.size()));
         results.waitForMapLoaded();
-        addedConcepts.add(results.clickChildEntityAndAddText(results.returnParentEntityNames().size()));
 
-        LOGGER.info("This is currently brittle and frequently breaks.");
-        verifyThat("All " + addedConcepts.size() + " added concept terms added to search", selectedConcepts(), containsItems(addedConcepts));
+        addedConcepts.add(results.clickChildEntityAndAddText(results.parentEntityNames().size()));
+        verifyThat("All " + addedConcepts.size() + " added concept terms added to search", selectedConcepts(),containsItems(addedConcepts));
     }
 
     private String stripSpaces(final CharSequence term) {
