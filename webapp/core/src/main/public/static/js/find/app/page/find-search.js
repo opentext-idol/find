@@ -334,7 +334,7 @@ define([
                         return function () {
                             const inputText = options.searchModel.get('inputText');
                             if (inputText && inputText !== '*') {
-                                options.queryState.conceptGroups.set([{concepts: [inputText]}]);
+                                options.queryState.conceptGroups.set([{concepts: [inputText], hidden: true}]);
                             } else {
                                 options.queryState.conceptGroups.reset();
                             }

@@ -10,10 +10,11 @@ define([
     './concept-cluster-view',
     'find/app/page/search/input-view',
     'find/app/page/search/input-view-concept-strategy',
+    'find/app/util/filtering-collection',
     'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/concept-view.html'
-], function (Backbone, $, _, ConceptClusterView, InputView, conceptStrategy, i18n, ListView, template) {
+], function (Backbone, $, _, ConceptClusterView, InputView, conceptStrategy, FilteringCollection, i18n, ListView, template) {
     "use strict";
 
     /**
@@ -54,8 +55,14 @@ define([
             });
 
 
-            this.listView = new ListView({
+            this.filteringCollection = new FilteringCollection([], {
                 collection: this.conceptGroups,
+                predicate: function (model) {
+                    return !model.has('hidden');
+                }
+            });
+            this.listView = new ListView({
+                collection: this.filteringCollection,
                 ItemView: ConceptClusterView
             });
 
@@ -75,7 +82,7 @@ define([
         },
 
         updateEmpty: function () {
-            const empty = this.conceptGroups.isEmpty();
+            const empty = this.filteringCollection.isEmpty();
             this.listView.$el.toggleClass('hide', empty);
             this.$('.concept-view-empty-message').toggleClass('hide', !empty);
         },

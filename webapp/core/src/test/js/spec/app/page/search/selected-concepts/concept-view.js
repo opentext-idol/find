@@ -69,15 +69,33 @@ define([
                         expect(this.view.$('.concept-view-empty-message')).not.toHaveClass('hide');
                     });
 
-                    describe('then a new cluster is added', function() {
+                    describe('then a new hidden concept is added', function() {
                         beforeEach(function() {
                             this.conceptGroups.add({
-                                concepts: ['cat', 'kitten', 'lion']
+                                concepts: ['animals'],
+                                hidden: true
                             });
                         });
 
-                        it('hides the empty message', function() {
-                            expect(this.view.$('.concept-view-empty-message')).toHaveClass('hide');
+                        it('displays the empty message', function() {
+                            expect(this.view.$('.concept-view-empty-message')).not.toHaveClass('hide');
+                        });
+
+                        describe('then a new cluster is added', function() {
+                            beforeEach(function() {
+                                this.conceptGroups.add({
+                                    concepts: ['cat', 'kitten', 'lion']
+                                });
+                            });
+
+                            it('hides the empty message', function() {
+                                expect(this.view.$('.concept-view-empty-message')).toHaveClass('hide');
+                            });
+
+                            it('does not show the hidden concept', function() {
+                                const $selectedConcepts = this.view.$('.selected-related-concept');
+                                expect($selectedConcepts).toHaveLength(1);
+                            });
                         });
                     });
                 });
