@@ -5,7 +5,7 @@ import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.SimpleDateFormat;
@@ -62,9 +62,6 @@ public class SimilarDocumentsView implements AppPage {
         return Integer.valueOf(findElement(By.className("current-results-number")).getText());
     }
 
-    /**
-     * Z in 'X to Y of Z'
-     */
     public int getTotalResults() {
         return Integer.valueOf(findElement(By.className("total-results-number")).getText());
     }
@@ -90,7 +87,13 @@ public class SimilarDocumentsView implements AppPage {
     public void waitForLoad() {
         new WebDriverWait(driver, 20)
                 .withMessage("loading similar results view")
-                .until(ExpectedConditions.visibilityOf(backButton()));
+                .until(new ExpectedCondition<Boolean>() {
+                    @Override
+                    public Boolean apply(final WebDriver driver) {
+                        return findElement(By.cssSelector(".main-results-list.results")).isDisplayed() ||
+                                findElement(By.cssSelector(".results-view-error")).isDisplayed();
+                    }
+                });
     }
 
     private WebElement findElement(final By locator) {
@@ -107,10 +110,6 @@ public class SimilarDocumentsView implements AppPage {
 
     public void sortByDate() {
         sortBy(1);
-    }
-
-    public void sortByRelevance() {
-        sortBy(2);
     }
 
     private void sortBy(final int dropdownRow){

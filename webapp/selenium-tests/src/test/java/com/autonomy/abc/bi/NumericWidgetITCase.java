@@ -263,8 +263,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.clickAndDrag(200, mainGraph.graph());
         numericService.waitForReload();
 
-        final String firstLabel = findPage.filterLabelsText().get(0).split(":")[1];
-        verifyThat("Place elevation filter label doesn't have time format", firstLabel, not(containsString(":")));
+        verifyThat("Place elevation filter label doesn't have time format", findPage.filterLabelsText().get(0), not(containsString(":")));
     }
 
     @Test
@@ -288,6 +287,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-400")
+    @Ignore("Numeric widget reloading currently makes it impossible to Selenium test this.")
     public void testInputDateBoundsAsText() throws Exception {
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(2, "red");
         final String startDate = "1976-10-22 08:46";
@@ -360,6 +360,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-633")
     public void testInputDateBoundsWithCalendar() {
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "tragedy");
         final DatePicker startCalendar = mainGraph.openCalendar(mainGraph.startCalendar());
@@ -431,45 +432,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
             saveService.deleteAll();
         }
     }
-
-    @Test
-    @ResolvedBug("FIND-304")
-    //Not sure how this will work remotely
-    public void testTimeBarSelectionScalesWithWindow() {
-        final MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "face");
-        mainGraph.clickAndDrag(-100, mainGraph.graph());
-
-        final Dimension dimension = new Dimension(800, 600);
-        getDriver().manage().window().setSize(dimension);
-
-        //check if some body element is greater than window.width()
-        //TODO: get clarification from Matt G on what should do
-    }
-
-    //TODO: this is proving tricky -> have already tried several ways
-    /*@Test
-    @ActiveBug("FIND-336")
-    public void testZoomingOutFar(){
-        //test doesn't crash if zoom out really far
-        MainNumericWidget mainGraph = searchAndSelectNthGraph(1,"politics");
-
-        mainGraph.graph().click();
-
-        mainGraph.simulateZoomingIn();
-
-        //need to check the little text boxes are changing
-        //need to check the bottom date when you hover over the bar is sensible -> not negative
-    }
-
-    @Test
-    @ActiveBug("FIND-300")
-    public void testZooming() {
-        //test range of purple remains the same
-        //the selection rec moves independently of x axis -> range changes
-
-        //Applies zooming to side panel
-    }*/
-    //FIND-323 -> zoom in zoom out
 
     private IdolFilterPanel filters() {
         return getElementFactory().getFilterPanel();

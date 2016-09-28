@@ -104,9 +104,10 @@ public class ResultsView extends AppElement implements QueryResultsPage {
         }
 
         private boolean resultsLoaded(final WebDriver driver) {
-            return !driver.findElements(By.cssSelector(".well:not(.hide)")).isEmpty()
-                    || !driver.findElements(By.xpath("//div[contains(@class,'result-message') and contains(text(),'No results found')]")).isEmpty()
-                    || !driver.findElements(By.cssSelector(".results-contents")).isEmpty();
+            return  !driver.findElement(By.cssSelector(".loading-spinner")).isDisplayed()
+                    && (driver.findElements(By.cssSelector(".results-view-error.hide")).isEmpty()
+                    || !driver.findElements(By.cssSelector(".main-results-list.results .result-message")).isEmpty()
+                    || !driver.findElements(By.cssSelector(".main-results-list.results .main-results-container")).isEmpty());
         }
     }
 }

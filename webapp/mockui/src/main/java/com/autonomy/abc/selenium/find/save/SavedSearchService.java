@@ -7,6 +7,8 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class SavedSearchService {
     private final BIIdolFindElementFactory elementFactory;
     private static final Logger LOGGER = LoggerFactory.getLogger(SavedSearchService.class);
@@ -16,11 +18,14 @@ public class SavedSearchService {
     }
 
     public void saveCurrentAs(final String searchName, final SearchType type){
+        Waits.loadOrFadeWait();
         nameSavedSearch(searchName,type).confirmSave();
     }
 
     public void renameCurrentAs(final String newSearchName) {
         final SearchOptionsBar optionsBar = elementFactory.getSearchOptionsBar();
+        Waits.loadOrFadeWait();
+
         optionsBar.renameButton().click();
         optionsBar.searchTitleInput().setValue(newSearchName);
         optionsBar.confirmSave();
@@ -36,20 +41,26 @@ public class SavedSearchService {
     public void openNewTab() {
         elementFactory.getSearchTabBar().newTabButton().click();
         elementFactory.getTopicMap().waitForMapLoaded();
+        elementFactory.getSearchTabBar().hoverOnTab(0);
     }
 
     public void deleteAll() {
         LOGGER.info("Deleting all tabs");
-        for (final SearchTab tab : elementFactory.getSearchTabBar()) {
-            tab.activate();
+        SearchTabBar tabBar = elementFactory.getSearchTabBar();
+
+        final List<String> savedTitles = tabBar.savedTabTitles();
+
+        for(String title: savedTitles) {
+            elementFactory.getSearchTabBar().tab(title).activate();
             deleteCurrentSearch();
         }
+        elementFactory.getFindPage().refresh();
+        elementFactory.getFindPage().waitForLoad();
     }
 
     public void deleteCurrentSearch() {
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
-        options.openDeleteModal();
-        options.confirmModalOperation();
+        options.delete();
         Waits.loadOrFadeWait();
     }
 

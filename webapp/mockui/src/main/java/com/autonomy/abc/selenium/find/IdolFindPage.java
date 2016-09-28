@@ -41,6 +41,13 @@ public class IdolFindPage extends FindPage {
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.elementToBeClickable(compareButton()));
     }
 
+    public void waitUntilDatabasesLoaded() {
+        new WebDriverWait(getDriver(),20)
+                .withMessage("databases not loaded message to disappear")
+                .until(ExpectedConditions.invisibilityOfElementWithText(By.cssSelector(".main-results-list .results")
+                        ,"The list of databases has not yet been retrieved"));
+    }
+
     public MainNumericWidget mainGraph() {return new MainNumericWidget(getDriver());}
 
     public boolean mainGraphDisplayed(){
@@ -75,6 +82,10 @@ public class IdolFindPage extends FindPage {
 
     public boolean resultsComparisonVisible() {
         return findElement(By.cssSelector(".comparison-view")).isDisplayed();
+    }
+
+    public void refresh() {
+        getDriver().navigate().refresh();
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {

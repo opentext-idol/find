@@ -68,22 +68,20 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         findService = getApplication().findService();
         savedSearchService = getApplication().savedSearchService();
         elementFactory = getElementFactory();
-        findPage = getElementFactory().getFindPage();
         findService.search("long set-up");
 
-        try {
-            findPage.waitUntilSearchTabsLoaded();
+        try{
+            elementFactory.getSearchTabBar().waitUntilMoreThanOneTab();
             savedSearchService.deleteAll();
         } catch (final TimeoutException ignored) {
             //no-op
         }
 
+        findPage = getElementFactory().getFindPage();
         findPage.goToListView();
     }
 
     @After
-    //TODO: used to check hasSetUp() but something about that wasn't working
-    //Should probably check if it hasSetUp()
     public void tearDown() {
         savedSearchService.deleteAll();
     }

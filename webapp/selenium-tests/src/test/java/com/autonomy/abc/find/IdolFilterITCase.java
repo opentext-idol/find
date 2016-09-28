@@ -96,6 +96,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
         assertThat(filters().getErrorMessage(), is("No filters matched"));
 
         filters().clearMetaFilter();
+        findPage.waitUntilDatabasesLoaded();
         assertThat(filters().getErrorMessage(), isEmptyOrNullString());
     }
 
@@ -167,6 +168,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
         searchAndWait("haven");
         final IdolFilterPanel filterPanel = filters();
 
+        findPage.waitUntilDatabasesLoaded();
         final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
         final IndexesTree indexes = filterPanel.indexesTree();
         final String firstValue = indexes.allIndexes().getIndex(0).getName();

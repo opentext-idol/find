@@ -111,6 +111,7 @@ public class MapITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-328")
+    //TODO: Bug involving result numbers needs investigating but blocked by FIND-642
     public void testOnlyLocationDataInMapComparison() {
         final String firstSearch = "Dr Jekyll";
         final String secondSearch = "Mr Hyde";
@@ -137,8 +138,9 @@ public class MapITCase extends IdolFindTestBase {
             //map often adjusts zoom and moves markers
             Waits.loadOrFadeWait();
 
-            int comparee = mapView.countLocationsForComparee();
-            int comparer = mapView.countLocationsForComparer();
+            final int common = mapView.countCommonLocations();
+            final int comparee = mapView.countLocationsForComparee() + common;
+            final int comparer = mapView.countLocationsForComparer() + common;
 
             verifyThat("First search has same number results",comparee,is(firstResults));
             verifyThat("Second search has same number results",comparer,is(secondResults));

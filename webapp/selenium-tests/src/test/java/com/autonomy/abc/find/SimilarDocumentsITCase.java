@@ -157,14 +157,17 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value = "FIND-496", type = ApplicationType.HOSTED)
-    public void testInfiniteScroll() {
+    @ResolvedBug("FIND-496")
+    @ActiveBug(value = "FIND-626", type = ApplicationType.HOSTED)
+    public void testInfiniteScroll(){
         final ResultsView results = findService.search(new Query("blast").withFilter(IndexFilter.ALL));
 
         similarDocuments = findService.goToSimilarDocuments(1);
-        assumeThat(similarDocuments.getResults().size(), is(30));
 
-        for (int i = 30; i <= 150; i += 30) {
+
+        final int totalNumberDocs = similarDocuments.getTotalResults();
+
+        for(int i = 30; i <= totalNumberDocs; i =+ 30) {
             verifyThat(similarDocuments.getVisibleResultsCount(), is(i));
             final DocumentViewer documentViewer = similarDocuments.getResult(i).openDocumentPreview();
             assertThat("Have opened preview container", documentViewer.previewPresent());
@@ -199,8 +202,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value = "FIND-496", type = ApplicationType.HOSTED)
-    public void testDocumentPreview() {
+    @ResolvedBug("FIND-496")
+    @ActiveBug(value = "FIND-626", type = ApplicationType.HOSTED)
+    public void testDocumentPreview(){
         findService.search(new Query("stars"));
         similarDocuments = findService.goToSimilarDocuments(1);
         testDocPreview(similarDocuments.getResults(5));
@@ -227,8 +231,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value = "FIND-496", type = ApplicationType.HOSTED)
-    public void testDetailedDocumentPreviewFromSimilar() {
+    @ResolvedBug("FIND-496")
+    @ActiveBug(value = "FIND-626", type = ApplicationType.HOSTED)
+    public void testDetailedDocumentPreviewFromSimilar(){
         findService.search(new Query("stars"));
         similarDocuments = findService.goToSimilarDocuments(1);
 

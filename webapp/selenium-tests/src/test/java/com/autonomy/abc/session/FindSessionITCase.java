@@ -10,7 +10,6 @@ import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
-import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,13 +21,12 @@ import org.openqa.selenium.TimeoutException;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
-import static org.openqa.selenium.lift.Matchers.displayed;
 
-@RelatedTo("CSA-1567")
 public class FindSessionITCase extends FindTestBase {
     private FindService findService;
 
@@ -43,13 +41,15 @@ public class FindSessionITCase extends FindTestBase {
 
     @Test
     public void testSearch(){
+        assumeThat("Runs only on-prem",not(isHosted()));
+
         deleteCookies();
         try {
             findService.search("XYZ");
         } catch (final NoSuchElementException | StaleElementReferenceException | TimeoutException ignored) {
             /* Probably refreshed page quicker than .search could complete */
         }
-        verifyRefreshedSession();
+        verifyThat(getWindow(), urlContains("login"));
     }
 
     @Test
@@ -77,6 +77,8 @@ public class FindSessionITCase extends FindTestBase {
     @Test
     @Role(UserRole.FIND)
     public void testRelatedConcepts(){
+        assumeThat("Runs only on-prem",not(isHosted()));
+
         findService.search("Come and Gone");
 
         deleteCookies();
@@ -84,7 +86,7 @@ public class FindSessionITCase extends FindTestBase {
         getElementFactory().getRelatedConceptsPanel().hoverOverRelatedConcept(0);
 
         Waits.loadOrFadeWait();
-        verifyRefreshedSession();
+        verifyThat(getWindow(), urlContains("login"));
     }
 
     @Test
@@ -98,16 +100,7 @@ public class FindSessionITCase extends FindTestBase {
         navigateToAppUrl(findService.getQueryUrl(query));
 
         loginService.login(getInitialUser());
-
         assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(query));
-    }
-
-    private void verifyRefreshedSession(){
-        if (isHosted()) {
-            verifyThat("Directed to splash screen", getElementFactory().getFindPage().footerLogo(), displayed());
-        } else {
-            verifyThat(getWindow(), urlContains("login"));
-        }
     }
 
     private void deleteCookies(){

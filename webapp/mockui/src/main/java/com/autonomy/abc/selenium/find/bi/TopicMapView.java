@@ -11,7 +11,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +49,20 @@ public class TopicMapView {
         return findElements(By.cssSelector(".entity-topic-map > svg > path"));
     }
 
+    public void waitForTopLevelEntities() {
+        new WebDriverWait(driver,25)
+                .withMessage("top level entities to reach the right opacity")
+                .until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.2']")));
+    }
+
     public List<WebElement> topLevelMapEntities() {
         return findElements(By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.2']"));
+    }
+
+    public void waitForBaseLevelEntities() {
+        new WebDriverWait(driver,10)
+                .withMessage("base entities to reach the right opacity")
+                .until(ExpectedConditions.elementToBeClickable(By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.7']")));
     }
 
     public List<WebElement> mapEntityTextElements() {
@@ -55,8 +70,7 @@ public class TopicMapView {
     }
 
     public void clickParentEntities() {
-        final List<WebElement> webElements = topLevelMapEntities();
-        for(WebElement cluster : webElements) {
+        for(WebElement cluster : topLevelMapEntities()) {
             offCentreClick(cluster);
         }
     }
@@ -68,7 +82,7 @@ public class TopicMapView {
         build.moveToElement(element, xOffset, yOffset).click().build().perform();
     }
 
-    public List<String> returnParentEntityNames() {
+    public List<String> parentEntityNames() {
         final List<String> clusterNames = new ArrayList<>();
         final int numberOfClusters = topLevelMapEntities().size();
         final List<WebElement> mapEntities = mapEntityTextElements();
@@ -93,12 +107,13 @@ public class TopicMapView {
 
     public String clickChildEntityAndAddText(int noOfClusters) {
         waitForMapLoaded();
+
         final int maxIndex = mapEntities().size() - 1;
         final int i = maxIndex - 1;
 
-        Waits.loadOrFadeWait();
+        waitForTopLevelEntities();
         clickParentEntities();
-        Waits.loadOrFadeWait();
+        waitForBaseLevelEntities();
 
         final String concept = mapEntityTextElements().get(i - noOfClusters).getText().replace(" ", "").toLowerCase();
         offCentreClick(mapEntityTextElements().get(i - noOfClusters));
@@ -107,7 +122,7 @@ public class TopicMapView {
     }
 
     public void waitForMapLoaded() {
-        new WebDriverWait(driver, 30).until(new mapLoaded());
+        waitForTopLevelEntities();
     }
 
     private WebElement findElement(final By locator) {
