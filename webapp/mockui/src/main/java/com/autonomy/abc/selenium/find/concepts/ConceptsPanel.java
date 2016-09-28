@@ -28,7 +28,7 @@ public class ConceptsPanel {
     private final WebDriver driver;
 
     public ConceptsPanel(final WebDriver driver) {
-        panel = Container.LEFT.findUsing(driver).findElement(By.xpath(".//h3[contains(text(), 'Concepts')]/.."));
+        panel = Container.LEFT.findUsing(driver).findElement(By.cssSelector(".left-side-concepts-view-section"));
         this.driver = driver;
     }
 
