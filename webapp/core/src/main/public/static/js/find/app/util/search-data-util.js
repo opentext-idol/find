@@ -5,10 +5,10 @@
 define([
     'underscore',
     'parametric-refinement/to-field-text-node'
-], function (_, toFieldTextNode) {
+], function(_, toFieldTextNode) {
 
     function wrapInBrackets(concept) {
-        return '(' + concept + ')';
+        return concept ? '(' + concept + ')' : concept;
     }
 
     // WARNING: This logic is duplicated in the server-side SavedSearch class
@@ -18,12 +18,13 @@ define([
      * @return {string}
      */
     function makeQueryText(concepts) {
-        if (!concepts || concepts.length < 1){
+        if(!concepts || concepts.length < 1) {
             return '*';
         }
 
-        //noinspection JSUnresolvedFunction
-        return _.flatten(concepts).map(wrapInBrackets).join(' AND ');
+        return concepts.map(function(concept) {
+            return wrapInBrackets(concept.join(' '));
+        }).join(' AND ');
     }
 
     /**
