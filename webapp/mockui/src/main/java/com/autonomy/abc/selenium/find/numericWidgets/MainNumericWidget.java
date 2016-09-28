@@ -209,5 +209,9 @@ public class MainNumericWidget extends AppElement {
         return new DatePicker(dateInput, driver);
     }
 
+    public Boolean calendarHasOpened() {
+        return !findElements(By.cssSelector(".datepicker-days .picker-switch")).isEmpty();
+    }
+
 
 }

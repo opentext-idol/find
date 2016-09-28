@@ -151,7 +151,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    @Ignore
+    @Ignore("Desired behaviour but not implemented and not a bug")
     public void testMinAndMaxReflectCurrentSearch() {
         //currently 0th graph is place elevation (i.e. non-date)
         numericService.searchAndSelectNthGraph(0, "*");
@@ -301,8 +301,14 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
+    //TODO: improve by getting the range and minValue from the widget at the time
+    //NB: the proportion of the graph needs to be commensurate with the data in the graph
+    //Set range and minValue to something reasonable for your graph
     public void testInputNumericBoundsAsText() throws Exception {
-        final int range = 250;
+        final double range = 0.3;
+        final String minValue = "0.4";
+
+        final String maxValue = Double.toString(Double.parseDouble(minValue) + range);
         final int rangeMinusDelta = (int) (range * 0.98);
         final int rangePlusDelta = (int) (range * 1.02);
 
@@ -310,7 +316,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         final int numericUnitsPerChartWidth = mainGraph.getRange() / mainGraph.graphWidth();
 
         //#1 testing that correct proportion of chart selected
-        mainGraph = setMinAndMax("500", "750", mainGraph);
+        mainGraph = setMinAndMax(minValue, maxValue, mainGraph);
         Waits.loadOrFadeWait();
         final int newUnitsPerWidthUnit = 250 / findPage.mainGraph().graphAsWidget().selectionRectangleWidth();
         verifyThat("Selection rectangle covering correct fraction of chart", newUnitsPerWidthUnit, is(numericUnitsPerChartWidth));
@@ -363,6 +369,9 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     public void testInputDateBoundsWithCalendar() {
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("tragedy");
         final DatePicker startCalendar = mainGraph.openCalendar(mainGraph.startCalendar());
+
+        assertThat("Calendar widget has opened",mainGraph.calendarHasOpened());
+
         startCalendar.calendarDateSelect(new Date(76, 8, 26));
         final DatePicker endCalendar = mainGraph.openCalendar(mainGraph.endCalendar());
         endCalendar.calendarDateSelect(new Date(201, 3, 22));
@@ -393,10 +402,12 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         final MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("dire");
         final String filterType = mainGraph.header();
         mainGraph.clickAndDrag(-50, mainGraph.graph());
+        findPage.waitForParametricValuesToLoad();
 
         final SavedSearchService saveService = getApplication().savedSearchService();
         final SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
-        try {
+
+       try {
             saveService.saveCurrentAs("bad", SearchType.SNAPSHOT);
             searchTabs.switchTo("bad");
             Waits.loadOrFadeWait();
