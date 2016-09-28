@@ -72,10 +72,12 @@ public class MapView {
     }
 
     public int countLocationsForComparer() {
-      return countLocationsFor("green","first");
+      return countLocationsFor("green", "first");
     }
 
-    public int countLocationsForComparee() { return countLocationsFor("red","second"); }
+    public int countLocationsForComparee() { return countLocationsFor("red", "second"); }
+
+    public int countCommonLocations() { return countLocationsFor("orange", "both"); }
 
     private int countLocationsFor(final String colour, final String position) {
         int total = 0;
