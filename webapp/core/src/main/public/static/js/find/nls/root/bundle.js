@@ -129,6 +129,7 @@ define([
         'search.filters.applied': 'Filters applied',
         'search.filters.filter': 'Filter\u2026',
         'search.filters.empty': 'No filters matched',
+        'search.filters.removeAll': 'remove all',
         'search.indexes': 'Indexes',
         'search.indexes.all': 'All',
         'search.indexes.publicIndexes': 'Public Indexes',

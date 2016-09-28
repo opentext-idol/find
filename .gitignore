@@ -38,6 +38,7 @@ vagrant/scriptcache/
 
 # Selenium
 webapp/selenium-tests/.output/
+webapp/.output/
 
 # Maven
 log/ #webapp?

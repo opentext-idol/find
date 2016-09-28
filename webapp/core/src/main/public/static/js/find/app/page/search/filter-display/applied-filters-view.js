@@ -15,7 +15,7 @@ define([
 
     var html = _.template(template)({i18n: i18n});
 
-    var removeAllButton = '<span class="inline clickable remove-all-filters text-muted"><i class="fa fa-ban"></i></span>';
+    var removeAllButton = '<span class="inline clickable hyperlink text-muted remove-all-filters">' + i18n["search.filters.removeAll"] + '</span>';
 
     var FilterListItemView = ListItemView.extend({
         render: function() {

@@ -1493,21 +1493,29 @@ input.find-input {
   &:extend(.m-l-xs);
 }
 
+.left-side-applied-filters-view-title {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  max-width: 100%;
+
+  .shorten {
+    .inline-block;
+    flex: 1;
+    white-space: pre;
+  }
+}
+
+.section-title-counter {
+  .m-l-xs;
+}
+
+.section-controls {
+  .m-l-sm;
+}
+
 .remove-all-filters {
-  .fa-bars {
-    &:extend(.p-nil);
-
-    color: @color9;
-    height: 9px;
-    left: @nil;
-    top: @nil;
-    width: @custom6;
-  }
-
-  .fa-remove {
-    color: @color27;
-    font-size: 1.5em;
-  }
+  font-size: @fontSizeMedium;
+  text-transform: lowercase;
 }
 
 .filter-label {
