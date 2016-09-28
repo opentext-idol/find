@@ -147,7 +147,6 @@ define([
                 documentsCollection: this.documentsCollection,
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
-                configuration: configuration(),
                 highlightModel: this.highlightModel,
                 numericParametricFieldsCollection: this.numericParametricFieldsCollection,
                 queryModel: this.queryModel,

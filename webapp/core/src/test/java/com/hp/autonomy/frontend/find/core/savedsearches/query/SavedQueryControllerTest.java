@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
@@ -21,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.Serializable;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -86,6 +88,7 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
         final long id = 123L;
         final SavedQuery savedQuery = new SavedQuery.Builder()
                 .setId(id)
+                .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase()))
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
         int numberOfResults = 1;
@@ -99,6 +102,7 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
         final long id = 123L;
         final SavedQuery savedQuery = new SavedQuery.Builder()
                 .setId(id)
+                .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase()))
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
         final int numberOfResults = 0;
