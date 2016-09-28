@@ -13,8 +13,9 @@ define([
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
     'find/app/page/find-settings-page',
+    'find/app/page/customisations-page',
     'i18n!find/nls/bundle'
-], function(BaseApp, _, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage, SettingsPage, i18n) {
+], function(BaseApp, _, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage, SettingsPage, CustomisationsPage, i18n) {
 
     'use strict';
 
@@ -55,12 +56,20 @@ define([
             };
 
             if (_.contains(configuration().roles, 'ROLE_ADMIN')) {
-                pageData.settings = {
-                    Constructor: SettingsPage,
-                    icon: 'hp-icon hp-fw hp-settings',
-                    title: i18n['app.settings'],
-                    order: 2
-                };
+                _.extend(pageData, {
+                    settings: {
+                        Constructor: SettingsPage,
+                        icon: 'hp-icon hp-fw hp-settings',
+                        title: i18n['app.settings'],
+                        order: 2
+                    },
+                    customisations: {
+                        Constructor: CustomisationsPage,
+                        icon: 'hp-icon hp-fw hp-view',
+                        title: i18n['app.customisations'],
+                        order: 3
+                    }
+                });
             }
 
             return pageData;

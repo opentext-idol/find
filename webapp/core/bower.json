@@ -51,7 +51,8 @@
     "hp-autonomy-js-databases-view": "0.9.0",
     "datatables.net-fixedcolumns": "3.2.2",
     "datatables.net-fixedcolumns-bs": "3.2.2",
-    "hp-autonomy-about-page": "0.3.0"
+    "hp-autonomy-about-page": "0.3.0",
+    "dropzone": "4.3.0"
   },
   "devDependencies": {
     "hp-autonomy-js-testing-utils": "2.2.0",

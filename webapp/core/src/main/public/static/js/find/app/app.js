@@ -7,6 +7,7 @@ define([
     'jquery',
     'backbone',
     'underscore',
+    'dropzone',
     'find/app/util/test-browser',
     'find/app/model/window-scroll-model',
     'find/app/model/saved-searches/saved-query-collection',
@@ -18,7 +19,7 @@ define([
     'find/app/vent',
     'find/app/router',
     'text!find/templates/app/app.html'
-], function($, Backbone, _, testBrowser, WindowScrollModel, SavedQueryCollection, ModelRegistry,
+], function($, Backbone, _, Dropzone, testBrowser, WindowScrollModel, SavedQueryCollection, ModelRegistry,
             Navigation, configuration, Pages, logout, vent, router, template) {
 
     return Backbone.View.extend({
@@ -41,6 +42,9 @@ define([
 
         initialize: function() {
             $.ajaxSetup({cache: false});
+
+            // disable auto-discover for dropzones
+            Dropzone.autoDiscover = false;
 
             // disable Datatables alerting behaviour
             if ($.fn.dataTableExt) { $.fn.dataTableExt.sErrMode = 'throw'; }

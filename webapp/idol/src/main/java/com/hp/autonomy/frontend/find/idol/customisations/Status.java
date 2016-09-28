@@ -12,10 +12,29 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum Status {
+    /**
+     * Error creating directory or listing directory
+     */
     DIRECTORY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
+
+    /**
+     * File with given name already exists
+     */
     FILE_EXISTS(HttpStatus.CONFLICT),
+
+    /**
+     * An IOException was thrown while writing the file
+     */
     IO_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
+
+    /**
+     * The file was missing or of an incorrect MIME type
+     */
     INVALID_FILE(HttpStatus.UNSUPPORTED_MEDIA_TYPE),
+
+    /**
+     * The file was uploaded successfully
+     */
     SUCCESS(HttpStatus.OK);
 
     @JsonIgnore
