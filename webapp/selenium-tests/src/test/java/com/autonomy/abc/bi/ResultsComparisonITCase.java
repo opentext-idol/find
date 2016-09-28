@@ -73,9 +73,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         search("red",searchName2,SearchType.QUERY);
     }
 
-    //TODO: when this bug is no longer active, update the deleteCurrentSearch to not refresh after deleting
     @Test
-    @ActiveBug("FIND-616")
     public void testDeletingATab() {
         saveTwoSearches("mellow","unmellow");
 

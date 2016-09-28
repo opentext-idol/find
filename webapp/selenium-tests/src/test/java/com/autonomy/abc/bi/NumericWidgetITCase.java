@@ -287,8 +287,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-400")
-    @Ignore
-    //Ignoring because widget reloading makes it impossible for seleniumt to test this
+    @Ignore("Numeric widget reloading currently makes it impossible to Selenium test this.")
     public void testInputDateBoundsAsText() throws Exception {
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(2, "red");
         final String startDate = "1976-10-22 08:46";
