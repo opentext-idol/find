@@ -88,6 +88,16 @@ define([
 
             var collapsed = {};
 
+            var isCollapsed = function (model) {
+                if (this.filterModel && this.filterModel.get('text')) {
+                    return false;
+                }
+                else {
+                    //noinspection JSUnresolvedFunction
+                    return _.isUndefined(collapsed[model.id]) ? true : collapsed[model.id];
+                }
+            }.bind(this);
+
             this.fieldNamesListView = new ListView({
                 collection: this.collection,
                 proxyEvents: ['toggle'],
@@ -110,20 +120,12 @@ define([
                         }
                     },
                     parametricViewItemOptions: {
+                        collapsed: isCollapsed,
                         parametricCollection: options.parametricCollection,
                         // collection is not passed to the individual views
                         parametricDisplayCollection: this.displayCollection,
                         selectedParametricValues: this.selectedParametricValues,
-                        timeBarModel: options.timeBarModel,
-                        collapsed: function (model) {
-                            if (this.filterModel && this.filterModel.get('text')) {
-                                return false;
-                            }
-                            else {
-                                //noinspection JSUnresolvedFunction
-                                return _.isUndefined(collapsed[model.id]) ? true : collapsed[model.id];
-                            }
-                        }.bind(this)
+                        timeBarModel: options.timeBarModel
                     },
                     numericViewItemOptions: {
                         inputTemplate: options.inputTemplate,
@@ -137,12 +139,14 @@ define([
                         selectionEnabled: options.selectionEnabled,
                         zoomEnabled: options.zoomEnabled,
                         buttonsEnabled: options.buttonsEnabled,
-                        coordinatesEnabled: options.coordinatesEnabled
+                        coordinatesEnabled: options.coordinatesEnabled,
+                        collapsed: isCollapsed
                     }
                 }
             });
 
             //noinspection JSUnresolvedFunction
+            // Would ideally use model.cid but on refresh display Collection creates new models with different cids
             this.listenTo(this.fieldNamesListView, 'item:toggle', function (model, newState) {
                 collapsed[model.id] = newState;
             });

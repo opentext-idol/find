@@ -45,7 +45,14 @@ define([
             this.dataType = this.model.get('dataType');
             this.timeBarModel = options.timeBarModel;
             this.filterModel = options.filterModel;
-            this.collapsed = true;
+
+            if (_.isFunction(options.collapsed)) {
+                this.collapsed = options.collapsed(options.model);
+            }
+            else {
+                //noinspection NegatedConditionalExpressionJS
+                this.collapsed = !_.isUndefined(options.collapsed) ? options.collapsed : true;
+            }
 
             var clickCallback = null;
 
@@ -88,6 +95,7 @@ define([
 
             this.listenTo(this.collapsible, 'toggle', function(newState) {
                 this.collapsed = newState;
+                this.trigger('toggle', this.model, newState);
             });
 
             if (this.filterModel) {

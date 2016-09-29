@@ -14,6 +14,10 @@ define([
             }, options[this.viewTypes[type].options]));
 
             this.childView.setElement(this.$el);
+
+            this.listenTo(this.childView, 'all', function(){
+                this.trigger.apply(this, arguments);
+            })
         },
         
         render: function() {
