@@ -13,8 +13,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +47,23 @@ public class TopicMapView {
         return findElements(By.cssSelector(".entity-topic-map > svg > path"));
     }
 
+    //This is complicated because you need to wait until any entity exists before then waiting until elements
+    //have an opacity of either the top or bottom layer (i.e. the map is done loading).
     public void waitForTopLevelEntities() {
         new WebDriverWait(driver,25)
-                .withMessage("top level entities to reach the right opacity")
+                .withMessage("entity to exist with opacity 2")
                 .until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.2']")));
-    }
+
+        new WebDriverWait(driver,10)
+                .withMessage("all entities to have opacity of either 0.2 or 0.7")
+                .until(new ExpectedCondition<Boolean>() {
+                    @Override
+                    public Boolean apply(final WebDriver driver) {
+                        return container.findElements(By.cssSelector(".entity-topic-map > svg > path:not([stroke-opacity='0.2']):not([stroke-opacity='0.7'])")).isEmpty();
+                    }
+                });
+        }
+
 
     public List<WebElement> topLevelMapEntities() {
         return findElements(By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.2']"));
@@ -62,7 +72,7 @@ public class TopicMapView {
     public void waitForBaseLevelEntities() {
         new WebDriverWait(driver,10)
                 .withMessage("base entities to reach the right opacity")
-                .until(ExpectedConditions.elementToBeClickable(By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.7']")));
+                .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.7']")));
     }
 
     public List<WebElement> mapEntityTextElements() {
