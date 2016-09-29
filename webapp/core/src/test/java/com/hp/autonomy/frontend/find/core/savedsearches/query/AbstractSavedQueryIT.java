@@ -2,7 +2,6 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -190,7 +189,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     @Test
     public void basicUserNotAuthorised() throws Exception {
         mockMvc.perform(get(SavedQueryController.PATH).with(authentication(userAuth())))
-            .andExpect(status().is(403));
+                .andExpect(status().is(403));
     }
 
     @Test

@@ -2,7 +2,6 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'find/app/util/search-data-util',
     'parametric-refinement/to-field-text-node'
@@ -14,14 +13,14 @@ define([
             it('called with no concepts returns *', function() {
                 expect(searchDataUtil.makeQueryText([])).toEqual('*');
             });
-            
+
             it('called with one concepts returns that concept, preserving quotes', function() {
                 expect(searchDataUtil.makeQueryText([['"chlorine fluoride"']])).toEqual('("chlorine fluoride")');
             });
 
             it('called with multiple concepts returns those concepts', function() {
-                expect(searchDataUtil.makeQueryText([['chlorine fluoride'], ['activated carbon'], ['mercury', 'bromine', 'ammonia']]))
-                    .toEqual('(chlorine fluoride) AND (activated carbon) AND (mercury) AND (bromine) AND (ammonia)');
+                expect(searchDataUtil.makeQueryText([['chlorine fluoride'], ['activated carbon'], ['"mercury"', '"bromine"', '"ammonia"']]))
+                    .toEqual('(chlorine fluoride) AND (activated carbon) AND ("mercury" "bromine" "ammonia")');
             });
         });
 
@@ -62,5 +61,4 @@ define([
             })
         });
     });
-
 });

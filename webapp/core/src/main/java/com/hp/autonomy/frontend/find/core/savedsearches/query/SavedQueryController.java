@@ -2,7 +2,6 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
@@ -82,9 +81,9 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
 
         final SavedQuery savedQuery = service.get(id);
         final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
-        if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
+        if(savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
             final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                    .setQueryText(savedQuery.getConceptClusterPhrases().isEmpty() ? "*" : savedQuery.getConceptClusterPhrases().iterator().next().getPhrase())
+                    .setQueryText(savedQuery.toQueryText())
                     .setFieldText(fieldTextParser.toFieldText(savedQuery))
                     .setDatabases(convertEmbeddableIndexes(savedQuery.getIndexes()))
                     .setMinDate(dateDocsLastFetched)
@@ -106,8 +105,8 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
 
     private List<S> convertEmbeddableIndexes(final Iterable<EmbeddableIndex> embeddableIndexes) {
         final List<S> indexes = new ArrayList<>(CollectionUtils.size(embeddableIndexes));
-        if (embeddableIndexes != null) {
-            for (final EmbeddableIndex embeddableIndex : embeddableIndexes) {
+        if(embeddableIndexes != null) {
+            for(final EmbeddableIndex embeddableIndex : embeddableIndexes) {
                 indexes.add(convertEmbeddableIndex(embeddableIndex));
             }
         }

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
@@ -58,7 +62,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         findService = getApplication().findService();
         saveService = getApplication().savedSearchService();
 
-        elementFactory = (BIIdolFindElementFactory) getElementFactory();
+        elementFactory = (BIIdolFindElementFactory)getElementFactory();
         elementFactory.getFindPage().goToListView();
         searchTabBar = elementFactory.getSearchTabBar();
     }

@@ -2,9 +2,7 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
-
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -42,7 +40,7 @@ public class SavedQuery extends SavedSearch<SavedQuery> {
     @Column(name = "last_fetched_date")
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime dateDocsLastFetched;
-    
+
     private SavedQuery(final Builder builder) {
         super(builder);
         dateNewDocsLastFetched = builder.dateNewDocsLastFetched;
@@ -75,4 +73,3 @@ public class SavedQuery extends SavedSearch<SavedQuery> {
         }
     }
 }
-
