@@ -10,7 +10,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
@@ -62,7 +61,10 @@ public class SunburstView extends ParametricFieldView {
     }
 
     public void hoverOverTooFewToDisplaySegment(){
-        DriverUtil.hover(getDriver(),findElement(By.cssSelector("svg > path[fill='#f0f0f0']")));
+        final WebElement areaWithGrey = findElement(By.cssSelector("svg > path[fill='#f0f0f0']"));
+        final Dimension dimensions = areaWithGrey.getSize();
+
+        hoveringOffSide(areaWithGrey,dimensions.getWidth()/6,dimensions.getHeight()/2);
     }
 
     public boolean greySunburstAreaExists(){
