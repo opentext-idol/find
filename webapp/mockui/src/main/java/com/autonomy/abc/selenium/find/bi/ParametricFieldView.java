@@ -17,7 +17,6 @@ class ParametricFieldView {
     ParametricFieldView(final WebDriver driver) {
         this.driver = driver;
         this.container = driver.findElement(By.className("service-view-container:not(.hide)"));
-        //this.container = driver.findElement(By.className("service-view-container"));
     }
 
     public String getSelectedFieldName(final int i){

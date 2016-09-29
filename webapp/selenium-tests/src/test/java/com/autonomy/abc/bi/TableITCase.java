@@ -3,6 +3,7 @@ package com.autonomy.abc.bi;
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
+import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TableView;
@@ -13,6 +14,7 @@ import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,8 +22,10 @@ import java.util.List;
 
 import static com.autonomy.abc.selenium.find.bi.TableView.EntryCount.TWENTY_FIVE;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 @Role(UserRole.BIFHI)
 public class TableITCase extends IdolFindTestBase {
@@ -42,10 +46,25 @@ public class TableITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-251")
     public void testTableTabShowsTable(){
-        init("shambolic");
+        init("s");
 
+        tableView.waitForTable();
         verifyThat("Table element displayed", tableView.tableVisible());
         verifyThat("Parametric selectors appear", tableView.parametricSelectionDropdownsExist());
+
+        getElementFactory().getConceptsPanel().removeAllConcepts();
+        findService.search("shambolicwolic");
+
+        IdolFindPage findPage = getElementFactory().getFindPage();
+        findPage.goToListView();
+        assumeThat("There are no results for this", findPage.totalResultsNum(), is(0));
+
+        findPage.goToTable();
+
+        final WebElement message = tableView.message();
+        final String correctMessage = "Could not display Table View: your search returned no parametric values";
+        assertThat("Message appearing when no sunburst & search from Sunburst", message, displayed());
+        verifyThat("Message is: " + correctMessage, message, containsText(correctMessage));
     }
 
     @Test

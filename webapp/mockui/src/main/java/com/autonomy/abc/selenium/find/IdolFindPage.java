@@ -9,6 +9,7 @@ import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -77,7 +78,13 @@ public class IdolFindPage extends FindPage {
 
     public void goToTable(){
         findElement(By.cssSelector("[data-tab-id='table']")).click();
-        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector("table.dataTable"))));
+        new WebDriverWait(getDriver(), 15).until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(final WebDriver driver) {
+                return findElement(By.cssSelector("table.dataTable")).isDisplayed() ||
+                        findElement(By.cssSelector(".parametric-view-message")).isDisplayed();
+            }
+        });
     }
 
     public boolean resultsComparisonVisible() {
