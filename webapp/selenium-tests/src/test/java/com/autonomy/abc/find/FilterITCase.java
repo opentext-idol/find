@@ -383,7 +383,7 @@ public class FilterITCase extends FindTestBase {
 
     // Filters Applied section
     @Test
-    public void filtersAppearInFiltersAppliedSection() {
+    public void testFiltersAppearInFiltersAppliedSection() {
         final ResultsView results = findService.search("truth");
 
         List<WebElement> appliedFiltersPanel = getFilterLabels();
@@ -404,7 +404,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    public void appliedFiltersCounterDefaultsToZero() {
+    public void testAppliedFiltersCounterDefaultsToZero() {
         final List<WebElement> appliedFilters = appliedFiltersPanel.getAppliedFilters();
         assertThat("By default there are no filters present", appliedFilters, is(empty()));
 
@@ -414,7 +414,7 @@ public class FilterITCase extends FindTestBase {
 
     @SuppressWarnings("FeatureEnvy")
     @Test
-    public void applyingFiltersIncrementsTheHeaderCounter() {
+    public void testApplyingFiltersIncrementsTheHeaderCounter() {
         final ResultsView results = findService.search("truth");
 
         List<WebElement> appliedFilters = appliedFiltersPanel.getAppliedFilters();
@@ -426,8 +426,8 @@ public class FilterITCase extends FindTestBase {
         appliedFilters = appliedFiltersPanel.getAppliedFilters();
         assertThat("A filter label appears", appliedFilters, hasSize(1));
 
-        String headerText = appliedFiltersPanel.getHeader().getText();
-        assertThat("The header reports the number of filter labels", headerText, endsWith("(" + appliedFilters.size() + ")"));
+        String headerText = appliedFiltersPanel.appliedFilterCounter().getText();
+        assertThat("The header reports the number of filter labels", headerText, containsString("(" + appliedFilters.size() + ")"));
 
         filterPanel.toggleFilter(DateOption.WEEK);
         results.waitForResultsToLoad();
@@ -435,8 +435,8 @@ public class FilterITCase extends FindTestBase {
         appliedFilters = appliedFiltersPanel.getAppliedFilters();
         assertThat("The filter label disappears", appliedFilters, is(empty()));
 
-        headerText = appliedFiltersPanel.getHeader().getText();
-        assertThat("The header again reports no filters", headerText, endsWith("(" + appliedFilters.size() + ")"));
+        headerText = appliedFiltersPanel.appliedFilterCounter().getText();
+        assertThat("The header again reports no filters", headerText, containsString("(" + appliedFilters.size() + ")"));
     }
 
     @SuppressWarnings("FeatureEnvy")

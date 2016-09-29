@@ -27,6 +27,10 @@ public class AppliedFiltersPanel {
         return panel.findElement(By.cssSelector(".left-side-applied-filters-view-title"));
     }
 
+    public WebElement appliedFilterCounter() {
+        return getHeader().findElement(By.cssSelector(".section-title-counter"));
+    }
+
     public WebElement getRemoveAllFiltersButton() {
         return panel.findElement(By.cssSelector(".section-controls .remove-all-filters"));
     }
