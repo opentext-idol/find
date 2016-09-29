@@ -1,7 +1,7 @@
 /*------------------------------------
 -- Description: Initial Find schema
 -- Previous Version: n/a
--- Target Version: 0
+-- Target Version: 11.0.0.0
 ------------------------------------*/
 
 CREATE DATABASE IF NOT EXISTS find CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

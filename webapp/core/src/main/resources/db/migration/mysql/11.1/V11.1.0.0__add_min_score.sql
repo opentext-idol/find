@@ -2,8 +2,8 @@
 -- Description: Add min score column to
   searches to accommodate extra restriction.
 
--- Previous Version: 0
--- Target Version: 1
+-- Previous Version: 11.0.0.0
+-- Target Version: 11.1.0.0
 --------------------------------------------*/
 
 USE find;
