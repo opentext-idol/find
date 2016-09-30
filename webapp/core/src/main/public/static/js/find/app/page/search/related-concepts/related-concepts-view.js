@@ -51,7 +51,7 @@ define([
         var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : _.flatten(this.entityCollection.getClusterEntities(entityCluster)).map(function (concept) {
             return '"' + concept + '"';
         });
-        var relatedConcepts = _.union(this.conceptGroups.pluck('concepts'), clusterEntities);
+        var relatedConcepts = _.union(this.conceptGroups.pluck('concepts'), [clusterEntities]);
 
         var queryText = searchDataUtil.makeQueryText(relatedConcepts);
 
