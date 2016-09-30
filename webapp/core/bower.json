@@ -66,6 +66,9 @@
     "requirejs": "2.1.22",
     "requirejs-text": "2.0.15",
     "underscore": "1.8.3",
-    "bootstrap": "3.3.7"
+    "bootstrap": "3.3.7",
+    "pegjs": "0.10.0",
+    "raphael": "2.2.0",
+    "hp-autonomy-fieldtext-js": "1.4.0"
   }
 }
