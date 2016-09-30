@@ -33,13 +33,38 @@ public class NumericWidgetService {
     }
 
     public MainNumericWidget searchAndSelectNthGraph(int n, String searchTerm) {
-        find.findService().search(searchTerm);
-        IdolFilterPanel filterPanel = elementFactory.getFilterPanel();
-        filterPanel.waitForParametricFields();
-
+        IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
         selectFilterGraph(filterPanel.getNthGraph(n));
 
         return findPage.mainGraph();
+    }
+
+    public MainNumericWidget searchAndSelectNamedGraph(final String name, final String searchTerm) {
+        IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
+        selectFilterGraph(filterPanel.getNamedGraph(name));
+
+        return findPage.mainGraph();
+    }
+
+    public MainNumericWidget searchAndSelectFirstNumericGraph(final String searchTerm) {
+        IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
+        selectFilterGraph(filterPanel.getFirstNumericGraph());
+
+        return findPage.mainGraph();
+    }
+
+    public MainNumericWidget searchAndSelectFirstDateGraph(final String searchTerm) {
+        IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
+        selectFilterGraph(filterPanel.getFirstDateGraph());
+
+        return findPage.mainGraph();
+    }
+
+    private IdolFilterPanel searchAndReturnFilterPanel(String searchTerm){
+        find.findService().search(searchTerm);
+        final IdolFilterPanel filterPanel = elementFactory.getFilterPanel();
+        filterPanel.waitForParametricFields();
+        return filterPanel;
     }
 
 
