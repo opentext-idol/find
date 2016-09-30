@@ -7,6 +7,12 @@ import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.query.AggregateQueryFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryService;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.util.Waits;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class FindService implements QueryService<ResultsView> {
     private final FindElementFactory elementFactory;
@@ -24,17 +30,36 @@ public class FindService implements QueryService<ResultsView> {
 
     @Override
     public ResultsView search(final Query query) {
-        elementFactory.getTopNavBar().search(query.getTerm());
+        search(elementFactory.getSearchBox(), query.getTerm());
         elementFactory.getFilterPanel().waitForIndexes();
         findPage.filterBy(new AggregateQueryFilter(query.getFilters()));
         return elementFactory.getResultsPage();
     }
 
+    private void search(final FormInput formInput, final String term) {
+        formInput.clear();
+        formInput.setValue(term);
+        Waits.loadOrFadeWait();
+        formInput.submit();
+    }
+
     public SimilarDocumentsView goToSimilarDocuments(final int resultNumber) {
         final ResultsView resultsPage = elementFactory.getResultsPage();
         resultsPage.getResult(resultNumber).similarDocuments().click();
-        resultsPage.waitForResultsToLoad();
-        return elementFactory.getSimilarDocumentsView();
+        SimilarDocumentsView similarDocuments = elementFactory.getSimilarDocumentsView();
+        similarDocuments.waitForLoad();
+        return similarDocuments;
     }
 
+    /**
+     * @param query The query text
+     * @return The URL of the search page for the given query text, relative to the application context path
+     */
+    public String getQueryUrl(final String query) {
+        try {
+            return "public/search/query/" + URLEncoder.encode(query, StandardCharsets.UTF_8.name());
+        } catch (final UnsupportedEncodingException e) {
+            throw new IllegalStateException("UTF-8 not supported", e);
+        }
+    }
 }

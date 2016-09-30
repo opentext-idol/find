@@ -9,9 +9,9 @@ define([
     
     return Backbone.Router.extend({
         routes: {
-            'find/search/query(/:text)': 'search',
-            'find/:page': 'find',
-            'find/search/splash': 'searchSplash'
+            'search/query(/:text)': 'search',
+            ':page': 'page',
+            'search/splash': 'searchSplash'
         },
 
         navigate: function() {
@@ -21,19 +21,19 @@ define([
         },
 
         search: function() {
-            this.trigger('route:find', 'search');
+            this.trigger('route:page', 'search');
         },
 
         documentDetail: function() {
-            this.trigger('route:find', 'search');
+            this.trigger('route:page', 'search');
         },
 
         suggest: function() {
-            this.trigger('route:find', 'search');
+            this.trigger('route:page', 'search');
         },
 
         searchSplash: function() {
-            this.trigger('route:find', 'search');
+            this.trigger('route:page', 'search');
         }
     });
 

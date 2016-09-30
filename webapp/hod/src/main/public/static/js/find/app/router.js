@@ -11,8 +11,8 @@ define([
     //noinspection LocalVariableNamingConventionJS
     var Router = RouterConstructor.extend({
         routes: _.extend({
-            'find/search/document/:domain/:index/:reference': 'documentDetail',
-            'find/search/suggest/:domain/:index/:reference': 'suggest'
+            'search/document/:domain/:index/:reference': 'documentDetail',
+            'search/suggest/:domain/:index/:reference': 'suggest'
         }, RouterConstructor.prototype.routes)
     });
 

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 package com.autonomy.abc.selenium.find.filters;
 
 import com.autonomy.abc.selenium.query.DatePickerFilter;
@@ -18,17 +22,17 @@ class DateFilterContainer extends ListFilterContainer implements DatePickerFilte
 
     private final WebDriver driver;
 
-    DateFilterContainer(final WebElement element, final WebDriver webDriver){
-        super(element,webDriver);
+    DateFilterContainer(final WebElement element, final WebDriver webDriver) {
+        super(element, webDriver);
         driver = webDriver;
     }
 
-    public List<WebElement> getFilters(){
+    public List<WebElement> getFilters() {
         return getContainer().findElements(By.cssSelector("[data-filter-id] > td:nth-child(2)"));
     }
 
     @Override
-    public List<String> getFilterNames(){
+    public List<String> getFilterNames() {
         return ElementUtil.getTexts(getFilters());
     }
 
@@ -83,7 +87,7 @@ class DateFilterContainer extends ListFilterContainer implements DatePickerFilte
     }
 
     private void showCustomDateBoxes() {
-        if (!isFilteringBy(DateOption.CUSTOM)) {
+        if(!isFilteringBy(DateOption.CUSTOM)) {
             toggleFilter(DateOption.CUSTOM);
         }
     }

@@ -140,7 +140,7 @@
         <dependency>
             <groupId>com.hp.autonomy.hod</groupId>
             <artifactId>hod-sso-spring-security</artifactId>
-            <version>0.7.1</version>
+            <version>0.8.0</version>
         </dependency>
 
         <!-- It's not clear why, but we need to define dependency here as well, not just at the core level.  Otherwise the hibernate classloader does not pick this up. -->

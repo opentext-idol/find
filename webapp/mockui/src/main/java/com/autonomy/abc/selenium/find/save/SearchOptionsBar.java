@@ -2,10 +2,13 @@ package com.autonomy.abc.selenium.find.save;
 
 import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
+import com.hp.autonomy.frontend.selenium.element.Menu;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.stalenessOf;
@@ -17,7 +20,7 @@ public class SearchOptionsBar {
 
     public SearchOptionsBar(final WebDriver driver) {
         this.driver = driver;
-        this.bar = driver.findElement(By.cssSelector(".query-service-view-container > :not(.hide):not(.search-tabs-container) .search-options-container"));
+        bar = driver.findElement(By.cssSelector(".query-service-view-container > :not(.hide):not(.search-tabs-container) .search-options-container"));
     }
 
     public WebElement saveAsButton(final SearchType type){
@@ -37,7 +40,12 @@ public class SearchOptionsBar {
         confirmButton.click();
         new WebDriverWait(driver, 20)
                 .withMessage("saving a search")
-                .until(stalenessOf(confirmButton));
+                .until(new ExpectedCondition<Boolean>() {
+                @Override
+                public Boolean apply(final WebDriver driver) {
+                    return bar.findElements(By.cssSelector(".search-title-input-container")).isEmpty();
+                }
+                });
     }
 
     public WebElement saveConfirmButton() {
@@ -56,7 +64,13 @@ public class SearchOptionsBar {
         return ElementUtil.ancestor(findElement(By.cssSelector("input[type='radio'][value='" + type + "']")), 2);
     }
 
-    void openDeleteModal() {
+    public void delete() {
+        openDeleteModal();
+        confirmModalOperation();
+        Waits.loadOrFadeWait();
+    }
+
+    private void openDeleteModal() {
         extraOptions().select("Delete");
     }
 
@@ -64,16 +78,21 @@ public class SearchOptionsBar {
         extraOptions().select("Open as Query");
     }
 
-    private Dropdown extraOptions() {
+    public void openResetModal() {
+        extraOptions().select("Reset");
+    }
+
+    private Menu<String> extraOptions() {
         final WebElement dropdown = findElement(By.cssSelector("[data-toggle=dropdown]"));
         return new Dropdown(ElementUtil.getParent(dropdown), driver);
     }
 
-    void confirmDelete() {
-        final WebElement deleteModal = new WebDriverWait(driver, 10)
+    public void confirmModalOperation() {
+        final WebElement confirmModal = new WebDriverWait(driver, 10)
                 .until(visibilityOfElementLocated(By.className("modal-content")));
-        deleteModal.findElement(By.className("okButton")).click();
-        new WebDriverWait(driver, 10).until(stalenessOf(deleteModal));
+
+        confirmModal.findElement(By.className("okButton")).click();
+        new WebDriverWait(driver, 10).until(stalenessOf(confirmModal));
     }
 
     private WebElement findElement(final By locator) {

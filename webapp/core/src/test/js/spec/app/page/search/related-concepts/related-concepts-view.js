@@ -20,7 +20,7 @@ define([
                 queryModel: this.queryModel,
                 clickHandler: this.clickHandler,
                 queryState: {
-                    queryTextModel: this.queryTextModel
+                    conceptGroups: this.conceptGroups
                 }
             });
 
@@ -31,10 +31,10 @@ define([
             this.indexesCollection = new Backbone.Collection();
             this.queryModel = new Backbone.Model();
 
-            this.queryTextModel = new Backbone.Model({
-                inputText: 'orange',
-                relatedConcepts: [['blood']]
-            });
+            this.conceptGroups = new Backbone.Collection([
+                {concepts: ['orange']},
+                {concepts: ['blood']}
+            ]);
             
             this.entityCollection = new EntityCollection([], {
                 getSelectedRelatedConcepts: _.constant([])

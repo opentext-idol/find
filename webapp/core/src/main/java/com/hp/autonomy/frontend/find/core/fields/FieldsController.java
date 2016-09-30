@@ -5,6 +5,9 @@
 
 package com.hp.autonomy.frontend.find.core.fields;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsRequest;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
@@ -37,15 +40,17 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     private final FieldsService<R, E> fieldsService;
     private final ParametricValuesService<P, S, E> parametricValuesService;
     private final ObjectFactory<ParametricRequest.Builder<P, S>> parametricRequestBuilderFactory;
+    private final ConfigService<? extends FindConfig> configService;
 
     protected FieldsController(
             final FieldsService<R, E> fieldsService,
             final ParametricValuesService<P, S, E> parametricValuesService,
-            final ObjectFactory<ParametricRequest.Builder<P, S>> parametricRequestBuilderFactory
-    ) {
+            final ObjectFactory<ParametricRequest.Builder<P, S>> parametricRequestBuilderFactory,
+            final ConfigService<? extends FindConfig> configService) {
         this.fieldsService = fieldsService;
         this.parametricValuesService = parametricValuesService;
         this.parametricRequestBuilderFactory = parametricRequestBuilderFactory;
+        this.configService = configService;
     }
 
     /**
@@ -56,7 +61,8 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public List<TagName> getParametricFields(final R request) throws E {
-        final Map<FieldTypeParam, List<TagName>> response = fieldsService.getFields(request, FieldTypeParam.Parametric, FieldTypeParam.Numeric, FieldTypeParam.NumericDate);
+        final FieldTypeParam[] fieldTypeParams = {FieldTypeParam.Parametric, FieldTypeParam.Numeric, FieldTypeParam.NumericDate};
+        final Map<FieldTypeParam, List<TagName>> response = getFields(request, fieldTypeParams, Collections.emptyList());
         final List<TagName> parametricFields = new ArrayList<>(response.get(FieldTypeParam.Parametric));
         parametricFields.removeAll(response.get(FieldTypeParam.Numeric));
         parametricFields.removeAll(response.get(FieldTypeParam.NumericDate));
@@ -78,14 +84,13 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     /**
      * Fetch the parametric fields of the given type along with their min and max values.
      */
-    protected List<FieldAndValueDetails> fetchParametricFieldAndValueDetails(final R request, final FieldTypeParam fieldType, final Iterable<String> additionalFields) throws E {
-        final Map<FieldTypeParam, List<TagName>> response = fieldsService.getFields(request, FieldTypeParam.Parametric, fieldType);
+    protected List<FieldAndValueDetails> fetchParametricFieldAndValueDetails(final R request, final FieldTypeParam fieldType, final Collection<String> additionalFields) throws E {
+        final FieldTypeParam[] fieldTypes = {FieldTypeParam.Parametric, fieldType};
+        final Map<FieldTypeParam, List<TagName>> response = getFields(request, fieldTypes, additionalFields);
         final Collection<TagName> parametricFields = new ArrayList<>(response.get(FieldTypeParam.Parametric));
         parametricFields.retainAll(response.get(fieldType));
 
-        for (final String field : additionalFields) {
-            parametricFields.add(new TagName(field));
-        }
+        parametricFields.addAll(additionalFields.stream().map(TagName::new).collect(Collectors.toList()));
 
         final List<String> fieldNames = parametricFields.stream().map(TagName::getId).collect(Collectors.toCollection(LinkedList::new));
 
@@ -116,5 +121,47 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         }
 
         return output;
+    }
+
+    private Map<FieldTypeParam, List<TagName>> getFields(final R request, final FieldTypeParam[] fieldTypeParams, final Collection<String> additionalFields) throws E {
+        final UiCustomization uiCustomization = configService.getConfig().getUiCustomization();
+        final Collection<String> parametricWhitelist = uiCustomization == null || uiCustomization.getParametricWhitelist() == null
+                ? Collections.emptyList()
+                : uiCustomization.getParametricWhitelist()
+                .stream()
+                .map(fieldName -> normaliseFieldName(fieldName, additionalFields))
+                .collect(Collectors.toList());
+        final Collection<String> parametricBlacklist = uiCustomization == null || uiCustomization.getParametricBlacklist() == null
+                ? Collections.emptyList()
+                : uiCustomization.getParametricBlacklist()
+                .stream()
+                .map(fieldName -> normaliseFieldName(fieldName, additionalFields))
+                .collect(Collectors.toList());
+
+        return fieldsService.getFields(request, fieldTypeParams)
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()
+                        .stream()
+                        .filter(tagName -> (parametricWhitelist.isEmpty() || parametricWhitelist.contains(tagName.getId())) && !parametricBlacklist.contains(tagName.getId()))
+                        .collect(Collectors.toList()))
+                );
+    }
+
+    //TODO: this logic should be in haven-search-components or somewhere similar
+
+    private static final String FULL_PATH_IDENTIFIER = "DOCUMENT/";
+
+    private String normaliseFieldName(final String fieldName, final Collection<String> specialFields) {
+        String normalisedFieldName = fieldName;
+        if (fieldName.contains(FULL_PATH_IDENTIFIER)) {
+            if (!fieldName.startsWith("/")) {
+                normalisedFieldName = '/' + fieldName;
+            }
+        } else if (!specialFields.contains(fieldName)) {
+            normalisedFieldName = '/' + FULL_PATH_IDENTIFIER + fieldName;
+        }
+
+        return normalisedFieldName;
     }
 }

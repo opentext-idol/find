@@ -40,10 +40,10 @@ define([
         },
 
         updateCount: function() {
-            if (this.$count) {
+            if(this.$count) {
                 var count = this.model.get('count');
 
-                if (count !== null) {
+                if(count !== null) {
                     this.$count.text(' (' + count + ')');
                 } else {
                     this.$count.text('');
@@ -52,7 +52,7 @@ define([
         },
 
         updateSelected: function() {
-            if (this.$check) {
+            if(this.$check) {
                 this.$check.toggleClass('hide', !this.model.get('selected'));
             }
         },
@@ -63,5 +63,4 @@ define([
             Backbone.View.prototype.remove.apply(this, arguments);
         }
     });
-
 });

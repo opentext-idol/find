@@ -13,7 +13,7 @@ define([
     'find/app/vent'
 ], function(Backbone, $, DocumentDetailView, TabContentView, DocumentModel, configuration, vent) {
 
-    var BACK_URL = 'find/search/goback';
+    var BACK_URL = 'search/goback';
     var DOCUMENT_MODEL_REF = 'reference';
 
     var URL_LIKE_REFERENCE = 'http://www.example.com';

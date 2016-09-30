@@ -140,38 +140,39 @@ define([
                 queryText: 'cat AND Copenhagen'
             });
 
-            var queryTextModel = new Backbone.Model({
-                inputText: 'cat',
-                relatedConcepts: [['Copenhagen']]
-            });
+            const conceptGroups = new Backbone.Collection([
+                {concepts: ['cat']},
+                {concepts: ['Copenhagen']}
+            ]);
 
             this.documentsCollection = new Backbone.Collection();
             this.documentsCollection.totalResults = 50;
 
-            var selectedIndexes = new Backbone.Collection([
+            const selectedIndexes = new Backbone.Collection([
                 {name: 'Wikipedia', domain: 'PUBLIC'}
             ]);
+
             databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function () {
                 return [{name: 'Wikipedia', domain: 'PUBLIC'}];
             });
 
-            var selectedParametricValues = new Backbone.Collection([
+            const selectedParametricValues = new Backbone.Collection([
                 {field: 'WIKIPEDIA_CATEGORY', value: 'Concepts in Physics'}
             ]);
 
-            var datesFilterModel = new DatesFilterModel({
+            const datesFilterModel = new DatesFilterModel({
                 dateRange: null,
                 customMinDate: null,
                 customMaxDate: null
             });
 
-            var minScoreModel = new MinScoreModel({
+            const minScoreModel = new MinScoreModel({
                 minScore: 20
             });
 
             this.queryState = {
+                conceptGroups: conceptGroups,
                 datesFilterModel: datesFilterModel,
-                queryTextModel: queryTextModel,
                 selectedIndexes: selectedIndexes,
                 selectedParametricValues: selectedParametricValues,
                 minScoreModel: minScoreModel
@@ -180,7 +181,7 @@ define([
             this.savedSearchModel = new SavedSearchModel({
                 title: 'New Search',
                 type: SavedSearchModel.Type.QUERY,
-                queryText: '*'
+                relatedConcepts: [['*']]
             });
 
             spyOn(this.savedSearchModel, 'destroy');
@@ -404,7 +405,7 @@ define([
 
                 it('copies the query restriction parameters to the new model', function() {
                     var model = this.savedQueryCollection.at(0);
-                    expect(model.get('queryText')).toBe('cat');
+                    expect(model.get('relatedConcepts')[0][0]).toBe('cat');
                     expect(model.get('indexes').length).toBe(1);
                     expect(model.get('minScore')).toBe(20);
                 });
@@ -738,7 +739,7 @@ define([
 
             describe('then the query is changed', function() {
                 beforeEach(function() {
-                    this.queryState.queryTextModel.set({inputText: 'archipelago'});
+                    this.queryState.conceptGroups.set([{concepts: ['archipelago']}]);
                     this.queryModel.set('queryText', 'archipelago');
                 });
 
@@ -763,7 +764,7 @@ define([
                         expect(this.savedSearchModel.save).toHaveBeenCalled();
 
                         var savedAttributes = this.savedSearchModel.save.calls.argsFor(0)[0];
-                        expect(savedAttributes.queryText).toBe('archipelago');
+                        expect(savedAttributes.relatedConcepts[0][0]).toBe('archipelago');
                     });
 
                     it('disables the save button', function() {
@@ -818,8 +819,9 @@ define([
                         });
 
                         it('restores the original query state', function() {
-                            expect(this.queryState.queryTextModel.get('inputText')).toBe('cat');
-                            expect(this.queryState.queryTextModel.get('relatedConcepts')).toEqual([['Copenhagen']]);
+                            expect(this.queryState.conceptGroups.length).toBe(2);
+                            expect(this.queryState.conceptGroups.at(0).get('concepts')).toEqual(['cat']);
+                            expect(this.queryState.conceptGroups.at(1).get('concepts')).toEqual(['Copenhagen']);
                         });
                     });
                 });
@@ -836,7 +838,7 @@ define([
                         });
 
                         it('does not revert the search', function() {
-                            expect(this.queryState.queryTextModel.get('inputText')).toBe('archipelago');
+                            expect(this.queryState.conceptGroups.at(0).get('concepts')).toEqual(['archipelago']);
                         });
                     });
 
@@ -849,7 +851,7 @@ define([
                         });
 
                         it('reverts the search', function() {
-                            expect(this.queryState.queryTextModel.get('inputText')).toBe('cat');
+                            expect(this.queryState.conceptGroups.at(0).get('concepts')).toEqual(['cat']);
                         });
                     });
                 });

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 define([
     'backbone',
     'jquery',
@@ -13,9 +17,10 @@ define([
     'text!find/templates/app/page/search/popover-message.html',
     'text!find/templates/app/page/search/results-popover.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function (Backbone, $, _, i18n, DocumentsCollection, popover, searchDataUtil, viewStateSelector, addLinksToSummary, viewTemplate, clusterTemplate,
-             popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
-
+], function(Backbone, $, _, i18n, DocumentsCollection, popover, searchDataUtil, viewStateSelector, addLinksToSummary, viewTemplate, clusterTemplate,
+            popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
+    "use strict";
+    
     var html = _.template(viewTemplate)({
         i18n: i18n,
         loadingSpinnerHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false})
@@ -43,10 +48,12 @@ define([
 
     function popoverHandler($content, $target) {
         var entityCluster = $target.data('entityCluster');
-        var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : this.entityCollection.getClusterEntities(entityCluster);
-        var relatedConcepts = _.union(this.queryTextModel.get('relatedConcepts'), clusterEntities);
+        var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : _.flatten(this.entityCollection.getClusterEntities(entityCluster)).map(function (concept) {
+            return '"' + concept + '"';
+        });
+        var relatedConcepts = _.union(this.conceptGroups.pluck('concepts'), clusterEntities);
 
-        var queryText = searchDataUtil.makeQueryText(this.queryTextModel.get('inputText'), relatedConcepts);
+        var queryText = searchDataUtil.makeQueryText(relatedConcepts);
 
         var topResultsCollection = new DocumentsCollection([], {
             indexesCollection: this.indexesCollection
@@ -64,15 +71,15 @@ define([
                 indexes: this.queryModel.get('indexes'),
                 queryType: 'MODIFIED'
             },
-            error: _.bind(function () {
+            error: _.bind(function() {
                 $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.error']}));
             }, this),
-            success: _.bind(function () {
-                if (topResultsCollection.isEmpty()) {
+            success: _.bind(function() {
+                if(topResultsCollection.isEmpty()) {
                     $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.none']}));
                 } else {
                     $content.html('<ul class="list-unstyled"></ul>');
-                    _.each(topResultsCollection.models, function (model) {
+                    _.each(topResultsCollection.models, function(model) {
                         var listItem = $(popoverTemplateFunction({
                             title: model.get('title'),
                             summary: addLinksToSummary(model.get('summary')).trim().substring(0, 200) + '\u2026'
@@ -90,28 +97,28 @@ define([
         selectViewState: _.noop,
 
         events: {
-            'click [data-entity-text]': function (e) {
+            'click [data-entity-text]': function(e) {
                 var $target = $(e.currentTarget);
                 var text = $target.attr('data-entity-text');
                 this.clickHandler([text]);
             },
-            'click [data-entity-cluster]': function (e) {
+            'click [data-entity-cluster]': function(e) {
                 var $target = $(e.currentTarget);
                 var queryCluster = Number($target.attr('data-entity-cluster'));
                 this.clickHandler(this.entityCollection.getClusterEntities(queryCluster));
             }
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.queryModel = options.queryModel;
-            this.queryTextModel = options.queryState.queryTextModel;
+            this.conceptGroups = options.queryState.conceptGroups;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
             this.clickHandler = options.clickHandler;
 
             var initialViewState;
 
-            if (this.indexesCollection.isEmpty()) {
+            if(this.indexesCollection.isEmpty()) {
                 initialViewState = ViewState.NOT_LOADING;
             } else {
                 initialViewState = this.entityCollection.isEmpty() ? ViewState.PROCESSING : ViewState.LIST;
@@ -123,9 +130,9 @@ define([
             // Each instance of this view gets its own bound, de-bounced popover handler
             var handlePopover = _.debounce(_.bind(popoverHandler, this), 500);
 
-            this.listenTo(this.entityCollection, 'reset update', function () {
-                if (this.entityCollection.isEmpty()) {
-                    if (this.indexesCollection.isEmpty()) {
+            this.listenTo(this.entityCollection, 'reset update', function() {
+                if(this.entityCollection.isEmpty()) {
+                    if(this.indexesCollection.isEmpty()) {
                         this.model.set('viewState', ViewState.NOT_LOADING);
                     } else {
                         this.model.set('viewState', ViewState.NONE);
@@ -134,12 +141,12 @@ define([
                     this.model.set('viewState', ViewState.LIST);
 
                     var html = this.entityCollection.chain()
-                        .groupBy(function (model) {
+                        .groupBy(function(model) {
                             return model.get('cluster');
                         })
-                        .map(function (models, cluster) {
+                        .map(function(models, cluster) {
                             return clusterTemplateFunction({
-                                entities: _.map(models, function (model) {
+                                entities: _.map(models, function(model) {
                                     return model.get('text');
                                 }),
                                 cluster: cluster
@@ -154,16 +161,16 @@ define([
                 }
             });
 
-            this.listenTo(this.entityCollection, 'request', function () {
+            this.listenTo(this.entityCollection, 'request', function() {
                 this.model.set('viewState', this.indexesCollection.isEmpty() ? ViewState.NOT_LOADING : ViewState.PROCESSING);
             });
 
-            this.listenTo(this.entityCollection, 'error', function () {
+            this.listenTo(this.entityCollection, 'error', function() {
                 this.model.set('viewState', ViewState.ERROR);
             });
         },
 
-        render: function () {
+        render: function() {
             this.$el.html(html);
 
             this.$list = this.$('.related-concepts-list');
@@ -182,7 +189,5 @@ define([
             this.selectViewState = viewStateSelector(viewStateElements);
             updateForViewState.call(this);
         }
-
     });
-
 });

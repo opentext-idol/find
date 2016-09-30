@@ -2,7 +2,6 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'find/app/util/search-data-util',
     'parametric-refinement/to-field-text-node'
@@ -11,19 +10,17 @@ define([
     describe('Search Data Utils', function() {
 
         describe('makeQueryText', function() {
-            it('called with inputText and empty relatedConcepts returns the inputText', function() {
-                expect(searchDataUtil.makeQueryText('"chlorine fluoride"',[])).toEqual('"chlorine fluoride"');
+            it('called with no concepts returns *', function() {
+                expect(searchDataUtil.makeQueryText([])).toEqual('*');
             });
 
-            it('called with no inputText and some relatedConcepts returns the empty string', function() {
-                expect(searchDataUtil.makeQueryText(undefined, [['activated carbon'], ['mercury', 'bromine', 'ammonia']]))
-                    .toEqual('')
+            it('called with one concepts returns that concept, preserving quotes', function() {
+                expect(searchDataUtil.makeQueryText([['"chlorine fluoride"']])).toEqual('("chlorine fluoride")');
             });
 
-            it('called with inputText and some relatedConcepts returns the inputText wrapped in brackets ' +
-                'followed by each word in the related concept array separated by spaces', function() {
-                expect(searchDataUtil.makeQueryText('"chlorine fluoride"', [['activated carbon'], ['mercury', 'bromine', 'ammonia']]))
-                    .toEqual('("chlorine fluoride") "activated carbon" "mercury" "bromine" "ammonia"');
+            it('called with multiple concepts returns those concepts', function() {
+                expect(searchDataUtil.makeQueryText([['chlorine fluoride'], ['activated carbon'], ['"mercury"', '"bromine"', '"ammonia"']]))
+                    .toEqual('(chlorine fluoride) AND (activated carbon) AND ("mercury" "bromine" "ammonia")');
             });
         });
 
@@ -64,5 +61,4 @@ define([
             })
         });
     });
-
 });

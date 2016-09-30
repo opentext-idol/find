@@ -6,6 +6,8 @@
 package com.hp.autonomy.frontend.find.core.web;
 
 public enum MvcConstants {
+    APPLICATION_PATH("applicationPath"),
+    BASE_URL("baseUrl"),
     CONFIG("configJson"),
     GIT_COMMIT("commit"),
     MAIN_JS("mainJs"),
@@ -19,7 +21,8 @@ public enum MvcConstants {
     PARAMETRIC_DISPLAY_VALUES("parametricDisplayValues"),
     FIELDS_INFO("fieldsInfo"),
     TOPIC_MAP_MAX_RESULTS("topicMapMaxResults"),
-    METADATA_FIELD_IDS("metadataFieldIds");
+    METADATA_FIELD_IDS("metadataFieldIds"),
+    PUBLIC_INDEXES_ENABLED("publicIndexesEnabled");
 
     private final String value;
 

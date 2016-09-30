@@ -1,8 +1,12 @@
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.MapView;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
@@ -23,7 +27,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 
-
+@Role(UserRole.BIFHI)
 public class MapITCase extends IdolFindTestBase {
     private FindService findService;
     private IdolFindPage findPage;
@@ -32,6 +36,11 @@ public class MapITCase extends IdolFindTestBase {
 
     public MapITCase(final TestConfig config) {
         super(config);
+    }
+
+    @Override
+    public BIIdolFindElementFactory getElementFactory() {
+        return (BIIdolFindElementFactory) super.getElementFactory();
     }
 
     @Before
@@ -102,6 +111,7 @@ public class MapITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-328")
+    //TODO: Bug involving result numbers needs investigating but blocked by FIND-642
     public void testOnlyLocationDataInMapComparison() {
         final String firstSearch = "Dr Jekyll";
         final String secondSearch = "Mr Hyde";
@@ -128,8 +138,9 @@ public class MapITCase extends IdolFindTestBase {
             //map often adjusts zoom and moves markers
             Waits.loadOrFadeWait();
 
-            int comparee = mapView.countLocationsForComparee();
-            int comparer = mapView.countLocationsForComparer();
+            final int common = mapView.countCommonLocations();
+            final int comparee = mapView.countLocationsForComparee() + common;
+            final int comparer = mapView.countLocationsForComparer() + common;
 
             verifyThat("First search has same number results",comparee,is(firstResults));
             verifyThat("Second search has same number results",comparer,is(secondResults));

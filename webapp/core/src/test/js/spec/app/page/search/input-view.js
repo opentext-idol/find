@@ -4,59 +4,78 @@
  */
 
 define([
+    'backbone',
+    'jquery',
     'find/app/page/search/input-view',
-    'backbone'
-], function(InputView, Backbone) {
+    'find/app/page/search/input-view-concept-strategy',
+    'find/app/page/search/input-view-query-text-strategy'
+], function(Backbone, $, InputView, conceptStrategy, queryTextStrategy) {
+    "use strict";
 
     describe('Input view', function() {
-        beforeEach(function() {
-            this.model = new Backbone.Model({
-                inputText: 'cat',
-                relatedConcepts: [['lion'], ['tiger']]
+        const model = new Backbone.Model({inputText: 'cat'});
+        const collection = new Backbone.Collection([{concepts: ['cat']}]);
+        const configurations = [{
+            description: 'using query text strategy',
+            options: {
+                strategy: queryTextStrategy(model)
+            },
+            expectations: {
+                initialText: 'cat',
+                changedModel: 'dog',
+                onModelUpdate: $.noop
+            },
+            changeModel: function () {
+                model.set('inputText', 'dog');
+            },
+            getFirstValue: function () {
+                return model.get('inputText');
+            }
+        }, {
+            description: 'using concept strategy',
+            options: {
+                strategy: conceptStrategy(collection)
+            },
+            expectations: {
+                initialText: '',
+                changedModel: '',
+                onModelUpdate: function () {
+                    expect(collection.length).toBeGreaterThan(1);
+                }
+            },
+            changeModel: function () {
+                collection.unshift({concepts: ['dog']});
+            },
+            getFirstValue: function () {
+                return collection.first().get('concepts')[0];
+            }
+        }];
+        
+        configurations.forEach(function (configuration) {
+            describe(configuration.description, function () {
+                beforeEach(function() {
+                    this.view = new InputView(configuration.options);
+                    this.view.render();
+                });
+
+                it('displays the initial search text', function() {
+                    expect(this.view.$('.find-input').typeahead('val')).toBe(configuration.expectations.initialText);
+                });
+
+                it('updates the text when the model changes', function() {
+                    configuration.changeModel();
+
+                    expect(this.view.$('.find-input').typeahead('val')).toBe(configuration.expectations.changedModel);
+                });
+
+                it('updates the model when the input is changed', function() {
+                    this.view.$('.find-input').typeahead('val', 'dog');
+                    this.view.$('.find-form').submit();
+
+                    expect(configuration.getFirstValue()).toBe('dog');
+                    configuration.expectations.onModelUpdate();
+                });
             });
-
-            this.view = new InputView({
-                model: this.model
-            });
-
-            this.view.render();
-        });
-
-        it('displays the initial search text', function() {
-            expect(this.view.$('.find-input').typeahead('val')).toBe('cat');
-        });
-
-        it('displays the initial related concepts', function() {
-            expect(this.view.$('.additional-concepts')).toContainText('lion');
-            expect(this.view.$('.additional-concepts')).toContainText('tiger');
-        });
-
-        it('updates the text when the model changes', function() {
-            this.model.set('inputText', 'dog');
-
-            expect(this.view.$('.find-input').typeahead('val')).toBe('dog');
-        });
-
-        it('updates the related concepts when the model changes', function() {
-            this.model.set('relatedConcepts', []);
-
-            expect(this.view.$('.additional-concepts')).not.toContainText('lion');
-            expect(this.view.$('.additional-concepts')).not.toContainText('tiger');
-        });
-
-        it('updates the model text and clears the related concepts when the input is changed', function() {
-            this.view.$('.find-input').typeahead('val', 'dog');
-            this.view.$('.find-form').submit();
-
-            expect(this.model.get('inputText')).toBe('dog');
-            expect(this.model.get('relatedConcepts')).toEqual([]);
-        });
-
-        it('updates the model concepts when a related concept is removed', function() {
-            this.view.$('[data-id="0"] .concept-remove-icon').click();
-
-            expect(this.model.get('relatedConcepts')).toEqual([['tiger']]);
         });
     });
-
 });

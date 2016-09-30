@@ -13,7 +13,7 @@ define([
             var domain = encodeURIComponent(this.model.get('domain'));
             var index = encodeURIComponent(this.model.get('index'));
             var reference = encodeURIComponent(this.model.get('reference'));
-            return 'find/search/document/' + domain + '/' + index + '/' + reference;
+            return 'search/document/' + domain + '/' + index + '/' + reference;
         }
     });
 });

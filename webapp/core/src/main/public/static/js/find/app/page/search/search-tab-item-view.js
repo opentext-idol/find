@@ -8,7 +8,8 @@ define([
     'underscore',
     'i18n!find/nls/bundle',
     'find/app/model/saved-searches/saved-search-model',
-    'text!find/templates/app/page/search/search-tab-item-view.html'
+    'text!find/templates/app/page/search/search-tab-item-view.html',
+    'bootstrap'
 ], function(ListItemView, _, i18n, SavedSearchModel, template) {
 
     'use strict';
@@ -49,6 +50,13 @@ define([
 
             this.updateSavedness();
             this.updateTabBadge();
+            
+            this.$tooltip = this.$('[data-toggle="tooltip"]');
+
+            this.$tooltip.tooltip({
+                container: 'body',
+                placement: 'bottom'
+            });
         },
 
         updateTabBadge: function() {
@@ -75,7 +83,7 @@ define([
 
             if (this.queryState) {
                 this.stopListening(this.queryState.selectedIndexes);
-                this.stopListening(this.queryState.queryTextModel);
+                this.stopListening(this.queryState.conceptGroups);
                 this.stopListening(this.queryState.selectedParametricValues);
                 this.stopListening(this.queryState.datesFilterModel);
             }
@@ -84,7 +92,7 @@ define([
 
             if (this.queryState) {
                 this.listenTo(this.queryState.selectedIndexes, 'add remove', this.updateSavedness);
-                this.listenTo(this.queryState.queryTextModel, 'change', this.updateSavedness);
+                this.listenTo(this.queryState.conceptGroups, 'update change', this.updateSavedness);
                 this.listenTo(this.queryState.selectedParametricValues, 'add remove', this.updateSavedness);
                 this.listenTo(this.queryState.datesFilterModel, 'change', this.updateSavedness);
             }

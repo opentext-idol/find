@@ -6,14 +6,11 @@
 define([
     'backbone',
     'jquery',
-    // 'find/app/model/query-model',QueryModel, DocumentsCollection,
-    // 'find/app/model/documents-collection',
     'find/app/page/search/spellcheck-view'
 ], function(Backbone, $, SpellCheckView) {
 
     describe('Spellcheck View', function() {
         beforeEach(function() {
-            // this.documentsCollection = new Backbone.Collection({autoCorrection: null});
             this.documentsCollection = new Backbone.Collection();
             this.documentsCollection.autoCorrection = null;
 

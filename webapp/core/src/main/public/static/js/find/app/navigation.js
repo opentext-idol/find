@@ -19,19 +19,9 @@ define([
 
         menuItems: _.constant(''),
 
-        events: {
-            'click a[data-pagename]': function(event) {
-                if (event.which !== 2) {
-                    event.preventDefault();
-                    var pageName = $(event.target).attr('data-pagename');
-                    vent.navigate('find/' + pageName);
-                }
-            }
-        },
-
         initialize: function(options) {
             this.pageData = options.pageData;
-            this.listenTo(options.router, 'route:find', this.selectPage);
+            this.listenTo(options.router, 'route:page', this.selectPage);
         },
 
         render: function() {

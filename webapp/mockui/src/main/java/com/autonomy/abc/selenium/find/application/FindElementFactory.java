@@ -1,7 +1,13 @@
+/*
+ * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 package com.autonomy.abc.selenium.find.application;
 
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindTopNavBar;
+import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
+import com.autonomy.abc.selenium.find.filters.AppliedFiltersPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
@@ -10,9 +16,11 @@ import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
+@SuppressWarnings("WeakerAccess")
 public abstract class FindElementFactory extends ElementFactoryBase {
     protected FindElementFactory(final WebDriver driver) {
         super(driver, null);
@@ -43,14 +51,24 @@ public abstract class FindElementFactory extends ElementFactoryBase {
         return new FilterPanel(new IndexesTree.Factory(), getDriver());
     }
 
+    public ConceptsPanel getConceptsPanel() {
+        return new ConceptsPanel(getDriver());
+    }
+
     public SimilarDocumentsView getSimilarDocumentsView() {
         return new SimilarDocumentsView.Factory().create(getDriver());
     }
 
     public DetailedPreviewPage getDetailedPreview() {return new DetailedPreviewPage.Factory().create(getDriver());}
 
+    public AppliedFiltersPanel getAppliedFiltersPanel() {
+        return new AppliedFiltersPanel(getDriver());
+    }
+
     @Override
     public <T extends AppPage> T loadPage(final Class<T> type) {
         throw new UnsupportedOperationException("loadPage does not make sense for a single page application");
     }
+
+    public abstract FormInput getSearchBox();
 }

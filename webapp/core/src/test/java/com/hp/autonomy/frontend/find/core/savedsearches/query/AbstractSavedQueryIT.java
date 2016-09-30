@@ -2,7 +2,6 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -50,7 +49,6 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     private static final TypeReference<Set<SavedQuery>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedQuery>>() {};
 
     private static final String TITLE = "Any old saved search";
-    private static final String QUERY_TEXT = "orange";
     private static final String PRIMARY_PHRASE = "manhattan";
     private static final String OTHER_PHRASE = "mid-town";
     private static final Integer MIN_SCORE = 88;
@@ -86,7 +84,6 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", not(nullValue())))
                 .andExpect(jsonPath("$.title", equalTo(TITLE)))
-                .andExpect(jsonPath("$.queryText", equalTo(QUERY_TEXT)))
                 .andExpect(jsonPath("$.minScore", equalTo(MIN_SCORE)))
                 .andExpect(jsonPath("$.conceptClusterPhrases", hasSize(2)))
                 .andExpect(jsonPath("$.conceptClusterPhrases[*].phrase", containsInAnyOrder(PRIMARY_PHRASE, OTHER_PHRASE)))
@@ -104,11 +101,8 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final Set<ConceptClusterPhrase> conceptClusterPhrases = new HashSet<>();
         conceptClusterPhrases.add(new ConceptClusterPhrase(updatedPhrase, true, 1));
 
-        final String updatedQueryText = "banana";
-
         final Integer updatedMinScore = 99;
         final SavedQuery updatedQuery = new SavedQuery.Builder()
-                .setQueryText(updatedQueryText)
                 .setMinScore(updatedMinScore)
                 .setConceptClusterPhrases(conceptClusterPhrases)
                 .build();
@@ -122,7 +116,6 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", is(createdEntity.getId().intValue())))
-                .andExpect(jsonPath("$.queryText", equalTo(updatedQueryText)))
                 .andExpect(jsonPath("$.minScore", equalTo(updatedMinScore)))
                 .andExpect(jsonPath("$.conceptClusterPhrases", hasSize(1)))
                 .andExpect(jsonPath("$.conceptClusterPhrases[*].phrase", contains(updatedPhrase)))
@@ -132,9 +125,6 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
     @Test
     public void createAndFetch() throws Exception {
-        // Query text containing U+1F435
-        final String queryText = "monkey face character \uD83D\uDC35";
-
         final byte[] requestBytes = IOUtils.toByteArray(saveQueryRequestResource.getInputStream());
 
         final MockHttpServletRequestBuilder requestBuilder = post(SavedQueryController.PATH + '/')
@@ -153,7 +143,6 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$[0].id", is(id)))
                 .andExpect(jsonPath("$[0].title", is("\u30e2\u30f3\u30ad\u30fc")))
-                .andExpect(jsonPath("$[0].queryText", is(queryText)))
                 .andExpect(jsonPath("$[0].minDate", is(1400000000)))
                 .andExpect(jsonPath("$[0].maxDate", is(1500000000)))
                 .andExpect(jsonPath("$[0].conceptClusterPhrases", hasSize(3)))
@@ -200,14 +189,13 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     @Test
     public void basicUserNotAuthorised() throws Exception {
         mockMvc.perform(get(SavedQueryController.PATH).with(authentication(userAuth())))
-            .andExpect(status().is(403));
+                .andExpect(status().is(403));
     }
 
     @Test
     public void checkTimeAuditDataInsertedUpdated() throws Exception {
         final SavedQuery inputSavedQuery = new SavedQuery.Builder()
                 .setTitle("title")
-                .setQueryText("*")
                 .setMinScore(0)
                 .build();
 
@@ -222,7 +210,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         // TODO: mock out the datetime service used by spring auditing to check this properly
         assertTrue(savedQuery.getDateCreated().plusHours(1).isAfterNow());
 
-        savedQuery.setQueryText("*");
+        savedQuery.setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("*", true, -1)));
 
         final SavedQuery savedQueryUpdate = new SavedQuery.Builder()
                 .setId(savedQuery.getId())
@@ -241,13 +229,11 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     public void checkUserNotDuplicated() throws Exception {
         final SavedQuery savedQuery1 = new SavedQuery.Builder()
                 .setTitle("title1")
-                .setQueryText("*")
                 .setMinScore(0)
                 .build();
 
         final SavedQuery savedQuery2 = new SavedQuery.Builder()
                 .setTitle("title2")
-                .setQueryText("*")
                 .setMinScore(0)
                 .build();
 
@@ -264,17 +250,17 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
         final SavedQuery saveRequest1 = new SavedQuery.Builder()
                 .setTitle("title1")
-                .setQueryText("*")
                 .setMinScore(0)
                 .setIndexes(indexes)
+                .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("*", true, -1)))
                 .build();
 
         final SavedQuery saveRequest2 = new SavedQuery.Builder()
                 .setDateDocsLastFetched(DateTime.now())
                 .setTitle("title2")
-                .setQueryText("*")
                 .setMinScore(0)
                 .setIndexes(indexes)
+                .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("*", true, -1)))
                 .build();
 
         final SavedQuery savedQuery1 = createAndParseSavedQuery(saveRequest1);
@@ -345,7 +331,6 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     private SavedQuery getBaseSavedQuery() {
         return new SavedQuery.Builder()
                 .setTitle(TITLE)
-                .setQueryText(QUERY_TEXT)
                 .setMinScore(MIN_SCORE)
                 .setConceptClusterPhrases(getBaseConceptClusterPhrases())
                 .build();

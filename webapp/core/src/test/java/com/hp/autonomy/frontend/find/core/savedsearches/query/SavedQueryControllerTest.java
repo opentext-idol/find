@@ -2,9 +2,9 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.Serializable;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -30,6 +31,9 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class SavedQueryControllerTest<S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception> {
+    private final SavedQuery savedQuery = new SavedQuery.Builder()
+            .setTitle("Any old saved search")
+            .build();
     @Mock
     protected SavedQueryService savedQueryService;
     @Mock
@@ -37,15 +41,10 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
     @Mock
     protected FieldTextParser fieldTextParser;
     @Mock
-    private Documents<D> searchResults;
-    @Mock
     protected QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
-
+    @Mock
+    private Documents<D> searchResults;
     private SavedQueryController<S, Q, D, E> savedQueryController;
-
-    private final SavedQuery savedQuery = new SavedQuery.Builder()
-            .setTitle("Any old saved search")
-            .build();
 
     protected abstract SavedQueryController<S, Q, D, E> constructController();
 
@@ -66,7 +65,7 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
 
         final SavedQuery updatedQuery = savedQueryController.update(42, savedQuery);
         verify(savedQueryService).update(Matchers.isA(SavedQuery.class));
-        assertEquals(42L, (long) updatedQuery.getId());
+        assertEquals(42L, (long)updatedQuery.getId());
     }
 
     @Test
@@ -86,6 +85,7 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
         final long id = 123L;
         final SavedQuery savedQuery = new SavedQuery.Builder()
                 .setId(id)
+                .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("raccoons", true, 0)))
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
         int numberOfResults = 1;
@@ -99,6 +99,7 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
         final long id = 123L;
         final SavedQuery savedQuery = new SavedQuery.Builder()
                 .setId(id)
+                .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("raccoons", true, 0)))
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
         final int numberOfResults = 0;

@@ -61,6 +61,7 @@ define([
                 title: this.model.get('title'),
                 href: this.documentHref,
                 tabs: this.tabs,
+                relatedConcepts: configuration().enableRelatedConcepts,
                 mmapBaseUrl: configuration().mmapBaseUrl,
                 mmapUrl: this.model.get('mmapUrl')
             }));

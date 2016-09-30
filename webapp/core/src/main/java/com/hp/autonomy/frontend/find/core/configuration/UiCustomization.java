@@ -13,9 +13,11 @@ import com.hp.autonomy.frontend.configuration.ConfigException;
 import lombok.Getter;
 import lombok.experimental.Builder;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @SuppressWarnings("InstanceVariableOfConcreteClass")
 @Builder(fluent = false)
@@ -23,6 +25,8 @@ import java.util.Map;
 @JsonDeserialize(builder = UiCustomization.UiCustomizationBuilder.class)
 public class UiCustomization implements ConfigurationComponent<UiCustomization> {
     private final UiCustomizationOptions options;
+    private final Collection<String> parametricBlacklist;
+    private final Collection<String> parametricWhitelist;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final Map<String, String> specialUrlPrefixes;
     private final String errorCallSupportString;
@@ -35,7 +39,9 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
             final Map<String, String> specialUrlPrefixes = new HashMap<>(uiCustomization.specialUrlPrefixes);
             specialUrlPrefixes.putAll(this.specialUrlPrefixes);
             return builder()
-                    .setOptions(options.merge(uiCustomization.options))
+                    .setOptions(Optional.ofNullable(options).map(o -> o.merge(uiCustomization.options)).orElse(uiCustomization.options))
+                    .setParametricBlacklist(parametricBlacklist != null ? parametricBlacklist : uiCustomization.parametricBlacklist)
+                    .setParametricWhitelist(parametricWhitelist != null ? parametricWhitelist : uiCustomization.parametricWhitelist)
                     .setSpecialUrlPrefixes(specialUrlPrefixes)
                     .setErrorCallSupportString(uiCustomization.errorCallSupportString)
                     .build();

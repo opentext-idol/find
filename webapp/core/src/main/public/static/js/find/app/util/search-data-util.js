@@ -1,38 +1,61 @@
+/*
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 define([
     'underscore',
     'parametric-refinement/to-field-text-node'
-], function (_, toFieldTextNode) {
+], function(_, toFieldTextNode) {
 
-    function wrapQuotes(concept) {
-        return '"' + concept + '"';
+    function wrapInBrackets(concept) {
+        return concept ? '(' + concept + ')' : concept;
     }
 
     // WARNING: This logic is duplicated in the server-side SavedSearch class
-    var makeQueryText = function(inputText, relatedConcepts) {
-        if (!inputText){
-            return '';
+    /**
+     * Build query text from the text in the search bar and an array of concept groups (none of which are *).
+     * @param {Array.<Array.<string>>} concepts
+     * @return {string}
+     */
+    function makeQueryText(concepts) {
+        if(!concepts || concepts.length < 1) {
+            return '*';
         }
 
-        if (_.isEmpty(relatedConcepts)){
-            return inputText;
-        }
+        return concepts.map(function(concept) {
+            return wrapInBrackets(concept.join(' '));
+        }).join(' AND ');
+    }
 
-        var tail = _.map(_.flatten(_.uniq(relatedConcepts)), wrapQuotes).join(' ');
-        return inputText === '*' ? tail : '(' + inputText + ') ' + tail;
-    };
-
-    var buildIndexes = function(selectedIndexesArray) {
+    /**
+     * Create an array of strings representing the given selected indexes suitable for sending to the server.
+     * @param {Array} selectedIndexesArray
+     * @return {string[]}
+     */
+    function buildIndexes(selectedIndexesArray) {
         return _.map(selectedIndexesArray, function(index) {
-            return index.domain ? encodeURIComponent(index.domain) + ':' + encodeURIComponent(index.name) : encodeURIComponent(index.name);
+            return index.domain
+                ? encodeURIComponent(index.domain) + ':' + encodeURIComponent(index.name)
+                : encodeURIComponent(index.name);
         });
-    };
+    }
 
-    var buildFieldText = function(parametricValues) {
+    /**
+     * Convert an array of parametric fields and values or ranges to a field text string.
+     * @param {Array} parametricValues
+     * @return {string} A field text string or null
+     */
+    function buildFieldText(parametricValues) {
         var fieldTextNode = toFieldTextNode(parametricValues);
         return fieldTextNode && fieldTextNode.toString();
-    };
+    }
 
-    var buildQuery = function(model) {
+    /**
+     * Creates query parameters from a saved search model.
+     * @param {Backbone.Model} model A model with attributes of type {@link SavedSearchModelAttributes}
+     * @return {{minDate: *, maxDate: *, queryText: string, databases, fieldText, anyLanguage: boolean}}
+     */
+    function buildQuery(model) {
         return {
             minDate: model.get('minDate'),
             maxDate: model.get('maxDate'),
@@ -41,7 +64,7 @@ define([
             fieldText: buildFieldText(model.get('parametricValues')),
             anyLanguage: true
         };
-    };
+    }
 
     return {
         makeQueryText: makeQueryText,

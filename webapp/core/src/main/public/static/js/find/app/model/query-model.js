@@ -27,6 +27,10 @@ define([
         }));
     };
 
+    function makeQueryText(queryState) {
+        return searchDataUtil.makeQueryText(queryState.conceptGroups.pluck('concepts'));
+    }
+
     return Backbone.Model.extend({
         defaults: {
             autoCorrect: true,
@@ -48,8 +52,8 @@ define([
         initialize: function(attributes, options) {
             this.queryState = options.queryState;
 
-            this.listenTo(this.queryState.queryTextModel, 'change', function() {
-                var queryText = this.queryState.queryTextModel.makeQueryText();
+            this.listenTo(this.queryState.conceptGroups, 'change:concepts update reset', function () {
+                var queryText = makeQueryText(this.queryState);
                 if (queryText) {
                     this.set('queryText', queryText);
                 }
@@ -75,7 +79,7 @@ define([
             var fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
 
             this.set(_.extend({
-                queryText: this.queryState.queryTextModel.makeQueryText(),
+                queryText: makeQueryText(this.queryState),
                 minScore: this.queryState.minScoreModel.get('minScore'),
                 indexes: collectionBuildIndexes(this.queryState.selectedIndexes),
                 fieldText: fieldTextNode ? fieldTextNode : null

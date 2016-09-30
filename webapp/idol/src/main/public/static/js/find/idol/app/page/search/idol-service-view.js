@@ -2,7 +2,6 @@
  * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'underscore',
     'find/app/configuration',
@@ -24,35 +23,47 @@ define([
 
             ServiceView.prototype.initialize.call(this, options);
 
-            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchData);
+            addChangeListener(
+                this,
+                this.queryModel,
+                [
+                    'queryText',
+                    'indexes',
+                    'fieldText',
+                    'minDate',
+                    'maxDate',
+                    'minScore',
+                    'stateMatchIds'
+                ], this.fetchData);
         },
 
-        fetchParametricFields: function (fieldsCollection, callback) {
+        fetchParametricFields: function(fieldsCollection, callback) {
             fieldsCollection.fetch({
                 success: _.bind(function() {
-                    if (callback) {
+                    if(callback) {
                         callback();
                     }
                 }, this)
             });
         },
-        
-        getSavedSearchControlViewOptions: function () {
+
+        getSavedSearchControlViewOptions: function() {
             return {
                 comparisonModalCallback: this.comparisonModalCallback
             };
         },
-        
-        fetchParametricValues: function () {
+
+        fetchParametricValues: function() {
             this.parametricCollection.reset();
 
             var fieldNames = this.parametricFieldsCollection.pluck('id');
-            if (fieldNames.length > 0) {
-                this.parametricCollection.fetch({data: {
-                    fieldNames: fieldNames
-                }});
+            if(fieldNames.length > 0) {
+                this.parametricCollection.fetch({
+                    data: {
+                        fieldNames: fieldNames
+                    }
+                });
             }
         }
     });
-
 });

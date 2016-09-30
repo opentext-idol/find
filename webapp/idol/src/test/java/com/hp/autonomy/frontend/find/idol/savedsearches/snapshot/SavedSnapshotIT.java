@@ -2,6 +2,7 @@ package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
@@ -11,6 +12,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,11 +52,9 @@ public class SavedSnapshotIT extends AbstractFindIT {
     public void update() throws Exception {
         final SavedSnapshot createdEntity = createAndParseSnapshot(getBaseSavedSnapshot());
 
-        final String updatedQueryText = "banana";
         final String updatedTitle = "a new title";
 
         final SavedSnapshot updatedSnapshot = new SavedSnapshot.Builder()
-                .setQueryText(updatedQueryText)
                 .setTitle(updatedTitle)
                 .build();
 
@@ -67,7 +67,6 @@ public class SavedSnapshotIT extends AbstractFindIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", is(createdEntity.getId().intValue())))
-                .andExpect(jsonPath("$.queryText", is(QUERY_TEXT))) // Only title is updatable for snapshots
                 .andExpect(jsonPath("$.title", is(updatedTitle)));
     }
 
@@ -138,9 +137,9 @@ public class SavedSnapshotIT extends AbstractFindIT {
 
         return new SavedSnapshot.Builder()
                 .setTitle("Any old saved search")
-                .setQueryText(QUERY_TEXT)
                 .setMinScore(0)
                 .setIndexes(embeddableIndexes)
+                .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase(QUERY_TEXT, true, -1)))
                 .build();
     }
 }

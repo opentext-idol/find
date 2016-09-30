@@ -18,7 +18,7 @@ define([
     var defaultModule;
 
     var log = function(event) {
-        $.ajax('../api/public/stats', {
+        $.ajax('api/public/stats', {
             contentType: 'application/json',
             data: JSON.stringify(event),
             method: 'POST'

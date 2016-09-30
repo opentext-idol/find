@@ -4,6 +4,7 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
@@ -17,6 +18,7 @@ import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +42,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
-        if(!isHosted()) {
+        if(!findPage.footerLogo().isDisplayed()) {
             ((IdolFindPage) findPage).goToListView();
         }
     }
@@ -69,7 +71,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value="FIND-497",type= ApplicationType.HOSTED)
+    @ResolvedBug("FIND-497")
     public void testOpenOriginalDocInNewTab() {
         final Session session = getMainSession();
 
@@ -125,7 +127,7 @@ public class DocumentPreviewITCase extends FindTestBase {
 
         checkSimilarDocuments(detailedPreviewPage);
 
-        if(!isHosted()) {
+        if(getApplication().getClass() == BIIdolFind.class) {
             checkSimilarDates(detailedPreviewPage);
         }
         detailedPreviewPage.goBackToSearch();

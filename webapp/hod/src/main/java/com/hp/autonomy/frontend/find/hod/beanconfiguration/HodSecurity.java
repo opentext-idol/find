@@ -17,11 +17,10 @@ import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.sso.HodAuthenticationProvider;
 import com.hp.autonomy.hod.sso.HodTokenLogoutSuccessHandler;
-import com.hp.autonomy.hod.sso.HodUsernameResolver;
+import com.hp.autonomy.hod.sso.HodUserMetadataResolver;
 import com.hp.autonomy.hod.sso.SsoAuthenticationEntryPoint;
 import com.hp.autonomy.hod.sso.SsoAuthenticationFilter;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
-import com.hp.autonomy.searchcomponents.hod.authentication.HavenSearchUserMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -59,7 +58,7 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
     private UserStoreUsersService userStoreUsersService;
 
     @Autowired
-    private HodUsernameResolver hodUsernameResolverImpl;
+    private HodUserMetadataResolver hodUserMetadataResolver;
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
@@ -82,8 +81,7 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
                 authenticationService,
                 unboundTokenService,
                 userStoreUsersService,
-                HavenSearchUserMetadata.METADATA_TYPES,
-                hodUsernameResolverImpl,
+                hodUserMetadataResolver,
                 null
         ));
     }
@@ -98,19 +96,19 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
 
         final LogoutSuccessHandler logoutSuccessHandler = new HodTokenLogoutSuccessHandler(SsoController.SSO_LOGOUT_PAGE, tokenRepository);
 
-        http.regexMatcher("/public/.*|/sso|/authenticate-sso|/api/authentication/.*|/logout")
-                .csrf()
+        http.regexMatcher("/public(/.*)?|/sso|/authenticate-sso|/api/authentication/.*|/logout")
+            .csrf()
                 .disable()
-                .exceptionHandling()
+            .exceptionHandling()
                 .authenticationEntryPoint(ssoEntryPoint)
                 .accessDeniedPage(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
                 .and()
-                .authorizeRequests()
-                .antMatchers(FindController.APP_PATH + "**").hasRole(FindRole.USER.name())
+            .authorizeRequests()
+                .antMatchers(FindController.APP_PATH + "/**").hasRole(FindRole.USER.name())
                 .and()
-                .logout()
+            .logout()
                 .logoutSuccessHandler(logoutSuccessHandler)
                 .and()
-                .addFilterAfter(ssoAuthenticationFilter, AbstractPreAuthenticatedProcessingFilter.class);
+            .addFilterAfter(ssoAuthenticationFilter, AbstractPreAuthenticatedProcessingFilter.class);
     }
 }

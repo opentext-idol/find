@@ -23,7 +23,7 @@ define([
                 };
             });
 
-            this.listenTo(options.router, 'route:find', function(name) {
+            this.listenTo(options.router, 'route:page', function(name) {
                 var pageName = this.pages[name] ? name : options.defaultPage;
 
                 if (pageName && this.currentPage !== pageName) {
@@ -33,14 +33,20 @@ define([
                         this.stopListening(currentView, 'change-title');
                     }
 
+                    // Order is important here. We need to add the element and show it before rendering, so that features
+                    // such as the topic map which rely upon DOM size, have something to work with
                     if (!this.pages[pageName].hasRendered) {
-                        this.pages[pageName].view.render();
                         this.$el.append(this.pages[pageName].view.$el);
-                        this.pages[pageName].hasRendered = true;
                     }
 
                     var view = this.pages[pageName].view;
                     view.show();
+
+                    if (!this.pages[pageName].hasRendered) {
+                        this.pages[pageName].view.render();
+                        this.pages[pageName].hasRendered = true;
+                    }
+                    
                     this.currentPage = pageName;
                 }
             });

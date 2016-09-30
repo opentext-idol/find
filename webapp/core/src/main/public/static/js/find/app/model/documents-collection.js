@@ -11,7 +11,7 @@ define([
 
     return FindBaseCollection.extend({
         model: DocumentModel,
-        url: '../api/public/search/query-text-index/results',
+        url: 'api/public/search/query-text-index/results',
 
         autoCorrection: null,
         totalResults: null,

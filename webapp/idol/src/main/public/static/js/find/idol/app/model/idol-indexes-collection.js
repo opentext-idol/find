@@ -11,7 +11,7 @@ define([
     var DatabaseModel = DatabasesCollection.prototype.model;
 
     return DatabasesCollection.extend({
-        url: '../api/public/search/list-indexes',
+        url: 'api/public/search/list-indexes',
 
         parse: function (response) {
             return _.map(response, function (responseItem) {

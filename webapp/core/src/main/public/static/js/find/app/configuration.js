@@ -30,11 +30,10 @@ define([
             if (uiCustomization) {
                 config.directAccessLink = parseBooleanOption(config, uiCustomization, 'directAccessLink');
                 config.enableMetaFilter = parseBooleanOption(config, uiCustomization, 'enableMetaFilter');
+                config.enableRelatedConcepts = parseBooleanOption(config, uiCustomization, 'enableRelatedConcepts');
                 config.errorCallSupportString = uiCustomization.errorCallSupportString;
             }
         }
-
         return config;
     }
-
 });

@@ -8,7 +8,7 @@ import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
 import com.hp.autonomy.frontend.find.idol.export.IdolMetadataNode;
-import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -31,7 +31,6 @@ public class IdolFindController extends FindController<IdolFindConfig> {
         super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService);
     }
 
-
     @Override
     protected Map<String, Object> getPublicConfig() {
         final Map<String, Object> publicConfig = new HashMap<>();
@@ -39,7 +38,7 @@ public class IdolFindController extends FindController<IdolFindConfig> {
 
         final MMAP mmap = config.getMmap();
 
-        if (mmap.isEnabled()) {
+        if(mmap.isEnabled()) {
             publicConfig.put(MMAP_BASE_URL, mmap.getBaseUrl());
         }
 

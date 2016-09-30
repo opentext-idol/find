@@ -10,7 +10,7 @@ define([
 ], function(_, BaseCollection, DocumentModel) {
 
     return BaseCollection.extend({
-        url: '../api/public/search/similar-documents',
+        url: 'api/public/search/similar-documents',
         model: DocumentModel,
 
         parse: function(response) {

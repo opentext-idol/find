@@ -26,7 +26,7 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
         final ParametricRequest.Builder<IdolParametricRequest, String> builder = new IdolParametricRequest.Builder();
         when(requestBuilderFactory.getObject()).thenReturn(builder);
 
-        return new IdolFieldsController(service, parametricValuesService, requestBuilderFactory);
+        return new IdolFieldsController(service, parametricValuesService, requestBuilderFactory, configService);
     }
 
     @Override

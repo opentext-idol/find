@@ -1,4 +1,4 @@
-<form action="../api/bi/export/csv" method="post" target="_blank">
+<form action="api/bi/export/csv" method="post" target="_blank">
     <input type="hidden" name="searchRequest" value="<%-searchRequest%>">
     <%_.each(fields, function(field) { %>
         <input type="hidden" name="selectedFieldIds" value="<%-field%>">

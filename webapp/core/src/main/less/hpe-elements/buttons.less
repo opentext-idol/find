@@ -1,0 +1,676 @@
+.btn {
+  border-radius: @btn-border-radius;
+  font-size:@buttonMedium;
+  font-family:Metric;
+  text-transform: uppercase;
+  padding: 4px 15px;
+  box-shadow: 1px 1px 3px #999;
+  &:hover{
+    box-shadow: 1px 1px 8px #999; 
+  }
+  &:active &.active{
+    box-shadow: none; 
+  }
+  &:focus, &:active:focus, &.focus{
+    .elements-outline;
+  }
+
+  &.btn-lg {
+    font-size: @buttonLarge;
+    padding: 6px 20px;
+  }
+  &.btn-sm, &.btn-xs {
+    font-size: @buttonSmall;
+    padding: 0px 10px;
+  }
+
+  &.btn-stroke{
+    box-shadow: none;
+    border-width: 2px;
+    &:hover{
+      border-width: 3px;
+      box-shadow: 1px 1px 8px #ccc;
+      padding: 3px 14px;
+      &.btn-lg {
+        padding: 5px 19px;
+      }
+      &.btn-sm, .btn-xs {
+        padding: 0px 9px;
+        line-height: 12px;
+        height: 22px;
+      }
+    }
+    &:active{
+      box-shadow: none;
+    }
+  }
+  &.btn-link{
+    border:none;
+    box-shadow: none;
+    &:hover,&:focus{
+      text-decoration: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.float-btn-margins .btn {
+  margin-bottom: 5px;
+}
+
+.btn-primary {
+  .button-primary;
+}
+
+//New primary style
+.button-primary,.btn-primary {
+  background-color: @hpegreen;
+  border-color: @hpegreen;
+  color: @white;
+
+  &:hover{
+    background-color: @hpegreen-hover;
+    border-color: @hpegreen-hover;
+    color: @white;
+  }
+  &:focus, &.focus, .open .dropdown-toggle.button-primary {
+    background-color: @hpegreen;
+    color: @white; 
+  }
+  &:active, &.active, .button-primary.active,.btn-toggle.active {
+    background-color: @hpegreen-active;
+    border-color: @hpegreen-active;
+    color: @white;
+  }
+
+  &.btn-stroke{
+    color: @hpegreen;
+    background-color: transparent;
+    &:hover{
+      color:@hpegreen-hover;
+    }
+    &:focus{
+    }
+    &:active{
+      border-color: @hpegreen-active;
+      color:@hpegreen-active;
+    }
+  }
+  &.btn-link{
+    color: @hpegreen;
+    background-color: transparent;
+    &:hover{
+      background-color: @link-secondary-hover;
+    }
+    &:focus{
+      background-color: transparent;
+    }
+    &:active{
+      color:@hpegreen;
+      background-color:@stroke-secondary-border;
+    }
+  }
+}
+
+.floating-action-button {
+  .child-btn-set {
+    opacity: 0;
+    overflow: hidden;
+    max-height:0;
+  }
+  .child-btn-set-visible {
+    opacity:1;
+    transition: opacity 0s linear 0.5s;
+    overflow: visible;
+  }
+
+
+  .child-btn-set-top {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+  }
+  .child-btn-set-top-visible {
+    opacity: 1;
+    transition: opacity 0s linear 0.5s;
+    position: relative;
+    bottom: 140px;
+    overflow: visible;
+  }
+
+  .child-btn-set-horizontal {
+    opacity: 0;
+    &.right {
+      position: absolute;
+    }
+    &.left {
+      position: relative;
+      left: -180px;
+    }
+  }
+  .child-btn-set-visible-horizontal {
+    opacity: 1;
+    transition: opacity 0s linear 0.5s;
+  }
+}
+
+.button-primary.disabled, .button-primary.disabled:hover, .button-primary.disabled:focus, .button-primary.disabled:active, .button-primary.disabled.active, .button-primary[disabled], .button-primary[disabled]:hover, .button-primary[disabled]:focus, .button-primary[disabled]:active, .button-primary.active[disabled], fieldset[disabled] .button-primary, fieldset[disabled] .button-primary:hover, fieldset[disabled] .button-primary:focus, fieldset[disabled] .button-primary:active, fieldset[disabled] .button-primary.active,fieldset[disabled] .btn-toggle.active, 
+.btn-primary.disabled, .btn-primary.disabled:hover, .btn-primary.disabled:focus, .btn-primary.disabled:active, .btn-primary.disabled.active, .btn-primary[disabled], .btn-primary[disabled]:hover, .btn-primary[disabled]:focus, .btn-primary[disabled]:active, .btn-primary.active[disabled], fieldset[disabled] .btn-primary, fieldset[disabled] .btn-primary:hover, fieldset[disabled] .btn-primary:focus, fieldset[disabled] .btn-primary:active, fieldset[disabled] .btn-primary.active,fieldset[disabled] {
+  background-color: @disabled-color;
+  color: @disabled-text-color;
+  border-color: @disabled-color;
+}
+.affix-toolbar.multiple-select-mode .btn[disabled]
+{
+  opacity: 0.9 !important ;
+}
+//Secondary
+.btn-white {
+  .button-secondary;
+}
+//Secondary new style
+
+.button-secondary, .btn-white {
+  color: @secondary-font-color;
+  background: @white;
+  border: 1px solid @secondary-border;
+  box-shadow: 1px 1px 3px @secondary-border;
+  &:hover {
+    background-color: @secondary-hover;
+    border:1px solid @secondary-hover-border;
+    color:@secondary-font-color;
+  }
+  &:active, &.active {
+    background-color: @secondary-active;
+    border: 1px solid @secondary-active-border;
+  }
+  &:focus, &.focus,{
+    color: @secondary-font-color;
+  }
+
+  &.btn-stroke{
+    border-color: @secondary-border;
+    border-width: 2px;
+    background-color: transparent;
+    &:hover{
+      color:@secondary-font-color-stroke;
+      border-color: @secondary-hover-border;
+    }
+    &:focus{
+    }
+    &:active{
+      border-color: @secondary-active-border;
+      color:@secondary-font-color-stroke-active;
+    }
+  }
+  &.btn-link{
+    color: @secondary-font-color;
+    background-color: transparent;
+    border:none;
+    &:hover{
+      background-color: @link-secondary-hover;
+    }
+    &:focus{
+      background-color: transparent;
+    }
+    &:active{
+      color:@secondary-font-color;
+      background-color:@stroke-secondary-border;
+    }
+  }
+}
+
+.button-secondary.btn-grouped.active, .btn-secondary.btn-grouped.active {
+  background-color: @hpegreen;
+  color: #fff;
+  border-radius: @btn-border-radius;
+}
+
+.btn-group .button-secondary:hover , .open .dropdown-toggle.button-secondary{
+  background-color: @secondary-hover;
+  color:@secondary-font-color;
+}
+
+.btn-group.toggle-buttons{
+  .button-secondary {
+    &.active {
+      &:hover {
+        background-color: @secondary-active;
+        box-shadow: 1px 1px 8px #ddd;
+      }
+    }
+  }
+}
+
+.btn-group .button-secondary:focus, .open .dropdown-toggle.button-secondary {
+  color:@secondary-font-color;
+
+}
+
+.button-secondary.disabled, .button-secondary.disabled:hover, .button-secondary.disabled:focus, .button-secondary.disabled:active, .button-secondary.disabled.active, .button-secondary[disabled], .button-secondary[disabled]:hover, .button-secondary[disabled]:focus, .button-secondary[disabled]:active, .button-secondary.active[disabled], fieldset[disabled] .button-secondary, fieldset[disabled] .button-secondary:hover, fieldset[disabled] .button-secondary:focus, fieldset[disabled] .button-secondary:active, fieldset[disabled] .button-secondary.active, 
+.btn-white.disabled, .btn-white.disabled:hover, .btn-white.disabled:focus, .btn-white.disabled:active, .btn-white.disabled.active, .btn-white[disabled], .btn-white[disabled]:hover, .btn-white[disabled]:focus, .btn-white[disabled]:active, .btn-white.active[disabled], fieldset[disabled] .btn-white, fieldset[disabled] .btn-white:hover, fieldset[disabled] .btn-white:focus, fieldset[disabled] .btn-white:active, fieldset[disabled] .btn-white.active {
+  background-color: @disabled-color;
+  color: @disabled-text-color;
+  border-color: @disabled-color;
+}
+
+
+//Accent
+
+.btn-secondary {
+  .button-accent;
+}
+
+//Accent new stryle
+
+.button-accent, .btn-secondary {
+  background-color: @accent;
+  border-color: @accent;
+  color: @white;
+  &:hover {
+    background-color: @accent-hover;
+    border-color: @accent-hover;
+    color: @white;
+  }
+  &:focus, &.focus,{
+    background-color: @accent;
+    color: @white;
+  }
+  &:active, &.active, .open .dropdown-toggle.button-accent {
+    background-color: @accent-active-color;
+    border-color: @accent-active;
+    color: @white;
+  }
+
+  &.btn-stroke{
+    background-color: transparent;
+    color:@accent;
+    &:hover{
+      color:@accent-hover;
+      border-color:@accent-hover;
+    }
+    &:focus{
+    }
+    &:active{
+      border-color: @accent-active;
+      color:@accent-active;
+    }
+  }
+  &.btn-link{
+    color: @accent;
+    background-color: transparent;
+    &:hover{
+      background-color: @link-secondary-hover;
+    }
+    &:focus{
+      background-color: transparent;
+    }
+    &:active{
+      color:@accent;
+      background-color:@stroke-secondary-border;
+    }
+  }
+}
+
+
+.button-accent.disabled, .button-accent.disabled:hover, .button-accent.disabled:focus, .button-accent.disabled:active, .button-accent.disabled.active, .button-accent[disabled], .button-accent[disabled]:hover, .button-accent[disabled]:focus, .button-accent[disabled]:active, .button-accent.active[disabled], fieldset[disabled] .button-accent, fieldset[disabled] .button-accent:hover, fieldset[disabled] .button-accent:focus, fieldset[disabled] .button-accent:active, fieldset[disabled] .button-accent.active,
+.btn-secondary.disabled, .btn-secondary.disabled:hover, .btn-secondary.disabled:focus, .btn-secondary.disabled:active, .btn-secondary.disabled.active, .btn-secondary[disabled], .btn-secondary[disabled]:hover, .btn-secondary[disabled]:focus, .btn-secondary[disabled]:active, .btn-secondary.active[disabled], fieldset[disabled] .btn-secondary, fieldset[disabled] .btn-secondary:hover, fieldset[disabled] .btn-secondary:focus, fieldset[disabled] .btn-secondary:active, fieldset[disabled] .btn-secondary.active {
+  background-color: @disabled-color;
+  color: @disabled-text-color;
+  border-color: @disabled-color;
+}
+
+
+// Alert
+
+.btn-alert.btn-grouped.active {
+  background-color: @warning;
+  color: @white;
+  border-radius: 0px;
+}
+
+.btn-alert {
+  .button-warning;
+}
+
+//Warning new style
+
+.button-warning.btn-grouped.active {
+  background-color: @warning;
+  color: @white;
+  border-radius: 0px;
+}
+
+.button-warning, .btn-alert {
+  background-color: @warning;
+  color: @white;
+  &:hover {
+    background-color: @warning-hover;
+    color: @white;
+  }
+  &:focus, &.focus,{
+    background-color: @warning;
+    color: @white;
+  }
+  &:active, &.active, .button-warning:active, .button-warning.active,.btn-toggle.active, .open .dropdown-toggle.button-warning {
+    background-color: @warning-focus;
+    border-color: @warning-focus;
+    color:@white;
+  }
+
+  &.btn-stroke{
+    background-color: transparent;
+    color:@warning;
+    border-color:@warning;
+    &:hover{
+      color:@warning-hover;
+      border-color:@warning-hover;
+    }
+    &:focus{
+    }
+    &:active{
+      border-color: @warning-active;
+      color:@warning-active;
+    }
+  }
+  &.btn-link{
+    color: @warning;
+    background-color: transparent;
+    &:hover{
+      background-color: @link-secondary-hover;
+    }
+    &:focus{
+      background-color: transparent;
+    }
+    &:active{
+      color:@warning;
+      background-color:@stroke-secondary-border;
+    }
+  }
+}
+
+.button-warning.disabled, .button-warning.disabled:hover, .button-warning.disabled:focus, .button-warning.disabled:active, .button-warning.disabled.active, .button-warning[disabled], .button-warning[disabled]:hover, .button-warning[disabled]:focus, .button-warning[disabled]:active, .button-warning.active[disabled], fieldset[disabled] .button-warning, fieldset[disabled] .button-warning:hover, fieldset[disabled] .button-warning:focus, fieldset[disabled] .button-warning:active, fieldset[disabled] .button-warning.active,fieldset[disabled] .btn-toggle.active,
+.btn-alert.disabled, .btn-alert.disabled:hover, .btn-alert.disabled:focus, .btn-alert.disabled:active, .btn-alert.disabled.active, .btn-alert[disabled], .btn-alert[disabled]:hover, .btn-alert[disabled]:focus, .btn-alert[disabled]:active, .btn-alert.active[disabled], fieldset[disabled] .btn-alert, fieldset[disabled] .btn-alert:hover, fieldset[disabled] .btn-alert:focus, fieldset[disabled] .btn-alert:active, fieldset[disabled] .btn-alert.active,fieldset[disabled] .btn-toggle.active {
+  background-color: @disabled-color;
+  color: @disabled-text-color;
+  border-color: @disabled-color;
+}
+
+
+//Stroke style disabled
+.btn-stroke[disabled]{
+  border-color: @disabled-stroke-color;
+  background-color: transparent;
+}
+
+//link disabled style
+.btn-link[disabled]{
+  border:none;
+  background-color: transparent;
+  color:@disabled-text-color;
+}
+
+button.dim:before {
+  font-size: 50px;
+  line-height: 1em;
+  font-weight: normal;
+  color: #fff;
+  display: block;
+  padding-top: 10px;
+
+}
+
+button.dim:active:before {
+  top: 7px;
+  font-size: 50px;
+}
+
+.btn-group .btn-grouped:hover,
+.btn-group .btn-grouped:focus {
+  background-color: @hpegreen;
+  border-color: @hpegreen;
+  color: @white;
+}
+
+.btn-darker-border {
+ border-color: darken(@hpegreen, 12%);
+}
+
+.btn-darker-border:hover,
+.btn-darker-border:focus {
+ border-color: darken(@hpegreen, 12%);
+}
+
+//Back
+
+.btn-back:before {
+  content: url('../img/arrow_accent.png');
+  position:relative;
+  top:4px;
+}
+
+.btn-back:focus{
+    .elements-outline;
+}
+
+//Back for Header
+.btn-back-header{
+  display: none;
+}
+.back-button{
+.btn-back-header{
+  display: block;
+  float: left;
+  height: 28px;
+  width: 28px;
+  margin-top: 24px;
+  margin-right: 2px;
+  cursor: pointer;
+  span{
+    width: 100%;
+	height: 100%;
+	padding : 5.5px 1px 0px 5px;
+    svg{
+      g{
+        path{
+          stroke: @hpegreen;
+        }
+      }
+    }
+  }
+}
+}
+
+.page-content-navbar-top-light{
+  .back-button{
+    .btn-back-header{
+      &:hover{
+        background-color: darken(@white, 3%);
+      }
+    }
+  }
+}
+.page-content-navbar-top-dark{
+  .back-button{
+    .btn-back-header{
+      &:hover{
+        background-color:@secondary-hover-dark;
+      }
+    }
+  }
+
+}
+
+.affix{
+  .btn-back-header{
+    display: none;
+  }
+}
+
+.btn-pair{
+  white-space:nowrap;
+  margin-right: 16px;
+}
+
+.btn-pair button{
+  width:110px;
+}
+
+.btn-pair button:first-child{
+  i{
+    font-size: @fontSizeSmall;
+    margin-right: 5px;
+  }
+  
+}
+.btn-pair button:last-child{
+  margin-left: 4px;
+  i{
+    font-size: @fontSizeSmall;
+    margin-left: 5px;
+  }
+}
+
+.btn-group{
+  :not(.dropdown-toggle:first-child).btn {
+    margin-bottom: 5px;
+    padding: 6px 12px;
+  }
+  button.btn-nav {
+    min-width: 45px;
+  }
+  .dropdown-toggle:focus{
+    .elements-force-outline;
+    z-index:3;
+  }
+}
+
+.dropdown-menu{
+  margin-top: 5px;
+}
+
+
+.btn-link.disabled, .btn-link.disabled:hover,
+.btn-link.disabled:focus, .btn-link.disabled:active,
+.btn-link.disabled.active, .btn-link[disabled],
+.btn-link[disabled]:hover, .btn-link[disabled]:focus,
+.btn-link[disabled]:active, .btn-link.active[disabled],
+fieldset[disabled] .btn-link, fieldset[disabled] .btn-link:hover,
+fieldset[disabled] .btn-link:focus, fieldset[disabled] .btn-link:active,
+fieldset[disabled] .btn-link.active,fieldset[disabled] .btn-toggle.active {
+  color:@disabled-link-color;
+}
+
+.btn-login {
+ 
+  width: 100%;
+  height:48px;
+}
+
+//addon size
+.input-group-btn{
+  .btn{
+   padding: 6px 15px; 
+  }
+  .btn-sm{
+    padding: 5px 10px;
+    height:30px!important;
+  }
+  .btn-lg{
+    padding: 10px 20px;
+  }
+  >.btn{
+    z-index: 2;
+    &:hover{
+      z-index: 2;
+    }
+    &:active,&:focus{
+     z-index: 3; 
+     box-shadow: 0px 0px 1px 1px @accent;
+    }
+  }
+  .dropdown-toggle:focus{
+    outline: 0;
+    box-shadow: 0px 0px 1px 1px @accent;
+    z-index: 3;
+  }
+}
+
+.btn-icon{
+  &.btn{
+    padding:4px 7px;
+    width:30px;
+  }
+  &.btn-lg{
+    padding:6px 10px;
+    width:40px;
+
+  }
+  &.btn-sm{
+    padding:0px;
+    width:20px;
+
+  }
+  &.btn-circular {
+    border-radius: @btn-circular-border-radius;
+  }
+}
+
+
+
+//Hyperlink styles
+
+.hyperlink{
+  font-family:Metric;
+  &:link{
+    color:@hyperlink-color;
+    border-bottom: 2px dotted @hpegreen;
+  }
+  &:hover, &:focus{
+    color:@black;
+    border-bottom: 2px solid @hpegreen;
+    outline-color: @accent;
+  }
+  &:active{
+    color:@black;
+    border-bottom: 2px solid @black;
+  }
+  &:visited{
+    color:@hyperlink-color;
+    border-bottom: 2px solid @hyperlink-color;
+  }
+}
+//inline dropdown styles
+.inline-dropdown-text 
+{
+  font-size: @fontSizeMedium+1;
+  vertical-align: 0;
+}
+.btn.inline-dropdown.dropdown-toggle 
+{
+  background:transparent;
+  padding-left:5px;
+  padding-top:2px;
+  padding-right:5px;
+  box-shadow:none;
+  outline:none;
+  vertical-align: middle;
+  & > span
+  {
+  border-bottom: 2px dotted @text-color;
+  text-transform: none;
+  font-size: @fontSizeMedium+1;
+  color: @text-color;
+  &.caret {
+	border-bottom: none;
+  }
+  }
+  &:hover
+  {
+  background-color: @link-primary-hover !important;
+  }
+  &:focus
+  {
+  border: solid 1px @text-color;
+  }
+}

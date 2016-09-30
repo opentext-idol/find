@@ -27,7 +27,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
-        requestCache.setRequestMatcher(new AntPathRequestMatcher(FindController.APP_PATH));
+        requestCache.setRequestMatcher(new AntPathRequestMatcher(FindController.APP_PATH + "/**"));
 
         http
             .authorizeRequests()

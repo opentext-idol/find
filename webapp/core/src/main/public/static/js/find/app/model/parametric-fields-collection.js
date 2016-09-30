@@ -8,7 +8,7 @@ define([
 ], function(FindBaseCollection) {
 
     return FindBaseCollection.extend({
-        url: '../api/public/fields/parametric'
+        url: 'api/public/fields/parametric'
     });
 
 });

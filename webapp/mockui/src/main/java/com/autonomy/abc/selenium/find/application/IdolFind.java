@@ -1,15 +1,12 @@
 package com.autonomy.abc.selenium.find.application;
-
 import com.autonomy.abc.selenium.find.numericWidgets.NumericWidgetService;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
-import com.hp.autonomy.frontend.selenium.application.Application;
-import com.hp.autonomy.frontend.selenium.control.Window;
 
-public class IdolFind extends FindApplication<IdolFindElementFactory> {
-    private IdolFindElementFactory elementFactory;
+public abstract class IdolFind<T extends IdolFindElementFactory> extends FindApplication<T> {
+    private T elementFactory;
 
     @Override
-    public IdolFindElementFactory elementFactory() {
+    public T elementFactory() {
         return elementFactory;
     }
 
@@ -18,17 +15,28 @@ public class IdolFind extends FindApplication<IdolFindElementFactory> {
         return false;
     }
 
-    @Override
-    public Application<IdolFindElementFactory> inWindow(final Window window) {
-        this.elementFactory = new IdolFindElementFactory(window.getSession().getDriver());
-        return this;
-    }
-
-    public SavedSearchService savedSearchService() {
-        return new SavedSearchService(this);
+    public void setElementFactory(T elementFactory) {
+        this.elementFactory = elementFactory;
     }
 
     public NumericWidgetService numericWidgetService() {
         return new NumericWidgetService(this);
+    }
+
+    public abstract SavedSearchService savedSearchService();
+
+    public static IdolFind<? extends IdolFindElementFactory> withRole(final UserRole role) {
+        if(role == null){
+            return new BIIdolFind();
+        }
+
+        switch (role) {
+            case BIFHI:
+                return new BIIdolFind();
+            case FIND:
+                return new FindIdolFind();
+            default:
+                throw new IllegalStateException("Unsupported user role: " + role);
+        }
     }
 }

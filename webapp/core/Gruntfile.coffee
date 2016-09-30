@@ -71,10 +71,19 @@ module.exports = (grunt) ->
           template: jasmineRequireTemplate
           templateOptions:
             requireConfigFile: browserTestRequireConfig
+    less:
+      build:
+        files:
+          'target/classes/static/css/bootstrap.css': 'src/main/less/bootstrap.less',
+          'target/classes/static/css/compiled.css': 'src/main/less/app.less',
+          'target/classes/static/css/login.css': 'src/main/less/login.less',
+          'target/classes/static/css/result-highlighting.css': 'src/main/less/result-highlighting.less'
+      options:
+        strictMath: true
     watch:
-      buildTest:
+      buildBrowserTest:
         files: watchFiles
-        tasks: ['jasmine:test:build']
+        tasks: ['jasmine:browser-test:build']
       test:
         files: watchFiles
         tasks: ['babel:transform', 'jasmine:test']
@@ -84,8 +93,9 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
+  grunt.loadNpmTasks 'grunt-contrib-less'
 
   grunt.registerTask 'default', ['test']
   grunt.registerTask 'test', ['babel:transform', 'jasmine:test']
-  grunt.registerTask 'browser-test', ['jasmine:browser-test:build', 'connect:server', 'watch:buildTest']
+  grunt.registerTask 'browser-test', ['jasmine:browser-test:build', 'connect:server', 'watch:buildBrowserTest']
   grunt.registerTask 'watch-test', ['babel:transform', 'jasmine:test', 'watch:test']

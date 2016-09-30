@@ -13,8 +13,7 @@ define([
         'detailTitle': 'Snapshot',
         'restrictions.maxDate': 'Until Date',
         'restrictions.minDate': 'From Date',
-        'restrictions.queryText': 'Query Text',
-        'restrictions.relatedConcepts': 'Also searching for',
+        'restrictions.relatedConcepts': 'Concepts',
         'restrictionsTitle': 'Query Restrictions',
         'openEdit.create': 'Save as snapshot',
         'openEdit.edit': 'Save as snapshot'

@@ -5,6 +5,8 @@
 
 package com.hp.autonomy.frontend.find.hod.fields;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
@@ -32,9 +34,10 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
     HodFieldsController(
             final FieldsService<HodFieldsRequest, HodErrorException> fieldsService,
             final ParametricValuesService<HodParametricRequest, ResourceIdentifier, HodErrorException> parametricValuesService,
-            final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory
+            final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory,
+            final ConfigService<? extends FindConfig> configService
     ) {
-        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory);
+        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, configService);
     }
 
     @Override
@@ -48,6 +51,6 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
     @Override
     public List<FieldAndValueDetails> getParametricDateFields(final HodFieldsRequest request) throws HodErrorException {
         // TODO: Remove this override once FIND-180 is complete; we are just preventing AUTN_DATE from showing up in HoD as it will cause performance problems
-        return fetchParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, Collections.<String>emptyList());
+        return fetchParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, Collections.emptyList());
     }
 }

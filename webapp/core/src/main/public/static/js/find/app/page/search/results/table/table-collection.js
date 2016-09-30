@@ -13,7 +13,7 @@ define([
     var NONE_COLUMN = 'defaultColumn';
     
     return BaseCollection.extend({
-        url: '../api/public/parametric/dependent-values',
+        url: 'api/public/parametric/dependent-values',
 
         parse: function(data) {
             this.columnNames = _.chain(data)

@@ -43,7 +43,7 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
         final ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier> builder = new HodParametricRequest.Builder();
         when(requestBuilderFactory.getObject()).thenReturn(builder);
 
-        return new HodFieldsController(service, parametricValuesService, requestBuilderFactory);
+        return new HodFieldsController(service, parametricValuesService, requestBuilderFactory, configService);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
         response.put(FieldTypeParam.NumericDate, ImmutableList.of(new TagName("DateField"), new TagName("ParametricDateField")));
         response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("ParametricField"), new TagName("ParametricNumericField"), new TagName("ParametricDateField")));
-        when(service.getFields(Matchers.<HodFieldsRequest>any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
+        when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
 
         final ValueDetails valueDetails = new ValueDetails.Builder()
                 .setMin(146840000d)
@@ -72,7 +72,7 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
                 .put(new TagName("ParametricDateField"), valueDetails)
                 .build();
 
-        when(parametricValuesService.getValueDetails(Matchers.<HodParametricRequest>any())).thenReturn(valueDetailsOutput);
+        when(parametricValuesService.getValueDetails(Matchers.any())).thenReturn(valueDetailsOutput);
 
         final List<FieldAndValueDetails> fields = controller.getParametricDateFields(createRequest());
         assertThat(fields, hasSize(1));

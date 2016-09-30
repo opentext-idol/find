@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 package com.autonomy.abc.selenium.find.bi;
 
 import com.hp.autonomy.frontend.selenium.element.Slider;
@@ -7,7 +11,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +49,20 @@ public class TopicMapView {
         return findElements(By.cssSelector(".entity-topic-map > svg > path"));
     }
 
+    public void waitForTopLevelEntities() {
+        new WebDriverWait(driver,25)
+                .withMessage("top level entities to reach the right opacity")
+                .until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.2']")));
+    }
+
     public List<WebElement> topLevelMapEntities() {
         return findElements(By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.2']"));
+    }
+
+    public void waitForBaseLevelEntities() {
+        new WebDriverWait(driver,10)
+                .withMessage("base entities to reach the right opacity")
+                .until(ExpectedConditions.elementToBeClickable(By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.7']")));
     }
 
     public List<WebElement> mapEntityTextElements() {
@@ -51,38 +70,50 @@ public class TopicMapView {
     }
 
     public void clickParentEntities() {
-        final List<WebElement> webElements = topLevelMapEntities();
-        for (WebElement cluster: webElements){
+        for(WebElement cluster : topLevelMapEntities()) {
             offCentreClick(cluster);
         }
     }
 
     public void offCentreClick(WebElement element) {
-        int xOffset = element.getSize().getWidth()/8;
-        int yOffset = element.getSize().getHeight()/8;
+        int xOffset = element.getSize().getWidth() / 8;
+        int yOffset = element.getSize().getHeight() / 8;
         Actions build = new Actions(driver);
         build.moveToElement(element, xOffset, yOffset).click().build().perform();
     }
 
-    public List<String> returnParentEntityNames() {
+    public List<String> parentEntityNames() {
         final List<String> clusterNames = new ArrayList<>();
         final int numberOfClusters = topLevelMapEntities().size();
         final List<WebElement> mapEntities = mapEntityTextElements();
         final int max = mapEntities.size() - 1;
-        for (int i = 0; i < numberOfClusters; i++) {
+        for(int i = 0; i < numberOfClusters; i++) {
             clusterNames.add(mapEntities.get(max - i).getText().replace(" ", "").toLowerCase());
         }
         return clusterNames;
     }
 
+    /**
+     * Click one of the cluster headings in the topic map.
+     * @return The text of the clicked heading
+     */
+    public String clickClusterHeading() {
+        final WebElement clusterHeading = findElements(By.cssSelector(".entity-topic-map > svg > text[font-size='50px']")).get(0);
+        final String text = clusterHeading.getText();
+        clusterHeading.click();
+        Waits.loadOrFadeWait();
+        return text;
+    }
+
     public String clickChildEntityAndAddText(int noOfClusters) {
         waitForMapLoaded();
+
         final int maxIndex = mapEntities().size() - 1;
         final int i = maxIndex - 1;
 
-        Waits.loadOrFadeWait();
+        waitForTopLevelEntities();
         clickParentEntities();
-        Waits.loadOrFadeWait();
+        waitForBaseLevelEntities();
 
         final String concept = mapEntityTextElements().get(i - noOfClusters).getText().replace(" ", "").toLowerCase();
         offCentreClick(mapEntityTextElements().get(i - noOfClusters));
@@ -91,14 +122,7 @@ public class TopicMapView {
     }
 
     public void waitForMapLoaded() {
-        new WebDriverWait(driver, 30).until(new mapLoaded());
-    }
-
-    private static class mapLoaded implements ExpectedCondition<Boolean> {
-        @Override
-        public Boolean apply(final WebDriver driver) {
-            return driver.findElements(By.cssSelector(".service-view-container:not(.hide) .entity-topic-map > svg > text")).size()>0;
-        }
+        waitForTopLevelEntities();
     }
 
     private WebElement findElement(final By locator) {
@@ -108,5 +132,11 @@ public class TopicMapView {
     private List<WebElement> findElements(final By locator) {
         return container.findElements(locator);
     }
-}
 
+    private static class mapLoaded implements ExpectedCondition<Boolean> {
+        @Override
+        public Boolean apply(final WebDriver driver) {
+            return driver.findElements(By.cssSelector(".service-view-container:not(.hide) .entity-topic-map > svg > text")).size() > 0;
+        }
+    }
+}

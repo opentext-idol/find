@@ -25,7 +25,8 @@ require.config({
             'find/app/util/confirm-view': 'mock/util/confirm-view',
             'find/app/page/search/document/location-tab': 'mock/page/search/document/location-tab',
             'find/app/util/topic-map-view': 'mock/util/topic-map-view',
-            'find/app/model/bucketed-parametric-collection': 'mock/model/bucketed-parametric-collection'
+            'find/app/model/bucketed-parametric-collection': 'mock/model/bucketed-parametric-collection',
+            'css/result-highlighting.css': 'mock/css/result-highlighting.css'
         },
         'find/app/page/search/related-concepts/related-concepts-view': {
             'find/app/model/documents-collection': 'mock/model/documents-collection'
@@ -33,7 +34,7 @@ require.config({
         'find/app/page/search/results/parametric-results-view': {
             'find/app/model/dependent-parametric-collection': 'mock/model/dependent-parametric-collection'
         },
-        'find/app/page/search/abstract-query-left-side-view': {
+        'find/app/page/search/filter-view': {
             'find/app/configuration': 'mock/configuration',
             'find/app/page/search/filters/date/dates-filter-view': 'mock/page/search/filters/date/dates-filter-view',
             'find/app/page/search/filters/parametric/numeric-parametric-view': 'mock/page/search/filters/parametric/numeric-parametric-view',
