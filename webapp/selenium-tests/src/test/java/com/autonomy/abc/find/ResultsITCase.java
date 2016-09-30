@@ -129,7 +129,8 @@ public class ResultsITCase extends FindTestBase {
         search("jedu");
         verifyThat("Says it corrected query", findPage.originalQuery(), displayed());
 
-        if (!isHosted()) {
+        //TODO: Soon FindPage will have goToListView and this will be redundant
+        if (findPage.listTabExists()) {
             ((IdolFindPage) findPage).goToListView();
         }
         verifyThat("There are results in list view", findPage.totalResultsNum(), greaterThan(0));
