@@ -72,10 +72,11 @@ public class DocumentPreviewITCase extends FindTestBase {
 
     @Test
     @ResolvedBug("FIND-497")
+    //WARNING: may fail for some data if indexed URL now redirects to a newer version of the wiki page.
     public void testOpenOriginalDocInNewTab() {
         final Session session = getMainSession();
 
-        final ResultsView results = findService.search("flail");
+        final ResultsView results = findService.search("general");
         if (isHosted()) {
             // e.g. FIFA contains links that redirect to new pages
             findPage.filterBy(new IndexFilter("simpsonsarchive"));

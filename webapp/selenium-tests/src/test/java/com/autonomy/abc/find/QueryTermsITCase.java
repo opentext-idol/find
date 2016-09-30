@@ -52,7 +52,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     @Role(UserRole.FIND)
-    public void searchOnSimpleTerms() throws InterruptedException {
+    public void testSearchOnSimpleTerms() throws InterruptedException {
         goToListView();
 
         final String searchTerm = "Fred is a chimpanzee";
@@ -65,7 +65,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     @Role(UserRole.FIND)
-    public void searchForAll() {
+    public void testSearchForAll() {
         goToListView();
 
         final String searchTerm = "*";
@@ -78,7 +78,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     @Role(UserRole.BIFHI)
-    public void searchOnSimpleConcepts() throws InterruptedException {
+    public void testSearchOnSimpleConcepts() throws InterruptedException {
         goToListView();
 
         final String searchTerm = "chimpanzee";
@@ -90,7 +90,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     @Role(UserRole.BIFHI)
-    public void implicitSearchForAll() throws InterruptedException {
+    public void testImplicitSearchForAll() throws InterruptedException {
         goToListView();
 
         assertThat(getElementFactory().getResultsPage().getResults(), not(empty()));
