@@ -76,13 +76,13 @@ public class FindSessionITCase extends FindTestBase {
     @Test
     @Role(UserRole.FIND)
     public void testRelatedConcepts(){
-        assumeThat("Runs only on-prem",not(isHosted()));
+        assumeThat("Runs only on-prem", not(isHosted()));
 
         findService.search("Come and Gone");
 
         deleteCookies();
 
-        getElementFactory().getRelatedConceptsPanel().hoverOverRelatedConcept(0);
+        getElementFactory().getRelatedConceptsPanel().concept(0).click();
 
         Waits.loadOrFadeWait();
         verifyThat(getWindow(), urlContains("login"));
