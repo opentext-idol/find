@@ -18,6 +18,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
@@ -25,7 +26,6 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeThat;
 
 public class FindSessionITCase extends FindTestBase {
     private FindService findService;
@@ -41,8 +41,7 @@ public class FindSessionITCase extends FindTestBase {
 
     @Test
     public void testSearch(){
-        assumeThat("Runs only on-prem",not(isHosted()));
-
+        assumeThat("Should only run on prem", !isHosted());
         deleteCookies();
         try {
             findService.search("XYZ");
