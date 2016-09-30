@@ -132,10 +132,10 @@ define([
             });
 
             this.parametricFieldsCollection = new ParametricFieldsCollection([]);
+            this.parametricCollection = new ParametricCollection([], {url: 'api/public/parametric'});
             this.restrictedParametricCollection = new ParametricCollection([], {url: 'api/public/parametric/restricted'});
             this.numericParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'numeric'});
             this.dateParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'date'});
-            this.parametricCollection = new ParametricCollection([], {url: 'api/public/parametric'});
 
             // Tracks the document model which is currently shown in the preview
             this.previewModeModel = new Backbone.Model({document: null});

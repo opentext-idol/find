@@ -10,11 +10,9 @@ define([
     'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
-    'parametric-refinement/prettify-field-name',
     'find/app/util/collapsible',
-    'find/app/vent',
-    'find/app/configuration'
-], function(Backbone, $, _, i18n, NumericParametricFieldView, rounder, prettifyFieldName, Collapsible, vent, configuration) {
+    'find/app/vent'
+], function(Backbone, $, _, i18n, NumericParametricFieldView, rounder, Collapsible, vent) {
 
     'use strict';
 
@@ -44,10 +42,17 @@ define([
     return Backbone.View.extend({
         initialize: function (options) {
             this.selectedParametricValues = options.selectedParametricValues;
-            this.dataType = options.dataType;
+            this.dataType = this.model.get('dataType');
             this.timeBarModel = options.timeBarModel;
             this.filterModel = options.filterModel;
-            this.collapsed = true;
+
+            if (_.isFunction(options.collapsed)) {
+                this.collapsed = options.collapsed(options.model);
+            }
+            else {
+                //noinspection NegatedConditionalExpressionJS
+                this.collapsed = !_.isUndefined(options.collapsed) ? options.collapsed : true;
+            }
 
             var clickCallback = null;
 
@@ -56,7 +61,7 @@ define([
                     var isCurrentField = this.isCurrentField();
 
                     this.timeBarModel.set({
-                        graphedDataType: isCurrentField ? null : options.dataType,
+                        graphedDataType: isCurrentField ? null : this.dataType,
                         graphedFieldName: isCurrentField ? null : this.model.id
                     });
                 }.bind(this);
@@ -64,11 +69,9 @@ define([
 
             this.fieldView = new NumericParametricFieldView(_.extend({
                 hideTitle: true,
-                clickCallback: clickCallback
+                clickCallback: clickCallback,
+                dataType: this.dataType
             }, options));
-
-            var paramMap = _.findWhere(configuration().parametricDisplayValues, {name: this.model.id});
-            this.model.set('displayName', paramMap ? paramMap.displayName : prettifyFieldName(this.model.id));
 
             this.collapsible = new Collapsible({
                 title: this.model.get('displayName'),
@@ -92,6 +95,7 @@ define([
 
             this.listenTo(this.collapsible, 'toggle', function(newState) {
                 this.collapsed = newState;
+                this.trigger('toggle', this.model, newState);
             });
 
             if (this.filterModel) {

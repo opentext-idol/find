@@ -8,7 +8,8 @@ define([
     return FindBaseCollection.extend({
         model: Backbone.Model.extend({
             defaults: {
-                values: []
+                values: [],
+                dataType: 'parametric'
             }
         }),
         

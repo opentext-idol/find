@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
@@ -108,7 +107,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     @Test
     public void testSelectionRecFiltersResults() {
-        MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "space");
+        MainNumericWidget mainGraph = numericService.searchAndSelectNamedGraph("autn date", "space");
 
         final ResultsView results = getElementFactory().getResultsPage();
         results.goToListView();
@@ -126,7 +125,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         verifyThat("Min field text value changed", mainGraph.minFieldValue(), not(is(beforeMin)));
         verifyThat("Max field text value changed", mainGraph.maxFieldValue(), not(is(beforeMax)));
 
-        NumericWidget sidePanelChart = filters().getNthGraph(1).getChart();
+        NumericWidget sidePanelChart = filters().getNamedGraph("autn date").getChart();
         verifyThat("Side panel chart has selection rectangle", sidePanelChart.selectionRectangleExists());
 
         mainGraph.reset();
@@ -136,7 +135,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         verifyThat("Min bound returned to original", mainGraph.minFieldValue(), is(beforeMin));
         verifyThat("Max bound returned to original", mainGraph.maxFieldValue(), is(beforeMax));
 
-        sidePanelChart = filters().getNthGraph(1).getChart();
+        sidePanelChart = filters().getNamedGraph("autn date").getChart();
         verifyThat("Selection rectangle gone from side panel", !sidePanelChart.selectionRectangleExists());
     }
 
@@ -191,7 +190,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-390")
     public void testInteractionWithRegularDateFilters() {
-        final MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "whatever");
+        final MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("whatever");
         filters().toggleFilter(DateOption.MONTH);
 
         filters().waitForParametricFields();
@@ -255,10 +254,10 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-365")
-    //horrendously fragile -> v dependent on specific filters
+    // Make sure that the named graph used is a numeric and not date widget
     public void testFilterLabelFormatReflectsNumericData() {
-        final MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "beer");
-        assumeThat("Test assumes that 0th graph is place elevation", mainGraph.header(), equalToIgnoringCase("Place Elevation"));
+        final MainNumericWidget mainGraph = numericService.searchAndSelectNamedGraph("Random Number", "beer");
+        assumeThat("Test assumes that there is the numeric field place elevation", mainGraph.header(), equalToIgnoringCase("Random Number"));
 
         mainGraph.clickAndDrag(200, mainGraph.graph());
         numericService.waitForReload();
@@ -269,7 +268,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-273")
     public void testRemovingViaFilterLabelRemovesSelection() {
-        MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "space");
+        MainNumericWidget mainGraph = numericService.searchAndSelectFirstNumericGraph("space");
         mainGraph.clickAndDrag(100, mainGraph.graph());
 
         filters().waitForParametricFields();
@@ -281,7 +280,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         findPage.removeFilterLabel(labels.get(0));
 
         filters().waitForParametricFields();
-        final NumericWidget sidePanelChart = filters().getNthGraph(1).getChart();
+        final NumericWidget sidePanelChart = filters().getFirstNumericGraph().getChart();
         verifyThat("Side panel chart selection rectangle gone", !sidePanelChart.selectionRectangleExists());
     }
 
@@ -289,7 +288,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-400")
     @Ignore("Numeric widget reloading currently makes it impossible to Selenium test this.")
     public void testInputDateBoundsAsText() throws Exception {
-        MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(2, "red");
+        MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("red");
         final String startDate = "1976-10-22 08:46";
         final String endDate = "2012-10-10 21:49";
 
@@ -307,7 +306,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         final int rangeMinusDelta = (int) (range * 0.98);
         final int rangePlusDelta = (int) (range * 1.02);
 
-        MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "red");
+        MainNumericWidget mainGraph = numericService.searchAndSelectFirstNumericGraph("red");
         final int numericUnitsPerChartWidth = mainGraph.getRange() / mainGraph.graphWidth();
 
         //#1 testing that correct proportion of chart selected
@@ -334,7 +333,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     public void testTextMaxBoundCannotBeLessThanMin() throws Exception {
         final String lowNum = "0";
         final String highNum = "600";
-        MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "red");
+        MainNumericWidget mainGraph = numericService.searchAndSelectFirstNumericGraph("red");
 
         mainGraph = setMinAndMax(highNum, lowNum, mainGraph);
         verifyThat("Min bound re-set to value of max", mainGraph.minFieldValue(), is(lowNum));
@@ -362,7 +361,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Test
     @ActiveBug("FIND-633")
     public void testInputDateBoundsWithCalendar() {
-        MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "tragedy");
+        MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("tragedy");
         final DatePicker startCalendar = mainGraph.openCalendar(mainGraph.startCalendar());
         startCalendar.calendarDateSelect(new Date(76, 8, 26));
         final DatePicker endCalendar = mainGraph.openCalendar(mainGraph.endCalendar());
@@ -391,7 +390,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug({"FIND-389", "FIND-143"})
     public void testSnapshotDateRangesDisplayedCorrectly() {
-        final MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "dire");
+        final MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("dire");
         final String filterType = mainGraph.header();
         mainGraph.clickAndDrag(-50, mainGraph.graph());
 

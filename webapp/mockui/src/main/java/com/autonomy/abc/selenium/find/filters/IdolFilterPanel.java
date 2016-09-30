@@ -12,37 +12,63 @@ import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class IdolFilterPanel extends FilterPanel{
+public class IdolFilterPanel extends FilterPanel {
     private final WebDriver driver;
 
-    public IdolFilterPanel(final ParametrizedFactory<IndexCategoryNode, IndexesTree> indexesTreeFactory, final WebDriver driver){
-        super(indexesTreeFactory,driver);
+    public IdolFilterPanel(final ParametrizedFactory<IndexCategoryNode, IndexesTree> indexesTreeFactory, final WebDriver driver) {
+        super(indexesTreeFactory, driver);
         this.driver = driver;
     }
 
-    public GraphFilterContainer getNthGraph(int n){
-        if(n == 0){
-            WebElement graphItself = getPanel().findElement(By.cssSelector("div.collapse .clickable-widget"));
-            return new GraphFilterContainer(ElementUtil.ancestor(graphItself,5),driver);
-        }
-        else{
+    public GraphFilterContainer getNthGraph(final int n) {
+        if (n == 0) {
+            final WebElement graphItself = getPanel().findElement(By.cssSelector("div.collapse .clickable-widget"));
+            return new GraphFilterContainer(ElementUtil.ancestor(graphItself, 5), driver);
+        } else {
             return graphContainers().get(n);
         }
     }
 
+    public GraphFilterContainer getFirstNumericGraph() {
+        return numericGraphContainers().get(0);
+    }
+
+    public GraphFilterContainer getFirstDateGraph() {
+        return dateGraphContainers().get(0);
+    }
+
+    public GraphFilterContainer getNamedGraph(final String name) {
+        for (final GraphFilterContainer container : graphContainers()) {
+            if (container.filterCategoryName().toLowerCase().equals(name.toLowerCase())) {
+                return container;
+            }
+        }
+
+        throw new IllegalStateException("There are no graphs with name " + name);
+    }
+
+    public List<GraphFilterContainer> numericGraphContainers() {
+        return graphContainers().stream().filter(container -> !container.filterCategoryName().toLowerCase().contains("date")).collect(Collectors.toList());
+    }
+
+    public List<GraphFilterContainer> dateGraphContainers() {
+        return graphContainers().stream().filter(container -> container.filterCategoryName().toLowerCase().contains("date")).collect(Collectors.toList());
+    }
+
     public List<GraphFilterContainer> graphContainers() {
         final List<GraphFilterContainer> containers = new ArrayList<>();
-        for(final WebElement container : getGraphContainers()) {
-            containers.add(new GraphFilterContainer(container,driver));
+        for (final WebElement container : getGraphContainers()) {
+            containers.add(new GraphFilterContainer(container, driver));
         }
         return containers;
     }
 
     private List<WebElement> getGraphContainers() {
         final List<WebElement> ancestors = new ArrayList<>();
-        for (WebElement element : getPanel().findElements(By.cssSelector("div.collapse .clickable-widget"))){
-            ancestors.add(ElementUtil.ancestor(element,5));
+        for (final WebElement element : getPanel().findElements(By.cssSelector("div.collapse .clickable-widget"))) {
+            ancestors.add(ElementUtil.ancestor(element, 5));
         }
         return ancestors;
     }

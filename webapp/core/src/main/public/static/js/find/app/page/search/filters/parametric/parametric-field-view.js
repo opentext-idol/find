@@ -62,8 +62,6 @@ define([
         className: 'animated fadeIn',
 
         initialize: function(options) {
-            this.$el.attr('data-field', this.model.id);
-            this.$el.attr('data-field-display-name', this.model.get('displayName'));
             this.parametricDisplayCollection = options.parametricDisplayCollection;
             this.selectedParametricValues = options.selectedParametricValues;
             this.parametricCollection = options.parametricCollection;
@@ -100,7 +98,12 @@ define([
         },
 
         render: function() {
-            this.$el.empty().append(this.collapsible.$el);
+            this.$el
+                .attr('data-field', this.model.id)
+                .attr('data-field-display-name', this.model.get('displayName'))
+                .empty()
+                .append(this.collapsible.$el);
+            
             this.collapsible.render();
         },
 

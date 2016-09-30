@@ -14,7 +14,6 @@ define([
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/page/search/filters/parametric/numeric-widget',
     'find/app/model/bucketed-parametric-collection',
-    'parametric-refinement/prettify-field-name',
     'parametric-refinement/to-field-text-node',
     'find/app/util/date-picker',
     'find/app/util/model-any-changed-attribute-listener',
@@ -24,7 +23,7 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
 ], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, rounder, numericWidget,
-            BucketedParametricCollection, prettifyFieldName, toFieldTextNode, datePicker, addChangeListener,
+            BucketedParametricCollection, toFieldTextNode, datePicker, addChangeListener,
             template, numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
 
     'use strict';
@@ -83,14 +82,13 @@ define([
             this.zoomEnabled = options.zoomEnabled;
             this.buttonsEnabled = options.selectionEnabled && options.buttonsEnabled;
             this.coordinatesEnabled = options.coordinatesEnabled === undefined ? true : options.coordinatesEnabled;
-            this.numericRestriction = options.numericRestriction || false;
             this.hideTitle = options.hideTitle;
             this.dataType = options.dataType;
             this.clickCallback = options.clickCallback;
 
             this.fieldName = this.model.id;
 
-            var formatting = options.formatting || NumericParametricFieldView.defaultFormatting;
+            var formatting = this.dataType === 'date' ? options.formatting : NumericParametricFieldView.defaultFormatting;
             this.formatValue = function (value) {
                 return formatting.format(value, this.model.get('currentMin'), this.model.get('currentMax'));
             }.bind(this);
@@ -139,7 +137,7 @@ define([
                 .empty()
                 .append(this.template({
                     i18n: i18n,
-                    fieldName: this.hideTitle ? undefined : prettifyFieldName(this.model.get('name')),
+                    fieldName: this.hideTitle ? undefined : this.model.get('displayName'),
                     clickable: Boolean(this.clickCallback),
                     buttonsEnabled: this.buttonsEnabled,
                     inputsRowClass: this.selectionEnabled || this.coordinatesEnabled ? '' : 'hide',
