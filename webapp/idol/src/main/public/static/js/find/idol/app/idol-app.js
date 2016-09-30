@@ -9,13 +9,15 @@ define([
     'find/app/configuration',
     'find/idol/app/model/idol-indexes-collection',
     'find/idol/app/model/saved-searches/saved-snapshot-collection',
+    'find/app/model/asset-collection',
     'find/idol/app/idol-navigation',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
     'find/app/page/find-settings-page',
     'find/app/page/customisations-page',
     'i18n!find/nls/bundle'
-], function(BaseApp, _, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage, SettingsPage, CustomisationsPage, i18n) {
+], function(BaseApp, _, configuration, IndexesCollection, SavedSnapshotCollection, AssetCollection,Navigation,
+            FindSearch, AboutPage, SettingsPage, CustomisationsPage, i18n) {
 
     'use strict';
 
@@ -34,6 +36,21 @@ define([
                     }
                 }, modelData);
             }
+
+            modelData = _.extend({
+                bigLogoCollection: {
+                    Constructor: AssetCollection,
+                    options: {
+                        type: CustomisationsPage.AssetTypes.bigLogo.type
+                    }
+                },
+                smallLogoCollection: {
+                    Constructor: AssetCollection,
+                    options: {
+                        type: CustomisationsPage.AssetTypes.smallLogo.type
+                    }
+                }
+            }, modelData);
 
             return modelData;
         },
@@ -66,6 +83,7 @@ define([
                     customisations: {
                         Constructor: CustomisationsPage,
                         icon: 'hp-icon hp-fw hp-view',
+                        models: ['bigLogoCollection', 'smallLogoCollection'],
                         title: i18n['app.customisations'],
                         order: 3
                     }

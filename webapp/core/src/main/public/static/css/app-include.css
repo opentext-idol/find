@@ -1773,3 +1773,17 @@ h4.similar-dates-message {
 .leaflet-container {
     font-family: Metric;
 }
+
+.small-logo-background {
+    /* TODO use less variable when merging */
+    background-color: #425563;
+    color: white;
+}
+
+.dropzone.small-logo-background {
+    border-color: #425563;
+}
+
+.dropzone.small-logo-background .dz-preview.dz-image-preview {
+    background-color: #425563;
+}

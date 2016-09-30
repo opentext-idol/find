@@ -30,15 +30,18 @@ define([
 
         className: 'container-fluid',
 
-        initialize: function() {
+        initialize: function(options) {
             this.assets = [
                 [
                     _.extend({
+                        collection: options.bigLogoCollection,
                         description: i18n['customisations.bigLogo.description'],
                         title: i18n['customisations.bigLogo'],
                     }, ASSET_TYPES.bigLogo),
                     _.extend({
+                        collection: options.smallLogoCollection,
                         description: i18n['customisations.smallLogo.description'],
+                        imageClass: 'small-logo-background',
                         title: i18n['customisations.smallLogo'],
                     }, ASSET_TYPES.smallLogo)
                 ]
@@ -71,6 +74,8 @@ define([
             }, this)
         }
 
+    }, {
+        AssetTypes: ASSET_TYPES
     });
 
 });
