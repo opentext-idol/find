@@ -62,17 +62,6 @@ define([
                 textAttribute: 'id',
                 valueAttribute: 'id'
             });
-
-            this.listenTo(this.dropdownView, 'change', function(value) {
-                if (value === '') {
-                    this.$image.css('background-image', '');
-                    this.$deleteAsset.addClass('hidden');
-                }
-                else {
-                    this.$image.css('background-image', 'url(' + this.url + '/' + encodeURIComponent(value) + ')');
-                    this.$deleteAsset.removeClass('hidden');
-                }
-            });
         },
 
         render: function() {
@@ -142,6 +131,17 @@ define([
 
             this.dropdownView.render();
             this.$('.asset-dropdown').prepend(this.dropdownView.el);
+
+            this.listenTo(this.dropdownView, 'change', function(value) {
+                if (value === '') {
+                    this.$image.css('background-image', '');
+                    this.$deleteAsset.addClass('hidden');
+                }
+                else {
+                    this.$image.css('background-image', 'url(' + this.url + '/' + encodeURIComponent(value) + ')');
+                    this.$deleteAsset.removeClass('hidden');
+                }
+            });
         },
 
         remove: function() {
