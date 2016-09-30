@@ -164,15 +164,14 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         similarDocuments = findService.goToSimilarDocuments(1);
 
-
         final int totalNumberDocs = similarDocuments.getTotalResults();
 
-        for(int i = 30; i <= totalNumberDocs; i =+ 30) {
+        for(int i = 30; i <= totalNumberDocs; i += 30) {
             verifyThat(similarDocuments.getVisibleResultsCount(), is(i));
             final DocumentViewer documentViewer = similarDocuments.getResult(i).openDocumentPreview();
             assertThat("Have opened preview container", documentViewer.previewPresent());
             documentViewer.close();
-            verifyThat(similarDocuments.getVisibleResultsCount(), is(i + 30));
+            verifyThat(similarDocuments.getVisibleResultsCount(), anyOf(is(i + 30),is(totalNumberDocs)));
             results.waitForResultsToLoad();
         }
     }
