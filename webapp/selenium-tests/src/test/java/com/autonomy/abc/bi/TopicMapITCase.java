@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.FindParametricFilter;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Slider;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,15 +69,13 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Test
     public void testNumbersForMapInSliders() {
-        findService.search("gove");
+        search("gove");
+
         slidingIncreasesNumber(results.speedVsAccuracySlider());
     }
 
     private void slidingIncreasesNumber(final Slider slider) {
-        slider.hover();
-        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(slider.tooltip()));
-        verifyThat("Tooltip appears on hover", slider.tooltip().isDisplayed());
-        final int firstNumber = slider.getValue();
+        final int firstNumber = sliderToolTipValue(slider);
 
         slider.dragBy(100);
         slider.hover();
@@ -87,7 +86,7 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Test
     public void testEveryMapEntityHasText() {
-        findService.search("trouble");
+        search("trouble");
 
         results.speedVsAccuracySlider().dragBy(100);
         Waits.loadOrFadeWait();
@@ -99,6 +98,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         final List<WebElement> textElements = results.mapEntityTextElements();
         verifyThat("Same number of text elements as map pieces", textElements.size(), is(numberEntities));
 
+        results.waitForMapLoaded();
         for (final WebElement textElement : textElements) {
             verifyThat("Text element not empty", textElement.getText(), not(""));
         }
@@ -123,9 +123,7 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Test
     public void testClickingOnMapEntities() {
-        findService.search("m");
-        results.waitForMapLoaded();
-        Waits.loadOrFadeWait();
+        search("m");
 
         assumeThat("Search has results for this data", results.emptyMessage(), not(displayed()));
         final List<String> clusterNames = results.parentEntityNames();
@@ -135,16 +133,65 @@ public class TopicMapITCase extends IdolFindTestBase {
         results.waitForMapLoaded();
 
         addedConcepts.add(results.clickChildEntityAndAddText(results.parentEntityNames().size()));
-        verifyThat("All " + addedConcepts.size() + " added concept terms added to search", selectedConcepts(),containsItems(addedConcepts));
+        Waits.loadOrFadeWait();
+
+        for(String concept : addedConcepts) {
+            verifyThat("Concept " + concept + " was added to the Concepts Panel", selectedConcepts(), hasItem(concept));
+        }
+    }
+
+    @Test
+    @ActiveBug("FIND-620")
+    public void testToolTipNotLyingAboutNumberDocsUsed() {
+        search("thing");
+
+        Slider slider = results.speedVsAccuracySlider();
+        final int originalToolTipValue = sliderToolTipValue(slider);
+
+        final List<String> originalParentEntityNames = results.parentEntityNames();
+
+        slider.dragBy(30);
+        results.waitForMapLoaded();
+        final List<String> changedParentNames = results.parentEntityNames();
+        assertThat("Changing the slider has changed the map",changedParentNames,
+                anyOf(not(hasSize(originalParentEntityNames.size())),
+                        not(containsItems(originalParentEntityNames))));
+
+        slider.dragBy(-30);
+        results.waitForMapLoaded();
+
+        //Selenium Actions.moveByOffset takes int -> cannot move by <1%
+        //Getting within 1 doc of the original value is permissible
+        assumeThat("Have returned tooltip to original value",sliderToolTipValue(slider),
+                anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
+                lessThanOrEqualTo(originalToolTipValue + 1)));
+        verifyThat("Same parent concepts as when originally loaded",results.parentEntityNames(),containsItems(originalParentEntityNames));
+    }
+
+    private int sliderToolTipValue(final Slider slider) {
+        slider.hover();
+        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(slider.tooltip()));
+        verifyThat("Tooltip appears on hover", slider.tooltip().isDisplayed());
+        return slider.getValue();
+    }
+
+    private void search(final String term) {
+        findService.search(term);
+        results.waitForMapLoaded();
     }
 
     private String stripSpaces(final CharSequence term) {
         return SPACE_PATTERN.matcher(term).replaceAll(Matcher.quoteReplacement(""));
     }
 
+    private String addsQuotes(final String term) {
+        return term.replace("\"","");
+    }
+
     private List<String> selectedConcepts() {
         return conceptsPanel.selectedConceptHeaders().stream()
                 .map(this::stripSpaces)
+                .map(this::addsQuotes)
                 .collect(Collectors.toList());
     }
 

@@ -146,6 +146,11 @@ public class FindPage extends AppElement implements AppPage,
         return (boolean) executor.executeScript(javaScript);
     }
 
+    //TODO: remove this when this class implements goToList
+    public Boolean listTabExists() {
+        return !mainContainer().findElements(By.cssSelector("[data-tab-id='list']")).isEmpty();
+    }
+
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {
         @Override
         public FindPage create(final WebDriver context) {

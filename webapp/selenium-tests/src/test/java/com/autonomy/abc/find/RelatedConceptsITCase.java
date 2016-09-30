@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
@@ -84,6 +85,7 @@ public class RelatedConceptsITCase extends FindTestBase {
 
     @Test
     @ResolvedBug({"CCUK-3498", "CSA-2066"})
+    @ActiveBug("FIND-666")
     public void testRelatedConceptsHover() {
         searchAndWait(findService, "Find");
         final String popover = relatedConceptsPanel().hoverOverRelatedConcept(0).getText();
@@ -93,6 +95,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-666")
     public void testMultipleAdditionalConcepts() {
         searchAndWait(findService, "bongo");
 
@@ -114,8 +117,10 @@ public class RelatedConceptsITCase extends FindTestBase {
 
     @Test
     @Category(CoreFeature.class)
+    @ActiveBug({"FIND-666","FIND-665"})
     public void testAddRemoveConcepts() {
         searchAndWait(findService, "jungle");
+
         final Collection<String> concepts = new ArrayList<>();
         final String firstConcept = clickFirstNewConcept(concepts, relatedConceptsPanel().relatedConcepts());
         final String secondConcept = clickFirstNewConcept(concepts, relatedConceptsPanel().relatedConcepts());
@@ -151,6 +156,7 @@ public class RelatedConceptsITCase extends FindTestBase {
 
     @Test
     @ResolvedBug("CCUK-3566")
+    @ActiveBug("FIND-666")
     public void testAdditionalConceptsNotAlsoRelated() {
         searchAndWait(findService, "matt");
         final Collection<String> addedConcepts = new ArrayList<>();
@@ -167,10 +173,13 @@ public class RelatedConceptsITCase extends FindTestBase {
 
     @Test
     @RelatedTo({"FIND-243", "FIND-110"})
+    @ActiveBug("FIND-666")
     public void testRefreshAddedConcepts() {
         searchAndWait(findService, "fresh");
+
         final Collection<String> concepts = new ArrayList<>();
         clickFirstNewConcept(concepts, relatedConceptsPanel().relatedConcepts());
+        getElementFactory().getResultsPage().waitForResultsToLoad();
         clickFirstNewConcept(concepts, relatedConceptsPanel().relatedConcepts());
         getWindow().refresh();
         navBar = getElementFactory().getTopNavBar();
@@ -181,7 +190,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-308")
+    @ActiveBug({"FIND-308","FIND-666"})
     public void testRelatedConceptsHoverNoExtraScrollBar() {
         searchAndWait(findService, "orange");
         // Bug not observed if few related concepts

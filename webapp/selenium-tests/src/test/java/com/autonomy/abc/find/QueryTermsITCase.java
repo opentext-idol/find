@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
@@ -52,7 +53,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     @Role(UserRole.FIND)
-    public void searchOnSimpleTerms() throws InterruptedException {
+    public void testSearchOnSimpleTerms() throws InterruptedException {
         goToListView();
 
         final String searchTerm = "Fred is a chimpanzee";
@@ -65,7 +66,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     @Role(UserRole.FIND)
-    public void searchForAll() {
+    public void testSearchForAll() {
         goToListView();
 
         final String searchTerm = "*";
@@ -78,7 +79,9 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     @Role(UserRole.BIFHI)
-    public void searchOnSimpleConcepts() throws InterruptedException {
+    public void testSearchOnSimpleConcepts() throws InterruptedException {
+        assumeThat("Currently should only run on prem - requires role infrastructure", !isHosted());
+
         goToListView();
 
         final String searchTerm = "chimpanzee";
@@ -90,7 +93,9 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     @Role(UserRole.BIFHI)
-    public void implicitSearchForAll() throws InterruptedException {
+    public void testImplicitSearchForAll() throws InterruptedException {
+        assumeThat("Currently should only run on prem - requires role infrastructure", !isHosted());
+
         goToListView();
 
         assertThat(getElementFactory().getResultsPage().getResults(), not(empty()));
@@ -206,6 +211,8 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @ActiveBug(value = "CCUK-3700", type = ApplicationType.ON_PREM)
     public void testWhitespaceSearch() {
+        assumeThat("Currently should only run on prem - requires role infrastructure", !isHosted());
+
         goToListView();
 
         try {

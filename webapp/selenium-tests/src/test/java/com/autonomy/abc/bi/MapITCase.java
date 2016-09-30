@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
@@ -58,6 +59,7 @@ public class MapITCase extends IdolFindTestBase {
 
         mapView.waitForMarkers();
         verifyThat("Map isn't stuck loading forever", !mapView.isLoading());
+        getElementFactory().getConceptsPanel().removeAllConcepts();
 
         search("tse");
         mapView.waitForMarkers();
@@ -78,6 +80,7 @@ public class MapITCase extends IdolFindTestBase {
         mapView = search("saint");
         checkMarkersPresent(mapView);
 
+        Waits.loadOrFadeWait();
         clickClustersUntilMarker();
 
         WebElement popover = mapView.popover();
@@ -111,7 +114,7 @@ public class MapITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-328")
-    //TODO: Bug involving result numbers needs investigating but blocked by FIND-642
+    @ActiveBug("FIND-649")
     public void testOnlyLocationDataInMapComparison() {
         final String firstSearch = "Dr Jekyll";
         final String secondSearch = "Mr Hyde";
@@ -154,7 +157,9 @@ public class MapITCase extends IdolFindTestBase {
     private MapView search(String searchTerm) {
         findService.search(searchTerm);
         findPage.goToMap();
-        return getElementFactory().getMap();
+        MapView map = getElementFactory().getMap();
+        map.waitForMarkers();
+        return map;
     }
 
 }

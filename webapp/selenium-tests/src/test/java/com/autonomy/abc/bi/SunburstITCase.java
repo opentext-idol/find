@@ -52,10 +52,18 @@ public class SunburstITCase extends IdolFindTestBase {
     //TODO: test that checks what happens to sunburst when docs have 2 (non-mutually exclusive) fields from the same category
 
     @Test
+    @ActiveBug("FIND-382")
+    public void testMessageOnFirstSearchIfNoValues() {
+        search("shambolisjlfijslifjeslj");
+        results.waitForSunburst();
+        verifyThat("Message appearing when no sunburst & search from Sunburst", results.message(), displayed());
+    }
+
+    @Test
     @ResolvedBug("FIND-251")
     @ActiveBug("FIND-382")
     public void testSunburstTabShowsSunburstOrMessage() {
-        search("shambolic");
+        search("s");
 
         results.waitForSunburst();
 
@@ -133,8 +141,8 @@ public class SunburstITCase extends IdolFindTestBase {
         search("elephant");
 
         assumeThat("Some segments not displayable", results.greySunburstAreaExists());
-        results.hoverOverTooFewToDisplaySegment();
 
+        results.hoverOverTooFewToDisplaySegment();
         verifyThat("Hovering on greyed segment explains why grey", results.getSunburstCentreName(), allOf(containsString("Please refine your search"), containsString("too small to display")));
     }
 
@@ -177,7 +185,7 @@ public class SunburstITCase extends IdolFindTestBase {
     public void testTwoParametricSelectorSunburst() {
         search("cameron");
 
-        results.parametricSelectionDropdown(1).select("Category");
+        results.parametricSelectionDropdown(1).select("Overall Vibe");
         results.waitForSunburst();
         final int segNumberBefore = results.numberOfSunburstSegments();
 
@@ -190,14 +198,14 @@ public class SunburstITCase extends IdolFindTestBase {
 
     //v data dependent -> needs these categories to be mutually exclusive
     @Test
-    @ActiveBug("FIND-267")
+    @ResolvedBug("FIND-267")
     public void testNoOverlapParametricFields() {
         search("*");
-        results.parametricSelectionDropdown(1).select("Person Sex");
+        results.parametricSelectionDropdown(1).select("Category");
         results.waitForSunburst();
         final int segNumberBefore = results.numberOfSunburstSegments();
 
-        results.parametricSelectionDropdown(2).select("Category");
+        results.parametricSelectionDropdown(2).select("Place");
         results.waitForSunburst();
         final int segNumberAfter = results.numberOfSunburstSegments();
 
