@@ -11,8 +11,6 @@ import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.FindParametricFilter;
-import com.autonomy.abc.selenium.query.IndexFilter;
-import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Slider;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
@@ -163,7 +161,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         results.waitForMapLoaded();
 
         //Selenium Actions.moveByOffset takes int -> cannot move by <1%
-        //Allow you to get with 1 doc of original
+        //Getting within 1 doc of the original value is permissible
         assumeThat("Have returned tooltip to original value",sliderToolTipValue(slider),
                 anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
                 lessThanOrEqualTo(originalToolTipValue + 1)));

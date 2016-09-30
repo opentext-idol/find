@@ -143,8 +143,7 @@ public class SunburstITCase extends IdolFindTestBase {
         assumeThat("Some segments not displayable", results.greySunburstAreaExists());
 
         results.hoverOverTooFewToDisplaySegment();
-        final String centreMessage = results.getSunburstCentreName();
-        verifyThat("Hovering on greyed segment explains why grey", centreMessage, allOf(containsString("Please refine your search"), containsString("too small to display")));
+        verifyThat("Hovering on greyed segment explains why grey", results.getSunburstCentreName(), allOf(containsString("Please refine your search"), containsString("too small to display")));
     }
 
     @Test
