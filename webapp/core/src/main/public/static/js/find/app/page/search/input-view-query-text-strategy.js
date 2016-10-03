@@ -1,6 +1,7 @@
 define([
-    'i18n!find/nls/bundle'
-], function (i18n) {
+    'i18n!find/nls/bundle',
+    'jquery'
+], function (i18n, $) {
     "use strict";
 
     return function (model) {
@@ -17,8 +18,8 @@ define([
             onExternalUpdate: function () {
                 return model.get('inputText');
             },
-            inFocus: $.noop(),
-            onBlur: $.noop()
+            inFocus: $.noop,
+            onBlur: $.noop
         }
     }
 });
