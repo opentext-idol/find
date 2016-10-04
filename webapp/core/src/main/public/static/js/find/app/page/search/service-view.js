@@ -30,17 +30,17 @@ define([
     'parametric-refinement/prettify-field-name',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
-            ParametricFieldsCollection, NumericParametricFieldsCollection, queryStrategy, stateTokenStrategy, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView, SunburstView,
-            MapResultsView, TableView, TimeBarView, configuration, prettifyFieldName, i18n, templateString) {
+], function (Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
+             ParametricFieldsCollection, NumericParametricFieldsCollection, queryStrategy, stateTokenStrategy, ResultsViewContainer,
+             ResultsViewSelection, RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView, SunburstView,
+             MapResultsView, TableView, TimeBarView, configuration, prettifyFieldName, i18n, templateString) {
     "use strict";
 
     var $window = $(window);
     var template = _.template(templateString);
 
     function updateScrollParameters() {
-        if(this.$middleContainerContents) {
+        if (this.$middleContainerContents) {
             this.middleColumnScrollModel.set({
                 innerHeight: this.$middleContainerContents.innerHeight(),
                 scrollTop: this.$middleContainerContents.scrollTop(),
@@ -55,7 +55,7 @@ define([
         // Can be overridden
         displayDependentParametricViews: true,
 
-        getSavedSearchControlViewOptions: function() {
+        getSavedSearchControlViewOptions: function () {
             return {};
         },
 
@@ -67,7 +67,7 @@ define([
 
         timeBarView: null,
 
-        initialize: function(options) {
+        initialize: function (options) {
             var hasBiRole = configuration().hasBiRole;
 
             this.indexesCollection = options.indexesCollection;
@@ -79,12 +79,6 @@ define([
             this.searchTypes = options.searchTypes;
             this.searchCollections = options.searchCollections;
 
-            this.entityCollection = new EntityCollection([], {
-                getSelectedRelatedConcepts: function() {
-                    return _.flatten(this.queryState.conceptGroups.pluck('concepts'));
-                }.bind(this)
-            });
-
             var searchType = this.savedSearchModel.get('type');
 
             this.queryModel = new QueryModel({
@@ -93,11 +87,11 @@ define([
                 promotionsStateMatchIds: this.savedSearchModel.get('promotionsStateTokens')
             }, {queryState: this.queryState});
 
-            this.listenTo(this.queryModel, 'change:indexes', function() {
+            this.listenTo(this.queryModel, 'change:indexes', function () {
                 this.queryState.selectedParametricValues.reset();
             });
 
-            this.listenTo(this.savedSearchModel, 'refresh', function() {
+            this.listenTo(this.savedSearchModel, 'refresh', function () {
                 this.queryModel.trigger('refresh');
             });
 
@@ -105,28 +99,28 @@ define([
 
             // Either:
             //      We have a change in the query model that is not related to the date filters
-            this.listenTo(this.queryModel, 'change', function(model) {
-                if(!_.has(model.changed, 'minDate') && !_.has(model.changed, 'maxDate')) {
+            this.listenTo(this.queryModel, 'change', function (model) {
+                if (!_.has(model.changed, 'minDate') && !_.has(model.changed, 'maxDate')) {
                     this.queryState.datesFilterModel.resetDateLastFetched();
                 }
             });
 
             // Or:
             //      We have a change in the selected date filter (but not to NEW or from NEW to null)
-            this.listenTo(this.queryState.datesFilterModel, 'change:dateRange', function(model, value) {
+            this.listenTo(this.queryState.datesFilterModel, 'change:dateRange', function (model, value) {
                 var changeToNewDocFilter = value === DatesFilterModel.DateRange.NEW;
                 var removeNewDocFilter = !value && model.previous('dateRange') === DatesFilterModel.DateRange.NEW;
 
-                if(!changeToNewDocFilter && !removeNewDocFilter) {
+                if (!changeToNewDocFilter && !removeNewDocFilter) {
                     this.queryState.datesFilterModel.resetDateLastFetched();
                 }
             });
 
             // If the saved search is unmodified and not new, update the last fetched date
-            this.listenTo(this.documentsCollection, 'sync', function() {
+            this.listenTo(this.documentsCollection, 'sync', function () {
                 var changed = this.queryState ? !this.savedSearchModel.equalsQueryState(this.queryState) : false;
 
-                if(!changed && !this.savedSearchModel.isNew()) {
+                if (!changed && !this.savedSearchModel.isNew()) {
                     this.savedSearchModel.save({dateDocsLastFetched: moment()});
                 }
             });
@@ -145,7 +139,6 @@ define([
                 dateParametricFieldsCollection: this.dateParametricFieldsCollection,
                 delayedIndexesSelection: options.delayedIndexesSelection,
                 documentsCollection: this.documentsCollection,
-                entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 highlightModel: this.highlightModel,
                 numericParametricFieldsCollection: this.numericParametricFieldsCollection,
@@ -169,10 +162,10 @@ define([
                 selectedTabModel: this.selectedTabModel
             };
 
-            if(hasBiRole) {
+            if (hasBiRole) {
                 this.savedSearchControlView = new SavedSearchControlView(_.extend(this.getSavedSearchControlViewOptions(), subViewArguments));
 
-                if(this.searchTypes[searchType].showTimeBar) {
+                if (this.searchTypes[searchType].showTimeBar) {
                     this.timeBarModel = new Backbone.Model({
                         graphedFieldName: null,
                         graphedDataType: null
@@ -190,10 +183,17 @@ define([
             var relatedConceptsClickHandler = this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments);
 
             // TODO: genericise removal of feature (FIND-245)
-            if(configuration().enableRelatedConcepts) {
+            if (configuration().enableRelatedConcepts) {
+                this.entityCollection = new EntityCollection([], {
+                    getSelectedRelatedConcepts: function () {
+                        return _.flatten(this.queryState.conceptGroups.pluck('concepts'));
+                    }.bind(this)
+                });
                 this.relatedConceptsView = new RelatedConceptsView(_.extend({
+                    entityCollection: this.entityCollection,
                     clickHandler: relatedConceptsClickHandler
                 }, subViewArguments));
+                this.fetchEntities();
             }
 
             this.middleColumnScrollModel = new Backbone.Model();
@@ -278,7 +278,7 @@ define([
             });
 
             // need a selector if multiple active views
-            if(this.resultsViews.length > 1) {
+            if (this.resultsViews.length > 1) {
                 this.resultsViewSelection = new ResultsViewSelection({
                     views: this.resultsViews,
                     model: resultsViewSelectionModel
@@ -295,7 +295,6 @@ define([
             this.fetchParametricFields(this.parametricFieldsCollection, _.bind(this.fetchParametricValueCollections, this));
             this.fetchParametricFields(this.numericParametricFieldsCollection);
             this.fetchParametricFields(this.dateParametricFieldsCollection);
-            this.fetchEntities();
 
             this.updateScrollParameters = updateScrollParameters.bind(this);
 
@@ -304,7 +303,7 @@ define([
                 .resize(this.updateScrollParameters);
         },
 
-        render: function() {
+        render: function () {
             var hasBiRole = configuration().hasBiRole;
 
             this.$el.html(template({
@@ -315,7 +314,7 @@ define([
             this.$middleContainer = this.$('.middle-container');
             this.renderTimeBar();
 
-            if(this.savedSearchControlView) {
+            if (this.savedSearchControlView) {
                 // the padding looks silly if we don't have the view so add it here
                 var $searchOptionContainer = this.$('.search-options-container').addClass('p-sm');
 
@@ -323,12 +322,12 @@ define([
             }
 
             // TODO: genericise removal of feature (FIND-245)
-            if(configuration().enableRelatedConcepts) {
+            if (configuration().enableRelatedConcepts) {
                 this.relatedConceptsView.render();
                 this.$('.related-concepts-container').append(this.relatedConceptsView.$el);
             }
 
-            if(this.resultsViewSelection) {
+            if (this.resultsViewSelection) {
                 this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
             }
 
@@ -336,7 +335,7 @@ define([
 
             this.leftSideFooterView.setElement(this.$('.left-side-footer')).render();
 
-            if(this.middleColumnHeaderView) {
+            if (this.middleColumnHeaderView) {
                 this.middleColumnHeaderView.setElement(this.$('.middle-column-header')).render();
             }
 
@@ -346,28 +345,28 @@ define([
             this.updateScrollParameters();
         },
 
-        renderTimeBar: function() {
-            if(this.timeBarView && this.$middleContainer) {
+        renderTimeBar: function () {
+            if (this.timeBarView && this.$middleContainer) {
                 this.$middleContainer.append(this.timeBarView.$el);
                 this.timeBarView.render();
             }
         },
 
-        updateTimeBar: function() {
+        updateTimeBar: function () {
             var graphedFieldName = this.timeBarModel.get('graphedFieldName');
             var graphedDataType = this.timeBarModel.get('graphedDataType');
             var collapsed = graphedFieldName === null;
 
-            if(this.$middleContainer) {
+            if (this.$middleContainer) {
                 this.$middleContainer.toggleClass('middle-container-with-time-bar', !collapsed);
             }
 
-            if(this.timeBarView) {
+            if (this.timeBarView) {
                 this.timeBarView.remove();
                 this.timeBarView = null;
             }
 
-            if(!collapsed) {
+            if (!collapsed) {
                 this.timeBarView = new TimeBarView({
                     queryModel: this.queryModel,
                     queryState: this.queryState,
@@ -381,13 +380,15 @@ define([
             }
         },
 
-        fetchData: function() {
-            this.fetchEntities();
+        fetchData: function () {
+            if (this.entityCollection) {
+                this.fetchEntities();
+            }
             this.fetchRestrictedParametricCollection();
         },
 
-        fetchEntities: function() {
-            if(this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+        fetchEntities: function () {
+            if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
                     databases: this.queryModel.get('indexes'),
                     queryText: this.queryModel.get('queryText'),
@@ -402,7 +403,7 @@ define([
             }
         },
 
-        containerToggle: function(event) {
+        containerToggle: function (event) {
             var $containerToggle = $(event.currentTarget);
             var $sideContainer = $containerToggle.closest('.side-container');
             var hide = !$sideContainer.hasClass('small-container');
@@ -412,17 +413,17 @@ define([
             $containerToggle.toggleClass('fa-rotate-180', hide);
         },
 
-        fetchParametricValueCollections: function() {
+        fetchParametricValueCollections: function () {
             this.fetchParametricValues();
             this.fetchRestrictedParametricCollection();
         },
 
-        fetchRestrictedParametricCollection: function() {
+        fetchRestrictedParametricCollection: function () {
             this.restrictedParametricCollection.reset();
 
             var fieldNames = this.parametricFieldsCollection.pluck('id');
 
-            if(fieldNames.length > 0 && this.queryModel.get('indexes').length !== 0) {
+            if (fieldNames.length > 0 && this.queryModel.get('indexes').length !== 0) {
                 this.restrictedParametricCollection.fetch({
                     data: {
                         fieldNames: fieldNames,
@@ -438,11 +439,11 @@ define([
             }
         },
 
-        rightSideContainerHideToggle: function(toggle) {
+        rightSideContainerHideToggle: function (toggle) {
             this.$('.right-side-container').toggle(toggle);
         },
 
-        remove: function() {
+        remove: function () {
             $window
                 .off('resize', this.updateScrollParameters)
                 .off('scroll', this.updateScrollParameters);

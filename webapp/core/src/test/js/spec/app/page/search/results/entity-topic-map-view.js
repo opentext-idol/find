@@ -6,8 +6,9 @@ define([
     'backbone',
     'find/app/configuration',
     'find/app/page/search/results/entity-topic-map-view',
-    'find/app/util/topic-map-view'
-], function(Backbone, configuration, EntityTopicMapView, TopicMapView) {
+    'find/app/util/topic-map-view',
+    'mock/model/entity-collection'
+], function(Backbone, configuration, EntityTopicMapView, TopicMapView, EntityCollection) {
     "use strict";
 
     describe('EntityTopicMapView', function() {
@@ -18,12 +19,14 @@ define([
             });
 
             this.clickHandler = jasmine.createSpy('clickHandler');
-            this.entityCollection = new Backbone.Collection();
+            this.queryModel = new Backbone.Model();
+            this.queryModel.getIsoDate = jasmine.createSpy('getIsoDate');
 
             this.createView = function() {
                 this.view = new EntityTopicMapView({
                     clickHandler: this.clickHandler,
-                    entityCollection: this.entityCollection
+                    queryModel: this.queryModel,
+                    type: 'QUERY'
                 });
 
                 // The view only updates when visible
@@ -33,6 +36,7 @@ define([
                 this.view.update();
 
                 this.topicMap = TopicMapView.instances[0];
+                this.entityCollection = EntityCollection.instances[0];
             };
         });
 
@@ -40,6 +44,7 @@ define([
             configuration.and.stub();
             this.view.remove();
             TopicMapView.reset();
+            EntityCollection.reset();
         });
 
         describe('rendered with no entities in the collection', function() {
@@ -64,42 +69,15 @@ define([
             });
         });
 
-        describe('rendered with a request in flight', function() {
-            beforeEach(function() {
-                this.entityCollection.currentRequest = true;
-
-                // Populate the collection to test that the current request overrides the empty condition
-                this.entityCollection.set([{text: 'gin', occurrences: 12, docsWithPhrase: 7}]);
-
-                this.createView();
-            });
-
-            it('shows the loading indicator', function() {
-                expect(this.view.$('.entity-topic-map-loading')).not.toHaveClass('hide');
-            });
-
-            it('does not show the empty message', function() {
-                expect(this.view.$('.entity-topic-map-empty')).toHaveClass('hide');
-            });
-
-            it('does not show the error message', function() {
-                expect(this.view.$('.entity-topic-map-error')).toHaveClass('hide');
-            });
-
-            it('does not show the topic map', function() {
-                expect(this.view.$('.entity-topic-map')).toHaveClass('hide');
-            });
-        });
-
         describe('rendered with entities in the collection', function() {
             beforeEach(function() {
-                this.entityCollection.set([
+                this.createView();
+                this.entityCollection.add([
                     {text: 'gin', occurrences: 12, docsWithPhrase: 7, cluster: 0},
                     {text: 'siege', occurrences: 23, docsWithPhrase: 1, cluster: 0},
                     {text: 'pneumatic', occurrences: 2, docsWithPhrase: 2, cluster: 1}
                 ]);
-
-                this.createView();
+                this.entityCollection.trigger('sync');
             });
 
             it('does not show the loading indicator', function() {
@@ -128,7 +106,6 @@ define([
 
             describe('when the entities collection is fetched', function() {
                 beforeEach(function() {
-                    this.entityCollection.currentRequest = true;
                     this.entityCollection.trigger('request');
                 });
 

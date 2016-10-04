@@ -7,6 +7,7 @@ define([
     'underscore',
     'find/app/util/model-any-changed-attribute-listener',
     'find/app/util/topic-map-view',
+    'find/app/model/entity-collection',
     'i18n!find/nls/bundle',
     'find/app/configuration',
     'find/app/util/generate-error-support-message',
@@ -14,7 +15,7 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'iCheck',
     'slider/bootstrap-slider'
-], function(Backbone, _, addChangeListener, TopicMapView, i18n, configuration, generateErrorHtml, template, loadingTemplate) {
+], function(Backbone, _, addChangeListener, TopicMapView, EntityCollection, i18n, configuration, generateErrorHtml, template, loadingTemplate) {
     'use strict';
 
     var loadingHtml = _.template(loadingTemplate)({i18n: i18n, large: true});
@@ -49,7 +50,13 @@ define([
         },
 
         initialize: function(options) {
-            this.entityCollection = options.entityCollection;
+            this.queryState = options.queryState;
+
+            this.entityCollection = new EntityCollection([], {
+                getSelectedRelatedConcepts: function() {
+                    return _.flatten(this.queryState.conceptGroups.pluck('concepts'));
+                }.bind(this)
+            });
             this.queryModel = options.queryModel;
             this.type = options.type;
 
@@ -59,23 +66,17 @@ define([
 
             this.errorTemplate = generateErrorHtml({messageToUser: i18n['search.topicMap.error']});
 
-            var viewState;
-
-            if(this.entityCollection.currentRequest) {
-                viewState = ViewState.LOADING;
-            } else {
-                viewState = this.entityCollection.isEmpty() ? ViewState.EMPTY : ViewState.MAP;
-            }
-
             this.viewModel = new Backbone.Model({
-                state: viewState
+                state: ViewState.EMPTY
             });
 
             this.model = new Backbone.Model({
-                maxCount: 10
+                maxCount: 10,
+                maxResults: 300
             });
 
             this.listenTo(this.model, 'change:maxResults', this.fetchRelatedConcepts);
+            this.listenTo(this.queryModel, 'change', this.fetchRelatedConcepts);
 
             this.listenTo(this.entityCollection, 'sync', function() {
                 this.viewModel.set('state', this.entityCollection.isEmpty() ? ViewState.EMPTY : ViewState.MAP);
@@ -95,7 +96,7 @@ define([
 
             this.listenTo(this.viewModel, 'change', this.updateViewState);
 
-            this.updateTopicMapData();
+            this.fetchRelatedConcepts();
         },
 
         update: function() {
@@ -216,7 +217,7 @@ define([
                     id: this.cid + '-speed-slider',
                     min: 50,
                     max: configuration().topicMapMaxResults,
-                    value: 300
+                    value: this.model.get('maxResults')
                 });
 
             this.topicMap.setElement(this.$('.entity-topic-map')).render();
