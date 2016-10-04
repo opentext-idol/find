@@ -51,22 +51,6 @@ define([
                         openEditText: {
                             create: snapshotsI18n['openEdit.create'],
                             edit: snapshotsI18n['openEdit.edit']
-                        },
-                        createSearchModelAttributes: function() {
-                            return {inputText: ''};
-                        },
-                        searchModelChange: function(options) {
-                            return function() {
-                                var newSearch = new SavedSearchModel({
-                                    queryText: options.searchModel.get('inputText'),
-                                    relatedConcepts: [],
-                                    title: i18n['search.newSearch'],
-                                    type: SavedSearchModel.Type.QUERY
-                                });
-
-                                options.savedQueryCollection.add(newSearch);
-                                options.selectedTabModel.set('selectedSearchCid', newSearch.cid);
-                            };
                         }
                     }
                 }, searchTypes);
