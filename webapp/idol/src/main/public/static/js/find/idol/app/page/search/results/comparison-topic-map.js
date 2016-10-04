@@ -26,32 +26,7 @@ define([
             var bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
             var firstQueryModel = this.createQueryModel(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
             var secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
-
-            var bothCollection = new EntityCollection([], {
-                getSelectedRelatedConcepts: _.constant([])
-            });
-            var firstCollection = new EntityCollection([], {
-                getSelectedRelatedConcepts: _.constant([])
-            });
-            var secondCollection = new EntityCollection([], {
-                getSelectedRelatedConcepts: _.constant([])
-            });
-
-            this.comparisons = [
-                {
-                    model: bothQueryModel,
-                    collection: bothCollection
-                },
-                {
-                    model: firstQueryModel,
-                    collection: firstCollection
-                },
-                {
-                    model: secondQueryModel,
-                    collection: secondCollection
-                }
-            ];
-
+            
             var resultsViews = [
                 {
                     Constructor: TopicMapView,
@@ -59,7 +34,6 @@ define([
                     uniqueId: _.uniqueId('results-view-item-'),
                     constructorArguments: {
                         clickHandler: _.noop,
-                        entityCollection: firstCollection,
                         queryModel: firstQueryModel,
                         type: 'COMPARISON'
                     },
@@ -74,7 +48,6 @@ define([
                     uniqueId: _.uniqueId('results-view-item-'),
                     constructorArguments: {
                         clickHandler: _.noop,
-                        entityCollection: bothCollection,
                         queryModel: bothQueryModel,
                         type: 'COMPARISON'
                     },
@@ -89,7 +62,6 @@ define([
                     uniqueId: _.uniqueId('results-view-item-'),
                     constructorArguments: {
                         clickHandler: _.noop,
-                        entityCollection: secondCollection,
                         queryModel: secondQueryModel,
                         type: 'COMPARISON'
                     },
@@ -117,8 +89,6 @@ define([
                 views: resultsViews,
                 model: resultsViewSelectionModel
             });
-
-            this.fetchRelatedConcepts();
         },
 
         render: function() {
@@ -142,18 +112,6 @@ define([
                 queryText: queryText,
                 indexes: indexes
             }, stateTokens));
-        },
-
-        fetchRelatedConcepts: function() {
-            _.forEach(this.comparisons, function(comparison) {
-                comparison.collection.fetch({
-                    data: _.extend({
-                        queryText: comparison.model.get('queryText'),
-                        databases: comparison.model.get('indexes'),
-                        fieldText: comparison.model.get('fieldText')
-                    }, stateTokenStrategy.requestParams(comparison.model))
-                })
-            })
         }
     })
 });

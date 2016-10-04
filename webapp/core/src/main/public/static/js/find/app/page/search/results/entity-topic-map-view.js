@@ -54,7 +54,9 @@ define([
 
             this.entityCollection = new EntityCollection([], {
                 getSelectedRelatedConcepts: function() {
-                    return _.flatten(this.queryState.conceptGroups.pluck('concepts'));
+                    // Comparison topic view does not have queryState
+                    return this.queryState ? _.flatten(this.queryState.conceptGroups.pluck('concepts')) : [];
+
                 }.bind(this)
             });
             this.queryModel = options.queryModel;
