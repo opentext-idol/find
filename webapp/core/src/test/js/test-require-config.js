@@ -40,6 +40,9 @@ require.config({
             'find/app/page/search/filters/parametric/numeric-parametric-view': 'mock/page/search/filters/parametric/numeric-parametric-view',
             'find/app/page/search/filters/parametric/parametric-view': 'mock/page/search/filters/parametric/parametric-view',
             'parametric-refinement/display-collection': 'mock/model/display-collection'
+        },
+        'find/app/page/search/results/entity-topic-map-view': {
+            'find/app/model/entity-collection': 'mock/model/entity-collection'
         }
     }
 });
