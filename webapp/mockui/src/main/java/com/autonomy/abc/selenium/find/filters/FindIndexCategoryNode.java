@@ -14,7 +14,7 @@ class FindIndexCategoryNode extends IndexCategoryNode {
     private final WebDriver driver;
 
     FindIndexCategoryNode(final WebElement clickable, final WebDriver webDriver) {
-        super(new FindIndexLeafNode(clickable, webDriver), clickable, webDriver);
+        super(new FindIndexLeafNode(clickable), clickable, webDriver);
         container = clickable;
         driver = webDriver;
     }
@@ -32,7 +32,7 @@ class FindIndexCategoryNode extends IndexCategoryNode {
     protected List<IndexNodeElement> getIndexNodes() {
         final List<IndexNodeElement> nodes = new ArrayList<>();
         for (final WebElement element : container.findElements(By.cssSelector(".clickable[data-name]"))) {
-            nodes.add(new FindIndexLeafNode(element, driver));
+            nodes.add(new FindIndexLeafNode(element));
         }
         return nodes;
     }
@@ -41,7 +41,7 @@ class FindIndexCategoryNode extends IndexCategoryNode {
     //TODO update this to use index name rather than data-name
     protected IndexNodeElement find(final String name) {
         final WebElement childElement = container.findElement(By.xpath(".//*[normalize-space(.)='" + name + "' and contains(@class,'clickable')]"));
-        return new FindIndexLeafNode(childElement, driver);
+        return new FindIndexLeafNode(childElement);
     }
 
     @Override

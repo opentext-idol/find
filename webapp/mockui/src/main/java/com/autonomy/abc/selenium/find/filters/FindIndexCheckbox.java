@@ -1,25 +1,31 @@
 package com.autonomy.abc.selenium.find.filters;
 
-import com.hp.autonomy.frontend.selenium.element.Checkbox;
+import com.hp.autonomy.frontend.selenium.element.CheckboxBase;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-class FindIndexCheckbox extends Checkbox {
+class FindIndexCheckbox extends CheckboxBase {
 
-    FindIndexCheckbox(final WebElement element, final WebDriver driver) {
-        super(element, element.findElement(By.className("check-cell")), driver);
+    private WebElement element;
+
+    FindIndexCheckbox(final WebElement element) {
+        this.element = element;
     }
 
-    @Override
     public String getName() {
-        return findElement(By.className("database-name")).getText();
+        return element.findElement(By.className("database-name")).getText();
     }
 
     @Override
     public boolean isChecked() {
-        return ElementUtil.hasClass("hp-check", getOuterBoxElement().findElement(By.tagName("i")));
+        return ElementUtil.hasClass("hp-check", element.findElement(By.tagName("i")));
+    }
+
+    @Override
+    public void toggle() {
+        element.click();
     }
 
     @Override
