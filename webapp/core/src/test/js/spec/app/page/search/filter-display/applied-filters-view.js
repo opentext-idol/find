@@ -62,7 +62,6 @@ define([
             it('clicking the Remove All button removes test labels, the Remove All' +
                 ' button, and resets the counter', function() {
                 this.view.$el.find('.remove-all-filters').click();
-                debugger;
                 expect(this.view.collection.isEmpty()).toBe(true);
                 expect(this.view.$el.find('.filter-label').length).toBe(0);
                 expect(this.view.getSectionControls()).toHaveClass('hide');
