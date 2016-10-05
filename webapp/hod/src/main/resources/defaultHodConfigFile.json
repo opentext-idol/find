@@ -64,6 +64,10 @@
             "enableMetaFilter": {
                 "user": false,
                 "bi": true
+            },
+            "resultViewOrder": {
+                "bi": ["list", "topic-map", "sunburst", "table", "map"],
+                "user": ["list"]
             }
         },
         "specialUrlPrefixes": {
