@@ -28,11 +28,11 @@ Find uses the Git commit hash as a "cache-buster" - all static files (CSS, JavaS
 
 We need to get the Git commit hash and pass it to Maven.
 
-`git rev-parse HEAD` will give you the hash of the latest commit on your current branch.
+`git rev-parse --short HEAD` will give you the hash of the latest commit on your current branch.
 
 From Bash, run the following command:
 
-    GIT_COMMIT=`git rev-parse HEAD`
+    GIT_COMMIT=`git rev-parse --short HEAD`
 
 You can check that this worked by running `echo $GIT_COMMIT` - this should print out the hash.
 
