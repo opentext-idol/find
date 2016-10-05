@@ -1,4 +1,5 @@
-# Requirements
+Requirements
+------------
 
 Building Find requires the following to be installed:
 
@@ -7,7 +8,8 @@ Building Find requires the following to be installed:
 * [NodeJS](http://nodejs.org)
 * [Java 8 JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
-# Get the code
+Get the code
+------------
 
 First, we use Git to clone Find from GitHub.  From your command line (hint: Git Bash is better than the Windows Command Prompt), run:
 
@@ -19,7 +21,8 @@ Change your current directory to be the new `find` folder:
 
 `cd find`
 
-# Build the Application
+Build the Application
+---------------------
 
 Run the following command:
 
@@ -32,13 +35,15 @@ If this doesn't work, check that you've installed everything correctly:
 - `java -version` should give you a version higher than 1.8.0 (e.g. "1.8.0_65")
 - `node -v` should give you a version higher than 0.12 (e.g. "v0.12.0")
 
-# Output Files
+Output Files
+------------
 
 - `hod/target/find-hod.war` - this is a build of Find with the Haven OnDemand modules included.  Use this if you want to run Find against Haven OnDemand
 - `idol/target/find.war` - this is a build of Find with the HPE IDOL modules included.  Use this if you want to run Find against HPE IDOL (note: this only works with IDOL 10 - IDOL 7 is **not supported**).
 - `on-prem-dist/target/find-*.zip` - this is a zip archive containing the IDOL build of Find (find.war) and some scripts for running Find as a service.  You probably don't want to use this - just ignore it.
 
-# Build Profiles
+Build Profiles
+--------------
 
 To optimize the JavaScript and CSS resources, run Maven with the `production` profile, like so:
 
