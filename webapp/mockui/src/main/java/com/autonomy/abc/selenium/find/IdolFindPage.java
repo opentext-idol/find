@@ -49,6 +49,10 @@ public class IdolFindPage extends FindPage {
                         ,"The list of databases has not yet been retrieved"));
     }
 
+    public void waitUntilSaveButtonsActive() {
+        new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active").until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
+    }
+
     public MainNumericWidget mainGraph() {return new MainNumericWidget(getDriver());}
 
     public boolean mainGraphDisplayed(){

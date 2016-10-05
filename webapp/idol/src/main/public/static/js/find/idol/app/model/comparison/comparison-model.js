@@ -12,7 +12,7 @@ define([
     var getComparisonAttributesFromSavedSearch = function(savedSearchModel, prefix) {
         var data = {};
 
-        data[prefix + 'Text'] = searchDataUtil.makeQueryText(savedSearchModel.get('queryText'), savedSearchModel.get('relatedConcepts'));
+        data[prefix + 'Text'] = searchDataUtil.makeQueryText(savedSearchModel.get('relatedConcepts'));
 
         if(savedSearchModel.get('type') === SavedSearchModel.Type.SNAPSHOT) {
             data[prefix + 'QueryStateToken'] = _.first(savedSearchModel.get('queryStateTokens'));

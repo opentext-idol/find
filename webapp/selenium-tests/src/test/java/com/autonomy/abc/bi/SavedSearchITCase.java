@@ -270,4 +270,33 @@ public class SavedSearchITCase extends IdolFindTestBase {
             description.appendText("a modified tab");
         }
     }
+
+
+    @Test
+    public void testDeletingATab() {
+        saveService.deleteAll();
+        saveManySearchesWithSameNameAsSearchText(new String[] {"yellow", "red"}, SearchType.QUERY);
+
+        SearchTabBar bar = elementFactory.getSearchTabBar();
+        final String title = bar.currentTab().getTitle();
+
+        final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
+        options.delete();
+        bar.waitUntilTabGone(title);
+
+        verifyThat("Deleted search is gone", bar.savedTabTitles(), not(contains(title)));
+    }
+
+    private void saveManySearchesWithSameNameAsSearchText(final String[] searchNames, final SearchType saveType) {
+        boolean firstSearch = true;
+        for (final String name : searchNames) {
+            if (!firstSearch){
+                saveService.openNewTab();
+            }
+            firstSearch = false;
+            findService.search(name);
+            getElementFactory().getFindPage().waitUntilSaveButtonsActive();
+            saveService.saveCurrentAs(name, saveType);
+        }
+    }
 }
