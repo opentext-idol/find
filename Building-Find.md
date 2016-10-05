@@ -21,12 +21,30 @@ Change your current directory to be the new `find` folder:
 
 `cd find`
 
+Store the Git Commit Hash
+-------------------------
+
+Find uses the Git commit hash as a "cache-buster" - all static files (CSS, JavaScript, HTML templates, etc) are "stamped" with the Git Commit hash as part of the build process.  This means that with every new build, all the file names (apart from index.html - the entry point to the application) change.  This is to make sure that browsers don't use old, cached versions of the code.
+
+We need to get the Git commit hash and pass it to Maven.
+
+`git rev-parse HEAD` will give you the hash of the latest commit on your current branch.
+
+From Bash, run the following command:
+
+    GIT_COMMIT=`git rev-parse HEAD`
+
+You can check that this worked by running `echo $GIT_COMMIT` - this should print out the hash.
+
+
 Build the Application
 ---------------------
 
 Run the following command:
 
-`mvn package`
+    mvn package -Dapplication.buildNumber=$GIT_COMMIT
+
+(`$GIT_COMMIT` assumes that you followed the steps in the "Store the Git Commit Hash" section and chose to call your variable `GIT_COMMIT`)
 
 You should see lots of scrolling text, followed by a large `BUILD SUCCESS` message.  This might take a few minutes!
 
