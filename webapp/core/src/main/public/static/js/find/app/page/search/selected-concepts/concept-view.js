@@ -64,7 +64,10 @@ define([
             });
             this.listView = new ListView({
                 collection: this.filteringCollection,
-                ItemView: ConceptClusterView
+                ItemView: ConceptClusterView,
+                collectionChangeEvents: {
+                    concepts: 'updateConcepts'
+                }
             });
 
             this.listenTo(this.conceptGroups, 'update reset', this.updateEmpty);
