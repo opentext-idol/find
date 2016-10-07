@@ -7,13 +7,12 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ParametricFieldContainer extends ListFilterContainer implements Iterable<FindParametricFilter> {
-    private final WebDriver driver;
 
     ParametricFieldContainer(final WebElement element, final WebDriver webDriver) {
         super(element, webDriver);
-        driver = webDriver;
     }
 
     @Override
@@ -27,13 +26,8 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
     }
 
     public List<FindParametricFilter> getFilters() {
-        final List<FindParametricFilter> boxes = new ArrayList<>();
         final List<WebElement> filters = getContainer().findElements(By.cssSelector(".parametric-value-element:not(.hide)"));
-
-        for (final WebElement el : filters) {
-            boxes.add(new FindParametricFilter(el, driver));
-        }
-        return boxes;
+        return filters.stream().map(FindParametricFilter::new).collect(Collectors.toList());
     }
 
     @Override
@@ -45,10 +39,7 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
             this.expand();
         }
 
-        List<String> filterNames = new ArrayList<>();
-        for(FindParametricFilter filter: getFilters()) {
-            filterNames.add(filter.getName());
-        }
+        List<String> filterNames = getFilters().stream().map(FindParametricFilter::getName).collect(Collectors.toList());
 
         // restore collapsed state
         if (startedCollapsed) {

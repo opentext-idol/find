@@ -136,12 +136,12 @@ public class FilterPanel {
 
     public FindParametricFilter checkboxForParametricValue(final String fieldName, final String fieldValue) {
         final WebElement checkbox = panel.findElement(By.cssSelector("[data-field-display-name='" + fieldName + "'] [data-value='" + fieldValue.toUpperCase() + "']"));
-        return new FindParametricFilter(checkbox, driver);
+        return new FindParametricFilter(checkbox);
     }
 
     public FindParametricFilter checkboxForParametricValue(final int fieldIndex, final int valueIndex) {
         final WebElement checkbox = panel.findElement(By.cssSelector("[data-field]:nth-of-type(" + cssifyIndex(fieldIndex) + ") [data-value]:nth-of-type(" + cssifyIndex(valueIndex) + ')'));
-        return new FindParametricFilter(checkbox, driver);
+        return new FindParametricFilter(checkbox);
     }
 
     //EXPANDING AND COLLAPSING
@@ -154,9 +154,7 @@ public class FilterPanel {
     }
 
     public void collapseAll() {
-        for(final Collapsible collapsible : allFilterContainers()) {
-            collapsible.collapse();
-        }
+        allFilterContainers().forEach(Collapsible::collapse);
     }
 
     //OTHER
