@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ParametricFilterModal extends ModalView implements Iterable<ParametricModalCheckbox> {
     //number of segments visible in sunburst - calculable from ParametricFilterModal
@@ -89,7 +90,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
     }
 
     public String checkCheckBoxInActivePane(final int i) {
-        final ParametricModalCheckbox box = new ParametricModalCheckbox(activePaneFilterList().get(i), getDriver());
+        final ParametricModalCheckbox box = new ParametricModalCheckbox(activePaneFilterList().get(i));
         box.check();
         return box.getName();
     }
@@ -108,11 +109,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
     }
 
     public List<ParametricModalCheckbox> values(){
-        final List<ParametricModalCheckbox> boxes = new ArrayList<>();
-        for (final WebElement checkbox: activePaneFilterList()){
-            boxes.add(new ParametricModalCheckbox(checkbox,driver));
-        }
-        return boxes;
+        return activePaneFilterList().stream().map(ParametricModalCheckbox::new).collect(Collectors.toList());
     }
 
     private int totalResultsInPane(final Iterable<ParametricModalCheckbox> checkboxes){
