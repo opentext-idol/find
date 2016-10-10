@@ -41,7 +41,7 @@ define([
             });
         });
 
-        describe('if the model contains multiple concepts', function() {
+        describe('if multiple concepts are in a cluster', function() {
             beforeEach(function() {
                 this.conceptModel.set({
                     concepts: ['dog', 'canine', 'wolf']
@@ -52,15 +52,6 @@ define([
 
             it('displays the first concept in the model', function() {
                 expect(this.view.$el).toContainText('dog');
-            });
-
-            it('displays every concept in a dropdown', function() {
-                const dropdownConcepts = this.view.$('.selected-related-concept-dropdown > li > a')
-                    .map(function(index, el) {
-                        return $(el).text();
-                    });
-
-                expect(dropdownConcepts).toEqual(['dog', 'canine', 'wolf']);
             });
         });
     });

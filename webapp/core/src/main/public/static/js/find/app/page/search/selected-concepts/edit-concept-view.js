@@ -37,7 +37,10 @@ define([
                 }
 
                 this.model.set({
-                    concepts: _.compact(concepts.map(function(string) {return string.trim()}))
+                    concepts: _.compact(concepts.map(function(string) {
+                        // the regex above will leave new lines if they were between quotes
+                        return string.replace('\n', ' ').trim();
+                    }))
                 });
 
                 this.trigger('remove');
