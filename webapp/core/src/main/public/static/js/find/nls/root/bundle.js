@@ -122,6 +122,8 @@ define([
         'search.document.url': 'URL',
         'search.document.mmapUrl': 'MMAP URL',
         'search.document.weight': 'Weight',
+        'search.editConcept.save': 'Save',
+        'search.editConcept.cancelSave': 'Cancel',
         'search.error.promotions': 'An error occurred while retrieving promotions',
         'search.error.relatedConcepts': 'Error: could not retrieve Related Concepts',
         'search.error.parametric': 'An error occurred while retrieving additional filters',

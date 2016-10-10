@@ -1178,6 +1178,8 @@ input.find-input {
     height: 19px;
     line-height: @selectedConceptsLineHeight;
     padding: 1px 6px;
+    background-color: @white;
+    cursor: pointer;
 
     i:before {
       color: @sidePanelLabelColour;
@@ -1191,46 +1193,6 @@ input.find-input {
       &:extend(.m-r-xs);
 
       max-width: @selectedConceptsMaxWidth;
-    }
-
-    &.selected-related-concept-cluster {
-      background-color: @white;
-
-      .selected-related-concept-dropdown-trigger-container, .selected-related-concept-dropdown-trigger {
-        &:extend(.inline-flex);
-      }
-
-      .btn-group {
-        vertical-align: inherit;
-
-        .dropdown-toggle {
-          box-shadow: inset @nil @nil @nil @nil;
-        }
-      }
-
-      .selected-related-concept-cluster-chevron {
-        line-height: 12px;
-      }
-    }
-  }
-
-  .selected-related-concept-dropdown-container {
-    &:extend(.absolute);
-
-    ul {
-      min-width: 100px;
-
-      a {
-        font-size: @labelSize;
-        line-height: 20px;
-        padding: 1px 10px;
-
-        &:hover {
-          background: inherit;
-          color: inherit;
-          cursor: default;
-        }
-      }
     }
   }
 }
