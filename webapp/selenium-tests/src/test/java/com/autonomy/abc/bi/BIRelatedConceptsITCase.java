@@ -63,7 +63,7 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
             findPage.goToTopicMap();
             topicMap.waitForMapLoaded();
 
-            topicMap.clickChildEntityAndAddText(1);
+            topicMap.clickChildEntityAndAddText(topicMap.parentEntityNames().size());
             Waits.loadOrFadeWait();
 
             findPage.goToListView();
