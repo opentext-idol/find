@@ -133,6 +133,12 @@
             </properties>
         </profile>
         <profile>
+            <id>release</id>
+            <properties>
+                    <build.config.base>release.json</build.config.base>
+            </properties>
+        </profile>
+        <profile>
             <id>core</id>
             <build>
                 <plugins>
