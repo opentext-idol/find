@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

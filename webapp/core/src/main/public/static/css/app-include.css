@@ -912,7 +912,12 @@ input.find-input {
     margin-bottom: 5px;
 }
 
-/* Loading spinner */
+.parametric-results-accuracy-warning {
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+    /* Loading spinner */
 .loading-spinner {
     text-align: center;
     font-size: 18px;

@@ -4,6 +4,9 @@
  */
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.frontend.find.core.fields.FieldAndValue;
+import com.hp.autonomy.frontend.find.core.fields.ParametricRange;
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -29,8 +33,9 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
 
     public static final String QUERY_TEXT_PARAM = "queryText";
     public static final String DATABASES_PARAM = "databases";
-    public static final String FIELD_TEXT_PARAM = "fieldText";
     public static final String STATE_TOKEN_PARAM = "stateTokens";
+    private static final String FIELD_MATCH_PARAM = "field_matches";
+    private static final String FIELD_RANGE_PARAM = "field_ranges";
     private static final String MIN_DATE_PARAM = "minDate";
     private static final String MAX_DATE_PARAM = "maxDate";
     private static final String MIN_SCORE_PARAM = "minScore";
@@ -41,13 +46,16 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
     private final RelatedConceptsService<Q, S, E> relatedConceptsService;
     private final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory;
     private final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory;
+    private final FieldTextParser fieldTextParser;
 
     protected RelatedConceptsController(final RelatedConceptsService<Q, S, E> relatedConceptsService,
                                         final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory,
-                                        final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory) {
+                                        final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory,
+                                        final FieldTextParser fieldTextParser) {
         this.relatedConceptsService = relatedConceptsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.relatedConceptsRequestBuilderFactory = relatedConceptsRequestBuilderFactory;
+        this.fieldTextParser = fieldTextParser;
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -55,7 +63,8 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
     @ResponseBody
     public List<Q> findRelatedConcepts(
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
-            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(value = FIELD_MATCH_PARAM, required = false) final Collection<FieldAndValue> fieldAndValues,
+            @RequestParam(value = FIELD_RANGE_PARAM, required = false) final Collection<ParametricRange> parametricRanges,
             @RequestParam(DATABASES_PARAM) final List<S> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
@@ -65,7 +74,7 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
     ) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
                 .setQueryText(queryText)
-                .setFieldText(fieldText)
+                .setFieldText(fieldTextParser.toFieldText(fieldAndValues, parametricRanges, null))
                 .setDatabases(databases)
                 .setMinDate(minDate)
                 .setMaxDate(maxDate)

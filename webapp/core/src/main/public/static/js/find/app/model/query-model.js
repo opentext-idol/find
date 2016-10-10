@@ -5,8 +5,9 @@
 
 define([
     'backbone',
-    'find/app/util/search-data-util'
-], function(Backbone, searchDataUtil) {
+    'find/app/util/search-data-util',
+    'parametric-refinement/to-fields-and-ranges'
+], function(Backbone, searchDataUtil, toFieldsAndRanges) {
     
     'use strict';
     
@@ -32,7 +33,8 @@ define([
             autoCorrect: true,
             queryText: '',
             indexes: [],
-            fieldText: null,
+            field_matches: null,
+            field_ranges: null,
             minDate: undefined,
             maxDate: undefined,
             minScore: 0,
@@ -72,14 +74,27 @@ define([
                 this.set('fieldText', fieldTextNode ? fieldTextNode : null);
             }, this), DEBOUNCE_WAIT_MILLISECONDS));
 
-            var fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
+            var fieldTexts = toFieldsAndRanges(this.queryState.selectedParametricValues.models);
 
             this.set(_.extend({
                 queryText: this.queryState.queryTextModel.makeQueryText(),
                 minScore: this.queryState.minScoreModel.get('minScore'),
                 indexes: collectionBuildIndexes(this.queryState.selectedIndexes),
-                fieldText: fieldTextNode ? fieldTextNode : null
+                field_matches: fieldTexts.parametricValues || null,
+                field_ranges: fieldTexts.parametricRanges || null
             }, this.queryState.datesFilterModel.toQueryModelAttributes()));
+        },
+
+        getFieldMatches: function() {
+            return _.map(toFieldsAndRanges(this.queryState.selectedParametricValues.models).parametricValues, function(value) {
+                return value.field + "::" + value.value;
+            }).join(',');
+        },
+
+        getFieldRanges: function() {
+            return _.map(toFieldsAndRanges(this.queryState.selectedParametricValues.models).parametricRanges, function(range) {
+                return range.field + "::" + range.min + "::" + range.max + "::" + range.type;
+            }).join(',');
         },
 
         getIsoDate: function(type) {

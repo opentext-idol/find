@@ -23,7 +23,6 @@ public class HodParametricValuesServiceIT extends AbstractParametricValuesServic
                 .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH))
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)

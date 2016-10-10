@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.search;
 
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsControllerTest;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
@@ -24,9 +25,9 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class HodRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<Entity, HodQueryRestrictions, HodRelatedConceptsRequest, ResourceIdentifier, HodErrorException> {
     @Override
-    protected RelatedConceptsController<Entity, HodQueryRestrictions, HodRelatedConceptsRequest, ResourceIdentifier, HodErrorException> buildController(final RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> relatedConceptsService, final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.Builder<HodRelatedConceptsRequest, ResourceIdentifier>> relatedConceptsRequestBuilderFactory) {
+    protected RelatedConceptsController<Entity, HodQueryRestrictions, HodRelatedConceptsRequest, ResourceIdentifier, HodErrorException> buildController(final RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> relatedConceptsService, final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.Builder<HodRelatedConceptsRequest, ResourceIdentifier>> relatedConceptsRequestBuilderFactory, final FieldTextParser fieldTextParser) {
         when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new HodQueryRestrictions.Builder());
         when(relatedConceptsRequestBuilderFactory.getObject()).thenReturn(new HodRelatedConceptsRequest.Builder());
-        return new HodRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
+        return new HodRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory, fieldTextParser);
     }
 }

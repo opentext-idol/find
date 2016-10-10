@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class IdolParametricValuesControllerTest extends AbstractParametricValuesControllerTest<IdolParametricValuesController, IdolQueryRestrictions, IdolParametricRequest, String, AciErrorException> {
     @Override
     protected IdolParametricValuesController newControllerInstance() {
-        return new IdolParametricValuesController(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
+        return new IdolParametricValuesController(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory, fieldTextParser);
     }
 
     @Override

@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Transient;
 
 @SuppressWarnings("WeakerAccess")
 @Embeddable
@@ -20,6 +21,9 @@ public class FieldAndValue {
 
     private String field;
     private String value;
+
+    @Transient
+    private String fieldDisplayName;
 
     @JsonCreator
     public FieldAndValue(

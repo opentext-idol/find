@@ -10,9 +10,10 @@ define([
     'i18n!find/nls/bundle',
     'find/app/page/search/results/field-selection-view',
     'text!find/templates/app/page/search/results/parametric-results-view.html',
+    'text!find/templates/app/page/search/results/accuracy-warning.html',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, DependentParametricCollection, _, $, i18n, FieldSelectionView, template, generateErrorHtml, loadingSpinnerTemplate) {
+], function(Backbone, DependentParametricCollection, _, $, i18n, FieldSelectionView, template, accuracyTemplate, generateErrorHtml, loadingSpinnerTemplate) {
     'use strict';
 
     var fieldInvalid = function(field, fields) {
@@ -36,6 +37,7 @@ define([
 
     return Backbone.View.extend({
         template: _.template(template),
+        accuracyHtml: _.template(accuracyTemplate)({warning: i18n['search.parametric.accuracy.warning']}),
         loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
 
         initialize: function(options) {
@@ -75,6 +77,10 @@ define([
             this.$errorMessage = this.$('.parametric-view-error-message');
 
             this.$parametricSelections = this.$('.parametric-selections').addClass('hide');
+
+            this.$accuracyWarning = $(this.accuracyHtml);
+            this.$parametricSelections.append(this.$accuracyWarning);
+            this.$accuracyWarning.addClass('hide');
 
             this.listenTo(this.fieldsCollection.at(0), 'change:field', this.secondSelection);
 
@@ -157,6 +163,7 @@ define([
             this.model.set('loading', false);
 
             if(!this.parametricCollection.fetching && !this.dependentParametricCollection.isEmpty()) {
+                this.$accuracyWarning.toggleClass("hide", this.dependentParametricCollection.accurateCounts);
                 this.update();
             } else if(this.dependentParametricCollection.isEmpty()) {
                 this.model.set('loading', false);
@@ -179,7 +186,7 @@ define([
             this.firstChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(0),
                 name: 'first',
-                fields: _.difference(this.parametricCollection.pluck('id'), this.selectedParametricValues.pluck('field')).sort(),
+                fields: _.difference(this.parametricCollection.pluck('name'), this.selectedParametricValues.pluck('field')).sort(),
                 allowEmpty: false
             });
 
@@ -195,11 +202,16 @@ define([
             this.secondChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(1),
                 name: 'second',
-                fields: _.difference(this.parametricCollection.pluck('id'), _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))).sort(),
+                fields: _.difference(this.parametricCollection.pluck('name'), _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))).sort(),
                 allowEmpty: true
             });
 
-            this.$parametricSelections.append(this.secondChosen.$el);
+            if (this.firstChosen) {
+                this.firstChosen.$el.after(this.secondChosen.$el);
+            }
+            else {
+                this.$parametricSelections.prepend(this.secondChosen.$el);
+            }
             this.secondChosen.render();
         },
 
@@ -236,7 +248,8 @@ define([
                     data: {
                         databases: this.queryModel.get('indexes'),
                         queryText: this.queryModel.get('queryText'),
-                        fieldText: this.queryModel.get('fieldText') ? this.queryModel.get('fieldText').toString() : '',
+                        field_matches: this.queryModel.getFieldMatches(),
+                        field_ranges: this.queryModel.getFieldRanges(),
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),
                         minScore: this.queryModel.get('minScore'),

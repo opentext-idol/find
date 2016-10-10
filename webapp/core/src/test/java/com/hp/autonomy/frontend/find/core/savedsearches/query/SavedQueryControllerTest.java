@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
+import com.hp.autonomy.searchcomponents.core.fields.FieldsMapper;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
@@ -40,6 +41,8 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
     private Documents<D> searchResults;
     @Mock
     protected QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
+    @Mock
+    protected FieldsMapper fieldsMapper;
 
     private SavedQueryController<S, Q, D, E> savedQueryController;
 

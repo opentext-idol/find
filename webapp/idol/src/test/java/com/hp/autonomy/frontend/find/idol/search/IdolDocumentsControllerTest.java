@@ -18,7 +18,7 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
     @Before
     public void setUp() {
         when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new IdolQueryRestrictions.Builder());
-        documentsController = new IdolDocumentsController(documentsService, queryRestrictionsBuilderFactory);
+        documentsController = new IdolDocumentsController(documentsService, queryRestrictionsBuilderFactory, fieldTextParser);
         databaseType = String.class;
     }
 

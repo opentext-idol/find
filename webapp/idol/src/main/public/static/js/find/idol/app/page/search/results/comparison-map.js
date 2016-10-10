@@ -229,18 +229,11 @@ define([
             var latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
             var longitudeFieldsInfo = configuration().fieldsInfo[locationField.longitudeField];
 
-            var latitudesFieldsString = latitudeFieldsInfo.names.join(':');
-            var longitudeFieldsString = longitudeFieldsInfo.names.join(':');
-
-            var exists = 'EXISTS{}:' + latitudesFieldsString + ' AND EXISTS{}:' + longitudeFieldsString;
-
-            var newFieldText = queryModel.get('fieldText') ? queryModel.get('fieldText') + ' AND ' + exists : exists;
-
             return {
                 data: _.extend({
                     start: length + 1,
                     max_results: length + this.resultsStep,
-                    field_text: newFieldText,
+                    field_exists: _.union(latitudeFieldsInfo.names, longitudeFieldsInfo.names),
                     sort: 'relevance',
                     summary: 'context'
                 }, stateTokenStrategy.requestParams(queryModel)),

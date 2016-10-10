@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
-import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;

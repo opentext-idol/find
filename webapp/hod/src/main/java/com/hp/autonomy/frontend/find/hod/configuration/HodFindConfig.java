@@ -17,7 +17,6 @@ import com.hp.autonomy.frontend.configuration.PasswordsConfig;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
-import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
@@ -50,7 +49,6 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private final MapConfiguration map;
     private final UiCustomization uiCustomization;
     private final Integer minScore;
-    private final Set<ParametricDisplayValues> parametricDisplayValues;
     private final Integer topicMapMaxResults;
 
     @JsonProperty("savedSearches")
@@ -68,7 +66,6 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         uiCustomization = builder.uiCustomization;
         savedSearchConfig = builder.savedSearchConfig;
         minScore = builder.minScore;
-        parametricDisplayValues = builder.parametricDisplayValues;
         topicMapMaxResults = builder.topicMapMaxResults;
     }
 
@@ -87,7 +84,6 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
                 .setUiCustomization(uiCustomization == null ? config.uiCustomization : uiCustomization.merge(config.uiCustomization))
                 .setSavedSearchConfig(savedSearchConfig == null ? config.savedSearchConfig : savedSearchConfig.merge(config.savedSearchConfig))
                 .setMinScore(minScore == null ? config.minScore : minScore)
-                .setParametricDisplayValues(parametricDisplayValues == null ? config.parametricDisplayValues : parametricDisplayValues)
                 .setTopicMapMaxResults(topicMapMaxResults == null ? config.topicMapMaxResults : topicMapMaxResults)
                 .build() : this;
     }
@@ -187,7 +183,6 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         @JsonProperty("savedSearches")
         private SavedSearchConfig savedSearchConfig;
         private Integer minScore;
-        private Set<ParametricDisplayValues> parametricDisplayValues;
         private Integer topicMapMaxResults;
 
         public Builder(final HodFindConfig config) {
@@ -202,7 +197,6 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
             uiCustomization = config.uiCustomization;
             savedSearchConfig = config.savedSearchConfig;
             minScore = config.minScore;
-            parametricDisplayValues = config.parametricDisplayValues;
             topicMapMaxResults = config.topicMapMaxResults;
         }
 

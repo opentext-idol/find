@@ -21,8 +21,6 @@ public interface FindConfig {
 
     UiCustomization getUiCustomization();
 
-    Set<ParametricDisplayValues> getParametricDisplayValues();
-
     Integer getTopicMapMaxResults();
 
 }

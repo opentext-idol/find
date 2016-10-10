@@ -4,6 +4,7 @@
  */
 package com.hp.autonomy.frontend.find.hod.search;
 
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
@@ -22,8 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 class HodDocumentsController extends DocumentsController<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
     @Autowired
     public HodDocumentsController(final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService,
-                                  final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory) {
-        super(documentsService, queryRestrictionsBuilderFactory);
+                                  final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory,
+                                  final FieldTextParser fieldTextParser) {
+        super(documentsService, queryRestrictionsBuilderFactory, fieldTextParser);
     }
 
     @Override

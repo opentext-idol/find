@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsControllerTest;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
@@ -20,9 +21,9 @@ import static org.mockito.Mockito.when;
 
 public class IdolRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<QsElement, IdolQueryRestrictions, IdolRelatedConceptsRequest, String, AciErrorException> {
     @Override
-    protected RelatedConceptsController<QsElement, IdolQueryRestrictions, IdolRelatedConceptsRequest, String, AciErrorException> buildController(final RelatedConceptsService<QsElement, String, AciErrorException> relatedConceptsService, final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.Builder<IdolRelatedConceptsRequest, String>> relatedConceptsRequestBuilderFactory) {
+    protected RelatedConceptsController<QsElement, IdolQueryRestrictions, IdolRelatedConceptsRequest, String, AciErrorException> buildController(final RelatedConceptsService<QsElement, String, AciErrorException> relatedConceptsService, final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.Builder<IdolRelatedConceptsRequest, String>> relatedConceptsRequestBuilderFactory, final FieldTextParser fieldTextParser) {
         when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new IdolQueryRestrictions.Builder());
         when(relatedConceptsRequestBuilderFactory.getObject()).thenReturn(new IdolRelatedConceptsRequest.Builder());
-        return new IdolRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
+        return new IdolRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory, fieldTextParser);
     }
 }

@@ -16,7 +16,8 @@ define([
         url: '../api/public/parametric/dependent-values',
 
         parse: function(data) {
-            this.columnNames = _.chain(data)
+            this.accurateCounts = data.countsMatch;
+            this.columnNames = _.chain(data.recursiveFields)
             // take all the field arrays
                 .pluck('field')
                 // flatten into a single array so we can pluck the values
@@ -24,7 +25,7 @@ define([
                 .pluck('value')
                 // make unique and sort
                 .uniq()
-                .sort()
+                .sortBy(function(name) {return name.toLowerCase()})
                 .value();
 
             if (_.contains(this.columnNames, '')) {
@@ -35,7 +36,7 @@ define([
             }
 
             if (_.isEmpty(this.columnNames)) {
-                return _.map(data, function(datum) {
+                return _.map(data.recursiveFields, function(datum) {
                     return {
                         count: Number(datum.count),
                         text: datum.value
@@ -43,7 +44,7 @@ define([
                 });
             }
             else {
-                return _.map(data, function(datum) {
+                return _.map(data.recursiveFields, function(datum) {
                     var columns = _.chain(datum.field)
                         .map(function(field) {
                             var value = {};

@@ -23,7 +23,6 @@ public abstract class AbstractRelatedConceptsServiceIT extends AbstractFindIT {
         final MockHttpServletRequestBuilder request = get(RelatedConceptsController.RELATED_CONCEPTS_PATH)
                 .param(RelatedConceptsController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(RelatedConceptsController.QUERY_TEXT_PARAM, "*")
-                .param(RelatedConceptsController.FIELD_TEXT_PARAM, "")
                 .with(authentication(userAuth()));
 
         mockMvc

@@ -16,7 +16,6 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexServi
 import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
-import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.searchcomponents.core.caching.CacheNames;
 import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
@@ -30,6 +29,7 @@ import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.Warnings;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;

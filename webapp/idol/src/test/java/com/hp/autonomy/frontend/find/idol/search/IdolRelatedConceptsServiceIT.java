@@ -47,7 +47,6 @@ public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsService
         final MockHttpServletRequestBuilder request = get(RelatedConceptsController.RELATED_CONCEPTS_PATH)
                 .param(RelatedConceptsController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(RelatedConceptsController.QUERY_TEXT_PARAM, "*")
-                .param(RelatedConceptsController.FIELD_TEXT_PARAM, "")
                 .param(RelatedConceptsController.STATE_TOKEN_PARAM, stateToken)
                 .with(authentication(userAuth()));
 

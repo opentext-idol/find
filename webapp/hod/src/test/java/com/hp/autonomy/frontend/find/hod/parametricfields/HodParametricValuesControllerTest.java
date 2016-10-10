@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 public class HodParametricValuesControllerTest extends AbstractParametricValuesControllerTest<HodParametricValuesController, HodQueryRestrictions, HodParametricRequest, ResourceIdentifier, HodErrorException> {
     @Override
     protected HodParametricValuesController newControllerInstance() {
-        return new HodParametricValuesController(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
+        return new HodParametricValuesController(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory, fieldTextParser);
     }
 
     @Override

@@ -5,7 +5,9 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
+import com.hp.autonomy.searchcomponents.core.fields.FieldsMapper;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
@@ -43,6 +45,9 @@ public abstract class AbstractParametricValuesControllerTest<C extends Parametri
     @Mock
     protected ObjectFactory<ParametricRequest.Builder<R, S>> parametricRequestBuilderFactory;
 
+    @Mock
+    protected FieldTextParser fieldTextParser;
+
     protected C parametricValuesController;
 
     protected abstract C newControllerInstance();
@@ -54,8 +59,8 @@ public abstract class AbstractParametricValuesControllerTest<C extends Parametri
 
     @Test
     public void getDependentParametricValues() throws E {
-        parametricValuesController.getDependentParametricValues(Collections.singletonList("SomeParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
-        verify(parametricValuesService).getDependentParametricValues(Matchers.<R>any());
+        parametricValuesController.getDependentParametricValues(Collections.singletonList("SomeParametricField"), "Some query text", null, null, Collections.emptyList(), null, null, 0, null);
+        verify(parametricValuesService).getDependentParametricValues(Matchers.any());
     }
 
     @Test
@@ -65,14 +70,14 @@ public abstract class AbstractParametricValuesControllerTest<C extends Parametri
         final RangeInfo rangeInfo = mock(RangeInfo.class);
         final BucketingParams expectedBucketingParams = new BucketingParams(5, -0.5, 0.5);
 
-        when(parametricValuesService.getNumericParametricValuesInBuckets(Matchers.<R>any(), Matchers.<Map<String, BucketingParams>>any())).thenAnswer(new Answer<List<RangeInfo>>() {
+        when(parametricValuesService.getNumericParametricValuesInBuckets(Matchers.any(), Matchers.any())).thenAnswer(new Answer<List<RangeInfo>>() {
             @Override
             public List<RangeInfo> answer(final InvocationOnMock invocation) {
                 @SuppressWarnings("unchecked")
                 final Map<String, BucketingParams> bucketingParamsPerField = invocation.getArgumentAt(1, Map.class);
 
                 final BucketingParams bucketingParams = bucketingParamsPerField.get(fieldName);
-                return expectedBucketingParams.equals(bucketingParams) ? Collections.singletonList(rangeInfo) : Collections.<RangeInfo>emptyList();
+                return expectedBucketingParams.equals(bucketingParams) ? Collections.singletonList(rangeInfo) : Collections.emptyList();
             }
         });
 
@@ -82,8 +87,9 @@ public abstract class AbstractParametricValuesControllerTest<C extends Parametri
                 expectedBucketingParams.getMin(),
                 expectedBucketingParams.getMax(),
                 "*",
-                "",
-                Collections.<S>emptyList(),
+                null,
+                null,
+                Collections.emptyList(),
                 null,
                 null,
                 0

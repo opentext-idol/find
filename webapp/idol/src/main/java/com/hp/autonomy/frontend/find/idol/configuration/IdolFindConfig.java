@@ -9,8 +9,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.hp.autonomy.frontend.configuration.*;
-import com.hp.autonomy.frontend.find.core.configuration.*;
+import com.hp.autonomy.frontend.configuration.AbstractConfig;
+import com.hp.autonomy.frontend.configuration.Authentication;
+import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
+import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
+import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.configuration.ServerConfig;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
+import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
@@ -21,8 +29,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.util.Set;
 
 @SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
 @Data
@@ -43,7 +49,6 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
-    private final Set<ParametricDisplayValues> parametricDisplayValues;
 
     public IdolFindConfig(final Builder builder) {
         login = builder.login;
@@ -58,7 +63,6 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         minScore = builder.minScore;
         statsServer = builder.statsServer;
         topicMapMaxResults = builder.topicMapMaxResults;
-        parametricDisplayValues = builder.parametricDisplayValues;
     }
 
     @Override
@@ -79,7 +83,6 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .setMap(map == null ? other.map : map.merge(other.map))
                 .setMinScore(minScore == null ? other.minScore : minScore)
                 .setStatsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
-                .setParametricDisplayValues(parametricDisplayValues == null ? other.parametricDisplayValues : parametricDisplayValues)
                 .setTopicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
                 .build();
     }
@@ -160,7 +163,6 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         private MapConfiguration map;
         private Integer minScore;
         private StatsServerConfig statsServer;
-        private Set<ParametricDisplayValues> parametricDisplayValues;
         private Integer topicMapMaxResults;
 
         public Builder(final IdolFindConfig config) {
@@ -176,7 +178,6 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             minScore = config.minScore;
             statsServer = config.statsServer;
             topicMapMaxResults = config.topicMapMaxResults;
-            parametricDisplayValues = config.parametricDisplayValues;
         }
 
         public IdolFindConfig build() {

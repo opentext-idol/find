@@ -5,12 +5,10 @@
 
 package com.hp.autonomy.frontend.find.core.stats;
 
-import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-
-import javax.xml.bind.annotation.XmlElement;
 
 @Data
 @RequiredArgsConstructor(access = AccessLevel.NONE)

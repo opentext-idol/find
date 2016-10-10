@@ -14,7 +14,6 @@ define([
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/page/search/filters/parametric/numeric-widget',
     'find/app/model/bucketed-parametric-collection',
-    'parametric-refinement/prettify-field-name',
     'parametric-refinement/to-field-text-node',
     'find/app/util/date-picker',
     'find/app/util/model-any-changed-attribute-listener',
@@ -24,7 +23,7 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
 ], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, rounder, numericWidget,
-            BucketedParametricCollection, prettifyFieldName, toFieldTextNode, datePicker, addChangeListener,
+            BucketedParametricCollection, toFieldTextNode, datePicker, addChangeListener,
             template, numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
 
     'use strict';
@@ -139,7 +138,7 @@ define([
                 .empty()
                 .append(this.template({
                     i18n: i18n,
-                    fieldName: this.hideTitle ? undefined : prettifyFieldName(this.model.get('name')),
+                    fieldName: this.hideTitle ? undefined : this.model.get('name'),
                     clickable: Boolean(this.clickCallback),
                     buttonsEnabled: this.buttonsEnabled,
                     inputsRowClass: this.selectionEnabled || this.coordinatesEnabled ? '' : 'hide',
@@ -312,7 +311,7 @@ define([
                 this.bucketModel.fetch({
                     data: {
                         queryText: this.queryModel.get('queryText'),
-                        fieldText: toFieldTextNode(otherSelectedValues),
+                        fieldText: toFieldTextNode(otherSelectedValues), //todo fields
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),
                         minScore: this.queryModel.get('minScore'),

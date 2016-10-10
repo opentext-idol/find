@@ -8,7 +8,8 @@ package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepository;
-import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
+
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.data.domain.AuditorAware;
 
 import java.security.Principal;

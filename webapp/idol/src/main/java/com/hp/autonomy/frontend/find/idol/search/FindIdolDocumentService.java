@@ -9,6 +9,7 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
+import com.hp.autonomy.searchcomponents.core.fields.FieldsMapper;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentService;

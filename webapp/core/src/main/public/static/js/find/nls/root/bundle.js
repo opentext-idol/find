@@ -204,6 +204,7 @@ define([
         'search.topicMap.error': 'Error: could not retrieve topics for this search',
         'search.topicMap.fast': 'Fast',
         'search.topicMap.accurate': 'Accurate',
+        'search.parametric.accuracy.warning': 'Document counts are not accurate',
         'search.sunburst.title': 'Parametric Distribution',
         'search.sunburst.fieldPlaceholder.first': 'Select a field',
         'search.sunburst.fieldPlaceholder.second': 'Select a second field',

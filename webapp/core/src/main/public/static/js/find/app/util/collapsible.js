@@ -50,7 +50,7 @@ define([
                 subtitle: this.subtitle
             }));
 
-            this.$header = this.$('.collapsible-header');
+            this.$header = this.$('.collapsible-header > h4 > span');
             this.updateHeaderState();
 
             // activate plugin manually for greater control of click handlers

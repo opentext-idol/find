@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.parametricfields;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.parametricfields.ParametricValuesController;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
@@ -32,8 +33,9 @@ class IdolParametricValuesController extends ParametricValuesController<IdolQuer
     @Autowired
     public IdolParametricValuesController(final ParametricValuesService<IdolParametricRequest, String, AciErrorException> parametricValuesService,
                                           final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory,
-                                          final ObjectFactory<ParametricRequest.Builder<IdolParametricRequest, String>> parametricRequestBuilderFactory) {
-        super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
+                                          final ObjectFactory<ParametricRequest.Builder<IdolParametricRequest, String>> parametricRequestBuilderFactory,
+                                          final FieldTextParser fieldTextParser) {
+        super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory, fieldTextParser);
     }
 
     @RequestMapping(method = RequestMethod.GET)

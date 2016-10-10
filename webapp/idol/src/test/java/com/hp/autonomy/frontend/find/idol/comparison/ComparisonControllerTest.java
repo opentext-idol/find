@@ -6,6 +6,8 @@
 package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.find.core.fields.FieldAndValue;
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
@@ -17,6 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
@@ -33,6 +36,9 @@ public class ComparisonControllerTest {
     @Mock
     private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
 
+    @Mock
+    private FieldTextParser fieldTextParser;
+
     private ComparisonController<String, IdolSearchResult, AciErrorException> comparisonController;
 
     @Mock
@@ -41,7 +47,7 @@ public class ComparisonControllerTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-        comparisonController = new ComparisonController<>(comparisonService, documentsService);
+        comparisonController = new ComparisonController<>(comparisonService, documentsService, fieldTextParser);
         when(documentsService.getStateToken(any(QueryRestrictions.class), anyInt(), anyBoolean()))
                 .thenReturn(MOCK_STATE_TOKEN_1);
     }
@@ -95,14 +101,15 @@ public class ComparisonControllerTest {
         final List<String> stateMatchIds = Collections.singletonList(MOCK_STATE_TOKEN_1);
         final List<String> stateDontMatchIds = Collections.singletonList(MOCK_STATE_TOKEN_2);
         final String text = "*";
-        final String fieldText = "EXISTS{}:LATITUDE AND EXISTS{}:LONGITUDE";
+        final Set<FieldAndValue> fieldAndValues = Collections.singleton(new FieldAndValue("", ""));
         final int start = 3;
         final int maxResults = 6;
         final String summary = "context";
         final String sort = "relevance";
         final boolean highlight = true;
+        final String fieldText = fieldTextParser.toFieldText(fieldAndValues, null, null);
 
-        comparisonController.getResults(stateMatchIds, stateDontMatchIds, text, fieldText, start, maxResults, summary, sort, highlight, false);
+        comparisonController.getResults(stateMatchIds, stateDontMatchIds, text, fieldAndValues, null, start, maxResults, summary, sort, highlight);
         verify(comparisonService).getResults(eq(stateMatchIds), eq(stateDontMatchIds), eq(text), eq(fieldText), eq(start), eq(maxResults), eq(summary), eq(sort), eq(highlight));
     }
 }

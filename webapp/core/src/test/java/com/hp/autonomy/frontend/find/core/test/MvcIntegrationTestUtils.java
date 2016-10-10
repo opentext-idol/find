@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
@@ -21,10 +22,13 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -69,13 +73,11 @@ public abstract class MvcIntegrationTestUtils {
 
         final MvcResult mvcResult = mockMvc.perform(requestBuilder)
                 .andReturn();
-        final TagName[] tagNames = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), TagName[].class);
-        final List<String> fieldNames = new ArrayList<>(tagNames.length);
-        for (final TagName tagName : tagNames) {
-            fieldNames.add(tagName.getId());
-        }
+        final ObjectMapper mapper = new ObjectMapper();
+        final List<Map<String, String>> tagNames = mapper.readValue(mvcResult.getResponse().getContentAsString(), mapper.getTypeFactory().constructCollectionType(List.class, Map.class));
+        final List<String> fieldNames = tagNames.stream().map(stringStringMap -> stringStringMap.get("id")).collect(Collectors.toList());
 
-        return fieldNames.toArray(new String[fieldNames.size()]);
+        return fieldNames.toArray(new String[0]);
     }
 
     public Authentication userAuth() {

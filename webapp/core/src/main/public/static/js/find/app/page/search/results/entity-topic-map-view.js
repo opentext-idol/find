@@ -189,7 +189,8 @@ define([
                 data = {
                     databases: this.queryModel.get('indexes'),
                     queryText: this.queryModel.get('queryText'),
-                    fieldText: this.queryModel.get('fieldText'),
+                    field_matches: this.queryModel.getFieldMatches(),
+                    field_ranges: this.queryModel.getFieldRanges(),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
                     minScore: this.queryModel.get('minScore'),

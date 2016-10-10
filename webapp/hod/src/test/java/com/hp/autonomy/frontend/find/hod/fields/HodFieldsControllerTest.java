@@ -43,7 +43,7 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
         final ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier> builder = new HodParametricRequest.Builder();
         when(requestBuilderFactory.getObject()).thenReturn(builder);
 
-        return new HodFieldsController(service, parametricValuesService, requestBuilderFactory);
+        return new HodFieldsController(service, parametricValuesService, requestBuilderFactory, fieldsMapper);
     }
 
     @Override
@@ -56,8 +56,8 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
     @Test
     public void getParametricDateFields() throws HodErrorException {
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
-        response.put(FieldTypeParam.NumericDate, ImmutableList.of(new TagName("DateField"), new TagName("ParametricDateField")));
-        response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("ParametricField"), new TagName("ParametricNumericField"), new TagName("ParametricDateField")));
+        response.put(FieldTypeParam.NumericDate, ImmutableList.of(new TagName("DateField", "/DOCUMENT/DateField"), new TagName("ParametricDateField", "/DOCUMENT/ParametricDateField")));
+        response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("ParametricField", "/DOCUMENT/ParametricField"), new TagName("ParametricNumericField", "/DOCUMENT/ParametricNumericField"), new TagName("ParametricDateField", "/DOCUMENT/ParametricDateField")));
         when(service.getFields(Matchers.<HodFieldsRequest>any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
 
         final ValueDetails valueDetails = new ValueDetails.Builder()
@@ -69,13 +69,13 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
                 .build();
 
         final Map<TagName, ValueDetails> valueDetailsOutput = ImmutableMap.<TagName, ValueDetails>builder()
-                .put(new TagName("ParametricDateField"), valueDetails)
+                .put(new TagName("ParametricDateField", "/DOCUMENT/ParametricDateField"), valueDetails)
                 .build();
 
         when(parametricValuesService.getValueDetails(Matchers.<HodParametricRequest>any())).thenReturn(valueDetailsOutput);
 
         final List<FieldAndValueDetails> fields = controller.getParametricDateFields(createRequest());
         assertThat(fields, hasSize(1));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails("ParametricDateField", "ParametricDateField", 146840000d, 146860000d, 1000))));
+        assertThat(fields, hasItem(is(new FieldAndValueDetails("/DOCUMENT/ParametricDateField", "ParametricDateField", 146840000d, 146860000d, 1000))));
     }
 }

@@ -5,12 +5,11 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
-import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +32,9 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, Q 
     @Mock
     protected QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
 
+    @Mock
+    protected FieldTextParser fieldTextParser;
+
     protected DocumentsController<S, Q, R, E> documentsController;
     protected Class<S> databaseType;
 
@@ -40,32 +42,32 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, Q 
 
     @Test
     public void query() throws E {
-        documentsController.query("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, 0, false, SearchRequest.QueryType.MODIFIED.name());
-        verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
+        documentsController.query("Some query text", 1, 30, null, null, Collections.emptySet(), null, null, null, null, null, true, 0, false, SearchRequest.QueryType.MODIFIED.name());
+        verify(documentsService).queryTextIndex(Matchers.any());
     }
 
     @Test
     public void queryForPromotions() throws E {
-        documentsController.query("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, 0, false, SearchRequest.QueryType.PROMOTIONS.name());
-        verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
+        documentsController.query("Some query text", 1, 30, null, null, Collections.emptySet(), null, null, null, null, null, true, 0, false, SearchRequest.QueryType.PROMOTIONS.name());
+        verify(documentsService).queryTextIndex(Matchers.any());
     }
 
     @Test
     public void queryPaginationTest() throws E {
-        documentsController.query("Some query text", 30, 60, null, Collections.<S>emptyList(), null, null, null, null, true, 0, false, SearchRequest.QueryType.MODIFIED.name());
-        verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
+        documentsController.query("Some query text", 30, 60, null, null, Collections.emptySet(), null, null, null, null, null, true, 0, false, SearchRequest.QueryType.MODIFIED.name());
+        verify(documentsService).queryTextIndex(Matchers.any());
     }
 
     @Test
     public void findSimilar() throws E {
         final String reference = "SomeReference";
-        documentsController.findSimilar(reference, 1, 30, "context", Collections.<S>emptyList(), "", "relevance", null, DateTime.now(), true, 0);
-        verify(documentsService).findSimilar(Matchers.<SuggestRequest<S>>any());
+        documentsController.findSimilar(reference, 1, 30, "context", Collections.emptyList(), Collections.emptySet(), Collections.emptySet(), "relevance", null, DateTime.now(), true, 0);
+        verify(documentsService).findSimilar(Matchers.any());
     }
 
     @Test
     public void getDocumentContent() throws E {
-        when(documentsService.getDocumentContent(Matchers.<GetContentRequest<S>>any())).thenReturn(Collections.singletonList(sampleResult()));
+        when(documentsService.getDocumentContent(Matchers.any())).thenReturn(Collections.singletonList(sampleResult()));
         final String reference = "SomeReference";
         assertNotNull(documentsController.getDocumentContent(reference, null));
     }

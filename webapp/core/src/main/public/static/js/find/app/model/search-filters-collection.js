@@ -11,10 +11,8 @@ define([
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/util/database-name-resolver',
     'find/app/util/model-any-changed-attribute-listener',
-    'parametric-refinement/prettify-field-name',
-    'find/app/configuration',
     'i18n!find/nls/bundle'
-], function(Backbone, _, moment, DatesFilterModel, rounder, databaseNameResolver, addChangeListener, prettifyFieldName, configuration, i18n) {
+], function(Backbone, _, moment, DatesFilterModel, rounder, databaseNameResolver, addChangeListener, i18n) {
     "use strict";
 
     var DATE_FORMAT = "YYYY-MM-DD HH:mm";
@@ -50,22 +48,10 @@ define([
 
     // Get the display text for the given parametric field name and array of selected parametric values
     function parametricFilterText(field, values, ranges, numeric) {
-        var fieldMap = _.findWhere(configuration().parametricDisplayValues, {name: field});
-
-        var displayName = fieldMap ? fieldMap.displayName : prettifyFieldName(field);
-
-        var valueText;
+       var valueText;
 
         if (!_.isEmpty(values)) {
-            valueText = _.map(values, function(value) {
-                if (fieldMap) {
-                    var param = _.findWhere(fieldMap.values, {name: value});
-                    return param ? param.displayName : value;
-                }
-                else {
-                    return value;
-                }
-            }).join(', ');
+            valueText = values.join(', ');
         } else {
             valueText = ranges.map(function (range) {
                 //Discard time of day if range greater than 1 week
@@ -80,7 +66,7 @@ define([
             }).join(', ');
         }
 
-        return displayName + ': ' + valueText;
+        return field + ': ' + valueText;
     }
 
     // Get an array of filter model attributes from the selected parametric values collection
@@ -89,7 +75,7 @@ define([
             return {
                 id: parametricFilterId(field),
                 field: field,
-                text: parametricFilterText(field, data.values, data.range ? [data.range] : [], data.dataType),                
+                text: parametricFilterText(field, data.values, data.range ? [data.range] : [], data.dataType),
                 type: FilterType.PARAMETRIC
             };
         });

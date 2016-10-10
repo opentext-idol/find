@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Transient;
 
 @SuppressWarnings("WeakerAccess")
 @Embeddable
@@ -24,6 +25,9 @@ public class ParametricRange {
     private double max;
     @Enumerated(EnumType.ORDINAL)
     private Type type;
+
+    @Transient
+    private String fieldDisplayName;
 
     // Don't ever reorder these as we are using ordinal enumeration
     public enum Type {

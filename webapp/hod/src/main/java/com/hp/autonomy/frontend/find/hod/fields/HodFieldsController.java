@@ -9,6 +9,7 @@ import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.core.fields.FieldsMapper;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
@@ -32,9 +33,10 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
     HodFieldsController(
             final FieldsService<HodFieldsRequest, HodErrorException> fieldsService,
             final ParametricValuesService<HodParametricRequest, ResourceIdentifier, HodErrorException> parametricValuesService,
-            final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory
+            final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory,
+            final FieldsMapper fieldsMapper
     ) {
-        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory);
+        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, fieldsMapper);
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.core.fields.FieldsMapper;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
@@ -29,8 +30,9 @@ class HodSavedQueryController extends SavedQueryController<ResourceIdentifier, H
     public HodSavedQueryController(final SavedSearchService<SavedQuery> service,
                                    final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService,
                                    final FieldTextParser fieldTextParser,
-                                   final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory) {
-        super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory);
+                                   final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory,
+                                   final FieldsMapper fieldsMapper) {
+        super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory, fieldsMapper);
     }
 
     @Override

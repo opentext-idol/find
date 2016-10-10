@@ -116,7 +116,7 @@ class SavedSnapshotController {
                 .setAnyLanguage(true)
                 .setDatabases(indexes)
                 .setQueryText(snapshot.toQueryText())
-                .setFieldText(fieldTextParser.toFieldText(snapshot))
+                .setFieldText(fieldTextParser.toFieldText(snapshot.getParametricValues(), snapshot.getParametricRanges(), null))
                 .setMaxDate(snapshot.getMaxDate())
                 .setMinDate(snapshot.getMinDate())
                 .setMinScore(snapshot.getMinScore())

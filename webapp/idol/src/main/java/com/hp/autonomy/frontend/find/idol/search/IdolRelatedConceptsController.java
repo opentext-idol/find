@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
@@ -24,7 +25,8 @@ public class IdolRelatedConceptsController extends RelatedConceptsController<QsE
     @Autowired
     public IdolRelatedConceptsController(final RelatedConceptsService<QsElement, String, AciErrorException> relatedConceptsService,
                                          final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory,
-                                         final ObjectFactory<RelatedConceptsRequest.Builder<IdolRelatedConceptsRequest, String>> relatedConceptsRequestBuilderFactory) {
-        super(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
+                                         final ObjectFactory<RelatedConceptsRequest.Builder<IdolRelatedConceptsRequest, String>> relatedConceptsRequestBuilderFactory,
+                                         final FieldTextParser fieldTextParser) {
+        super(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory, fieldTextParser);
     }
 }

@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.fields;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.fields.AbstractFieldsControllerTest;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
+import com.hp.autonomy.searchcomponents.core.fields.FieldsMapperImpl;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequest;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
@@ -26,7 +27,7 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
         final ParametricRequest.Builder<IdolParametricRequest, String> builder = new IdolParametricRequest.Builder();
         when(requestBuilderFactory.getObject()).thenReturn(builder);
 
-        return new IdolFieldsController(service, parametricValuesService, requestBuilderFactory);
+        return new IdolFieldsController(service, parametricValuesService, requestBuilderFactory, new FieldsMapperImpl());
     }
 
     @Override

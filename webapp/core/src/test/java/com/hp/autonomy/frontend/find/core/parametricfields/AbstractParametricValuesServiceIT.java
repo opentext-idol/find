@@ -25,7 +25,6 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
                 .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH))
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -57,7 +56,6 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
         final MockHttpServletRequestBuilder requestBuilder = get(url)
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
                 .param(ParametricValuesController.TARGET_NUMBER_OF_BUCKETS_PARAM, "35")
                 .param(ParametricValuesController.BUCKET_MIN_PARAM, "0")
                 .param(ParametricValuesController.BUCKET_MAX_PARAM, String.valueOf(Integer.MAX_VALUE))
@@ -75,7 +73,6 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
                 .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH))
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)

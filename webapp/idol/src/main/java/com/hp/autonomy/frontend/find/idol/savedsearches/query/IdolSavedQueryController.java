@@ -13,6 +13,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
+import com.hp.autonomy.searchcomponents.core.fields.FieldsMapper;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
@@ -28,8 +29,9 @@ class IdolSavedQueryController extends SavedQueryController<String, IdolQueryRes
     public IdolSavedQueryController(final SavedSearchService<SavedQuery> service,
                                     final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService,
                                     final FieldTextParser fieldTextParser,
-                                    final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory) {
-        super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory);
+                                    final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory,
+                                    final FieldsMapper fieldsMapper) {
+        super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory, fieldsMapper);
     }
 
     @Override

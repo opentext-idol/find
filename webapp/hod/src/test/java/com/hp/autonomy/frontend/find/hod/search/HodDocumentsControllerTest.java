@@ -22,7 +22,7 @@ public class HodDocumentsControllerTest extends AbstractDocumentsControllerTest<
     @Before
     public void setUp() {
         when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new HodQueryRestrictions.Builder());
-        documentsController = new HodDocumentsController(documentsService, queryRestrictionsBuilderFactory);
+        documentsController = new HodDocumentsController(documentsService, queryRestrictionsBuilderFactory, fieldTextParser);
         databaseType = ResourceIdentifier.class;
     }
 

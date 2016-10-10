@@ -12,7 +12,7 @@ import com.hp.autonomy.frontend.configuration.LoginTypes;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.export.MetadataNode;
-import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,7 +85,6 @@ public abstract class FindController<C extends FindConfig> {
         config.put(MvcConstants.SAVED_SEARCH_CONFIG.value(), configService.getConfig().getSavedSearchConfig());
         config.put(MvcConstants.MIN_SCORE.value(), configService.getConfig().getMinScore());
         config.put(MvcConstants.FIELDS_INFO.value(), configService.getConfig().getFieldsInfo().getFieldConfig());
-        config.put(MvcConstants.PARAMETRIC_DISPLAY_VALUES.value(), configService.getConfig().getParametricDisplayValues());
         config.put(MvcConstants.TOPIC_MAP_MAX_RESULTS.value(), configService.getConfig().getTopicMapMaxResults());
         config.put(MvcConstants.METADATA_FIELD_IDS.value(), getMetadataNodes());
         config.putAll(getPublicConfig());

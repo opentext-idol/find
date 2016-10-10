@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.fields;
 
+import com.hp.autonomy.searchcomponents.core.fields.FieldsMapper;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsRequest;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
@@ -37,15 +38,18 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     private final FieldsService<R, E> fieldsService;
     private final ParametricValuesService<P, S, E> parametricValuesService;
     private final ObjectFactory<ParametricRequest.Builder<P, S>> parametricRequestBuilderFactory;
+    private final FieldsMapper fieldsMapper;
 
     protected FieldsController(
             final FieldsService<R, E> fieldsService,
             final ParametricValuesService<P, S, E> parametricValuesService,
-            final ObjectFactory<ParametricRequest.Builder<P, S>> parametricRequestBuilderFactory
+            final ObjectFactory<ParametricRequest.Builder<P, S>> parametricRequestBuilderFactory,
+            final FieldsMapper fieldsMapper
     ) {
         this.fieldsService = fieldsService;
         this.parametricValuesService = parametricValuesService;
         this.parametricRequestBuilderFactory = parametricRequestBuilderFactory;
+        this.fieldsMapper = fieldsMapper;
     }
 
     /**
@@ -72,7 +76,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     @RequestMapping(value = GET_PARAMETRIC_DATE_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public List<FieldAndValueDetails> getParametricDateFields(final R request) throws E {
-        return fetchParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, Collections.singletonList(ParametricValuesService.AUTN_DATE_FIELD));
+        return fetchParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, Collections.singletonList(ParametricValuesService. ));
     }
 
     /**
@@ -84,7 +88,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         parametricFields.retainAll(response.get(fieldType));
 
         for (final String field : additionalFields) {
-            parametricFields.add(new TagName(field));
+            parametricFields.add(new TagName(fieldsMapper.transformFieldName(field), field));
         }
 
         final List<String> fieldNames = parametricFields.stream().map(TagName::getId).collect(Collectors.toCollection(LinkedList::new));

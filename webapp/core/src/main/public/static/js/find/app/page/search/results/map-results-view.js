@@ -147,20 +147,15 @@ define([
             var latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
             var longitudeFieldsInfo = configuration().fieldsInfo[locationField.longitudeField];
 
-            var latitudesFieldsString = latitudeFieldsInfo.names.join(':');
-            var longitudeFieldsString = longitudeFieldsInfo.names.join(':');
-
-            var exists = 'EXISTS{}:' + latitudesFieldsString + ' AND EXISTS{}:' + longitudeFieldsString;
-
-            var newFieldText = this.queryModel.get('fieldText') ? this.queryModel.get('fieldText') + ' AND ' + exists : exists;
-
             return {
                 data: {
                     text: this.queryModel.get('queryText'),
                     start: this.allowIncrement ? this.documentsCollection.length + 1 : 1,
                     max_results: this.allowIncrement ? this.documentsCollection.length + this.resultsStep : this.resultsStep,
                     indexes: this.queryModel.get('indexes'),
-                    field_text: newFieldText,
+                    field_matches: this.queryModel.getFieldMatches(),
+                    field_ranges: this.queryModel.getFieldRanges(),
+                    field_exists: _.union(latitudeFieldsInfo.names, longitudeFieldsInfo.names),
                     min_date: this.queryModel.get('minDate'),
                     max_date: this.queryModel.get('maxDate'),
                     sort: 'relevance',

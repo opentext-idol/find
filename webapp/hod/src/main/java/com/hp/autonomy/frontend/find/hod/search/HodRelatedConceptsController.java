@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.search;
 
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
@@ -25,7 +26,8 @@ public class HodRelatedConceptsController extends RelatedConceptsController<Enti
     @Autowired
     public HodRelatedConceptsController(final RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> relatedConceptsService,
                                         final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory,
-                                        final ObjectFactory<RelatedConceptsRequest.Builder<HodRelatedConceptsRequest, ResourceIdentifier>> relatedConceptsRequestBuilderFactory) {
-        super(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
+                                        final ObjectFactory<RelatedConceptsRequest.Builder<HodRelatedConceptsRequest, ResourceIdentifier>> relatedConceptsRequestBuilderFactory,
+                                        final FieldTextParser fieldTextParser) {
+        super(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory, fieldTextParser);
     }
 }

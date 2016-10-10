@@ -12,7 +12,8 @@ define(['underscore'], function(_) {
         requestParams: function(queryModel) {
             return {
                 indexes: queryModel.get('indexes'),
-                field_text: queryModel.get('fieldText'),
+                field_matches: queryModel.getFieldMatches(),
+                field_ranges: queryModel.getFieldRanges(),
                 min_date: queryModel.getIsoDate('minDate'),
                 max_date: queryModel.getIsoDate('maxDate'),
                 min_score: queryModel.get('minScore'),

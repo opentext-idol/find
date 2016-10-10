@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
@@ -21,7 +22,6 @@ import java.io.Serializable;
 import java.util.Collections;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySummaryElement, R extends QueryRestrictions<S>, L extends RelatedConceptsRequest<S>, S extends Serializable, E extends Exception> {
@@ -34,18 +34,21 @@ public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySumma
     @Mock
     protected ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory;
 
-    protected RelatedConceptsController<Q, R, L, S, E> relatedConceptsController;
+    private RelatedConceptsController<Q, R, L, S, E> relatedConceptsController;
 
-    protected abstract RelatedConceptsController<Q, R, L, S, E> buildController(final RelatedConceptsService<Q, S, E> relatedConceptsService, final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory);
+    @Mock
+    protected FieldTextParser fieldTextParser;
+
+    protected abstract RelatedConceptsController<Q, R, L, S, E> buildController(final RelatedConceptsService<Q, S, E> relatedConceptsService, final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory, final FieldTextParser fieldTextParser);
 
     @Before
     public void setUp() {
-        relatedConceptsController = buildController(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
+        relatedConceptsController = buildController(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory, fieldTextParser);
     }
 
     @Test
     public void query() throws E {
-        relatedConceptsController.findRelatedConcepts("Some query text", null, Collections.<S>emptyList(), null, null, 0, null, null);
-        verify(relatedConceptsService).findRelatedConcepts(Matchers.<RelatedConceptsRequest<S>>any());
+        relatedConceptsController.findRelatedConcepts("Some query text", null, null, Collections.emptyList(), null, null, 0, null, null);
+        verify(relatedConceptsService).findRelatedConcepts(Matchers.any());
     }
 }

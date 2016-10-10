@@ -14,13 +14,12 @@ define([
     'find/app/util/text-input',
     'find/app/util/collapsible',
     'find/app/util/filtering-collection',
-    'parametric-refinement/prettify-field-name',
     'parametric-refinement/display-collection',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, $, _, DateView, ParametricView, NumericParametricView, NumericParametricFieldView,
-            TextInput, Collapsible, FilteringCollection, prettifyFieldName, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
+            TextInput, Collapsible, FilteringCollection, ParametricDisplayCollection, configuration, i18n, i18nIndexes) {
     "use strict";
 
     var datesTitle = i18n['search.dates'];
@@ -36,7 +35,7 @@ define([
 
     function filterPredicate(model, filterModel) {
         var searchText = filterModel && filterModel.get('text');
-        return searchText ? searchMatches(prettifyFieldName(model.id), filterModel.get('text')) : true;
+        return searchText ? searchMatches(model.get('name'), filterModel.get('text')) : true;
     }
 
     function searchMatches(text, search) {

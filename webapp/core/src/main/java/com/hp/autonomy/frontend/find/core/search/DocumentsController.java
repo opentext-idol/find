@@ -4,6 +4,16 @@
  */
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.frontend.find.core.fields.FieldAndValue;
+import com.hp.autonomy.frontend.find.core.fields.ParametricRange;
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
+import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
+import com.hp.autonomy.searchcomponents.core.search.GetContentRequestIndex;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
 import com.hp.autonomy.searchcomponents.core.search.*;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
@@ -17,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,7 +48,9 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
     static final String AUTO_CORRECT_PARAM = "auto_correct";
     static final String QUERY_TYPE_PARAM = "queryType";
     static final String DATABASE_PARAM = "database";
-    private static final String FIELD_TEXT_PARAM = "field_text";
+    private static final String FIELD_MATCH_PARAM = "field_matches";
+    private static final String FIELD_RANGE_PARAM = "field_ranges";
+    private static final String FIELD_EXISTS_PARAM = "field_exists";
     private static final String SORT_PARAM = "sort";
     private static final String MIN_DATE_PARAM = "min_date";
     private static final String MAX_DATE_PARAM = "max_date";
@@ -45,10 +58,14 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
     private static final String MIN_SCORE_PARAM = "min_score";
     protected final DocumentsService<S, R, E> documentsService;
     private final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
+    private final FieldTextParser fieldTextParser;
 
-    protected DocumentsController(final DocumentsService<S, R, E> documentsService, final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory) {
+    protected DocumentsController(final DocumentsService<S, R, E> documentsService,
+                                  final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory,
+                                  final FieldTextParser fieldTextParser) {
         this.documentsService = documentsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
+        this.fieldTextParser = fieldTextParser;
     }
 
     protected abstract <T> T throwException(final String message) throws E;
@@ -62,7 +79,9 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
             @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
             @RequestParam(SUMMARY_PARAM) final String summary,
             @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
-            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(value = FIELD_MATCH_PARAM, required = false) final Collection<FieldAndValue> fieldAndValues,
+            @RequestParam(value = FIELD_RANGE_PARAM, required = false) final Collection<ParametricRange> parametricRanges,
+            @RequestParam(value = FIELD_EXISTS_PARAM, required = false) final Collection<String> parametricExists,
             @RequestParam(value = SORT_PARAM, required = false) final String sort,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
@@ -73,7 +92,7 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
     ) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
                 .setQueryText(queryText)
-                .setFieldText(fieldText)
+                .setFieldText(fieldTextParser.toFieldText(fieldAndValues, parametricRanges, parametricExists))
                 .setDatabases(ListUtils.emptyIfNull(databases))
                 .setMinDate(minDate)
                 .setMaxDate(maxDate)
@@ -104,7 +123,8 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
             @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
             @RequestParam(SUMMARY_PARAM) final String summary,
             @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
-            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(value = FIELD_MATCH_PARAM, required = false) final Collection<FieldAndValue> fieldAndValues,
+            @RequestParam(value = FIELD_RANGE_PARAM, required = false) final Collection<ParametricRange> parametricRanges,
             @RequestParam(value = SORT_PARAM, required = false) final String sort,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
@@ -112,7 +132,7 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
             @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore
     ) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                .setFieldText(fieldText)
+                .setFieldText(fieldTextParser.toFieldText(fieldAndValues, parametricRanges, null))
                 .setDatabases(ListUtils.emptyIfNull(databases))
                 .setMinDate(minDate)
                 .setMaxDate(maxDate)
@@ -143,6 +163,6 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
         final GetContentRequest<S> getContentRequest = new GetContentRequest<>(Collections.singleton(getContentRequestIndex), PrintParam.All.name());
         final List<R> results = documentsService.getDocumentContent(getContentRequest);
 
-        return results.isEmpty() ? this.throwException("No content found for document with reference " + reference + " in database " + database) : results.get(0);
+        return results.isEmpty() ? throwException("No content found for document with reference " + reference + " in database " + database) : results.get(0);
     }
 }

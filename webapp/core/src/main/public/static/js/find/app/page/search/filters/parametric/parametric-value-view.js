@@ -29,7 +29,7 @@ define([
         updateText: function() {
             this.$text.tooltip('destroy');
 
-            var name = this.model.get('displayName') || this.model.id;
+            var name = this.model.id;
             this.$name.text(name);
 
             this.$text.tooltip({

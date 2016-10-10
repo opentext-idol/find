@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
+import com.hp.autonomy.frontend.find.core.fieldtext.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.parametricfields.ParametricValuesController;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
@@ -32,8 +33,9 @@ class HodParametricValuesController extends ParametricValuesController<HodQueryR
     @Autowired
     public HodParametricValuesController(final ParametricValuesService<HodParametricRequest, ResourceIdentifier, HodErrorException> parametricValuesService,
                                          final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory,
-                                         final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory) {
-        super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
+                                         final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory,
+                                         final FieldTextParser fieldTextParser) {
+        super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory, fieldTextParser);
     }
 
     @RequestMapping(method = RequestMethod.GET)

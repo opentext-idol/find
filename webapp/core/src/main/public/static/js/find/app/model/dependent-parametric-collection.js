@@ -66,9 +66,10 @@ define([
         url: '../api/public/parametric/dependent-values',
 
         parse: function (results) {
-            var totalCount = getArrayTotal(results);
+            var totalCount = getArrayTotal(results.recursiveFields);
+            this.accurateCounts = results.countsMatch;
 
-            return parseResult(results, totalCount);
+            return parseResult(results.recursiveFields, totalCount);
         }
     });
 

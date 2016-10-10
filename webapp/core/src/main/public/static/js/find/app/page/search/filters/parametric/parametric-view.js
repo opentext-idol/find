@@ -25,7 +25,7 @@ define([
                 var $field = $target.closest('[data-field]');
 
                 var attributes = {
-                    field: $field.attr('data-field'),
+                    field: $field.attr('data-field-display-name'),
                     value: $target.attr('data-value')
                 };
 

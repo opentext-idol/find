@@ -8,7 +8,7 @@ import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
 import com.hp.autonomy.frontend.find.idol.export.IdolMetadataNode;
-import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 

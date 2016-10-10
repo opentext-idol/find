@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.fields;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
+import com.hp.autonomy.searchcomponents.core.fields.FieldsMapper;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
@@ -23,9 +24,10 @@ class IdolFieldsController extends FieldsController<IdolFieldsRequest, AciErrorE
     IdolFieldsController(
             final FieldsService<IdolFieldsRequest, AciErrorException> fieldsService,
             final ParametricValuesService<IdolParametricRequest, String, AciErrorException> parametricValuesService,
-            final ObjectFactory<ParametricRequest.Builder<IdolParametricRequest, String>> parametricRequestBuilderFactory
+            final ObjectFactory<ParametricRequest.Builder<IdolParametricRequest, String>> parametricRequestBuilderFactory,
+            final FieldsMapper fieldsMapper
     ) {
-        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory);
+        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, fieldsMapper);
     }
 
     @Override

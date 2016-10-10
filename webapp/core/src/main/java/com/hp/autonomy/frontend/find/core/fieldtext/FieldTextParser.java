@@ -5,8 +5,12 @@
 
 package com.hp.autonomy.frontend.find.core.fieldtext;
 
-import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
+import com.hp.autonomy.frontend.find.core.fields.FieldAndValue;
+import com.hp.autonomy.frontend.find.core.fields.ParametricRange;
 
+import java.util.Collection;
+
+@FunctionalInterface
 public interface FieldTextParser {
-    String toFieldText(SavedSearch<?> savedSearch);
+    String toFieldText(Collection<FieldAndValue> fieldTextEntry, Collection<ParametricRange> parametricRanges, Collection<String> parametricExists);
 }
