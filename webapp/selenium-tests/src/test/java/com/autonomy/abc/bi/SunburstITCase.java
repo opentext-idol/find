@@ -60,8 +60,7 @@ public class SunburstITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ResolvedBug("FIND-251")
-    @ActiveBug("FIND-382")
+    @ResolvedBug({"FIND-251", "FIND-382"})
     public void testSunburstTabShowsSunburstOrMessage() {
         search("s");
 

@@ -177,7 +177,6 @@ define([
         'search.resultsView.map.show.more': 'Show More',
         'search.resultsView.table': 'Table',
         'search.resultsView.table.count': 'Count',
-        'search.resultsView.table.error.noParametricValues': 'Could not display Table View: your search returned no parametric values',
         'search.resultsView.table.error.query': 'Error: could not display Table View',
         'search.resultsView.table.error.noDependentParametricValues': 'There are too many parametric fields to display in Table View',
         'search.resultsView.table.info': 'Showing _START_ to _END_ of _TOTAL_ entries', // see https://datatables.net/reference/option/language.info

@@ -8,8 +8,9 @@ define([
     'jquery',
     'i18n!find/nls/bundle',
     'sunburst/js/sunburst',
+    'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/sunburst/sunburst-label.html'
-], function(ParametricResultsView, _, $, i18n, Sunburst, labelTemplate) {
+], function(ParametricResultsView, _, $, i18n, Sunburst, generateErrorHtml, labelTemplate) {
     'use strict';
 
     var SUNBURST_NAME_ATTR = 'text';
@@ -99,24 +100,26 @@ define([
         initialize: function(options) {
             ParametricResultsView.prototype.initialize.call(this, _.defaults({
                 emptyDependentMessage: i18n['search.resultsView.sunburst.error.noDependentParametricValues'],
-                emptyMessage: i18n['search.resultsView.sunburst.error.noParametricValues'],
+                emptyMessage: generateErrorHtml({errorLookup: 'emptySunburstView'}),
                 errorMessageArguments: {messageToUser: i18n['search.resultsView.sunburst.error.query']}
             }, options));
         },
 
         update: function() {
-            drawSunburst.call(this, this.$content, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
+            if (!this.parametricCollection.isEmpty()) {
+                drawSunburst.call(this, this.$content, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
 
-            var noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
-                .compact()
-                .flatten()
-                .isEmpty()
-                .value();
+                var noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
+                    .compact()
+                    .flatten()
+                    .isEmpty()
+                    .value();
 
-            if(this.fieldsCollection.at(1).get('field') !== '' && noValidChildren) {
-                this.$message.text(i18n['search.resultsView.sunburst.error.noSecondFieldValues']);
-            } else {
-                this.$message.empty();
+                if (this.fieldsCollection.at(1).get('field') !== '' && noValidChildren) {
+                    this.$message.text(i18n['search.resultsView.sunburst.error.noSecondFieldValues']);
+                } else {
+                    this.$message.empty();
+                }
             }
         },
 

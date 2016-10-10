@@ -33,7 +33,7 @@ define([
             ParametricResultsView.prototype.initialize.call(this, _.defaults({
                 dependentParametricCollection: new TableCollection(),
                 emptyDependentMessage: i18n['search.resultsView.table.error.noDependentParametricValues'],
-                emptyMessage: i18n['search.resultsView.table.error.noParametricValues'],
+                emptyMessage: generateErrorHtml({errorLookup: 'emptyTableView'}),
                 errorMessageArguments: {messageToUser: i18n['search.resultsView.table.error.query']}
             }, options))
         },
@@ -54,8 +54,8 @@ define([
                 this.$table.empty();
             }
 
-            // if field is null then nothing has loaded and datatables will fail
-            if(this.fieldsCollection.at(0).get('field')) {
+            // if parametric collection is empty then nothing has loaded and datatables will fail
+            if(!this.parametricCollection.isEmpty()) {
                 // columnNames will be empty if only one field is selected
                 if(_.isEmpty(this.dependentParametricCollection.columnNames)) {
                     this.$table.dataTable({
