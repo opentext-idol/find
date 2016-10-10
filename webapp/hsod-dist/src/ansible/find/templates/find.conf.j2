@@ -17,7 +17,7 @@ env JAVA_BIN=/usr/bin/java # Path to Java 7 binary
 script
 	cd $APP_HOME
 	echo $$ > $APP_PID
-	exec sudo -u $APP_USER $JAVA_BIN {{find_options | join(" ")}} -jar $APP_HOME/{{find_archive_name}} >> $APP_SYSLOG
+	exec sudo -u $APP_USER $JAVA_BIN {{find_options | join(" ")}} -jar $APP_HOME/{{find_archive_name}} >>$APP_SYSLOG 2>&1
 end script
 
 pre-start script

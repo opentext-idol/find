@@ -1,3 +1,9 @@
+find-ansible (0.0.7) precise; urgency=low
+
+  * Pipe stderr to Find syslog file.
+
+ -- Matthew Gordon <matthew.gordon2@hpe.com>  Fri, 10 Oct 2016 12:00:00 +0100
+
 find-ansible (0.0.6) precise; urgency=low
 
   * Added SSO page POST URL to config file.
