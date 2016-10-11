@@ -35,6 +35,8 @@ define([
                 dateParametricFieldsCollection: new (backboneMockFactory.getCollection())()
             });
 
+            this.view.render();
+
             this.parametricInfo = {
                 description: 'parametric',
                 collection: this.view.mergedParametricCollection,
@@ -132,32 +134,30 @@ define([
         it('should track the collapsible state of the indexes view', function () {
             spyOn(this.view.indexesViewWrapper, 'toggle');
 
-            expect(this.view.collapsed.indexes).toBe(false);
+            expect(this.view.collapsed.indexes).toBe(true);
 
-            // user closes view
-            this.view.collapsed.indexes = true;
+            this.view.indexesViewWrapper.$('.collapsible-header').click();
             this.view.filterModel.set('text', 'ind');
 
             this.view.indexesViewWrapper.view.visibleIndexesCallback(['index1']);
 
             // this shouldn't change for auto toggle
-            expect(this.view.collapsed.indexes).toBe(true);
+            expect(this.view.collapsed.indexes).toBe(false);
 
             this.view.filterModel.set('text', '');
             this.view.indexesViewWrapper.view.visibleIndexesCallback(['index1']);
 
             expect(this.view.indexesViewWrapper.toggle.calls.count()).toBe(2);
             expect(this.view.indexesViewWrapper.toggle.calls.argsFor(0)[0]).toBeTruthy();
-            expect(this.view.indexesViewWrapper.toggle.calls.argsFor(1)[0]).toBe(false);
+            expect(this.view.indexesViewWrapper.toggle.calls.argsFor(1)[0]).toBe(true);
         });
 
         it('should track the collapsible state of the date view', function () {
             spyOn(this.view.dateViewWrapper, 'toggle');
 
-            expect(this.view.collapsed.dates).toBe(false);
+            expect(this.view.collapsed.dates).toBe(true);
 
-            // user closes view
-            this.view.collapsed.dates = true;
+            this.view.dateViewWrapper.$('.collapsible-header').click();
             this.view.filterModel.set('text', 'ind');
 
             expect(this.view.dateViewWrapper.toggle.calls.count()).toBe(1);
@@ -166,7 +166,7 @@ define([
 
             expect(this.view.dateViewWrapper.toggle.calls.count()).toBe(2);
             expect(this.view.dateViewWrapper.toggle.calls.argsFor(0)[0]).toBeTruthy();
-            expect(this.view.dateViewWrapper.toggle.calls.argsFor(1)[0]).toBe(false);
+            expect(this.view.dateViewWrapper.toggle.calls.argsFor(1)[0]).toBe(true);
         });
     });
 });

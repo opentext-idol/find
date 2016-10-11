@@ -91,7 +91,7 @@ define([
                 shown: true,
                 initialize: function() {
                     this.indexesEmpty = false;
-                    this.collapsed.indexes = false;
+                    this.collapsed.indexes = true;
 
                     //noinspection JSUnresolvedFunction
                     var indexesView = new IndexesView({
@@ -132,7 +132,7 @@ define([
             }, {
                 shown: true,
                 initialize: function() {
-                    this.collapsed.dates = false;
+                    this.collapsed.dates = true;
 
                     var dateView = new DateView({
                         datesFilterModel: options.queryState.datesFilterModel,
