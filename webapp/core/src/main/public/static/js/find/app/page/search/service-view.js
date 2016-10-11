@@ -87,10 +87,6 @@ define([
                 promotionsStateMatchIds: this.savedSearchModel.get('promotionsStateTokens')
             }, {queryState: this.queryState});
 
-            this.listenTo(this.queryModel, 'change:indexes', function () {
-                this.queryState.selectedParametricValues.reset();
-            });
-
             this.listenTo(this.savedSearchModel, 'refresh', function () {
                 this.queryModel.trigger('refresh');
             });

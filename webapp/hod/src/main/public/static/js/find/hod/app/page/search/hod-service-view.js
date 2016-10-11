@@ -38,8 +38,12 @@ define([
                     this.fetchParametricFields(this.dateParametricFieldsCollection);
                 }
             });
+
+            this.listenTo(this.queryModel, 'change:indexes', function () {
+                this.queryState.selectedParametricValues.reset();
+            });
         },
-        
+
         fetchParametricFields: function (fieldsCollection, callback) {
             if (this.queryModel.get('indexes').length > 0) {
                 fieldsCollection.fetch({
