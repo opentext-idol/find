@@ -20,7 +20,7 @@ public abstract class HodFind<T extends HodFindElementFactory> extends FindAppli
 
     public static HodFind<? extends HodFindElementFactory> withRole(final UserRole role) {
         if(role == null){
-            return new BIHodFind();
+            return new FindHodFind();
         }
 
         switch (role) {
