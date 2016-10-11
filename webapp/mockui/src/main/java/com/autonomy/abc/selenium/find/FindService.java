@@ -30,17 +30,10 @@ public class FindService implements QueryService<ResultsView> {
 
     @Override
     public ResultsView search(final Query query) {
-        search(elementFactory.getSearchBox(), query.getTerm());
+        elementFactory.getSearchBox().setAndSubmit(query.getTerm());
         elementFactory.getFilterPanel().waitForIndexes();
         findPage.filterBy(new AggregateQueryFilter(query.getFilters()));
         return elementFactory.getResultsPage();
-    }
-
-    private void search(final FormInput formInput, final String term) {
-        formInput.clear();
-        formInput.setValue(term);
-        Waits.loadOrFadeWait();
-        formInput.submit();
     }
 
     public SimilarDocumentsView goToSimilarDocuments(final int resultNumber) {
