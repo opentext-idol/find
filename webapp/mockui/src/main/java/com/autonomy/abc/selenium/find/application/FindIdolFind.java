@@ -6,6 +6,8 @@ import com.hp.autonomy.frontend.selenium.control.Window;
 
 public class FindIdolFind extends IdolFind<FindIdolFindElementFactory>{
 
+    protected FindIdolFind(){}
+
     @Override
     public Application<FindIdolFindElementFactory> inWindow(final Window window) {
         setElementFactory(new FindIdolFindElementFactory(window.getSession().getDriver()));
