@@ -37,9 +37,9 @@ define([
                 }
             };
 
-            if (this.clickHandler) {
-                this.$el.addClass('clickable');
+            this.$el.addClass('clickable');
 
+            if (this.clickHandler && this.clickHandler !== _.noop) {
                 topicMapOptions.onLeafClick = _.bind(function(node) {
                     this.clickHandler([node.name]);
                 }, this);
