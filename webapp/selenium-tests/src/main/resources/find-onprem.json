@@ -9,10 +9,15 @@
     "url": "http://localhost:4444/wd/hub"
   },
   "users": {
-    "default": {
-      "role": "Admin",
+    "bifhi": {
+      "role" : "bifhi",
       "username": "BIFace",
-      "password": "soBIFace"
+      "password" : "soBIFace"
+    },
+    "find": {
+      "role": "Admin",
+      "username": "face",
+      "password": "soFace"
     }
   }
 }
