@@ -1659,8 +1659,8 @@ input.find-input {
 }
 
 .preview-document-frame {
-  &:extend(.p-t-sm);
-  &:extend(.m-nil);
+  .p-t-sm;
+  .m-nil;
 
   border: @nil;
   display: block;
@@ -1690,7 +1690,7 @@ input.find-input {
 }
 
 .preview-mode-document {
-  &:extend(.flex);
+  .flex;
 
   flex-grow: 1;
 }
@@ -1945,6 +1945,18 @@ h4.similar-dates-message {
   .navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
     background-color: @color1;
     background-image: none;
+  }
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /* IE10+ CSS styles go here */
+  .preview-document-frame,
+  .preview-mode-document {
+    height: @100percent;
+  }
+
+  .preview-mode-document-title {
+    .p-b-sm;
   }
 }
 
