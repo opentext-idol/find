@@ -206,6 +206,12 @@ public class MainNumericWidget extends AppElement {
 
     public DatePicker openCalendar(WebElement dateInput) {
         dateInput.findElement(By.className("hp-calendar")).click();
+        new WebDriverWait(getDriver(), 3).until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(final WebDriver driver) {
+                return calendarHasOpened();
+            }
+        });
         return new DatePicker(dateInput, driver);
     }
 

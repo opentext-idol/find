@@ -365,7 +365,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-633")
     public void testInputDateBoundsWithCalendar() {
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("tragedy");
         final DatePicker startCalendar = mainGraph.openCalendar(mainGraph.startCalendar());
