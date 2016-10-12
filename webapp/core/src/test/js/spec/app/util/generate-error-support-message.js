@@ -28,7 +28,6 @@ define([
                 this.xhr = {
                     responseJSON: {
                         backendErrorCode: KNOWN_USER_ERROR_CODE,
-                        message: DUMMY_MESSAGE_FOR_USER,
                         uuid: DUMMY_UUID
                     }
                 };
