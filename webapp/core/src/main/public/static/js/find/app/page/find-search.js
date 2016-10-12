@@ -419,7 +419,7 @@ define([
                             savedSearchModel: savedSearchModel,
                             searchCollections: this.searchCollections,
                             searchTypes: this.searchTypes,
-                            selectedTabModel: this.selectedTabModel                           
+                            selectedTabModel: this.selectedTabModel
                         }, this.serviceViewOptions(cid)))
                     };
                     this.serviceViews[cid] = viewData;
@@ -443,6 +443,9 @@ define([
                 }
 
                 viewData.view.$el.removeClass('hide');
+                if (viewData.view.update) {
+                    viewData.view.update();
+                }
             }
         },
 

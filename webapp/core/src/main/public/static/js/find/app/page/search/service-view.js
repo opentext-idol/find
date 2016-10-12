@@ -341,6 +341,10 @@ define([
             this.updateScrollParameters();
         },
 
+        update: function() {
+            this.resultsViewContainer.updateTab();
+        },
+
         renderTimeBar: function () {
             if (this.timeBarView && this.$middleContainer) {
                 this.$middleContainer.append(this.timeBarView.$el);

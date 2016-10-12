@@ -59,6 +59,14 @@ define([
             }
         },
 
+        updateTab: function() {
+            var tabId = this.model.get('selectedTab');
+            var viewData = _.findWhere(this.views, {id: tabId});
+            if (viewData.content.update) {
+                viewData.content.update();
+            }
+        },
+
         remove: function() {
             _.chain(this.views)
                 .pluck('content')
