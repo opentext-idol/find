@@ -126,13 +126,13 @@ public class TopicMapITCase extends IdolFindTestBase {
         search("m");
 
         assumeThat("Search has results for this data", results.emptyMessage(), not(displayed()));
-        final List<String> clusterNames = results.parentEntityNames();
+        final List<String> clusterNames = results.conceptClusterNames();
         final List<String> addedConcepts = new ArrayList<>();
 
-        addedConcepts.add(results.clickChildEntityAndAddText(clusterNames.size()));
+        addedConcepts.add(results.clickConceptAndAddText(clusterNames.size()));
         results.waitForMapLoaded();
 
-        addedConcepts.add(results.clickChildEntityAndAddText(results.parentEntityNames().size()));
+        addedConcepts.add(results.clickConceptAndAddText(results.conceptClusterNames().size()));
         Waits.loadOrFadeWait();
 
         for(String concept : addedConcepts) {
@@ -148,11 +148,11 @@ public class TopicMapITCase extends IdolFindTestBase {
         Slider slider = results.speedVsAccuracySlider();
         final int originalToolTipValue = sliderToolTipValue(slider);
 
-        final List<String> originalParentEntityNames = results.parentEntityNames();
+        final List<String> originalParentEntityNames = results.conceptClusterNames();
 
         slider.dragBy(30);
         results.waitForMapLoaded();
-        final List<String> changedParentNames = results.parentEntityNames();
+        final List<String> changedParentNames = results.conceptClusterNames();
         assertThat("Changing the slider has changed the map",changedParentNames,
                 anyOf(not(hasSize(originalParentEntityNames.size())),
                         not(containsItems(originalParentEntityNames))));
@@ -165,7 +165,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         assumeThat("Have returned tooltip to original value",sliderToolTipValue(slider),
                 anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
                 lessThanOrEqualTo(originalToolTipValue + 1)));
-        verifyThat("Same parent concepts as when originally loaded",results.parentEntityNames(),containsItems(originalParentEntityNames));
+        verifyThat("Same parent concepts as when originally loaded",results.conceptClusterNames(),containsItems(originalParentEntityNames));
     }
 
     private int sliderToolTipValue(final Slider slider) {

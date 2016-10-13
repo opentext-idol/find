@@ -1,64 +1,54 @@
 package com.autonomy.abc.selenium.find.bi;
 
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openqa.selenium.WebElement;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TopicMapConcept {
-
     private final WebElement entity;
     private Double[][] boundaries;
 
+
     TopicMapConcept(WebElement element) {
         entity = element;
+        boundaries = this.getEntityCoordinates();
     }
 
-    public Double[][] getBoundaries() {
+    Double[][] getBoundaries() {
         return boundaries;
     }
 
-    Double[][] extractLocations() {
+    private Double[][] getEntityCoordinates() {
         final String path = entity.getAttribute("d");
 
-        List<ImmutablePair> coords = new ArrayList<>();
+        List<String> coordinatesAsStrings = new LinkedList<>(Arrays.asList(path.split("M|L|Z")));
+        coordinatesAsStrings.remove("");
 
-        List<String> coordinates = new LinkedList<>(Arrays.asList(path.split("M|L|Z")));
-        coordinates.remove("");
+        Double[][] boundaries = {{10000000., -1.}, {10000000., -1.}};
 
-        for(String value : coordinates){
-            String[] pair = value.split(",");
-            coords.add(new ImmutablePair(Double.parseDouble(pair[0]),Double.parseDouble(pair[1])));
+        for(String value : coordinatesAsStrings) {
+            List<Double> pair = Arrays.asList(value.split(","))
+                    .stream()
+                    .map(Double::parseDouble)
+                    .collect(Collectors.toList());
+
+            //Boundary Values: x axis
+            findBoundaryValues(pair.get(0), boundaries[0]);
+            //Boundary Values: y axis
+            findBoundaryValues(pair.get(1), boundaries[1]);
         }
+        return boundaries;
+    }
 
-        double lowestX = 100000000;
-        double highestX = -1;
-        double lowestY = 100000000;
-        double highestY = -1;
-
-        for(ImmutablePair coord : coords) {
-            //L: x value
-            if((double)coord.getLeft() > highestX) {
-                highestX = (double)coord.getLeft();
-            }
-            else if((double)coord.getLeft() < lowestX){
-                lowestX = (double)coord.getLeft();
-            }
-
-            //R: y value
-            if((double)coord.getRight() > highestY) {
-                highestY = (double)coord.getRight();
-            }
-            else if((double)coord.getRight() < lowestY){
-                lowestY = (double)coord.getRight();
-            }
+    private void findBoundaryValues(final Double value, Double[] boundaries) {
+        if(value > boundaries[1]) {
+            boundaries[1] = value;
         }
-        Double[][] array = {{lowestX,highestX},{lowestY,highestY}};
-        this.boundaries = array;
-        return array;
+        else if(value < boundaries[0]) {
+            boundaries[0] = value;
+        }
     }
 }

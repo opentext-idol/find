@@ -117,12 +117,11 @@ public class ConceptsPanel {
     }
 
     public EditPopover editConcept(final int i) {
-        final Removable concept = selectedConceptRemovables().get(i);
         try{
-            return editPopover(concept);
+            return editPopover(selectedConceptRemovables().get(i));
         }
         catch (NoSuchElementException | TimeoutException e) {
-            return editPopover(concept);
+            return editPopover(selectedConceptRemovables().get(i));
         }
     }
 
@@ -166,7 +165,7 @@ public class ConceptsPanel {
             editBox.setValue(value);
         }
 
-        public void setValue(final List<String> concepts) {
+        public void setValueAndSave(final List<String> concepts) {
             editBox.clear();
             final WebElement box = editBox.getElement();
 
@@ -174,6 +173,7 @@ public class ConceptsPanel {
                 box.sendKeys(concept);
                 box.sendKeys(Keys.ENTER);
             }
+            saveEdit();
         }
     }
 
