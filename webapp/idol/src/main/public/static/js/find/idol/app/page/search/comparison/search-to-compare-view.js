@@ -23,6 +23,7 @@ define([
         initialize: function(options) {
             this.selectedSearch = options.selectedSearch;
             this.savedSearchCollection = options.savedSearchCollection;
+            this.originalSelectedModelCid = options.originalSelectedModelCid;
         },
 
         render: function() {
@@ -30,7 +31,7 @@ define([
                 i18n:comparisonsI18n,
                 selectedSearchTitle: this.selectedSearch.get('title'),
                 searches: this.savedSearchCollection.reject(function(model){
-                    return model.cid === this.selectedSearch.cid;
+                    return model.cid === this.originalSelectedModelCid;
                 }, this)
             }));
         }
