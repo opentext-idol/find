@@ -306,6 +306,16 @@ define([
             }
         },
 
+        // Overrides method in BasePage
+        update: function() {
+            const viewData = this.serviceViews[this.selectedTabModel.get('selectedSearchCid')];
+
+            if (viewData && viewData.view.update) {
+                // Inform the service view that it is visible again so (e.g.) the topic map can be re-drawn
+                viewData.view.update();
+            }
+        },
+
         // Can be overridden
         getSearchTypes: function () {
             return {
@@ -443,6 +453,7 @@ define([
                 }
 
                 viewData.view.$el.removeClass('hide');
+
                 if (viewData.view.update) {
                     viewData.view.update();
                 }
