@@ -53,7 +53,8 @@ define([
             var views = [{
                 shown: configuration().enableMetaFilter,
                 initialize: function() {
-                    this.filterModel = new Backbone.Model();
+                    //Initializing the text with empty string to stop IE11 issue with triggering input event on render
+                    this.filterModel = new Backbone.Model({text: ''});
 
                     this.filterInput = new TextInput({
                         model: this.filterModel,

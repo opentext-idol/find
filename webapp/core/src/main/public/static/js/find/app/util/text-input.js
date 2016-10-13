@@ -22,7 +22,10 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template(this.templateOptions));
+            this.$el.html(this.template(_.extend({
+                value: this.model.get(this.modelAttribute)
+            }, this.templateOptions)));
+
             this.$input = this.$('.text-input');
         }
     });
