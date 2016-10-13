@@ -68,6 +68,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         numericService = getApplication().numericWidgetService();
     }
 
+    /*##########ANY NUMERIC GRAPH###########*/
     @Test
     @ActiveBug("FIND-417")
     public void testClickingOnFilterPanelGraphOpensMain() {
@@ -92,6 +93,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-356")
     public void testSelectionRecDoesNotDisappear() {
+        //TODO THIS ISN'T NEEDED - do not hardcode
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "politics");
         mainGraph.clickAndDrag(100, mainGraph.graph());
 
@@ -151,57 +153,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    @Ignore("Desired behaviour but not implemented and not a bug")
-    public void testMinAndMaxReflectCurrentSearch() {
-        //currently 0th graph is place elevation (i.e. non-date)
-        numericService.searchAndSelectNthGraph(0, "*");
-        checkBoundsForPlaceElevationWidget();
-
-        numericService.searchAndSelectNthGraph(1, "*");
-        checkBoundsForDateWidget();
-    }
-
-    private void checkBoundsForPlaceElevationWidget() {
-        findPage.filterBy(new IndexFilter("Cities"));
-        MainNumericWidget mainGraph = findPage.mainGraph();
-        final int originalRange = mainGraph.getRange();
-
-        findService.search("Tse");
-        mainGraph = findPage.mainGraph();
-        final int newRange = mainGraph.getRange();
-
-        verifyThat("Bounds are determined by current query for non-date widget", newRange, lessThan(originalRange));
-        mainGraph.reset();
-    }
-
-    private void checkBoundsForDateWidget() {
-        final List<Date> oldD = findPage.mainGraph().getDates();
-        findPage.filterBy(IndexFilter.ALL);
-        findService.search("George Orwell");
-        final List<Date> newD = findPage.mainGraph().getDates();
-
-        if(newD.get(0).after(oldD.get(0))) {
-            verifyThat("Bounds are determined by current query for date widget", newD.get(0).after(oldD.get(0)));
-        } else {
-            verifyThat("Bounds are determined by current query for date widget", newD.get(1).before(oldD.get(1)));
-        }
-    }
-
-    @Test
-    @ResolvedBug("FIND-390")
-    public void testInteractionWithRegularDateFilters() {
-        final MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("whatever");
-        filters().toggleFilter(DateOption.MONTH);
-
-        filters().waitForParametricFields();
-        mainGraph.waitUntilWidgetLoaded();
-
-        final WebElement errorMessage = mainGraph.errorMessage();
-        verifyThat("Error message not displayed", !errorMessage.isDisplayed());
-        verifyThat("Error message not 'failed to load data'", errorMessage.getText(), not(equalToIgnoringCase("Failed to load data")));
-    }
-
-    @Test
     @ResolvedBug("FIND-366")
     public void testFilterLabelsUpdate() {
         findService.search("dance");
@@ -253,19 +204,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ResolvedBug("FIND-365")
-    // Make sure that the named graph used is a numeric and not date widget
-    public void testFilterLabelFormatReflectsNumericData() {
-        final MainNumericWidget mainGraph = numericService.searchAndSelectNamedGraph("Random Number", "beer");
-        assumeThat("Test assumes that there is the numeric field place elevation", mainGraph.header(), equalToIgnoringCase("Random Number"));
-
-        mainGraph.clickAndDrag(200, mainGraph.graph());
-        numericService.waitForReload();
-
-        verifyThat("Place elevation filter label doesn't have time format", findPage.filterLabelsText().get(0), not(containsString(":")));
-    }
-
-    @Test
     @ResolvedBug("FIND-273")
     public void testRemovingViaFilterLabelRemovesSelection() {
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstNumericGraph("space");
@@ -285,6 +223,45 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
+    @ResolvedBug({"FIND-270", "FIND-143"})
+    public void testFilterLabelPresentInSavedQuery() {
+        final String searchName = "meh";
+        final MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "moon");
+        mainGraph.clickAndDrag(-50, mainGraph.graph());
+
+        final SavedSearchService saveService = getApplication().savedSearchService();
+        final SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
+
+        try {
+            saveService.saveCurrentAs(searchName, SearchType.QUERY);
+            saveService.openNewTab();
+            searchTabs.switchTo(searchName);
+
+            Waits.loadOrFadeWait();
+
+            verifyThat("Filter labels have appeared", findPage.filterLabels(), not(empty()));
+        } finally {
+            findService.search("back to results");
+            saveService.deleteAll();
+        }
+    }
+
+    /*##########DATE GRAPHS##########*/
+    @Test
+    @ResolvedBug("FIND-390")
+    public void testInteractionWithRegularDateFilters() {
+        final MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("whatever");
+        filters().toggleFilter(DateOption.MONTH);
+
+        filters().waitForParametricFields();
+        mainGraph.waitUntilWidgetLoaded();
+
+        final WebElement errorMessage = mainGraph.errorMessage();
+        verifyThat("Error message not displayed", !errorMessage.isDisplayed());
+        verifyThat("Error message not 'failed to load data'", errorMessage.getText(), not(equalToIgnoringCase("Failed to load data")));
+    }
+
+    @Test
     @ResolvedBug("FIND-400")
     @Ignore("Numeric widget reloading currently makes it impossible to Selenium test this.")
     public void testInputDateBoundsAsText() throws Exception {
@@ -298,6 +275,74 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.waitUntilWidgetLoaded();
 
         dateRectangleHover(mainGraph, "1976", "2012");
+    }
+
+    @Test
+    public void testInputDateBoundsWithCalendar() {
+        MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("tragedy");
+        final DatePicker startCalendar = mainGraph.openCalendar(mainGraph.startCalendar());
+
+        assertThat("Calendar widget has opened",mainGraph.calendarHasOpened());
+
+        startCalendar.calendarDateSelect(new Date(76, 8, 26));
+        final DatePicker endCalendar = mainGraph.openCalendar(mainGraph.endCalendar());
+        endCalendar.calendarDateSelect(new Date(201, 3, 22));
+
+        mainGraph = findPage.mainGraph();
+        mainGraph.waitUntilWidgetLoaded();
+        mainGraph.waitUntilRectangleBack();
+        //to close the calendar pop-up
+        mainGraph.messageRow().click();
+        mainGraph.waitUntilDatePickerGone();
+
+        dateRectangleHover(mainGraph, "1976", "2101");
+    }
+
+    private void dateRectangleHover(final MainNumericWidget mainGraph, final String start, final String end) {
+        mainGraph.rectangleHoverRight();
+        final String rightCorner = mainGraph.hoverMessage().split(" ")[0];
+        mainGraph.rectangleHoverLeft();
+        final String leftCorner = mainGraph.hoverMessage().split(" ")[0];
+
+        verifyThat("Start bound is correct", leftCorner, containsString(start));
+        verifyThat("End bound is correct", rightCorner, containsString(end));
+    }
+
+    @Test
+    @ResolvedBug({"FIND-389", "FIND-143"})
+    public void testSnapshotDateRangesDisplayedCorrectly() {
+        final MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("dire");
+        final String filterType = mainGraph.header();
+        mainGraph.clickAndDrag(-50, mainGraph.graph());
+        findPage.waitForParametricValuesToLoad();
+
+        final SavedSearchService saveService = getApplication().savedSearchService();
+        final SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
+
+        try {
+            saveService.saveCurrentAs("bad", SearchType.SNAPSHOT);
+            searchTabs.switchTo("bad");
+            Waits.loadOrFadeWait();
+            final String dateRange = new SavedSearchPanel(getDriver()).getFirstSelectedFilterOfType(filterType);
+            verifyThat("Date range formatted like date", dateRange, allOf(containsString("/"), containsString(":")));
+        } finally {
+            searchTabs.switchTo("bad");
+            saveService.deleteCurrentSearch();
+        }
+    }
+
+    /*##########NON-DATE GRAPHS##########*/
+    @Test
+    @ResolvedBug("FIND-365")
+    // Make sure that the named graph used is a numeric and not date widget
+    public void testFilterLabelFormatReflectsNumericData() {
+        final MainNumericWidget mainGraph = numericService.searchAndSelectNamedGraph("Random Number", "beer");
+        assumeThat("Test assumes that there is the numeric field place elevation", mainGraph.header(), equalToIgnoringCase("Random Number"));
+
+        mainGraph.clickAndDrag(200, mainGraph.graph());
+        numericService.waitForReload();
+
+        verifyThat("Place elevation filter label doesn't have time format", findPage.filterLabelsText().get(0), not(containsString(":")));
     }
 
     @Test
@@ -364,81 +409,41 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         return findPage.mainGraph();
     }
 
+    //###########BOTH DATE AND NUMERIC NEEDED###########//
     @Test
-    public void testInputDateBoundsWithCalendar() {
-        MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("tragedy");
-        final DatePicker startCalendar = mainGraph.openCalendar(mainGraph.startCalendar());
+    @Ignore("Desired behaviour but not implemented and not a bug")
+    public void testMinAndMaxReflectCurrentSearch() {
+        //currently 0th graph is place elevation (i.e. non-date)
+        numericService.searchAndSelectNthGraph(0, "*");
+        checkBoundsForPlaceElevationWidget();
 
-        assertThat("Calendar widget has opened",mainGraph.calendarHasOpened());
+        numericService.searchAndSelectNthGraph(1, "*");
+        checkBoundsForDateWidget();
+    }
 
-        startCalendar.calendarDateSelect(new Date(76, 8, 26));
-        final DatePicker endCalendar = mainGraph.openCalendar(mainGraph.endCalendar());
-        endCalendar.calendarDateSelect(new Date(201, 3, 22));
+    private void checkBoundsForPlaceElevationWidget() {
+        findPage.filterBy(new IndexFilter("Cities"));
+        MainNumericWidget mainGraph = findPage.mainGraph();
+        final int originalRange = mainGraph.getRange();
 
+        findService.search("Tse");
         mainGraph = findPage.mainGraph();
-        mainGraph.waitUntilWidgetLoaded();
-        mainGraph.waitUntilRectangleBack();
-        //to close the calendar pop-up
-        mainGraph.messageRow().click();
-        mainGraph.waitUntilDatePickerGone();
+        final int newRange = mainGraph.getRange();
 
-        dateRectangleHover(mainGraph, "1976", "2101");
+        verifyThat("Bounds are determined by current query for non-date widget", newRange, lessThan(originalRange));
+        mainGraph.reset();
     }
 
-    private void dateRectangleHover(final MainNumericWidget mainGraph, final String start, final String end) {
-        mainGraph.rectangleHoverRight();
-        final String rightCorner = mainGraph.hoverMessage().split(" ")[0];
-        mainGraph.rectangleHoverLeft();
-        final String leftCorner = mainGraph.hoverMessage().split(" ")[0];
+    private void checkBoundsForDateWidget() {
+        final List<Date> oldD = findPage.mainGraph().getDates();
+        findPage.filterBy(IndexFilter.ALL);
+        findService.search("George Orwell");
+        final List<Date> newD = findPage.mainGraph().getDates();
 
-        verifyThat("Start bound is correct", leftCorner, containsString(start));
-        verifyThat("End bound is correct", rightCorner, containsString(end));
-    }
-
-    @Test
-    @ResolvedBug({"FIND-389", "FIND-143"})
-    public void testSnapshotDateRangesDisplayedCorrectly() {
-        final MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("dire");
-        final String filterType = mainGraph.header();
-        mainGraph.clickAndDrag(-50, mainGraph.graph());
-        findPage.waitForParametricValuesToLoad();
-
-        final SavedSearchService saveService = getApplication().savedSearchService();
-        final SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
-
-       try {
-            saveService.saveCurrentAs("bad", SearchType.SNAPSHOT);
-            searchTabs.switchTo("bad");
-            Waits.loadOrFadeWait();
-            final String dateRange = new SavedSearchPanel(getDriver()).getFirstSelectedFilterOfType(filterType);
-            verifyThat("Date range formatted like date", dateRange, allOf(containsString("/"), containsString(":")));
-        } finally {
-            searchTabs.switchTo("bad");
-            saveService.deleteCurrentSearch();
-        }
-    }
-
-    @Test
-    @ResolvedBug({"FIND-270", "FIND-143"})
-    public void testFilterLabelPresentInSavedQuery() {
-        final String searchName = "meh";
-        final MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "moon");
-        mainGraph.clickAndDrag(-50, mainGraph.graph());
-
-        final SavedSearchService saveService = getApplication().savedSearchService();
-        final SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
-
-        try {
-            saveService.saveCurrentAs(searchName, SearchType.QUERY);
-            saveService.openNewTab();
-            searchTabs.switchTo(searchName);
-
-            Waits.loadOrFadeWait();
-
-            verifyThat("Filter labels have appeared", findPage.filterLabels(), not(empty()));
-        } finally {
-            findService.search("back to results");
-            saveService.deleteAll();
+        if(newD.get(0).after(oldD.get(0))) {
+            verifyThat("Bounds are determined by current query for date widget", newD.get(0).after(oldD.get(0)));
+        } else {
+            verifyThat("Bounds are determined by current query for date widget", newD.get(1).before(oldD.get(1)));
         }
     }
 
