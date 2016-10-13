@@ -228,7 +228,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         topicMap.waitForMapLoaded();
 
         // Select a concept and save the search
-        final String selectedConcept = topicMap.clickClusterHeading();
+        final String selectedConcept = topicMap.clickNthClusterHeading(0);
         new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active").until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
         saveService.saveCurrentAs("Conceptual Search", SearchType.QUERY);
 

@@ -14,7 +14,6 @@ import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
 import com.autonomy.abc.selenium.find.results.ResultsView;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
@@ -125,7 +124,7 @@ public class RelatedConceptsITCase extends FindTestBase {
         final String firstConcept = clickFirstNewConcept(concepts, relatedConceptsPanel().relatedConcepts());
         final String secondConcept = clickFirstNewConcept(concepts, relatedConceptsPanel().relatedConcepts());
 
-        verifyThat(conceptsPanel.selectedConceptElements(), hasSize(2));
+        verifyThat(conceptsPanel.selectedConcepts(), hasSize(2));
 
         conceptsPanel.removableConceptForHeader(secondConcept).removeAndWait();
 
