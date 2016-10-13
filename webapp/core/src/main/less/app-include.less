@@ -99,6 +99,7 @@
 /*------Z-index variables------*/
 @dateSelectZIndex: 1000;
 @findInputZIndex: 1020;
+@tooltipZIndex: 10000;
 
 /*------Selectors and declarations-------*/
 html,
@@ -145,6 +146,10 @@ body {
   rect.selection {
     fill: @timebarSelectionColor;
   }
+}
+
+.tooltip {
+  z-index: @tooltipZIndex;
 }
 
 .numeric-parametric-inputs {
