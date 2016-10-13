@@ -10,7 +10,6 @@ import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -118,7 +117,7 @@ public class ResultsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-350")
+    @ResolvedBug("FIND-350")
     @Role(UserRole.FIND)
     public void testDecliningAutoCorrectNotPermanent() {
         search("blarf");
@@ -126,13 +125,14 @@ public class ResultsITCase extends FindTestBase {
         findPage.originalQuery().click();
         findPage.waitForParametricValuesToLoad();
 
-        search("jedu");
+        search("maney");
         verifyThat("Says it corrected query", findPage.originalQuery(), displayed());
 
         //TODO: Soon FindPage will have goToListView and this will be redundant
         if (findPage.listTabExists()) {
             ((IdolFindPage) findPage).goToListView();
         }
+
         verifyThat("There are results in list view", findPage.totalResultsNum(), greaterThan(0));
     }
 

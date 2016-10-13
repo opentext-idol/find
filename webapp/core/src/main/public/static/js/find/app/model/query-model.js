@@ -54,8 +54,13 @@ define([
 
             this.listenTo(this.queryState.conceptGroups, 'change:concepts update reset', function () {
                 var queryText = makeQueryText(this.queryState);
+
                 if (queryText) {
-                    this.set('queryText', queryText);
+                    this.set({
+                        // Reset auto-correct whenever the search text changes
+                        autoCorrect: true,
+                        queryText: queryText
+                    });
                 }
             });
 
