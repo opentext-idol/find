@@ -94,6 +94,7 @@ public class SearchTabBar implements Iterable<SearchTab> {
     }
 
     public void waitUntilMoreThanOneTab() {
-        new WebDriverWait(driver,20).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".search-tab:nth-child(2)")));
+        //TODO: Should be wait until a saved search is present.
+        new WebDriverWait(driver,30).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".search-tab:nth-child(2)")));
     }
 }

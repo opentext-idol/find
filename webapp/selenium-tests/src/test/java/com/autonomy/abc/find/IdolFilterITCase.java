@@ -152,6 +152,8 @@ public class IdolFilterITCase extends IdolFindTestBase {
 
         final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
         final IndexesTree indexes = filterPanel.indexesTree();
+        indexesTreeContainer.expand();
+
         final String firstValue = indexes.allIndexes().getIndex(0).getName();
 
         verifyThat(indexesTreeContainer.isCollapsed(), is(false));
@@ -171,6 +173,8 @@ public class IdolFilterITCase extends IdolFindTestBase {
         findPage.waitUntilDatabasesLoaded();
         final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
         final IndexesTree indexes = filterPanel.indexesTree();
+        indexesTreeContainer.expand();
+
         final String firstValue = indexes.allIndexes().getIndex(0).getName();
 
         indexesTreeContainer.collapse();

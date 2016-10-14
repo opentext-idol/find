@@ -91,6 +91,10 @@ public class IdolFindPage extends FindPage {
         });
     }
 
+    public void waitUntilSavePossible() {
+        new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active").until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
+    }
+
     public boolean resultsComparisonVisible() {
         return findElement(By.cssSelector(".comparison-view")).isDisplayed();
     }

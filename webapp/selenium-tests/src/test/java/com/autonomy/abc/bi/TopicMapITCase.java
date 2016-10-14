@@ -113,6 +113,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         final FilterPanel filters = getElementFactory().getFilterPanel();
         final int index = filters.nonZeroParamFieldContainer(0);
         filters.parametricField(index).expand();
+
         final FindParametricFilter filter = filters.checkboxForParametricValue(index, 0);
         final String filterName = filter.getName();
         filter.check();

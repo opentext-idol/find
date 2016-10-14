@@ -70,21 +70,18 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         elementFactory = getElementFactory();
         findService.search("long set-up");
 
-        try{
-            elementFactory.getSearchTabBar().waitUntilMoreThanOneTab();
-            savedSearchService.deleteAll();
-        } catch (final TimeoutException ignored) {
-            //no-op
-        }
-
+        savedSearchService.waitForSomeTabsAndDelete();
         findPage = getElementFactory().getFindPage();
         findPage.goToListView();
     }
 
     @After
     public void tearDown() {
-        savedSearchService.deleteAll();
+        getDriver().get(getConfig().getAppUrl(getApplication()));
+        savedSearchService.waitForSomeTabsAndDelete();
     }
+
+
 
     @SuppressWarnings("Duplicates")
     @Test
@@ -102,6 +99,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
 
     @Test
     public void testNoOverlap() {
+        getElementFactory().getFilterPanel().indexesTreeContainer().expand();
         final Query polar = new Query("\"polar bear\"").withFilter(new IndexFilter(SOME_INDEX));
         final Query opposites = new Query("\"opposable thumbs\"").withFilter(new IndexFilter(OTHER_INDEX));
 
@@ -211,6 +209,9 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         final String expectedTabName = "expected";
 
         searchAndSave(new Query("face"), comparedTabName);
+        savedSearchService.openNewTab();
+
+        getElementFactory().getFilterPanel().indexesTreeContainer().expand();
         searchAndSave(new Query("bus").withFilter(new IndexFilter(expectedIndex)), expectedTabName);
 
         getElementFactory().getTopicMap().waitForMapLoaded();
@@ -221,6 +222,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService.compareCurrentWith(comparedTabName);
         ResultsComparisonView resultsComparison = getElementFactory().getResultsComparison();
         resultsComparison.goToListView();
+
         resultsComparison.resultsView(AppearsIn.THIS_ONLY)
                 .getResult(1)
                 .similarDocuments()

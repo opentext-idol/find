@@ -10,7 +10,7 @@
   },
   "users": {
     "default": {
-      "role": "Admin",
+      "role": "admin",
       "username": "BIFace",
       "password": "soBIFace"
     }

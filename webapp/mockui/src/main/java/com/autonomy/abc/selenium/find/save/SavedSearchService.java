@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.hp.autonomy.frontend.selenium.util.Waits;
+import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,17 @@ public class SavedSearchService {
         elementFactory.getSearchTabBar().hoverOnTab(0);
     }
 
+    public void waitForSomeTabsAndDelete() {
+        try{
+            elementFactory.getSearchTabBar().waitUntilMoreThanOneTab();
+            deleteAll();
+        } catch (final TimeoutException ignored) {
+            //no-op
+        }
+
+    }
+
+    //STILL NOT DELETING THE TABS
     public void deleteAll() {
         LOGGER.info("Deleting all tabs");
         SearchTabBar tabBar = elementFactory.getSearchTabBar();
@@ -54,8 +66,6 @@ public class SavedSearchService {
             elementFactory.getSearchTabBar().tab(title).activate();
             deleteCurrentSearch();
         }
-        elementFactory.getFindPage().refresh();
-        elementFactory.getFindPage().waitForLoad();
     }
 
     public void deleteCurrentSearch() {

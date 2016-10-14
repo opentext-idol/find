@@ -251,8 +251,9 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-390")
     public void testInteractionWithRegularDateFilters() {
         final MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("whatever");
-        filters().toggleFilter(DateOption.MONTH);
 
+        filters().expandDateFilters();
+        filters().toggleFilter(DateOption.MONTH);
         filters().waitForParametricFields();
         mainGraph.waitUntilWidgetLoaded();
 
