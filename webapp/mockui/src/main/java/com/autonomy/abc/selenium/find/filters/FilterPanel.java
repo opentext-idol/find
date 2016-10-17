@@ -19,6 +19,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,8 @@ public class FilterPanel {
     private final WebElement panel;
     private final WebDriver driver;
     private final ParametrizedFactory<IndexCategoryNode, IndexesTree> indexesTreeFactory;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParametricFilterModal.class);
+
 
     public FilterPanel(final ParametrizedFactory<IndexCategoryNode, IndexesTree> indexesTreeFactory, final WebDriver driver) {
         this.indexesTreeFactory = indexesTreeFactory;
@@ -171,5 +175,9 @@ public class FilterPanel {
 
     protected WebElement getPanel() {
         return panel;
+    }
+
+    public List<WebElement> toolTips() {
+        return panel.findElements(By.cssSelector("[aria-describedby^='tooltip']"));
     }
 }

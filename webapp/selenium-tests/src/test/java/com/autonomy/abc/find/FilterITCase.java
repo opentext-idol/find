@@ -6,11 +6,9 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
-import com.autonomy.abc.selenium.find.ToolTips;
 import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -81,23 +79,23 @@ public class FilterITCase extends FindTestBase {
             verifyThat("Field values: " + numberFields + " - less than or equal to 5", numberFields, lessThanOrEqualTo(5));
         }
 
-        final ParametricFieldContainer secondContainer = filterPanel.parametricField(filterPanel.nonZeroParamFieldContainer(1));
+        final ParametricFieldContainer firstContainer = filterPanel.parametricField(filterPanel.nonZeroParamFieldContainer(0));
 
-        final FindParametricFilter secondField = secondContainer.getFilters().get(1);
-        final String filterName = secondField.getName();
-        final int expectedResults = secondField.getResultsCount();
+        final FindParametricFilter firstField = firstContainer.getFilters().get(0);
+        final String filterName = firstField.getName();
+        final int expectedResults = firstField.getResultsCount();
 
         final int originalNumberOfResults = findPage.totalResultsNum();
         assumeThat("Fewer results predicted w/ this filter", expectedResults, lessThan(originalNumberOfResults));
 
-        secondField.check();
+        firstField.check();
         results.waitForResultsToLoad();
 
         verifyThat("Expected number of results (according to panel) equals actual number of results",
                    results.getResultsCount(), is(expectedResults));
 
         try {
-            secondContainer.getFilters();
+            firstContainer.getFilters();
             fail("Filter panel did not reload after filter selection");
         } catch(Exception e) {
             LOGGER.info("Correctly threw exception as filter panel has reloaded");
@@ -117,6 +115,8 @@ public class FilterITCase extends FindTestBase {
         int totalParametricFields = filterPanel.parametricFieldContainers().size();
 
         searchAndWait("shouldhavenoresultsprobably");
+        findPage.ensureTermNotAutoCorrected();
+
         findPage.waitForParametricValuesToLoad();
         int noResultsParametricFields = filterPanel.parametricFieldContainers().size();
 
@@ -201,8 +201,7 @@ public class FilterITCase extends FindTestBase {
             checkbox.name().click();
         }
 
-        Waits.loadOrFadeWait();
-        verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()), not(hasSize(boxes.size())));
+        verifyThat("Tooltips aren't floating everywhere", filters().toolTips(), hasSize(lessThan(boxes.size())));
     }
 
     private List<FindParametricFilter> checkAllVisibleFiltersInFirstParametrics() {
@@ -262,6 +261,7 @@ public class FilterITCase extends FindTestBase {
     public void testFilterByMultipleIndexes() {
         findService.search("unbelievable");
         final FilterPanel filterPanel = filters();
+        filterPanel.indexesTreeContainer().expand();
         findPage.filterBy(IndexFilter.ALL);
 
         final IndexFilter filter = new IndexFilter(filterPanel.getIndex(2));
