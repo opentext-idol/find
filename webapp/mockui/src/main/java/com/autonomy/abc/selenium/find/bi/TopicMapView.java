@@ -175,7 +175,7 @@ public class TopicMapView {
         List<String> childConcepts = new ArrayList<>();
         for(ImmutablePair path : childConceptsOfChosenCluster) {
             int indexOfText = concepts().size() - 1 - (int) path.getRight();
-            childConcepts.add(mapEntityTextElements().get(indexOfText).getText());
+            childConcepts.add(mapEntityTextElements().get(indexOfText).getText().replaceAll("\\s+",""));
         }
 
         return childConcepts;

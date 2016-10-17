@@ -113,14 +113,16 @@ public class ConceptsPanel {
         new WebDriverWait(driver,5)
                 .withMessage("Popover did not open")
                 .until(ExpectedConditions.visibilityOfElementLocated(POPOVER_LOCATOR));
+
         return new EditPopover(panel.findElement(POPOVER_LOCATOR));
     }
 
     public EditPopover editConcept(final int i) {
+        //Necessary due to tooltip
         try{
             return editPopover(selectedConceptRemovables().get(i));
         }
-        catch (NoSuchElementException | TimeoutException e) {
+        catch (NoSuchElementException | TimeoutException | StaleElementReferenceException e) {
             return editPopover(selectedConceptRemovables().get(i));
         }
     }
@@ -145,6 +147,12 @@ public class ConceptsPanel {
 
         public void cancelEdit() {
             findElement(By.cssSelector(".edit-concept-cancel-button")).click();
+            new WebDriverWait(driver, 5).until(new ExpectedCondition<Boolean>() {
+                @Override
+                public Boolean apply(final WebDriver driver) {
+                    return popOverGone();
+                }
+            });
         }
 
         public void saveEdit() {
@@ -158,7 +166,8 @@ public class ConceptsPanel {
         }
 
         public boolean containsValue(final String value) {
-            return editBox.getValue().contains(value);
+            //Need to remove all the spaces from the editBox value.
+            return editBox.getValue().replaceAll("\\s+","").contains(value);
         }
 
         public void setValue(final String value) {

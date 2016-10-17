@@ -279,6 +279,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-690")
     public void testInputDateBoundsWithCalendar() {
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("tragedy");
         final DatePicker startCalendar = mainGraph.openCalendar(mainGraph.startCalendar());
@@ -287,7 +288,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
         startCalendar.calendarDateSelect(new Date(76, 8, 26));
         final DatePicker endCalendar = mainGraph.openCalendar(mainGraph.endCalendar());
-        endCalendar.calendarDateSelect(new Date(201, 3, 22));
+        endCalendar.calendarDateSelect(new Date(120, 3, 22));
 
         mainGraph = findPage.mainGraph();
         mainGraph.waitUntilWidgetLoaded();
@@ -296,7 +297,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.messageRow().click();
         mainGraph.waitUntilDatePickerGone();
 
-        dateRectangleHover(mainGraph, "1976", "2101");
+        dateRectangleHover(mainGraph, "1976", "2022");
     }
 
     private void dateRectangleHover(final MainNumericWidget mainGraph, final String start, final String end) {
@@ -306,6 +307,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         final String leftCorner = mainGraph.hoverMessage().split(" ")[0];
 
         verifyThat("Start bound is correct", leftCorner, containsString(start));
+        verifyThat("End bound is not an empty string due to selection rectangle truncation", leftCorner, not(""));
         verifyThat("End bound is correct", rightCorner, containsString(end));
     }
 
