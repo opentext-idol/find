@@ -30,7 +30,8 @@ define([
 
             this.view = new SearchToCompareView({
                 savedSearchCollection: this.savedSearchCollection,
-                selectedSearch: this.primaryModel
+                selectedSearch: this.primaryModel,
+                originalSelectedModelCid: this.primaryModel.cid
             });
 
             this.view.render();
