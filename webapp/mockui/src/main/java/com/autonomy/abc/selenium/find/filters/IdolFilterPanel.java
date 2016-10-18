@@ -74,7 +74,7 @@ public class IdolFilterPanel extends FilterPanel {
     }
 
     @Override
-    protected List<FilterContainer> allFilterContainers() {
+    public List<FilterContainer> allFilterContainers() {
         final List<FilterContainer> nodes = new ArrayList<>();
         nodes.add(indexesTreeContainer());
         nodes.add(dateFilterContainer());

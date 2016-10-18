@@ -31,8 +31,6 @@ public class FilterPanel {
     private final WebElement panel;
     private final WebDriver driver;
     private final ParametrizedFactory<IndexCategoryNode, IndexesTree> indexesTreeFactory;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ParametricFilterModal.class);
-
 
     public FilterPanel(final ParametrizedFactory<IndexCategoryNode, IndexesTree> indexesTreeFactory, final WebDriver driver) {
         this.indexesTreeFactory = indexesTreeFactory;
@@ -150,7 +148,7 @@ public class FilterPanel {
     }
 
     //EXPANDING AND COLLAPSING
-    protected List<FilterContainer> allFilterContainers() {
+    public List<FilterContainer> allFilterContainers() {
         final List<FilterContainer> nodes = new ArrayList<>();
         nodes.add(indexesTreeContainer());
         nodes.add(dateFilterContainer());

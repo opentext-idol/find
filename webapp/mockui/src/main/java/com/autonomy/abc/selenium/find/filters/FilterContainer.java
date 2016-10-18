@@ -14,7 +14,7 @@ public abstract class FilterContainer extends ChevronContainer{
         container = element;
     }
 
-    WebElement getContainer(){
+    public WebElement getContainer(){
         return container;
     }
 

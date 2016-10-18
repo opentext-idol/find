@@ -31,6 +31,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class FilterITCase extends FindTestBase {
     private FindPage findPage;
@@ -58,12 +59,20 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    public void testParametricFiltersDefaultCollapsed() {
+    public void testAllFiltersDefaultCollapsed() {
         searchAndWait("knee");
 
-        for(ParametricFieldContainer container : filters().parametricFieldContainers()) {
+        for(FilterContainer container : filters().allFilterContainers()) {
             verifyThat("Container is collapsed", container.isCollapsed());
         }
+    }
+
+    @Test
+    @ResolvedBug("FIND-671")
+    public void testDatabasesDisplayed() {
+        searchAndWait("dark");
+
+        assertThat("Databases are not hidden", filters().indexesTreeContainer().getContainer(), displayed());
     }
 
     @Test
