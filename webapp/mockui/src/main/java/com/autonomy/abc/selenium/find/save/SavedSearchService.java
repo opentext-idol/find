@@ -47,23 +47,24 @@ public class SavedSearchService {
 
     public void waitForSomeTabsAndDelete() {
         try{
-            elementFactory.getSearchTabBar().waitUntilMoreThanOneTab();
+            elementFactory.getSearchTabBar().waitUntilSavedSearchAppears();
             deleteAll();
         } catch (final TimeoutException ignored) {
-            //no-op
+            deleteAll();
         }
 
     }
 
     //STILL NOT DELETING THE TABS
     public void deleteAll() {
-        LOGGER.info("Deleting all tabs");
         SearchTabBar tabBar = elementFactory.getSearchTabBar();
 
         final List<String> savedTitles = tabBar.savedTabTitles();
+        LOGGER.info("Saved titles: "+savedTitles);
 
         for(String title: savedTitles) {
             elementFactory.getSearchTabBar().tab(title).activate();
+            elementFactory.getFindPage().waitForLoad();
             deleteCurrentSearch();
         }
     }

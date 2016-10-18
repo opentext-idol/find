@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
+import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -18,7 +19,10 @@ import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
 //The result comparisons for non-list view
@@ -46,6 +50,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
             findPage = getElementFactory().getFindPage();
             findPage.waitUntilSearchTabsLoaded();
             savedSearchService.deleteAll();
+
             elementFactory.getConceptsPanel().removeAllConcepts();
         } catch (final TimeoutException ignored) {
             //no-op
@@ -59,18 +64,24 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService.deleteAll();
     }
 
-    @Test
-    @ResolvedBug("FIND-370")
-    public void testMapSliderDoesThingsInComparison() {
-        final String firstSearch = "mellow";
-
-        saveTwoSearches(firstSearch,"unmellow");
+    private TopicMapView compareAndGetTopicMap(final String firstSearch, final String secondSearch) {
+        saveTwoSearches(firstSearch,secondSearch);
         savedSearchService.compareCurrentWith(firstSearch);
 
         Waits.loadOrFadeWait();
 
         final TopicMapView mapView = elementFactory.getTopicMap();
         mapView.waitForMapLoaded();
+        return mapView;
+    }
+
+    @Test
+    @ResolvedBug("FIND-370")
+    public void testMapSliderDoesThingsInComparison() {
+        final String firstSearch = "mellow";
+
+        final TopicMapView mapView = compareAndGetTopicMap(firstSearch, "unmellow");
+
         final WebElement mapEntity = mapView.mapEntities().get(0);
         mapView.speedVsAccuracySlider().dragBy(100);
         mapView.waitForMapLoaded();
@@ -83,14 +94,39 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     }
 
     private void saveTwoSearches(final String searchName1, final String searchName2) {
-        search("yellow",searchName1,SearchType.QUERY);
+        search("yellow", searchName1, SearchType.QUERY);
         savedSearchService.openNewTab();
-        search("red",searchName2,SearchType.QUERY);
+        search("red", searchName2, SearchType.QUERY);
     }
 
     private void search(final String query, final String saveAs, final SearchType saveType) {
+        Waits.loadOrFadeWait();
         findService.search(query);
         findPage.waitUntilSaveButtonsActive();
         savedSearchService.saveCurrentAs(saveAs, saveType);
+    }
+
+    @Test
+    @ResolvedBug("FIND-402")
+    public void testCannotCompareUnsavedSearchWithSelf() {
+        saveTwoSearches("meep","eep");
+
+        savedSearchService.openNewTab();
+        final ComparisonModal modal = findPage.openCompareModal();
+
+        final List<String> possibleComparees = modal.getItems();
+        verifyThat("2 items to compare with", possibleComparees, hasSize(2));
+        verifyThat("Does not contain itself",possibleComparees, not(contains("New Search")));
+    }
+
+    @Test
+    @ResolvedBug("FIND-631")
+    public void testClickingTopicMapClusterHeaderAddsConcept() {
+        final TopicMapView mapView = compareAndGetTopicMap("woo", "boo");
+
+        final String clickedCluster = mapView.clickNthClusterHeading(1);
+        verifyThat("Clicking has revealed child concepts",
+                mapView.conceptClusterNames(),
+                not(hasItem(clickedCluster.toLowerCase())));
     }
 }

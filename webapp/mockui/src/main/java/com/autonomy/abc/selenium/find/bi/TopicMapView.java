@@ -4,6 +4,7 @@
  */
 package com.autonomy.abc.selenium.find.bi;
 
+import com.autonomy.abc.selenium.find.Container;
 import com.hp.autonomy.frontend.selenium.element.Slider;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -24,7 +25,7 @@ public class TopicMapView {
 
     public TopicMapView(final WebDriver driver) {
         this.driver = driver;
-        this.container = driver.findElement(By.cssSelector(".service-view-container:not(.hide)"));
+        this.container = driver.findElement(By.cssSelector(".service-view-container:not(.hide) > :not(.hide):not(.search-tabs-container), div[data-pagename=search]"));
     }
 
     //GENERAL PAGE
@@ -52,7 +53,7 @@ public class TopicMapView {
     }
 
     //MAP
-    public WebElement map () { return findElement(By.cssSelector(".entity-topic-map.clickable")); }
+    public WebElement map() { return findElement(By.cssSelector(".entity-topic-map.clickable")); }
 
     public int numberOfMapEntities() {
         return mapEntities().size();

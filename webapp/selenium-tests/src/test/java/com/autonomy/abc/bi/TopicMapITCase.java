@@ -11,9 +11,11 @@ import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.FindParametricFilter;
+import com.autonomy.abc.selenium.find.save.SearchTabBar;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.Slider;
-import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,10 +29,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -142,7 +144,7 @@ public class TopicMapITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-620")
+    @ResolvedBug("FIND-620")
     public void testToolTipNotLyingAboutNumberDocsUsed() {
         search("thing");
 
@@ -174,6 +176,28 @@ public class TopicMapITCase extends IdolFindTestBase {
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(slider.tooltip()));
         verifyThat("Tooltip appears on hover", slider.tooltip().isDisplayed());
         return slider.getValue();
+    }
+
+    @Test
+    @ResolvedBug("FIND-650")
+    public void testTopicMapRendersWhenManyNewTabs() {
+        final int numberTabs = 8;
+        search("grey");
+
+        final SearchTabBar tabBar = getElementFactory().getSearchTabBar();
+        for (int i = 0; i < numberTabs; i++) {
+            tabBar.newTab();
+        }
+
+        tabBar.switchTo(numberTabs/2);
+        results.waitForMapLoaded();
+
+        for (int j = 0; j < numberTabs; j++) {
+            tabBar.switchTo(j);
+            results = getElementFactory().getTopicMap();
+            results.waitForMapLoaded();
+            verifyThat("Map has appeared on tab " + (j+1), results.mapEntities(), hasSize(greaterThan(0)));
+        }
     }
 
     private void search(final String term) {
