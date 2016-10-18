@@ -52,7 +52,7 @@ public class SunburstITCase extends IdolFindTestBase {
     //TODO: test that checks what happens to sunburst when docs have 2 (non-mutually exclusive) fields from the same category
 
     @Test
-    @ActiveBug("FIND-382")
+    @ResolvedBug("FIND-382")
     public void testMessageOnFirstSearchIfNoValues() {
         search("shambolisjlfijslifjeslj");
         results.waitForSunburst();
