@@ -148,7 +148,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         }
         verifyThat("Detailed Preview has title", detailedPreviewPage.getTitle(), not(nullValue()));
         verifyThat("Detailed Preview has summary", detailedPreviewPage.getSummary(), not(nullValue()));
-//        verifyThat("Detailed Preview has date",detailedPreviewPage.getDate(),not(nullValue()));
+        //verifyThat("Detailed Preview has date", detailedPreviewPage.getDate(), not(nullValue()));
     }
 
     private void checkSimilarDocuments(final DetailedPreviewPage detailedPreviewPage) {
@@ -179,6 +179,15 @@ public class DocumentPreviewITCase extends FindTestBase {
 
         detailedPreviewPage.goBackToSearch();
 
+    }
+
+    @Test
+    @ResolvedBug("FIND-672")
+    public void testPreviewFillsFrame() {
+        final ResultsView results = findService.search("face");
+
+        InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
+        assertThat("iframe containing document not squashed", inlinePreview.docFillsMoreThanHalfOfPreview());
     }
 
     private FilterPanel filters() {
