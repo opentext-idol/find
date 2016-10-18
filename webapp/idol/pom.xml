@@ -118,6 +118,16 @@
             <classifier>full</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>aci-types</artifactId>
+            <version>0.13.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>idol-types</artifactId>
+            <version>0.5.1</version>
+        </dependency>
 
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
