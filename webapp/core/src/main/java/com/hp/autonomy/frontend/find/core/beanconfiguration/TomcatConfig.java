@@ -5,29 +5,45 @@
 
 package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
+import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.webresources.StandardRoot;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnProperty("server.reverseProxy")
-public class TomcatAjpConfig {
+public class TomcatConfig {
+    @Value("${server.reverseProxy}")
+    private boolean useReverseProxy;
 
     @Value("${server.ajp.port}")
     private int ajpPort;
 
+    @Value("${server.tomcat.resources.max-cache-kb}")
+    private long webResourcesCacheSize;
+
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
         final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
-        tomcat.addAdditionalTomcatConnectors(createConnector());
+
+        if (useReverseProxy) {
+            tomcat.addAdditionalTomcatConnectors(createAjpConnector());
+        }
+
+        // Set the web resources cache size (this defaults to 10MB but that is too small for Find)
+        tomcat.addContextCustomizers(context -> {
+            final WebResourceRoot resources = new StandardRoot(context);
+            resources.setCacheMaxSize(webResourcesCacheSize);
+            context.setResources(resources);
+        });
+
         return tomcat;
     }
 
-    private Connector createConnector() {
+    private Connector createAjpConnector() {
         final Connector connector = new Connector("AJP/1.3");
         connector.setPort(ajpPort);
         connector.setAttribute("tomcatAuthentication", false);
