@@ -18,7 +18,6 @@ import java.util.List;
 public class SearchTabBar implements Iterable<SearchTab> {
     private final WebElement bar;
     private final WebDriver driver;
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 
     public SearchTabBar(final WebDriver driver) {
@@ -59,8 +58,11 @@ public class SearchTabBar implements Iterable<SearchTab> {
     }
 
     public void switchTo(final String title) {
-        LOGGER.info("Trying to switch to another tab");
         tab(title).activate();
+    }
+
+    public void switchTo(final int index) {
+        tabFromIndex(index).activate();
     }
 
     public SearchTab tab(final String title) {
@@ -80,6 +82,10 @@ public class SearchTabBar implements Iterable<SearchTab> {
         return bar.findElement(By.className("start-new-search"));
     }
 
+    public void newTab() {
+        newTabButton().click();
+    }
+
     public void hoverOnTab(final int i){
         DriverUtil.hover(driver, tabFromIndex(i).getTab());
     }
@@ -93,8 +99,8 @@ public class SearchTabBar implements Iterable<SearchTab> {
         });
     }
 
-    public void waitUntilMoreThanOneTab() {
-        //TODO: Should be wait until a saved search is present.
-        new WebDriverWait(driver,30).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".search-tab:nth-child(2)")));
+    public void waitUntilSavedSearchAppears() {
+        new WebDriverWait(driver, 45).until(ExpectedConditions.presenceOfElementLocated
+                (By.cssSelector(".search-tab:nth-child(2) .search-tab-title .hp-new:not(.hide)")));
     }
 }

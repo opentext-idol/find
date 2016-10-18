@@ -24,7 +24,6 @@ public class SearchTab {
 
     void activate() {
         tab.findElement(By.tagName("a")).click();
-        LOGGER.info("Succeeded in changing to the tab");
     }
 
     public SearchType getType() {

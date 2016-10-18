@@ -44,9 +44,6 @@ import static org.hamcrest.Matchers.*;
  */
 @Role(UserRole.BIFHI)
 public class ListResultsComparisonITCase extends IdolFindTestBase {
-    private static final Index SOME_INDEX = new Index("AmericanNews");
-    private static final Index OTHER_INDEX = new Index("Wookiepedia");
-
     private FindService findService;
     private SavedSearchService savedSearchService;
     private BIIdolFindElementFactory elementFactory;
@@ -71,17 +68,19 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         findService.search("long set-up");
 
         savedSearchService.waitForSomeTabsAndDelete();
+
+        elementFactory.getConceptsPanel().removeAllConcepts();
         findPage = getElementFactory().getFindPage();
         findPage.goToListView();
+        elementFactory.getResultsPage().waitForResultsToLoad();
     }
 
     @After
     public void tearDown() {
         getDriver().get(getConfig().getAppUrl(getApplication()));
+        elementFactory.getResultsPage().waitForResultsToLoad();
         savedSearchService.waitForSomeTabsAndDelete();
     }
-
-
 
     @SuppressWarnings("Duplicates")
     @Test
@@ -98,17 +97,26 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     }
 
     @Test
+    //TODO needs to find 2 search terms that never share results but each have results
     public void testNoOverlap() {
-        getElementFactory().getFilterPanel().indexesTreeContainer().expand();
-        final Query polar = new Query("\"polar bear\"").withFilter(new IndexFilter(SOME_INDEX));
-        final Query opposites = new Query("\"opposable thumbs\"").withFilter(new IndexFilter(OTHER_INDEX));
+        findPage.waitForParametricValuesToLoad();
+
+        final FilterPanel filters = elementFactory.getFilterPanel();
+        filters.indexesTreeContainer().expand();
+
+        final Query polar = new Query("\"polar bear\"").withFilter(new IndexFilter(filters.getIndex(0)));
+        final Query opposites = new Query("\"opposable thumbs\"").withFilter(new IndexFilter(filters.getIndex(1)));
 
         searchAndSave(polar, "polar");
         savedSearchService.openNewTab();
+
+        findPage.waitUntilDatabasesLoaded();
+
+        elementFactory.getFilterPanel().indexesTreeContainer().expand();
         searchAndSave(opposites, "opposites");
         savedSearchService.compareCurrentWith("polar");
 
-        resultsComparison = getElementFactory().getResultsComparison();
+        resultsComparison = elementFactory.getResultsComparison();
         Waits.loadOrFadeWait();
         resultsComparison.goToListView();
         final ResultsView resultsView = resultsComparison.resultsView(AppearsIn.BOTH);
@@ -129,13 +137,13 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService.openNewTab();
         searchAndSave(innerQuery, "inner");
         Waits.loadOrFadeWait();
-        ResultsView resultsView = getElementFactory().getResultsPage();
+        ResultsView resultsView = elementFactory.getResultsPage();
         resultsView.goToListView();
 
         final int innerCount = getTotalResults();
 
         savedSearchService.compareCurrentWith("outer");
-        resultsComparison = getElementFactory().getResultsComparison();
+        resultsComparison = elementFactory.getResultsComparison();
         resultsComparison.goToListView();
 
         verifyThat(resultsComparison.getResults(AppearsIn.THIS_ONLY), empty());
@@ -149,7 +157,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     }
 
     private int getTotalResults() {
-        return getElementFactory().getResultsPage().getResultsCount();
+        return elementFactory.getResultsPage().getResultsCount();
     }
 
     @Test
@@ -193,7 +201,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     }
 
     private List<String> getModalOptionsForTab(final String tabName) {
-        getElementFactory().getSearchTabBar().switchTo(tabName);
+        elementFactory.getSearchTabBar().switchTo(tabName);
         assertThat(findPage.compareButton(), not(disabled()));
         final ComparisonModal modal = findPage.openCompareModal();
         verifyThat(modal.getSelected(), is(tabName));
@@ -208,19 +216,20 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         final String comparedTabName = "nope";
         final String expectedTabName = "expected";
 
+        findPage.waitForParametricValuesToLoad();
         searchAndSave(new Query("face"), comparedTabName);
         savedSearchService.openNewTab();
 
-        getElementFactory().getFilterPanel().indexesTreeContainer().expand();
+        elementFactory.getFilterPanel().indexesTreeContainer().expand();
         searchAndSave(new Query("bus").withFilter(new IndexFilter(expectedIndex)), expectedTabName);
 
-        getElementFactory().getTopicMap().waitForMapLoaded();
-        ResultsView resultsView = getElementFactory().getResultsPage();
+        elementFactory.getTopicMap().waitForMapLoaded();
+        ResultsView resultsView = elementFactory.getResultsPage();
         resultsView.goToListView();
         final String firstTitle = resultsView.getResult(1).getTitleString();
 
         savedSearchService.compareCurrentWith(comparedTabName);
-        ResultsComparisonView resultsComparison = getElementFactory().getResultsComparison();
+        ResultsComparisonView resultsComparison = elementFactory.getResultsComparison();
         resultsComparison.goToListView();
 
         resultsComparison.resultsView(AppearsIn.THIS_ONLY)
@@ -228,15 +237,15 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
                 .similarDocuments()
                 .click();
 
-        final SimilarDocumentsView similarDocs = getElementFactory().getSimilarDocumentsView();
+        final SimilarDocumentsView similarDocs = elementFactory.getSimilarDocumentsView();
         assertThat(similarDocs.getTitle(), containsString(firstTitle));
 
         similarDocs.backButton().click();
-        final FilterPanel filters = getElementFactory().getFilterPanel();
+        final FilterPanel filters = elementFactory.getFilterPanel();
 
-        assertThat(getElementFactory().getResultsPage().getResult(1).getTitleString(), is(firstTitle));
+        assertThat(elementFactory.getResultsPage().getResult(1).getTitleString(), is(firstTitle));
         assertThat(filters.indexesTree().getSelected(), is(Collections.singletonList(expectedIndex)));
-        assertThat(getElementFactory().getSearchTabBar().getCurrentTabTitle(), is(expectedTabName));
+        assertThat(elementFactory.getSearchTabBar().getCurrentTabTitle(), is(expectedTabName));
     }
 
     @Test

@@ -166,7 +166,6 @@ public class ConceptsPanel {
         }
 
         public boolean containsValue(final String value) {
-            //Need to remove all the spaces from the editBox value.
             return editBox.getValue().replaceAll("\\s+","").contains(value);
         }
 
