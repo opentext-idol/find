@@ -78,7 +78,8 @@ define([
                     indexes: this.queryModel.get('indexes'),
                     min_date: this.queryModel.getIsoDate('minDate'),
                     max_date: this.queryModel.getIsoDate('maxDate'),
-                    min_score: this.queryModel.get('minScore')
+                    min_score: this.queryModel.get('minScore'),
+                    anyLanguage: true
                 },
                 start: 1,
                 max_results: 0x7fffffff, // 2^31 - 1
