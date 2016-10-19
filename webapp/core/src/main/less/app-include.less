@@ -87,7 +87,7 @@
 @custom8: 70px;
 @custom9: 30px;
 @errorBodyMarginTop: 250px;
-@custom11: 15px;
+@custom11: 12px;
 @selectedConceptsLineHeight: 14px;
 
 /*------Custom text variables------*/
@@ -967,7 +967,6 @@ input.find-input {
 }
 
 .navbar-username {
-  display: none;
   right: @custom8 !important;
   top: @custom11 !important;
 }
@@ -1268,6 +1267,10 @@ input.find-input {
   color: @white;
   height: @navBarHeight;
   transition: @transitAllFast;
+
+  .navbar-right.drop-list {
+    .m-nil;
+  }
 
   .dropdown-toggle {
     &:extend(.pull-right);
