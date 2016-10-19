@@ -30,7 +30,7 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
     public static final String QUERY_TEXT_PARAM = "queryText";
     public static final String DATABASES_PARAM = "databases";
     public static final String FIELD_TEXT_PARAM = "fieldText";
-    private static final String STATE_MATCH_TOKEN_PARAM = "stateMatchTokens";
+    public static final String STATE_MATCH_TOKEN_PARAM = "stateMatchTokens";
     private static final String STATE_DONT_MATCH_TOKEN_PARAM = "stateDontMatchTokens";
     private static final String MIN_DATE_PARAM = "minDate";
     private static final String MAX_DATE_PARAM = "maxDate";
