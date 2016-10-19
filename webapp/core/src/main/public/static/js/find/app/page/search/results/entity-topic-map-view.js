@@ -185,7 +185,8 @@ define([
                     queryText: '*',
                     maxResults: this.model.get('maxResults'),
                     databases: this.queryModel.get('indexes'),
-                    stateTokens: this.queryModel.get('stateMatchIds')
+                    stateMatchTokens: this.queryModel.get('stateMatchIds'),
+                    stateDontMatchTokens: this.queryModel.get('stateDontMatchIds')
                 };
 
             } else if(this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
@@ -196,7 +197,7 @@ define([
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
                     minScore: this.queryModel.get('minScore'),
-                    stateTokens: this.queryModel.get('stateMatchIds'),
+                    stateMatchTokens: this.queryModel.get('stateMatchIds'),
                     maxResults: this.model.get('maxResults')
                 };
             }
