@@ -78,7 +78,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     @After
     public void tearDown() {
         getDriver().get(getConfig().getAppUrl(getApplication()));
-        elementFactory.getResultsPage().waitForResultsToLoad();
+        elementFactory.getFindPage().waitUntilDatabasesLoaded();
         savedSearchService.waitForSomeTabsAndDelete();
     }
 

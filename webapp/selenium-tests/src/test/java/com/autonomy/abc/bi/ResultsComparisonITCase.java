@@ -67,8 +67,9 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     @After
     public void tearDown() {
         findPage = getElementFactory().getFindPage();
-        findPage.goBackToSearch();
-        //Perhaps should use URL directly in case of bug
+        getDriver().get(getConfig().getAppUrl(getApplication()));
+        getElementFactory().getFindPage().waitUntilDatabasesLoaded();
+        findPage.waitUntilSearchTabsLoaded();
         savedSearchService.deleteAll();
     }
 
@@ -125,6 +126,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         final List<String> possibleComparees = modal.getItems();
         verifyThat("2 items to compare with", possibleComparees, hasSize(2));
         verifyThat("Does not contain itself",possibleComparees, not(contains("New Search")));
+        modal.close();
     }
 
     @Test

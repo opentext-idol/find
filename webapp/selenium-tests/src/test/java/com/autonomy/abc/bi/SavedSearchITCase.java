@@ -126,7 +126,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         findService.search("useless");
         saveService.saveCurrentAs("duplicate", SearchType.QUERY);
         saveService.openNewTab();
-        getElementFactory().getResultsPage().waitForResultsToLoad();
+        getElementFactory().getFindPage().waitUntilDatabasesLoaded();
 
         checkSavingDuplicateThrowsError("duplicate", SearchType.QUERY);
         checkSavingDuplicateThrowsError("duplicate", SearchType.SNAPSHOT);
@@ -186,6 +186,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         final SunburstView results = elementFactory.getSunburst();
 
         results.waitForSunburst();
+        //TODO: extract coordinates from SVG to ensure click/hover over segments
         results.getIthSunburstSegment(1).click();
         results.waitForSunburst();
 
@@ -215,7 +216,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
     public void testSearchesWithNumericFilters() {
         final NumericWidgetService widgetService = getApplication().numericWidgetService();
 
-        final MainNumericWidget mainGraph = widgetService.searchAndSelectNthGraph(1, "saint");
+        final MainNumericWidget mainGraph = widgetService.searchAndSelectNthGraph(0, "saint");
         mainGraph.clickAndDrag(100, mainGraph.graph());
 
         getElementFactory().getResultsPage().waitForResultsToLoad();
