@@ -288,6 +288,12 @@ define([
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
 
+            addChangeListener(this, this.queryModel, ['correctedQuery', 'autoCorrect'], function(model) {
+                if (model.get('correctedQuery') || !model.get('autoCorrect')) {
+                    this.fetchData();
+                }
+            }.bind(this));
+
             this.fetchParametricFields(this.parametricFieldsCollection, _.bind(this.fetchParametricValueCollections, this));
             this.fetchParametricFields(this.numericParametricFieldsCollection);
             this.fetchParametricFields(this.dateParametricFieldsCollection);
@@ -391,7 +397,7 @@ define([
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
                     databases: this.queryModel.get('indexes'),
-                    queryText: this.queryModel.get('queryText'),
+                    queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery') ? this.queryModel.get('correctedQuery') : this.queryModel.get('queryText'),
                     fieldText: this.queryModel.get('fieldText'),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
@@ -428,7 +434,7 @@ define([
                     data: {
                         fieldNames: fieldNames,
                         databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('queryText'),
+                        queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery') ? this.queryModel.get('correctedQuery') : this.queryModel.get('queryText'),
                         fieldText: this.queryModel.get('fieldText'),
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),

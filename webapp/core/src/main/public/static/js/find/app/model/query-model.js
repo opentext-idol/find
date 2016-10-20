@@ -59,6 +59,7 @@ define([
                     this.set({
                         // Reset auto-correct whenever the search text changes
                         autoCorrect: true,
+                        correctedQuery: '',
                         queryText: queryText
                     });
                 }

@@ -40,6 +40,7 @@ define([
             var autoCorrection = this.documentsCollection.getAutoCorrection();
 
             if (this.$correctedQuery && autoCorrection) {
+                this.queryModel.set('correctedQuery', autoCorrection.correctedQuery);
                 this.$correctedQuery.text(autoCorrection.correctedQuery);
                 this.$originalQuery.text(autoCorrection.originalQuery);
             }
