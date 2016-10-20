@@ -2,15 +2,21 @@ package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.base.Role;
+import com.autonomy.abc.selenium.find.BIFindService;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
+import com.autonomy.abc.selenium.find.comparison.AppearsIn;
+import com.autonomy.abc.selenium.find.comparison.AppearsInTopicMap;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
+import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
+import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.After;
@@ -24,11 +30,12 @@ import java.util.List;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
+import static org.openqa.selenium.lift.match.DisplayedMatcher.displayed;
 
 //The result comparisons for non-list view
 @Role(UserRole.BIFHI)
 public class ResultsComparisonITCase extends IdolFindTestBase {
-    private FindService findService;
+    private BIFindService findService;
     private SavedSearchService savedSearchService;
     private BIIdolFindElementFactory elementFactory;
 
@@ -40,7 +47,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
     @Before
     public void setUp() {
-        findService = getApplication().findService();
+        findService = (BIFindService) getApplication().findService();
         savedSearchService = getApplication().savedSearchService();
         elementFactory = (BIIdolFindElementFactory) getElementFactory();
         findPage = getElementFactory().getFindPage();
@@ -61,6 +68,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     public void tearDown() {
         findPage = getElementFactory().getFindPage();
         findPage.goBackToSearch();
+        //Perhaps should use URL directly in case of bug
         savedSearchService.deleteAll();
     }
 
@@ -129,4 +137,25 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
                 mapView.conceptClusterNames(),
                 not(hasItem(clickedCluster.toLowerCase())));
     }
+
+    @Test
+    @ResolvedBug("FIND-632")
+    public void testCommonToBothMap() {
+        search("face", "Has results", SearchType.QUERY);
+        savedSearchService.openNewTab();
+
+        search("elsijfleisjtgilsejtlisejt", "No results", SearchType.QUERY);
+        findPage.ensureTermNotAutoCorrected();
+
+        savedSearchService.compareCurrentWith("Has results");
+
+        final TopicMapView mapView = elementFactory.getTopicMap();
+        mapView.waitForMapLoaded();
+
+        ResultsComparisonView resultsComparison = elementFactory.getResultsComparison();
+        TopicMapView map = resultsComparison.topicMapView(AppearsInTopicMap.BOTH);
+        verifyThat("Map not present", !map.topicMapPresent());
+        verifyThat("There is no map to display", map.emptyMessage(), displayed());
+    }
+
 }

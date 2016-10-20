@@ -33,6 +33,10 @@ public class TopicMapView {
         return !findElements(By.cssSelector(".entity-topic-map:not(.hide)")).isEmpty();
     }
 
+    public boolean topicMapPresent() {
+        return !findElements(By.cssSelector(".entity-topic-map.clickable")).isEmpty();
+    }
+
     public WebElement emptyMessage() {
         return findElement(By.cssSelector(".entity-topic-map-empty"));
     }

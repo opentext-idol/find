@@ -12,8 +12,11 @@ import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
+import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
+import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
@@ -180,6 +183,23 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
         for(String concept : newConcepts) {
             verifyThat("Tool tip has added concept: " + concept, text, containsString(concept));
         }
+    }
+
+    @Test
+    @ResolvedBug("FIND-686")
+    public void testInlinePreviewClosesOnEdit() {
+        final String originalSearch = "face";
+        findPage.goToListView();
+        final ResultsView results = findService.search(originalSearch);
+        results.waitForResultsToLoad();
+
+        InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
+        ConceptsPanel.EditPopover popOver = openEditPopOverForConcept(0, originalSearch);
+
+        popOver.setValue("blaaaaaaaaaaaaahljsfiejsfeisjtl");
+        popOver.saveEdit();
+
+        verifyThat("Document preview not still there", inlinePreview, not(displayed()));
     }
 
     private void goToTopicMap() {

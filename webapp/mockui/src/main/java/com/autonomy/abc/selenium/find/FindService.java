@@ -35,8 +35,7 @@ public class FindService implements QueryService<ResultsView> {
         return elementFactory.getResultsPage();
     }
 
-    private void submitSearch(final String term) {
-        //NOT USING SAME INSTANCE OF SEARCH BOX BECAUSE CAN RELOAD
+    protected void submitSearch(final String term) {
         elementFactory.getSearchBox().setValue(term);
         Waits.loadOrFadeWait();
         elementFactory.getSearchBox().submit();
