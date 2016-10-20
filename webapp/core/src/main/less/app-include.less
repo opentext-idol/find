@@ -71,9 +71,12 @@
 @navBarHeight: 50px;
 @searchTabsHeight: 44px;
 
-/*------Font variables------*/
+/*------Font size variables------*/
 @errorMessageFontSize: 28px;
 @loadingIndicatorFontSize: 28px;
+
+/*------Font weight variables------*/
+@fontWeightBold: 900;
 
 /*------Custom numeric variables------*/
 @nil: 0;
@@ -1151,6 +1154,8 @@ input.find-input {
 .results-popover-title,
 .search-text {
   &:extend(.metric-semibold);
+
+  font-weight: @fontWeightBold;
 }
 
 .also-searching-for {
