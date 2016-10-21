@@ -341,7 +341,7 @@ define([
                 this.middleColumnHeaderView.setElement(this.$('.middle-column-header')).render();
             }
 
-            this.$('.container-toggle').on('click', this.containerToggle);
+            this.$('.container-toggle').click('click', _.bind(this.containerToggle, this));
 
             this.$middleContainerContents = this.$('.middle-container-contents').scroll(this.updateScrollParameters);
             this.updateScrollParameters();
@@ -417,6 +417,7 @@ define([
             $sideContainer.find('.side-panel-content').toggleClass('hide', hide);
             $sideContainer.toggleClass('small-container', hide);
             $containerToggle.toggleClass('fa-rotate-180', hide);
+            this.resultsViewContainer.updateTab();
         },
 
         fetchParametricValueCollections: function () {
