@@ -24,13 +24,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTagName;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class ResultsITCase extends FindTestBase {
@@ -134,6 +134,31 @@ public class ResultsITCase extends FindTestBase {
         }
 
         verifyThat("There are results in list view", findPage.totalResultsNum(), greaterThan(0));
+    }
+
+    @Test
+    @ResolvedBug("FIND-694")
+    @Role(UserRole.FIND)
+    public void testAutoCorrectedQueriesHaveRelatedConceptsAndParametrics() {
+        final String term = "blarf";
+        final String termAutoCorrected = "Blair";
+        search(termAutoCorrected);
+
+        LOGGER.info("Need to verify that " + termAutoCorrected + " has results, related concepts and parametrics");
+
+        assertThat(termAutoCorrected + " has some results", findPage.totalResultsNum(), greaterThan(0));
+
+        final int indexOfCategoryWFilters = getElementFactory().getFilterPanel().nonZeroParamFieldContainer(0);
+        assertThat(termAutoCorrected + " has some parametric fields", indexOfCategoryWFilters, not(-1));
+        assertThat(termAutoCorrected + " has related concepts", !getElementFactory().getRelatedConceptsPanel().noConceptsPresent());
+
+        search(term);
+        assertThat("Has autocorrected", findPage.hasAutoCorrected());
+        assertThat("Has autocorrected" + term + " to " + termAutoCorrected, findPage.correctedQuery(), is("( " + termAutoCorrected + " )"));
+
+        findPage.waitForParametricValuesToLoad();
+        verifyThat("Still has parametric fields", getElementFactory().getFilterPanel().parametricField(indexOfCategoryWFilters).getFilterNumber(), not("0"));
+        verifyThat("Still has related concepts", !getElementFactory().getRelatedConceptsPanel().noConceptsPresent());
     }
 
     @Test
