@@ -11,7 +11,6 @@ import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.IndexFilter;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.Browser;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
@@ -50,6 +49,8 @@ public class DocumentPreviewITCase extends FindTestBase {
     @Test
     public void testShowDocumentPreview() {
         final ResultsView results = findService.search("cake");
+        getElementFactory().getFilterPanel().indexesTreeContainer().expand();
+
         findPage.filterBy(new IndexFilter(filters().getIndex(1)));
 
         final InlinePreview docPreview = results.searchResult(1).openDocumentPreview();
@@ -113,7 +114,8 @@ public class DocumentPreviewITCase extends FindTestBase {
 
     @Test
     public void testDetailedPreview() {
-        final ResultsView results = findService.search("tragic");
+        final ResultsView results = findService.search("m");
+        getElementFactory().getFilterPanel().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter(filters().getIndex(1)));
 
         InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
@@ -145,7 +147,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         }
         verifyThat("Detailed Preview has title", detailedPreviewPage.getTitle(), not(nullValue()));
         verifyThat("Detailed Preview has summary", detailedPreviewPage.getSummary(), not(nullValue()));
-//        verifyThat("Detailed Preview has date",detailedPreviewPage.getDate(),not(nullValue()));
+        //verifyThat("Detailed Preview has date", detailedPreviewPage.getDate(), not(nullValue()));
     }
 
     private void checkSimilarDocuments(final DetailedPreviewPage detailedPreviewPage) {
@@ -176,6 +178,15 @@ public class DocumentPreviewITCase extends FindTestBase {
 
         detailedPreviewPage.goBackToSearch();
 
+    }
+
+    @Test
+    @ResolvedBug("FIND-672")
+    public void testPreviewFillsFrame() {
+        final ResultsView results = findService.search("face");
+
+        InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
+        assertThat("iframe containing document not squashed", inlinePreview.docFillsMoreThanHalfOfPreview());
     }
 
     private FilterPanel filters() {

@@ -52,7 +52,11 @@ public class TableView  extends ParametricFieldView {
     }
 
     public void nextPage() {
-        paginate(findElement(By.cssSelector(".dataTables_paginate .next a")));
+        paginate(nextButton());
+    }
+
+    public WebElement nextButton() {
+        return findElement(By.cssSelector(".paginate_button.next"));
     }
 
     public void previousPage() {

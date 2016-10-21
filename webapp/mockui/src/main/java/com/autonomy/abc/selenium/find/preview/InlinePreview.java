@@ -9,16 +9,18 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class InlinePreview extends DocumentViewer {
+    private static final By LOCATOR = By.cssSelector(".preview-mode-wrapper:not(.hide) .preview-mode-container");
+    private WebElement preview;
 
     private InlinePreview(final WebDriver driver){
-        super(driver,driver.findElement(By.cssSelector(".preview-mode-wrapper:not(.hide) .preview-mode-container")));
+        super(driver, driver.findElement(LOCATOR));
+        preview = driver.findElement(LOCATOR);
     }
 
     public static InlinePreview make(final WebDriver driver){
-        new WebDriverWait(driver,5)
+        new WebDriverWait(driver, 10)
                 .withMessage("Preview did not open")
-                .until(ExpectedConditions.visibilityOfElementLocated(
-                        By.cssSelector(".preview-mode-wrapper:not(.hide) .preview-mode-container")));
+                .until(ExpectedConditions.visibilityOfElementLocated(LOCATOR));
         final InlinePreview docPreviewer = new InlinePreview(driver);
         docPreviewer.waitForLoad();
         return docPreviewer;
@@ -67,4 +69,10 @@ public class InlinePreview extends DocumentViewer {
     @Override
     public boolean previewPresent(){return !findElements(By.className("preview-mode-document")).isEmpty();}
 
+    public boolean docFillsMoreThanHalfOfPreview () {
+        final int frameHeight = frame().getSize().height;
+        final int previewHeight = preview.getSize().height;
+
+        return previewHeight > frameHeight/2;
+    }
 }

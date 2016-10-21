@@ -55,7 +55,7 @@ public class FilterPanel {
         return new IndexesTreeContainer(container, driver);
     }
 
-    protected DateFilterContainer dateFilterContainer() {
+    DateFilterContainer dateFilterContainer() {
         final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Dates')]"));
         final WebElement container = ElementUtil.ancestor(heading, 2);
         return new DateFilterContainer(container, driver);
@@ -81,6 +81,10 @@ public class FilterPanel {
     public ParametricFieldContainer parametricContainer(final String filterCategory) {
         final WebElement category = panel.findElement(By.cssSelector("[data-field-display-name='" + filterCategory + "']"));
         return new ParametricFieldContainer(category, driver);
+    }
+
+    public boolean parametricContainerIsPresent(final String filterCategory) {
+        return !panel.findElements(By.cssSelector("[data-field-display-name='" + filterCategory + "']")).isEmpty();
     }
 
     public ParametricFieldContainer parametricField(final int i) {
@@ -140,18 +144,21 @@ public class FilterPanel {
     }
 
     public FindParametricFilter checkboxForParametricValue(final int fieldIndex, final int valueIndex) {
-        final WebElement checkbox = panel.findElement(By.cssSelector("[data-field]:nth-of-type(" + cssifyIndex(fieldIndex) + ") [data-value]:nth-of-type(" + cssifyIndex(valueIndex) + ')'));
+        final WebElement checkbox = panel.findElements(By.cssSelector("[data-field]")).get(fieldIndex)
+                .findElement(By.cssSelector("[data-value]:nth-of-type(" + cssifyIndex(valueIndex) + ')'));
         return new FindParametricFilter(checkbox);
     }
 
     //EXPANDING AND COLLAPSING
-    protected List<FilterContainer> allFilterContainers() {
+    public List<FilterContainer> allFilterContainers() {
         final List<FilterContainer> nodes = new ArrayList<>();
         nodes.add(indexesTreeContainer());
         nodes.add(dateFilterContainer());
         nodes.addAll(parametricFieldContainers());
         return nodes;
     }
+
+    public void expandDateFilters() { dateFilterContainer().expand(); }
 
     public void collapseAll() {
         allFilterContainers().forEach(Collapsible::collapse);
@@ -162,13 +169,40 @@ public class FilterPanel {
         return panel.findElement(By.cssSelector("p:not(.hide)")).getText();
     }
 
-    public boolean noParametricFields() { return !panel.findElements(By.cssSelector(".parametric-empty:not(.hide)")).isEmpty(); }
-
     public void waitForParametricFields() {
         Container.LEFT.waitForLoad(driver);
     }
 
     protected WebElement getPanel() {
         return panel;
+    }
+
+    public List<WebElement> toolTips() {
+        return panel.findElements(By.cssSelector("[aria-describedby^='tooltip']"));
+    }
+
+    public boolean containerContainsFilter(final String target, final int index) {
+        final int tooManyFiltersToBother = 600;
+
+        final ParametricFieldContainer container = parametricField(index);
+        if(Integer.parseInt(container.getFilterNumber()) > tooManyFiltersToBother){
+            return true;
+        }
+        container.expand();
+        container.seeAll();
+
+        final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(driver);
+
+        final List<WebElement> filters = filterModal.activePaneFilterList();
+
+        for(WebElement filter : filters) {
+            String name = filter.findElement(By.cssSelector(".field-value")).getText();
+            if(name.contains(target)) {
+                filterModal.cancel();
+                return true;
+            }
+        }
+        filterModal.cancel();
+        return false;
     }
 }

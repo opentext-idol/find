@@ -9,9 +9,11 @@ import com.autonomy.abc.selenium.find.Container;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.HPRemovable;
 import com.hp.autonomy.frontend.selenium.element.Removable;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
  */
 public class ConceptsPanel {
     private static final String SELECTED_RELATED_CONCEPT_CLASS = "selected-related-concept";
+    final By POPOVER_LOCATOR = By.cssSelector(".selected-concept-container .popover");
+
 
     private final WebElement panel;
     private final WebDriver driver;
@@ -44,7 +48,7 @@ public class ConceptsPanel {
      *
      * @return Selected concept elements
      */
-    public List<WebElement> selectedConceptElements() {
+    public List<WebElement> selectedConcepts() {
         return panel.findElements(By.className(SELECTED_RELATED_CONCEPT_CLASS));
     }
 
@@ -54,16 +58,16 @@ public class ConceptsPanel {
      * @return Lower-cased primary selected concepts
      */
     public List<String> selectedConceptHeaders() {
-        return selectedConceptElements().stream()
+        return selectedConcepts().stream()
                 .map(((Function<WebElement, String>) WebElement::getText).andThen(String::toLowerCase))
                 .collect(Collectors.toList());
     }
 
     /**
-     * @return A removable for each of the {@link #selectedConceptElements()}
+     * @return A removable for each of the {@link #selectedConcepts()}
      */
     private List<Removable> selectedConceptRemovables() {
-        return selectedConceptElements().stream()
+        return selectedConcepts().stream()
                 .map(concept -> new HPRemovable(concept, driver))
                 .collect(Collectors.toList());
     }
@@ -75,7 +79,7 @@ public class ConceptsPanel {
     public Removable removableConceptForHeader(final String headerConcept) {
         final String lowerCaseHeader = headerConcept.toLowerCase();
 
-        final Optional<WebElement> match = selectedConceptElements().stream()
+        final Optional<WebElement> match = selectedConcepts().stream()
                 .filter(element -> element.getText().toLowerCase().contains(lowerCaseHeader))
                 .findFirst();
 
@@ -102,4 +106,83 @@ public class ConceptsPanel {
     public void removeAllConcepts() {
         selectedConceptRemovables().stream().forEach(Removable::removeAndWait);
     }
+
+    public EditPopover editPopover(Removable concept) {
+        concept.click();
+
+        new WebDriverWait(driver,5)
+                .withMessage("Popover did not open")
+                .until(ExpectedConditions.visibilityOfElementLocated(POPOVER_LOCATOR));
+
+        return new EditPopover(panel.findElement(POPOVER_LOCATOR));
+    }
+
+    public EditPopover editConcept(final int i) {
+        //Necessary due to tooltip
+        try{
+            return editPopover(selectedConceptRemovables().get(i));
+        }
+        catch (NoSuchElementException | TimeoutException | StaleElementReferenceException e) {
+            return editPopover(selectedConceptRemovables().get(i));
+        }
+    }
+
+    public boolean popOverGone() {
+        return panel.findElements(POPOVER_LOCATOR).isEmpty();
+    }
+
+    public String toolTipText(final int index) {
+        return panel.findElements(By.cssSelector("[data-toggle='tooltip']"))
+                .get(index)
+                .getAttribute("data-original-title");
+    }
+
+    public class EditPopover extends AppElement {
+        private FormInput editBox;
+
+        private EditPopover(final WebElement element) {
+            super(element,driver);
+            editBox =  new FormInput(findElement(By.cssSelector(".edit-concept-form .form-group textarea")), driver);
+        };
+
+        public void cancelEdit() {
+            findElement(By.cssSelector(".edit-concept-cancel-button")).click();
+            new WebDriverWait(driver, 5).until(new ExpectedCondition<Boolean>() {
+                @Override
+                public Boolean apply(final WebDriver driver) {
+                    return popOverGone();
+                }
+            });
+        }
+
+        public void saveEdit() {
+            findElement(By.cssSelector(".edit-concept-confirm-button")).click();
+            new WebDriverWait(driver, 5).until(new ExpectedCondition<Boolean>() {
+                @Override
+                public Boolean apply(final WebDriver driver) {
+                    return popOverGone();
+                }
+            });
+        }
+
+        public boolean containsValue(final String value) {
+            return editBox.getValue().replaceAll("\\s+","").contains(value);
+        }
+
+        public void setValue(final String value) {
+            editBox.setValue(value);
+        }
+
+        public void setValueAndSave(final List<String> concepts) {
+            editBox.clear();
+            final WebElement box = editBox.getElement();
+
+            for(String concept : concepts) {
+                box.sendKeys(concept);
+                box.sendKeys(Keys.ENTER);
+            }
+            saveEdit();
+        }
+    }
+
 }

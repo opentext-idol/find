@@ -23,6 +23,7 @@ import java.util.List;
 import static com.autonomy.abc.selenium.find.bi.TableView.EntryCount.TWENTY_FIVE;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.openqa.selenium.lift.Matchers.displayed;
@@ -98,12 +99,14 @@ public class TableITCase extends IdolFindTestBase {
 
     @Test
     public void testPagination() {
-        init("burning");
+        init("*");
 
         tableView.waitForTable();
         assumeThat(tableView.currentPage(), is(1));
 
         final String initialText = tableView.text(1, 0);
+
+        assumeThat("There needs to be enough parametric values to have >1 page", tableView.nextButton(), not(disabled()));
 
         tableView.nextPage();
         verifyThat(tableView.text(1, 0), is(not(initialText)));
@@ -116,7 +119,7 @@ public class TableITCase extends IdolFindTestBase {
 
     @Test
     public void testSorting() {
-        init("waterfall");
+        init("*");
 
         tableView.waitForTable();
         tableView.sort(1, TableView.SortDirection.DESCENDING);
@@ -152,15 +155,15 @@ public class TableITCase extends IdolFindTestBase {
 
     @Test
     public void testShowEntries() {
-        init("strength");
+        init("*");
 
         tableView.waitForTable();
 
-        assumeThat(tableView.maxRow(), is(10));
+        assumeThat("Table needs at least 10 rows to test increasing the number to view", tableView.maxRow(), is(10));
 
         tableView.showEntries(TWENTY_FIVE);
 
-        verifyThat(tableView.maxRow(), is(25));
+        verifyThat(tableView.maxRow(), is(greaterThan(10)));
     }
 
     @Test

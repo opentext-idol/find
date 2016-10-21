@@ -94,10 +94,10 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("CCUK-3647")
     public void testNoMoreResultsFoundAtEnd() {
-        final ResultsView results = findService.search(new Query("Cheese AND Onion"));
+        final ResultsView results = findService.search(new Query("Cheese AND Onion AND Carrot"));
         results.waitForResultsToLoad();
 
-        verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
+        verifyThat(findPage.totalResultsNum(), lessThanOrEqualTo(30));
 
         findPage.scrollToBottom();
         verifyThat(results.resultsDiv(), containsText("No more results found"));

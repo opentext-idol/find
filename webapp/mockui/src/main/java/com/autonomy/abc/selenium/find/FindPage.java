@@ -4,7 +4,6 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
-import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.*;
 import org.openqa.selenium.By;
@@ -107,7 +106,11 @@ public class FindPage extends AppElement implements AppPage,
 
     public WebElement originalQuery() { return findElement(By.className("original-query")); }
 
-    public String correctedQuery() { return findElement(By.className("corrected-query")).getText();}
+    public void ensureTermNotAutoCorrected() {
+        if(!findElements(By.className("original-query")).isEmpty()) {
+            originalQuery().click();
+        }
+    }
 
     public List<String> filterLabelsText() {
         return ElementUtil.getTexts(filterLabels());
