@@ -113,7 +113,7 @@ define([
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
 
             this.listenTo(this.scrollModel, 'change', function() {
-                if(this.scrollModel.get('scrollTop') > this.scrollModel.get('scrollHeight') - INFINITE_SCROLL_POSITION_PIXELS - this.scrollModel.get('innerHeight')) {
+                if(this.$el.is(':visible') && this.scrollModel.get('scrollTop') > this.scrollModel.get('scrollHeight') - INFINITE_SCROLL_POSITION_PIXELS - this.scrollModel.get('innerHeight')) {
                     this.infiniteScroll();
                 }
             });
