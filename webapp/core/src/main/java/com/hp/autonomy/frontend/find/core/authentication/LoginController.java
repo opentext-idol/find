@@ -5,14 +5,14 @@
 
 package com.hp.autonomy.frontend.find.core.authentication;
 
-import com.hp.autonomy.frontend.configuration.Authentication;
-import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hp.autonomy.frontend.configuration.authentication.Authentication;
+import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,24 +25,19 @@ public class LoginController {
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> configService;
 
-    @RequestMapping(value = FindController.DEFAULT_LOGIN_PAGE)
+    @RequestMapping(FindController.DEFAULT_LOGIN_PAGE)
     @ResponseBody
     public void login(
         final HttpServletRequest request,
         final HttpServletResponse response
     ) throws IOException {
         String queryString = request.getQueryString();
-        final Authentication<?> authentication = this.configService.getConfig().getAuthentication();
+        final Authentication<?> authentication = configService.getConfig().getAuthentication();
 
         if(LoginTypes.DEFAULT.equalsIgnoreCase(authentication.getMethod())) {
             final String defaultUsername = authentication.getDefaultLogin().getUsername();
 
-            if(queryString != null) {
-                queryString = "defaultLogin=" + defaultUsername + '&' + queryString;
-            }
-            else {
-                queryString = "defaultLogin=" + defaultUsername;
-            }
+            queryString = queryString != null ? "defaultLogin=" + defaultUsername + '&' + queryString : "defaultLogin=" + defaultUsername;
         }
 
         String redirectUrl = request.getContextPath() + FindController.LOGIN_PATH;

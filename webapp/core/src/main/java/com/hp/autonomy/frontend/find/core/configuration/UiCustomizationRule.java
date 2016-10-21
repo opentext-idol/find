@@ -7,36 +7,41 @@ package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
+import com.hp.autonomy.frontend.configuration.SimpleComponent;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("WeakerAccess")
-public class UiCustomizationRule implements ConfigurationComponent<UiCustomizationRule> {
-    private final Map<String, Object> roleMap = new HashMap<>();
-
-    @JsonAnySetter
-    public void populateRule(final String key, final Object value) {
-        roleMap.put(key, value);
-    }
+@SuppressWarnings({"WeakerAccess", "DefaultAnnotationParam"})
+@Builder
+@EqualsAndHashCode(callSuper = false)
+@ToString
+@JsonDeserialize(builder = UiCustomizationRule.UiCustomizationRuleBuilder.class)
+public class UiCustomizationRule extends SimpleComponent<UiCustomizationRule> implements ConfigurationComponent<UiCustomizationRule> {
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    private final Map<String, Object> roleMap;
 
     @JsonAnyGetter
-    public Map<String, Object> any() {
+    public Map<String, Object> getRoleMap() {
         return Collections.unmodifiableMap(roleMap);
     }
 
-    @Override
-    public UiCustomizationRule merge(final UiCustomizationRule other) {
-        if (other != null) {
-            other.roleMap.entrySet().stream().filter(entry -> !roleMap.containsKey(entry.getKey())).forEach(entry -> roleMap.put(entry.getKey(), entry.getValue()));
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "FieldMayBeFinal"})
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class UiCustomizationRuleBuilder {
+        private Map<String, Object> roleMap = new HashMap<>();
+
+        @JsonAnySetter
+        public UiCustomizationRuleBuilder populateRule(final String key, final Object value) {
+            roleMap.put(key, value);
+            return this;
         }
-
-        return this;
-    }
-
-    @Override
-    public void basicValidate(final String section) throws ConfigException {
     }
 }

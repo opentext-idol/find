@@ -6,8 +6,8 @@
 package com.hp.autonomy.frontend.find.hod.databases;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HodConfig;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
@@ -21,8 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -42,7 +40,7 @@ public class FindHodDatabasesServiceTest extends HodDatabasesServiceTest {
         findDatabasesService = new FindHodDatabasesServiceImpl(resourcesService, configService, authenticationInformationRetriever);
         databasesService = findDatabasesService;
 
-        final HodConfig hodConfig = new HodConfig.Builder().build();
+        final HodConfig hodConfig = HodConfig.builder().build();
         when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setHod(hodConfig).build());
     }
 
@@ -56,7 +54,9 @@ public class FindHodDatabasesServiceTest extends HodDatabasesServiceTest {
     @Test
     public void listActiveIndexes() throws HodErrorException {
         final ResourceIdentifier activeIndex = ResourceIdentifier.WIKI_ENG;
-        final HodConfig hodConfig = new HodConfig.Builder().setActiveIndexes(Collections.singletonList(activeIndex)).build();
+        final HodConfig hodConfig = HodConfig.builder()
+                .activeIndex(activeIndex)
+                .build();
         when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setHod(hodConfig).build());
         final HodDatabasesRequest databasesRequest = new HodDatabasesRequest.Builder()
                 .setPublicIndexesEnabled(true)

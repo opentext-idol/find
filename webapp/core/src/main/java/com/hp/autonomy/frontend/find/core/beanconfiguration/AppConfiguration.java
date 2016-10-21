@@ -8,9 +8,9 @@ package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
 import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
 import com.hp.autonomy.frontend.configuration.Config;
-import com.hp.autonomy.frontend.configuration.ValidationService;
-import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
-import com.hp.autonomy.frontend.configuration.Validator;
+import com.hp.autonomy.frontend.configuration.validation.ValidationService;
+import com.hp.autonomy.frontend.configuration.validation.ValidationServiceImpl;
+import com.hp.autonomy.frontend.configuration.validation.Validator;
 import com.hp.autonomy.frontend.logging.ApplicationStartLogger;
 import com.hp.autonomy.frontend.logging.UserLoggingFilter;
 import org.springframework.beans.factory.annotation.Autowired;

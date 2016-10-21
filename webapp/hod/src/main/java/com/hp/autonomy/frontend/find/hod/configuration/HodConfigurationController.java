@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.hod.configuration;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.ConfigResponse;
-import com.hp.autonomy.frontend.configuration.ConfigValidationException;
+import com.hp.autonomy.frontend.configuration.validation.ConfigValidationException;
 import com.hp.autonomy.frontend.logging.Markers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -10,11 +10,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.AbstractConfig;
-import com.hp.autonomy.frontend.configuration.Authentication;
-import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigException;
-import com.hp.autonomy.frontend.configuration.PasswordsConfig;
-import com.hp.autonomy.frontend.configuration.RedisConfig;
+import com.hp.autonomy.frontend.configuration.authentication.Authentication;
+import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
+import com.hp.autonomy.frontend.configuration.passwords.PasswordsConfig;
+import com.hp.autonomy.frontend.configuration.redis.RedisConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
@@ -40,6 +40,8 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public class HodFindConfig extends AbstractConfig<HodFindConfig> implements AuthenticationConfig<HodFindConfig>, HodSearchCapable, PasswordsConfig<HodFindConfig>, HodSsoConfig, FindConfig {
+    private static final String SECTION = "Hod Config";
+
     private final Authentication<?> login;
     private final HsodConfig hsod;
     private final HodConfig hod;
@@ -120,17 +122,17 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     }
 
     @Override
-    public void basicValidate() throws ConfigException {
-        redis.basicValidate();
-        queryManipulation.basicValidate();
-        savedSearchConfig.basicValidate();
+    public void basicValidate(final String section) throws ConfigException {
+        redis.basicValidate(SECTION);
+        queryManipulation.basicValidate(SECTION);
+        savedSearchConfig.basicValidate(SECTION);
 
         if (map != null) {
             map.basicValidate("map");
         }
 
         if (!"default".equalsIgnoreCase(login.getMethod())) {
-            login.basicValidate();
+            login.basicValidate(SECTION);
         }
     }
 

@@ -7,8 +7,8 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
-import com.hp.autonomy.frontend.configuration.ServerConfig;
+import com.hp.autonomy.frontend.configuration.filter.ConfigurationFilterMixin;
+import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.ConfigFileConfiguration;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import org.apache.commons.io.FileUtils;

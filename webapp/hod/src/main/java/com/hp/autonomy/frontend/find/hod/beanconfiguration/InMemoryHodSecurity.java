@@ -5,8 +5,8 @@
 
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
-import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
 import com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthenticationProvider;

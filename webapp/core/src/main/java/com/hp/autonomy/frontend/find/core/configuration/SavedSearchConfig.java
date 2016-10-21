@@ -9,14 +9,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
-import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
+import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @JsonDeserialize(builder = SavedSearchConfig.Builder.class)
 @Data
-public class SavedSearchConfig implements ConfigurationComponent {
+public class SavedSearchConfig implements OptionalConfigurationComponent<SavedSearchConfig> {
     private final Boolean pollForUpdates;
     private final Integer pollingInterval;
 
@@ -25,6 +25,7 @@ public class SavedSearchConfig implements ConfigurationComponent {
         pollingInterval = builder.pollingInterval;
     }
 
+    @Override
     public SavedSearchConfig merge(final SavedSearchConfig savedSearchConfig) {
         return savedSearchConfig != null ?
                 new SavedSearchConfig.Builder()
@@ -34,7 +35,8 @@ public class SavedSearchConfig implements ConfigurationComponent {
                 : this;
     }
 
-    public void basicValidate() throws ConfigException {
+    @Override
+    public void basicValidate(final String section) throws ConfigException {
         if (pollForUpdates != null && pollForUpdates && (pollingInterval == null || pollingInterval <= 0)) {
             throw new ConfigException("Saved Searches", "Polling interval must be positive");
         }
@@ -42,7 +44,7 @@ public class SavedSearchConfig implements ConfigurationComponent {
 
     @Override
     @JsonIgnore
-    public boolean isEnabled() {
+    public Boolean getEnabled() {
         return true;
     }
 

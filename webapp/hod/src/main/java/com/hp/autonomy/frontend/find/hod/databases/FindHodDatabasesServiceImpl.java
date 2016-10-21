@@ -17,14 +17,15 @@ import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
-import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesService;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Service
-public class FindHodDatabasesServiceImpl extends HodDatabasesService implements FindHodDatabasesService {
+class FindHodDatabasesServiceImpl extends HodDatabasesService implements FindHodDatabasesService {
     private final ConfigService<HodFindConfig> configService;
 
     @Autowired
@@ -63,7 +64,7 @@ public class FindHodDatabasesServiceImpl extends HodDatabasesService implements 
 
     @Override
     public Set<Database> getDatabases(final HodDatabasesRequest request) throws HodErrorException {
-        final List<ResourceIdentifier> activeIndexes = configService.getConfig().getHod().getActiveIndexes();
+        final Collection<ResourceIdentifier> activeIndexes = configService.getConfig().getHod().getActiveIndexes();
         return activeIndexes.isEmpty() ? super.getDatabases(request) : listActiveIndexes(activeIndexes);
     }
 

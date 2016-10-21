@@ -16,8 +16,6 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexServi
 import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
-import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import com.hp.autonomy.searchcomponents.core.caching.CacheNames;
 import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
@@ -30,9 +28,8 @@ import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.Warnings;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -42,10 +39,9 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class FindHodDocumentService extends HodDocumentsService {
+class FindHodDocumentService extends HodDocumentsService {
     private final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService;
     private final ConfigService<HodFindConfig> findConfigService;
-    private final CacheManager cacheManager;
 
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Autowired
@@ -56,13 +52,11 @@ public class FindHodDocumentService extends HodDocumentsService {
             final GetContentService<HodSearchResult> getContentService,
             final AuthenticationInformationRetriever<?, HodAuthenticationPrincipal> authenticationRetriever,
             final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService,
-            final DocumentFieldsService documentFieldsService,
-            final CacheManager cacheManager
+            final DocumentFieldsService documentFieldsService
     ) {
         super(findSimilarService, configService, queryTextIndexService, getContentService, authenticationRetriever, documentFieldsService);
         this.databasesService = databasesService;
         findConfigService = configService;
-        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -75,10 +69,6 @@ public class FindHodDocumentService extends HodDocumentsService {
                 final Boolean publicIndexesEnabled = findConfigService.getConfig().getHod().getPublicIndexesEnabled();
                 final HodDatabasesRequest databasesRequest = new HodDatabasesRequest.Builder().setPublicIndexesEnabled(publicIndexesEnabled).build();
 
-                final Cache cache = cacheManager.getCache(CacheNames.DATABASES);
-                if (cache != null) {
-                    cache.clear();
-                }
                 final Set<Database> updatedDatabases = databasesService.getDatabases(databasesRequest);
 
                 final QueryRestrictions<ResourceIdentifier> queryRestrictions = searchRequest.getQueryRestrictions();
@@ -101,8 +91,7 @@ public class FindHodDocumentService extends HodDocumentsService {
                         .setMinScore(queryRestrictions.getMinScore())
                         .setStateMatchId(queryRestrictions.getStateMatchId())
                         .setStateDontMatchId(queryRestrictions.getStateDontMatchId())
-                        .build(
-                ));
+                        .build());
                 final Documents<HodSearchResult> resultDocuments = super.queryTextIndex(searchRequest);
                 final Warnings warnings = new Warnings(badIndexes);
                 return new Documents<>(

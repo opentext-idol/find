@@ -7,7 +7,6 @@ package com.hp.autonomy.frontend.find.core.export;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
-import com.hp.autonomy.searchcomponents.core.config.FieldType;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.core.config.HavenSearchCapable;
 import org.junit.Before;
@@ -39,10 +38,19 @@ public class CsvExportStrategyTest {
     @Before
     public void setUp() {
         when(configService.getConfig()).thenReturn(config);
-        when(config.getFieldsInfo()).thenReturn(new FieldsInfo.Builder()
-                .populateResponseMap("authors", new FieldInfo<String>("authors", Arrays.asList("AUTHOR", "author"), FieldType.STRING, false))
-                .populateResponseMap("categories", new FieldInfo<String>("categories", Arrays.asList("CATEGORY", "category"), FieldType.STRING, false))
-                                                        .populateResponseMap("databases", new FieldInfo<String>("databases", Arrays.asList("DATABASE", "database"), FieldType.STRING, false))
+        when(config.getFieldsInfo()).thenReturn(FieldsInfo.builder()
+                .populateResponseMap("authors", FieldInfo.<String>builder()
+                        .id("authors")
+                        .names(Arrays.asList("AUTHOR", "author"))
+                        .build())
+                .populateResponseMap("categories", FieldInfo.<String>builder()
+                        .id("categories")
+                        .names(Arrays.asList("CATEGORY", "category"))
+                        .build())
+                .populateResponseMap("databases", FieldInfo.<String>builder()
+                        .id("databases")
+                        .names(Arrays.asList("DATABASE", "database"))
+                        .build())
                 .build());
 
         csvExportStrategy = new CsvExportStrategy(configService);
@@ -65,7 +73,7 @@ public class CsvExportStrategyTest {
 
     @Test
     public void getFilteredFields() {
-        assertThat(csvExportStrategy.getFieldNames(new MetadataNode[]{mock(MetadataNode.class)}, Arrays.asList("authors")), hasSize(1));
+        assertThat(csvExportStrategy.getFieldNames(new MetadataNode[]{mock(MetadataNode.class)}, Collections.singletonList("authors")), hasSize(1));
     }
 
     @Test

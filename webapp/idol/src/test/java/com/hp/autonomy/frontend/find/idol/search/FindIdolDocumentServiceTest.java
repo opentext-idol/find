@@ -6,17 +6,13 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
-import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.util.AciParameters;
-import com.hp.autonomy.searchcomponents.core.search.AciSearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentServiceTest;
-import com.hp.autonomy.types.idol.QueryResponseData;
+import com.hp.autonomy.types.idol.responses.QueryResponseData;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;

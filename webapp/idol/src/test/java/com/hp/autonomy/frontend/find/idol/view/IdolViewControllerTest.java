@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewController, String, AciErrorException> {
     @Mock
-    private ConfigService<? extends IdolSearchCapable> configService;
+    private ConfigService<IdolSearchCapable> configService;
 
     @Mock
     private ViewServerService<String, AciErrorException> idolViewServerService;
@@ -56,7 +56,7 @@ public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewC
 
     @Test
     public void noReferenceField() {
-        when(configService.getConfig()).thenReturn(new IdolFindConfig.Builder().setView(new ViewConfig.Builder().build()).build());
+        when(configService.getConfig()).thenReturn(new IdolFindConfig.Builder().setView(ViewConfig.builder().build()).build());
 
         assertNotNull(viewController.handleViewNoReferenceFieldException(new ViewNoReferenceFieldException("some reference", "some field"), new MockHttpServletRequest(), new MockHttpServletResponse()));
     }

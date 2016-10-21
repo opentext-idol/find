@@ -94,7 +94,11 @@ public class HodExportServiceTest {
                 .setSummary("Inspired by the Muses of Mount Helicon let us sing")
                 .setWeight(0.62)
                 .setDate(DateTime.now())
-                .setFieldMap(ImmutableMap.of("categories", new FieldInfo<>("categories", Collections.singleton("category"), FieldType.STRING, false, Arrays.asList("Epic Literature", "Philosophy", "Cosmogony"))))
+                .setFieldMap(ImmutableMap.of("categories", FieldInfo.builder()
+                        .id("categories")
+                        .name("category")
+                        .values(Arrays.asList("Epic Literature", "Philosophy", "Cosmogony"))
+                        .build()))
                 .build();
         final Documents<HodSearchResult> results = new Documents<>(Arrays.asList(result1, result2), 2, null, null, null, null);
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(results);
@@ -104,7 +108,13 @@ public class HodExportServiceTest {
     }
 
     private FieldInfo<?> fieldInfo(final String id, final String name, final FieldType type, final Object value) {
-        return new FieldInfo<>(id, Collections.singleton(name), type, true, value);
+        return FieldInfo.builder()
+                .id(id)
+                .name(name)
+                .type(type)
+                .advanced(true)
+                .value(value)
+                .build();
     }
 
     @Test

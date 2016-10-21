@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.idol.databases;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.databases.AbstractDatabasesControllerTest;
 import com.hp.autonomy.searchcomponents.idol.databases.IdolDatabasesRequest;
-import com.hp.autonomy.types.idol.Database;
+import com.hp.autonomy.types.idol.responses.Database;
 import org.junit.Before;
 
 public class IdolDatabasesControllerTest extends AbstractDatabasesControllerTest<Database, IdolDatabasesRequest, AciErrorException> {

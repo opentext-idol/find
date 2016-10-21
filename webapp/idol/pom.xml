@@ -124,17 +124,6 @@
             <artifactId>haven-search-components-idol</artifactId>
             <version>${haven.search.components.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend.user</groupId>
-            <artifactId>idol-user-service</artifactId>
-            <version>2.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.hp.autonomy.frontend</groupId>
-                    <artifactId>aci-types</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>

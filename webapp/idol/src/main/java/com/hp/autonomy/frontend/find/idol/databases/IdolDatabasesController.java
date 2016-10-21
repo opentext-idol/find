@@ -9,7 +9,7 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.databases.DatabasesController;
 import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.idol.databases.IdolDatabasesRequest;
-import com.hp.autonomy.types.idol.Database;
+import com.hp.autonomy.types.idol.responses.Database;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 

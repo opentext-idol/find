@@ -7,16 +7,16 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
+import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang.BooleanUtils;
 
 @Data
 @JsonDeserialize(builder = MMAP.Builder.class)
-public class MMAP implements ConfigurationComponent {
+public class MMAP implements OptionalConfigurationComponent<MMAP> {
     private final Boolean enabled;
     private final String baseUrl;
 
@@ -25,20 +25,16 @@ public class MMAP implements ConfigurationComponent {
         baseUrl = builder.baseUrl;
     }
 
+    @Override
     public MMAP merge(final MMAP mmap) {
-        if (mmap == null) {
-            return this;
-        } else {
-            return new Builder()
-                    .setBaseUrl(baseUrl == null ? mmap.baseUrl : baseUrl)
-                    .setEnabled(enabled == null ? mmap.enabled : enabled)
-                    .build();
-        }
+        return mmap == null ? this : new Builder()
+                .setBaseUrl(baseUrl == null ? mmap.baseUrl : baseUrl)
+                .setEnabled(enabled == null ? mmap.enabled : enabled)
+                .build();
     }
 
     @Override
-    public boolean isEnabled() {
-        return BooleanUtils.isTrue(enabled);
+    public void basicValidate(final String s) throws ConfigException {
     }
 
     @Setter

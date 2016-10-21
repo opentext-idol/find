@@ -26,7 +26,9 @@ public class HodDatabasesControllerTest extends AbstractDatabasesControllerTest<
 
     @Before
     public void setUp() {
-        final HodConfig hodConfig = new HodConfig.Builder().setPublicIndexesEnabled(true).build();
+        final HodConfig hodConfig = HodConfig.builder()
+                .publicIndexesEnabled(true)
+                .build();
         when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setHod(hodConfig).build());
 
         databasesController = new HodDatabasesController(databasesService, configService);

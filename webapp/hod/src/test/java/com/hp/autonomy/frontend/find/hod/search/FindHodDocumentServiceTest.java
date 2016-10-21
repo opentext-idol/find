@@ -6,15 +6,14 @@
 package com.hp.autonomy.frontend.find.hod.search;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HodConfig;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryRequestBuilder;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryResults;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.searchcomponents.core.caching.CacheNames;
 import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
@@ -30,8 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
@@ -43,7 +40,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -57,20 +53,17 @@ public class FindHodDocumentServiceTest extends HodDocumentServiceTest {
     @Mock
     private HodFindConfig findConfig;
 
-    @Mock
-    private CacheManager cacheManager;
-
-    @Mock
-    private Cache cache;
-
     @Override
     @Before
     public void setUp() {
         super.setUp();
-        documentsService = new FindHodDocumentService(findSimilarService, findConfigService, queryTextIndexService, getContentService, authenticationInformationRetriever, databasesService, documentFieldsService, cacheManager);
+        documentsService = new FindHodDocumentService(findSimilarService, findConfigService, queryTextIndexService, getContentService, authenticationInformationRetriever, databasesService, documentFieldsService);
 
-        when(findConfig.getQueryManipulation()).thenReturn(new QueryManipulationConfig("SomeProfile", "SomeIndex"));
-        when(findConfig.getHod()).thenReturn(new HodConfig.Builder().setPublicIndexesEnabled(true).build());
+        when(findConfig.getQueryManipulation()).thenReturn(QueryManipulationConfig.builder()
+                .profile("SomeProfile")
+                .index("SomeIndex")
+                .build());
+        when(findConfig.getHod()).thenReturn(HodConfig.builder().publicIndexesEnabled(true).build());
         when(findConfigService.getConfig()).thenReturn(findConfig);
     }
 
@@ -78,8 +71,6 @@ public class FindHodDocumentServiceTest extends HodDocumentServiceTest {
     public void invalidIndexName() throws HodErrorException {
         final ResourceIdentifier goodIndex = testUtils.getDatabases().get(0);
         final ResourceIdentifier badIndex = new ResourceIdentifier("bad", "bad");
-
-        when(cacheManager.getCache(CacheNames.DATABASES)).thenReturn(cache);
 
         final HodError invalidIndexError = new HodError.Builder().setErrorCode(HodErrorCode.INDEX_NAME_INVALID).build();
         final HodSearchResult result = new HodSearchResult.Builder().setIndex(goodIndex.getName()).build();
@@ -110,7 +101,6 @@ public class FindHodDocumentServiceTest extends HodDocumentServiceTest {
         assertNotNull(results.getWarnings());
         assertThat(results.getWarnings().getInvalidDatabases(), hasSize(1));
         assertEquals(badIndex, results.getWarnings().getInvalidDatabases().iterator().next());
-        verify(cache).clear();
     }
 
     @Test(expected = HodErrorException.class)

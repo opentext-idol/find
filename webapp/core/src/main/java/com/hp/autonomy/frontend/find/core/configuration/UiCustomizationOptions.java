@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.core.configuration;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
 
 import java.util.Collections;
 import java.util.HashMap;

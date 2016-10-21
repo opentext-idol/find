@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
-import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.transport.AciServerDetails;
@@ -15,25 +14,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.hp.autonomy.frontend.configuration.AbstractConfigurableAciService;
-import com.hp.autonomy.frontend.configuration.Authentication;
-import com.hp.autonomy.frontend.configuration.CommunityAuthenticationValidator;
-import com.hp.autonomy.frontend.configuration.CommunityService;
-import com.hp.autonomy.frontend.configuration.CommunityServiceImpl;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
-import com.hp.autonomy.frontend.configuration.ServerConfig;
-import com.hp.autonomy.frontend.configuration.ServerConfigValidator;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsDeserializer;
+import com.hp.autonomy.frontend.configuration.aci.AbstractConfigurableAciService;
+import com.hp.autonomy.frontend.configuration.aci.CommunityService;
+import com.hp.autonomy.frontend.configuration.aci.CommunityServiceImpl;
+import com.hp.autonomy.frontend.configuration.authentication.Authentication;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthenticationValidator;
+import com.hp.autonomy.frontend.configuration.filter.ConfigurationFilterMixin;
+import com.hp.autonomy.frontend.configuration.server.ServerConfig;
+import com.hp.autonomy.frontend.configuration.server.ServerConfigValidator;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolAuthenticationMixins;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
-import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
-import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.user.UserService;
 import com.hp.autonomy.user.UserServiceImpl;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.apache.http.client.HttpClient;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,13 +53,13 @@ public class IdolConfiguration {
     @Autowired
     @Primary
     public ObjectMapper jacksonObjectMapper(
-        final Jackson2ObjectMapperBuilder builder,
-        final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever
+            final Jackson2ObjectMapperBuilder builder,
+            final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever
     ) {
         final ObjectMapper mapper = builder
-            .createXmlMapper(false)
-            .mixIn(Authentication.class, IdolAuthenticationMixins.class)
-            .build();
+                .createXmlMapper(false)
+                .mixIn(Authentication.class, IdolAuthenticationMixins.class)
+                .build();
 
         mapper.setInjectableValues(new InjectableValues.Std().addValue(AuthenticationInformationRetriever.class, authenticationInformationRetriever));
 
@@ -97,16 +94,16 @@ public class IdolConfiguration {
     }
 
     @Bean
-    public UserService userService(final ConfigService<IdolFindConfig> configService, final AciService aciService, final AciResponseJaxbProcessorFactory processorFactory) {
+    public UserService userService(final ConfigService<IdolFindConfig> configService, final AciService aciService, final ProcessorFactory processorFactory) {
         return new UserServiceImpl(configService, aciService, processorFactory);
     }
 
     @Bean
     @Autowired
-    public CommunityService communityService(final AciService aciService, final IdolAnnotationsProcessorFactory idolAnnotationsProcessorFactory) {
+    public CommunityService communityService(final AciService aciService, final ProcessorFactory processorFactory) {
         final CommunityServiceImpl communityService = new CommunityServiceImpl();
         communityService.setAciService(aciService);
-        communityService.setProcessorFactory(idolAnnotationsProcessorFactory);
+        communityService.setProcessorFactory(processorFactory);
 
         return communityService;
     }
@@ -124,7 +121,7 @@ public class IdolConfiguration {
     @Bean
     public CommunityAuthenticationValidator communityAuthenticationValidator(
             final AciService validatorAciService,
-            final IdolAnnotationsProcessorFactory processorFactory
+            final ProcessorFactory processorFactory
     ) {
         final CommunityAuthenticationValidator communityAuthenticationValidator = new CommunityAuthenticationValidator();
 
@@ -137,7 +134,7 @@ public class IdolConfiguration {
     @Bean
     public ServerConfigValidator serverConfigValidator(
             final AciService validatorAciService,
-            final IdolAnnotationsProcessorFactory processorFactory
+            final ProcessorFactory processorFactory
     ) {
         final ServerConfigValidator serverConfigValidator = new ServerConfigValidator();
 

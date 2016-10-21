@@ -10,6 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.*;
+import com.hp.autonomy.frontend.configuration.authentication.Authentication;
+import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
+import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.*;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
@@ -29,6 +33,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 @JsonDeserialize(builder = IdolFindConfig.Builder.class)
 public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, AuthenticationConfig<IdolFindConfig>, IdolSearchCapable, FindConfig {
+    private static final String SECTION = "Find Config Root";
 
     private final CommunityAuthentication login;
     private final ServerConfig content;
@@ -117,17 +122,17 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     }
 
     @Override
-    public void basicValidate() throws ConfigException {
-        login.basicValidate();
+    public void basicValidate(final String section) throws ConfigException {
+        login.basicValidate(SECTION);
         content.basicValidate("content");
-        savedSearchConfig.basicValidate();
+        savedSearchConfig.basicValidate(SECTION);
 
         if (map != null) {
             map.basicValidate("map");
         }
 
         if (queryManipulation != null) {
-            queryManipulation.basicValidate();
+            queryManipulation.basicValidate(SECTION);
         }
     }
 

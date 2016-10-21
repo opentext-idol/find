@@ -5,8 +5,8 @@
 
 package com.hp.autonomy.frontend.find.idol.configuration;
 
-import com.hp.autonomy.frontend.configuration.ValidationResult;
-import com.hp.autonomy.frontend.configuration.Validator;
+import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
+import com.hp.autonomy.frontend.configuration.validation.Validator;
 import org.springframework.stereotype.Component;
 
 @Component

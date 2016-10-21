@@ -6,8 +6,8 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.configuration.HostAndPort;
-import com.hp.autonomy.frontend.configuration.RedisConfig;
+import com.hp.autonomy.frontend.configuration.redis.RedisConfig;
+import com.hp.autonomy.frontend.configuration.server.HostAndPort;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.RedisCondition;
 import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
@@ -31,6 +31,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @Conditional(RedisCondition.class)
 @EnableRedisHttpSession
 public class RedisConfiguration {
+    private static final int DEFAULT_EXPIRATION = 30 * 60;
 
     @Autowired
     private ConfigService<HodFindConfig> configService;
@@ -74,7 +75,7 @@ public class RedisConfiguration {
         cacheManager.setUsePrefix(true);
         cacheManager.setCachePrefix(new DefaultRedisCachePrefix(":cache:" + commit + ':'));
 
-        cacheManager.setDefaultExpiration(30 * 60);
+        cacheManager.setDefaultExpiration(DEFAULT_EXPIRATION);
         cacheManager.setExpires(FindCacheNames.CACHE_EXPIRES);
 
         return cacheManager;
@@ -90,11 +91,7 @@ public class RedisConfiguration {
     @Bean
     public ConfigureRedisAction configureRedisAction() {
         // The config action might not be available in a secure redis (eg: Azure)
-        if (configService.getConfig().getRedis().getAutoConfigure()) {
-            return new ConfigureNotifyKeyspaceEventsAction();
-        } else {
-            return ConfigureRedisAction.NO_OP;
-        }
+        return configService.getConfig().getRedis().getAutoConfigure() ? new ConfigureNotifyKeyspaceEventsAction() : ConfigureRedisAction.NO_OP;
     }
 
 }
