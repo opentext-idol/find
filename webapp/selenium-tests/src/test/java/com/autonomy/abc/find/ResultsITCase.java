@@ -2,10 +2,14 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.Role;
+import com.autonomy.abc.selenium.find.CSVExportModal;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.Query;
@@ -171,6 +175,28 @@ public class ResultsITCase extends FindTestBase {
 
         // This could fail because %2F can be blocked by Tomcat
         assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(query));
+    }
+
+    @Test
+    @ResolvedBug("FIND-508")
+    @Role(UserRole.BIFHI)
+    public void testCanSelectParametricsThenExport() {
+        final FilterPanel filters = getElementFactory().getFilterPanel();
+        findPage.waitForParametricValuesToLoad();
+
+        final int goodFilter = filters.nonZeroParamFieldContainer(0);
+        final ParametricFieldContainer container = filters.parametricField(goodFilter);
+        container.expand();
+        container.getFilters().get(0).check();
+        findPage.waitForParametricValuesToLoad();
+
+        //TODO: part of the bad structure -> will be fixed w/ refactor of Roles vs App.
+        ((BIIdolFindElementFactory)getElementFactory()).getSearchOptionsBar().exportResultsToCSV();
+
+        final CSVExportModal modal = CSVExportModal.make(getDriver());
+        assertThat("Modal has some contents", modal.fieldsToExport(), hasSize(greaterThan(0)));
+
+        modal.close();
     }
 
     private void search(final String term) {
