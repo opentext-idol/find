@@ -65,7 +65,7 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Test
     public void testTopicMapTabShowsTopicMap() {
-        findService.search("shambolic");
+        findService.search("m");
         verifyThat("Topic map element displayed", results.topicMapVisible());
     }
 
@@ -125,6 +125,7 @@ public class TopicMapITCase extends IdolFindTestBase {
     }
 
     @Test
+    //TODO: SO BRITTLE
     public void testClickingOnMapEntities() {
         search("m");
 

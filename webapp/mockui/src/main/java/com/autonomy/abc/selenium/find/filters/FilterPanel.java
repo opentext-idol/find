@@ -19,8 +19,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +81,10 @@ public class FilterPanel {
     public ParametricFieldContainer parametricContainer(final String filterCategory) {
         final WebElement category = panel.findElement(By.cssSelector("[data-field-display-name='" + filterCategory + "']"));
         return new ParametricFieldContainer(category, driver);
+    }
+
+    public boolean parametricContainerIsPresent(final String filterCategory) {
+        return !panel.findElements(By.cssSelector("[data-field-display-name='" + filterCategory + "']")).isEmpty();
     }
 
     public ParametricFieldContainer parametricField(final int i) {
@@ -177,5 +179,30 @@ public class FilterPanel {
 
     public List<WebElement> toolTips() {
         return panel.findElements(By.cssSelector("[aria-describedby^='tooltip']"));
+    }
+
+    public boolean containerContainsFilter(final String target, final int index) {
+        final int tooManyFiltersToBother = 600;
+
+        final ParametricFieldContainer container = parametricField(index);
+        if(Integer.parseInt(container.getFilterNumber()) > tooManyFiltersToBother){
+            return true;
+        }
+        container.expand();
+        container.seeAll();
+
+        final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(driver);
+
+        final List<WebElement> filters = filterModal.activePaneFilterList();
+
+        for(WebElement filter : filters) {
+            String name = filter.findElement(By.cssSelector(".field-value")).getText();
+            if(name.contains(target)) {
+                filterModal.cancel();
+                return true;
+            }
+        }
+        filterModal.cancel();
+        return false;
     }
 }

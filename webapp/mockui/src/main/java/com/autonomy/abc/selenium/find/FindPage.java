@@ -4,7 +4,6 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
-import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.*;
 import org.openqa.selenium.By;

@@ -114,7 +114,7 @@ public class DocumentPreviewITCase extends FindTestBase {
 
     @Test
     public void testDetailedPreview() {
-        final ResultsView results = findService.search("tragic");
+        final ResultsView results = findService.search("m");
         getElementFactory().getFilterPanel().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter(filters().getIndex(1)));
 
