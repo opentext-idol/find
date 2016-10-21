@@ -10,9 +10,11 @@ import com.autonomy.abc.selenium.find.comparison.AppearsIn;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
+import com.autonomy.abc.selenium.find.save.SearchTabBar;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -262,6 +264,37 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
 
         findPage.goBackToSearch();
     }
+
+    @Test
+    @ActiveBug("FIND-634")
+    public void testEditingSavedSearchThenComparing() {
+        final String otherSearchName = "Not Changin'";
+        searchAndSave(new Query("car"), otherSearchName);
+        savedSearchService.openNewTab();
+
+        final String originalSearch = "face";
+
+        searchAndSave(new Query(originalSearch), "Gonna Change");
+        findPage.goToListView();
+
+        final String originalFirstResult = getElementFactory()
+                .getResultsPage()
+                .getResult(1)
+                .title()
+                .getText();
+
+        elementFactory.getConceptsPanel().removeAllConcepts();
+        findService.search("stuff AND (NOT " + originalSearch + ")");
+
+        verifyThat("Tab is marked as modified", elementFactory.getSearchTabBar().currentTab().isNew());
+        savedSearchService.compareCurrentWith(otherSearchName);
+        resultsComparison = elementFactory.getResultsComparison();
+        resultsComparison.goToListView();
+
+        verifyThat(resultsComparison.getResults(AppearsIn.THIS_ONLY).get(0).getTitleString(), not(originalFirstResult));
+    }
+
+
 
     private void searchAndSave(final Query query, final String saveAs) {
         searchAndSave(query, saveAs, SearchType.QUERY);

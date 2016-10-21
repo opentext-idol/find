@@ -61,7 +61,7 @@ public class IdolFindPage extends FindPage {
 
     public void goToListView() {
         mainContainer().findElement(By.cssSelector("[data-tab-id='list']")).click();
-        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".results-list-container"))));
+        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(mainContainer().findElement(By.cssSelector(".results-list-container"))));
     }
 
     public void goToTopicMap() {
