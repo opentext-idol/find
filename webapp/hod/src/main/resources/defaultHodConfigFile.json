@@ -70,8 +70,8 @@
                 "bi": false
             }
         },
-        "parametricBlacklist": [],
-        "parametricWhitelist": [],
+        "parametricNeverShow": [],
+        "parametricAlwaysShow": [],
         "parametricOrder": [],
         "specialUrlPrefixes": {
             "application/msword": "ms-word:ofv|u|",

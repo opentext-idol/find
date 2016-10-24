@@ -125,25 +125,27 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
 
     private Map<FieldTypeParam, List<TagName>> getFields(final R request, final FieldTypeParam[] fieldTypeParams, final Collection<String> additionalFields) throws E {
         final UiCustomization uiCustomization = configService.getConfig().getUiCustomization();
-        final Collection<String> parametricWhitelist = uiCustomization == null || uiCustomization.getParametricWhitelist() == null
+
+        final Collection<String> parametricAlwaysShow = uiCustomization == null || uiCustomization.getParametricAlwaysShow() == null
                 ? Collections.emptyList()
-                : uiCustomization.getParametricWhitelist()
-                .stream()
-                .map(fieldName -> normaliseFieldName(fieldName, additionalFields))
-                .collect(Collectors.toList());
-        final Collection<String> parametricBlacklist = uiCustomization == null || uiCustomization.getParametricBlacklist() == null
+                : uiCustomization.getParametricAlwaysShow()
+                    .stream()
+                    .map(fieldName -> normaliseFieldName(fieldName, additionalFields))
+                    .collect(Collectors.toList());
+
+        final Collection<String> parametricNeverShow = uiCustomization == null || uiCustomization.getParametricNeverShow() == null
                 ? Collections.emptyList()
-                : uiCustomization.getParametricBlacklist()
-                .stream()
-                .map(fieldName -> normaliseFieldName(fieldName, additionalFields))
-                .collect(Collectors.toList());
+                : uiCustomization.getParametricNeverShow()
+                    .stream()
+                    .map(fieldName -> normaliseFieldName(fieldName, additionalFields))
+                    .collect(Collectors.toList());
 
         return fieldsService.getFields(request, fieldTypeParams)
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()
                         .stream()
-                        .filter(tagName -> (parametricWhitelist.isEmpty() || parametricWhitelist.contains(tagName.getId())) && !parametricBlacklist.contains(tagName.getId()))
+                        .filter(tagName -> (parametricAlwaysShow.isEmpty() || parametricAlwaysShow.contains(tagName.getId())) && !parametricNeverShow.contains(tagName.getId()))
                         .collect(Collectors.toList()))
                 );
     }

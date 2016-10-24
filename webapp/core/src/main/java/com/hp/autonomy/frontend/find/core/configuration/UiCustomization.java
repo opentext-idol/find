@@ -26,8 +26,8 @@ import java.util.Optional;
 @JsonDeserialize(builder = UiCustomization.UiCustomizationBuilder.class)
 public class UiCustomization implements ConfigurationComponent<UiCustomization> {
     private final UiCustomizationOptions options;
-    private final Collection<String> parametricBlacklist;
-    private final Collection<String> parametricWhitelist;
+    private final Collection<String> parametricNeverShow;
+    private final Collection<String> parametricAlwaysShow;
     private final List<String> parametricOrder;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final Map<String, String> specialUrlPrefixes;
@@ -42,8 +42,8 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
             specialUrlPrefixes.putAll(this.specialUrlPrefixes);
             return builder()
                     .setOptions(Optional.ofNullable(options).map(o -> o.merge(uiCustomization.options)).orElse(uiCustomization.options))
-                    .setParametricBlacklist(parametricBlacklist != null ? parametricBlacklist : uiCustomization.parametricBlacklist)
-                    .setParametricWhitelist(parametricWhitelist != null ? parametricWhitelist : uiCustomization.parametricWhitelist)
+                    .setParametricNeverShow(parametricNeverShow != null ? parametricNeverShow : uiCustomization.parametricNeverShow)
+                    .setParametricAlwaysShow(parametricAlwaysShow != null ? parametricAlwaysShow : uiCustomization.parametricAlwaysShow)
                     .setParametricOrder(parametricOrder != null ? parametricOrder : uiCustomization.parametricOrder)
                     .setSpecialUrlPrefixes(specialUrlPrefixes)
                     .setErrorCallSupportString(uiCustomization.errorCallSupportString)

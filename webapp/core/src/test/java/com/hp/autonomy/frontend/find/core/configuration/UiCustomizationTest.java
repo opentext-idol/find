@@ -52,8 +52,8 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
     protected void validateParsedComponent(final UiCustomization component) {
         assertNotNull(component.getOptions());
         assertFalse(component.getOptions().any().isEmpty());
-        assertThat(component.getParametricBlacklist(), not(empty()));
-        assertThat(component.getParametricWhitelist(), not(empty()));
+        assertThat(component.getParametricNeverShow(), not(empty()));
+        assertThat(component.getParametricAlwaysShow(), not(empty()));
     }
 
     @Override
@@ -61,8 +61,8 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         assertThat(mergedComponent.getOptions().any(), hasKey("option1"));
         assertThat(mergedComponent.getOptions().any(), hasKey("option2"));
         assertThat(mergedComponent.getOptions().any(), hasKey("option3"));
-        assertThat(mergedComponent.getParametricBlacklist(), hasItem(is("A_CLEAN_NUMERIC_FIELD")));
-        assertThat(mergedComponent.getParametricWhitelist(), hasItem(is("AUTN_DATE")));
+        assertThat(mergedComponent.getParametricNeverShow(), hasItem(is("A_CLEAN_NUMERIC_FIELD")));
+        assertThat(mergedComponent.getParametricAlwaysShow(), hasItem(is("AUTN_DATE")));
         assertThat(mergedComponent.getSpecialUrlPrefixes(), hasKey("application/msword"));
         assertThat(mergedComponent.getSpecialUrlPrefixes(), hasKey("application/vnd.visio"));
     }
