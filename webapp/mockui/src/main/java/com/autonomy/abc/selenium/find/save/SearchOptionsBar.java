@@ -60,10 +60,6 @@ public class SearchOptionsBar {
         return findElement(By.className("search-title-error-message")).getText();
     }
 
-    public WebElement searchTypeButton(final SearchType type) {
-        return ElementUtil.ancestor(findElement(By.cssSelector("input[type='radio'][value='" + type + "']")), 2);
-    }
-
     public void delete() {
         openDeleteModal();
         confirmModalOperation();
@@ -81,6 +77,9 @@ public class SearchOptionsBar {
     public void openResetModal() {
         extraOptions().select("Reset");
     }
+
+    //Ellipsis unicode character used
+    public void exportResultsToCSV() { extraOptions().select("Export Results to CSV\u2026");}
 
     private Menu<String> extraOptions() {
         final WebElement dropdown = findElement(By.cssSelector("[data-toggle=dropdown]"));

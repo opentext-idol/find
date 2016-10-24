@@ -2,35 +2,39 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.Role;
+import com.autonomy.abc.selenium.find.CSVExportModal;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
+import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTagName;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class ResultsITCase extends FindTestBase {
@@ -57,7 +61,7 @@ public class ResultsITCase extends FindTestBase {
 
         findService.search(searchTerm);
 
-        for (final WebElement searchElement : getDriver().findElements(By.xpath("//*[contains(@class,'search-text') and contains(text(),'" + searchTerm + "')]"))) {
+        for (final WebElement searchElement : findPage.resultsContainingString(searchTerm)) {
             if (searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                 verifyThat(searchElement.getText().toLowerCase(), containsString(searchTerm));
             }
@@ -137,6 +141,31 @@ public class ResultsITCase extends FindTestBase {
     }
 
     @Test
+    @ResolvedBug("FIND-694")
+    @Role(UserRole.FIND)
+    public void testAutoCorrectedQueriesHaveRelatedConceptsAndParametrics() {
+        final String term = "blarf";
+        final String termAutoCorrected = "Blair";
+        search(termAutoCorrected);
+
+        LOGGER.info("Need to verify that " + termAutoCorrected + " has results, related concepts and parametrics");
+
+        assumeThat(termAutoCorrected + " has some results", findPage.totalResultsNum(), greaterThan(0));
+
+        final int indexOfCategoryWFilters = getElementFactory().getFilterPanel().nonZeroParamFieldContainer(0);
+        assertThat(termAutoCorrected + " has some parametric fields", indexOfCategoryWFilters, not(-1));
+        assertThat(termAutoCorrected + " has related concepts", !getElementFactory().getRelatedConceptsPanel().noConceptsPresent());
+
+        search(term);
+        assertThat("Has autocorrected", findPage.hasAutoCorrected());
+        assertThat("Has autocorrected" + term + " to " + termAutoCorrected, findPage.correctedQuery(), is("( " + termAutoCorrected + " )"));
+
+        findPage.waitForParametricValuesToLoad();
+        verifyThat("Still has parametric fields", getElementFactory().getFilterPanel().parametricField(indexOfCategoryWFilters).getFilterNumber(), not("0"));
+        verifyThat("Still has related concepts", !getElementFactory().getRelatedConceptsPanel().noConceptsPresent());
+    }
+
+    @Test
     @Role(UserRole.FIND)
     public void testRefreshWithSlash() {
         final String query = "foo/bar";
@@ -147,6 +176,73 @@ public class ResultsITCase extends FindTestBase {
         // This could fail because %2F can be blocked by Tomcat
         assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(query));
     }
+
+    @Test
+    @ResolvedBug("FIND-508")
+    @Role(UserRole.BIFHI)
+    public void testCanSelectParametricsThenExport() {
+        final FilterPanel filters = getElementFactory().getFilterPanel();
+        findPage.waitForParametricValuesToLoad();
+
+        final int goodFilter = filters.nonZeroParamFieldContainer(0);
+        final ParametricFieldContainer container = filters.parametricField(goodFilter);
+        container.expand();
+        container.getFilters().get(0).check();
+        findPage.waitForParametricValuesToLoad();
+
+        //TODO: part of the bad structure -> will be fixed w/ refactor of Roles vs App.
+        ((BIIdolFindElementFactory)getElementFactory()).getSearchOptionsBar().exportResultsToCSV();
+
+        final CSVExportModal modal = CSVExportModal.make(getDriver());
+        assertThat("Modal has some contents", modal.fieldsToExport(), hasSize(greaterThan(0)));
+
+        modal.close();
+    }
+
+    @Test
+    @ResolvedBug("FIND-563")
+    public void testQueryHighlightingForNonLatin() {
+        search("*");
+
+        final ConceptsPanel conceptsPanel = getElementFactory().getConceptsPanel();
+
+        //Japanese: Human; Hebrew: Home; Thai: make; Russian: Russia; Arabic: white; Chinese: China
+        final List<String> nonLatinQueries = Arrays.asList("人", "אדום", "ทำ", "Россия", "بيض", "中国");
+        final String weightOfHighlightedTerm = "900";
+
+        boolean foundResults = false;
+
+        for (String query : nonLatinQueries) {
+            if(!foundResults) {
+                search(query);
+
+                if (findPage.totalResultsNum() > 0) {
+                    foundResults = true;
+                    final WebElement incidenceOfTerm = findPage.resultsContainingString(query).get(0);
+                    assertThat("Term \"" + query + "\" is highlighted (bold).",
+                            incidenceOfTerm.getCssValue("font-weight"),
+                            is(weightOfHighlightedTerm));
+                }
+
+                conceptsPanel.removeAllConcepts();
+            }
+        }
+        assertThat("Found some results for the non-Latin queries", foundResults);
+    }
+
+    @Test
+    @Role(UserRole.BIFHI)
+    @ActiveBug("FIND-703")
+    public void testBIUserCannotRouteToSplashPage() {
+        final String splashURL = getAppUrl() + "/public/search/splash";
+        getDriver().get(splashURL);
+        Waits.loadOrFadeWait();
+
+        findPage = getElementFactory().getFindPage();
+        assertThat("Splash page logo not visible", findPage.footerLogo(), not(displayed()));
+        assertThat("Has redirected away from Splash page", getDriver().getCurrentUrl(), not(splashURL));
+    }
+
 
     private void search(final String term) {
         findService.search(term);

@@ -104,10 +104,18 @@ public class FindPage extends AppElement implements AppPage,
         return Integer.parseInt(findElement(By.className("total-results-number")).getText());
     }
 
+    public List<WebElement> resultsContainingString(final String searchTerm) {
+        return getDriver().findElements(By.xpath("//*[contains(@class,'search-text') and contains(text(),'" + searchTerm + "')]"));
+    }
+
     public WebElement originalQuery() { return findElement(By.className("original-query")); }
 
+    public String correctedQuery() { return findElement(By.className("corrected-query")).getText(); }
+
+    public boolean hasAutoCorrected() { return !findElements(By.className("original-query")).isEmpty(); }
+
     public void ensureTermNotAutoCorrected() {
-        if(!findElements(By.className("original-query")).isEmpty()) {
+        if(hasAutoCorrected()) {
             originalQuery().click();
         }
     }
