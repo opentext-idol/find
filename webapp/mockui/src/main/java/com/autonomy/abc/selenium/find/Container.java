@@ -22,6 +22,7 @@ public enum Container {
         return '.' + container + "-container";
     }
 
+    //TODO: wait it is waiting too long
     public void waitForLoad(final WebDriver driver) {
          try {
              new WebDriverWait(driver, 5)

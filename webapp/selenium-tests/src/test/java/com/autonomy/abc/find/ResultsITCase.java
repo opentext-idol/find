@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
+import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.autonomy.abc.selenium.find.results.FindResult;
@@ -18,15 +19,11 @@ import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
@@ -61,7 +58,7 @@ public class ResultsITCase extends FindTestBase {
 
         findService.search(searchTerm);
 
-        for (final WebElement searchElement : getDriver().findElements(By.xpath("//*[contains(@class,'search-text') and contains(text(),'" + searchTerm + "')]"))) {
+        for (final WebElement searchElement : findPage.resultsContainingString(searchTerm)) {
             if (searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                 verifyThat(searchElement.getText().toLowerCase(), containsString(searchTerm));
             }
@@ -197,6 +194,37 @@ public class ResultsITCase extends FindTestBase {
         assertThat("Modal has some contents", modal.fieldsToExport(), hasSize(greaterThan(0)));
 
         modal.close();
+    }
+
+    @Test
+    @ResolvedBug("FIND-563")
+    public void testQueryHighlightingForNonLatin() {
+        search("*");
+
+        final ConceptsPanel conceptsPanel = getElementFactory().getConceptsPanel();
+
+        //Japanese: Human; Hebrew: Home; Thai: make; Russian: Russia; Arabic: white; Chinese: China
+        final List<String> nonLatinQueries = Arrays.asList("人", "אדום", "ทำ", "Россия", "بيض", "中国");
+        final String weightOfHighlightedTerm = "900";
+
+        boolean foundResults = false;
+
+        for (String query : nonLatinQueries) {
+            if(!foundResults) {
+                search(query);
+
+                if (findPage.totalResultsNum() > 0) {
+                    foundResults = true;
+                    final WebElement incidenceOfTerm = findPage.resultsContainingString(query).get(0);
+                    assertThat("Term \"" + query + "\" is highlighted (bold).",
+                            incidenceOfTerm.getCssValue("font-weight"),
+                            is(weightOfHighlightedTerm));
+                }
+
+                conceptsPanel.removeAllConcepts();
+            }
+        }
+        assertThat("Found some results for the non-Latin queries", foundResults);
     }
 
     private void search(final String term) {
