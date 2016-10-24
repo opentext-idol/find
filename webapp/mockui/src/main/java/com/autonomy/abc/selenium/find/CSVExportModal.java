@@ -9,7 +9,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public class CSVExportModal extends ModalView{
+public class CSVExportModal extends ModalView {
 
     private CSVExportModal(final WebElement $el, final WebDriver driver) {
         super($el, driver);

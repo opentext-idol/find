@@ -15,7 +15,9 @@ import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +28,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.*;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTagName;
@@ -147,7 +150,7 @@ public class ResultsITCase extends FindTestBase {
 
         LOGGER.info("Need to verify that " + termAutoCorrected + " has results, related concepts and parametrics");
 
-        assertThat(termAutoCorrected + " has some results", findPage.totalResultsNum(), greaterThan(0));
+        assumeThat(termAutoCorrected + " has some results", findPage.totalResultsNum(), greaterThan(0));
 
         final int indexOfCategoryWFilters = getElementFactory().getFilterPanel().nonZeroParamFieldContainer(0);
         assertThat(termAutoCorrected + " has some parametric fields", indexOfCategoryWFilters, not(-1));
@@ -226,6 +229,20 @@ public class ResultsITCase extends FindTestBase {
         }
         assertThat("Found some results for the non-Latin queries", foundResults);
     }
+
+    @Test
+    @Role(UserRole.BIFHI)
+    @ActiveBug("FIND-703")
+    public void testBIUserCannotRouteToSplashPage() {
+        final String splashURL = getAppUrl() + "/public/search/splash";
+        getDriver().get(splashURL);
+        Waits.loadOrFadeWait();
+
+        findPage = getElementFactory().getFindPage();
+        assertThat("Splash page logo not visible", findPage.footerLogo(), not(displayed()));
+        assertThat("Has redirected away from Splash page", getDriver().getCurrentUrl(), not(splashURL));
+    }
+
 
     private void search(final String term) {
         findService.search(term);
