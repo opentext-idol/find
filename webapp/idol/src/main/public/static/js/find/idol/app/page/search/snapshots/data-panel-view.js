@@ -2,13 +2,13 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'backbone',
     'underscore',
-    'find/app/util/model-any-changed-attribute-listener',
+    'js-whatever/js/model-any-changed-attribute-listener',
     'text!find/templates/app/page/search/snapshots/data-panel-item.html'
 ], function(Backbone, _, addChangeListener, itemTemplate) {
+    'use strict';
 
     var itemTemplateFunction = _.template(itemTemplate);
 
@@ -45,5 +45,4 @@ define([
             this.$el.html(html);
         }
     });
-
 });

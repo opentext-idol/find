@@ -8,7 +8,7 @@ define([
     'find/app/page/search/service-view',
     'find/idol/app/page/search/results/idol-results-view-augmentation',
     'find/idol/app/page/search/results/idol-results-view',
-    'find/app/util/model-any-changed-attribute-listener'
+    'js-whatever/js/model-any-changed-attribute-listener'
 ], function(_, configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
     'use strict';
 

@@ -13,8 +13,9 @@ define([
     'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/concept-view.html'
-], function (AbstractSectionView, $, _, ConceptClusterView, InputView, conceptStrategy, FilteringCollection, i18n, ListView, template) {
-    "use strict";
+], function(AbstractSectionView, $, _, ConceptClusterView, InputView, conceptStrategy, FilteringCollection, i18n,
+            ListView, template) {
+    'use strict';
 
     /**
      * View for displaying the selected concept groups eg in the left side panel.
@@ -24,13 +25,13 @@ define([
         html: _.template(template)({i18n: i18n}),
 
         events: {
-            'click .concept-remove-icon': function (event) {
+            'click .concept-remove-icon': function(event) {
                 const cid = $(event.currentTarget).closest('.selected-related-concept').attr('data-cluster-cid');
                 this.conceptGroups.remove(cid);
             }
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             AbstractSectionView.prototype.initialize.apply(this, arguments);
 
             this.conceptGroups = options.queryState.conceptGroups;
@@ -38,12 +39,12 @@ define([
             const optionalViews = [{
                 enabled: options.configuration.hasBiRole,
                 selector: '.concept-view-container',
-                construct: function () {
+                construct: function() {
                     return new InputView({
                         strategy: conceptStrategy(options.queryState.conceptGroups)
                     });
                 },
-                onRender: function (view) {
+                onRender: function(view) {
                     view.focus();
                 }
             }];
@@ -51,14 +52,13 @@ define([
             this.optionalViews = _.where(optionalViews, {enabled: true});
 
             //noinspection JSUnresolvedFunction
-            this.optionalViews.forEach(function (view) {
+            this.optionalViews.forEach(function(view) {
                 view.instance = view.construct();
             });
 
-
             this.filteringCollection = new FilteringCollection([], {
                 collection: this.conceptGroups,
-                predicate: function (model) {
+                predicate: function(model) {
                     return !model.has('hidden');
                 }
             });
@@ -78,7 +78,7 @@ define([
 
             this.getViewContainer().html(this.html);
 
-            this.optionalViews.forEach(function (view) {
+            this.optionalViews.forEach(function(view) {
                 view.instance.setElement(this.$(view.selector)).render();
                 view.onRender(view.instance);
             }, this);
@@ -87,13 +87,13 @@ define([
             this.updateEmpty();
         },
 
-        updateEmpty: function () {
+        updateEmpty: function() {
             const empty = this.filteringCollection.isEmpty();
             this.listView.$el.toggleClass('hide', empty);
             this.$('.concept-view-empty-message').toggleClass('hide', !empty);
         },
 
-        remove: function () {
+        remove: function() {
             //noinspection JSUnresolvedFunction
             _.chain(this.optionalViews).pluck('instance').invoke('remove');
 

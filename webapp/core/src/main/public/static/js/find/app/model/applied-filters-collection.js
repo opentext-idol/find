@@ -9,16 +9,16 @@ define([
     'find/app/model/dates-filter-model',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/util/database-name-resolver',
-    'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/prettify-field-name',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(Backbone, _, moment, DatesFilterModel, rounder, databaseNameResolver, addChangeListener, prettifyFieldName, configuration, i18n, i18nIndexes) {
-    "use strict";
+], function(Backbone, _, moment, DatesFilterModel, rounder, databaseNameResolver, prettifyFieldName,
+            configuration, i18n, i18nIndexes) {
+    'use strict';
 
-    var DATE_FORMAT = "YYYY-MM-DD HH:mm";
-    var SHORT_DATE_FORMAT = "YYYY-MM-DD";
+    var DATE_FORMAT = 'YYYY-MM-DD HH:mm';
+    var SHORT_DATE_FORMAT = 'YYYY-MM-DD';
     var DATE_SHORTEN_CUTOFF = 7 * 24 * 3600; // interval in seconds at which date format changes to short
 
     var FilterType = {

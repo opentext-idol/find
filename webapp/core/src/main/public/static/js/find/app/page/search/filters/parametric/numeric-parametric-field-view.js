@@ -2,7 +2,6 @@
  * Copyright 2016 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'backbone',
     'jquery',
@@ -16,7 +15,7 @@ define([
     'find/app/model/bucketed-parametric-collection',
     'parametric-refinement/to-field-text-node',
     'find/app/util/date-picker',
-    'find/app/util/model-any-changed-attribute-listener',
+    'js-whatever/js/model-any-changed-attribute-listener',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-numeric-input.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html',
@@ -25,7 +24,6 @@ define([
 ], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, rounder, numericWidget,
             BucketedParametricCollection, toFieldTextNode, datePicker, addChangeListener,
             template, numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
-
     'use strict';
 
     function plus(a, b) {
@@ -89,7 +87,7 @@ define([
             this.fieldName = this.model.id;
 
             var formatting = this.dataType === 'date' ? options.formatting : NumericParametricFieldView.defaultFormatting;
-            this.formatValue = function (value) {
+            this.formatValue = function(value) {
                 return formatting.format(value, this.model.get('currentMin'), this.model.get('currentMax'));
             }.bind(this);
             this.parseValue = formatting.parse;
@@ -363,10 +361,10 @@ define([
                 return Math.round(input);
             },
             render: function($el) {
-                datePicker.render($el.find('.numeric-parametric-min-input'), function () {
+                datePicker.render($el.find('.numeric-parametric-min-input'), function() {
                     this.updateRestrictions([this.readMinInput(), null]);
                 }.bind(this));
-                datePicker.render($el.find('.numeric-parametric-max-input'), function () {
+                datePicker.render($el.find('.numeric-parametric-max-input'), function() {
                     this.updateRestrictions([null, this.readMaxInput()]);
                 }.bind(this));
             }
@@ -374,5 +372,4 @@ define([
     });
 
     return NumericParametricFieldView;
-
 });

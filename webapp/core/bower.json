@@ -7,7 +7,8 @@
     "Daniel Grayling <daniel.grayling@hpe.com>",
     "Matthew Gordon <matthew.gordon2@hpe.com>",
     "Will Byrne <will.byrne@hpe.com>",
-    "Ivo Miller <ivo.miller@hpe.com>"
+    "Ivo Miller <ivo.miller@hpe.com>",
+    "Wojciech Kaluza <wojciech.kaluza@hpe.com>"
   ],
   "moduleType": [
     "amd"
@@ -30,7 +31,7 @@
     "jquery": "components/jquery#1.10.2",
     "json": "json2#c98948ae19",
     "underscore": "1.8.3",
-    "hp-autonomy-js-whatever": "2.10.1",
+    "hp-autonomy-js-whatever": "2.11.0",
     "hp-autonomy-login-page": "1.2.0",
     "hp-autonomy-settings-page": "0.8.3",
     "hp-autonomy-fieldtext-js": "1.4.0",
@@ -60,7 +61,7 @@
   },
   "resolutions": {
     "backbone": "1.2.3",
-    "hp-autonomy-js-whatever": "2.10.1",
+    "hp-autonomy-js-whatever": "2.11.0",
     "jquery": "1.10.2",
     "requirejs": "2.1.22",
     "requirejs-text": "2.0.15",
