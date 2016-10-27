@@ -117,6 +117,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         final ResultsView results = findService.search("m");
         getElementFactory().getFilterPanel().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter(filters().getIndex(1)));
+        findPage.waitForLoad();
 
         InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
         final DetailedPreviewPage detailedPreviewPage = inlinePreview.openPreview();

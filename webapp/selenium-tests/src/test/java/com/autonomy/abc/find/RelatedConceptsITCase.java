@@ -20,6 +20,7 @@ import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.openqa.selenium.NoSuchElementException;
@@ -159,19 +160,23 @@ public class RelatedConceptsITCase extends FindTestBase {
         searchAndWait(findService, "matt");
         final Collection<String> addedConcepts = new ArrayList<>();
 
-        for(int i = 0; i < 5; i++) {
+        final int limit = 5;
+        int i = 0;
+        while (i < limit && !relatedConceptsPanel().noConceptsPresent()) {
             clickFirstNewConcept(addedConcepts, relatedConceptsPanel().relatedConcepts());
             final List<String> relatedConcepts = relatedConceptsPanel().getRelatedConcepts();
 
-            for(final String addedConcept : addedConcepts) {
+            for (final String addedConcept : addedConcepts) {
                 verifyThat(relatedConcepts, not(hasItem(equalToIgnoringCase('"' + addedConcept + '"'))));
             }
+            i++;
         }
     }
 
     @Test
     @RelatedTo({"FIND-243", "FIND-110"})
     @ResolvedBug("FIND-666")
+    @Ignore
     public void testRefreshAddedConcepts() {
         searchAndWait(findService, "fresh");
 
