@@ -119,6 +119,21 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
         assertThat(fields, hasItem(is(new TagName("/DOCUMENT/ParametricField2"))));
     }
 
+    @Test
+    public void getParametricDateFieldsWithNeverShowList() throws E {
+        final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
+        response.put(FieldTypeParam.Numeric, Collections.emptyList());
+        response.put(FieldTypeParam.Parametric, Collections.emptyList());
+        when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .setParametricNeverShow(Collections.singletonList(ParametricValuesService.AUTN_DATE_FIELD))
+                .build());
+
+        final List<FieldAndValueDetails> output = controller.getParametricDateFields(createRequest());
+        assertThat(output, is(empty()));
+    }
+
     private void mockSimpleParametricResponse() throws E {
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
         response.put(FieldTypeParam.Numeric, Collections.emptyList());
