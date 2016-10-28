@@ -105,6 +105,7 @@ public class ResultsView extends AppElement implements QueryResultsPage {
 
         private boolean resultsLoaded(final WebDriver driver) {
             return  !driver.findElement(By.cssSelector(".loading-spinner")).isDisplayed()
+                    && !driver.findElements(By.cssSelector(".results > div")).isEmpty()
                     && (driver.findElements(By.cssSelector(".results-view-error.hide")).isEmpty()
                     || !driver.findElements(By.cssSelector(".main-results-list.results .result-message")).isEmpty()
                     || !driver.findElements(By.cssSelector(".main-results-list.results .main-results-container")).isEmpty());
