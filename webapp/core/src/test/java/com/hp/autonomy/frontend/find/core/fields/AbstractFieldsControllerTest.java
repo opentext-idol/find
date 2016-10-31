@@ -122,7 +122,7 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
     @Test
     public void getParametricDateFieldsWithNeverShowList() throws E {
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
-        response.put(FieldTypeParam.Numeric, Collections.emptyList());
+        response.put(FieldTypeParam.NumericDate, Collections.emptyList());
         response.put(FieldTypeParam.Parametric, Collections.emptyList());
         when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
 
