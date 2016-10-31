@@ -384,7 +384,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-393")
+    @ResolvedBug("FIND-393")
     public void testTextMaxBoundCannotBeLessThanMin() throws Exception {
         final String lowNum = "0";
         final String highNum = "600";

@@ -27,7 +27,7 @@ define([
 
     'use strict';
 
-    function plus(a, b) {
+    function sum(a, b) {
         return a + b;
     }
 
@@ -276,7 +276,7 @@ define([
 
             // Fixes error where user could manually input min > max or max < min
             if(newAttributes.range[0] > newAttributes.range[1]) {
-                if(existingRange.reduce(plus) - newAttributes.range.reduce(plus) > 0) { // if max was decreased
+                if(existingRange.reduce(sum) - newAttributes.range.reduce(sum) > 0) { // if max was decreased
                     newAttributes.range[0] = newAttributes.range[1]; //set min to equal max
                 } else { // if min was increased
                     newAttributes.range[1] = newAttributes.range[0]; //set max to equal min
@@ -346,7 +346,7 @@ define([
         numericInputTemplate: _.template(numericInputTemplate),
         defaultFormatting: {
             format: rounder().round,
-            parse: _.identity,
+            parse: Number,
             parseBoundarySelection: _.identity,
             render: _.noop
         },
