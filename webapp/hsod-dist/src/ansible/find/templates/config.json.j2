@@ -1,0 +1,20 @@
+{
+	"login" : {{find_login | to_nice_json}},
+	"hod" : {
+		"apiKey" : "{{find_api_key}}",
+		"endpointUrl": "https://api.{{find_endpoint_domain}}",
+		"ssoPageGetUrl": "https://www.{{find_endpoint_domain}}/sso.html",
+		"ssoPagePostUrl": "https://www.{{find_endpoint_domain}}/sso",
+		"activeIndexes" : [],
+		"publicIndexesEnabled": {{find_enable_public_indexes | to_nice_json}}
+	},
+	"hsod": {
+		"landingPageUrl": "{{find_hsod_landing_page}}"
+	},
+	"queryManipulation": {
+		"profile":"{{find_qm_profile}}",
+		"index": "{{find_qm_index}}"
+	},
+	"allowedOrigins": {{find_allowed_origins | to_nice_json}},
+	"redis": {{find_redis | to_nice_json}}
+}

@@ -1,0 +1,208 @@
+@tagbgcolor:#e2e3e5;
+
+tags-input {
+  display: block;
+}
+tags-input *, tags-input *:before, tags-input *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+tags-input {
+  .host {
+    position: relative;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 100%;
+  }
+}
+tags-input {
+  .host {
+    &:active {
+      outline: none;
+    }
+  }
+}
+
+.body-dark {
+  tags-input .tags .tag-item {
+    border: 1px solid @secondary-dark-hover-border;
+    background-color: @secondary-dark-hover;
+    color: #999999;
+  }
+}
+
+tags-input {
+  .tags {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    padding: 1px;
+    overflow: hidden;
+    word-wrap: break-word;
+    cursor: text;
+    border: 1px solid @control-border-color;
+    height: 100%;
+    padding-top: 2px;
+    &.focused {
+      .elements-outline;
+    }
+    .tag-list {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+    }
+    .tag-item {
+      margin: 2px 0 2px 6px;
+      padding: 5px 20px 3px 5px;
+      display: list-item;
+      float: left;
+      font: 18px "Metric";
+      font-weight: 400;
+      height: 25px;
+      line-height: 13px;
+      border: 1px solid #d8d9db;
+      background-color: @tagbgcolor;
+      color: #555555;
+      position: relative;
+      border-radius: 1px;
+      cursor: default;
+      list-style: none;
+      
+      .remove-button {
+        margin: 1px 0px 0px 5px;
+        padding: 0;
+        border: none;
+        cursor: pointer;
+        vertical-align: middle;
+        font: bold 16px Arial, sans-serif;
+        color: #585858;
+        position: absolute;
+        top: 6px;
+        right: 3px;
+        display: block;
+        width: 12px;
+        height: 12px;
+        background: url('../../img/chosen-sprite.png') -42px 1px no-repeat;
+        font-size: 1px;
+
+        &:hover {
+          background-position: -42px -10px;
+        }
+
+        &:active {
+          color: #000;
+        }
+      }
+    }
+    .tag-item.selected {
+      background-color: @hpegreen;
+      border: 1px solid @hpegreen;
+      color:#fff;
+    }
+    .input {
+      border: 0;
+      outline: none;
+      margin: 2px;
+      padding: 0;
+      padding-left: 5px;
+      float: left;
+      height: 26px;
+      font: @fontSizeLarge "Metric";
+      background-color: transparent;
+
+      &.invalid-tag {
+        color: #ff0000;
+      }
+    }
+  }
+  &.ng-invalid {
+    .tags {
+      border-color: @warning;
+    }
+  }
+  .autocomplete {
+    margin-top: 5px;
+    position: absolute;
+    padding: 5px 0;
+    z-index: 999;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+
+    .suggestion-list {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+      max-height: 280px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .suggestion-item {
+      padding: 5px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font: 16px "Metric", Helvetica, Arial, sans-serif;
+      color: #000;
+      background-color: #fff;
+
+      &.selected {
+        color: #fff;
+        background-color: #0097cf;
+
+        em {
+          color: #fff;
+          background-color: #0097cf;
+        }
+      }
+      em {
+        font: normal bold 16px "Metric";
+        color: #000;
+        background-color: #fff;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+tags-input .tags .input::-ms-clear {
+  display: none;
+}
+
+tags-input[disabled] {
+  .host:focus {
+    outline: none;
+  }
+  .tags {
+    background-color: #eee;
+    cursor: default;
+
+    .tag-item {
+      opacity: 0.65;
+
+      .remove-button {
+        cursor: default;
+
+        &:active {
+          color: #585858;
+        }
+      }
+    }
+    .input {
+      background-color: #eee;
+      cursor: default;
+    }
+  }
+}
+
+.tags-text-bold {
+  font-weight: bold;
+}
+
+.tags-text-small {
+  font-size: 12px;
+}
+
+/*# sourceMappingURL=ng-tags-input.css.map */

@@ -1,0 +1,160 @@
+.side-modal {
+ position: fixed;
+ right:0;
+ top: 0;
+ bottom: 0;
+ z-index: 10020;
+ background: @white;
+ color: @black;
+
+ .side-modal-content {
+   position: absolute;
+   top: 0;
+   bottom: 60px;
+   overflow-y: auto;
+
+ }
+
+ .side-modal-header-affix {
+  .header {
+    position: fixed;
+    top: 0;
+  }
+  .main {
+    position: absolute;
+    top: 60px;
+    padding-top: 10px;
+    bottom:60px;
+    overflow-y: auto;
+  }
+ }
+
+ .header {
+   min-height: 60px;
+   .modalheader {
+     display: inline-block;
+   }
+   .modal-close {
+     position: absolute;
+     right: 0px;
+     padding-top: 20px;
+     padding-right: 25px;
+     button {
+       border: 0;
+       box-shadow: none;
+       &:hover, &:active, &:focus {
+         border: 0;
+         color:@black;
+         background:none;
+         outline:0;
+       }
+     }
+   }
+ }
+ .main {
+   padding: 20px;
+ }
+
+ .footer {
+    position: fixed;
+    bottom:0 ;
+    border-top: 1px solid rgba(51,51,51,0.1);
+    &>div {
+      text-align: right;
+      padding: 15px;
+      padding-right: 25px;
+    }
+   }
+}
+
+.modal-content {
+  overflow-y: auto;
+}
+
+.modal-backdrop{
+  opacity:0.5;
+}
+
+
+
+.display-panel-item-selected {
+  background-color: #fdfdfd;
+  outline: 0;
+}
+.display-panel {
+ position: absolute;
+ right:0;
+ top: 0;
+ bottom: 0;
+ z-index: 999;
+ background: @white;
+ color: @black;
+  border-left: 1px solid rgba(51,51,51,0.4);
+  box-shadow: 1px 0px 10px 0px rgba(51,51,51,0.4);
+
+ .display-panel-content {
+   position: absolute;
+   top: 0;
+   bottom: 60px;
+   overflow: hidden;
+
+ }
+
+ .display-panel-header-affix {
+  .header {
+    top: 0;
+  }
+  .main {
+    position: absolute;
+    top: 60px;
+    padding-top: 10px;
+    bottom:0px;
+    width: 100%
+  }
+ }
+
+ .header {
+   min-height: 60px;
+   .modalheader {
+     display: inline-block;
+   }
+   .modal-close {
+     position: absolute;
+     right: 0px;
+     padding-top: 20px;
+     padding-right: 25px;
+     button {
+       border: 0;
+       box-shadow: none;
+       &:hover, &:active, &:focus {
+         border: 0;
+         color:@black;
+         background:none;
+         outline:0;
+       }
+     }
+   }
+ }
+ .main {
+   padding: 20px;
+ }
+ .footer {
+    background-color: @white;
+    position: fixed;
+    bottom:0 ;
+    border-top: 1px solid rgba(51,51,51,0.1);
+    &>div {
+      text-align: right;
+      padding: 15px;
+      padding-right: 25px;
+    }
+   }
+   &.fixed-display-panel {
+      position: fixed !important;
+      z-index: 9999;
+   }
+
+   &.float-display-panel {
+     position: absolute !important;
+   }
+}

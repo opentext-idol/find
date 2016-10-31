@@ -1,0 +1,43 @@
+<% var promoted = data.isPromotion ? 'promoted-document' : ''; %>
+<% var directAccessLink = data.directAccessLink ? 'direct-access' : ''; %>
+
+<div class="main-results-container m-b-sm <%-promoted%> <%-directAccessLink%>" data-cid="<%-model.cid %>">
+    <span class="pull-left m-t-xs text-muted m-r-sm content-type">
+        <i class="icomoon-file-<%-data.contentType%>"></i>
+    </span>
+
+    <div class="results-contents">
+        <% if (data.isPromotion) { %>
+            <span class="pull-right m-t-xs text-muted promoted-label">
+                <i class="hp-icon hp-fw hp-favorite"></i> Promoted
+            </span>
+        <% } %>
+        <h4 class="pull-left m-b-nil m-t-xs result-header">
+        <% if (data.directAccessLink && href) {%>
+            <a class="pull-left m-b-nil m-t-xs result-header direct-access-title h4" href="<%= href %>" target="_blank"><%- model.get('title') %></a>
+        <% } else { %>
+            <%- model.get('title') %>
+        <% } %>
+        </h4>
+        <span class="document-date pull-left m-t-xs m-l-xs">
+            <%- data.date %>
+        </span>
+        <span class="document-reference shorten"><%- model.get('reference') %></span>
+        <% if(model.get('thumbnail')) { %>
+            <img class="document-thumbnail m-r-sm pull-left" src="data:image/jpeg;base64,<%=model.get('thumbnail')%>"/>
+        <% } else if (model.get('thumbnailUrl')) { %>
+            <img class="document-thumbnail m-r-sm pull-left" src="<%=model.get('thumbnailUrl')%>"/>
+        <% } %>
+        <p class="result-summary">
+            <%= data.highlightedSummary %>
+        </p>
+        <span class="text-right results-small-links">
+            <% if (!data.staticPromotion) { %>
+                <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
+            <% }
+            if (data.directAccessLink && data.enablePreview) { %>
+                <a class="preview-link result-container-control" role="button" tabindex="-1"><%-i18n['search.preview']%></a>
+            <% } %>
+        </span>
+    </div>
+</div>

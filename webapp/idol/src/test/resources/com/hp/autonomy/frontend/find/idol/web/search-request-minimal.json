@@ -1,0 +1,8 @@
+{
+  "queryRestrictions": {
+    "text": "Homer",
+    "indexes": ["ClassicalLiterature", "EpicLiterature"]
+  },
+  "max_results": 30,
+  "summary": "off"
+}

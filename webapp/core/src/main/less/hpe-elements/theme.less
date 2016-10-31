@@ -1,0 +1,481 @@
+//============================
+//Left navigation container styling
+//============================
+.navbar-static-side-container-dark {
+  background-color: @black;
+}
+
+.navbar-static-side-container-light {
+ background-color: @white;
+ .nav-header-dark {
+  border-bottom: 0;
+ }
+}
+
+//============================
+//Left navigation styling
+//============================
+
+.navbar-static-side-dark {
+  &> .nav > li:nth-child(2) {
+    margin-top: 25px;
+  }
+  background-color: @black;
+  .nav > li > a {
+    color: @nav-text-color;
+    font-weight:300;
+    font-size: 15px;
+  }
+  .nav > li.active > a {
+    color: @white;
+    .metric-semibold;
+  }
+  &.navbar-default .nav > li > a {
+    &:hover {
+      background-color: lighten(@black, 5%);
+      color: @white;
+   }
+   &:focus {
+     background-color: @black;
+     color: @white;
+   }
+  }
+   .nav > li.active {
+     border-left: 4px solid darken(@hpegreen, 5%);
+   }
+   .logo-element {
+     color: @white;
+   }
+   .nav-header-dark {
+     box-shadow: 0px 5px 10px 0px rgba(255,255,255,0.05);
+   }
+}
+
+.navbar-static-side-light {
+  &> .nav > li:nth-child(2) {
+    margin-top: 25px;
+  }
+  background-color: @white;
+  .nav > li > a {
+    color: @black;
+    font-weight: 400;
+  }
+  .nav > li.active > a {
+    .metric-semibold;
+  }
+  &.navbar-default .nav > li > a {
+    &:hover {
+      background-color: darken(@white, 4%);
+      color: @black;
+    }
+    &:focus {
+      background-color: @white;
+      color: @black;
+    }
+  }
+   .nav > li.active {
+     border-left: 4px solid darken(@hpegreen, 5%);
+   }
+   .logo-element {
+     color: @black;
+   }
+  .nav-header-light {
+    box-shadow: 0px 5px 10px 0px rgba(51,51,51,0.05);
+  }
+}
+
+//============================
+//Left header navigation styling
+//============================
+
+
+.nav-header-dark {
+  background-color: @black;
+  color : @white;
+  transition: all 0s ease 0s;
+  .logo-element{
+    background: url(../img/HPE_Dark.svg) no-repeat;
+    background-size:111px 47px;
+
+  }
+}
+
+.nav-header-light {
+  background-color: @white;
+  color : @black;
+  transition: all 0s ease 0s;
+  .logo-element{
+    background: url(../img/HPE_Light.svg) no-repeat;
+    background-size:111px 47px;
+
+  }
+}
+
+//============================
+//Navigation Menu Toggle Button
+//============================
+
+.nav-menu-btn-container-dark {
+ background-color: @black;
+ a{
+   color: @white;
+ }
+
+ &:hover, &:focus {
+  color: @white;
+ }
+}
+
+.nav-menu-btn-container-light {
+ background-color: @white;
+ a{
+   color: @black;
+ }
+  &:hover, &:focus {
+   color: @black;
+  }
+}
+
+//============================
+// Top Header
+//============================
+.page-content-navbar-top-dark {
+  .navbar-static-top {
+   border-left: 1px solid rgba(255,255,255,0.05);
+   &.condensed {
+    box-shadow:none;
+   }
+   background-color: @black;
+    .navbar-form-search {
+      .placeholder(@white);
+      .form-control {
+        &:focus {
+          -webkit-text-fill-color: @white;
+          box-shadow: 0 0 0px 1000px @black inset;
+          color: @white;
+        }
+      }
+
+     .expanded {
+         input {
+           border-bottom: 1px solid rgba(255,255,255,0.5) !important;
+         }
+         .input-group-btn .btn {
+           border-bottom: 1px solid rgba(255,255,255,0.6);
+         }
+       }
+    .expand-input {
+      .input-group-btn .btn {
+        color: @white;
+       }
+      .input-group-addon a {
+        color: @white;
+       }
+     }
+    }
+    .primary-bg {
+      background-color: @black;
+      color: @white;
+    }
+    .nav.navbar-right {
+     &> li > a {
+         color: @white;
+       }
+    }
+    .nav.navbar-top-links > li > a:hover,
+    .nav.navbar-top-links > li > a:focus,
+    .nav.navbar-top-links > .open > a,
+    .nav.navbar-top-links > .open > a:hover,
+    .nav.navbar-top-links > .open > a:focus {
+       background-color: lighten(@black, 10%);
+    }
+    .navbar-top-links .navbar-top-link {
+     color: @white;
+    }
+  }
+}
+
+.page-content-navbar-top-light {
+  .navbar-static-top {
+   border-left: 1px solid rgba(51,51,51,0.05);
+   box-shadow: 0px 5px 10px rgba(51,51,51,0.05);
+   &.condensed {
+       box-shadow:none;
+   }
+   background-color: @white;
+   .navbar-form-search {
+     .form-control {
+       .placeholder(@black);
+       &:focus {
+        -webkit-text-fill-color: @black;
+        color: @white;
+       }
+     }
+    .expanded {
+       input {
+         border-bottom: 1px solid rgba(51,51,51,0.5) !important;
+       }
+       .input-group-btn .btn {
+         border-bottom: 1px solid rgba(51,51,51,0.6);
+       }
+     }
+    .expand-input {
+      .input-group-btn .btn {
+        color: @black;
+       }
+      .input-group-addon a {
+        color: @black;
+       }
+     }
+   }
+   .primary-bg {
+     background-color: @white;
+     color: @black;
+   }
+   .nav.navbar-right {
+    &> li > a {
+        color: @black;
+      }
+   }
+  .nav.navbar-top-links > li > a:hover,
+  .nav.navbar-top-links > li > a:focus,
+  .nav.navbar-top-links > .open > a,
+  .nav.navbar-top-links > .open > a:hover,
+  .nav.navbar-top-links > .open > a:focus {
+    background-color: darken(@white, 3%);
+  }
+  .navbar-top-links .navbar-top-link {
+    color: @black;
+  }
+  }
+}
+
+.hidden-navbar.hide-navbar {
+ //============================
+ //Left navigation container styling
+ //============================
+ .navbar-static-side-container-dark {
+   background-color: @black;
+ }
+
+ .navbar-static-side-container-light {
+  .nav-menu-btn-container-light {
+    padding-top: 15px;
+  }
+  background-color: @white;
+  .nav-header-dark {
+   border-bottom: 0;
+  }
+ }
+
+ //============================
+ //Left navigation styling
+ //============================
+
+ .navbar-static-side-dark {
+   &> .nav > li:nth-child(2) {
+     margin-top: 25px;
+   }
+   background-color: @black;
+   .nav > li > a {
+     color: @nav-text-color;
+     font-weight:300;
+     font-size: 15px;
+   }
+   .nav > li.active > a {
+     color: @white;
+     font-weight: 500;
+   }
+   &.navbar-default .nav > li > a {
+     &:hover {
+       background-color: lighten(@black, 5%);
+       color: @white;
+    }
+    &:focus {
+      background-color: @black;
+      color: @white;
+    }
+   }
+    .nav > li.active {
+      border-left: 4px solid darken(@hpegreen, 5%);
+    }
+    .logo-element {
+      color: @white;
+    }
+    .nav-header-dark {
+      box-shadow: 0px 10px 10px 0px rgba(255,255,255,0.05);
+    }
+ }
+
+.navbar-static-side-light {
+   &> .nav > li:nth-child(2) {
+     margin-top: 25px;
+   }
+   background-color: @white;
+   .nav > li > a {
+     color: @black;
+     font-weight: 400;
+   }
+   .nav > li.active > a {
+     font-weight: 600;
+   }
+   &.navbar-default .nav > li > a {
+     &:hover {
+       background-color: darken(@white, 4%);
+       color: @black;
+     }
+     &:focus {
+       background-color: @white;
+       color: @black;
+     }
+   }
+    .nav > li.active {
+      border-left: 4px solid darken(@hpegreen, 5%);
+    }
+    .logo-element {
+      color: @black;
+    }
+   .nav-header-light {
+     box-shadow: 0px 10px 10px 0px rgba(51,51,51,0.05);
+   }
+ }
+
+ //============================
+ //Navigation Menu Toggle Button
+ //============================
+
+.nav-menu-btn-container-dark {
+  background-color: @black;
+  a{
+    color: @white;
+  }
+
+  &:hover, &:focus {
+   color: @white;
+  }
+ }
+
+.nav-menu-btn-container-light {
+  background-color: @white;
+  a{
+    color: @black;
+  }
+   &:hover, &:focus {
+    color: @black;
+   }
+ }
+
+ //============================
+ // Top Header
+ //============================
+.page-content-navbar-top-dark {
+   .navbar-static-top {
+    border-left: 1px solid rgba(255,255,255,0.05);
+    &.condensed {
+     box-shadow:none;
+    }
+    background-color: @black;
+     .navbar-form-search {
+       .placeholder(@white);
+       .form-control {
+         &:focus {
+           -webkit-text-fill-color: @white;
+           box-shadow: 0 0 0px 1000px @black inset;
+           color: @white;
+         }
+       }
+
+      .expanded {
+          input {
+            border-bottom: 1px solid rgba(255,255,255,0.5) !important;
+          }
+          .input-group-btn .btn {
+            border-bottom: 1px solid rgba(255,255,255,0.6);
+          }
+        }
+     .expand-input {
+       .input-group-btn .btn {
+         color: @white;
+        }
+       .input-group-addon a {
+         color: @white;
+        }
+      }
+     }
+     .primary-bg {
+       background-color: @black;
+       color: @white;
+     }
+     .nav.navbar-right {
+      &> li > a {
+          color: @white;
+        }
+     }
+     .nav.navbar-top-links > li > a:hover,
+     .nav.navbar-top-links > li > a:focus,
+     .nav.navbar-top-links > .open > a,
+     .nav.navbar-top-links > .open > a:hover,
+     .nav.navbar-top-links > .open > a:focus {
+        background-color: lighten(@black, 10%);
+     }
+     .navbar-top-links .navbar-top-link {
+      color: @white;
+     }
+   }
+ }
+
+.page-content-navbar-top-light {
+   .navbar-static-top {
+    border-left: 1px solid rgba(51,51,51,0.05);
+    box-shadow: 0px 10px 10px rgba(51,51,51,0.05);
+    &.condensed {
+        box-shadow:none;
+    }
+    background-color: @white;
+    .navbar-form-search {
+      .form-control {
+        .placeholder(@black);
+        &:focus {
+         -webkit-text-fill-color: @black;
+         color: @white;
+        }
+      }
+     .expanded {
+        input {
+          border-bottom: 1px solid rgba(51,51,51,0.5) !important;
+        }
+        .input-group-btn .btn {
+          border-bottom: 1px solid rgba(51,51,51,0.6);
+        }
+      }
+     .expand-input {
+       .input-group-btn .btn {
+         color: @black;
+        }
+       .input-group-addon a {
+         color: @black;
+        }
+      }
+    }
+    .primary-bg {
+      background-color: @white;
+      color: @black;
+    }
+    .nav.navbar-right {
+     &> li > a {
+         color: @black;
+       }
+    }
+   .nav.navbar-top-links > li > a:hover,
+   .nav.navbar-top-links > li > a:focus,
+   .nav.navbar-top-links > .open > a,
+   .nav.navbar-top-links > .open > a:hover,
+   .nav.navbar-top-links > .open > a:focus {
+     background-color: darken(@white, 3%);
+   }
+   .navbar-top-links .navbar-top-link {
+     color: @black;
+   }
+   }
+ }
+}

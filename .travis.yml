@@ -1,6 +1,6 @@
 language: java
 jdk:
-- oraclejdk7
+- oraclejdk8
 before_install:
 - nvm install 5.1
 branches:
@@ -8,4 +8,5 @@ branches:
   - master
   - develop
 install: true
-script: mvn package -P production
+before_script: cd webapp
+script: mvn package -Pproduction -pl idol,hod -am

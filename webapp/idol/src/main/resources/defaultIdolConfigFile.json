@@ -1,0 +1,232 @@
+{
+  "login": {
+    "method": "default",
+    "community": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 9030,
+      "productType": [
+        "UASERVER",
+        "DAH",
+        "IDOLPROXY"
+      ]
+    },
+    "name": "CommunityAuthentication"
+  },
+  "content": {
+    "protocol": "HTTP",
+    "host": "localhost",
+    "port": 9000,
+    "productType": [
+      "AXE",
+      "DAH",
+      "IDOLPROXY"
+    ]
+  },
+  "queryManipulation": {
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 16000,
+      "productType": [
+        "QMS",
+        "DAH",
+        "IDOLPROXY"
+      ]
+    },
+    "typeAheadMode": "Index",
+    "expandQuery": true,
+    "blacklist": "ISO_BLACKLIST",
+    "enabled": false
+  },
+  "statsServer": {
+    "enabled": false,
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 19870,
+      "productType": [
+        "STATS",
+        "DAH",
+        "IDOLPROXY"
+      ]
+    }
+  },
+  "view": {
+    "protocol": "HTTP",
+    "host": "localhost",
+    "port": 9080,
+    "productType": [
+      "VIEW",
+      "IDOLPROXY",
+      "DAH"
+    ],
+    "referenceField": "DREREFERENCE",
+    "viewingMode": "FIELD",
+    "connector": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 10000,
+      "productTypeRegex": ".*?CONNECTOR"
+    },
+    "highlighting": true
+  },
+  "savedSearches": {
+    "pollForUpdates": true,
+    "pollingInterval": 5
+  },
+  "map": {
+    "enabled": false,
+    "attribution": null,
+    "initialLocation": {
+      "latitude": 51.5074,
+      "longitude": 0.1278
+    },
+    "tileUrlTemplate": null,
+    "resultsStep": 2500,
+    "locationFields": [
+      {
+        "displayName": "DefaultLocation",
+        "latitudeField": "latitude",
+        "longitudeField": "longitude"
+      }
+    ]
+  },
+  "mmap": {
+    "enabled": false,
+    "baseUrl": ""
+  },
+  "uiCustomization": {
+    "options": {
+        "directAccessLink": {
+          "user": false
+        },
+        "enableMetaFilter": {
+          "user": false,
+          "bi": true
+        },
+        "enableRelatedConcepts": {
+          "user": true,
+          "bi": false
+        }
+      },
+      "parametricNeverShow": [],
+      "parametricAlwaysShow": [],
+      "parametricOrder": [],
+      "specialUrlPrefixes": {
+        "application/msword": "ms-word:ofv|u|",
+        "application/mspowerpoint": "ms-powerpoint:ofv|u|",
+        "application/vnd.ms-powerpoint": "ms-powerpoint:ofv|u|",
+        "application/msexcel": "ms-excel:ofv|u|",
+        "application/vnd.ms-excel": "ms-excel:ofv|u|",
+        "application/vnd.visio": "ms-visio:ofv|u|",
+        "application/msaccess": "ms-access:ofv|u|",
+        "application/x-msaccess": "ms-access:ofv|u|",
+        "application/msproject": "ms-project:ofv|u|",
+        "application/vnd.ms-project": "ms-project:ofv|u|",
+        "application/x-mspublisher": "ms-publisher:ofv|u|"
+      },
+      "errorCallSupportString": null
+  },
+  "minScore": 0,
+  "parametricDisplayValues": [
+    {
+      "name": "COUNTRY_ORIGIN",
+      "displayName": "Country",
+      "values": [
+        {
+          "name": "UK",
+          "displayName": "United Kingdom of Great Britain and Northern Ireland"
+        }
+      ]
+    },
+    {
+      "name": "/DOCUMENT/PLACE_ELEVATION",
+      "displayName": "Place Elevation (ft)"
+    }
+  ],
+  "topicMapMaxResults": 1000,
+  "fieldsInfo": {
+    "contentType": {
+      "names": [
+        "AU_REPOSITORY_METADATA_TYPE_STRING"
+      ]
+    },
+    "url": {
+      "names": [
+        "AU_REPOSITORY_METADATA_URL_FILE_STRING"
+      ]
+    },
+    "offset": {
+      "names": [
+        "OFFSET"
+      ],
+      "advanced": true
+    },
+    "authors": {
+      "names": [
+        "AU_DOCUMENT_METADATA_AUTHOR_STRING"
+      ]
+    },
+    "categories": {
+      "names": [
+        "AU_REPOSITORY_METADATA_CATEGORY_STRING"
+      ]
+    },
+    "dateCreated": {
+      "names": [
+        "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS"
+      ],
+      "type": "Date"
+    },
+    "dateModified": {
+      "names": [
+        "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS"
+      ],
+      "type": "Date"
+    },
+    "mmapUrl": {
+      "names": [
+        "MMAP_PROXY_URL"
+      ],
+      "advanced": true
+    },
+    "thumbnail": {
+      "names": [
+        "PREVIEW_THUMBNAIL_BASE64"
+      ]
+    },
+    "thumbnailUrl": {
+      "names": [
+        "THUMBNAIL_URL"
+      ],
+      "advanced": true
+    },
+    "sourceType": {
+      "names": [
+        "SOURCETYPE"
+      ],
+      "advanced": true
+    },
+    "transcript": {
+      "names": [
+        "TRANSCRIPTION_CONTENT"
+      ],
+      "advanced": true
+    },
+    "latitude": {
+      "names": [
+        "LAT"
+      ],
+      "type": "NUMBER",
+      "advanced": true
+    },
+    "longitude": {
+      "names": [
+        "LON"
+      ],
+      "type": "NUMBER",
+      "advanced": true
+    }
+  }
+}

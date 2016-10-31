@@ -1,0 +1,33 @@
+.alert-info {
+  color: @accent;
+  background-color: rgba(96, 121, 141, 0.2);
+  border: 1px solid rgba(96, 121, 141, 0.4);
+}
+
+.alert-info .alert-link {
+  color: @accent ;
+}
+
+.alert-error {
+  color: @warning;
+  background-color: rgba(255, 69, 79, 0.2);
+  border: 1px solid rgba(255, 69, 79, 0.4);
+}
+
+.alert-error .alert-link {
+  color: @warning; ;
+}
+
+.close {
+  opacity: 0.5;
+  &:focus{
+	.elements-outline;
+	}
+}
+
+.alert-link{
+  .metric-semibold;
+  &:focus{
+	.elements-outline;
+  }
+}
