@@ -38,7 +38,8 @@ define([
 
             this.searchToCompare = new SearchToCompare({
                 savedSearchCollection: savedSearchCollection,
-                selectedSearch: initialSearch
+                selectedSearch: initialSearch,
+                originalSelectedModelCid: options.cid
             });
 
             Modal.prototype.initialize.call(this, {

@@ -30,7 +30,8 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
     public static final String QUERY_TEXT_PARAM = "queryText";
     public static final String DATABASES_PARAM = "databases";
     public static final String FIELD_TEXT_PARAM = "fieldText";
-    public static final String STATE_TOKEN_PARAM = "stateTokens";
+    public static final String STATE_MATCH_TOKEN_PARAM = "stateMatchTokens";
+    private static final String STATE_DONT_MATCH_TOKEN_PARAM = "stateDontMatchTokens";
     private static final String MIN_DATE_PARAM = "minDate";
     private static final String MAX_DATE_PARAM = "maxDate";
     private static final String MIN_SCORE_PARAM = "minScore";
@@ -60,7 +61,8 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final Integer minScore,
-            @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens,
+            @RequestParam(value = STATE_MATCH_TOKEN_PARAM, required = false) final List<String> stateMatchTokens,
+            @RequestParam(value = STATE_DONT_MATCH_TOKEN_PARAM, required = false) final List<String> stateDontMatchTokens,
             @RequestParam(value = MAX_RESULTS, required = false) final Integer maxResults
     ) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
@@ -70,7 +72,8 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
                 .setMinDate(minDate)
                 .setMaxDate(maxDate)
                 .setMinScore(minScore)
-                .setStateMatchId(ListUtils.emptyIfNull(stateTokens))
+                .setStateMatchId(ListUtils.emptyIfNull(stateMatchTokens))
+                .setStateDontMatchId(ListUtils.emptyIfNull(stateDontMatchTokens))
                 .build();
 
         final RelatedConceptsRequest<S> relatedConceptsRequest = relatedConceptsRequestBuilderFactory.getObject()

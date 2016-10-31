@@ -24,6 +24,7 @@ define([
 ], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, rounder, numericWidget,
             BucketedParametricCollection, toFieldTextNode, datePicker, addChangeListener,
             template, numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
+
     'use strict';
 
     function plus(a, b) {
@@ -361,10 +362,10 @@ define([
                 return Math.round(input);
             },
             render: function($el) {
-                datePicker.render($el.find('.numeric-parametric-min-input'), function() {
+                datePicker.render($el.find('.results-filter-date[data-date-attribute="min-date"]'), function() {
                     this.updateRestrictions([this.readMinInput(), null]);
                 }.bind(this));
-                datePicker.render($el.find('.numeric-parametric-max-input'), function() {
+                datePicker.render($el.find('.results-filter-date[data-date-attribute="max-date"]'), function() {
                     this.updateRestrictions([null, this.readMaxInput()]);
                 }.bind(this));
             }
@@ -372,4 +373,5 @@ define([
     });
 
     return NumericParametricFieldView;
+
 });

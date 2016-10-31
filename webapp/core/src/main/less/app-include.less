@@ -44,6 +44,9 @@
 @sidePanelLabelColour: #435663;
 @sidePanelLabelBorderColour: #676a6d;
 
+// Timebar colors
+@timebarSelectionColor: rgba(97,71,103,0.35);
+
 /*------Width variables------*/
 @pageContainerMinWidth: 640px;
 @shortUsernameMaxWidth: 250px;
@@ -68,9 +71,12 @@
 @navBarHeight: 50px;
 @searchTabsHeight: 44px;
 
-/*------Font variables------*/
+/*------Font size variables------*/
 @errorMessageFontSize: 28px;
 @loadingIndicatorFontSize: 28px;
+
+/*------Font weight variables------*/
+@fontWeightBold: 900;
 
 /*------Custom numeric variables------*/
 @nil: 0;
@@ -84,7 +90,7 @@
 @custom8: 70px;
 @custom9: 30px;
 @errorBodyMarginTop: 250px;
-@custom11: 15px;
+@custom11: 12px;
 @selectedConceptsLineHeight: 14px;
 
 /*------Custom text variables------*/
@@ -96,6 +102,7 @@
 /*------Z-index variables------*/
 @dateSelectZIndex: 1000;
 @findInputZIndex: 1020;
+@tooltipZIndex: 10000;
 
 /*------Selectors and declarations-------*/
 html,
@@ -140,8 +147,12 @@ body {
   }
 
   rect.selection {
-    fill: @secondaryFillHover2;
+    fill: @timebarSelectionColor;
   }
+}
+
+.tooltip {
+  z-index: @tooltipZIndex;
 }
 
 .numeric-parametric-inputs {
@@ -343,6 +354,10 @@ dt {
     .rotating-chevron {
       font-weight: bold;
     }
+  }
+
+  .container-toggle {
+    font-size: 18px;
   }
 }
 
@@ -959,7 +974,6 @@ input.find-input {
 }
 
 .navbar-username {
-  display: none;
   right: @custom8 !important;
   top: @custom11 !important;
 }
@@ -1144,6 +1158,8 @@ input.find-input {
 .results-popover-title,
 .search-text {
   &:extend(.metric-semibold);
+
+  font-weight: @fontWeightBold;
 }
 
 .also-searching-for {
@@ -1260,6 +1276,10 @@ input.find-input {
   color: @white;
   height: @navBarHeight;
   transition: @transitAllFast;
+
+  .navbar-right.drop-list {
+    .m-nil;
+  }
 
   .dropdown-toggle {
     &:extend(.pull-right);
@@ -1659,12 +1679,13 @@ input.find-input {
 }
 
 .preview-document-frame {
-  &:extend(.p-t-sm);
-  &:extend(.m-nil);
+  .p-t-sm;
+  .m-nil;
 
   border: @nil;
   display: block;
   width: @100percent;
+  background-color: @white;
 }
 
 .preview-media-player {
@@ -1690,7 +1711,7 @@ input.find-input {
 }
 
 .preview-mode-document {
-  &:extend(.flex);
+  .flex;
 
   flex-grow: 1;
 }
@@ -1712,6 +1733,18 @@ input.find-input {
     &:first-child > td {
       border: none;
     }
+  }
+}
+
+.metadata-table {
+  th {
+    &:extend(.font-bold);
+
+    width: 30%;
+  }
+  td {
+    &:extend(.break-all);
+    &:extend(.p-l-sm);
   }
 }
 
@@ -1945,6 +1978,24 @@ h4.similar-dates-message {
   .navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
     background-color: @color1;
     background-image: none;
+  }
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /* IE10+ CSS styles go here */
+  .preview-document-frame,
+  .preview-mode-document {
+    height: @100percent;
+  }
+
+  .preview-mode-document-title {
+    .p-b-sm;
+  }
+
+  .left-side-applied-filters-view-title {
+    .shorten {
+      flex: inherit;
+    }
   }
 }
 

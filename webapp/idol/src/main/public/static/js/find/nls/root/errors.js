@@ -54,6 +54,8 @@ define([
         'error.code.DAHGETQUERYTAGVALUES512': 'Find did not understand your search text',
         'error.code.AXEGETQUERYTAGVALUES512': 'Find did not understand your search text',
         'error.code.DAHQUERY512': 'Find did not understand your search text',
-        'error.code.AXEQUERY512': 'Find did not understand your search text'
+        'error.code.AXEQUERY512': 'Find did not understand your search text',
+        'error.code.emptyTableView': 'Could not display Table View: your search returned no parametric values',
+        'error.code.emptySunburstView': 'Could not display Sunburst View: your search returned no parametric values'
     });
 });

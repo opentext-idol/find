@@ -9,7 +9,6 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
-import com.autonomy.abc.selenium.find.ToolTips;
 import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -32,6 +31,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class FilterITCase extends FindTestBase {
     private FindPage findPage;
@@ -59,12 +59,20 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    public void testParametricFiltersDefaultCollapsed() {
+    public void testAllFiltersDefaultCollapsed() {
         searchAndWait("knee");
 
-        for(ParametricFieldContainer container : filters().parametricFieldContainers()) {
+        for(FilterContainer container : filters().allFilterContainers()) {
             verifyThat("Container is collapsed", container.isCollapsed());
         }
+    }
+
+    @Test
+    @ResolvedBug("FIND-671")
+    public void testDatabasesDisplayed() {
+        searchAndWait("dark");
+
+        assertThat("Databases are not hidden", filters().indexesTreeContainer().getContainer(), displayed());
     }
 
     @Test
@@ -80,23 +88,23 @@ public class FilterITCase extends FindTestBase {
             verifyThat("Field values: " + numberFields + " - less than or equal to 5", numberFields, lessThanOrEqualTo(5));
         }
 
-        final ParametricFieldContainer secondContainer = filterPanel.parametricField(filterPanel.nonZeroParamFieldContainer(1));
+        final ParametricFieldContainer firstContainer = filterPanel.parametricField(filterPanel.nonZeroParamFieldContainer(0));
 
-        final FindParametricFilter secondField = secondContainer.getFilters().get(1);
-        final String filterName = secondField.getName();
-        final int expectedResults = secondField.getResultsCount();
+        final FindParametricFilter firstField = firstContainer.getFilters().get(0);
+        final String filterName = firstField.getName();
+        final int expectedResults = firstField.getResultsCount();
 
         final int originalNumberOfResults = findPage.totalResultsNum();
         assumeThat("Fewer results predicted w/ this filter", expectedResults, lessThan(originalNumberOfResults));
 
-        secondField.check();
+        firstField.check();
         results.waitForResultsToLoad();
 
         verifyThat("Expected number of results (according to panel) equals actual number of results",
                    results.getResultsCount(), is(expectedResults));
 
         try {
-            secondContainer.getFilters();
+            firstContainer.getFilters();
             fail("Filter panel did not reload after filter selection");
         } catch(Exception e) {
             LOGGER.info("Correctly threw exception as filter panel has reloaded");
@@ -116,6 +124,8 @@ public class FilterITCase extends FindTestBase {
         int totalParametricFields = filterPanel.parametricFieldContainers().size();
 
         searchAndWait("shouldhavenoresultsprobably");
+        findPage.ensureTermNotAutoCorrected();
+
         findPage.waitForParametricValuesToLoad();
         int noResultsParametricFields = filterPanel.parametricFieldContainers().size();
 
@@ -200,8 +210,7 @@ public class FilterITCase extends FindTestBase {
             checkbox.name().click();
         }
 
-        Waits.loadOrFadeWait();
-        verifyThat("Tooltips aren't floating everywhere", ToolTips.toolTips(getDriver()), not(hasSize(boxes.size())));
+        verifyThat("Tooltips aren't floating everywhere", filters().toolTips(), hasSize(lessThan(boxes.size())));
     }
 
     private List<FindParametricFilter> checkAllVisibleFiltersInFirstParametrics() {
@@ -252,6 +261,7 @@ public class FilterITCase extends FindTestBase {
         final String index = docPreview.getIndexName();
         docPreview.close();
 
+        filters().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter(index));
         assertThat(results.searchResult(1).getTitleString(), is(titleString));
     }
@@ -260,6 +270,8 @@ public class FilterITCase extends FindTestBase {
     public void testFilterByMultipleIndexes() {
         findService.search("unbelievable");
         final FilterPanel filterPanel = filters();
+        filterPanel.indexesTreeContainer().expand();
+        findPage.filterBy(IndexFilter.ALL);
 
         final IndexFilter filter = new IndexFilter(filterPanel.getIndex(2));
         findPage.filterBy(filter);
@@ -285,6 +297,7 @@ public class FilterITCase extends FindTestBase {
         final String chosenIndex = docPreview.getIndexName();
         docPreview.close();
 
+        filters().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter(chosenIndex));
         //weirdly failing to open the 2nd result (subsequent okay)
         for(int i = 1; i < 6; i++) {
@@ -298,6 +311,7 @@ public class FilterITCase extends FindTestBase {
     public void testQuickDoubleClickOnDateFilterNotCauseError() {
         final ResultsView results = findService.search("wookie");
 
+        filters().expandDateFilters();
         toggleDateSelection(DateOption.MONTH);
         toggleDateSelection(DateOption.MONTH);
 
@@ -324,6 +338,7 @@ public class FilterITCase extends FindTestBase {
     private void preDefinedDateFiltersVersusCustomDateFilters(final DateOption period) {
         final ResultsView results = findService.search("*");
 
+        filters().expandDateFilters();
         toggleDateSelection(period);
         final List<String> preDefinedResults = results.getResultTitles();
         findPage.filterBy(new StringDateFilter().from(getDate(period)).until(new Date()));
@@ -357,6 +372,7 @@ public class FilterITCase extends FindTestBase {
         final Date start = getDate(DateOption.MONTH);
         final Date end = getDate(DateOption.WEEK);
 
+        filters().expandDateFilters();
         findService.search(new Query("Corbyn")
                                    .withFilter(new StringDateFilter().from(start).until(end)));
 
@@ -373,6 +389,7 @@ public class FilterITCase extends FindTestBase {
     @ResolvedBug("CSA-1577")
     public void testClickingCustomDateFilterDoesNotRefreshResults() {
         final ResultsView results = findService.search("O Captain! My Captain!");
+        filters().expandDateFilters();
         // may not happen the first time
         for(int unused = 0; unused < 5; unused++) {
             toggleDateSelection(DateOption.CUSTOM);
@@ -392,7 +409,9 @@ public class FilterITCase extends FindTestBase {
 
         final int initialLabelsSize = getFilterLabels().size();
 
-        filters().toggleFilter(DateOption.WEEK);
+        FilterPanel filterPanel = filters();
+        filterPanel.expandDateFilters();
+        filterPanel.toggleFilter(DateOption.WEEK);
         results.waitForResultsToLoad();
 
         assertThat("Filter label is in the Applied Filters Panel", getFilterLabels(), hasSize(greaterThan(initialLabelsSize)));
@@ -434,6 +453,7 @@ public class FilterITCase extends FindTestBase {
             assertThat("By default there are no filters present", initialLabelsSize, is(0));
         }
 
+        filterPanel.expandDateFilters();
         filterPanel.toggleFilter(DateOption.WEEK);
         results.waitForResultsToLoad();
 
@@ -465,7 +485,10 @@ public class FilterITCase extends FindTestBase {
         }
 
         final FilterPanel filterPanel = filters();
+
+        filterPanel.expandDateFilters();
         filterPanel.toggleFilter(DateOption.WEEK);
+
         results.waitForResultsToLoad();
         assertThat("Button is displayed when filter is present", removeAllButton.isDisplayed());
 
@@ -496,6 +519,7 @@ public class FilterITCase extends FindTestBase {
         parametricFilter.check();
         results.waitForResultsToLoad();
 
+        filterPanel.expandDateFilters();
         filterPanel.toggleFilter(DateOption.YEAR);
         results.waitForResultsToLoad();
 

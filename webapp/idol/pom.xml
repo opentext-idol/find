@@ -118,7 +118,6 @@
             <classifier>full</classifier>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-idol</artifactId>

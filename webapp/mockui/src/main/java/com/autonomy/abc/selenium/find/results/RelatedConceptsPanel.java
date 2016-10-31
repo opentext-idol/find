@@ -61,6 +61,10 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
         return hoverOverRelatedConcept(concept);
     }
 
+    public boolean noConceptsPresent() {
+        return panel.findElement(By.className("related-concepts-none")).isDisplayed();
+    }
+
     private void waitForPopoverToLoad(final WebElement popover) {
         new WebDriverWait(driver,10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
     }

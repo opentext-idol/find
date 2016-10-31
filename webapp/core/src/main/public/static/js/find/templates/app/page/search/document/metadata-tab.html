@@ -1,10 +1,8 @@
-<table class="table table-hover">
+<table class="table table-hover metadata-table">
     <% if(model.get('thumbnail')) { %>
     <tr>
-        <td class="font-bold">
-            <%-i18n['search.document.thumbnail']%>
-        </td>
-        <td class="break-all p-l-sm">
+        <th><%-i18n['search.document.thumbnail']%></th>
+        <td>
             <img class="document-thumbnail m-r-sm pull-left" src="data:image/jpeg;base64,<%=model.get('thumbnail')%>">
         </td>
     </tr>
@@ -12,22 +10,21 @@
     <% _.each(importantFields, function(field) { %>
     <% if (field.value) { %>
     <tr>
-        <td class="font-bold"><%-i18n['search.document.' + field.key] || i18nIndexes['search.document.' + field.key]%>
-        </td>
-        <td class="break-all p-l-sm"><%-field.value%></td>
+        <th><%-i18n['search.document.' + field.key] || i18nIndexes['search.document.' + field.key]%></th>
+        <td><%-field.value%></td>
     </tr>
     <% } %>
     <% }); %>
     <% if (model.get('date')) { %>
     <tr>
-        <td class="font-bold"><%-i18n['search.document.date']%></td>
-        <td class="break-all p-l-sm"><%-model.get('date').fromNow()%></td>
+        <th><%-i18n['search.document.date']%></th>
+        <td><%-model.get('date').fromNow()%></td>
     </tr>
     <% } %>
     <% basicFields.forEach(function(field) { %>
     <tr>
-        <td class="font-bold"><%-field.id%></td>
-        <td class="break-all p-l-sm">
+        <th class="break-all"><%-field.id%></th>
+        <td>
             <ul class="list-unstyled m-b-nil">
                 <% _.each(field.values, function(value) { %>
                 <li><%-value%></li>
@@ -38,8 +35,8 @@
     <% }); %>
     <% advancedFields.forEach(function(field) { %>
     <tr class="advanced-field hide">
-        <td class="font-bold"><%-field.id%></td>
-        <td class="break-all p-l-sm">
+        <th class="break-all"><%-field.id%></th>
+        <td>
             <ul class="list-unstyled m-b-nil">
                 <% _.each(field.values, function(value) { %>
                 <li><%-value%></li>

@@ -10,9 +10,11 @@ import com.autonomy.abc.selenium.find.comparison.AppearsIn;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
+import com.autonomy.abc.selenium.find.save.SearchTabBar;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
@@ -44,9 +46,6 @@ import static org.hamcrest.Matchers.*;
  */
 @Role(UserRole.BIFHI)
 public class ListResultsComparisonITCase extends IdolFindTestBase {
-    private static final Index SOME_INDEX = new Index("AmericanNews");
-    private static final Index OTHER_INDEX = new Index("Wookiepedia");
-
     private FindService findService;
     private SavedSearchService savedSearchService;
     private BIIdolFindElementFactory elementFactory;
@@ -70,20 +69,19 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         elementFactory = getElementFactory();
         findService.search("long set-up");
 
-        try{
-            elementFactory.getSearchTabBar().waitUntilMoreThanOneTab();
-            savedSearchService.deleteAll();
-        } catch (final TimeoutException ignored) {
-            //no-op
-        }
+        savedSearchService.waitForSomeTabsAndDelete();
 
+        elementFactory.getConceptsPanel().removeAllConcepts();
         findPage = getElementFactory().getFindPage();
         findPage.goToListView();
+        elementFactory.getResultsPage().waitForResultsToLoad();
     }
 
     @After
     public void tearDown() {
-        savedSearchService.deleteAll();
+        getDriver().get(getConfig().getAppUrl(getApplication()));
+        elementFactory.getFindPage().waitUntilDatabasesLoaded();
+        savedSearchService.waitForSomeTabsAndDelete();
     }
 
     @SuppressWarnings("Duplicates")
@@ -101,16 +99,26 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     }
 
     @Test
+    //TODO needs to find 2 search terms that never share results but each have results
     public void testNoOverlap() {
-        final Query polar = new Query("\"polar bear\"").withFilter(new IndexFilter(SOME_INDEX));
-        final Query opposites = new Query("\"opposable thumbs\"").withFilter(new IndexFilter(OTHER_INDEX));
+        findPage.waitForParametricValuesToLoad();
+
+        final FilterPanel filters = elementFactory.getFilterPanel();
+        filters.indexesTreeContainer().expand();
+
+        final Query polar = new Query("\"polar bear\"").withFilter(new IndexFilter(filters.getIndex(0)));
+        final Query opposites = new Query("\"opposable thumbs\"").withFilter(new IndexFilter(filters.getIndex(1)));
 
         searchAndSave(polar, "polar");
         savedSearchService.openNewTab();
+
+        findPage.waitUntilDatabasesLoaded();
+
+        elementFactory.getFilterPanel().indexesTreeContainer().expand();
         searchAndSave(opposites, "opposites");
         savedSearchService.compareCurrentWith("polar");
 
-        resultsComparison = getElementFactory().getResultsComparison();
+        resultsComparison = elementFactory.getResultsComparison();
         Waits.loadOrFadeWait();
         resultsComparison.goToListView();
         final ResultsView resultsView = resultsComparison.resultsView(AppearsIn.BOTH);
@@ -131,13 +139,13 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService.openNewTab();
         searchAndSave(innerQuery, "inner");
         Waits.loadOrFadeWait();
-        ResultsView resultsView = getElementFactory().getResultsPage();
+        ResultsView resultsView = elementFactory.getResultsPage();
         resultsView.goToListView();
 
         final int innerCount = getTotalResults();
 
         savedSearchService.compareCurrentWith("outer");
-        resultsComparison = getElementFactory().getResultsComparison();
+        resultsComparison = elementFactory.getResultsComparison();
         resultsComparison.goToListView();
 
         verifyThat(resultsComparison.getResults(AppearsIn.THIS_ONLY), empty());
@@ -151,7 +159,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     }
 
     private int getTotalResults() {
-        return getElementFactory().getResultsPage().getResultsCount();
+        return elementFactory.getResultsPage().getResultsCount();
     }
 
     @Test
@@ -195,7 +203,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     }
 
     private List<String> getModalOptionsForTab(final String tabName) {
-        getElementFactory().getSearchTabBar().switchTo(tabName);
+        elementFactory.getSearchTabBar().switchTo(tabName);
         assertThat(findPage.compareButton(), not(disabled()));
         final ComparisonModal modal = findPage.openCompareModal();
         verifyThat(modal.getSelected(), is(tabName));
@@ -210,31 +218,36 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         final String comparedTabName = "nope";
         final String expectedTabName = "expected";
 
+        findPage.waitForParametricValuesToLoad();
         searchAndSave(new Query("face"), comparedTabName);
+        savedSearchService.openNewTab();
+
+        elementFactory.getFilterPanel().indexesTreeContainer().expand();
         searchAndSave(new Query("bus").withFilter(new IndexFilter(expectedIndex)), expectedTabName);
 
-        getElementFactory().getTopicMap().waitForMapLoaded();
-        ResultsView resultsView = getElementFactory().getResultsPage();
+        elementFactory.getTopicMap().waitForMapLoaded();
+        ResultsView resultsView = elementFactory.getResultsPage();
         resultsView.goToListView();
         final String firstTitle = resultsView.getResult(1).getTitleString();
 
         savedSearchService.compareCurrentWith(comparedTabName);
-        ResultsComparisonView resultsComparison = getElementFactory().getResultsComparison();
+        ResultsComparisonView resultsComparison = elementFactory.getResultsComparison();
         resultsComparison.goToListView();
+
         resultsComparison.resultsView(AppearsIn.THIS_ONLY)
                 .getResult(1)
                 .similarDocuments()
                 .click();
 
-        final SimilarDocumentsView similarDocs = getElementFactory().getSimilarDocumentsView();
+        final SimilarDocumentsView similarDocs = elementFactory.getSimilarDocumentsView();
         assertThat(similarDocs.getTitle(), containsString(firstTitle));
 
         similarDocs.backButton().click();
-        final FilterPanel filters = getElementFactory().getFilterPanel();
+        final FilterPanel filters = elementFactory.getFilterPanel();
 
-        assertThat(getElementFactory().getResultsPage().getResult(1).getTitleString(), is(firstTitle));
+        assertThat(elementFactory.getResultsPage().getResult(1).getTitleString(), is(firstTitle));
         assertThat(filters.indexesTree().getSelected(), is(Collections.singletonList(expectedIndex)));
-        assertThat(getElementFactory().getSearchTabBar().getCurrentTabTitle(), is(expectedTabName));
+        assertThat(elementFactory.getSearchTabBar().getCurrentTabTitle(), is(expectedTabName));
     }
 
     @Test
@@ -251,6 +264,37 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
 
         findPage.goBackToSearch();
     }
+
+    @Test
+    @ActiveBug("FIND-634")
+    public void testEditingSavedSearchThenComparing() {
+        final String otherSearchName = "Not Changin'";
+        searchAndSave(new Query("car"), otherSearchName);
+        savedSearchService.openNewTab();
+
+        final String originalSearch = "face";
+
+        searchAndSave(new Query(originalSearch), "Gonna Change");
+        findPage.goToListView();
+
+        final String originalFirstResult = getElementFactory()
+                .getResultsPage()
+                .getResult(1)
+                .title()
+                .getText();
+
+        elementFactory.getConceptsPanel().removeAllConcepts();
+        findService.search("stuff AND (NOT " + originalSearch + ")");
+
+        verifyThat("Tab is marked as modified", elementFactory.getSearchTabBar().currentTab().isNew());
+        savedSearchService.compareCurrentWith(otherSearchName);
+        resultsComparison = elementFactory.getResultsComparison();
+        resultsComparison.goToListView();
+
+        verifyThat(resultsComparison.getResults(AppearsIn.THIS_ONLY).get(0).getTitleString(), not(originalFirstResult));
+    }
+
+
 
     private void searchAndSave(final Query query, final String saveAs) {
         searchAndSave(query, saveAs, SearchType.QUERY);

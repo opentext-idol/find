@@ -61,7 +61,7 @@ public class IdolFindPage extends FindPage {
 
     public void goToListView() {
         mainContainer().findElement(By.cssSelector("[data-tab-id='list']")).click();
-        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".results-list-container"))));
+        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(mainContainer().findElement(By.cssSelector(".results-list-container"))));
     }
 
     public void goToTopicMap() {
@@ -82,23 +82,29 @@ public class IdolFindPage extends FindPage {
 
     public void goToTable(){
         findElement(By.cssSelector("[data-tab-id='table']")).click();
-        new WebDriverWait(getDriver(), 15).until(new ExpectedCondition<Boolean>() {
+
+        new WebDriverWait(getDriver(), 15)
+                .withMessage("Table or message never appeared")
+                .until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(final WebDriver driver) {
-                return findElement(By.cssSelector("table.dataTable")).isDisplayed() ||
-                        findElement(By.cssSelector(".parametric-view-message")).isDisplayed();
+                return !findElements(By.cssSelector("table.dataTable")).isEmpty() ||
+                        currentView().findElement(By.cssSelector(".parametric-view-message .well div")).isDisplayed();
             }
         });
+    }
+
+    public void waitUntilSavePossible() {
+        new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active").until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
     }
 
     public boolean resultsComparisonVisible() {
         return findElement(By.cssSelector(".comparison-view")).isDisplayed();
     }
 
-    public void refresh() {
-        getDriver().navigate().refresh();
+    private WebElement currentView() {
+        return findElement(By.cssSelector(".tab-pane.active"));
     }
-
     public static class Factory implements ParametrizedFactory<WebDriver, IdolFindPage> {
         @Override
         public IdolFindPage create(final WebDriver context) {

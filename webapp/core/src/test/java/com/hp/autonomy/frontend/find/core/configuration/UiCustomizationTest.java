@@ -54,8 +54,8 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
     protected void validateParsedComponent(final ObjectContent<UiCustomization> objectContent) {
         assertNotNull(objectContent.getObject().getOptions());
         assertFalse(objectContent.getObject().getOptions().any().isEmpty());
-        assertThat(objectContent.getObject().getParametricBlacklist(), not(empty()));
-        assertThat(objectContent.getObject().getParametricWhitelist(), not(empty()));
+        assertThat(objectContent.getObject().getParametricNeverShow(), not(empty()));
+        assertThat(objectContent.getObject().getParametricAlwaysShow(), not(empty()));
     }
 
     @Override
@@ -63,8 +63,8 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         assertThat(objectContent.getObject().getOptions().any(), hasKey("option1"));
         assertThat(objectContent.getObject().getOptions().any(), hasKey("option2"));
         assertThat(objectContent.getObject().getOptions().any(), hasKey("option3"));
-        assertThat(objectContent.getObject().getParametricBlacklist(), hasItem(is("A_CLEAN_NUMERIC_FIELD")));
-        assertThat(objectContent.getObject().getParametricWhitelist(), hasItem(is("AUTN_DATE")));
+        assertThat(objectContent.getObject().getParametricNeverShow(), hasItem(is("A_CLEAN_NUMERIC_FIELD")));
+        assertThat(objectContent.getObject().getParametricAlwaysShow(), hasItem(is("AUTN_DATE")));
         assertThat(objectContent.getObject().getSpecialUrlPrefixes(), hasKey("application/msword"));
         assertThat(objectContent.getObject().getSpecialUrlPrefixes(), hasKey("application/vnd.visio"));
     }

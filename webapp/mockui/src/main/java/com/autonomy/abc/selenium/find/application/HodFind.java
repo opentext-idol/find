@@ -1,16 +1,16 @@
 package com.autonomy.abc.selenium.find.application;
 
-import com.hp.autonomy.frontend.selenium.control.Window;
+public abstract class HodFind<T extends HodFindElementFactory> extends FindApplication<T> {
 
-public class HodFind extends FindApplication<HodFindElementFactory> {
-    private HodFindElementFactory factory;
-
-    public HodFind() {
-    }
+    private T elementFactory;
 
     @Override
-    public HodFindElementFactory elementFactory() {
-        return factory;
+    public T elementFactory() {
+        return elementFactory;
+    }
+
+    public void setElementFactory(T elementFactory) {
+        this.elementFactory = elementFactory;
     }
 
     @Override
@@ -18,9 +18,18 @@ public class HodFind extends FindApplication<HodFindElementFactory> {
         return true;
     }
 
-    @Override
-    public HodFind inWindow(final Window window) {
-        this.factory = new HodFindElementFactory(window.getSession().getDriver());
-        return this;
+    public static HodFind<? extends HodFindElementFactory> withRole(final UserRole role) {
+        if(role == null){
+            return new FindHodFind();
+        }
+
+        switch (role) {
+            case BIFHI:
+                return new BIHodFind();
+            case FIND:
+                return new FindHodFind();
+            default:
+                throw new IllegalStateException("Unsupported user role: " + role);
+        }
     }
 }

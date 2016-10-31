@@ -19,7 +19,9 @@ public class ParametricModalCheckbox extends CheckboxBase {
     }
 
     public int getResultsCount() {
-        String spanResultCount = element.getText().split("\\(")[1];
+        final String[] splitTitle = element.getText().split("\\(");
+        final String spanResultCount = splitTitle[splitTitle.length - 1];
+
         return Integer.parseInt(spanResultCount.substring(0, spanResultCount.length() - 1));
 }
 

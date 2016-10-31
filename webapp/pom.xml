@@ -94,6 +94,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--TODO: Do we need this?-->
         <dependency>
             <groupId>com.hp.autonomy.frontend.configuration</groupId>
             <artifactId>configuration-impl</artifactId>

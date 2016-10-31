@@ -11,7 +11,7 @@ class FindIndexLeafNode implements IndexNodeElement {
 
     FindIndexLeafNode(final WebElement element) {
         container = element;
-        checkbox = new FindIndexCheckbox(element);
+        checkbox = new FindIndexCheckbox(element.findElement(By.tagName("span")));
     }
 
     @Override

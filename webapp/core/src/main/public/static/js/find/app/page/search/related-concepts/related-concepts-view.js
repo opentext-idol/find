@@ -78,6 +78,8 @@ define([
                 if(topResultsCollection.isEmpty()) {
                     $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.none']}));
                 } else {
+                    var oldHeight = $content.height();
+
                     $content.html('<ul class="list-unstyled"></ul>');
                     _.each(topResultsCollection.models, function(model) {
                         var listItem = $(popoverTemplateFunction({
@@ -87,6 +89,18 @@ define([
 
                         $content.find('ul').append(listItem);
                     }, this);
+
+                    var $popover = $content.closest('.popover');
+
+                    if ($popover.hasClass('top')) {
+                        // we've changed the content, so the Bootstrap provided position is wrong for top positioning
+                        // we need to adjust the top by the difference between the old height and the new height
+                        var newHeight = $content.height();
+                        var top = $popover.position().top;
+                        var newTop = top - (newHeight - oldHeight);
+
+                        $popover.css('top', newTop + 'px');
+                    }
                 }
             }, this)
         });

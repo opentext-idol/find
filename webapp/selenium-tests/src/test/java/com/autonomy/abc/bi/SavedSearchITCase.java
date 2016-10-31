@@ -31,6 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -40,6 +41,7 @@ import static com.autonomy.abc.matchers.ErrorMatchers.isError;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.checked;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
 
 @Role(UserRole.BIFHI)
@@ -113,7 +115,10 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat(searchTabBar.currentTab().getTitle(), is("New Search"));
         assertThat(searchTabBar.currentTab().getType(), is(SearchType.QUERY));
         assertThat(searchTabBar.tab("sesame").getType(), is(SearchType.SNAPSHOT));
-        assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is("open"));
+
+        final List<WebElement> addedConcepts = getElementFactory().getConceptsPanel().selectedConcepts();
+        assertThat(addedConcepts, hasSize(1));
+        assertThat(addedConcepts.get(0), containsText("open"));
     }
 
     @Test
@@ -121,7 +126,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         findService.search("useless");
         saveService.saveCurrentAs("duplicate", SearchType.QUERY);
         saveService.openNewTab();
-        getElementFactory().getResultsPage().waitForResultsToLoad();
+        getElementFactory().getFindPage().waitUntilDatabasesLoaded();
 
         checkSavingDuplicateThrowsError("duplicate", SearchType.QUERY);
         checkSavingDuplicateThrowsError("duplicate", SearchType.SNAPSHOT);
@@ -153,7 +158,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         final BIIdolFind other = new BIIdolFind();
         launchInNewSession(other);
-        other.loginService().login(getConfig().getDefaultUser());
+        other.loginService().login(getConfig().getUserWithRole("BIFHI"));
         other.findService().search("blur");
 
         final BIIdolFindElementFactory factory = other.elementFactory();
@@ -181,6 +186,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         final SunburstView results = elementFactory.getSunburst();
 
         results.waitForSunburst();
+        //TODO: extract coordinates from SVG to ensure click/hover over segments
         results.getIthSunburstSegment(1).click();
         results.waitForSunburst();
 
@@ -210,7 +216,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
     public void testSearchesWithNumericFilters() {
         final NumericWidgetService widgetService = getApplication().numericWidgetService();
 
-        final MainNumericWidget mainGraph = widgetService.searchAndSelectNthGraph(1, "saint");
+        final MainNumericWidget mainGraph = widgetService.searchAndSelectNthGraph(0, "saint");
         mainGraph.clickAndDrag(100, mainGraph.graph());
 
         getElementFactory().getResultsPage().waitForResultsToLoad();
@@ -228,8 +234,8 @@ public class SavedSearchITCase extends IdolFindTestBase {
         topicMap.waitForMapLoaded();
 
         // Select a concept and save the search
-        final String selectedConcept = topicMap.clickClusterHeading();
-        new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active").until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
+        final String selectedConcept = topicMap.clickNthClusterHeading(0);
+        getElementFactory().getFindPage().waitUntilSavePossible();
         saveService.saveCurrentAs("Conceptual Search", SearchType.QUERY);
 
         // Remove the selected concept
@@ -245,7 +251,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat(searchTabBar.currentTab(), not(modified()));
         final List<String> finalConceptHeaders = conceptsPanel.selectedConceptHeaders();
         assertThat(finalConceptHeaders, hasSize(1));
-        assertThat(finalConceptHeaders, hasItem('"' + selectedConcept + '"'));
+        assertThat(finalConceptHeaders, hasItem('"' + selectedConcept.toLowerCase() + '"'));
     }
 
     @Test

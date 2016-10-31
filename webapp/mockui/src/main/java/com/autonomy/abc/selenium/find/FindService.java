@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.query.AggregateQueryFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryService;
-import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 
 import java.io.UnsupportedEncodingException;
@@ -30,17 +29,16 @@ public class FindService implements QueryService<ResultsView> {
 
     @Override
     public ResultsView search(final Query query) {
-        search(elementFactory.getSearchBox(), query.getTerm());
+        submitSearch(query.getTerm());
         elementFactory.getFilterPanel().waitForIndexes();
         findPage.filterBy(new AggregateQueryFilter(query.getFilters()));
         return elementFactory.getResultsPage();
     }
 
-    private void search(final FormInput formInput, final String term) {
-        formInput.clear();
-        formInput.setValue(term);
+    protected void submitSearch(final String term) {
+        elementFactory.getSearchBox().setValue(term);
         Waits.loadOrFadeWait();
-        formInput.submit();
+        elementFactory.getSearchBox().submit();
     }
 
     public SimilarDocumentsView goToSimilarDocuments(final int resultNumber) {

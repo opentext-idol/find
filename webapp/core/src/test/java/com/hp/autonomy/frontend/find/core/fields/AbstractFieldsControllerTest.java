@@ -60,7 +60,7 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
     @Before
     public void setUp() throws E {
         when(configService.getConfig()).thenReturn(config);
-        when(config.getUiCustomization()).thenReturn(UiCustomization.builder().setParametricWhitelist(Collections.emptyList()).build());
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder().setParametricAlwaysShow(Collections.emptyList()).build());
 
         controller = constructController();
     }
@@ -79,11 +79,11 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
     }
 
     @Test
-    public void getParametricFieldsWithWhitelist() throws E {
+    public void getParametricFieldsWithAlwaysShowList() throws E {
         mockSimpleParametricResponse();
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .setParametricWhitelist(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .setParametricAlwaysShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
                 .build());
 
         final List<TagName> fields = controller.getParametricFields(createRequest());
@@ -93,11 +93,11 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
     }
 
     @Test
-    public void getParametricFieldsWithBlacklist() throws E {
+    public void getParametricFieldsWithNeverShowList() throws E {
         mockSimpleParametricResponse();
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .setParametricBlacklist(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .setParametricNeverShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
                 .build());
 
         final List<TagName> fields = controller.getParametricFields(createRequest());
@@ -106,17 +106,32 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
     }
 
     @Test
-    public void getParametricFieldsWithWhitelistAndBlacklist() throws E {
+    public void getParametricFieldsWithAlwaysShowListAndNeverShowList() throws E {
         mockSimpleParametricResponse();
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .setParametricWhitelist(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
-                .setParametricBlacklist(Collections.singletonList("ParametricField1"))
+                .setParametricAlwaysShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .setParametricNeverShow(Collections.singletonList("ParametricField1"))
                 .build());
 
         final List<TagName> fields = controller.getParametricFields(createRequest());
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(is(new TagName("/DOCUMENT/ParametricField2"))));
+    }
+
+    @Test
+    public void getParametricDateFieldsWithNeverShowList() throws E {
+        final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
+        response.put(FieldTypeParam.Numeric, Collections.emptyList());
+        response.put(FieldTypeParam.Parametric, Collections.emptyList());
+        when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .setParametricNeverShow(Collections.singletonList(ParametricValuesService.AUTN_DATE_FIELD))
+                .build());
+
+        final List<FieldAndValueDetails> output = controller.getParametricDateFields(createRequest());
+        assertThat(output, is(empty()));
     }
 
     private void mockSimpleParametricResponse() throws E {

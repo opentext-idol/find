@@ -19,6 +19,7 @@ import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.WebApplicationInitializer;
 
 @SpringBootApplication(exclude = {
@@ -31,6 +32,7 @@ import org.springframework.web.WebApplicationInitializer;
         HibernateJpaAutoConfiguration.class
 })
 @Import({HavenSearchHodConfiguration.class, CachingConfiguration.class})
+@PropertySource("classpath:/custom-application.properties")
 public class HodFindApplication extends SpringBootServletInitializer implements WebApplicationInitializer {
     public static void main(final String[] args) {
         TomcatSettings.apply();

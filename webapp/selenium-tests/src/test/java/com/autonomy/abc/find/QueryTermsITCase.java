@@ -21,6 +21,7 @@ import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.apache.commons.collections4.ListUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.openqa.selenium.WebDriverException;
@@ -168,6 +169,8 @@ public class QueryTermsITCase extends FindTestBase {
 
     @Test
     @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM, against = Deployment.DEVELOP)
+    @Ignore("Pending independence of error message tests from QueryTestHelpers")
+    //TODO: Test needs to be on the first tab (topic map) when check for error displayed.
     public void testCorrectErrorMessageDisplayed() {
         goToListView();
 

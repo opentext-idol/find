@@ -25,7 +25,17 @@ define([
         $el.popover({
             content: initialContent,
             html: true,
-            placement: 'bottom',
+            // can't use auto placement as we modify the content after popover creation
+            // see https://github.com/twbs/bootstrap/issues/1833#issuecomment-17092775
+            placement: function (tip, el) {
+                var offset = $(el).offset();
+                var height = $(document).outerHeight();
+
+                // position after which we use top placement
+                var heightThreshold = 0.5 * height;
+
+                return heightThreshold > offset.top ? 'bottom' : 'top';
+            },
             trigger: trigger
         }).on('inserted.bs.popover', function(e) {
             var $target = $(e.currentTarget);

@@ -36,8 +36,8 @@ define([
         var uuidTemplate = i18n['error.UUID'];
         var needTechSupport;
 
-        if(options.errorDetails) {
-            if(i18nErrors["error.code." + options.errorLookup]) {
+        if (!options.errorDetails && options.errorLookup) {
+            if (i18nErrors["error.code." + options.errorLookup]) {
                 options.errorDetails = i18nErrors["error.code." + options.errorLookup];
                 // Errors in the bundle are user-created errors, so we don't want them to contact support
                 needTechSupport = false;

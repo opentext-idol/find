@@ -4,7 +4,6 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
-import com.hp.autonomy.frontend.selenium.element.Dropdown;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.*;
 import org.openqa.selenium.By;
@@ -105,9 +104,21 @@ public class FindPage extends AppElement implements AppPage,
         return Integer.parseInt(findElement(By.className("total-results-number")).getText());
     }
 
+    public List<WebElement> resultsContainingString(final String searchTerm) {
+        return getDriver().findElements(By.xpath("//*[contains(@class,'search-text') and contains(text(),'" + searchTerm + "')]"));
+    }
+
     public WebElement originalQuery() { return findElement(By.className("original-query")); }
 
-    public String correctedQuery() { return findElement(By.className("corrected-query")).getText();}
+    public String correctedQuery() { return findElement(By.className("corrected-query")).getText(); }
+
+    public boolean hasAutoCorrected() { return !findElements(By.className("original-query")).isEmpty(); }
+
+    public void ensureTermNotAutoCorrected() {
+        if(hasAutoCorrected()) {
+            originalQuery().click();
+        }
+    }
 
     public List<String> filterLabelsText() {
         return ElementUtil.getTexts(filterLabels());

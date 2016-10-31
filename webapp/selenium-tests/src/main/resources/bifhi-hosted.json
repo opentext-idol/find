@@ -1,0 +1,26 @@
+{
+  "app": {
+    "type": "Hosted",
+    "search": "http://search.int.havenapps.io/searchoptimizer/p",
+    "find": "http://find.int.havenapps.io/find/",
+    "devconsole": "http://www.havenondemand.com",
+    "api" : "https://api.havenondemand.com"
+  },
+  "selenium": {
+    "browsers": ["chrome"],
+    "url": "http://localhost:4444/wd/hub"
+  },
+  "users": {
+    "default": {
+      "username": "Google Int",
+      "role": "Admin",
+      "auth": {
+        "type": "HP Passport",
+        "username": "hodtestqa401+BIUSERFOREVER@gmail.com",
+        "password": "abcdef"
+      },
+      "apikey" : "",
+      "domain" : ""
+    }
+  }
+}

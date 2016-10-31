@@ -69,6 +69,8 @@ public class MapITCase extends IdolFindTestBase {
 
 
     private int checkMarkersPresent(MapView mapView) {
+        assertThat("Test requires there to be location results for the query", !mapView.noResults());
+
         int numberMarkers = mapView.markers().size() + mapView.markerClusters().size();
         assertThat("Markers present on map",numberMarkers,greaterThan(0));
         return numberMarkers;
@@ -149,7 +151,7 @@ public class MapITCase extends IdolFindTestBase {
             verifyThat("Second search has same number results",comparer,is(secondResults));
         }
         finally {
-            findService.search("back to results");
+            findPage.goBackToSearch();
             savedSearchService.deleteAll();
         }
     }

@@ -129,6 +129,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.hp.autonomy.frontend.configuration</groupId>
+            <artifactId>configuration-impl</artifactId>
+            <version>1.4.0-SNAPSHOT</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>logging</artifactId>
             <version>1.1.3</version>
@@ -184,6 +192,10 @@
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session</artifactId>
             <version>1.0.2.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
         </dependency>
 
         <dependency>

@@ -46,7 +46,6 @@ define([
             this.displayCollection = options.displayCollection;
             this.filterModel = options.filterModel;
 
-            
             //ToDo : We are currently only monitoring restrictedParametricCollection for loading and error. Need to fix as part of FIND-618.
             this.model = new Backbone.Model({
                 processing: Boolean(this.restrictedParametricCollection.currentRequest),
@@ -165,8 +164,7 @@ define([
             //noinspection JSUnresolvedFunction
             this.$processing = this.$('.parametric-processing-indicator');
 
-            this.model.set({processing: true, error: false});
-
+            this.updateProcessing();
             return this;
         },
 

@@ -5,8 +5,8 @@ import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -74,7 +74,7 @@ public class IdolFilterPanel extends FilterPanel {
     }
 
     @Override
-    protected List<FilterContainer> allFilterContainers() {
+    public List<FilterContainer> allFilterContainers() {
         final List<FilterContainer> nodes = new ArrayList<>();
         nodes.add(indexesTreeContainer());
         nodes.add(dateFilterContainer());
@@ -85,11 +85,12 @@ public class IdolFilterPanel extends FilterPanel {
 
     //METAFILTERING
     public void searchFilters(final String term) {
-        // placeholder text uses ellipsis unicode character
         final FormInput input = new FormInput(getPanel().findElement(By.cssSelector("[placeholder='Filter\u2026']")), driver);
-        input.clear();
-        input.setAndSubmit(term);
-        Waits.loadOrFadeWait();
+        for(int i = 0; i < term.length(); i++) {
+            input.getElement().sendKeys(Keys.BACK_SPACE);
+        }
+        input.getElement().sendKeys(term);
+        input.submit();
     }
 
     public void clearMetaFilter() {

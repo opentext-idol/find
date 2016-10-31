@@ -9,11 +9,13 @@ public enum UserRole {
         if (value == null){
             return null;
         }
-        for(UserRole userRole : UserRole.values()) {
-            if (userRole.toString().toLowerCase().equals(value.toLowerCase())) {
-                return userRole;
-            }
+
+        switch(value.toLowerCase()){
+            case "find" :
+                return FIND;
+            case "bifhi":
+            default:
+                return BIFHI;
         }
-        return BIFHI;
     }
 }

@@ -37,9 +37,9 @@ define([
                 }
             };
 
-            if (this.clickHandler) {
-                this.$el.addClass('clickable');
+            this.$el.addClass('clickable');
 
+            if (this.clickHandler && this.clickHandler !== _.noop) {
                 topicMapOptions.onLeafClick = _.bind(function(node) {
                     this.clickHandler([node.name]);
                 }, this);
@@ -64,6 +64,7 @@ define([
          * Draw the current data as a topic map in the SVG.
          */
         draw: function() {
+            this.$('svg').attr('width', this.$el.width()).attr('height', this.$el.height());
             this.$el.topicmap('renderData', {
                 size: 1.0,
                 children: this.data

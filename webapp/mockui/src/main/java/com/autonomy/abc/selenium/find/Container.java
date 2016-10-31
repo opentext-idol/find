@@ -22,6 +22,7 @@ public enum Container {
         return '.' + container + "-container";
     }
 
+    //TODO: wait it is waiting too long
     public void waitForLoad(final WebDriver driver) {
          try {
              new WebDriverWait(driver, 5)
@@ -35,7 +36,8 @@ public enum Container {
                 .until(new ExpectedCondition<Boolean>() {
                     @Override
                     public Boolean apply(final WebDriver driver) {
-                        return noLoadingIndicatorsPresent(driver);
+                        return driver.findElements(By.cssSelector(asCssClass() + " .numeric-parametric-loading-indicator:not(.hide)")).isEmpty() &&
+                                driver.findElements(By.cssSelector(asCssClass() + " .parametric-processing-indicator:not(.hide)")).isEmpty();
                     }
                 });
     }
@@ -46,10 +48,5 @@ public enum Container {
 
     public static WebElement currentTabContents(final WebDriver driver) {
         return driver.findElement(By.cssSelector(".query-service-view-container > :not(.hide):not(.search-tabs-container), div[data-pagename=search]"));
-    }
-
-    public static boolean noLoadingIndicatorsPresent(final WebDriver driver) {
-        return driver.findElements(By.cssSelector(".numeric-parametric-loading-indicator:not(.hide)")).isEmpty() &&
-                driver.findElements(By.cssSelector(".parametric-processing-indicator:not(.hide)")).isEmpty();
     }
 }

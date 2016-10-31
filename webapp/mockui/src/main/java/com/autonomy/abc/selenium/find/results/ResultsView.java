@@ -104,7 +104,10 @@ public class ResultsView extends AppElement implements QueryResultsPage {
         }
 
         private boolean resultsLoaded(final WebDriver driver) {
-            return  !driver.findElement(By.cssSelector(".loading-spinner")).isDisplayed()
+            int loadingSpinners = driver.findElements(By.cssSelector(".loading-spinner:not(.hide)")).size();
+            loadingSpinners -= driver.findElements(By.cssSelector(".hide .loading-spinner")).size();
+
+            return  loadingSpinners == 0
                     && !driver.findElements(By.cssSelector(".results > div")).isEmpty()
                     && (driver.findElements(By.cssSelector(".results-view-error.hide")).isEmpty()
                     || !driver.findElements(By.cssSelector(".main-results-list.results .result-message")).isEmpty()

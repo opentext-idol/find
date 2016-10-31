@@ -24,9 +24,8 @@ define([
 
         initialize: function(options) {
             ServiceView.prototype.initialize.call(this, options);
-            addChangeListener(this, this.queryModel,
-                ['queryText', 'fieldText', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'],
-                this.fetchData);
+
+            addChangeListener(this, this.queryModel, ['queryText', 'fieldText', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchData);
 
             addChangeListener(this, this.queryModel, ['indexes'], function() {
                 if(this.entityCollection) {
@@ -44,10 +43,14 @@ define([
                     this.fetchParametricFields(this.dateParametricFieldsCollection);
                 }
             });
+
+            this.listenTo(this.queryModel, 'change:indexes', function () {
+                this.queryState.selectedParametricValues.reset();
+            });
         },
 
         fetchParametricFields: function(fieldsCollection, callback) {
-            if(this.queryModel.get('indexes').length > 0) {
+            if (this.queryModel.get('indexes').length > 0) {
                 fieldsCollection.fetch({
                     data: {
                         databases: this.queryModel.get('indexes')

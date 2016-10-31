@@ -59,10 +59,12 @@ public class FindHodDocumentServiceTest extends HodDocumentServiceTest {
         super.setUp();
         documentsService = new FindHodDocumentService(findSimilarService, findConfigService, queryTextIndexService, getContentService, authenticationInformationRetriever, databasesService, documentFieldsService);
 
-        when(findConfig.getQueryManipulation()).thenReturn(QueryManipulationConfig.builder()
+        final QueryManipulationConfig config = QueryManipulationConfig.builder()
                 .profile("SomeProfile")
                 .index("SomeIndex")
-                .build());
+                .build();
+
+        when(findConfig.getQueryManipulation()).thenReturn(config);
         when(findConfig.getHod()).thenReturn(HodConfig.builder().publicIndexesEnabled(true).build());
         when(findConfigService.getConfig()).thenReturn(findConfig);
     }
