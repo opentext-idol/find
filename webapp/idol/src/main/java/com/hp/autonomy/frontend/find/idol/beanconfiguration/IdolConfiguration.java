@@ -26,6 +26,8 @@ import com.hp.autonomy.frontend.configuration.server.ServerConfigValidator;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolAuthenticationMixins;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
+import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
+import com.hp.autonomy.searchcomponents.core.config.FieldInfoConfigMixins;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.user.UserService;
@@ -81,6 +83,7 @@ public class IdolConfiguration {
         objectMapper.addMixIn(ServerConfig.class, ConfigurationFilterMixin.class);
         objectMapper.addMixIn(ViewConfig.class, ConfigurationFilterMixin.class);
         objectMapper.addMixIn(IdolFindConfig.class, ConfigurationFilterMixin.class);
+        objectMapper.addMixIn(FieldInfo.class, FieldInfoConfigMixins.class);
 
         final IdolFindConfigFileService configService = new IdolFindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");

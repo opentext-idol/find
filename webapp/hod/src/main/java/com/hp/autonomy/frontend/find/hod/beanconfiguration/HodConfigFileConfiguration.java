@@ -14,6 +14,8 @@ import com.hp.autonomy.frontend.configuration.filter.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
+import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
+import com.hp.autonomy.searchcomponents.core.config.FieldInfoConfigMixins;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +30,7 @@ public class HodConfigFileConfiguration {
                 .mixIn(Authentication.class, HodAuthenticationMixins.class)
                 .mixIn(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class)
                 .mixIn(HodFindConfig.class, ConfigurationFilterMixin.class)
+                .mixIn(FieldInfo.class, FieldInfoConfigMixins.class)
                 .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
                 .build();
 
