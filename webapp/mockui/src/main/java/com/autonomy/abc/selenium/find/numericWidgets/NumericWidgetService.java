@@ -39,13 +39,6 @@ public class NumericWidgetService {
         return findPage.mainGraph();
     }
 
-    public MainNumericWidget searchAndSelectNamedGraph(final String name, final String searchTerm) {
-        IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
-        selectFilterGraph(filterPanel.getNamedGraph(name));
-
-        return findPage.mainGraph();
-    }
-
     public MainNumericWidget searchAndSelectFirstNumericGraph(final String searchTerm) {
         IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
         selectFilterGraph(filterPanel.getFirstNumericGraph());

@@ -93,7 +93,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-356")
     public void testSelectionRecDoesNotDisappear() {
-        //TODO THIS ISN'T NEEDED - do not hardcode
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "politics");
         mainGraph.clickAndDrag(100, mainGraph.graph());
 
@@ -109,10 +108,12 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     @Test
     public void testSelectionRecFiltersResults() {
-        MainNumericWidget mainGraph = numericService.searchAndSelectNamedGraph("autn date", "space");
+        MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "space");
 
         final ResultsView results = getElementFactory().getResultsPage();
         results.goToListView();
+        results.waitForResultsToLoad();
+
         final int beforeNumberResults = findPage.totalResultsNum();
         mainGraph.waitUntilWidgetLoaded();
         final String beforeMin = mainGraph.minFieldValue();
@@ -338,15 +339,13 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     /*##########NON-DATE GRAPHS##########*/
     @Test
     @ResolvedBug("FIND-365")
-    // Make sure that the named graph used is a numeric and not date widget
     public void testFilterLabelFormatReflectsNumericData() {
-        final MainNumericWidget mainGraph = numericService.searchAndSelectNamedGraph("Random Number", "beer");
-        assumeThat("Test assumes that there is the numeric field place elevation", mainGraph.header(), equalToIgnoringCase("Random Number"));
+        final MainNumericWidget mainGraph = numericService.searchAndSelectFirstNumericGraph("beer");
 
         mainGraph.clickAndDrag(200, mainGraph.graph());
         numericService.waitForReload();
 
-        verifyThat("Place elevation filter label doesn't have time format", findPage.filterLabelsText().get(0), not(containsString(":")));
+        verifyThat("Filter label doesn't have time format", findPage.filterLabelsText().get(0), not(containsString(":")));
     }
 
     @Test
@@ -418,10 +417,10 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Ignore("Desired behaviour but not implemented and not a bug")
     public void testMinAndMaxReflectCurrentSearch() {
         //currently 0th graph is place elevation (i.e. non-date)
-        numericService.searchAndSelectNthGraph(0, "*");
+        numericService.searchAndSelectFirstNumericGraph("*");
         checkBoundsForPlaceElevationWidget();
 
-        numericService.searchAndSelectNthGraph(1, "*");
+        numericService.searchAndSelectFirstDateGraph("*");
         checkBoundsForDateWidget();
     }
 
