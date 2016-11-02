@@ -144,8 +144,8 @@ public class ResultsITCase extends FindTestBase {
     @ResolvedBug("FIND-694")
     @Role(UserRole.FIND)
     public void testAutoCorrectedQueriesHaveRelatedConceptsAndParametrics() {
-        final String term = "blarf";
-        final String termAutoCorrected = "Blair";
+        final String term = "eevrything";
+        final String termAutoCorrected = "everything";
         search(termAutoCorrected);
 
         LOGGER.info("Need to verify that " + termAutoCorrected + " has results, related concepts and parametrics");
@@ -158,7 +158,7 @@ public class ResultsITCase extends FindTestBase {
 
         search(term);
         assertThat("Has autocorrected", findPage.hasAutoCorrected());
-        assertThat("Has autocorrected" + term + " to " + termAutoCorrected, findPage.correctedQuery(), is("( " + termAutoCorrected + " )"));
+        assertThat("Has autocorrected " + term + " to " + termAutoCorrected, findPage.correctedQuery().toLowerCase(), is("( " + termAutoCorrected + " )"));
 
         findPage.waitForParametricValuesToLoad();
         verifyThat("Still has parametric fields", getElementFactory().getFilterPanel().parametricField(indexOfCategoryWFilters).getFilterNumber(), not("0"));
