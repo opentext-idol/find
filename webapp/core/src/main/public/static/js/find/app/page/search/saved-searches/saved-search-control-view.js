@@ -228,6 +228,7 @@ define([
 
             this.$el.html(this.template({
                 i18n: i18n,
+                showCompare: Boolean(this.comparisonModalCallback),
                 showSaveAs: isMutable,
                 searchTypes: this.searchTypes,
                 showOpenAsQuery: !isMutable
