@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend.selenium</groupId>
             <artifactId>integration-tests-helpers</artifactId>
-            <version>2.2.1</version>
+            <version>2.3.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -62,14 +62,14 @@
         <repository>
             <id>cmbg-maven-releases</id>
             <url>
-                http://cmbg-maven.autonomy.com/nexus/content/repositories/releases
+                http://cbgmaven.hpeswlab.net/nexus/content/repositories/releases
             </url>
             <uniqueVersion>false</uniqueVersion>
         </repository>
         <snapshotRepository>
             <id>cmbg-maven-snapshots</id>
             <url>
-                http://cmbg-maven.autonomy.com/nexus/content/repositories/snapshots
+                http://cbgmaven.hpeswlab.net/nexus/content/repositories/snapshots
             </url>
             <uniqueVersion>true</uniqueVersion>
         </snapshotRepository>
