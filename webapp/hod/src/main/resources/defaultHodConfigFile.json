@@ -68,6 +68,10 @@
             "enableRelatedConcepts": {
                 "user": true,
                 "bi": false
+            },
+            "resultViewOrder": {
+                "bi": ["list", "topic-map", "sunburst", "table", "map"],
+                "user": ["list"]
             }
         },
         "parametricNeverShow": [],

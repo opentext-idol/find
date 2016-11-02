@@ -27,11 +27,13 @@ define([
 
             //noinspection JSUnresolvedVariable
             var uiCustomization = config.uiCustomization;
+            
             if (uiCustomization) {
                 config.directAccessLink = parseBooleanOption(config, uiCustomization, 'directAccessLink');
                 config.enableMetaFilter = parseBooleanOption(config, uiCustomization, 'enableMetaFilter');
                 config.enableRelatedConcepts = parseBooleanOption(config, uiCustomization, 'enableRelatedConcepts');
                 config.errorCallSupportString = uiCustomization.errorCallSupportString;
+                config.resultViewOrder = config.hasBiRole && uiCustomization.options.resultViewOrder.bi || uiCustomization.options.resultViewOrder.user;
             }
         }
         return config;

@@ -202,73 +202,80 @@ define([
                 scrollModel: this.middleColumnScrollModel
             }, subViewArguments));
 
-            this.resultsViews = _.where([{
-                Constructor: TopicMapView,
-                id: 'topic-map',
-                shown: hasBiRole,
-                uniqueId: _.uniqueId('results-view-item-'),
-                constructorArguments: _.extend({
-                    clickHandler: relatedConceptsClickHandler,
-                    type: 'QUERY'
-                }, subViewArguments),
-                selector: {
-                    displayNameKey: 'topic-map',
-                    icon: 'hp-grid'
-                }
-            }, {
-                Constructor: this.ResultsViewAugmentation,
-                id: 'list',
-                shown: true,
-                uniqueId: _.uniqueId('results-view-item-'),
-                constructorArguments: {
-                    resultsView: resultsView,
-                    queryModel: this.queryModel,
-                    indexesCollection: this.indexesCollection,
-                    previewModeModel: this.previewModeModel,
-                    scrollModel: this.middleColumnScrollModel
+            var resultsViewsMap = {
+                'topic-map': {
+                    Constructor: TopicMapView,
+                    shown: hasBiRole,
+                    constructorArguments: _.extend({
+                        clickHandler: relatedConceptsClickHandler,
+                        type: 'QUERY'
+                    }, subViewArguments),
+                    selector: {
+                        displayNameKey: 'topic-map',
+                        icon: 'hp-grid'
+                    }
                 },
-                events: {
-                    // needs binding as the view container will be the eventual listener
-                    'rightSideContainerHideToggle': _.bind(this.rightSideContainerHideToggle, this)
+                list: {
+                    Constructor: this.ResultsViewAugmentation,
+                    shown: true,
+                    constructorArguments: {
+                        resultsView: resultsView,
+                        queryModel: this.queryModel,
+                        indexesCollection: this.indexesCollection,
+                        previewModeModel: this.previewModeModel,
+                        scrollModel: this.middleColumnScrollModel
+                    },
+                    events: {
+                        // needs binding as the view container will be the eventual listener
+                        'rightSideContainerHideToggle': _.bind(this.rightSideContainerHideToggle, this)
+                    },
+                    selector: {
+                        displayNameKey: 'list',
+                        icon: 'hp-list'
+                    }
                 },
-                selector: {
-                    displayNameKey: 'list',
-                    icon: 'hp-list'
+                sunburst: {
+                    Constructor: SunburstView,
+                    constructorArguments: subViewArguments,
+                    shown: hasBiRole && this.displayDependentParametricViews,
+                    selector: {
+                        displayNameKey: 'sunburst',
+                        icon: 'hp-favorite'
+                    }
+                },
+                map: {
+                    Constructor: MapResultsView,
+                    shown: hasBiRole && configuration().map.enabled,
+                    constructorArguments: _.extend({
+                        resultsStep: this.mapViewResultsStep,
+                        allowIncrement: this.mapViewAllowIncrement
+                    }, subViewArguments),
+                    selector: {
+                        displayNameKey: 'map',
+                        icon: 'hp-map-view'
+                    }
+                },
+                table: {
+                    Constructor: TableView,
+                    constructorArguments: subViewArguments,
+                    shown: hasBiRole && this.displayDependentParametricViews,
+                    selector: {
+                        displayNameKey: 'table',
+                        icon: 'hp-table'
+                    }
                 }
-            }, {
-                Constructor: SunburstView,
-                constructorArguments: subViewArguments,
-                id: 'sunburst',
-                shown: hasBiRole && this.displayDependentParametricViews,
-                uniqueId: _.uniqueId('results-view-item-'),
-                selector: {
-                    displayNameKey: 'sunburst',
-                    icon: 'hp-favorite'
-                }
-            }, {
-                Constructor: MapResultsView,
-                id: 'map',
-                shown: hasBiRole && configuration().map.enabled,
-                uniqueId: _.uniqueId('results-view-item-'),
-                constructorArguments: _.extend({
-                    resultsStep: this.mapViewResultsStep,
-                    allowIncrement: this.mapViewAllowIncrement
-                }, subViewArguments),
-                selector: {
-                    displayNameKey: 'map',
-                    icon: 'hp-map-view'
-                }
-            }, {
-                Constructor: TableView,
-                constructorArguments: subViewArguments,
-                id: 'table',
-                shown: hasBiRole && this.displayDependentParametricViews,
-                uniqueId: _.uniqueId('results-view-item-'),
-                selector: {
-                    displayNameKey: 'table',
-                    icon: 'hp-table'
-                }
-            }], {shown: true});
+            };
+
+            this.resultsViews = configuration().resultViewOrder
+                .filter(function(viewId) {
+                    return resultsViewsMap[viewId] && resultsViewsMap[viewId].shown;
+                })
+                .map(function(viewId) {
+                    return _.extend({
+                        id: viewId,
+                        uniqueId: _.uniqueId('results-view-item-')
+                    }, resultsViewsMap[viewId]);
+                });
 
             var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
