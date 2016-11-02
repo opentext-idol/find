@@ -39,10 +39,6 @@ public class TableView  extends ParametricFieldView {
         return findElements(By.cssSelector("table.dataTable:not(.DTFC_Cloned) td:first-child")).size();
     }
 
-    public int totalRows() {
-        return getIntValue(getEntriesGroup("entries"));
-    }
-
     public int minRow() {
         return getIntValue(getEntriesGroup("from"));
     }
@@ -56,7 +52,7 @@ public class TableView  extends ParametricFieldView {
     }
 
     public WebElement nextButton() {
-        return findElement(By.cssSelector(".paginate_button.next"));
+        return findElement(By.cssSelector(".paginate_button.next a"));
     }
 
     public void previousPage() {
@@ -106,11 +102,16 @@ public class TableView  extends ParametricFieldView {
     }
 
     private void paginate(final WebElement button) {
-        final WebElement firstCell = findElement(By.cssSelector("table.dataTable:not(.DTFC_Cloned) td:first-child"));
-
+        final int currentPage = Integer.parseInt(findElement(By.cssSelector(".paginate_button.active")).getText());
         button.click();
+        waitUntilOnNextPage(currentPage);
+    }
 
-        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.stalenessOf(firstCell));
+    private void waitUntilOnNextPage(final int page) {
+        new WebDriverWait(getDriver(), 10)
+                .until(ExpectedConditions.presenceOfElementLocated(
+                        By.xpath(".//li[contains(@class,'paginate_button') and contains(@class,'active')]" +
+                                "/a[contains(text(),'" + (page - 1) + "') or contains(text(),'" + (page + 1) + "')]")));
     }
 
     private String getEntriesGroup(final String groupName) {

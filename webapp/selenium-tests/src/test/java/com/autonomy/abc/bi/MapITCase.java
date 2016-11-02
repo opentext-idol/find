@@ -66,7 +66,6 @@ public class MapITCase extends IdolFindTestBase {
         checkMarkersPresent(mapView);
     }
 
-
     private int checkMarkersPresent(MapView mapView) {
         assertThat("Test requires there to be location results for the query", !mapView.noResults());
 
@@ -78,6 +77,7 @@ public class MapITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-394")
     public void testMapSummariesHaveNoPlaceholder() {
+        LOGGER.info("Test failing on Selenium hub");
         mapView = search("saint");
         checkMarkersPresent(mapView);
 

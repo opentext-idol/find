@@ -34,11 +34,11 @@ public class TopicMapView {
     }
 
     public boolean topicMapPresent() {
-        return !findElements(By.cssSelector(".entity-topic-map.clickable")).isEmpty();
+        return !findElements(By.cssSelector(".entity-topic-map.clickable:not(.hide)")).isEmpty();
     }
 
     public WebElement emptyMessage() {
-        return findElement(By.cssSelector(".entity-topic-map-empty"));
+        return findElement(By.cssSelector(".entity-topic-map-empty p"));
     }
 
     public Slider speedVsAccuracySlider() {

@@ -225,8 +225,8 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     @ResolvedBug("FIND-247")
-    //Because filter categories all collapse after selecting 1, must be quick or throws NoSuchElement
     public void testSelectDifferentCategoryFiltersAndResultsLoad() throws InterruptedException {
+        LOGGER.info("Because filter categories all collapse after selecting 1, must be quick or throws NoSuchElement");
         final ResultsView results = findService.search("face");
         final FilterPanel filterPanel = filters();
         final FindParametricFilter filter1 = filterPanel.checkBoxesForParametricFieldContainer(0).get(0);
