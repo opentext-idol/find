@@ -30,9 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;

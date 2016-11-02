@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.FindElementFactory;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResult;
@@ -117,7 +118,10 @@ public class SimilarDocumentsITCase extends FindTestBase {
     public void testPublicIndexesSimilarDocs() {
         assumeThat(getConfig().getType(), Matchers.is(ApplicationType.HOSTED));
 
-        findService.search(new Query("Hammertime").withFilter(IndexFilter.PUBLIC));
+        findService.search(new Query("Hammertime"));
+        final FindElementFactory elementFactory = getElementFactory();
+        elementFactory.getFilterPanel().indexesTreeContainer().expand();
+        elementFactory.getFindPage().filterBy(IndexFilter.PUBLIC);
 
         for (int i = 1; i <= 5; i++) {
             verifySimilarDocsNotEmpty(i);
@@ -160,7 +164,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     @ResolvedBug("FIND-496")
     @ActiveBug(value = "FIND-626", type = ApplicationType.HOSTED)
     public void testInfiniteScroll(){
-        findService.search(new Query("blast").withFilter(IndexFilter.ALL));
+        findService.search(new Query("blast"));
 
         similarDocuments = findService.goToSimilarDocuments(1);
 

@@ -112,7 +112,9 @@ public class FindPage extends AppElement implements AppPage,
 
     public String correctedQuery() { return findElement(By.className("corrected-query")).getText(); }
 
-    public boolean hasAutoCorrected() { return !findElements(By.className("original-query")).isEmpty(); }
+    public boolean hasAutoCorrected() {
+        final List<WebElement> originalQuery = findElements(By.className("original-query"));
+        return !originalQuery.isEmpty() && originalQuery.get(0).isDisplayed(); }
 
     public void ensureTermNotAutoCorrected() {
         if(hasAutoCorrected()) {
@@ -136,6 +138,10 @@ public class FindPage extends AppElement implements AppPage,
         findElement(By.className("results-number")).click();
         DriverUtil.scrollToBottom(getDriver());
         waitForResultsToLoad();
+    }
+
+    public boolean resultsMessagePresent() {
+        return !findElements(By.className("result-message")).isEmpty();
     }
 
     protected WebElement mainContainer() {

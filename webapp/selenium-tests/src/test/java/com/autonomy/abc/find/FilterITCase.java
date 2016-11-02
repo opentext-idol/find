@@ -372,9 +372,9 @@ public class FilterITCase extends FindTestBase {
         final Date start = getDate(DateOption.MONTH);
         final Date end = getDate(DateOption.WEEK);
 
+        findService.search(new Query("Corbyn"));
         filters().expandDateFilters();
-        findService.search(new Query("Corbyn")
-                                   .withFilter(new StringDateFilter().from(start).until(end)));
+        findPage.filterBy(new StringDateFilter().from(start).until(end));
 
         Waits.loadOrFadeWait();
         for(int unused = 0; unused < 3; unused++) {

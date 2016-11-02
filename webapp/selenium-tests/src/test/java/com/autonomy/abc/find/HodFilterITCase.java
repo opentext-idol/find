@@ -83,9 +83,10 @@ public class HodFilterITCase extends HodFindTestBase {
     public void testAuthor(){
         final String author = "FIFA.COM";
 
-        ResultsView results = findService.search(new Query("football")
-                .withFilter(new IndexFilter("fifa"))
-                .withFilter(new ParametricFilter("Author", author)));
+        ResultsView results = findService.search(new Query("football"));
+        filters().indexesTreeContainer().expand();
+        findPage.filterBy(new IndexFilter("fifa"));
+        findPage.filterBy(new ParametricFilter("Author", author));
 
         assertThat(results.resultsDiv(), not(containsText(Errors.Find.GENERAL)));
 

@@ -78,11 +78,6 @@ public class DocumentPreviewITCase extends FindTestBase {
         final Session session = getMainSession();
 
         final ResultsView results = findService.search("general");
-        if (isHosted()) {
-            // e.g. FIFA contains links that redirect to new pages
-            findPage.filterBy(new IndexFilter("simpsonsarchive"));
-        }
-
         results.waitForResultsToLoad();
 
         for (final FindResult queryResult : results.getResults(4)) {
@@ -117,6 +112,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         final ResultsView results = findService.search("m");
         getElementFactory().getFilterPanel().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter(filters().getIndex(1)));
+        findPage.waitForLoad();
 
         InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
         final DetailedPreviewPage detailedPreviewPage = inlinePreview.openPreview();
