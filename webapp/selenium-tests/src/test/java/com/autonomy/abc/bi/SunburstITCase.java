@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
@@ -38,7 +39,6 @@ public class SunburstITCase extends IdolFindTestBase {
     }
 
     //TODO HAVE CHANGED getSunburst() IN ORDER TO GET THE ACTIVE THING
-    //NEED TO LOOK AT THE CONTAINER STUFF
     @Before
     public void setUp() {
         findPage = getElementFactory().getFindPage();
@@ -148,7 +148,10 @@ public class SunburstITCase extends IdolFindTestBase {
     @Test
     public void testClickingSunburstSegmentFiltersTheSearch() {
         //needs to search something that only has 2 parametric filter types
-        search("churchill");
+        search("general");
+
+        LOGGER.info("Test only works if filtering by the clicked filter leaves other filters in different categories clickable");
+        results.parametricSelectionDropdown(1).selectItem(1);
 
         final String fieldValue = results.hoverOnSegmentGetCentre(1);
         final String fieldName = results.getSelectedFieldName(1);

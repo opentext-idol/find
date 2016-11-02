@@ -36,7 +36,7 @@ public class SunburstView extends ParametricFieldView {
     }
 
     public void waitForSunburst(){
-        new WebDriverWait(getDriver(),15).withMessage("waiting for sunburst or sunburst message")
+        new WebDriverWait(getDriver(), 35).withMessage("waiting for sunburst or sunburst message")
                 .until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(final WebDriver driver) {
