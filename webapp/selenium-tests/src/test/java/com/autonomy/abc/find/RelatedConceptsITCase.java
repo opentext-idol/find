@@ -119,7 +119,8 @@ public class RelatedConceptsITCase extends FindTestBase {
     @ResolvedBug("FIND-666")
     @ActiveBug({"FIND-665"})
     public void testAddRemoveConcepts() {
-        searchAndWait(findService, "jungle");
+        final String queryTerm = "general";
+        searchAndWait(findService, queryTerm);
 
         final Collection<String> concepts = new ArrayList<>();
         final String firstConcept = clickFirstNewConcept(concepts, relatedConceptsPanel().relatedConcepts());
@@ -134,7 +135,7 @@ public class RelatedConceptsITCase extends FindTestBase {
         verifyThat(moreConcepts, hasSize(1));
         verifyThat(moreConcepts, not(hasItem(equalToIgnoringCase('"' + secondConcept + '"'))));
         verifyThat(moreConcepts, hasItem(equalToIgnoringCase('"' + firstConcept + '"')));
-        verifyThat(navBar.getSearchBoxTerm(), is("jungle"));
+        verifyThat(navBar.getSearchBoxTerm(), is(queryTerm));
     }
 
     @Test
@@ -176,7 +177,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     @Test
     @RelatedTo({"FIND-243", "FIND-110"})
     @ResolvedBug("FIND-666")
-    @Ignore
+    @Ignore("Test will never currently pass due to lack of routing/push-state")
     public void testRefreshAddedConcepts() {
         searchAndWait(findService, "fresh");
 
@@ -188,7 +189,6 @@ public class RelatedConceptsITCase extends FindTestBase {
         navBar = getElementFactory().getTopNavBar();
 
         verifyThat(navBar.getSearchBoxTerm(), is("fresh"));
-        LOGGER.info("Test will always currently fail due to lack of routing/push-state");
         verifyThat(conceptsPanel.selectedConceptHeaders(), containsItems(concepts));
     }
 

@@ -77,7 +77,7 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
 
     private String getField(final String name) {
         try {
-            return findElement(By.xpath(".//td[contains(text(), '" + name + "')]/following::td")).getText();
+            return findElement(By.xpath(".//th[contains(text(), '" + name + "')]/following::td")).getText();
         } catch (final NoSuchElementException e) {
             return null;
         }

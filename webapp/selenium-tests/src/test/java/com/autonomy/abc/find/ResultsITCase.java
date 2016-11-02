@@ -215,6 +215,8 @@ public class ResultsITCase extends FindTestBase {
         for (String query : nonLatinQueries) {
             if(!foundResults) {
                 search(query);
+                findPage.ensureTermNotAutoCorrected();
+                findPage.waitForParametricValuesToLoad();
 
                 if (findPage.totalResultsNum() > 0) {
                     foundResults = true;

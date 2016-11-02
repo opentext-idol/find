@@ -10,12 +10,10 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResult;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
 import com.hp.autonomy.frontend.selenium.control.Session;
 import com.hp.autonomy.frontend.selenium.control.Window;
-import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.RelatedTo;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Locator;
@@ -78,11 +76,17 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
     }
 
     @Test
-    public void testBetween30And60Results(){
+    @ResolvedBug("CCUK-3647")
+    public void testMessageWhenRunOutOfResults(){
         ResultsView results = findService.search(new Query("connectors"));
+        getElementFactory().getFilterPanel().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter("Site Search"));
 
-        findPage.scrollToBottom();
+        int count = 0;
+        while(count < 10 && !findPage.resultsMessagePresent()) {
+            findPage.scrollToBottom();
+            count++;
+        }
 
         verifyThat(results.resultsDiv(), containsText("No more results found"));
     }
@@ -92,7 +96,9 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
     @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
     public void testDocumentPreview(){
         final Index index = new Index("fifa");
-        ResultsView results = findService.search(new Query("document preview").withFilter(new IndexFilter(index)));
+        ResultsView results = findService.search(new Query("document preview"));
+        getElementFactory().getFilterPanel().indexesTreeContainer().expand();
+        findPage.filterBy(new IndexFilter(index));
 
         for(final QueryResult queryResult : results.getResults(5)) {
             final DocumentViewer documentViewer = queryResult.openDocumentPreview();
