@@ -99,9 +99,9 @@ public class TableITCase extends IdolFindTestBase {
 
     @Test
     public void testPagination() {
-        init("*");
-
+        getElementFactory().getFindPage().goToTable();
         tableView.waitForTable();
+
         assumeThat(tableView.currentPage(), is(1));
 
         final String initialText = tableView.text(1, 0);

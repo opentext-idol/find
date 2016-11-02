@@ -153,7 +153,6 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         ResultsComparisonView resultsComparison = elementFactory.getResultsComparison();
         TopicMapView map = resultsComparison.topicMapView(AppearsInTopicMap.BOTH);
         verifyThat("Map not present", !map.topicMapPresent());
-        verifyThat("There is no map to display", map.emptyMessage(), displayed());
     }
 
 }
