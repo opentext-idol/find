@@ -110,7 +110,8 @@ public class ResultsITCase extends FindTestBase {
     public void testNoResults() {
         final ResultsView results = findService.search("thissearchwillalmostcertainlyreturnnoresults");
 
-        new WebDriverWait(getDriver(), 60L).withMessage("No results message should appear").until(ExpectedConditions.textToBePresentInElement(results.resultsDiv(), "No results found"));
+        new WebDriverWait(getDriver(), 60L).withMessage("No results message should appear")
+                .until(ExpectedConditions.textToBePresentInElement(results.resultsDiv(), "No results found"));
 
         findPage.scrollToBottom();
 
