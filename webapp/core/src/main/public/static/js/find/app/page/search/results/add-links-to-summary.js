@@ -6,10 +6,18 @@
 define([
     'underscore'
 ], function(_) {
+
     /**
-     * Replace the placeholder highlighting tags and instances of the given entity titles (if provided) with anchor tags in the summary.
+     * Replace the placeholder highlighting tags and instances of the given entity titles (if provided) with anchor tags
+     * in the summary.
+     * @param {string} summary May be null
+     * @return {string}
      */
-    return function addLinksToSummary(summary) {
+    function addLinksToSummary(summary) {
+        if (!summary) {
+            return '';
+        }
+
         // Find highlighted query terms
         var queryTextRegex = /<HavenSearch-QueryText-Placeholder>(.*?)<\/HavenSearch-QueryText-Placeholder>/g;
         var queryText = [];
@@ -30,6 +38,8 @@ define([
         }
 
         return escapedSummaryElements.join('');
-    };
+    }
+
+    return addLinksToSummary;
 
 });
