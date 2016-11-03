@@ -8,11 +8,15 @@ import com.autonomy.abc.selenium.query.AggregateQueryFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryService;
 import com.hp.autonomy.frontend.selenium.util.Waits;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FindService implements QueryService<ResultsView> {
     private final FindElementFactory elementFactory;
@@ -63,6 +67,37 @@ public class FindService implements QueryService<ResultsView> {
             }
         }
         return "";
+    }
+
+    public ImmutablePair<String, String> getPairOfTermsThatDoNotShareResults() {
+        final List<ImmutablePair<String, String>> potentialTerms = Arrays.asList(
+                new ImmutablePair("\"polar bear\"","\"opposable thumbs\""),
+                new ImmutablePair("\"upshot\"","\"space invaders\""),
+                new ImmutablePair("\"animalistic\"","\"freefall\""));
+
+        for (ImmutablePair<String, String> pair : potentialTerms) {
+            Set<String> results1 = searchAndGetResults(pair.getLeft());
+            Set<String> results2 = searchAndGetResults(pair.getRight());
+
+            if(results1.size() > 0 && results2.size() > 0) {
+                results1.retainAll(results2);
+                if (results1.size() == 0) {
+                    return pair;
+                }
+            }
+        }
+        return null;
+    }
+
+    private Set<String> searchAndGetResults(final String term) {
+        search(term);
+
+        final ResultsView resultsView = elementFactory.getResultsPage();
+        resultsView.waitForResultsToLoad();
+
+        Set<String> results = new HashSet<>(resultsView.getResultTitles());
+        elementFactory.getConceptsPanel().removeAllConcepts();
+        return results;
     }
 
     /**

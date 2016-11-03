@@ -21,6 +21,7 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,11 +66,9 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         findService = getApplication().findService();
         savedSearchService = getApplication().savedSearchService();
         elementFactory = getElementFactory();
-        findService.search("long set-up");
 
         savedSearchService.waitForSomeTabsAndDelete();
 
-        elementFactory.getConceptsPanel().removeAllConcepts();
         findPage = getElementFactory().getFindPage();
         findPage.goToListView();
         elementFactory.getResultsPage().waitForResultsToLoad();
@@ -97,15 +96,17 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     }
 
     @Test
-    //TODO needs to find 2 search terms that never share results but each have results
     public void testNoOverlap() {
-        findPage.waitForParametricValuesToLoad();
+        final ImmutablePair<String, String> terms = findService.getPairOfTermsThatDoNotShareResults();
 
+        assertThat("Found pair of terms that have no overlapping results", terms, not(null));
+
+        findPage.waitForParametricValuesToLoad();
         final FilterPanel filters = elementFactory.getFilterPanel();
         filters.indexesTreeContainer().expand();
 
-        final Query polar = new Query("\"polar bear\"").withFilter(new IndexFilter(filters.getIndex(0)));
-        final Query opposites = new Query("\"opposable thumbs\"").withFilter(new IndexFilter(filters.getIndex(1)));
+        final Query polar = new Query(terms.getLeft());
+        final Query opposites = new Query(terms.getRight());
 
         searchAndSave(polar, "polar");
         savedSearchService.openNewTab();
