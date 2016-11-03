@@ -115,8 +115,6 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
 
         verifyThat("Frame has content", frameText, CoreMatchers.not(isEmptyOrNullString()));
         verifyThat(frameText, CoreMatchers.not(CoreMatchers.containsString("server error")));
-
-        //TODO Can no longer open in a new tab from document preview - should probably check whether can open full preview
     }
 
     @Test

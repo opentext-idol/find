@@ -133,15 +133,14 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-463")
     public void testFilterPanelAndModalLinked() {
         searchAndWait("cats");
         final FilterPanel filterPanel = filters();
 
         findPage.waitForParametricValuesToLoad();
-        //TODO: when everyone has same data, make test select across several filter categories
         final ParametricFieldContainer container = filterPanel.parametricField(1);
         final String filterCategory = container.filterCategoryName();
+
         FindParametricFilter checkbox = filterPanel.checkboxForParametricValue(1, 1);
         final List<String> selectedFilter = Arrays.asList(checkbox.getName());
         checkbox.check();

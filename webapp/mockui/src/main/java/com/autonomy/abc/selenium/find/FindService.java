@@ -12,6 +12,7 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class FindService implements QueryService<ResultsView> {
     private final FindElementFactory elementFactory;
@@ -47,6 +48,21 @@ public class FindService implements QueryService<ResultsView> {
         SimilarDocumentsView similarDocuments = elementFactory.getSimilarDocumentsView();
         similarDocuments.waitForLoad();
         return similarDocuments;
+    }
+
+    public String termWithBetween1And30Results(List<String> candidates) {
+        for(String term : candidates) {
+            search(term);
+            findPage.waitForLoad();
+            final int resultsNum = findPage.totalResultsNum();
+            elementFactory.getConceptsPanel().removeAllConcepts();
+
+            if (resultsNum > 0 && resultsNum <= 30 ) {
+                candidates.subList(0, candidates.indexOf(term)+1).clear();
+                return term;
+            }
+        }
+        return "";
     }
 
     /**

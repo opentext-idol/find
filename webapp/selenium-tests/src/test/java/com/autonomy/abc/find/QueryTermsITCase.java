@@ -26,9 +26,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.openqa.selenium.WebDriverException;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
@@ -103,20 +101,19 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    //TODO: test is bad because depends on having less than 30 of both results
     public void testBooleanOperators() {
         goToListView();
 
-        LOGGER.info("Test only works if query terms both have <=30 results ");
+        List<String> potentialTerms = new ArrayList<>(Arrays.asList("brevity", "tessellate", "hydrangea", "\"dearly departed\"", "abstruse", "lobotomy"));
+        final String termOne = findService.termWithBetween1And30Results(potentialTerms);
+        final String termTwo = findService.termWithBetween1And30Results(potentialTerms);
 
-        final String termOne = "brevity";
+        assertThat("Test only works if query terms both have <=30 results ","",not(anyOf(is(termOne),is(termTwo))));
 
         final ResultsView results = findService.search(termOne);
         final List<String> musketeersSearchResults = results.getResultTitles();
         final int numberOfMusketeersResults = musketeersSearchResults.size();
         removeAllConcepts();
-
-        final String termTwo = "\"dearly departed\"";
 
         findService.search(termTwo);
         final List<String> dearlyDepartedSearchResults = results.getResultTitles();
@@ -168,7 +165,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM, against = Deployment.DEVELOP)
     @Ignore("Pending independence of error message tests from QueryTestHelpers")
-    //TODO: Test needs to be on the first tab (topic map) when check for error displayed.
+    //TODO: Test needs to be on the first tab (topic map) when check for error displayed - part of splitting queryHelpers
     public void testCorrectErrorMessageDisplayed() {
         goToListView();
 

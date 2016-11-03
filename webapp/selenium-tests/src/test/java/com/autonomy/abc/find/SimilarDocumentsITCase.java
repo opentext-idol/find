@@ -157,7 +157,6 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
             previousTitle = docTitle;
         }
-        //TODO: routing is better now -> check where should go
     }
 
     @Test
