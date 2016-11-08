@@ -29,7 +29,7 @@ class FindIndexCategoryNode extends IndexCategoryNode {
     }
 
     @Override
-    protected List<IndexNodeElement> getIndexNodes() {
+    public List<IndexNodeElement> getIndexNodes() {
         final List<IndexNodeElement> nodes = new ArrayList<>();
         for (final WebElement element : container.findElements(By.cssSelector(".clickable[data-name]"))) {
             nodes.add(new FindIndexLeafNode(element));
@@ -38,7 +38,6 @@ class FindIndexCategoryNode extends IndexCategoryNode {
     }
 
     @Override
-    //TODO update this to use index name rather than data-name
     protected IndexNodeElement find(final String name) {
         final WebElement childElement = container.findElement(By.xpath(".//*[normalize-space(.)='" + name + "' and contains(@class,'clickable')]"));
         return new FindIndexLeafNode(childElement);
