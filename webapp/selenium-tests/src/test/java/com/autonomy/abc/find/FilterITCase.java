@@ -112,7 +112,7 @@ public class FilterITCase extends FindTestBase {
 
         Waits.loadOrFadeWait();
         final ParametricFieldContainer container = filterPanel.parametricContainerOfFilter(filterName);
-        final String filterNumber = container.getFilterNumber();
+        final String filterNumber = Integer.toString(container.getFilterNumber());
         final String filterCategory = container.filterCategoryName();
 
         container.seeAll();

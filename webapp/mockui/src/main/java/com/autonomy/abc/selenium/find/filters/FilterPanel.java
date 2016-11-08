@@ -22,6 +22,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.hp.autonomy.frontend.selenium.util.CssUtil.cssifyIndex;
 
@@ -49,14 +50,13 @@ public class FilterPanel {
         new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
     }
 
-    //TODO: Should return IndexesFilterContainer
-    public ListFilterContainer indexesTreeContainer() {
+    public IndexesTreeContainer indexesTreeContainer() {
         final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
         final WebElement container = ElementUtil.ancestor(heading, 2);
         return new IndexesTreeContainer(container, driver);
     }
 
-    DateFilterContainer dateFilterContainer() {
+    public DateFilterContainer dateFilterContainer() {
         final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Dates')]"));
         final WebElement container = ElementUtil.ancestor(heading, 2);
         return new DateFilterContainer(container, driver);
@@ -92,15 +92,16 @@ public class FilterPanel {
         return parametricFieldContainers().get(i);
     }
 
-    /**
-     * Gets the index of the nth non-empty filter container
-     */
     public int nonZeroParamFieldContainer(final int n) {
+        return nthParametricThatSatisfiedCondition(n,(x) -> !"0".equals(x));
+    }
+
+    public int nthParametricThatSatisfiedCondition(final int n, Predicate<Integer> op) {
         int index = 0;
         int nonZeroCount = 0;
         for(final WebElement container : getParametricFilters()) {
             final ParametricFieldContainer candidate = new ParametricFieldContainer(container, driver);
-            if(!"0".equals(candidate.getFilterNumber())) {
+            if(op.test(candidate.getFilterNumber())) {
                 if(nonZeroCount >= n) {
                     return index;
                 } else {
@@ -159,8 +160,6 @@ public class FilterPanel {
         return nodes;
     }
 
-    public void expandDateFilters() { dateFilterContainer().expand(); }
-
     public void collapseAll() {
         allFilterContainers().forEach(Collapsible::collapse);
     }
@@ -186,7 +185,7 @@ public class FilterPanel {
         final int tooManyFiltersToBother = 600;
 
         final ParametricFieldContainer container = parametricField(index);
-        if(Integer.parseInt(container.getFilterNumber()) > tooManyFiltersToBother){
+        if(container.getFilterNumber() > tooManyFiltersToBother){
             return true;
         }
         container.expand();

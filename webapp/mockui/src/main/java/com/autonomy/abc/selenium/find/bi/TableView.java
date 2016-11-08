@@ -28,19 +28,17 @@ public class TableView  extends ParametricFieldView {
     }
 
     public void waitForTable(){
-        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.invisibilityOfElementLocated(By.className("parametric-loading")));
+        new WebDriverWait(getDriver(), 25).until(ExpectedConditions.invisibilityOfElementLocated(By.className("parametric-loading")));
     }
 
     public int columnCount() {
-        return findElements(By.cssSelector("table.dataTable:not(.DTFC_Cloned) th")).size();
+        int columns = findElements(By.cssSelector("table.dataTable:not(.DTFC_Cloned) th")).size();
+        if(findElements(By.cssSelector("table.dataTable")).size() > 1) { columns = columns/2; }
+        return columns;
     }
 
     public int rowCount() {
         return findElements(By.cssSelector("table.dataTable:not(.DTFC_Cloned) td:first-child")).size();
-    }
-
-    public int minRow() {
-        return getIntValue(getEntriesGroup("from"));
     }
 
     public int maxRow() {

@@ -20,8 +20,8 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
         return filterCategory().getText().split(" \\(")[0];
     }
 
-    public String getFilterNumber() {
-        return filterCategory().getText().split(" \\(")[1].replaceAll("[()]","");
+    public int getFilterNumber() {
+        return Integer.parseInt(filterCategory().getText().split(" \\(")[1].replaceAll("[()]",""));
     }
 
     public List<FindParametricFilter> getFilters() {
