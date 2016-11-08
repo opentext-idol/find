@@ -266,7 +266,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-400")
     @Ignore("Numeric widget reloading currently makes it impossible to Selenium test this.")
-    public void testInputDateBoundsAsText() throws Exception {
+    public void testInputDateBoundsAsText() {
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("red");
         final String startDate = "1976-10-22 08:46";
         final String endDate = "2012-10-10 21:49";
@@ -349,19 +349,18 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    //TODO: improve by getting the range and minValue from the widget at the time
-    //NB: the proportion of the graph needs to be commensurate with the data in the graph
-    //Set range and minValue to something reasonable for your graph
-    public void testInputNumericBoundsAsText() throws Exception {
-        final double range = 0.3;
-        final String minValue = "0.4";
-
-        final String maxValue = Double.toString(Double.parseDouble(minValue) + range);
-        final int rangeMinusDelta = (int) (range * 0.98);
-        final int rangePlusDelta = (int) (range * 1.02);
-
+    public void testInputNumericBoundsAsText() {
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstNumericGraph("red");
-        final int numericUnitsPerChartWidth = mainGraph.getRange() / mainGraph.graphWidth();
+
+        final double fractionToSelect = 3.0;
+        final double selectRange = mainGraph.getRange()/fractionToSelect;
+        final String minValue = mainGraph.minFieldValue();
+
+        final String maxValue = Double.toString(Double.parseDouble(minValue) + selectRange);
+        final int rangeMinusDelta = (int) (selectRange * 0.98);
+        final int rangePlusDelta = (int) (selectRange * 1.02);
+
+        final int numericUnitsPerChartWidth = (int) mainGraph.getRange() / mainGraph.graphWidth();
 
         //#1 testing that correct proportion of chart selected
         mainGraph = setMinAndMax(minValue, maxValue, mainGraph);
@@ -384,7 +383,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-393")
-    public void testTextMaxBoundCannotBeLessThanMin() throws Exception {
+    public void testTextMaxBoundCannotBeLessThanMin() {
         final String lowNum = "0";
         final String highNum = "600";
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstNumericGraph("red");
@@ -400,7 +399,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         verifyThat("Max bound re-set to value of min", mainGraph.maxFieldValue(), is(highNum));
     }
 
-    private MainNumericWidget setMinAndMax(final String min, final String max, MainNumericWidget mainGraph) throws Exception {
+    private MainNumericWidget setMinAndMax(final String min, final String max, MainNumericWidget mainGraph) {
         Waits.loadOrFadeWait();
         Waits.loadOrFadeWait();
         mainGraph.setMinValueViaText(min);
@@ -427,11 +426,11 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     private void checkBoundsForPlaceElevationWidget() {
         findPage.filterBy(new IndexFilter("Cities"));
         MainNumericWidget mainGraph = findPage.mainGraph();
-        final int originalRange = mainGraph.getRange();
+        final int originalRange = (int) mainGraph.setAndGetFullRange();
 
         findService.search("Tse");
         mainGraph = findPage.mainGraph();
-        final int newRange = mainGraph.getRange();
+        final int newRange = (int) mainGraph.setAndGetFullRange();
 
         verifyThat("Bounds are determined by current query for non-date widget", newRange, lessThan(originalRange));
         mainGraph.reset();

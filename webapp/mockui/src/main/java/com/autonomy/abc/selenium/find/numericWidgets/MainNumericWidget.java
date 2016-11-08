@@ -47,10 +47,14 @@ public class MainNumericWidget extends AppElement {
         findElement(By.className("numeric-parametric-no-max")).click();
     }
 
-    public int getRange() {
+    public double setAndGetFullRange() {
         noMin();
         noMax();
-        return Integer.parseInt(maxFieldValue()) - Integer.parseInt(minFieldValue());
+        return getRange();
+    }
+
+    public double getRange() {
+        return Double.parseDouble(maxFieldValue()) - Double.parseDouble(minFieldValue());
     }
 
     public WebElement errorMessage() {
@@ -94,7 +98,7 @@ public class MainNumericWidget extends AppElement {
         clickAndDrag(100, bar);
     }
 
-    //Drag and drop not element -> needs to go in DriverUtils in QA infrastructure!!!
+    //TODO: Move to QA infrastructure -> DriverUtils
     public void clickAndDrag(int x_dest, WebElement startingElement) {
         final Actions action = new Actions(driver);
         action.moveToElement(startingElement)
@@ -136,7 +140,7 @@ public class MainNumericWidget extends AppElement {
         hoveringOffSide(graphAsWidget().selectionRec(), 0, dimensions.getHeight() / 100);
     }
 
-    //IS GOING TO DRIVERUTILS (also the one from SunburstView)
+    //TODO: move to DriverUtils
     private void hoveringOffSide(final WebElement element, final int xOffSet, final int yOffSet) {
         final Actions builder = new Actions(driver);
         builder.moveToElement(element, xOffSet, yOffSet);
