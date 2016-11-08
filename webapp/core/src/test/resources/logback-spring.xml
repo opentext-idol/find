@@ -5,5 +5,10 @@
   -->
 
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <root level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE" />
+    </root>
 </configuration>
