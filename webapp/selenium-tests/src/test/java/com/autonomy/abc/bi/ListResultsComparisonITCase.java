@@ -99,7 +99,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     public void testNoOverlap() {
         final ImmutablePair<String, String> terms = findService.getPairOfTermsThatDoNotShareResults();
 
-        assertThat("Found pair of terms that have no overlapping results", terms, not(null));
+        assertThat("Found pair of terms that have no overlapping results", terms.getLeft(), not(""));
 
         findPage.waitForParametricValuesToLoad();
         final FilterPanel filters = elementFactory.getFilterPanel();

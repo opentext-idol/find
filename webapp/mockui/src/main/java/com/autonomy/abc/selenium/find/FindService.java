@@ -86,7 +86,7 @@ public class FindService implements QueryService<ResultsView> {
                 }
             }
         }
-        return null;
+        return new ImmutablePair<>("","");
     }
 
     private Set<String> searchAndGetResults(final String term) {

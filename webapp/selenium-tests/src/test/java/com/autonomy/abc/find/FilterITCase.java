@@ -310,7 +310,7 @@ public class FilterITCase extends FindTestBase {
     public void testQuickDoubleClickOnDateFilterNotCauseError() {
         final ResultsView results = findService.search("wookie");
 
-        filters().expandDateFilters();
+        filters().dateFilterContainer().expand();
         toggleDateSelection(DateOption.MONTH);
         toggleDateSelection(DateOption.MONTH);
 
@@ -337,7 +337,7 @@ public class FilterITCase extends FindTestBase {
     private void preDefinedDateFiltersVersusCustomDateFilters(final DateOption period) {
         final ResultsView results = findService.search("*");
 
-        filters().expandDateFilters();
+        filters().dateFilterContainer().expand();
         toggleDateSelection(period);
         final List<String> preDefinedResults = results.getResultTitles();
         findPage.filterBy(new StringDateFilter().from(getDate(period)).until(new Date()));
@@ -372,7 +372,7 @@ public class FilterITCase extends FindTestBase {
         final Date end = getDate(DateOption.WEEK);
 
         findService.search(new Query("Corbyn"));
-        filters().expandDateFilters();
+        filters().dateFilterContainer().expand();
         findPage.filterBy(new StringDateFilter().from(start).until(end));
 
         Waits.loadOrFadeWait();
@@ -388,7 +388,7 @@ public class FilterITCase extends FindTestBase {
     @ResolvedBug("CSA-1577")
     public void testClickingCustomDateFilterDoesNotRefreshResults() {
         final ResultsView results = findService.search("O Captain! My Captain!");
-        filters().expandDateFilters();
+        filters().dateFilterContainer().expand();
         // may not happen the first time
         for(int unused = 0; unused < 5; unused++) {
             toggleDateSelection(DateOption.CUSTOM);
@@ -409,7 +409,7 @@ public class FilterITCase extends FindTestBase {
         final int initialLabelsSize = getFilterLabels().size();
 
         FilterPanel filterPanel = filters();
-        filterPanel.expandDateFilters();
+        filterPanel.dateFilterContainer().expand();
         filterPanel.toggleFilter(DateOption.WEEK);
         results.waitForResultsToLoad();
 
@@ -452,7 +452,7 @@ public class FilterITCase extends FindTestBase {
             assertThat("By default there are no filters present", initialLabelsSize, is(0));
         }
 
-        filterPanel.expandDateFilters();
+        filterPanel.dateFilterContainer().expand();
         filterPanel.toggleFilter(DateOption.WEEK);
         results.waitForResultsToLoad();
 
@@ -485,7 +485,7 @@ public class FilterITCase extends FindTestBase {
 
         final FilterPanel filterPanel = filters();
 
-        filterPanel.expandDateFilters();
+        filterPanel.dateFilterContainer().expand();
         filterPanel.toggleFilter(DateOption.WEEK);
 
         results.waitForResultsToLoad();
@@ -518,7 +518,7 @@ public class FilterITCase extends FindTestBase {
         parametricFilter.check();
         results.waitForResultsToLoad();
 
-        filterPanel.expandDateFilters();
+        filterPanel.dateFilterContainer().expand();
         filterPanel.toggleFilter(DateOption.YEAR);
         results.waitForResultsToLoad();
 

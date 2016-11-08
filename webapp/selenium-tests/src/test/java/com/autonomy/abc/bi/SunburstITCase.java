@@ -38,7 +38,6 @@ public class SunburstITCase extends IdolFindTestBase {
         super(config);
     }
 
-    //TODO HAVE CHANGED getSunburst() IN ORDER TO GET THE ACTIVE THING
     @Before
     public void setUp() {
         findPage = getElementFactory().getFindPage();
@@ -46,9 +45,6 @@ public class SunburstITCase extends IdolFindTestBase {
         findService = getApplication().findService();
         conceptsPanel = getElementFactory().getConceptsPanel();
     }
-
-    //TODO: test that checks the total doc number against what's in sunburst centre
-    //TODO: test that checks what happens to sunburst when docs have 2 (non-mutually exclusive) fields from the same category
 
     @Test
     @ResolvedBug("FIND-382")
