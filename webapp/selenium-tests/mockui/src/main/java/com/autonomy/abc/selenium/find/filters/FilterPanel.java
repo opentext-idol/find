@@ -93,7 +93,7 @@ public class FilterPanel {
     }
 
     public int nonZeroParamFieldContainer(final int n) {
-        return nthParametricThatSatisfiedCondition(n,(x) -> !"0".equals(x));
+        return nthParametricThatSatisfiedCondition(n,(x) -> 0 != (x));
     }
 
     public int nthParametricThatSatisfiedCondition(final int n, Predicate<Integer> op) {
