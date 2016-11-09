@@ -37,7 +37,7 @@ vagrant/scriptcache/
 *.db
 
 # Selenium
-webapp/selenium-tests/.output/
+webapp/selenium-tests/integration-tests/.output/
 webapp/.output/
 
 # Maven
@@ -45,7 +45,7 @@ log/ #webapp?
 webapp/core/target/
 webapp/hod/target/
 webapp/idol/target/
-webapp/mockui/target/
-webapp/selenium-tests/target/
+webapp/selenium-tests/integration-tests/target/
+webapp/selenium-tests/mockui/target/
 webapp/hsod-dist/target/
 webapp/on-prem-dist/target/
