@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.find.numericWidgets;
 
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
@@ -95,17 +96,7 @@ public class MainNumericWidget extends AppElement {
         int index = bars.size() * i / j;
 
         WebElement bar = bars.get(index);
-        clickAndDrag(100, bar);
-    }
-
-    //TODO: Move to QA infrastructure -> DriverUtils
-    public void clickAndDrag(int x_dest, WebElement startingElement) {
-        final Actions action = new Actions(driver);
-        action.moveToElement(startingElement)
-                .clickAndHold()
-                .moveByOffset(x_dest, 0)
-                .release()
-                .build().perform();
+        DriverUtil.clickAndDrag(100, bar, driver);
     }
 
     //Waits
@@ -122,30 +113,17 @@ public class MainNumericWidget extends AppElement {
     }
 
     private ExpectedCondition<Boolean> calendarPopUpsGone() {
-        return new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver webDriver) {
-                return findElements(By.cssSelector("div.bootstrap-datetimepicker-widget")).size() < 1;
-            }
-        };
+        return (WebDriver webdriver) -> findElements(By.cssSelector("div.bootstrap-datetimepicker-widget")).size() < 1;
     }
 
     public void rectangleHoverRight() {
         final Dimension dimensions = graphAsWidget().selectionRec().getSize();
-        hoveringOffSide(graphAsWidget().selectionRec(), (dimensions.getWidth()), dimensions.getHeight() / 100);
+        DriverUtil.hoveringOffSide(graphAsWidget().selectionRec(), new Point(dimensions.getWidth(), dimensions.getHeight() / 100), driver);
     }
 
     public void rectangleHoverLeft() {
         final Dimension dimensions = graphAsWidget().selectionRec().getSize();
-        hoveringOffSide(graphAsWidget().selectionRec(), 0, dimensions.getHeight() / 100);
-    }
-
-    //TODO: move to DriverUtils
-    private void hoveringOffSide(final WebElement element, final int xOffSet, final int yOffSet) {
-        final Actions builder = new Actions(driver);
-        builder.moveToElement(element, xOffSet, yOffSet);
-        final Action hover = builder.build();
-        hover.perform();
+        DriverUtil.hoveringOffSide(graphAsWidget().selectionRec(), new Point(0, dimensions.getHeight() / 100), driver);
     }
 
     //Getting date field values

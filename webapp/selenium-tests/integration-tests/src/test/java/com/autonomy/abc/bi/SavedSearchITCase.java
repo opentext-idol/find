@@ -23,6 +23,7 @@ import com.autonomy.abc.selenium.find.save.*;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -212,9 +213,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-269")
     public void testSearchesWithNumericFilters() {
         final NumericWidgetService widgetService = getApplication().numericWidgetService();
-
-        final MainNumericWidget mainGraph = widgetService.searchAndSelectNthGraph(0, "saint");
-        mainGraph.clickAndDrag(100, mainGraph.graph());
+        DriverUtil.clickAndDrag(100, widgetService.searchAndSelectNthGraph(0, "saint").graph(), getDriver());
 
         getElementFactory().getResultsPage().waitForResultsToLoad();
         saveService.saveCurrentAs("saaaaved", SearchType.QUERY);

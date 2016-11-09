@@ -26,6 +26,7 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -94,7 +95,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-356")
     public void testSelectionRecDoesNotDisappear() {
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "politics");
-        mainGraph.clickAndDrag(100, mainGraph.graph());
+        DriverUtil.clickAndDrag(100, mainGraph.graph(), getDriver());
 
         filters().waitForParametricFields();
 
@@ -161,10 +162,10 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         numericService.selectFilterGraph(filters().getNthGraph(0));
 
         final MainNumericWidget mainGraph = findPage.mainGraph();
-        mainGraph.clickAndDrag(100, mainGraph.graph());
+        DriverUtil.clickAndDrag(100, mainGraph.graph(), getDriver());
         final String label = findPage.filterLabelsText().get(0);
 
-        mainGraph.clickAndDrag(-100, mainGraph.graph());
+        DriverUtil.clickAndDrag(-100, mainGraph.graph(), getDriver());
         final String changedLabel = findPage.filterLabelsText().get(0);
         assertThat("The label has changed", changedLabel, not(is(label)));
     }
@@ -193,12 +194,10 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     private List<String> filterByAllGraphs() {
         final List<String> titles = new ArrayList<>();
-        MainNumericWidget mainGraph;
 
         for (final GraphFilterContainer container : filters().graphContainers()) {
             titles.add(numericService.selectFilterGraph(container));
-            mainGraph = findPage.mainGraph();
-            mainGraph.clickAndDrag(100, mainGraph.graph());
+            DriverUtil.clickAndDrag(100, findPage.mainGraph().graph(), getDriver());
         }
 
         return titles;
@@ -208,7 +207,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-273")
     public void testRemovingViaFilterLabelRemovesSelection() {
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstNumericGraph("space");
-        mainGraph.clickAndDrag(100, mainGraph.graph());
+        DriverUtil.clickAndDrag(100, mainGraph.graph(), getDriver());
 
         filters().waitForParametricFields();
         mainGraph = findPage.mainGraph();
@@ -228,7 +227,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     public void testFilterLabelPresentInSavedQuery() {
         final String searchName = "meh";
         final MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(1, "moon");
-        mainGraph.clickAndDrag(-50, mainGraph.graph());
+        DriverUtil.clickAndDrag(-50, mainGraph.graph(), getDriver());
 
         final SavedSearchService saveService = getApplication().savedSearchService();
         final SearchTabBar searchTabs = getElementFactory().getSearchTabBar();
@@ -286,7 +285,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("tragedy");
         final DatePicker startCalendar = mainGraph.openCalendar(mainGraph.startCalendar());
 
-        assertThat("Calendar widget has opened",mainGraph.calendarHasOpened());
+        assertThat("Calendar widget has opened", mainGraph.calendarHasOpened());
 
         startCalendar.calendarDateSelect(new Date(76, 8, 26));
         final DatePicker endCalendar = mainGraph.openCalendar(mainGraph.endCalendar());
@@ -318,7 +317,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     public void testSnapshotDateRangesDisplayedCorrectly() {
         final MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("dire");
         final String filterType = mainGraph.header();
-        mainGraph.clickAndDrag(-50, mainGraph.graph());
+        DriverUtil.clickAndDrag(-50, mainGraph.graph(), getDriver());
         findPage.waitForParametricValuesToLoad();
 
         final SavedSearchService saveService = getApplication().savedSearchService();
@@ -342,7 +341,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     public void testFilterLabelFormatReflectsNumericData() {
         final MainNumericWidget mainGraph = numericService.searchAndSelectFirstNumericGraph("beer");
 
-        mainGraph.clickAndDrag(200, mainGraph.graph());
+        DriverUtil.clickAndDrag(200, mainGraph.graph(), getDriver());
         numericService.waitForReload();
 
         verifyThat("Filter label doesn't have time format", findPage.filterLabelsText().get(0), not(containsString(":")));

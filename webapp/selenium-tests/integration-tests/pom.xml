@@ -12,7 +12,6 @@
 
     <artifactId>integration-tests</artifactId>
 
-    <!--potentially requires properties section-->
     <build>
         <plugins>
             <plugin>
@@ -37,7 +36,6 @@
         </plugins>
     </build>
 
-    <!--Do we need all this ?? -->
     <dependencies>
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
@@ -47,7 +45,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend.selenium</groupId>
             <artifactId>integration-tests-helpers</artifactId>
-            <version>2.3.3</version>
+            <version>${qa.infrastructure.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
