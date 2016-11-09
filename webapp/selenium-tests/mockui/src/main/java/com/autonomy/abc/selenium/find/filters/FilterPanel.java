@@ -43,6 +43,7 @@ public class FilterPanel {
     }
 
     public Index getIndex(final int i) {
+        indexesTreeContainer().expand();
         return indexesTree().allIndexes().getIndex(i);
     }
 
@@ -93,7 +94,7 @@ public class FilterPanel {
     }
 
     public int nonZeroParamFieldContainer(final int n) {
-        return nthParametricThatSatisfiedCondition(n,(x) -> !"0".equals(x));
+        return nthParametricThatSatisfiedCondition(n,(x) -> 0 != (x));
     }
 
     public int nthParametricThatSatisfiedCondition(final int n, Predicate<Integer> op) {
@@ -141,14 +142,15 @@ public class FilterPanel {
     }
 
     public FindParametricFilter checkboxForParametricValue(final String fieldName, final String fieldValue) {
-        final WebElement checkbox = panel.findElement(By.cssSelector("[data-field-display-name='" + fieldName + "'] [data-value='" + fieldValue.toUpperCase() + "']"));
-        return new FindParametricFilter(checkbox);
+        final ParametricFieldContainer container = new ParametricFieldContainer(panel.findElement(By.cssSelector("[data-field-display-name='" + fieldName + "']")), driver);
+        container.expand();
+        return new FindParametricFilter(container.getContainer().findElement(By.cssSelector("[data-value='" + fieldValue.toUpperCase() + "']")));
     }
 
     public FindParametricFilter checkboxForParametricValue(final int fieldIndex, final int valueIndex) {
-        final WebElement checkbox = panel.findElements(By.cssSelector("[data-field]")).get(fieldIndex)
-                .findElement(By.cssSelector("[data-value]:nth-of-type(" + cssifyIndex(valueIndex) + ')'));
-        return new FindParametricFilter(checkbox);
+        final ParametricFieldContainer container = new ParametricFieldContainer(panel.findElements(By.cssSelector("[data-field]")).get(fieldIndex), driver);
+        container.expand();
+        return new FindParametricFilter(container.getContainer().findElement(By.cssSelector("[data-value]:nth-of-type(" + cssifyIndex(valueIndex) + ')')));
     }
 
     //EXPANDING AND COLLAPSING

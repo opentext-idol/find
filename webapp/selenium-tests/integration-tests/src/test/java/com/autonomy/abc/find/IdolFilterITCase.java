@@ -175,6 +175,7 @@ public class IdolFilterITCase extends IdolFindTestBase {
         final IdolFilterPanel filterPanel = filters();
 
         final ListFilterContainer indexesTreeContainer = filterPanel.indexesTreeContainer();
+
         final IndexesTree indexes = filterPanel.indexesTree();
         indexesTreeContainer.expand();
 

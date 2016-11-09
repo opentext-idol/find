@@ -102,9 +102,6 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         assertThat("Found pair of terms that have no overlapping results", terms.getLeft(), not(""));
 
         findPage.waitForParametricValuesToLoad();
-        final FilterPanel filters = elementFactory.getFilterPanel();
-        filters.indexesTreeContainer().expand();
-
         final Query polar = new Query(terms.getLeft());
         final Query opposites = new Query(terms.getRight());
 
@@ -113,7 +110,6 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
 
         findPage.waitUntilDatabasesLoaded();
 
-        elementFactory.getFilterPanel().indexesTreeContainer().expand();
         searchAndSave(opposites, "opposites");
         savedSearchService.compareCurrentWith("polar");
 

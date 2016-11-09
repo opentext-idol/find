@@ -83,7 +83,6 @@ public class FilterITCase extends FindTestBase {
 
         List<ParametricFieldContainer> containers = filterPanel.parametricFieldContainers();
         for(ParametricFieldContainer container : containers) {
-            container.expand();
             int numberFields = container.getFilters().size();
             verifyThat("Field values: " + numberFields + " - less than or equal to 5", numberFields, lessThanOrEqualTo(5));
         }
@@ -112,6 +111,7 @@ public class FilterITCase extends FindTestBase {
 
         Waits.loadOrFadeWait();
         final ParametricFieldContainer container = filterPanel.parametricContainerOfFilter(filterName);
+        //TODO: GETTING FILTER NUMBER AS 1/X  -> CANNOT CONVERT STRING
         final String filterNumber = Integer.toString(container.getFilterNumber());
         final String filterCategory = container.filterCategoryName();
 
@@ -213,9 +213,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     private List<FindParametricFilter> checkAllVisibleFiltersInFirstParametrics() {
-        final FilterPanel filterPanel = filters();
-        filterPanel.parametricField(0).expand();
-        final List<FindParametricFilter> boxes = filterPanel.checkBoxesForParametricFieldContainer(0);
+        final List<FindParametricFilter> boxes = filters().checkBoxesForParametricFieldContainer(0);
         for(final FindParametricFilter checkBox : boxes) {
             checkBox.check();
         }
@@ -310,7 +308,6 @@ public class FilterITCase extends FindTestBase {
     public void testQuickDoubleClickOnDateFilterNotCauseError() {
         final ResultsView results = findService.search("wookie");
 
-        filters().dateFilterContainer().expand();
         toggleDateSelection(DateOption.MONTH);
         toggleDateSelection(DateOption.MONTH);
 
@@ -337,7 +334,6 @@ public class FilterITCase extends FindTestBase {
     private void preDefinedDateFiltersVersusCustomDateFilters(final DateOption period) {
         final ResultsView results = findService.search("*");
 
-        filters().dateFilterContainer().expand();
         toggleDateSelection(period);
         final List<String> preDefinedResults = results.getResultTitles();
         findPage.filterBy(new StringDateFilter().from(getDate(period)).until(new Date()));
@@ -372,7 +368,6 @@ public class FilterITCase extends FindTestBase {
         final Date end = getDate(DateOption.WEEK);
 
         findService.search(new Query("Corbyn"));
-        filters().dateFilterContainer().expand();
         findPage.filterBy(new StringDateFilter().from(start).until(end));
 
         Waits.loadOrFadeWait();
@@ -388,7 +383,6 @@ public class FilterITCase extends FindTestBase {
     @ResolvedBug("CSA-1577")
     public void testClickingCustomDateFilterDoesNotRefreshResults() {
         final ResultsView results = findService.search("O Captain! My Captain!");
-        filters().dateFilterContainer().expand();
         // may not happen the first time
         for(int unused = 0; unused < 5; unused++) {
             toggleDateSelection(DateOption.CUSTOM);
@@ -409,7 +403,6 @@ public class FilterITCase extends FindTestBase {
         final int initialLabelsSize = getFilterLabels().size();
 
         FilterPanel filterPanel = filters();
-        filterPanel.dateFilterContainer().expand();
         filterPanel.toggleFilter(DateOption.WEEK);
         results.waitForResultsToLoad();
 
@@ -452,7 +445,6 @@ public class FilterITCase extends FindTestBase {
             assertThat("By default there are no filters present", initialLabelsSize, is(0));
         }
 
-        filterPanel.dateFilterContainer().expand();
         filterPanel.toggleFilter(DateOption.WEEK);
         results.waitForResultsToLoad();
 
@@ -485,7 +477,6 @@ public class FilterITCase extends FindTestBase {
 
         final FilterPanel filterPanel = filters();
 
-        filterPanel.dateFilterContainer().expand();
         filterPanel.toggleFilter(DateOption.WEEK);
 
         results.waitForResultsToLoad();
@@ -511,14 +502,11 @@ public class FilterITCase extends FindTestBase {
         final int index = filterPanel.nonZeroParamFieldContainer(0);
         assumeThat("There are non-zero parametric filters", index > -1);
 
-        final ParametricFieldContainer parametricFilterContainer = filterPanel.parametricField(index);
-        parametricFilterContainer.expand();
-        final FindParametricFilter parametricFilter = parametricFilterContainer.getFilters().get(0);
+        final FindParametricFilter parametricFilter = filterPanel.parametricField(index).getFilters().get(0);
 
         parametricFilter.check();
         results.waitForResultsToLoad();
 
-        filterPanel.dateFilterContainer().expand();
         filterPanel.toggleFilter(DateOption.YEAR);
         results.waitForResultsToLoad();
 

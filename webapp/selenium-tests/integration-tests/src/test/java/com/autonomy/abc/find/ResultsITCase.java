@@ -184,9 +184,7 @@ public class ResultsITCase extends FindTestBase {
         findPage.waitForParametricValuesToLoad();
 
         final int goodFilter = filters.nonZeroParamFieldContainer(0);
-        final ParametricFieldContainer container = filters.parametricField(goodFilter);
-        container.expand();
-        container.getFilters().get(0).check();
+        filters.parametricField(goodFilter).getFilters().get(0).check();
         findPage.waitForParametricValuesToLoad();
 
         //TODO: part of the bad structure -> will be fixed w/ refactor of Roles vs App.

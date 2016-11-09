@@ -42,6 +42,7 @@ public class DateFilterContainer extends ListFilterContainer implements DatePick
     }
 
     void toggleFilter(final DateOption filter) {
+        expand();
         findDateFilter(filter).click();
     }
 
