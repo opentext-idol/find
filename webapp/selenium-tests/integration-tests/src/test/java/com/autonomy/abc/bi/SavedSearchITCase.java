@@ -148,7 +148,6 @@ public class SavedSearchITCase extends IdolFindTestBase {
         filterPanel.waitForParametricFields();
 
         final int index = filterPanel.nonZeroParamFieldContainer(0);
-        filterPanel.parametricField(index).expand();
         filterPanel.checkboxForParametricValue(index, 0).check();
 
         results.waitForResultsToLoad();

@@ -25,6 +25,7 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
     }
 
     public List<FindParametricFilter> getFilters() {
+        expand();
         final List<WebElement> filters = getContainer().findElements(By.cssSelector(".parametric-value-element:not(.hide)"));
         return filters.stream().map(FindParametricFilter::new).collect(Collectors.toList());
     }
@@ -54,6 +55,7 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
     }
 
     public void seeAll(){
+        expand();
         getContainer().findElement(By.cssSelector(".show-all")).click();
     }
 }

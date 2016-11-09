@@ -118,9 +118,7 @@ public class SunburstITCase extends IdolFindTestBase {
     }
 
     private List<String> getFilterResultsBigEnoughToDisplay(final String filterCategory){
-        ParametricFieldContainer filterContainer = filters().parametricContainer(filterCategory);
-        filterContainer.expand();
-        filterContainer.seeAll();
+        filters().parametricContainer(filterCategory).seeAll();
 
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
         final List<String> bigEnough = filterModal.expectedParametricValues();
@@ -148,6 +146,7 @@ public class SunburstITCase extends IdolFindTestBase {
 
         LOGGER.info("Test only works if filtering by the clicked filter leaves other filters in different categories clickable");
         results.parametricSelectionDropdown(1).selectItem(1);
+        results.waitForSunburst();
 
         final String fieldValue = results.hoverOnSegmentGetCentre(1);
         final String fieldName = results.getSelectedFieldName(1);
@@ -157,7 +156,6 @@ public class SunburstITCase extends IdolFindTestBase {
 
         verifyThat(findPage.filterLabelsText(), hasItem(containsString(fieldValue)));
 
-        filters().parametricContainer(fieldName).expand();
         verifyThat(filters().checkboxForParametricValue(fieldName, fieldValue), checked());
         verifyThat("Parametric selection name has changed to another type of filter", results.getSelectedFieldName(1), not(fieldName));
     }
@@ -170,9 +168,7 @@ public class SunburstITCase extends IdolFindTestBase {
         final FilterPanel filters = filters();
         final String parametricSelectionFirst = results.getSelectedFieldName(1);
 
-        final ParametricFieldContainer container = filters.parametricContainer(parametricSelectionFirst);
-        container.expand();
-        container.getFilters().get(0).check();
+        filters.parametricContainer(parametricSelectionFirst).getFilters().get(0).check();
 
         results.waitForSunburst();
         assertThat("Parametric selection changed", results.getSelectedFieldName(1), not(is(parametricSelectionFirst)));

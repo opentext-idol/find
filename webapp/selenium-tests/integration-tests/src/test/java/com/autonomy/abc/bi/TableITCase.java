@@ -227,9 +227,7 @@ public class TableITCase extends IdolFindTestBase {
         FilterPanel filters = filters();
         final String parametricSelectionFirst= tableView.getSelectedFieldName(1);
 
-        ParametricFieldContainer container = filters.parametricContainer(parametricSelectionFirst);
-        container.expand();
-        container.getFilters().get(0).check();
+        filters.parametricContainer(parametricSelectionFirst).getFilters().get(0).check();
 
         tableView.waitForTable();
         assertThat("Parametric selection changed", tableView.getSelectedFieldName(1), not(Matchers.is(parametricSelectionFirst)));
