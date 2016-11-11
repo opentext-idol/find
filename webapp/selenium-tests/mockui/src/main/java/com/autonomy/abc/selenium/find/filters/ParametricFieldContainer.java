@@ -54,6 +54,7 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
         return getFilters().iterator();
     }
 
+    //TODO: expanding reloads the parametric filter container so if have to expand them it will be stale
     public void seeAll(){
         expand();
         getContainer().findElement(By.cssSelector(".show-all")).click();

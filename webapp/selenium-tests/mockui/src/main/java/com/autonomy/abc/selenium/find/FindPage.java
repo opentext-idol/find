@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
@@ -12,6 +13,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -22,19 +25,49 @@ public class FindPage extends AppElement implements AppPage,
         StringDateFilter.Filterable,
         ParametricFilter.Filterable {
 
+    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
     FindPage(final WebDriver driver) {
         super(new WebDriverWait(driver, 30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container"))), driver);
     }
 
-    protected FilterPanel filters() {
-        return new FilterPanel(new IndexesTree.Factory(), getDriver());
-    }
-
+    //WAITS
     @Override
     public void waitForLoad() {
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container")));
+    }
+
+    private void waitForResultsToLoad() {
+        Container.MIDDLE.waitForLoad(getDriver());
+    }
+
+    public void waitUntilParametricModalGone() {
+        new WebDriverWait(getDriver(),10)
+                .until(ExpectedConditions.invisibilityOfElementLocated(By.className(".parametric-modal")));
+    }
+
+    public void waitUntilDatabasesLoaded() {
+        new WebDriverWait(getDriver(),20)
+                .withMessage("databases not loaded message to disappear")
+                .until(ExpectedConditions.invisibilityOfElementWithText(By.cssSelector(".main-results-list .results")
+                        ,"The list of databases has not yet been retrieved"));
+    }
+
+    //RESULTS
+    private WebElement currentView() {
+        return Container.currentTabContents(getDriver()).findElement(By.cssSelector(".tab-pane.active"));
+    }
+
+    //TODO: are there any messages (e.g. error or empty that are present in all the views?)
+    public boolean resultsMessagePresent() {
+        return !currentView().findElements(By.className("result-message")).isEmpty();
+    }
+
+    //FILTER PANEL
+    protected FilterPanel filters() {
+        return new FilterPanel(new IndexesTree.Factory(), getDriver());
     }
 
     @Override
@@ -94,18 +127,22 @@ public class FindPage extends AppElement implements AppPage,
         }
     }
 
-    // this can be used to check whether on the landing page,
-    // as opposed to main results page
+    //FILTER LABELS
+    public List<String> filterLabelsText() {
+        return ElementUtil.getTexts(filterLabels());
+    }
+
+    public List<WebElement> filterLabels() {
+        return findElements(By.className("filter-label"));
+    }
+
+    public void removeFilterLabel(WebElement filter) {
+        filter.findElement(By.cssSelector(".filters-remove-icon")).click();
+    }
+
+    //MISCELLANEOUS
     public WebElement footerLogo() {
         return findElement(By.className("hp-logo-footer"));
-    }
-
-    public int totalResultsNum() {
-        return Integer.parseInt(findElement(By.className("total-results-number")).getText());
-    }
-
-    public List<WebElement> resultsContainingString(final String searchTerm) {
-        return getDriver().findElements(By.xpath("//*[contains(@class,'search-text') and contains(text(),'" + searchTerm + "')]"));
     }
 
     public WebElement originalQuery() { return findElement(By.className("original-query")); }
@@ -122,50 +159,25 @@ public class FindPage extends AppElement implements AppPage,
         }
     }
 
-    public List<String> filterLabelsText() {
-        return ElementUtil.getTexts(filterLabels());
-    }
-
-    public List<WebElement> filterLabels() {
-        return findElements(By.className("filter-label"));
-    }
-
-    public void removeFilterLabel(WebElement filter) {
-        filter.findElement(By.cssSelector(".filters-remove-icon")).click();
-    }
-
     public void scrollToBottom() {
         findElement(By.className("results-number")).click();
         DriverUtil.scrollToBottom(getDriver());
         waitForResultsToLoad();
     }
 
-    public boolean resultsMessagePresent() {
-        return !findElements(By.className("result-message")).isEmpty();
+    public ListView goToListView() {
+        LOGGER.info("Non-BI User: already on list view.");
+        return new ListView(findElement(By.className("service-view-container")), getDriver());
     }
 
-    protected WebElement mainContainer() {
+    protected WebElement currentTab() {
         return Container.currentTabContents(getDriver());
-    }
-
-    private void waitForResultsToLoad() {
-        Container.MIDDLE.waitForLoad(getDriver());
-    }
-
-    public void waitUntilParametricModalGone() {
-        new WebDriverWait(getDriver(),10)
-                .until(ExpectedConditions.invisibilityOfElementLocated(By.className(".parametric-modal")));
     }
 
     public boolean verticalScrollBarPresent() {
         String javaScript = "return document.documentElement.scrollHeight>document.documentElement.clientHeight;";
         JavascriptExecutor executor = (JavascriptExecutor) getDriver();
         return (boolean) executor.executeScript(javaScript);
-    }
-
-    //TODO: remove this when this class implements goToList
-    public Boolean listTabExists() {
-        return !mainContainer().findElements(By.cssSelector("[data-tab-id='list']")).isEmpty();
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {

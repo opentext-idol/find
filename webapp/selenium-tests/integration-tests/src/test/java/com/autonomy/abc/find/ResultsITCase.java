@@ -10,9 +10,8 @@ import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
-import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.autonomy.abc.selenium.find.results.FindResult;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
@@ -47,9 +46,8 @@ public class ResultsITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
-        if (!findPage.footerLogo().isDisplayed()) {
-            ((IdolFindPage) findPage).goToListView();
-        }
+        findPage.goToListView();
+
     }
 
     @Test
@@ -57,9 +55,9 @@ public class ResultsITCase extends FindTestBase {
     public void testSearchTermInResults() {
         final String searchTerm = "tiger";
 
-        findService.search(searchTerm);
+        final ListView results = findService.search(searchTerm);
 
-        for (final WebElement searchElement : findPage.resultsContainingString(searchTerm)) {
+        for (final WebElement searchElement : results.resultsContainingString(searchTerm)) {
             if (searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                 verifyThat(searchElement.getText().toLowerCase(), containsString(searchTerm));
             }
@@ -70,7 +68,7 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("CSA-2082")
     public void testAutoScroll() {
-        final ResultsView results = findService.search("nightmare");
+        final ListView results = findService.search("nightmare");
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
@@ -96,10 +94,10 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("CCUK-3647")
     public void testNoMoreResultsFoundAtEnd() {
-        final ResultsView results = findService.search(new Query("Cheese AND Onion AND Carrot"));
+        final ListView results = findService.search(new Query("Cheese AND Onion AND Carrot"));
         results.waitForResultsToLoad();
 
-        verifyThat(findPage.totalResultsNum(), lessThanOrEqualTo(30));
+        verifyThat(results.getTotalResultsNum(), lessThanOrEqualTo(30));
 
         findPage.scrollToBottom();
         verifyThat(results.resultsDiv(), containsText("No more results found"));
@@ -108,7 +106,7 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-93")
     public void testNoResults() {
-        final ResultsView results = findService.search("thissearchwillalmostcertainlyreturnnoresults");
+        final ListView results = findService.search("thissearchwillalmostcertainlyreturnnoresults");
 
         new WebDriverWait(getDriver(), 60L).withMessage("No results message should appear")
                 .until(ExpectedConditions.textToBePresentInElement(results.resultsDiv(), "No results found"));
@@ -131,12 +129,8 @@ public class ResultsITCase extends FindTestBase {
         search("maney");
         verifyThat("Says it corrected query", findPage.originalQuery(), displayed());
 
-        //TODO: Soon FindPage will have goToListView and this will be redundant
-        if (findPage.listTabExists()) {
-            ((IdolFindPage) findPage).goToListView();
-        }
-
-        verifyThat("There are results in list view", findPage.totalResultsNum(), greaterThan(0));
+        ListView results = findPage.goToListView();
+        verifyThat("There are results in list view", results.getTotalResultsNum(), greaterThan(0));
     }
 
     @Test
@@ -149,7 +143,7 @@ public class ResultsITCase extends FindTestBase {
 
         LOGGER.info("Need to verify that " + termAutoCorrected + " has results, related concepts and parametrics");
 
-        assumeThat(termAutoCorrected + " has some results", findPage.totalResultsNum(), greaterThan(0));
+        assumeThat(termAutoCorrected + " has some results", getElementFactory().getListView().getTotalResultsNum(), greaterThan(0));
 
         final int indexOfCategoryWFilters = getElementFactory().getFilterPanel().nonZeroParamFieldContainer(0);
         assertThat(termAutoCorrected + " has some parametric fields", indexOfCategoryWFilters, not(-1));
@@ -215,9 +209,10 @@ public class ResultsITCase extends FindTestBase {
                 findPage.ensureTermNotAutoCorrected();
                 findPage.waitForParametricValuesToLoad();
 
-                if (findPage.totalResultsNum() > 0) {
+                final ListView results = getElementFactory().getListView();
+                if (results.getTotalResultsNum() > 0) {
                     foundResults = true;
-                    final WebElement incidenceOfTerm = findPage.resultsContainingString(query).get(0);
+                    final WebElement incidenceOfTerm = results.resultsContainingString(query).get(0);
                     assertThat("Term \"" + query + "\" is highlighted (bold).",
                             incidenceOfTerm.getCssValue("font-weight"),
                             is(weightOfHighlightedTerm));

@@ -9,7 +9,7 @@ import com.autonomy.abc.selenium.find.application.FindElementFactory;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResult;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -53,15 +53,12 @@ public class SimilarDocumentsITCase extends FindTestBase {
     @Before
     public void setUp() {
         findService = getApplication().findService();
-        FindPage findPage = getElementFactory().getFindPage();
-        if (!findPage.footerLogo().isDisplayed()) {
-            ((IdolFindPage) findPage).goToListView();
-        }
+        getElementFactory().getFindPage().goToListView();
     }
 
     @Test
     public void testSimilarDocumentsShowUp() throws InterruptedException {
-        final ResultsView results = findService.search(new Query("Doe"));
+        final ListView results = findService.search(new Query("Doe"));
 
         for (int i = 1; i <= 5; i++) {
             final String title = results.getResult(i).getTitleString();

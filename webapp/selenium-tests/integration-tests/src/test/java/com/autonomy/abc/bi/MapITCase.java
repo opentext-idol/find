@@ -108,7 +108,7 @@ public class MapITCase extends IdolFindTestBase {
 
         findPage.goToListView();
 
-        InlinePreview documentViewer = getElementFactory().getResultsPage().searchResult(1).openDocumentPreview();
+        InlinePreview documentViewer = getElementFactory().getListView().searchResult(1).openDocumentPreview();
         final DetailedPreviewPage detailedPreviewPage = documentViewer.openPreview();
         verifyThat("There is no location tab",!detailedPreviewPage.locationTabExists());
     }
@@ -149,6 +149,7 @@ public class MapITCase extends IdolFindTestBase {
             verifyThat("First search has same number results",comparee,is(firstResults));
             verifyThat("Second search has same number results",comparer,is(secondResults));
         }
+
         finally {
             findPage.goBackToSearch();
             savedSearchService.deleteAll();
@@ -156,7 +157,7 @@ public class MapITCase extends IdolFindTestBase {
     }
 
     private MapView search(String searchTerm) {
-        findService.search(searchTerm);
+        findService.searchAnyView(searchTerm);
         findPage.goToMap();
         MapView map = getElementFactory().getMap();
         map.waitForMarkers();

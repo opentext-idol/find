@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.find.results;
 import com.autonomy.abc.selenium.find.Container;
 import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,23 +14,22 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultsView extends AppElement implements QueryResultsPage {
-    public ResultsView(final WebElement element, final WebDriver driver) {
+public class ListView extends AppElement implements QueryResultsPage {
+
+    public ListView(final WebElement element, final WebDriver driver) {
         super(element, driver);
     }
 
-    public ResultsView(final WebDriver driver) {
-        this(Container.currentTabContents(driver).findElement(By.className("middle-container")), driver);
+    public ListView(final WebDriver driver) {
+        this(ElementUtil.ancestor(Container.currentTabContents(driver).findElement(By.className("main-results-content-container")), 1), driver);
     }
 
-    //bad because it assumes it exists in both which it doesn't
-    public void goToListView() {
-        findElement(By.cssSelector("[data-tab-id='list']")).click();
-        new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".results-list-container"))));
+    public int getTotalResultsNum() {
+        return Integer.parseInt(findElement(By.className("total-results-number")).getText());
     }
 
-    public int getResultsCount() {
-        return Integer.valueOf(findElement(By.className("total-results-number")).getText());
+    public List<WebElement> resultsContainingString(final String searchTerm) {
+        return getDriver().findElements(By.xpath("//*[contains(@class,'search-text') and contains(text(),'" + searchTerm + "')]"));
     }
 
     public WebElement correctedQuery() { return findElement(By.className("corrected-query"));}
@@ -91,10 +91,6 @@ public class ResultsView extends AppElement implements QueryResultsPage {
 
     public FindResult searchResult(final int searchResultNumber) {
         return new FindResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ')')), getDriver());
-    }
-
-    public List<WebElement> noMoreResultsMessage() {
-        return findElements(By.xpath("//div[@class = 'result-message' and contains(text(),'No more results')]"));
     }
 
     private static class LoadedCondition implements ExpectedCondition<Boolean> {

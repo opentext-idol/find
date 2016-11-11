@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.find.numericWidgets;
 
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.IdolFind;
 import com.autonomy.abc.selenium.find.application.IdolFindElementFactory;
 import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
@@ -8,11 +10,11 @@ import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 
 public class NumericWidgetService {
 
-    private final IdolFindElementFactory elementFactory;
-    private final IdolFind find;
+    private final BIIdolFindElementFactory elementFactory;
+    private final BIIdolFind find;
     private IdolFindPage findPage;
 
-    public NumericWidgetService(final IdolFind find) {
+    public NumericWidgetService(final BIIdolFind find) {
         elementFactory = find.elementFactory();
         this.find = find;
         findPage = elementFactory.getFindPage();
@@ -54,7 +56,7 @@ public class NumericWidgetService {
     }
 
     private IdolFilterPanel searchAndReturnFilterPanel(String searchTerm){
-        find.findService().search(searchTerm);
+        find.findService().searchAnyView(searchTerm);
         final IdolFilterPanel filterPanel = elementFactory.getFilterPanel();
         filterPanel.waitForParametricFields();
         return filterPanel;

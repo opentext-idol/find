@@ -1,6 +1,6 @@
 package com.autonomy.abc.queryHelper;
 
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.query.LanguageFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -12,11 +12,11 @@ import java.util.Iterator;
 
 public class IdolQueryTermResult extends SharedResult {
 
-    public IdolQueryTermResult(final String term, final ResultsView page){super(term,page);}
+    public IdolQueryTermResult(final String term, final ListView page){super(term,page);}
 
-    public WebElement correctedQuery(){return ((ResultsView)getPage()).correctedQuery();}
+    public WebElement correctedQuery(){return ((ListView)getPage()).correctedQuery();}
 
-    public boolean errorWellExists() {return ((ResultsView)getPage()).errorContainerShown();}
+    public boolean errorWellExists() {return ((ListView)getPage()).errorContainerShown();}
 
     protected static Iterable<IdolQueryTermResult> idolResultsFor(final Iterable<String> queries, final QueryService service) {
         return new Iterable<IdolQueryTermResult>() {
@@ -45,7 +45,7 @@ public class IdolQueryTermResult extends SharedResult {
     static private IdolQueryTermResult getTheResult(final String queryTerm, QueryService service ){
         final Query query = new Query(queryTerm)
                 .withFilter(new LanguageFilter(Language.ENGLISH));
-        final ResultsView page = (ResultsView) service.search(query);
+        final ListView page = (ListView) service.search(query);
         return new IdolQueryTermResult(queryTerm, page);
     }
 }

@@ -12,8 +12,8 @@ import com.autonomy.abc.selenium.find.FindTopNavBar;
 import com.autonomy.abc.selenium.find.application.FindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
-import com.autonomy.abc.selenium.find.results.ResultsView;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
@@ -183,7 +183,7 @@ public class RelatedConceptsITCase extends FindTestBase {
 
         final Collection<String> concepts = new ArrayList<>();
         clickFirstNewConcept(concepts, relatedConceptsPanel().relatedConcepts());
-        getElementFactory().getResultsPage().waitForResultsToLoad();
+        getElementFactory().getListView().waitForResultsToLoad();
         clickFirstNewConcept(concepts, relatedConceptsPanel().relatedConcepts());
         getWindow().refresh();
         navBar = getElementFactory().getTopNavBar();
@@ -214,16 +214,16 @@ public class RelatedConceptsITCase extends FindTestBase {
         final LinkedList<Integer> resultCountList = new LinkedList<>();
         final Collection<String> concepts = new ArrayList<>();
 
-        final ResultsView results = searchAndWait(findService, "sanctimonious");
+        final ListView results = searchAndWait(findService, "sanctimonious");
 
-        final int resultsCountNoConcept = results.getResultsCount();
+        final int resultsCountNoConcept = results.getTotalResultsNum();
         assumeThat("Initial query returned no results", resultsCountNoConcept, greaterThan(0));
         resultCountList.add(resultsCountNoConcept);
 
         for(int i = 0; i < numberOfRepeats; ++i) {
             clickFirstNewConcept(concepts, conceptsPanel().relatedConcepts());
             results.waitForResultsToLoad();
-            resultCountList.add(results.getResultsCount());
+            resultCountList.add(results.getTotalResultsNum());
         }
 
         for(int i = 0; i < resultCountList.size() - 1; ++i) {
@@ -259,8 +259,8 @@ public class RelatedConceptsITCase extends FindTestBase {
         throw new NoSuchElementException("no new related concepts");
     }
 
-    private ResultsView searchAndWait(final FindService findService, final String query) {
-        final ResultsView results = findService.search(query);
+    private ListView searchAndWait(final FindService findService, final String query) {
+        final ListView results = findService.search(query);
         results.waitForResultsToLoad();
         return results;
     }

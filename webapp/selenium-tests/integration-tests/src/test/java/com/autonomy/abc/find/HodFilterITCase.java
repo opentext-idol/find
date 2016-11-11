@@ -8,7 +8,7 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResult;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.ParametricFilter;
@@ -55,7 +55,7 @@ public class HodFilterITCase extends HodFindTestBase {
     private void checkContentTypeFilter(final String filterType, final String extension) {
         final Query query = new Query("red star")
                 .withFilter(new ParametricFilter("Content Type", filterType));
-        ResultsView results = findService.search(query);
+        ListView results = findService.search(query);
         for(final String type : results.getDisplayedDocumentsDocumentTypes()){
             assertThat(type, containsString(extension));
         }
@@ -63,7 +63,7 @@ public class HodFilterITCase extends HodFindTestBase {
 
     @Test
     public void testFileTypes(){
-        ResultsView results = findService.search("love ");
+        ListView results = findService.search("love ");
 
         for(final FileType f : FileType.values()) {
             findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
@@ -83,7 +83,7 @@ public class HodFilterITCase extends HodFindTestBase {
     public void testAuthor(){
         final String author = "FIFA.COM";
 
-        ResultsView results = findService.search(new Query("football"));
+        ListView results = findService.search(new Query("football"));
         filters().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter("fifa"));
         findPage.filterBy(new ParametricFilter("Author", author));

@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.results.FindResult;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
@@ -55,7 +55,7 @@ public class FindSessionITCase extends FindTestBase {
     public void testDocumentPreview(){
         assumeThat(((HasCapabilities) getDriver()).getCapabilities().getBrowserName(), is("firefox"));
 
-        final ResultsView results = findService.search("The Season");
+        final ListView results = findService.search("The Season");
         final FindResult searchResult = results.searchResult(1);
 
         deleteCookies();

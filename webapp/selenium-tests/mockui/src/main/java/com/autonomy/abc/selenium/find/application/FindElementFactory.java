@@ -11,7 +11,7 @@ import com.autonomy.abc.selenium.find.filters.AppliedFiltersPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.results.RelatedConceptsPanel;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
@@ -39,8 +39,8 @@ public abstract class FindElementFactory extends ElementFactoryBase {
         return new FindTopNavBar(getDriver());
     }
 
-    public ResultsView getResultsPage() {
-        return new ResultsView(getDriver());
+    public ListView getListView() {
+        return new ListView(getDriver());
     }
 
     public RelatedConceptsPanel getRelatedConceptsPanel() {

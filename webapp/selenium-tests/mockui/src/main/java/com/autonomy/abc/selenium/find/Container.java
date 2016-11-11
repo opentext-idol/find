@@ -7,6 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+//TODO: maybe rename?
 public enum Container {
     LEFT("left-side"),
     MIDDLE("middle"),
@@ -22,7 +23,7 @@ public enum Container {
         return '.' + container + "-container";
     }
 
-    //TODO: wait it is waiting too long
+    //TODO: waiting too long
     public void waitForLoad(final WebDriver driver) {
          try {
              new WebDriverWait(driver, 5)
@@ -31,7 +32,7 @@ public enum Container {
          catch (final Exception e) {
              //Noop
          }
-        new WebDriverWait(driver, 60)
+        new WebDriverWait(driver, 80)
                 .withMessage("Container " + this + " failed to load")
                 .until(new ExpectedCondition<Boolean>() {
                     @Override

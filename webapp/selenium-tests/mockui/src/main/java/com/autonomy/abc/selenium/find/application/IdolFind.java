@@ -19,10 +19,6 @@ public abstract class IdolFind<T extends IdolFindElementFactory> extends FindApp
         this.elementFactory = elementFactory;
     }
 
-    public NumericWidgetService numericWidgetService() {
-        return new NumericWidgetService(this);
-    }
-
     public abstract SavedSearchService savedSearchService();
 
     public static IdolFind<? extends IdolFindElementFactory> withRole(final UserRole role) {

@@ -10,7 +10,7 @@ import com.autonomy.abc.selenium.find.comparison.AppearsIn;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.autonomy.abc.selenium.find.comparison.ResultsComparisonView;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchType;
@@ -71,7 +71,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
 
         findPage = getElementFactory().getFindPage();
         findPage.goToListView();
-        elementFactory.getResultsPage().waitForResultsToLoad();
+        elementFactory.getListView().waitForResultsToLoad();
     }
 
     @After
@@ -85,10 +85,10 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-232")
     public void testComparisonButtonActivates() {
-        findService.search("\"Unicorns\"");
+        findService.searchAnyView("\"Unicorns\"");
         assertThat(findPage.compareButton(), hasClass("disabled"));
         savedSearchService.openNewTab();
-        findService.search("\"Pegasus\"");
+        findService.searchAnyView("\"Pegasus\"");
         Waits.loadOrFadeWait();
         assertThat(findPage.compareButton(), not(hasClass("disabled")));
         elementFactory.getSearchTabBar().tabFromIndex(0);
@@ -116,14 +116,15 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         resultsComparison = elementFactory.getResultsComparison();
         Waits.loadOrFadeWait();
         resultsComparison.goToListView();
-        final ResultsView resultsView = resultsComparison.resultsView(AppearsIn.BOTH);
+        final ListView listView = resultsComparison.resultsView(AppearsIn.BOTH);
 
-        assertThat(resultsView.getResults(), empty());
-        assertThat(resultsView, containsText("No results found"));
+        assertThat(listView.getResults(), empty());
+        assertThat(listView, containsText("No results found"));
 
         findPage.goBackToSearch();
     }
 
+    //TODO also not tearing down properly
     @Test
     @ActiveBug("FIND-240")
     public void testSubSearch() {
@@ -134,9 +135,8 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService.openNewTab();
         searchAndSave(innerQuery, "inner");
         Waits.loadOrFadeWait();
-        ResultsView resultsView = elementFactory.getResultsPage();
-        resultsView.goToListView();
 
+        findPage.goToListView();
         final int innerCount = getTotalResults();
 
         savedSearchService.compareCurrentWith("outer");
@@ -154,15 +154,15 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     }
 
     private int getTotalResults() {
-        return elementFactory.getResultsPage().getResultsCount();
+        return elementFactory.getListView().getTotalResultsNum();
     }
 
     @Test
     @ResolvedBug("FIND-228")
     public void testCompareUnsavedSearches() {
-        findService.search("\"not many results\"");
+        findService.searchAnyView("\"not many results\"");
         savedSearchService.openNewTab();
-        findService.search("\"to speed up comparison\"");
+        findService.searchAnyView("\"to speed up comparison\"");
 
         final ComparisonModal modal = findPage.openCompareModal();
         modal.select("New Search");
@@ -221,9 +221,9 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         searchAndSave(new Query("bus").withFilter(new IndexFilter(expectedIndex)), expectedTabName);
 
         elementFactory.getTopicMap().waitForMapLoaded();
-        ResultsView resultsView = elementFactory.getResultsPage();
-        resultsView.goToListView();
-        final String firstTitle = resultsView.getResult(1).getTitleString();
+
+        final ListView listView = findPage.goToListView();
+        final String firstTitle = listView.getResult(1).getTitleString();
 
         savedSearchService.compareCurrentWith(comparedTabName);
         ResultsComparisonView resultsComparison = elementFactory.getResultsComparison();
@@ -240,7 +240,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         similarDocs.backButton().click();
         final FilterPanel filters = elementFactory.getFilterPanel();
 
-        assertThat(elementFactory.getResultsPage().getResult(1).getTitleString(), is(firstTitle));
+        assertThat(elementFactory.getListView().getResult(1).getTitleString(), is(firstTitle));
         assertThat(filters.indexesTree().getSelected(), is(Collections.singletonList(expectedIndex)));
         assertThat(elementFactory.getSearchTabBar().getCurrentTabTitle(), is(expectedTabName));
     }
@@ -249,7 +249,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-239")
     public void testComparingWhenZeroResults() {
         searchAndSave(new Query("lsijfielsjfiesjflisejlijlij"), "contagion");
-        assumeThat("1 search has 0 results", findPage.totalResultsNum(), is(0));
+        assumeThat("1 search has 0 results", elementFactory.getListView().getTotalResultsNum(), is(0));
 
         savedSearchService.openNewTab();
         searchAndSave(new Query("virus"), "ill");
@@ -260,6 +260,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         findPage.goBackToSearch();
     }
 
+    //TODO: NOT CLEANING UP AFTER ITSELF!!!!!!!!!!!!!
     @Test
     @ActiveBug("FIND-634")
     public void testEditingSavedSearchThenComparing() {
@@ -273,13 +274,13 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         findPage.goToListView();
 
         final String originalFirstResult = getElementFactory()
-                .getResultsPage()
+                .getListView()
                 .getResult(1)
                 .title()
                 .getText();
 
         elementFactory.getConceptsPanel().removeAllConcepts();
-        findService.search("stuff AND (NOT " + originalSearch + ")");
+        findService.searchAnyView("stuff AND (NOT " + originalSearch + ")");
 
         verifyThat("Tab is marked as modified", elementFactory.getSearchTabBar().currentTab().isNew());
         savedSearchService.compareCurrentWith(otherSearchName);
@@ -296,7 +297,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
     }
 
     private void searchAndSave(final Query query, final String saveAs, final SearchType saveType) {
-        findService.search(query);
+        findService.searchAnyView(query);
         new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active").until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
         savedSearchService.saveCurrentAs(saveAs, saveType);
     }

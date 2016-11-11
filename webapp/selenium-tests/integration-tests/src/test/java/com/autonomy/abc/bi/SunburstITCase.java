@@ -40,8 +40,7 @@ public class SunburstITCase extends IdolFindTestBase {
 
     @Before
     public void setUp() {
-        findPage = getElementFactory().getFindPage();
-        results = ((BIIdolFindElementFactory) getElementFactory()).getSunburst();
+        findPage = ((BIIdolFindElementFactory)getElementFactory()).getFindPage();
         findService = getApplication().findService();
         conceptsPanel = getElementFactory().getConceptsPanel();
     }
@@ -49,7 +48,7 @@ public class SunburstITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-382")
     public void testMessageOnFirstSearchIfNoValues() {
-        search("shambolisjlfijslifjeslj");
+        results = search("shambolisjlfijslifjeslj");
         results.waitForSunburst();
         verifyThat("Message appearing when no sunburst & search from Sunburst", results.message(), displayed());
     }
@@ -57,7 +56,7 @@ public class SunburstITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug({"FIND-251", "FIND-382"})
     public void testSunburstTabShowsSunburstOrMessage() {
-        search("s");
+        results = search("s");
 
         results.waitForSunburst();
 
@@ -66,13 +65,13 @@ public class SunburstITCase extends IdolFindTestBase {
 
         conceptsPanel.removeAllConcepts();
 
-        search("shouldBeNoFieldsForThisCrazySearch");
+        results = search("shouldBeNoFieldsForThisCrazySearch");
         verifyThat("Message appearing when no sunburst & search from Sunburst", results.message(), displayed());
         findPage.goToListView();
 
         conceptsPanel.removeAllConcepts();
 
-        findService.search("shouldAlsoBeNoTopicsForThis");
+        findService.searchAnyView("shouldAlsoBeNoTopicsForThis");
         findPage.goToSunburst();
         verifyThat("Message appearing when no sunburst & search from elsewhere", results.message(), displayed());
     }
@@ -80,7 +79,7 @@ public class SunburstITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-405")
     public void testParametricSelectors() {
-        search("wild horses");
+        results = search("wild horses");
 
         final int index = filters().nonZeroParamFieldContainer(0);
         final String firstParametric = filters().parametricField(index).filterCategoryName();
@@ -92,7 +91,7 @@ public class SunburstITCase extends IdolFindTestBase {
 
     @Test
     public void testParametricSelectorsChangeDisplay() {
-        search("cricket");
+        results = search("cricket");
 
         final String filterCategory = filters().formattedNameOfNonZeroField(1);
         results.parametricSelectionDropdown(1).select(filterCategory);
@@ -104,7 +103,7 @@ public class SunburstITCase extends IdolFindTestBase {
 
     @Test
     public void testHoveringOverSegmentCausesTextToChange() {
-        search("elephant");
+        results = search("elephant");
 
         final String filterCategory = filters().formattedNameOfNonZeroField(0);
         final List<String> bigEnough = getFilterResultsBigEnoughToDisplay(filterCategory);
@@ -130,7 +129,7 @@ public class SunburstITCase extends IdolFindTestBase {
 
     @Test
     public void testHoveringOnGreySegmentGivesMessage() {
-        search("elephant");
+        results = search("elephant");
 
         assumeThat("Some segments not displayable", results.greySunburstAreaExists());
 
@@ -140,9 +139,9 @@ public class SunburstITCase extends IdolFindTestBase {
     }
 
     @Test
+    //needs to search something that only has 2 parametric filter types
     public void testClickingSunburstSegmentFiltersTheSearch() {
-        //needs to search something that only has 2 parametric filter types
-        search("general");
+        results = search("general");
 
         LOGGER.info("Test only works if filtering by the clicked filter leaves other filters in different categories clickable");
         results.parametricSelectionDropdown(1).selectItem(1);
@@ -163,7 +162,7 @@ public class SunburstITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-379")
     public void testSideBarFiltersChangeSunburst() {
-        search("lashing");
+        results = search("lashing");
 
         final FilterPanel filters = filters();
         final String parametricSelectionFirst = results.getSelectedFieldName(1);
@@ -177,7 +176,7 @@ public class SunburstITCase extends IdolFindTestBase {
     //will probably fail if your databases are different to the testing ones
     @Test
     public void testTwoParametricSelectorSunburst() {
-        search("cameron");
+        results = search("cameron");
 
         results.parametricSelectionDropdown(1).select("Overall Vibe");
         results.waitForSunburst();
@@ -194,7 +193,7 @@ public class SunburstITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-267")
     public void testNoOverlapParametricFields() {
-        search("*");
+        results = search("*");
         results.parametricSelectionDropdown(1).select("Category");
         results.waitForSunburst();
         final int segNumberBefore = results.numberOfSunburstSegments();
@@ -209,10 +208,11 @@ public class SunburstITCase extends IdolFindTestBase {
         verifyThat("Message contains \"" + sensibleMessage + "\"", results.message().getText(), containsString(sensibleMessage));
     }
 
-    private void search(final String searchTerm) {
-        findService.search(searchTerm);
-        findPage.goToSunburst();
+    private SunburstView search(final String searchTerm) {
+        findService.searchAnyView(searchTerm);
+        results = findPage.goToSunburst();
         results.waitForSunburst();
+        return results;
     }
 
     private IdolFilterPanel filters() {

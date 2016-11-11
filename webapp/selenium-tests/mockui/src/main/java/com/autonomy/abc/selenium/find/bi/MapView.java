@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find.bi;
 
 import com.autonomy.abc.selenium.find.Container;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -19,7 +20,7 @@ public class MapView {
 
     public MapView(final WebDriver driver) {
         this.driver = driver;
-        this.container = driver.findElement(By.cssSelector(".service-view-container:not(.hide)"));
+        this.container = ElementUtil.ancestor(Container.currentTabContents(driver).findElement(By.className("location-results-map")), 1);
     }
 
     public WebElement map() {
@@ -35,7 +36,7 @@ public class MapView {
     }
 
     public void waitForMarkers() {
-        new WebDriverWait(driver,40).withMessage("Map never stopped loading")
+        new WebDriverWait(driver, 60).withMessage("Map never stopped loading")
                 .until(ExpectedConditions.presenceOfElementLocated(cssSelector(".service-view-container:not(.hide) .map-loading-spinner > .loading-spinner.hide")));
     }
 

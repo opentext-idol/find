@@ -8,9 +8,8 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.filters.*;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResult;
@@ -45,14 +44,11 @@ public class FilterITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
-
-        if(!findPage.footerLogo().isDisplayed()) {
-            ((IdolFindPage) findPage).goToListView();
-        }
+        findPage.goToListView();
     }
 
-    private ResultsView searchAndWait(final String searchTerm) {
-        final ResultsView results = findService.search(searchTerm);
+    private ListView searchAndWait(final String searchTerm) {
+        final ListView results = findService.search(searchTerm);
         findPage.waitForParametricValuesToLoad();
         results.waitForResultsToLoad();
         return results;
@@ -78,7 +74,7 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ActiveBug("FIND-638")
     public void testParametricFiltersResults() {
-        ResultsView results = searchAndWait("*");
+        ListView results = searchAndWait("*");
         final FilterPanel filterPanel = filters();
 
         List<ParametricFieldContainer> containers = filterPanel.parametricFieldContainers();
@@ -93,14 +89,14 @@ public class FilterITCase extends FindTestBase {
         final String filterName = firstField.getName();
         final int expectedResults = firstField.getResultsCount();
 
-        final int originalNumberOfResults = findPage.totalResultsNum();
+        final int originalNumberOfResults = results.getTotalResultsNum();
         assumeThat("Fewer results predicted w/ this filter", expectedResults, lessThan(originalNumberOfResults));
 
         firstField.check();
         results.waitForResultsToLoad();
 
         verifyThat("Expected number of results (according to panel) equals actual number of results",
-                   results.getResultsCount(), is(expectedResults));
+                   results.getTotalResultsNum(), is(expectedResults));
 
         try {
             firstContainer.getFilters();
@@ -145,6 +141,7 @@ public class FilterITCase extends FindTestBase {
         final List<String> selectedFilter = Arrays.asList(checkbox.getName());
         checkbox.check();
 
+        findPage.waitForParametricValuesToLoad();
         container.seeAll();
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
 
@@ -224,7 +221,7 @@ public class FilterITCase extends FindTestBase {
     @ResolvedBug("FIND-247")
     public void testSelectDifferentCategoryFiltersAndResultsLoad() throws InterruptedException {
         LOGGER.info("Because filter categories all collapse after selecting 1, must be quick or throws NoSuchElement");
-        final ResultsView results = findService.search("face");
+        final ListView results = findService.search("face");
         final FilterPanel filterPanel = filters();
         final FindParametricFilter filter1 = filterPanel.checkBoxesForParametricFieldContainer(0).get(0);
         final FindParametricFilter filter2 = filterPanel.checkBoxesForParametricFieldContainer(1).get(0);
@@ -238,7 +235,7 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
-        final ResultsView results = findService.search("wolf");
+        final ListView results = findService.search("wolf");
 
         FindParametricFilter filter = filters().checkBoxesForParametricFieldContainer(0).get(0);
         filter.check();
@@ -250,7 +247,7 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testFilterByIndex() {
-        final ResultsView results = findService.search("face");
+        final ListView results = findService.search("face");
         final QueryResult queryResult = results.searchResult(1);
         final String titleString = queryResult.getTitleString();
         final DocumentViewer docPreview = queryResult.openDocumentPreview();
@@ -273,22 +270,23 @@ public class FilterITCase extends FindTestBase {
         final IndexFilter filter = new IndexFilter(filterPanel.getIndex(2));
         findPage.filterBy(filter);
         Waits.loadOrFadeWait();
-        final int firstFilterResults = findPage.totalResultsNum();
+        final ListView results = getElementFactory().getListView();
+        final int firstFilterResults = results.getTotalResultsNum();
 
         filter.add(filterPanel.getIndex(3));
         findPage.filterBy(filter);
         Waits.loadOrFadeWait();
-        final int bothFilterResults = findPage.totalResultsNum();
+        final int bothFilterResults = results.getTotalResultsNum();
 
         findPage.filterBy(new IndexFilter(filterPanel.getIndex(3)));
-        final int secondFilterResults = findPage.totalResultsNum();
+        final int secondFilterResults = results.getTotalResultsNum();
 
         assertThat("Both filter indexes thus both results", firstFilterResults + secondFilterResults, is(bothFilterResults));
     }
 
     @Test
     public void testFilteredByIndexOnlyHasFilesFromIndex() {
-        final ResultsView results = findService.search("Better");
+        final ListView results = findService.search("Better");
 
         final DocumentViewer docPreview = results.searchResult(1).openDocumentPreview();
         final String chosenIndex = docPreview.getIndexName();
@@ -306,7 +304,7 @@ public class FilterITCase extends FindTestBase {
 
     @Test
     public void testQuickDoubleClickOnDateFilterNotCauseError() {
-        final ResultsView results = findService.search("wookie");
+        final ListView results = findService.search("wookie");
 
         toggleDateSelection(DateOption.MONTH);
         toggleDateSelection(DateOption.MONTH);
@@ -332,7 +330,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     private void preDefinedDateFiltersVersusCustomDateFilters(final DateOption period) {
-        final ResultsView results = findService.search("*");
+        final ListView results = findService.search("*");
 
         toggleDateSelection(period);
         final List<String> preDefinedResults = results.getResultTitles();
@@ -382,7 +380,7 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ResolvedBug("CSA-1577")
     public void testClickingCustomDateFilterDoesNotRefreshResults() {
-        final ResultsView results = findService.search("O Captain! My Captain!");
+        final ListView results = findService.search("O Captain! My Captain!");
         // may not happen the first time
         for(int unused = 0; unused < 5; unused++) {
             toggleDateSelection(DateOption.CUSTOM);
@@ -392,13 +390,13 @@ public class FilterITCase extends FindTestBase {
 
     private void toggleDateSelection(final DateOption date) {
         filters().toggleFilter(date);
-        getElementFactory().getResultsPage().waitForResultsToLoad();
+        getElementFactory().getListView().waitForResultsToLoad();
     }
 
     // Filters Applied section
     @Test
     public void testFiltersAppearInFiltersAppliedSection() {
-        final ResultsView results = findService.search("truth");
+        final ListView results = findService.search("truth");
 
         final int initialLabelsSize = getFilterLabels().size();
 
@@ -433,7 +431,7 @@ public class FilterITCase extends FindTestBase {
     @SuppressWarnings("FeatureEnvy")
     @Test
     public void testApplyingFiltersIncrementsTheHeaderCounter() {
-        final ResultsView results = findService.search("truth");
+        final ListView results = findService.search("truth");
 
         final FilterPanel filterPanel = filters();
         final AppliedFiltersPanel appliedFiltersPanel = appliedFilters();
@@ -467,7 +465,7 @@ public class FilterITCase extends FindTestBase {
     @SuppressWarnings("FeatureEnvy")
     @Test
     public void testTheRemoveAllFiltersButtonIsHiddenWhenThereAreNoFilters() {
-        final ResultsView results = findService.search("truth");
+        final ListView results = findService.search("truth");
 
         final WebElement removeAllButton = appliedFilters().getRemoveAllFiltersButton();
 
@@ -490,7 +488,7 @@ public class FilterITCase extends FindTestBase {
     @SuppressWarnings("FeatureEnvy")
     @Test
     public void testClickingTheRemoveAllButtonRemovesAllFilters() {
-        final ResultsView results = findService.search("truth");
+        final ListView results = findService.search("truth");
         results.waitForResultsToLoad();
 
         final AppliedFiltersPanel appliedFiltersPanel = appliedFilters();

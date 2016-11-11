@@ -50,6 +50,7 @@ public class SavedSearchService {
             elementFactory.getSearchTabBar().waitUntilSavedSearchAppears();
             deleteAll();
         } catch (final TimeoutException ignored) {
+            LOGGER.info("Timed out waiting for a Saved Search to appear");
             deleteAll();
         }
 
@@ -60,7 +61,7 @@ public class SavedSearchService {
         SearchTabBar tabBar = elementFactory.getSearchTabBar();
 
         final List<String> savedTitles = tabBar.savedTabTitles();
-        LOGGER.info("Saved titles: "+savedTitles);
+        LOGGER.info("Saved titles: " + savedTitles);
 
         for(String title: savedTitles) {
             elementFactory.getSearchTabBar().tab(title).activate();

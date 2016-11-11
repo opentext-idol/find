@@ -4,6 +4,7 @@
  */
 package com.autonomy.abc.selenium.find.application;
 
+import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.bi.MapView;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.bi.TableView;
@@ -18,6 +19,11 @@ public class BIIdolFindElementFactory extends IdolFindElementFactory {
 
     BIIdolFindElementFactory(final WebDriver driver) {
         super(driver);
+    }
+
+    @Override
+    public IdolFindPage getFindPage() {
+        return new IdolFindPage.Factory().create(getDriver());
     }
 
     @Override

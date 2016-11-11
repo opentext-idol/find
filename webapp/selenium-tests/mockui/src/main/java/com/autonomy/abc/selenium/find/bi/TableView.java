@@ -19,7 +19,7 @@ public class TableView  extends ParametricFieldView {
     private static final Pattern SHOWING_ENTRIES = Pattern.compile("Showing (?<from>[0-9,]+) to (?<to>[0-9,]+) of (?<entries>[0-9,]+) entries");
 
     public TableView(final WebDriver driver) {
-        super(driver);
+        super(driver, By.xpath(".//*[contains(@class,'parametric-content')]/../.."));
     }
 
     //Display
