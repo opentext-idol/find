@@ -126,7 +126,7 @@ public class ResultsITCase extends FindTestBase {
         findPage.originalQuery().click();
         findPage.waitForParametricValuesToLoad();
 
-        search("maney");
+        search("eevrywhere");
         verifyThat("Says it corrected query", findPage.originalQuery(), displayed());
 
         ListView results = findPage.goToListView();

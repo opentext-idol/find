@@ -176,6 +176,7 @@ public class QueryTermsITCase extends FindTestBase {
 
     @Test
     @ResolvedBug("FIND-151")
+    //TODO: needs to be able to deal with BI and non BI and hosted
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
         new IdolQueryTestHelper<ListView>(findService).hiddenQueryOperatorText();
     }

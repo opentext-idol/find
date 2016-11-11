@@ -134,7 +134,7 @@ public class FilterITCase extends FindTestBase {
         final FilterPanel filterPanel = filters();
 
         findPage.waitForParametricValuesToLoad();
-        final ParametricFieldContainer container = filterPanel.parametricField(1);
+        ParametricFieldContainer container = filterPanel.parametricField(1);
         final String filterCategory = container.filterCategoryName();
 
         FindParametricFilter checkbox = filterPanel.checkboxForParametricValue(1, 1);
@@ -142,6 +142,9 @@ public class FilterITCase extends FindTestBase {
         checkbox.check();
 
         findPage.waitForParametricValuesToLoad();
+
+        container = filterPanel.parametricContainer(WordUtils.capitalize(filterCategory.toLowerCase()));
+        container.expand();
         container.seeAll();
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
 
@@ -256,11 +259,13 @@ public class FilterITCase extends FindTestBase {
         docPreview.close();
 
         filters().indexesTreeContainer().expand();
+        //TODO: filterBy expands by public but there is no public....
         findPage.filterBy(new IndexFilter(index));
         assertThat(results.searchResult(1).getTitleString(), is(titleString));
     }
 
     @Test
+    //TODO: same problem with indexes where is looking for 'public' index
     public void testFilterByMultipleIndexes() {
         findService.search("unbelievable");
         final FilterPanel filterPanel = filters();
