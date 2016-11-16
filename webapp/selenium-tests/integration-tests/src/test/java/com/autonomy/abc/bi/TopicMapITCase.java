@@ -62,7 +62,7 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Test
     public void testTopicMapTabShowsTopicMap() {
-        findService.search("m");
+        findService.searchAnyView("m");
         verifyThat("Topic map element displayed", results.topicMapVisible());
     }
 
@@ -106,7 +106,7 @@ public class TopicMapITCase extends IdolFindTestBase {
     @Test
     public void testApplyingFiltersToMap() {
         final String searchTerm = "European Union";
-        findService.search(searchTerm);
+        findService.searchAnyView(searchTerm);
 
         //checks first parametric filter of first parametric filter type
         final FilterPanel filters = getElementFactory().getFilterPanel();
@@ -198,7 +198,7 @@ public class TopicMapITCase extends IdolFindTestBase {
     }
 
     private void search(final String term) {
-        findService.search(term);
+        findService.searchAnyView(term);
         results.waitForMapLoaded();
     }
 

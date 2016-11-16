@@ -46,11 +46,11 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         findService = (BIFindService) getApplication().findService();
         savedSearchService = getApplication().savedSearchService();
         elementFactory = (BIIdolFindElementFactory) getElementFactory();
-        findPage = getElementFactory().getFindPage();
-        findService.search("careful now");
+        findPage = elementFactory.getFindPage();
+        findService.searchAnyView("careful now");
 
         try {
-            findPage = getElementFactory().getFindPage();
+            findPage = elementFactory.getFindPage();
             findPage.waitUntilSearchTabsLoaded();
             savedSearchService.deleteAll();
 
@@ -58,11 +58,12 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         } catch (final TimeoutException ignored) {
             //no-op
         }
+        elementFactory.getTopicMap().waitForMapLoaded();
     }
 
     @After
     public void tearDown() {
-        findPage = getElementFactory().getFindPage();
+        findPage = elementFactory.getFindPage();
         getDriver().get(getConfig().getAppUrl(getApplication()));
         getElementFactory().getFindPage().waitUntilDatabasesLoaded();
         findPage.waitUntilSearchTabsLoaded();
@@ -74,8 +75,8 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService.compareCurrentWith(firstSearch);
 
         Waits.loadOrFadeWait();
+        final TopicMapView mapView = elementFactory.getResultsComparison().topicMap();
 
-        final TopicMapView mapView = elementFactory.getTopicMap();
         mapView.waitForMapLoaded();
         return mapView;
     }
@@ -106,7 +107,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
     private void search(final String query, final String saveAs, final SearchType saveType) {
         Waits.loadOrFadeWait();
-        findService.search(query);
+        findService.searchAnyView(query);
         findPage.waitUntilSaveButtonsActive();
         savedSearchService.saveCurrentAs(saveAs, saveType);
     }
@@ -127,8 +128,11 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-631")
+    //TODO: not working because of a wait -> works on debug & not cleaning up
     public void testClickingTopicMapClusterHeaderAddsConcept() {
         final TopicMapView mapView = compareAndGetTopicMap("woo", "boo");
+
+        mapView.waitForMapLoaded();
 
         final String clickedCluster = mapView.clickNthClusterHeading(1);
         verifyThat("Clicking has revealed child concepts",

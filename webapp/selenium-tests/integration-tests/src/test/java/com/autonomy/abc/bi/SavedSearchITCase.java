@@ -16,9 +16,8 @@ import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
-import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
 import com.autonomy.abc.selenium.find.numericWidgets.NumericWidgetService;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.find.save.*;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -102,7 +101,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
     @Test
     public void testOpenSnapshotAsQuery() {
         findService.search("open");
-        getElementFactory().getResultsPage().waitForResultsToLoad();
+        elementFactory.getListView().waitForResultsToLoad();
 
         saveService.saveCurrentAs("sesame", SearchType.SNAPSHOT);
         findService.search("no longer open");
@@ -114,7 +113,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat(searchTabBar.currentTab().getType(), is(SearchType.QUERY));
         assertThat(searchTabBar.tab("sesame").getType(), is(SearchType.SNAPSHOT));
 
-        final List<WebElement> addedConcepts = getElementFactory().getConceptsPanel().selectedConcepts();
+        final List<WebElement> addedConcepts = elementFactory.getConceptsPanel().selectedConcepts();
         assertThat(addedConcepts, hasSize(1));
         assertThat(addedConcepts.get(0), containsText("open"));
     }
@@ -124,7 +123,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         findService.search("useless");
         saveService.saveCurrentAs("duplicate", SearchType.QUERY);
         saveService.openNewTab();
-        getElementFactory().getFindPage().waitUntilDatabasesLoaded();
+        elementFactory.getFindPage().waitUntilDatabasesLoaded();
 
         checkSavingDuplicateThrowsError("duplicate", SearchType.QUERY);
         checkSavingDuplicateThrowsError("duplicate", SearchType.SNAPSHOT);
@@ -141,10 +140,10 @@ public class SavedSearchITCase extends IdolFindTestBase {
     @Test
     public void testSavedSearchVisibleInNewSession() {
         findService.search(new Query("live forever"));
-        ResultsView results = getElementFactory().getResultsPage();
+        ListView results = elementFactory.getListView();
         results.waitForResultsToLoad();
 
-        final FilterPanel filterPanel = getElementFactory().getFilterPanel();
+        final FilterPanel filterPanel = elementFactory.getFilterPanel();
         filterPanel.waitForParametricFields();
 
         final int index = filterPanel.nonZeroParamFieldContainer(0);
@@ -156,7 +155,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         final BIIdolFind other = new BIIdolFind();
         launchInNewSession(other);
         other.loginService().login(getConfig().getUserWithRole("BIFHI"));
-        other.findService().search("blur");
+        other.findService().searchAnyView("blur");
 
         final BIIdolFindElementFactory factory = other.elementFactory();
         factory.getSearchTabBar().switchTo("oasis");
@@ -173,7 +172,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         saveService.saveCurrentAs(searchName, SearchType.SNAPSHOT);
         searchTabBar.switchTo(searchName);
 
-        final IdolFindPage findPage = getElementFactory().getFindPage();
+        final IdolFindPage findPage = elementFactory.getFindPage();
         findPage.goToSunburst();
         Waits.loadOrFadeWait();
 
@@ -211,10 +210,10 @@ public class SavedSearchITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-269")
     public void testSearchesWithNumericFilters() {
-        final NumericWidgetService widgetService = getApplication().numericWidgetService();
+        final NumericWidgetService widgetService = ((BIIdolFind) getApplication()).numericWidgetService();
         DriverUtil.clickAndDrag(100, widgetService.searchAndSelectNthGraph(0, "saint").graph(), getDriver());
 
-        getElementFactory().getResultsPage().waitForResultsToLoad();
+        elementFactory.getListView().waitForResultsToLoad();
         saveService.saveCurrentAs("saaaaved", SearchType.QUERY);
 
         assertThat(searchTabBar.currentTab(), not(modified()));
@@ -223,14 +222,12 @@ public class SavedSearchITCase extends IdolFindTestBase {
     // Checks that the saved-ness of the search respects the selected concepts
     @Test
     public void testSearchesWithConcepts() {
-        elementFactory.getFindPage().goToTopicMap();
-
-        final TopicMapView topicMap = elementFactory.getTopicMap();
+        final TopicMapView topicMap = elementFactory.getFindPage().goToTopicMap();
         topicMap.waitForMapLoaded();
 
         // Select a concept and save the search
         final String selectedConcept = topicMap.clickNthClusterHeading(0);
-        getElementFactory().getFindPage().waitUntilSavePossible();
+        elementFactory.getFindPage().waitUntilSavePossible();
         saveService.saveCurrentAs("Conceptual Search", SearchType.QUERY);
 
         // Remove the selected concept
@@ -295,8 +292,8 @@ public class SavedSearchITCase extends IdolFindTestBase {
                 saveService.openNewTab();
             }
             firstSearch = false;
-            findService.search(name);
-            getElementFactory().getFindPage().waitUntilSaveButtonsActive();
+            findService.searchAnyView(name);
+            elementFactory.getFindPage().waitUntilSaveButtonsActive();
             saveService.saveCurrentAs(name, saveType);
         }
     }

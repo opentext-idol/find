@@ -13,7 +13,7 @@ import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
@@ -36,7 +36,6 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
     private BIIdolFindElementFactory elementFactory;
     private FindService findService;
     private IdolFindPage findPage;
-    private TopicMapView topicMap;
     private ConceptsPanel conceptsPanel;
 
     public BIRelatedConceptsITCase(final TestConfig config) {
@@ -48,7 +47,6 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
         elementFactory = (BIIdolFindElementFactory)super.getElementFactory();
         findService = getApplication().findService();
         findPage = elementFactory.getFindPage();
-        topicMap = elementFactory.getTopicMap();
         findPage.goToListView();
         conceptsPanel = elementFactory.getConceptsPanel();
     }
@@ -68,21 +66,22 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
         final int numberOfRepeats = 2;
         final LinkedList<Integer> resultCountList = new LinkedList<>();
 
-        final ResultsView results = searchAndWait("loathing");
+        final ListView results = searchAndWait("loathing");
 
-        final int resultsCountNoConcept = results.getResultsCount();
+        final int resultsCountNoConcept = results.getTotalResultsNum();
         assumeThat("Initial query returned no results", resultsCountNoConcept, greaterThan(0));
         resultCountList.add(resultsCountNoConcept);
 
+        TopicMapView topicMap;
         for(int i = 0; i < numberOfRepeats; ++i) {
-            goToTopicMap();
+            topicMap = goToTopicMap();
             topicMap.clickConceptAndAddText(topicMap.conceptClusterNames().size());
             Waits.loadOrFadeWait();
 
             findPage.goToListView();
             results.waitForResultsToLoad();
 
-            resultCountList.add(results.getResultsCount());
+            resultCountList.add(results.getTotalResultsNum());
         }
 
         for(int i = 0; i < resultCountList.size() - 1; ++i) {
@@ -98,10 +97,10 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
         final String originalConcept = "balloon";
         final String editedConcept = "shiny";
 
-        ResultsView results = searchAndWait(originalConcept);
+        ListView results = searchAndWait(originalConcept);
         final String firstResult = results.getResult(1).getTitleString();
 
-        goToTopicMap();
+        TopicMapView topicMap = goToTopicMap();
         final List<String> parentNames = topicMap.conceptClusterNames();
 
         ConceptsPanel.EditPopover popOver = openEditPopOverForConcept(0,originalConcept);
@@ -120,7 +119,7 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
         verifyThat("Concept edited to new value", addedConcept, containsText(editedConcept));
 
         findPage.goToListView();
-        final String editedFirstResult = elementFactory.getResultsPage().getResult(1).getTitleString();
+        final String editedFirstResult = elementFactory.getListView().getResult(1).getTitleString();
         verifyThat("First result is different", editedFirstResult, not(firstResult));
 
         goToTopicMap();
@@ -134,11 +133,12 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
         final String termB = "nefarious";
 
         searchAndWait(termA);
-        int numResults = findPage.totalResultsNum();
+        final ListView results = elementFactory.getListView();
+        int numResults = results.getTotalResultsNum();
         conceptsPanel.removeAllConcepts();
 
         searchAndWait(termB);
-        numResults = numResults + findPage.totalResultsNum();
+        numResults = numResults + results.getTotalResultsNum();
         assertThat("There are some results when search terms are 'OR'ed", numResults, greaterThan(0));
         conceptsPanel.removeAllConcepts();
 
@@ -149,8 +149,8 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
 
         popOver.setValueAndSave(Arrays.asList("\""+termB, termA+"\""));
 
-        getElementFactory().getResultsPage().waitForResultsToLoad();
-        verifyThat("Converts the line break to a space and looks for an exact match", findPage.totalResultsNum(), is(0));
+        results.waitForResultsToLoad();
+        verifyThat("Converts the line break to a space and looks for an exact match", results.getTotalResultsNum(), is(0));
 
         popOver = conceptsPanel.editConcept(0);
         verifyThat("Line breaks replaced with spaces in edit box",!popOver.containsValue("\n"));
@@ -159,7 +159,7 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
     @Test
     public void testEditingConceptCluster() {
         searchAndWait("something");
-        goToTopicMap();
+        TopicMapView topicMap = goToTopicMap();
 
         final int clusterIndex = 0;
         final List<String> childConcepts = topicMap.getChildConceptsOfCluster(clusterIndex);
@@ -189,7 +189,7 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
     public void testInlinePreviewClosesOnEdit() {
         final String originalSearch = "face";
         findPage.goToListView();
-        final ResultsView results = findService.search(originalSearch);
+        final ListView results = findService.search(originalSearch);
         results.waitForResultsToLoad();
 
         InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
@@ -201,13 +201,14 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
         verifyThat("Document preview not still there", inlinePreview, not(displayed()));
     }
 
-    private void goToTopicMap() {
-        findPage.goToTopicMap();
-        topicMap.waitForMapLoaded();
+    private TopicMapView goToTopicMap() {
+        TopicMapView map = findPage.goToTopicMap();
+        map.waitForMapLoaded();
+        return map;
     }
 
-    private ResultsView searchAndWait(final String query) {
-        final ResultsView results = findService.search(query);
+    private ListView searchAndWait(final String query) {
+        final ListView results = findService.search(query);
         results.waitForResultsToLoad();
         return results;
     }

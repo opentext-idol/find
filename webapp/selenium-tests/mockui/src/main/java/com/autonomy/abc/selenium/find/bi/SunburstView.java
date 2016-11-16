@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.find.bi;
 
 import com.autonomy.abc.selenium.find.Container;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
@@ -15,7 +16,7 @@ import java.util.List;
 public class SunburstView extends ParametricFieldView {
 
     public SunburstView(final WebDriver driver) {
-        super(driver);
+        super(driver, By.xpath(".//*[contains(@class,'parametric-content') and contains(@class,'sunburst')]/../.."));
     }
 
     //Display

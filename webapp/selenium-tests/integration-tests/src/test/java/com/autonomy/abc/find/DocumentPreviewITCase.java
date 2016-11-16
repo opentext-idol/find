@@ -9,7 +9,7 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResult;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.hp.autonomy.frontend.selenium.config.Browser;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -41,14 +41,13 @@ public class DocumentPreviewITCase extends FindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
-        if(!findPage.footerLogo().isDisplayed()) {
-            ((IdolFindPage) findPage).goToListView();
-        }
+        findPage.goToListView();
     }
 
     @Test
     public void testShowDocumentPreview() {
-        final ResultsView results = findService.search("cake");
+        final ListView results = findService.search("cake");
+        filters().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter(filters().getIndex(1)));
 
         final InlinePreview docPreview = results.searchResult(1).openDocumentPreview();
@@ -75,7 +74,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     public void testOpenOriginalDocInNewTab() {
         final Session session = getMainSession();
 
-        final ResultsView results = findService.search("general");
+        final ListView results = findService.search("general");
         results.waitForResultsToLoad();
 
         for (final FindResult queryResult : results.getResults(4)) {
@@ -107,7 +106,9 @@ public class DocumentPreviewITCase extends FindTestBase {
 
     @Test
     public void testDetailedPreview() {
-        final ResultsView results = findService.search("m");
+        final ListView results = findService.search("m");
+
+        filters().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter(filters().getIndex(1)));
         findPage.waitForLoad();
 
@@ -162,7 +163,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     @Test
     @ActiveBug(value = "FIND-86", browsers = Browser.FIREFOX)
     public void testOneCopyOfDocInDetailedPreview() {
-        final ResultsView results = findService.search("face");
+        final ListView results = findService.search("face");
         InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
 
         final DetailedPreviewPage detailedPreviewPage = inlinePreview.openPreview();
@@ -176,7 +177,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-672")
     public void testPreviewFillsFrame() {
-        final ResultsView results = findService.search("face");
+        final ListView results = findService.search("face");
 
         InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
         assertThat("iframe containing document not squashed", inlinePreview.docFillsMoreThanHalfOfPreview());

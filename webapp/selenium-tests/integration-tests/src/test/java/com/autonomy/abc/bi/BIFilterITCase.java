@@ -1,14 +1,15 @@
-package com.autonomy.abc.find;
+package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.filters.GraphFilterContainer;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.filters.ListFilterContainer;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
@@ -24,25 +25,23 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 
 @Role(UserRole.BIFHI)
-public class IdolFilterITCase extends IdolFindTestBase {
+public class BIFilterITCase extends IdolFindTestBase {
     private FindService findService;
     private IdolFindPage findPage;
 
-    public IdolFilterITCase(final TestConfig config) {
+    public BIFilterITCase(final TestConfig config) {
         super(config);
     }
 
     @Before
     public void setUp() {
         findService = getApplication().findService();
-        findPage = getElementFactory().getFindPage();
-        if(!findPage.footerLogo().isDisplayed()) {
-            findPage.goToListView();
-        }
+        findPage = ((BIIdolFindElementFactory) getElementFactory()).getFindPage();
+        findPage.goToListView();
     }
 
-    private ResultsView searchAndWait(final String searchTerm) {
-        final ResultsView results = findService.search(searchTerm);
+    private ListView searchAndWait(final String searchTerm) {
+        final ListView results = findService.search(searchTerm);
         findPage.waitForParametricValuesToLoad();
         return results;
     }

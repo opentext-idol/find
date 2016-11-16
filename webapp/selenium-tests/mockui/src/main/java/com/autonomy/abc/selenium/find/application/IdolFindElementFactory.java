@@ -18,11 +18,6 @@ public abstract class IdolFindElementFactory extends FindElementFactory {
     }
 
     @Override
-    public IdolFindPage getFindPage() {
-        return new IdolFindPage.Factory().create(getDriver());
-    }
-
-    @Override
     public IdolFilterPanel getFilterPanel() {
         return new IdolFilterPanel(new IdolDatabaseTree.Factory(), getDriver());
     }

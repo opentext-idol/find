@@ -4,11 +4,11 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.queryHelper.IdolQueryTestHelper;
 import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.find.Container;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.UserRole;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.autonomy.abc.selenium.query.QueryService;
@@ -21,7 +21,6 @@ import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.apache.commons.collections4.ListUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.openqa.selenium.WebDriverException;
@@ -51,10 +50,10 @@ public class QueryTermsITCase extends FindTestBase {
     @Category(CoreFeature.class)
     @Role(UserRole.FIND)
     public void testSearchOnSimpleTerms() throws InterruptedException {
-        goToListView();
+        findPage.goToListView();
 
         final String searchTerm = "Fred is a chimpanzee";
-        final ResultsView results = findService.search(searchTerm);
+        final ListView results = findService.search(searchTerm);
         assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(searchTerm));
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
@@ -64,10 +63,10 @@ public class QueryTermsITCase extends FindTestBase {
     @Category(CoreFeature.class)
     @Role(UserRole.FIND)
     public void testSearchForAll() {
-        goToListView();
+        findPage.goToListView();
 
         final String searchTerm = "*";
-        final ResultsView results = findService.search(searchTerm);
+        final ListView results = findService.search(searchTerm);
         assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(searchTerm));
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
@@ -79,10 +78,10 @@ public class QueryTermsITCase extends FindTestBase {
     public void testSearchOnSimpleConcepts() throws InterruptedException {
         assumeThat("Currently should only run on prem - requires role infrastructure", !isHosted());
 
-        goToListView();
+        findPage.goToListView();
 
         final String searchTerm = "chimpanzee";
-        final ResultsView results = findService.search(searchTerm);
+        final ListView results = findService.search(searchTerm);
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), contains(searchTerm));
     }
@@ -93,16 +92,16 @@ public class QueryTermsITCase extends FindTestBase {
     public void testImplicitSearchForAll() throws InterruptedException {
         assumeThat("Currently should only run on prem - requires role infrastructure", !isHosted());
 
-        goToListView();
+        findPage.goToListView();
 
-        assertThat(getElementFactory().getResultsPage().getResults(), not(empty()));
+        assertThat(getElementFactory().getListView().getResults(), not(empty()));
         findService.search("*");
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
     }
 
     @Test
     public void testBooleanOperators() {
-        goToListView();
+        findPage.goToListView();
 
         List<String> potentialTerms = new ArrayList<>(Arrays.asList("brevity", "tessellate", "hydrangea", "\"dearly departed\"", "abstruse", "lobotomy"));
         final String termOne = findService.termWithBetween1And30Results(potentialTerms);
@@ -110,7 +109,7 @@ public class QueryTermsITCase extends FindTestBase {
 
         assertThat("Test only works if query terms both have <=30 results ","",not(anyOf(is(termOne),is(termTwo))));
 
-        final ResultsView results = findService.search(termOne);
+        final ListView results = findService.search(termOne);
         final List<String> musketeersSearchResults = results.getResultTitles();
         final int numberOfMusketeersResults = musketeersSearchResults.size();
         removeAllConcepts();
@@ -162,13 +161,17 @@ public class QueryTermsITCase extends FindTestBase {
         removeAllConcepts();
     }
 
+    private void ensureOnCorrectView() {
+        findService.searchAnyView("get rid of");
+        removeAllConcepts();
+        ListView results = findPage.goToListView();
+        results.waitForResultsToLoad();
+    }
+
     @Test
     @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM, against = Deployment.DEVELOP)
-    @Ignore("Pending independence of error message tests from QueryTestHelpers")
-    //TODO: Test needs to be on the first tab (topic map) when check for error displayed - part of splitting queryHelpers
     public void testCorrectErrorMessageDisplayed() {
-        goToListView();
-
+        ensureOnCorrectView();
         new QueryTestHelper<>(findService)
                 .booleanOperatorQueryText(Errors.Search.OPERATORS, Errors.Search.OPENING_BOOL, Errors.Search.GENERIC_HOSTED_ERROR);
         new QueryTestHelper<>(findService)
@@ -178,12 +181,13 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-151")
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-        new IdolQueryTestHelper<ResultsView>(findService).hiddenQueryOperatorText();
+        ensureOnCorrectView();
+        new IdolQueryTestHelper<ListView>(findService).hiddenQueryOperatorText(getElementFactory());
     }
 
     @Test
     public void testSearchParentheses() {
-        findService.search("Remove splash page");
+        ensureOnCorrectView();
         //noinspection AnonymousInnerClassWithTooManyMethods
         new QueryTestHelper<>(new QueryService<QueryResultsPage>() {
             @Override
@@ -211,7 +215,7 @@ public class QueryTermsITCase extends FindTestBase {
     public void testWhitespaceSearch() {
         assumeThat("Currently should only run on prem - requires role infrastructure", !isHosted());
 
-        goToListView();
+        findPage.goToListView();
 
         try {
             findService.search("       ");
@@ -219,7 +223,7 @@ public class QueryTermsITCase extends FindTestBase {
 
         assertThat(findPage.footerLogo(), displayed());
 
-        final ResultsView results = findService.search("Kevin Costner");
+        final ListView results = findService.search("Kevin Costner");
 
         final List<String> resultTitles = results.getResultTitles();
 
@@ -233,7 +237,7 @@ public class QueryTermsITCase extends FindTestBase {
     @ResolvedBug("CCUK-3624")
     @Role(UserRole.FIND)
     public void testRefreshEmptyQuery() throws InterruptedException {
-        goToListView();
+        findPage.goToListView();
 
         findService.search("something");
         findService.search("");
@@ -244,12 +248,6 @@ public class QueryTermsITCase extends FindTestBase {
 
         verifyThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(""));
         verifyThat("taken back to landing page after refresh", findPage.footerLogo(), displayed());
-    }
-
-    private void goToListView() {
-        if (!findPage.footerLogo().isDisplayed()) {
-            ((IdolFindPage) findPage).goToListView();
-        }
     }
 
     private void removeAllConcepts() {

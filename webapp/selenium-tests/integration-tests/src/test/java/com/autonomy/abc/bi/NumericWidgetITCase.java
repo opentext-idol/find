@@ -8,6 +8,7 @@ import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
+import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.filters.DateOption;
@@ -16,7 +17,7 @@ import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
 import com.autonomy.abc.selenium.find.numericWidgets.NumericWidget;
 import com.autonomy.abc.selenium.find.numericWidgets.NumericWidgetService;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.find.save.SavedSearchPanel;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchTabBar;
@@ -66,14 +67,15 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
-        numericService = getApplication().numericWidgetService();
+        numericService = ((BIIdolFind) getApplication()).numericWidgetService();
     }
 
     /*##########ANY NUMERIC GRAPH###########*/
     @Test
+    //TODO: test not actually for this
     @ActiveBug("FIND-417")
     public void testClickingOnFilterPanelGraphOpensMain() {
-        findService.search("book");
+        findService.searchAnyView("book");
         filters().waitForParametricFields();
 
         assertThat("Default: main graph not shown", !findPage.mainGraphDisplayed());
@@ -111,11 +113,10 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     public void testSelectionRecFiltersResults() {
         MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(0, "space");
 
-        final ResultsView results = getElementFactory().getResultsPage();
-        results.goToListView();
+        final ListView results = findPage.goToListView();
         results.waitForResultsToLoad();
 
-        final int beforeNumberResults = findPage.totalResultsNum();
+        final int beforeNumberResults = results.getTotalResultsNum();
         mainGraph.waitUntilWidgetLoaded();
         final String beforeMin = mainGraph.minFieldValue();
         final String beforeMax = mainGraph.maxFieldValue();
@@ -124,7 +125,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph = numericService.waitForReload();
 
         verifyThat("Filter label has appeared", findPage.filterLabelsText(), hasSize(1));
-        verifyThat("Fewer results", findPage.totalResultsNum(), lessThan(beforeNumberResults));
+        verifyThat("Fewer results", results.getTotalResultsNum(), lessThan(beforeNumberResults));
 
         verifyThat("Min field text value changed", mainGraph.minFieldValue(), not(is(beforeMin)));
         verifyThat("Max field text value changed", mainGraph.maxFieldValue(), not(is(beforeMax)));
@@ -149,15 +150,14 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         final MainNumericWidget mainGraph = numericService.searchAndSelectNthGraph(2, "face");
         mainGraph.selectFractionOfBars(3, 4);
         numericService.waitForReload();
-        final ResultsView results = getElementFactory().getResultsPage();
-        results.goToListView();
-        verifyThat("There are results present", findPage.totalResultsNum(), greaterThan(0));
+
+        verifyThat("There are results present", findPage.goToListView().getTotalResultsNum(), greaterThan(0));
     }
 
     @Test
     @ResolvedBug("FIND-366")
     public void testFilterLabelsUpdate() {
-        findService.search("dance");
+        findService.searchAnyView("dance");
         filters().waitForParametricFields();
         numericService.selectFilterGraph(filters().getNthGraph(0));
 
@@ -174,7 +174,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-282")
     @ActiveBug("FIND-417")
     public void testFilterLabelsHaveTitleOnTooltip() {
-        findService.search("ball");
+        findService.searchAnyView("ball");
         filters().waitForParametricFields();
 
         final List<String> graphTitles = filterByAllGraphs();
@@ -196,6 +196,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         final List<String> titles = new ArrayList<>();
 
         for (final GraphFilterContainer container : filters().graphContainers()) {
+            //TODO: this is reloading which is making things stale
             titles.add(numericService.selectFilterGraph(container));
             DriverUtil.clickAndDrag(100, findPage.mainGraph().graph(), getDriver());
         }
@@ -241,7 +242,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
             verifyThat("Filter labels have appeared", findPage.filterLabels(), not(empty()));
         } finally {
-            findService.search("back to results");
+            findService.searchAnyView("back to results");
             saveService.deleteAll();
         }
     }
@@ -280,6 +281,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-633")
     @ActiveBug("FIND-690")
+    //TODO: make less data-dependent -> can't guarantee what years are going to be there
     public void testInputDateBoundsWithCalendar() {
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstDateGraph("tragedy");
         final DatePicker startCalendar = mainGraph.openCalendar(mainGraph.startCalendar());
@@ -426,7 +428,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         MainNumericWidget mainGraph = findPage.mainGraph();
         final int originalRange = (int) mainGraph.setAndGetFullRange();
 
-        findService.search("Tse");
+        findService.searchAnyView("Tse");
         mainGraph = findPage.mainGraph();
         final int newRange = (int) mainGraph.setAndGetFullRange();
 
@@ -437,7 +439,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     private void checkBoundsForDateWidget() {
         final List<Date> oldD = findPage.mainGraph().getDates();
         findPage.filterBy(IndexFilter.ALL);
-        findService.search("George Orwell");
+        findService.searchAnyView("George Orwell");
         final List<Date> newD = findPage.mainGraph().getDates();
 
         if(newD.get(0).after(oldD.get(0))) {

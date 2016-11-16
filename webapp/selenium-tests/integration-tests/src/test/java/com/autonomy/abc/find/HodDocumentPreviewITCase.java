@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.results.FindResult;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -48,7 +48,7 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
     @Test
     @ResolvedBug("CSA-1767 - footer not hidden properly")
     public void testViewDocumentsOpenFromFind(){
-        ResultsView results = findService.search("Review");
+        ListView results = findService.search("Review");
 
         for(final FindResult result : results.getResults(5)){
             final DocumentViewer docViewer = result.openDocumentPreview();
@@ -78,7 +78,7 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
     @Test
     @ResolvedBug("CCUK-3647")
     public void testMessageWhenRunOutOfResults(){
-        ResultsView results = findService.search(new Query("connectors"));
+        ListView results = findService.search(new Query("connectors"));
         getElementFactory().getFilterPanel().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter("Site Search"));
 
@@ -96,7 +96,7 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
     @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
     public void testDocumentPreview(){
         final Index index = new Index("fifa");
-        ResultsView results = findService.search(new Query("document preview"));
+        ListView results = findService.search(new Query("document preview"));
         getElementFactory().getFilterPanel().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter(index));
 
@@ -122,7 +122,7 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
     public void testOpenDocumentFromSearch(){
         final Window original = getWindow();
 
-        ResultsView results = findService.search("Window");
+        ListView results = findService.search("Window");
 
         for(int i = 1; i <= 5; i++){
             final FindResult result = results.getResult(i);

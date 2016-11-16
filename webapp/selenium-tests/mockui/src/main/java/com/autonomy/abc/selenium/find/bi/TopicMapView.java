@@ -6,6 +6,7 @@ package com.autonomy.abc.selenium.find.bi;
 
 import com.autonomy.abc.selenium.find.Container;
 import com.hp.autonomy.frontend.selenium.element.Slider;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openqa.selenium.*;
@@ -25,7 +26,12 @@ public class TopicMapView {
 
     public TopicMapView(final WebDriver driver) {
         this.driver = driver;
-        this.container = driver.findElement(By.cssSelector(".service-view-container:not(.hide) > :not(.hide):not(.search-tabs-container), div[data-pagename=search]"));
+        this.container = ElementUtil.ancestor(Container.currentTabContents(driver).findElement(By.className("entity-topic-map")), 2);
+    }
+
+    public TopicMapView(final WebElement element, final WebDriver driver) {
+        this.driver = driver;
+        this.container = element;
     }
 
     //GENERAL PAGE
@@ -109,8 +115,10 @@ public class TopicMapView {
     }
 
     public String clickNthClusterHeading(final int index) {
-        int workingIndex = conceptClusters().size() - 1 -index;
-        int actualIndex = workingIndex + concepts().size();
+        waitForMapLoaded();
+
+        final int workingIndex = conceptClusters().size() - 1 - index;
+        final int actualIndex = workingIndex + concepts().size();
         final WebElement entity = mapEntityTextElements().get(actualIndex);
 
         final String text = entity.getText();

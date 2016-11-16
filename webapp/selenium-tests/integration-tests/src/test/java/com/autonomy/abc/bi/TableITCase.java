@@ -43,7 +43,6 @@ public class TableITCase extends IdolFindTestBase {
     @Before
     public void setUp() {
         elementFactory = (BIIdolFindElementFactory) getElementFactory();
-        tableView = elementFactory.getTableView();
         findService = getApplication().findService();
     }
 
@@ -57,13 +56,13 @@ public class TableITCase extends IdolFindTestBase {
         verifyThat("Parametric selectors appear", tableView.parametricSelectionDropdownsExist());
 
         elementFactory.getConceptsPanel().removeAllConcepts();
-        findService.search("shambolicwolic");
+        findService.searchAnyView("shambolicwolic");
 
         IdolFindPage findPage = elementFactory.getFindPage();
-        findPage.goToListView();
-        assumeThat("There are no results for this", findPage.totalResultsNum(), is(0));
+        assumeThat("There are no results for this", findPage.goToListView().getTotalResultsNum(), is(0));
 
-        findPage.goToTable();
+        //TODO: this doesn't work - dunno why though
+        tableView = findPage.goToTable();
 
         final WebElement message = tableView.message();
         final String correctMessage = "Could not display Table View: your search returned no parametric values";
@@ -83,7 +82,7 @@ public class TableITCase extends IdolFindTestBase {
 
     @Test
     public void testTwoFieldsGiveCorrectTableValues() {
-        elementFactory.getFindPage().goToTable();
+        tableView = elementFactory.getFindPage().goToTable();
 
         final FilterPanel filters = filters();
         final int reasonableFilterNumber = 10;
@@ -148,7 +147,7 @@ public class TableITCase extends IdolFindTestBase {
 
     @Test
     public void testPagination() {
-        elementFactory.getFindPage().goToTable();
+        tableView = elementFactory.getFindPage().goToTable();
         tableView.waitForTable();
 
         assumeThat(tableView.currentPage(), is(1));
@@ -247,8 +246,8 @@ public class TableITCase extends IdolFindTestBase {
     }
 
     private void init(final String searchText) {
-        findService.search(searchText);
-        elementFactory.getFindPage().goToTable();
+        findService.searchAnyView(searchText);
+        tableView = elementFactory.getFindPage().goToTable();
     }
 
     private FilterPanel filters() {

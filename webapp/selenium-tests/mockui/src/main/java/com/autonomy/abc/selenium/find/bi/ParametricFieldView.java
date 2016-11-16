@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.bi;
 
+import com.autonomy.abc.selenium.find.Container;
 import com.hp.autonomy.frontend.selenium.element.ChosenDrop;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
@@ -8,15 +9,16 @@ import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-class ParametricFieldView {
+abstract class ParametricFieldView {
 
     private final WebDriver driver;
     private final WebElement container;
 
-    ParametricFieldView(final WebDriver driver) {
+    ParametricFieldView(final WebDriver driver, final By locator) {
         this.driver = driver;
-        this.container = driver.findElement(By.className("service-view-container:not(.hide)"));
+        this.container = Container.currentTabContents(driver).findElement(locator);
     }
 
     public String getSelectedFieldName(final int i){
@@ -37,13 +39,8 @@ class ParametricFieldView {
 
     public List<String> getParametricDropdownItems(final int i){
         final ChosenDrop dropdown = parametricSelectionDropdown(i);
-        List<String> badFormat = ElementUtil.getTexts(dropdown.getItems());
-        List<String> goodFormat = new ArrayList<>();
-
-        for(String title : badFormat) {
-            goodFormat.add(title.toUpperCase());
-        }
-        return goodFormat;
+        final List<String> badFormat = ElementUtil.getTexts(dropdown.getItems());
+        return badFormat.stream().map(String::toUpperCase).collect(Collectors.toList());
     }
 
     public WebElement message() {

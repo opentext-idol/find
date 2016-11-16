@@ -3,7 +3,8 @@ package com.autonomy.abc.selenium.find.comparison;
 import com.autonomy.abc.selenium.find.bi.MapView;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.results.FindResult;
-import com.autonomy.abc.selenium.find.results.ResultsView;
+import com.autonomy.abc.selenium.find.results.ListView;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -34,11 +35,11 @@ public class ResultsComparisonView {
     }
 
     public int getResultsCountFor(final AppearsIn appearsIn) {
-        return resultsView(appearsIn).getResultsCount();
+        return resultsView(appearsIn).getTotalResultsNum();
     }
 
-    public ResultsView resultsView(final AppearsIn appearsIn) {
-        return new ResultsView(wholeContainer.findElement(appearsIn.getResultsListLocator()), driver);
+    public ListView resultsView(final AppearsIn appearsIn) {
+        return new ListView(wholeContainer.findElement(appearsIn.getResultsListLocator()), driver);
     }
 
     //TOPIC MAP VIEW
@@ -49,6 +50,11 @@ public class ResultsComparisonView {
 
     private void goToTopicMapView(final AppearsInTopicMap panel) {
         wholeContainer.findElement(panel.mapLocator()).click();
+    }
+
+    public TopicMapView topicMap() {
+        final WebElement map = ElementUtil.ancestor(wholeContainer.findElement(By.cssSelector(".entity-topic-map")), 2);
+        return new TopicMapView(map, driver);
     }
 
     //CHANGE VIEW
