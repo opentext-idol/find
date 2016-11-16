@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.query.Query;
 import com.autonomy.abc.selenium.query.QueryService;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -37,6 +38,8 @@ public class FindService implements QueryService<ListView> {
         submitSearch(query.getTerm());
         elementFactory.getFilterPanel().waitForIndexes();
         findPage.filterBy(new AggregateQueryFilter(query.getFilters()));
+        LoggerFactory.getLogger(this.getClass()).info("'search' expects you to already be on the listview, if it fails " +
+                "try 'searchAnyView'.");
         return elementFactory.getListView();
     }
 

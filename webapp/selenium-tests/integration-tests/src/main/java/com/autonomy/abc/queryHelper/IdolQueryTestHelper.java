@@ -1,6 +1,9 @@
 package com.autonomy.abc.queryHelper;
 
 import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.application.FindElementFactory;
+import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.query.QueryService;
 import com.autonomy.abc.shared.QueryTestHelper;
 import org.slf4j.Logger;
@@ -18,23 +21,17 @@ public class IdolQueryTestHelper<T> extends QueryTestHelper{
 
     public IdolQueryTestHelper(final QueryService queryService){super(queryService);}
 
-    @Override
-    public void hiddenQueryOperatorText() {
-        for (IdolQueryTermResult result : IdolQueryTermResult.idolResultsFor(getHiddenBooleans(),getService())) {
+    public void hiddenQueryOperatorText(final FindElementFactory elementFactory) {
+        for (IdolQueryTermResult result : IdolQueryTermResult.idolResultsFor(getHiddenBooleans(), getService())) {
             if (result.errorWellExists() && result.errorContainer().isDisplayed()) {
-                if(!result.correctedQuery().isDisplayed()){
-                    verifyThat("Query not auto-corrected thus error is for no results",
-                            result.errorContainer(),
-                            containsText(Errors.Search.NO_RESULTS));
-                }
-                else{
-                    verifyThat("Query auto-corrected so sees the Boolean",
-                            result.getErrorMessage(),
-                            stringContainingAnyOf(Arrays.asList(Errors.Search.CLOSING_BOOL,Errors.Search.OPENING_BOOL)));
-                }
-            } else {
+                verifyThat("Query auto-corrected so sees the Boolean",
+                        result.getErrorMessage(),
+                        stringContainingAnyOf(Arrays.asList(Errors.Search.CLOSING_BOOL, Errors.Search.OPENING_BOOL)));
+            }
+            else {
                 LOGGER.info("The error message is not displayed.");
             }
+            elementFactory.getConceptsPanel().removeAllConcepts();
         }
 
     }

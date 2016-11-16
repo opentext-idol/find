@@ -147,7 +147,9 @@ public class FindPage extends AppElement implements AppPage,
 
     public WebElement originalQuery() { return findElement(By.className("original-query")); }
 
-    public String correctedQuery() { return findElement(By.className("corrected-query")).getText(); }
+    public WebElement correctedQuery() { return findElement(By.className("corrected-query")); }
+
+    public String correctedQueryText() { return correctedQuery().getText(); }
 
     public boolean hasAutoCorrected() {
         final List<WebElement> originalQuery = findElements(By.className("original-query"));

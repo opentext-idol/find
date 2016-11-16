@@ -32,8 +32,6 @@ public class ListView extends AppElement implements QueryResultsPage {
         return getDriver().findElements(By.xpath("//*[contains(@class,'search-text') and contains(text(),'" + searchTerm + "')]"));
     }
 
-    public WebElement correctedQuery() { return findElement(By.className("corrected-query"));}
-
     @Override
     public WebElement errorContainer() {
         return findElement(By.cssSelector(".well"));

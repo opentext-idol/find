@@ -151,7 +151,9 @@ public class ResultsITCase extends FindTestBase {
 
         search(term);
         assertThat("Has autocorrected", findPage.hasAutoCorrected());
-        assertThat("Has autocorrected " + term + " to " + termAutoCorrected, findPage.correctedQuery().toLowerCase(), is("( " + termAutoCorrected + " )"));
+        assertThat("Has autocorrected " + term + " to " + termAutoCorrected,
+                findPage.correctedQueryText().toLowerCase(),
+                is("( " + termAutoCorrected + " )"));
 
         findPage.waitForParametricValuesToLoad();
         verifyThat("Still has parametric fields", getElementFactory().getFilterPanel().parametricField(indexOfCategoryWFilters).getFilterNumber(), not(0));

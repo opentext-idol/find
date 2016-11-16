@@ -161,13 +161,17 @@ public class QueryTermsITCase extends FindTestBase {
         removeAllConcepts();
     }
 
+    private void ensureOnCorrectView() {
+        findService.searchAnyView("get rid of");
+        removeAllConcepts();
+        ListView results = findPage.goToListView();
+        results.waitForResultsToLoad();
+    }
+
     @Test
     @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM, against = Deployment.DEVELOP)
-    //TODO: Test needs to be on the first tab (topic map) when check for error displayed - part of splitting queryHelpers
     public void testCorrectErrorMessageDisplayed() {
-        findPage.goToListView();
-
-        Container.currentTabContents(getDriver());
+        ensureOnCorrectView();
         new QueryTestHelper<>(findService)
                 .booleanOperatorQueryText(Errors.Search.OPERATORS, Errors.Search.OPENING_BOOL, Errors.Search.GENERIC_HOSTED_ERROR);
         new QueryTestHelper<>(findService)
@@ -176,14 +180,14 @@ public class QueryTermsITCase extends FindTestBase {
 
     @Test
     @ResolvedBug("FIND-151")
-    //TODO: needs to be able to deal with BI and non BI and hosted
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
-        new IdolQueryTestHelper<ListView>(findService).hiddenQueryOperatorText();
+        ensureOnCorrectView();
+        new IdolQueryTestHelper<ListView>(findService).hiddenQueryOperatorText(getElementFactory());
     }
 
     @Test
     public void testSearchParentheses() {
-        findService.search("Remove splash page");
+        ensureOnCorrectView();
         //noinspection AnonymousInnerClassWithTooManyMethods
         new QueryTestHelper<>(new QueryService<QueryResultsPage>() {
             @Override
