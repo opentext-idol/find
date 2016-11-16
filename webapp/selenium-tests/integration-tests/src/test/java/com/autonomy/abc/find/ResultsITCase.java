@@ -5,7 +5,6 @@ import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.CSVExportModal;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
@@ -152,7 +151,7 @@ public class ResultsITCase extends FindTestBase {
         search(term);
         assertThat("Has autocorrected", findPage.hasAutoCorrected());
         assertThat("Has autocorrected " + term + " to " + termAutoCorrected,
-                findPage.correctedQueryText().toLowerCase(),
+                findPage.getCorrectedQuery().toLowerCase(),
                 is("( " + termAutoCorrected + " )"));
 
         findPage.waitForParametricValuesToLoad();

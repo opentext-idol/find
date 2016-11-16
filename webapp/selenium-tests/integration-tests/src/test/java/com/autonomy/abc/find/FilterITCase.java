@@ -259,13 +259,11 @@ public class FilterITCase extends FindTestBase {
         docPreview.close();
 
         filters().indexesTreeContainer().expand();
-        //TODO: filterBy expands by public but there is no public....
         findPage.filterBy(new IndexFilter(index));
         assertThat(results.searchResult(1).getTitleString(), is(titleString));
     }
 
     @Test
-    //TODO: same problem with indexes where is looking for 'public' index
     public void testFilterByMultipleIndexes() {
         findService.search("unbelievable");
         final FilterPanel filterPanel = filters();
@@ -299,7 +297,6 @@ public class FilterITCase extends FindTestBase {
 
         filters().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter(chosenIndex));
-        //weirdly failing to open the 2nd result (subsequent okay)
         for(int i = 1; i < 6; i++) {
             final DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
             assertThat(docPreview.getIndexName(), is(chosenIndex));

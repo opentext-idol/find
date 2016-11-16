@@ -149,7 +149,7 @@ public class FindPage extends AppElement implements AppPage,
 
     public WebElement correctedQuery() { return findElement(By.className("corrected-query")); }
 
-    public String correctedQueryText() { return correctedQuery().getText(); }
+    public String getCorrectedQuery() { return correctedQuery().getText(); }
 
     public boolean hasAutoCorrected() {
         final List<WebElement> originalQuery = findElements(By.className("original-query"));
