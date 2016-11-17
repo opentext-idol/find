@@ -35,16 +35,16 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
     }
 
     private Documents<IdolSearchResult> getEmptyResults() {
-        return new Documents<>(Collections.<IdolSearchResult>emptyList(), 0, "", null, null, null);
+        return new Documents<>(Collections.emptyList(), 0, "", null, null, null);
     }
 
     private String generateDifferenceStateToken(final String firstQueryStateToken, final String secondQueryStateToken) throws AciErrorException {
         final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                .setQueryText("*")
-                .setFieldText("")
-                .setMinScore(0)
-                .setStateMatchId(Collections.singletonList(firstQueryStateToken))
-                .setStateDontMatchId(Collections.singletonList(secondQueryStateToken))
+                .queryText("*")
+                .fieldText("")
+                .minScore(0)
+                .stateMatchId(firstQueryStateToken)
+                .stateDontMatchId(secondQueryStateToken)
                 .build();
 
         return documentsService.getStateToken(queryRestrictions, ComparisonController.STATE_TOKEN_MAX_RESULTS, false);
@@ -67,23 +67,23 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
         }
 
         final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                .setQueryText(text)
-                .setFieldText(fieldText)
-                .setMinScore(0)
-                .setStateMatchId(stateMatchIds)
-                .setStateDontMatchId(stateDontMatchIds)
+                .queryText(text)
+                .fieldText(fieldText)
+                .minScore(0)
+                .stateMatchIds(stateMatchIds)
+                .stateDontMatchIds(stateDontMatchIds)
                 .build();
 
-        final SearchRequest<String> searchRequest = new SearchRequest.Builder<String>()
-                .setQueryRestrictions(queryRestrictions)
-                .setStart(resultsStart)
-                .setMaxResults(maxResults)
-                .setSummary(summary)
-                .setSummaryCharacters(DocumentsController.MAX_SUMMARY_CHARACTERS)
-                .setSort(sort)
-                .setHighlight(highlight)
-                .setAutoCorrect(false)
-                .setQueryType(SearchRequest.QueryType.RAW)
+        final SearchRequest<String> searchRequest = SearchRequest.<String>builder()
+                .queryRestrictions(queryRestrictions)
+                .start(resultsStart)
+                .maxResults(maxResults)
+                .summary(summary)
+                .summaryCharacters(DocumentsController.MAX_SUMMARY_CHARACTERS)
+                .sort(sort)
+                .highlight(highlight)
+                .autoCorrect(false)
+                .queryType(SearchRequest.QueryType.RAW)
                 .build();
 
         return documentsService.queryTextIndex(searchRequest);

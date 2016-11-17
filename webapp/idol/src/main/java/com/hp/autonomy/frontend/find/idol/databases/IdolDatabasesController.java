@@ -22,6 +22,6 @@ public class IdolDatabasesController extends DatabasesController<Database, IdolD
 
     @Override
     protected IdolDatabasesRequest buildDatabasesRequest() {
-        return new IdolDatabasesRequest();
+        return IdolDatabasesRequest.builder().build();
     }
 }

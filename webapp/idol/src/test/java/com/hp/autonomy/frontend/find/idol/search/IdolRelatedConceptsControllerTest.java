@@ -20,9 +20,12 @@ import static org.mockito.Mockito.when;
 
 public class IdolRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<QsElement, IdolQueryRestrictions, IdolRelatedConceptsRequest, String, AciErrorException> {
     @Override
-    protected RelatedConceptsController<QsElement, IdolQueryRestrictions, IdolRelatedConceptsRequest, String, AciErrorException> buildController(final RelatedConceptsService<QsElement, String, AciErrorException> relatedConceptsService, final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.Builder<IdolRelatedConceptsRequest, String>> relatedConceptsRequestBuilderFactory) {
-        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new IdolQueryRestrictions.Builder());
-        when(relatedConceptsRequestBuilderFactory.getObject()).thenReturn(new IdolRelatedConceptsRequest.Builder());
+    protected RelatedConceptsController<QsElement, IdolQueryRestrictions, IdolRelatedConceptsRequest, String, AciErrorException> buildController(
+            final RelatedConceptsService<QsElement, String, AciErrorException> relatedConceptsService,
+            final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory,
+            final ObjectFactory<RelatedConceptsRequest.RelatedConceptsRequestBuilder<IdolRelatedConceptsRequest, String>> relatedConceptsRequestBuilderFactory) {
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(IdolQueryRestrictions.builder());
+        when(relatedConceptsRequestBuilderFactory.getObject()).thenReturn(IdolRelatedConceptsRequest.builder());
         return new IdolRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
     }
 }

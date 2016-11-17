@@ -27,14 +27,14 @@ public class IdolParametricValuesControllerTest extends AbstractParametricValues
     @Override
     @Before
     public void setUp() {
-        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new IdolQueryRestrictions.Builder());
-        when(parametricRequestBuilderFactory.getObject()).thenReturn(new IdolParametricRequest.Builder());
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(IdolQueryRestrictions.builder());
+        when(parametricRequestBuilderFactory.getObject()).thenReturn(IdolParametricRequest.builder());
         super.setUp();
     }
 
     @Test
     public void getParametricValues() throws AciErrorException {
         parametricValuesController.getParametricValues(Collections.singletonList("SomeParametricField"));
-        verify(parametricValuesService).getAllParametricValues(Matchers.<IdolParametricRequest>any());
+        verify(parametricValuesService).getAllParametricValues(Matchers.any());
     }
 }

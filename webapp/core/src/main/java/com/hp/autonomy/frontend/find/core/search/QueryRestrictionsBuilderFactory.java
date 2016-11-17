@@ -7,8 +7,9 @@ import java.io.Serializable;
 /**
  * Creates a QueryRestrictions object initialised with the defaults for the platform.
  */
+@FunctionalInterface
 public interface QueryRestrictionsBuilderFactory<Q extends QueryRestrictions<S>, S extends Serializable> {
 
-    QueryRestrictions.Builder<Q, S> createBuilder();
+    QueryRestrictions.QueryRestrictionsBuilder<Q, S> createBuilder();
 
 }

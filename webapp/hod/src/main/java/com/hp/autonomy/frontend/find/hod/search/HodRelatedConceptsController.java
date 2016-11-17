@@ -25,7 +25,7 @@ public class HodRelatedConceptsController extends RelatedConceptsController<Enti
     @Autowired
     public HodRelatedConceptsController(final RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> relatedConceptsService,
                                         final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory,
-                                        final ObjectFactory<RelatedConceptsRequest.Builder<HodRelatedConceptsRequest, ResourceIdentifier>> relatedConceptsRequestBuilderFactory) {
+                                        final ObjectFactory<RelatedConceptsRequest.RelatedConceptsRequestBuilder<HodRelatedConceptsRequest, ResourceIdentifier>> relatedConceptsRequestBuilderFactory) {
         super(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
     }
 }

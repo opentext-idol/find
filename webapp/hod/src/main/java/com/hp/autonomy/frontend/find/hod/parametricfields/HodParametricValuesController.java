@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ class HodParametricValuesController extends ParametricValuesController<HodQueryR
     @Autowired
     public HodParametricValuesController(final ParametricValuesService<HodParametricRequest, ResourceIdentifier, HodErrorException> parametricValuesService,
                                          final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory,
-                                         final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory) {
+                                         final ObjectFactory<ParametricRequest.ParametricRequestBuilder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory) {
         super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
     }
 
@@ -40,7 +41,7 @@ class HodParametricValuesController extends ParametricValuesController<HodQueryR
     @ResponseBody
     public Set<QueryTagInfo> getParametricValues(
             @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
-            @RequestParam(DATABASES_PARAM) final List<ResourceIdentifier> databases
+            @RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases
     ) throws HodErrorException {
         final HodParametricRequest parametricRequest = buildRequest(fieldNames, databases, MAX_VALUES_DEFAULT, SortParam.DocumentCount);
         return parametricValuesService.getAllParametricValues(parametricRequest);

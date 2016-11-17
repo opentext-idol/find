@@ -20,15 +20,13 @@ public abstract class AbstractRequestMapper<S extends Serializable> implements R
     protected AbstractRequestMapper() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JodaModule());
-        objectMapper.addMixIn(SearchRequest.class, getSearchRequestMixinType());
+        objectMapper.addMixIn(SearchRequest.SearchRequestBuilder.class, SearchRequestBuilderMixins.class);
         addCustomMixins(objectMapper);
     }
 
     protected abstract void addCustomMixins(final ObjectMapper objectMapper);
 
     protected abstract Class<S> getDatabaseType();
-
-    protected abstract Class<? extends SearchRequestMixins> getSearchRequestMixinType();
 
     @Override
     public SearchRequest<S> parseSearchRequest(final String json) throws IOException {
@@ -37,7 +35,7 @@ public abstract class AbstractRequestMapper<S extends Serializable> implements R
     }
 
     @SuppressWarnings("unused")
-    public static class SearchRequestMixins {
+    private static class SearchRequestBuilderMixins {
         @JsonProperty(value = "max_results", required = true)
         private Integer maxResults;
         @JsonProperty(required = true)

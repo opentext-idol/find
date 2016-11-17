@@ -31,11 +31,11 @@ public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySumma
     protected QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory;
 
     @Mock
-    protected ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory;
+    protected ObjectFactory<RelatedConceptsRequest.RelatedConceptsRequestBuilder<L, S>> relatedConceptsRequestBuilderFactory;
 
-    protected RelatedConceptsController<Q, R, L, S, E> relatedConceptsController;
+    private RelatedConceptsController<Q, R, L, S, E> relatedConceptsController;
 
-    protected abstract RelatedConceptsController<Q, R, L, S, E> buildController(final RelatedConceptsService<Q, S, E> relatedConceptsService, final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory);
+    protected abstract RelatedConceptsController<Q, R, L, S, E> buildController(final RelatedConceptsService<Q, S, E> relatedConceptsService, final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.RelatedConceptsRequestBuilder<L, S>> relatedConceptsRequestBuilderFactory);
 
     @Before
     public void setUp() {

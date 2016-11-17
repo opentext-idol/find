@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class HodFieldsControllerIT extends FieldsControllerIT {
     @Override
     protected void addParams(final MockHttpServletRequestBuilder requestBuilder) {
-        requestBuilder.param("databases", mvcIntegrationTestUtils.getDatabases());
+        requestBuilder.param(HodFieldsController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases());
     }
 
     @Override

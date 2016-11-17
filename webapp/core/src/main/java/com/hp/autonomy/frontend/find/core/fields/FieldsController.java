@@ -18,8 +18,6 @@ import com.hp.autonomy.types.requests.idol.actions.tags.ValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -35,18 +33,18 @@ import java.util.stream.Stream;
 public abstract class FieldsController<R extends FieldsRequest, E extends Exception, S extends Serializable, Q extends QueryRestrictions<S>, P extends ParametricRequest<S>> {
     public static final String FIELDS_PATH = "/api/public/fields";
     public static final String GET_PARAMETRIC_FIELDS_PATH = "/parametric";
-    static final String GET_PARAMETRIC_NUMERIC_FIELDS_PATH = "/parametric-numeric";
+    protected static final String GET_PARAMETRIC_NUMERIC_FIELDS_PATH = "/parametric-numeric";
     public static final String GET_PARAMETRIC_DATE_FIELDS_PATH = "/parametric-date";
 
     private final FieldsService<R, E> fieldsService;
     private final ParametricValuesService<P, S, E> parametricValuesService;
-    private final ObjectFactory<ParametricRequest.Builder<P, S>> parametricRequestBuilderFactory;
+    private final ObjectFactory<ParametricRequest.ParametricRequestBuilder<P, S>> parametricRequestBuilderFactory;
     private final ConfigService<? extends FindConfig> configService;
 
     protected FieldsController(
             final FieldsService<R, E> fieldsService,
             final ParametricValuesService<P, S, E> parametricValuesService,
-            final ObjectFactory<ParametricRequest.Builder<P, S>> parametricRequestBuilderFactory,
+            final ObjectFactory<ParametricRequest.ParametricRequestBuilder<P, S>> parametricRequestBuilderFactory,
             final ConfigService<? extends FindConfig> configService
     ) {
         this.fieldsService = fieldsService;
@@ -60,9 +58,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
      */
     protected abstract Q createValueDetailsQueryRestrictions(R request);
 
-    @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public List<TagName> getParametricFields(final R request) throws E {
+    protected List<TagName> getParametricFields(final R request) throws E {
         final Map<FieldTypeParam, List<TagName>> response = fieldsService.getFields(request, FieldTypeParam.Parametric, FieldTypeParam.Numeric, FieldTypeParam.NumericDate);
 
         final List<TagName> numericFields = response.get(FieldTypeParam.Numeric);
@@ -75,15 +71,11 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
                 .collect(Collectors.toList());
     }
 
-    @RequestMapping(value = GET_PARAMETRIC_NUMERIC_FIELDS_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public List<FieldAndValueDetails> getParametricNumericFields(final R request) throws E {
+    protected List<FieldAndValueDetails> getParametricNumericFields(final R request) throws E {
         return fetchParametricFieldAndValueDetails(request, FieldTypeParam.Numeric, Collections.emptyList());
     }
 
-    @RequestMapping(value = GET_PARAMETRIC_DATE_FIELDS_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public List<FieldAndValueDetails> getParametricDateFields(final R request) throws E {
+    protected List<FieldAndValueDetails> getParametricDateFields(final R request) throws E {
         return fetchParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, Collections.singletonList(ParametricValuesService.AUTN_DATE_FIELD));
     }
 
@@ -113,8 +105,8 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         final List<String> fieldNames = parametricFields.stream().map(TagName::getId).collect(Collectors.toCollection(LinkedList::new));
 
         final P parametricRequest = parametricRequestBuilderFactory.getObject()
-                .setFieldNames(fieldNames)
-                .setQueryRestrictions(createValueDetailsQueryRestrictions(request))
+                .fieldNames(fieldNames)
+                .queryRestrictions(createValueDetailsQueryRestrictions(request))
                 .build();
 
         final Map<TagName, ValueDetails> valueDetailsResponse = parametricValuesService.getValueDetails(parametricRequest);

@@ -17,14 +17,14 @@ import static org.mockito.Mockito.when;
 public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
     @Before
     public void setUp() {
-        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new IdolQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(IdolQueryRestrictions.builder());
         documentsController = new IdolDocumentsController(documentsService, queryRestrictionsBuilderFactory);
         databaseType = String.class;
     }
 
     @Override
     protected IdolSearchResult sampleResult() {
-        return new IdolSearchResult.Builder().build();
+        return IdolSearchResult.builder().build();
     }
 
     @Test(expected = AciErrorException.class)

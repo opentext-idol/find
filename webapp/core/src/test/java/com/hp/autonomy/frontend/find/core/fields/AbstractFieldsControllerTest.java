@@ -38,7 +38,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E extends Exception, S extends Serializable, Q extends QueryRestrictions<S>, P extends ParametricRequest<S>> {
+public abstract class AbstractFieldsControllerTest<C extends FieldsController<R, E, S, Q, P>, R extends FieldsRequest, E extends Exception, S extends Serializable, Q extends QueryRestrictions<S>, P extends ParametricRequest<S>> {
     @Mock
     protected FieldsService<R, E> service;
 
@@ -51,11 +51,15 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
     @Mock
     private FindConfig config;
 
-    protected FieldsController<R, E, S, Q, P> controller;
+    protected C controller;
 
-    protected abstract FieldsController<R, E, S, Q, P> constructController();
+    protected abstract C constructController();
 
-    protected abstract R createRequest();
+    protected abstract List<TagName> getParametricFields() throws E;
+
+    protected abstract List<FieldAndValueDetails> getParametricDateFields() throws E;
+
+    protected abstract List<FieldAndValueDetails> getParametricNumericFields() throws E;
 
     @Before
     public void setUp() throws E {
@@ -66,14 +70,14 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
     }
 
     @Test
-    public void getParametricFields() throws E {
+    public void getParametricFieldsTest() throws E {
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
         response.put(FieldTypeParam.Numeric, ImmutableList.of(new TagName("NumericField"), new TagName("ParametricNumericField")));
         response.put(FieldTypeParam.NumericDate, ImmutableList.of(new TagName("DateField"), new TagName("ParametricDateField")));
         response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("ParametricField"), new TagName("ParametricNumericField"), new TagName("ParametricDateField")));
         when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
 
-        final List<TagName> fields = controller.getParametricFields(createRequest());
+        final List<TagName> fields = getParametricFields();
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(is(new TagName("ParametricField"))));
     }
@@ -86,7 +90,7 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
                 .setParametricAlwaysShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
                 .build());
 
-        final List<TagName> fields = controller.getParametricFields(createRequest());
+        final List<TagName> fields = getParametricFields();
         assertThat(fields, hasSize(2));
         assertThat(fields, hasItem(is(new TagName("/DOCUMENT/ParametricField1"))));
         assertThat(fields, hasItem(is(new TagName("/DOCUMENT/ParametricField2"))));
@@ -100,7 +104,7 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
                 .setParametricNeverShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
                 .build());
 
-        final List<TagName> fields = controller.getParametricFields(createRequest());
+        final List<TagName> fields = getParametricFields();
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(is(new TagName("/DOCUMENT/ParametricField3"))));
     }
@@ -114,7 +118,7 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
                 .setParametricNeverShow(Collections.singletonList("ParametricField1"))
                 .build());
 
-        final List<TagName> fields = controller.getParametricFields(createRequest());
+        final List<TagName> fields = getParametricFields();
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(is(new TagName("/DOCUMENT/ParametricField2"))));
     }
@@ -130,7 +134,7 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
                 .setParametricNeverShow(Collections.singletonList(ParametricValuesService.AUTN_DATE_FIELD))
                 .build());
 
-        final List<FieldAndValueDetails> output = controller.getParametricDateFields(createRequest());
+        final List<FieldAndValueDetails> output = getParametricDateFields();
         assertThat(output, is(empty()));
     }
 
@@ -143,7 +147,7 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
     }
 
     @Test
-    public void getParametricNumericFields() throws E {
+    public void getParametricNumericFieldsTest() throws E {
         final String fieldName = "ParametricNumericField";
 
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
@@ -165,13 +169,13 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
 
         when(parametricValuesService.getValueDetails(Matchers.any())).thenReturn(valueDetailsOutput);
 
-        final List<FieldAndValueDetails> fields = controller.getParametricNumericFields(createRequest());
+        final List<FieldAndValueDetails> fields = getParametricNumericFields();
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(is(new FieldAndValueDetails("ParametricNumericField", "ParametricNumericField", 1.4, 2.5, 25))));
     }
 
     @Test
-    public void getParametricDateFields() throws E {
+    public void getParametricDateFieldsTest() throws E {
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
         response.put(FieldTypeParam.NumericDate, ImmutableList.of(new TagName("DateField"), new TagName("ParametricDateField")));
         response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("ParametricField"), new TagName("ParametricNumericField"), new TagName("ParametricDateField")));
@@ -200,7 +204,7 @@ public abstract class AbstractFieldsControllerTest<R extends FieldsRequest, E ex
 
         when(parametricValuesService.getValueDetails(Matchers.any())).thenReturn(valueDetailsOutput);
 
-        final List<FieldAndValueDetails> fields = controller.getParametricDateFields(createRequest());
+        final List<FieldAndValueDetails> fields = getParametricDateFields();
         assertThat(fields, hasSize(2));
         assertThat(fields, hasItem(is(new FieldAndValueDetails("ParametricDateField", "ParametricDateField", 146840000d, 146860000d, 1000))));
         assertThat(fields, hasItem(is(new FieldAndValueDetails(ParametricValuesService.AUTN_DATE_FIELD, ParametricValuesService.AUTN_DATE_FIELD, 100000000d, 150000000d, 15000))));

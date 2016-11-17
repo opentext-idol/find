@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 @RequestMapping(SavedQueryController.PATH)
@@ -81,19 +81,19 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
 
         final SavedQuery savedQuery = service.get(id);
         final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
-        if(savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
+        if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
             final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                    .setQueryText(savedQuery.toQueryText())
-                    .setFieldText(fieldTextParser.toFieldText(savedQuery))
-                    .setDatabases(convertEmbeddableIndexes(savedQuery.getIndexes()))
-                    .setMinDate(dateDocsLastFetched)
-                    .setMinScore(savedQuery.getMinScore())
+                    .queryText(savedQuery.toQueryText())
+                    .fieldText(fieldTextParser.toFieldText(savedQuery))
+                    .databases(convertEmbeddableIndexes(savedQuery.getIndexes()))
+                    .minDate(dateDocsLastFetched)
+                    .minScore(savedQuery.getMinScore())
                     .build();
-            final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
-                    .setQueryRestrictions(queryRestrictions)
-                    .setMaxResults(1001)
-                    .setPrint(getNoResultsPrintParam())
-                    .setQueryType(SearchRequest.QueryType.MODIFIED)
+            final SearchRequest<S> searchRequest = SearchRequest.<S>builder()
+                    .queryRestrictions(queryRestrictions)
+                    .maxResults(1001)
+                    .print(getNoResultsPrintParam())
+                    .queryType(SearchRequest.QueryType.MODIFIED)
                     .build();
 
             final Documents<?> searchResults = documentsService.queryTextIndex(searchRequest);
@@ -103,10 +103,10 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
         return newResults;
     }
 
-    private List<S> convertEmbeddableIndexes(final Iterable<EmbeddableIndex> embeddableIndexes) {
-        final List<S> indexes = new ArrayList<>(CollectionUtils.size(embeddableIndexes));
-        if(embeddableIndexes != null) {
-            for(final EmbeddableIndex embeddableIndex : embeddableIndexes) {
+    private Collection<S> convertEmbeddableIndexes(final Iterable<EmbeddableIndex> embeddableIndexes) {
+        final Collection<S> indexes = new ArrayList<>(CollectionUtils.size(embeddableIndexes));
+        if (embeddableIndexes != null) {
+            for (final EmbeddableIndex embeddableIndex : embeddableIndexes) {
                 indexes.add(convertEmbeddableIndex(embeddableIndex));
             }
         }
