@@ -10,7 +10,7 @@ import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.Documents;
@@ -74,7 +74,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .stateDontMatchIds(stateDontMatchIds)
                 .build();
 
-        final SearchRequest<String> searchRequest = SearchRequest.<String>builder()
+        final QueryRequest<String> queryRequest = QueryRequest.<String>builder()
                 .queryRestrictions(queryRestrictions)
                 .start(resultsStart)
                 .maxResults(maxResults)
@@ -83,10 +83,10 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .sort(sort)
                 .highlight(highlight)
                 .autoCorrect(false)
-                .queryType(SearchRequest.QueryType.RAW)
+                .queryType(QueryRequest.QueryType.RAW)
                 .build();
 
-        return documentsService.queryTextIndex(searchRequest);
+        return documentsService.queryTextIndex(queryRequest);
     }
 
     @Override

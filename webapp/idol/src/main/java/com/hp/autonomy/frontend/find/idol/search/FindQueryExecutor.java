@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.util.AciParameters;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.QueryExecutor;
 import com.hp.autonomy.types.idol.responses.QueryResponseData;
 import com.hp.autonomy.types.idol.responses.SuggestResponseData;
@@ -34,12 +34,12 @@ class FindQueryExecutor implements QueryExecutor {
     }
 
     @Override
-    public boolean performQuery(final SearchRequest.QueryType queryType) throws AciErrorException {
+    public boolean performQuery(final QueryRequest.QueryType queryType) throws AciErrorException {
         return queryExecutor.performQuery(queryType);
     }
 
     @Override
-    public QueryResponseData executeQuery(final AciParameters aciParameters, final SearchRequest.QueryType queryType) throws AciErrorException {
+    public QueryResponseData executeQuery(final AciParameters aciParameters, final QueryRequest.QueryType queryType) throws AciErrorException {
         QueryResponseData responseData;
         try {
             responseData = queryExecutor.executeQuery(aciParameters, queryType);
@@ -57,7 +57,7 @@ class FindQueryExecutor implements QueryExecutor {
     }
 
     @Override
-    public SuggestResponseData executeSuggest(final AciParameters aciParameters, final SearchRequest.QueryType queryType) throws AciErrorException {
+    public SuggestResponseData executeSuggest(final AciParameters aciParameters, final QueryRequest.QueryType queryType) throws AciErrorException {
         return queryExecutor.executeSuggest(aciParameters, queryType);
     }
 }

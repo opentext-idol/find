@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -20,7 +20,7 @@ public abstract class AbstractRequestMapper<S extends Serializable> implements R
     protected AbstractRequestMapper() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JodaModule());
-        objectMapper.addMixIn(SearchRequest.SearchRequestBuilder.class, SearchRequestBuilderMixins.class);
+        objectMapper.addMixIn(QueryRequest.QueryRequestBuilder.class, QueryRequestBuilderMixins.class);
         addCustomMixins(objectMapper);
     }
 
@@ -29,13 +29,13 @@ public abstract class AbstractRequestMapper<S extends Serializable> implements R
     protected abstract Class<S> getDatabaseType();
 
     @Override
-    public SearchRequest<S> parseSearchRequest(final String json) throws IOException {
-        final JavaType type = objectMapper.getTypeFactory().constructParametrizedType(SearchRequest.class, SearchRequest.class, getDatabaseType());
+    public QueryRequest<S> parseQueryRequest(final String json) throws IOException {
+        final JavaType type = objectMapper.getTypeFactory().constructParametrizedType(QueryRequest.class, QueryRequest.class, getDatabaseType());
         return objectMapper.readValue(json, type);
     }
 
     @SuppressWarnings("unused")
-    private static class SearchRequestBuilderMixins {
+    private static class QueryRequestBuilderMixins {
         @JsonProperty(value = "max_results", required = true)
         private Integer maxResults;
         @JsonProperty(required = true)

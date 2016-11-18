@@ -5,11 +5,12 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 
 import java.io.IOException;
 import java.io.Serializable;
 
+@FunctionalInterface
 public interface RequestMapper<S extends Serializable> {
-    SearchRequest<S> parseSearchRequest(String json) throws IOException;
+    QueryRequest<S> parseQueryRequest(String json) throws IOException;
 }

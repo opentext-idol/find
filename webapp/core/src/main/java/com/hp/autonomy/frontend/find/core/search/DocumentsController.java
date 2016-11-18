@@ -81,7 +81,7 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
                 .minScore(minScore)
                 .build();
 
-        final SearchRequest<S> searchRequest = SearchRequest.<S>builder()
+        final QueryRequest<S> queryRequest = QueryRequest.<S>builder()
                 .queryRestrictions(queryRestrictions)
                 .start(resultsStart)
                 .maxResults(maxResults)
@@ -90,10 +90,10 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
                 .sort(sort)
                 .highlight(highlight)
                 .autoCorrect(autoCorrect)
-                .queryType(SearchRequest.QueryType.valueOf(queryType))
+                .queryType(QueryRequest.QueryType.valueOf(queryType))
                 .build();
 
-        return documentsService.queryTextIndex(searchRequest);
+        return documentsService.queryTextIndex(queryRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")

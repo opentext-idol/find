@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,46 +35,46 @@ public abstract class RequestMapperTest<S extends Serializable> {
     }
 
     @Test
-    public void jsonToSearchRequest() throws IOException {
+    public void jsonToQueryRequest() throws IOException {
         final String json = completeJsonObject();
-        final SearchRequest<S> searchRequest = requestMapper.parseSearchRequest(json);
+        final QueryRequest<S> queryRequest = requestMapper.parseQueryRequest(json);
 
-        assertNotNull(searchRequest.getQueryRestrictions());
-        assertThat(searchRequest.getQueryRestrictions().getQueryText(), is("Homer"));
-        assertThat(searchRequest.getQueryRestrictions().getFieldText(), is("MATCH{Iliad}:WORK"));
-        validateDatabases(searchRequest.getQueryRestrictions().getDatabases());
-        assertNull(searchRequest.getQueryRestrictions().getMinDate());
-        assertNotNull(searchRequest.getQueryRestrictions().getMaxDate());
-        assertThat(searchRequest.getQueryRestrictions().getMinScore(), is(5));
+        assertNotNull(queryRequest.getQueryRestrictions());
+        assertThat(queryRequest.getQueryRestrictions().getQueryText(), is("Homer"));
+        assertThat(queryRequest.getQueryRestrictions().getFieldText(), is("MATCH{Iliad}:WORK"));
+        validateDatabases(queryRequest.getQueryRestrictions().getDatabases());
+        assertNull(queryRequest.getQueryRestrictions().getMinDate());
+        assertNotNull(queryRequest.getQueryRestrictions().getMaxDate());
+        assertThat(queryRequest.getQueryRestrictions().getMinScore(), is(5));
 
-        assertThat(searchRequest.getStart(), is(10));
-        assertThat(searchRequest.getMaxResults(), is(30));
-        assertThat(searchRequest.getSummary(), is("off"));
-        assertThat(searchRequest.getSort(), is("DocumentCount"));
-        assertThat(searchRequest.isHighlight(), is(true));
-        assertThat(searchRequest.isAutoCorrect(), is(true));
-        assertThat(searchRequest.getQueryType(), is(SearchRequest.QueryType.RAW));
+        assertThat(queryRequest.getStart(), is(10));
+        assertThat(queryRequest.getMaxResults(), is(30));
+        assertThat(queryRequest.getSummary(), is("off"));
+        assertThat(queryRequest.getSort(), is("DocumentCount"));
+        assertThat(queryRequest.isHighlight(), is(true));
+        assertThat(queryRequest.isAutoCorrect(), is(true));
+        assertThat(queryRequest.getQueryType(), is(QueryRequest.QueryType.RAW));
     }
 
     @Test
-    public void minimalJsonToSearchRequest() throws IOException {
+    public void minimalJsonToQueryRequest() throws IOException {
         final String json = minimalJsonObject();
-        final SearchRequest<S> searchRequest = requestMapper.parseSearchRequest(json);
+        final QueryRequest<S> queryRequest = requestMapper.parseQueryRequest(json);
 
-        assertNotNull(searchRequest.getQueryRestrictions());
-        assertThat(searchRequest.getQueryRestrictions().getQueryText(), is("Homer"));
-        assertNull(searchRequest.getQueryRestrictions().getFieldText());
-        validateDatabases(searchRequest.getQueryRestrictions().getDatabases());
-        assertNull(searchRequest.getQueryRestrictions().getMinDate());
-        assertNull(searchRequest.getQueryRestrictions().getMaxDate());
-        assertNull(searchRequest.getQueryRestrictions().getMinScore());
+        assertNotNull(queryRequest.getQueryRestrictions());
+        assertThat(queryRequest.getQueryRestrictions().getQueryText(), is("Homer"));
+        assertNull(queryRequest.getQueryRestrictions().getFieldText());
+        validateDatabases(queryRequest.getQueryRestrictions().getDatabases());
+        assertNull(queryRequest.getQueryRestrictions().getMinDate());
+        assertNull(queryRequest.getQueryRestrictions().getMaxDate());
+        assertNull(queryRequest.getQueryRestrictions().getMinScore());
 
-        assertThat(searchRequest.getStart(), is(1));
-        assertThat(searchRequest.getMaxResults(), is(30));
-        assertThat(searchRequest.getSummary(), is("off"));
-        assertNull(searchRequest.getSort());
-        assertThat(searchRequest.isHighlight(), is(false));
-        assertThat(searchRequest.isAutoCorrect(), is(false));
-        assertThat(searchRequest.getQueryType(), is(SearchRequest.QueryType.MODIFIED));
+        assertThat(queryRequest.getStart(), is(1));
+        assertThat(queryRequest.getMaxResults(), is(30));
+        assertThat(queryRequest.getSummary(), is("off"));
+        assertNull(queryRequest.getSort());
+        assertThat(queryRequest.isHighlight(), is(false));
+        assertThat(queryRequest.isAutoCorrect(), is(false));
+        assertThat(queryRequest.getQueryType(), is(QueryRequest.QueryType.MODIFIED));
     }
 }

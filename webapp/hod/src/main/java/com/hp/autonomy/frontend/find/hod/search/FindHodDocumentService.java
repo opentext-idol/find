@@ -16,7 +16,7 @@ import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
@@ -55,9 +55,9 @@ class FindHodDocumentService implements DocumentsService<ResourceIdentifier, Hod
 
     @Override
     @Cacheable(value = FindCacheNames.DOCUMENTS, cacheResolver = CachingConfiguration.PER_USER_CACHE_RESOLVER_NAME)
-    public Documents<HodSearchResult> queryTextIndex(final SearchRequest<ResourceIdentifier> searchRequest) throws HodErrorException {
+    public Documents<HodSearchResult> queryTextIndex(final QueryRequest<ResourceIdentifier> queryRequest) throws HodErrorException {
         try {
-            return documentsService.queryTextIndex(searchRequest);
+            return documentsService.queryTextIndex(queryRequest);
         } catch (final HodErrorException e) {
             if (e.getErrorCode() == HodErrorCode.INDEX_NAME_INVALID) {
                 final Boolean publicIndexesEnabled = findConfigService.getConfig().getHod().getPublicIndexesEnabled();
@@ -65,7 +65,7 @@ class FindHodDocumentService implements DocumentsService<ResourceIdentifier, Hod
 
                 final Set<Database> updatedDatabases = databasesService.getDatabases(databasesRequest);
 
-                final QueryRestrictions<ResourceIdentifier> queryRestrictions = searchRequest.getQueryRestrictions();
+                final QueryRestrictions<ResourceIdentifier> queryRestrictions = queryRequest.getQueryRestrictions();
                 final Set<ResourceIdentifier> badIndexes = new HashSet<>(queryRestrictions.getDatabases());
 
                 for (final Database database : updatedDatabases) {
@@ -76,13 +76,13 @@ class FindHodDocumentService implements DocumentsService<ResourceIdentifier, Hod
                 final Collection<ResourceIdentifier> goodIndexes = new ArrayList<>(queryRestrictions.getDatabases());
                 goodIndexes.removeAll(badIndexes);
 
-                searchRequest
+                queryRequest
                         .toBuilder()
-                        .queryRestrictions(searchRequest.getQueryRestrictions()
+                        .queryRestrictions(queryRequest.getQueryRestrictions()
                                 .toBuilder()
                                 .databases(goodIndexes)
                                 .build());
-                final Documents<HodSearchResult> resultDocuments = documentsService.queryTextIndex(searchRequest);
+                final Documents<HodSearchResult> resultDocuments = documentsService.queryTextIndex(queryRequest);
                 final Warnings warnings = new Warnings(badIndexes);
                 return new Documents<>(
                         resultDocuments.getDocuments(),

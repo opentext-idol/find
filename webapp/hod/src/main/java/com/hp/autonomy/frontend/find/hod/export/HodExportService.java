@@ -12,7 +12,7 @@ import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +48,10 @@ class HodExportService implements ExportService<ResourceIdentifier, HodErrorExce
     }
 
     @Override
-    public void export(final OutputStream outputStream, final SearchRequest<ResourceIdentifier> searchRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds) throws HodErrorException {
+    public void export(final OutputStream outputStream, final QueryRequest<ResourceIdentifier> queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds) throws HodErrorException {
         final ExportStrategy exportStrategy = exportStrategies.get(exportFormat);
         final List<String> fieldIds = exportStrategy.getFieldNames(HodMetadataNode.values(), selectedFieldIds);
-        final Documents<HodSearchResult> documents = documentsService.queryTextIndex(searchRequest.toBuilder().printFields(fieldIds).build());
+        final Documents<HodSearchResult> documents = documentsService.queryTextIndex(queryRequest.toBuilder().printFields(fieldIds).build());
 
         try {
             //Caution: outputStream should not be written to before call to prependOutput().

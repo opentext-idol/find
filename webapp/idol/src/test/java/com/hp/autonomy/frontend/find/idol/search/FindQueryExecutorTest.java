@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.util.AciParameters;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.QueryExecutor;
 import com.hp.autonomy.types.idol.responses.QueryResponseData;
 import org.junit.Before;
@@ -40,18 +40,18 @@ public class FindQueryExecutorTest {
         blacklistError.setErrorString(FindQueryExecutor.MISSING_RULE_ERROR);
         when(queryExecutor.executeQuery(any(), any())).thenThrow(blacklistError).thenReturn(responseData);
 
-        assertNotNull(findQueryExecutor.executeQuery(new AciParameters(), SearchRequest.QueryType.MODIFIED));
+        assertNotNull(findQueryExecutor.executeQuery(new AciParameters(), QueryRequest.QueryType.MODIFIED));
     }
 
     @Test(expected = AciErrorException.class)
     public void queryQmsButUnexpectedError() {
         when(queryExecutor.executeQuery(any(), any())).thenThrow(new AciErrorException());
-        findQueryExecutor.executeQuery(new AciParameters(), SearchRequest.QueryType.MODIFIED);
+        findQueryExecutor.executeQuery(new AciParameters(), QueryRequest.QueryType.MODIFIED);
     }
 
     @Test
     public void performQuery() {
-        final SearchRequest.QueryType queryType = SearchRequest.QueryType.MODIFIED;
+        final QueryRequest.QueryType queryType = QueryRequest.QueryType.MODIFIED;
         findQueryExecutor.performQuery(queryType);
         verify(queryExecutor).performQuery(queryType);
     }
@@ -59,7 +59,7 @@ public class FindQueryExecutorTest {
     @Test
     public void executeSuggest() {
         final AciParameters parameters = new AciParameters();
-        final SearchRequest.QueryType queryType = SearchRequest.QueryType.RAW;
+        final QueryRequest.QueryType queryType = QueryRequest.QueryType.RAW;
         findQueryExecutor.executeSuggest(parameters, queryType);
         verify(queryExecutor).executeSuggest(parameters, queryType);
     }

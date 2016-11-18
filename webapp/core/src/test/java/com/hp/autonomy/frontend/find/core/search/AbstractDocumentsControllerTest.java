@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -38,19 +38,19 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, Q 
 
     @Test
     public void query() throws E {
-        documentsController.query("Some query text", 1, 30, null, Collections.emptyList(), null, null, null, null, true, 0, false, SearchRequest.QueryType.MODIFIED.name());
+        documentsController.query("Some query text", 1, 30, null, Collections.emptyList(), null, null, null, null, true, 0, false, QueryRequest.QueryType.MODIFIED.name());
         verify(documentsService).queryTextIndex(Matchers.any());
     }
 
     @Test
     public void queryForPromotions() throws E {
-        documentsController.query("Some query text", 1, 30, null, Collections.emptyList(), null, null, null, null, true, 0, false, SearchRequest.QueryType.PROMOTIONS.name());
+        documentsController.query("Some query text", 1, 30, null, Collections.emptyList(), null, null, null, null, true, 0, false, QueryRequest.QueryType.PROMOTIONS.name());
         verify(documentsService).queryTextIndex(Matchers.any());
     }
 
     @Test
     public void queryPaginationTest() throws E {
-        documentsController.query("Some query text", 30, 60, null, Collections.emptyList(), null, null, null, null, true, 0, false, SearchRequest.QueryType.MODIFIED.name());
+        documentsController.query("Some query text", 30, 60, null, Collections.emptyList(), null, null, null, null, true, 0, false, QueryRequest.QueryType.MODIFIED.name());
         verify(documentsService).queryTextIndex(Matchers.any());
     }
 

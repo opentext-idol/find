@@ -10,7 +10,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.apache.commons.collections4.CollectionUtils;
@@ -89,14 +89,14 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
                     .minDate(dateDocsLastFetched)
                     .minScore(savedQuery.getMinScore())
                     .build();
-            final SearchRequest<S> searchRequest = SearchRequest.<S>builder()
+            final QueryRequest<S> queryRequest = QueryRequest.<S>builder()
                     .queryRestrictions(queryRestrictions)
                     .maxResults(1001)
                     .print(getNoResultsPrintParam())
-                    .queryType(SearchRequest.QueryType.MODIFIED)
+                    .queryType(QueryRequest.QueryType.MODIFIED)
                     .build();
 
-            final Documents<?> searchResults = documentsService.queryTextIndex(searchRequest);
+            final Documents<?> searchResults = documentsService.queryTextIndex(queryRequest);
             newResults = searchResults.getTotalResults();
         }
 

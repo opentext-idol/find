@@ -16,7 +16,7 @@ import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
 import com.hp.autonomy.searchcomponents.core.test.TestUtils;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
@@ -95,7 +95,7 @@ public class FindHodDocumentServiceTest {
                 .databases(Arrays.asList(goodIndex, badIndex))
                 .anyLanguage(true)
                 .build();
-        final SearchRequest<ResourceIdentifier> searchRequest = SearchRequest.<ResourceIdentifier>builder()
+        final QueryRequest<ResourceIdentifier> queryRequest = QueryRequest.<ResourceIdentifier>builder()
                 .queryRestrictions(queryRestrictions)
                 .start(1)
                 .maxResults(30)
@@ -104,9 +104,9 @@ public class FindHodDocumentServiceTest {
                 .sort(null)
                 .highlight(true)
                 .autoCorrect(false)
-                .queryType(SearchRequest.QueryType.MODIFIED)
+                .queryType(QueryRequest.QueryType.MODIFIED)
                 .build();
-        final Documents<HodSearchResult> results = findDocumentsService.queryTextIndex(searchRequest);
+        final Documents<HodSearchResult> results = findDocumentsService.queryTextIndex(queryRequest);
         assertThat(results.getDocuments(), hasSize(1));
         assertNotNull(results.getWarnings());
         assertThat(results.getWarnings().getInvalidDatabases(), hasSize(1));
@@ -119,7 +119,7 @@ public class FindHodDocumentServiceTest {
         when(documentsService.queryTextIndex(any())).thenThrow(new HodErrorException(miscellaneousError, HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
         final QueryRestrictions<ResourceIdentifier> queryRestrictions = testUtils.buildQueryRestrictions();
-        final SearchRequest<ResourceIdentifier> searchRequest = SearchRequest.<ResourceIdentifier>builder()
+        final QueryRequest<ResourceIdentifier> queryRequest = QueryRequest.<ResourceIdentifier>builder()
                 .queryRestrictions(queryRestrictions)
                 .start(1)
                 .maxResults(30)
@@ -128,9 +128,9 @@ public class FindHodDocumentServiceTest {
                 .sort(null)
                 .highlight(true)
                 .autoCorrect(false)
-                .queryType(SearchRequest.QueryType.MODIFIED)
+                .queryType(QueryRequest.QueryType.MODIFIED)
                 .build();
-        findDocumentsService.queryTextIndex(searchRequest);
+        findDocumentsService.queryTextIndex(queryRequest);
     }
 
     @Test

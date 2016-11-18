@@ -71,7 +71,7 @@ define([
             var selectedFields = _.pluck(this.exportFieldCollection.where({selected: true}), 'id');
 
             //noinspection AmdModulesDependencies
-            var searchRequest = JSON.stringify({
+            var queryRequest = JSON.stringify({
                 queryRestrictions: {
                     text: this.queryModel.get('queryText'),
                     field_text: this.queryModel.get('fieldText') ? this.queryModel.get('fieldText').toString() : '',
@@ -90,7 +90,7 @@ define([
                 queryType: 'MODIFIED'
             });
 
-            var $form = $(this.formTemplate({searchRequest: searchRequest, fields: selectedFields}));
+            var $form = $(this.formTemplate({queryRequest: queryRequest, fields: selectedFields}));
             $form.appendTo('body').submit().remove();
         }
     });
