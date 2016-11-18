@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.view;
 
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
+import com.hp.autonomy.searchcomponents.core.view.ViewRequest;
 import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,19 +22,15 @@ import java.io.OutputStream;
 import java.io.Serializable;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractViewControllerTest<C extends ViewController<S, E>, S extends Serializable, E extends Exception> {
+public abstract class AbstractViewControllerTest<C extends ViewController<R, S, E>, R extends ViewRequest<S>, S extends Serializable, E extends Exception> {
     @Mock
     protected ControllerUtils controllerUtils;
 
     protected C viewController;
-    protected ViewServerService<S, E> viewServerService;
+    protected ViewServerService<R, S, E> viewServerService;
     protected MockHttpServletResponse response;
 
     @Before
@@ -49,6 +46,6 @@ public abstract class AbstractViewControllerTest<C extends ViewController<S, E>,
         final String reference = "SomeReference";
         final S sampleDatabase = getSampleDatabase();
         viewController.viewDocument(reference, sampleDatabase, null, response);
-        verify(viewServerService).viewDocument(eq(reference), eq(sampleDatabase), isNull(String.class), any(OutputStream.class));
+        verify(viewServerService).viewDocument(any(), any(OutputStream.class));
     }
 }
