@@ -12,6 +12,7 @@ import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
+import com.hp.autonomy.searchcomponents.hod.view.HodViewRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,15 +32,15 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HodViewControllerTest extends AbstractViewControllerTest<HodViewController, ResourceIdentifier, HodErrorException> {
+public class HodViewControllerTest extends AbstractViewControllerTest<HodViewController, HodViewRequest, ResourceIdentifier, HodErrorException> {
     @Mock
-    private ViewServerService<ResourceIdentifier, HodErrorException> hodViewService;
+    private ViewServerService<HodViewRequest, ResourceIdentifier, HodErrorException> hodViewService;
 
     @Override
     @Before
     public void setUp() {
         viewServerService = hodViewService;
-        viewController = new HodViewController(viewServerService, controllerUtils);
+        viewController = new HodViewController(viewServerService, HodViewRequest.builder(), controllerUtils);
         response = new MockHttpServletResponse();
         super.setUp();
     }

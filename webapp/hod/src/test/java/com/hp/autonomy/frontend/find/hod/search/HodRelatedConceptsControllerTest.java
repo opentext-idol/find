@@ -24,9 +24,9 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class HodRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<Entity, HodQueryRestrictions, HodRelatedConceptsRequest, ResourceIdentifier, HodErrorException> {
     @Override
-    protected RelatedConceptsController<Entity, HodQueryRestrictions, HodRelatedConceptsRequest, ResourceIdentifier, HodErrorException> buildController(final RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> relatedConceptsService, final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.Builder<HodRelatedConceptsRequest, ResourceIdentifier>> relatedConceptsRequestBuilderFactory) {
-        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new HodQueryRestrictions.Builder());
-        when(relatedConceptsRequestBuilderFactory.getObject()).thenReturn(new HodRelatedConceptsRequest.Builder());
+    protected RelatedConceptsController<Entity, HodQueryRestrictions, HodRelatedConceptsRequest, ResourceIdentifier, HodErrorException> buildController(final RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> relatedConceptsService, final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.RelatedConceptsRequestBuilder<HodRelatedConceptsRequest, ResourceIdentifier>> relatedConceptsRequestBuilderFactory) {
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(HodQueryRestrictions.builder());
+        when(relatedConceptsRequestBuilderFactory.getObject()).thenReturn(HodRelatedConceptsRequest.builder());
         return new HodRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
     }
 }

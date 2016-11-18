@@ -31,15 +31,15 @@ public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsService
     private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
 
     @Autowired
-    private IdolQueryRestrictions.Builder queryRestrictionsBuilder;
+    private IdolQueryRestrictions.IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
 
     @Test
     public void findRelatedConceptsWithStateToken() throws Exception {
         final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilder
-                .setQueryText("*")
-                .setFieldText("")
-                .setDatabases(Arrays.asList(mvcIntegrationTestUtils.getDatabases()))
-                .setMinScore(0)
+                .queryText("*")
+                .fieldText("")
+                .databases(Arrays.asList(mvcIntegrationTestUtils.getDatabases()))
+                .minScore(0)
                 .build();
 
         final String stateToken = documentsService.getStateToken(queryRestrictions, Integer.MAX_VALUE, false);

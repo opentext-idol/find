@@ -9,7 +9,6 @@ import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.joda.time.DateTime;
@@ -88,9 +87,9 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
                 .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("raccoons", true, 0)))
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
-        int numberOfResults = 1;
+        final int numberOfResults = 1;
         when(searchResults.getTotalResults()).thenReturn(numberOfResults);
-        when(documentsService.queryTextIndex(Matchers.<SearchRequest<S>>any())).thenReturn(searchResults);
+        when(documentsService.queryTextIndex(any())).thenReturn(searchResults);
         assertEquals(numberOfResults, savedQueryController.checkForNewQueryResults(id));
     }
 
@@ -102,8 +101,8 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
                 .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("raccoons", true, 0)))
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
+        when(documentsService.queryTextIndex(any())).thenReturn(searchResults);
         final int numberOfResults = 0;
-        when(documentsService.queryTextIndex(Matchers.<SearchRequest<S>>any())).thenReturn(searchResults);
         assertEquals(numberOfResults, savedQueryController.checkForNewQueryResults(id));
     }
 
@@ -120,6 +119,6 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
         final int numberOfResults = 0;
 
         assertEquals(numberOfResults, savedQueryController.checkForNewQueryResults(id));
-        verify(documentsService, never()).queryTextIndex(Matchers.<SearchRequest<S>>any());
+        verify(documentsService, never()).queryTextIndex(any());
     }
 }

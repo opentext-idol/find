@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.fields.AbstractFieldsControllerTest;
 import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
-import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
@@ -34,27 +33,37 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFieldsRequest, HodErrorException, ResourceIdentifier, HodQueryRestrictions, HodParametricRequest> {
+public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFieldsController, HodFieldsRequest, HodErrorException, ResourceIdentifier, HodQueryRestrictions, HodParametricRequest> {
     @Override
-    protected FieldsController<HodFieldsRequest, HodErrorException, ResourceIdentifier, HodQueryRestrictions, HodParametricRequest> constructController() {
+    protected HodFieldsController constructController() {
         @SuppressWarnings("unchecked")
-        final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> requestBuilderFactory = mock(ObjectFactory.class);
+        final ObjectFactory<ParametricRequest.ParametricRequestBuilder<HodParametricRequest, ResourceIdentifier>> requestBuilderFactory = mock(ObjectFactory.class);
 
-        final ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier> builder = new HodParametricRequest.Builder();
+        final ParametricRequest.ParametricRequestBuilder<HodParametricRequest, ResourceIdentifier> builder = HodParametricRequest.builder();
         when(requestBuilderFactory.getObject()).thenReturn(builder);
 
         return new HodFieldsController(service, parametricValuesService, requestBuilderFactory, configService);
     }
 
     @Override
-    protected HodFieldsRequest createRequest() {
-        return new HodFieldsRequest.Builder().setDatabases(Collections.singleton(ResourceIdentifier.WIKI_ENG)).build();
+    protected List<TagName> getParametricFields() throws HodErrorException {
+        return controller.getParametricFields(Collections.singleton(ResourceIdentifier.WIKI_ENG));
+    }
+
+    @Override
+    protected List<FieldAndValueDetails> getParametricNumericFields() throws HodErrorException {
+        return controller.getParametricNumericFields(Collections.singleton(ResourceIdentifier.WIKI_ENG));
+    }
+
+    @Override
+    protected List<FieldAndValueDetails> getParametricDateFields() throws HodErrorException {
+        return controller.getParametricDateFields(Collections.singleton(ResourceIdentifier.WIKI_ENG));
     }
 
     // TODO: Remove this override once we can support autn date in HOD (FIND-180)
     @Override
     @Test
-    public void getParametricDateFields() throws HodErrorException {
+    public void getParametricDateFieldsTest() throws HodErrorException {
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
         response.put(FieldTypeParam.NumericDate, ImmutableList.of(new TagName("DateField"), new TagName("ParametricDateField")));
         response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("ParametricField"), new TagName("ParametricNumericField"), new TagName("ParametricDateField")));
@@ -74,7 +83,7 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
 
         when(parametricValuesService.getValueDetails(Matchers.any())).thenReturn(valueDetailsOutput);
 
-        final List<FieldAndValueDetails> fields = controller.getParametricDateFields(createRequest());
+        final List<FieldAndValueDetails> fields = getParametricDateFields();
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(is(new FieldAndValueDetails("ParametricDateField", "ParametricDateField", 146840000d, 146860000d, 1000))));
     }

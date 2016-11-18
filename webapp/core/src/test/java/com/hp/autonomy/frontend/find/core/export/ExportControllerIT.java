@@ -27,7 +27,7 @@ public abstract class ExportControllerIT extends AbstractFindIT {
         final String selectedField2 = "WEIGHT";
 
         final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.CSV_PATH).with(authentication(biAuth()));
-        requestBuilder.param(ExportController.SEARCH_REQUEST_PARAM, json);
+        requestBuilder.param(ExportController.QUERY_REQUEST_PARAM, json);
         requestBuilder.param(ExportController.SELECTED_EXPORT_FIELDS_PARAM, selectedField1);
         requestBuilder.param(ExportController.SELECTED_EXPORT_FIELDS_PARAM, selectedField2);
 

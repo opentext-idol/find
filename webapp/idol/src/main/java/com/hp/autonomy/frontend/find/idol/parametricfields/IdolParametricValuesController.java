@@ -32,7 +32,7 @@ class IdolParametricValuesController extends ParametricValuesController<IdolQuer
     @Autowired
     public IdolParametricValuesController(final ParametricValuesService<IdolParametricRequest, String, AciErrorException> parametricValuesService,
                                           final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory,
-                                          final ObjectFactory<ParametricRequest.Builder<IdolParametricRequest, String>> parametricRequestBuilderFactory) {
+                                          final ObjectFactory<ParametricRequest.ParametricRequestBuilder<IdolParametricRequest, String>> parametricRequestBuilderFactory) {
         super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
     }
 
@@ -41,7 +41,7 @@ class IdolParametricValuesController extends ParametricValuesController<IdolQuer
     public Set<QueryTagInfo> getParametricValues(
             @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames
     ) throws AciErrorException {
-        final IdolParametricRequest parametricRequest = buildRequest(fieldNames, Collections.<String>emptyList(), MAX_VALUES_DEFAULT, SortParam.DocumentCount);
+        final IdolParametricRequest parametricRequest = buildRequest(fieldNames, Collections.emptyList(), MAX_VALUES_DEFAULT, SortParam.DocumentCount);
         return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 }

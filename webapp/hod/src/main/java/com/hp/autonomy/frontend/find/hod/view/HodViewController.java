@@ -11,7 +11,9 @@ import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.core.view.ViewRequest;
 import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
+import com.hp.autonomy.searchcomponents.hod.view.HodViewRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.NoSuchMessageException;
@@ -29,24 +31,27 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 @RequestMapping(ViewController.VIEW_PATH)
 @Slf4j
-public class HodViewController extends ViewController<ResourceIdentifier, HodErrorException> {
-    static final String HOD_ERROR_MESSAGE_CODE_PREFIX = "error.iodErrorCode.";
-    static final String HOD_ERROR_MESSAGE_CODE_MAIN = "error.iodErrorMain";
-    static final String HOD_ERROR_MESSAGE_CODE_SUB = "error.iodErrorSub";
-    static final String HOD_ERROR_MESSAGE_CODE_SUB_NULL = "error.iodErrorSubNull";
-    static final String HOD_ERROR_MESSAGE_CODE_TOKEN_EXPIRED = "error.iodTokenExpired";
-    static final String HOD_ERROR_MESSAGE_CODE_INTERNAL_MAIN = "error.internalServerErrorMain";
-    static final String HOD_ERROR_MESSAGE_CODE_INTERNAL_SUB = "error.internalServerErrorSub";
-    static final String HOD_ERROR_MESSAGE_CODE_UNKNOWN = "error.unknownError";
+class HodViewController extends ViewController<HodViewRequest, ResourceIdentifier, HodErrorException> {
+    private static final String HOD_ERROR_MESSAGE_CODE_PREFIX = "error.iodErrorCode.";
+    private static final String HOD_ERROR_MESSAGE_CODE_MAIN = "error.iodErrorMain";
+    private static final String HOD_ERROR_MESSAGE_CODE_SUB = "error.iodErrorSub";
+    private static final String HOD_ERROR_MESSAGE_CODE_SUB_NULL = "error.iodErrorSubNull";
+    private static final String HOD_ERROR_MESSAGE_CODE_TOKEN_EXPIRED = "error.iodTokenExpired";
+    private static final String HOD_ERROR_MESSAGE_CODE_INTERNAL_MAIN = "error.internalServerErrorMain";
+    private static final String HOD_ERROR_MESSAGE_CODE_INTERNAL_SUB = "error.internalServerErrorSub";
+    private static final String HOD_ERROR_MESSAGE_CODE_UNKNOWN = "error.unknownError";
 
     private final ControllerUtils controllerUtils;
 
     @Autowired
-    public HodViewController(final ViewServerService<ResourceIdentifier, HodErrorException> viewServerService, final ControllerUtils controllerUtils) {
-        super(viewServerService);
+    public HodViewController(final ViewServerService<HodViewRequest, ResourceIdentifier, HodErrorException> viewServerService,
+                             final ViewRequest.ViewRequestBuilder<HodViewRequest, ResourceIdentifier> viewRequestBuilder,
+                             final ControllerUtils controllerUtils) {
+        super(viewServerService, viewRequestBuilder);
         this.controllerUtils = controllerUtils;
     }
 
+    @SuppressWarnings("TypeMayBeWeakened")
     @ExceptionHandler
     public ModelAndView handleHodErrorException(
             final HodErrorException e,
@@ -92,6 +97,7 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
                 .build());
     }
 
+    @SuppressWarnings("TypeMayBeWeakened")
     @ExceptionHandler
     public ModelAndView hodAuthenticationFailedException(
             final HodAuthenticationFailedException e,
@@ -112,6 +118,7 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
                 .build());
     }
 
+    @SuppressWarnings("TypeMayBeWeakened")
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleGeneralException(

@@ -12,7 +12,7 @@ import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +20,19 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class HodExportService implements ExportService<ResourceIdentifier, HodErrorException> {
+class HodExportService implements ExportService<ResourceIdentifier, HodErrorException> {
     private final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService;
     private final Map<ExportFormat, ExportStrategy> exportStrategies;
 
@@ -36,35 +42,34 @@ public class HodExportService implements ExportService<ResourceIdentifier, HodEr
         this.documentsService = documentsService;
 
         this.exportStrategies = new EnumMap<>(ExportFormat.class);
-        for(final ExportStrategy exportStrategy : exportStrategies) {
+        for (final ExportStrategy exportStrategy : exportStrategies) {
             this.exportStrategies.put(exportStrategy.getExportFormat(), exportStrategy);
         }
     }
 
     @Override
-    public void export(final OutputStream outputStream, final SearchRequest<ResourceIdentifier> searchRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds) throws HodErrorException {
+    public void export(final OutputStream outputStream, final QueryRequest<ResourceIdentifier> queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds) throws HodErrorException {
         final ExportStrategy exportStrategy = exportStrategies.get(exportFormat);
         final List<String> fieldIds = exportStrategy.getFieldNames(HodMetadataNode.values(), selectedFieldIds);
-        searchRequest.setPrintFields(fieldIds);
-        final Documents<HodSearchResult> documents = documentsService.queryTextIndex(searchRequest);
+        final Documents<HodSearchResult> documents = documentsService.queryTextIndex(queryRequest.toBuilder().printFields(fieldIds).build());
 
         try {
             //Caution: outputStream should not be written to before call to prependOutput().
             exportStrategy.prependOutput(outputStream);
 
-            if(exportStrategy.writeHeader()) {
+            if (exportStrategy.writeHeader()) {
                 exportStrategy.exportRecord(outputStream, fieldIds);
             }
 
             final List<Function<HodSearchResult, String>> exportMetadataFunctions = Arrays.stream(HodMetadataNode.values())
                     .filter(node -> selectedFieldIds.isEmpty() || selectedFieldIds.contains(node.getName()))
-                    .map(node -> (Function<HodSearchResult, String>)hodSearchResult -> {
+                    .map(node -> (Function<HodSearchResult, String>) hodSearchResult -> {
                         final Object value = node.getGetter().apply(hodSearchResult);
                         return value == null ? "" : value.toString();
                     })
                     .collect(Collectors.toList());
 
-            for(final HodSearchResult searchResult : documents.getDocuments()) {
+            for (final HodSearchResult searchResult : documents.getDocuments()) {
                 final Stream<String> metadataStream = exportMetadataFunctions.stream()
                         .map(extractor -> extractor.apply(searchResult));
 
@@ -77,22 +82,16 @@ public class HodExportService implements ExportService<ResourceIdentifier, HodEr
 
                 exportStrategy.exportRecord(outputStream, Stream.concat(metadataStream, nonMetadataStream).collect(Collectors.toList()));
             }
-        } catch(final IOException e) {
+        } catch (final IOException e) {
             //noinspection ProhibitedExceptionThrown
             throw new RuntimeException("Error parsing data", e);
         }
     }
 
     private List<String> getValuesAsStrings(final FieldInfo<?> fieldInfo) {
-        final List<String> stringList;
-        if(fieldInfo != null) {
-            stringList = fieldInfo.getValues().stream()
-                    // prevents NullPointerException if the data set contains an incorrectly formatted date
-                    .filter(Objects::nonNull)
-                    .map(Object::toString).collect(Collectors.toList());
-        } else {
-            stringList = Collections.emptyList();
-        }
-        return stringList;
+        return fieldInfo != null ? fieldInfo.getValues().stream()
+                // prevents NullPointerException if the data set contains an incorrectly formatted date
+                .filter(Objects::nonNull)
+                .map(Object::toString).collect(Collectors.toList()) : Collections.emptyList();
     }
 }

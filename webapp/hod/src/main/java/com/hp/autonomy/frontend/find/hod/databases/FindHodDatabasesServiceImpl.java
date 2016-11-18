@@ -16,12 +16,11 @@ import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
+import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
-import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesService;
-import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,17 +31,22 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesServiceConstants.CONTENT_FLAVOURS;
+
 @Service
-class FindHodDatabasesServiceImpl extends HodDatabasesService implements FindHodDatabasesService {
+class FindHodDatabasesServiceImpl implements FindHodDatabasesService {
+    private final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService;
+    private final ResourcesService resourcesService;
     private final ConfigService<HodFindConfig> configService;
 
     @Autowired
     public FindHodDatabasesServiceImpl(
+            @Qualifier(DATABASES_SERVICE_BEAN_NAME) final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService,
             final ResourcesService resourcesService,
-            final ConfigService<HodFindConfig> configService,
-            final AuthenticationInformationRetriever<?, HodAuthenticationPrincipal> authenticationInformationRetriever
+            final ConfigService<HodFindConfig> configService
     ) {
-        super(resourcesService, authenticationInformationRetriever);
+        this.databasesService = databasesService;
+        this.resourcesService = resourcesService;
         this.configService = configService;
     }
 
@@ -65,16 +69,16 @@ class FindHodDatabasesServiceImpl extends HodDatabasesService implements FindHod
     @Override
     public Set<Database> getDatabases(final HodDatabasesRequest request) throws HodErrorException {
         final Collection<ResourceIdentifier> activeIndexes = configService.getConfig().getHod().getActiveIndexes();
-        return activeIndexes.isEmpty() ? super.getDatabases(request) : listActiveIndexes(activeIndexes);
+        return activeIndexes.isEmpty() ? databasesService.getDatabases(request) : listActiveIndexes(activeIndexes);
     }
 
     private Set<Database> listActiveIndexes(final Iterable<ResourceIdentifier> activeIndexes) {
         final Set<Database> activeDatabases = new TreeSet<>();
 
         for (final ResourceIdentifier index : activeIndexes) {
-            activeDatabases.add(new Database.Builder()
-                    .setDomain(index.getDomain())
-                    .setName(index.getName())
+            activeDatabases.add(Database.builder()
+                    .domain(index.getDomain())
+                    .name(index.getName())
                     .build());
         }
 

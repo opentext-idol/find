@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.ObjectFactory;
@@ -41,7 +40,7 @@ public abstract class AbstractParametricValuesControllerTest<C extends Parametri
     protected QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
 
     @Mock
-    protected ObjectFactory<ParametricRequest.Builder<R, S>> parametricRequestBuilderFactory;
+    protected ObjectFactory<ParametricRequest.ParametricRequestBuilder<R, S>> parametricRequestBuilderFactory;
 
     protected C parametricValuesController;
 
@@ -54,8 +53,8 @@ public abstract class AbstractParametricValuesControllerTest<C extends Parametri
 
     @Test
     public void getDependentParametricValues() throws E {
-        parametricValuesController.getDependentParametricValues(Collections.singletonList("SomeParametricField"), "Some query text", null, Collections.<S>emptyList(), null, null, 0, null);
-        verify(parametricValuesService).getDependentParametricValues(Matchers.<R>any());
+        parametricValuesController.getDependentParametricValues(Collections.singletonList("SomeParametricField"), "Some query text", null, Collections.emptyList(), null, null, 0, null);
+        verify(parametricValuesService).getDependentParametricValues(Matchers.any());
     }
 
     @Test
@@ -65,15 +64,12 @@ public abstract class AbstractParametricValuesControllerTest<C extends Parametri
         final RangeInfo rangeInfo = mock(RangeInfo.class);
         final BucketingParams expectedBucketingParams = new BucketingParams(5, -0.5, 0.5);
 
-        when(parametricValuesService.getNumericParametricValuesInBuckets(Matchers.<R>any(), Matchers.<Map<String, BucketingParams>>any())).thenAnswer(new Answer<List<RangeInfo>>() {
-            @Override
-            public List<RangeInfo> answer(final InvocationOnMock invocation) {
-                @SuppressWarnings("unchecked")
-                final Map<String, BucketingParams> bucketingParamsPerField = invocation.getArgumentAt(1, Map.class);
+        when(parametricValuesService.getNumericParametricValuesInBuckets(Matchers.any(), Matchers.any())).thenAnswer((Answer<List<RangeInfo>>) invocation -> {
+            @SuppressWarnings("unchecked")
+            final Map<String, BucketingParams> bucketingParamsPerField = invocation.getArgumentAt(1, Map.class);
 
-                final BucketingParams bucketingParams = bucketingParamsPerField.get(fieldName);
-                return expectedBucketingParams.equals(bucketingParams) ? Collections.singletonList(rangeInfo) : Collections.<RangeInfo>emptyList();
-            }
+            final BucketingParams bucketingParams = bucketingParamsPerField.get(fieldName);
+            return expectedBucketingParams.equals(bucketingParams) ? Collections.singletonList(rangeInfo) : Collections.emptyList();
         });
 
         final RangeInfo output = parametricValuesController.getNumericParametricValuesInBucketsForField(
@@ -83,7 +79,7 @@ public abstract class AbstractParametricValuesControllerTest<C extends Parametri
                 expectedBucketingParams.getMax(),
                 "*",
                 "",
-                Collections.<S>emptyList(),
+                Collections.emptyList(),
                 null,
                 null,
                 0

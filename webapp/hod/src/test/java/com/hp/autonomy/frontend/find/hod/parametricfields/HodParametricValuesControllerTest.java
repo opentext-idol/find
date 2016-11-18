@@ -31,14 +31,14 @@ public class HodParametricValuesControllerTest extends AbstractParametricValuesC
     @Override
     @Before
     public void setUp() {
-        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new HodQueryRestrictions.Builder());
-        when(parametricRequestBuilderFactory.getObject()).thenReturn(new HodParametricRequest.Builder());
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(HodQueryRestrictions.builder());
+        when(parametricRequestBuilderFactory.getObject()).thenReturn(HodParametricRequest.builder());
         super.setUp();
     }
 
     @Test
     public void getParametricValues() throws HodErrorException {
-        parametricValuesController.getParametricValues(Collections.singletonList("SomeParametricField"), Collections.<ResourceIdentifier>emptyList());
-        verify(parametricValuesService).getAllParametricValues(Matchers.<HodParametricRequest>any());
+        parametricValuesController.getParametricValues(Collections.singletonList("SomeParametricField"), Collections.emptyList());
+        verify(parametricValuesService).getAllParametricValues(Matchers.any());
     }
 }

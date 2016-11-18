@@ -26,13 +26,13 @@ public class HodQueryRestrictionsDeserializer extends QueryRestrictionsDeseriali
 
         final JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 
-        return new HodQueryRestrictions.Builder()
-                .setQueryText(parseAsText(objectMapper, node, "queryText"))
-                .setFieldText(parseAsText(objectMapper, node, "fieldText"))
-                .setDatabases(parseDatabaseArray(node, "databases"))
-                .setMinDate(parseDate(objectMapper, node, "minDate"))
-                .setMaxDate(parseDate(objectMapper, node, "maxDate"))
-                .setLanguageType(parseAsText(objectMapper, node, "languageType"))
+        return HodQueryRestrictions.builder()
+                .queryText(parseAsText(objectMapper, node, "queryText"))
+                .fieldText(parseAsText(objectMapper, node, "fieldText"))
+                .databases(parseDatabaseArray(node, "databases"))
+                .minDate(parseDate(objectMapper, node, "minDate"))
+                .maxDate(parseDate(objectMapper, node, "maxDate"))
+                .languageType(parseAsText(objectMapper, node, "languageType"))
                 .build();
     }
 

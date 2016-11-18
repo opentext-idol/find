@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.export;
 
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.test.TestUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.Test;
@@ -18,6 +18,7 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertNotNull;
 
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
 public abstract class ExportServiceIT<S extends Serializable, E extends Exception> {
     @Autowired
@@ -28,13 +29,13 @@ public abstract class ExportServiceIT<S extends Serializable, E extends Exceptio
 
     @Test
     public void exportToCsv() throws E {
-        final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
-                .setQueryRestrictions(testUtils.buildQueryRestrictions())
-                .setQueryType(SearchRequest.QueryType.MODIFIED)
+        final QueryRequest<S> queryRequest = QueryRequest.<S>builder()
+                .queryRestrictions(testUtils.buildQueryRestrictions())
+                .queryType(QueryRequest.QueryType.MODIFIED)
                 .build();
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        exportService.export(outputStream, searchRequest, ExportFormat.CSV, Collections.emptyList());
+        exportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
         assertNotNull(outputStream.toString());
     }
 }

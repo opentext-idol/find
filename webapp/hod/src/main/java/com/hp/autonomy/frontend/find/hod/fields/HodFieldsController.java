@@ -17,12 +17,18 @@ import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesSe
 import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsRequest;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,26 +36,53 @@ import java.util.List;
 @Controller
 @Slf4j
 class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorException, ResourceIdentifier, HodQueryRestrictions, HodParametricRequest> {
+    static final String DATABASES_PARAM = "databases";
+
+    @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
     HodFieldsController(
             final FieldsService<HodFieldsRequest, HodErrorException> fieldsService,
             final ParametricValuesService<HodParametricRequest, ResourceIdentifier, HodErrorException> parametricValuesService,
-            final ObjectFactory<ParametricRequest.Builder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory,
+            final ObjectFactory<ParametricRequest.ParametricRequestBuilder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory,
             final ConfigService<? extends FindConfig> configService
     ) {
         super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, configService);
     }
 
+    @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
+    @ResponseBody
+    public List<TagName> getParametricFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases) throws HodErrorException {
+        return getParametricFields(HodFieldsRequest.builder()
+                .databases(databases)
+                .build());
+    }
+
+    @RequestMapping(value = GET_PARAMETRIC_NUMERIC_FIELDS_PATH, method = RequestMethod.GET)
+    @ResponseBody
+    public List<FieldAndValueDetails> getParametricNumericFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases) throws HodErrorException {
+        return getParametricNumericFields(HodFieldsRequest.builder()
+                .databases(databases)
+                .build());
+    }
+
+    @RequestMapping(value = GET_PARAMETRIC_DATE_FIELDS_PATH, method = RequestMethod.GET)
+    @ResponseBody
+    public List<FieldAndValueDetails> getParametricDateFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases) throws HodErrorException {
+        return getParametricDateFields(HodFieldsRequest.builder()
+                .databases(databases)
+                .build());
+    }
+
     @Override
     protected HodQueryRestrictions createValueDetailsQueryRestrictions(final HodFieldsRequest request) {
-        return new HodQueryRestrictions.Builder()
-                .setQueryText("*")
-                .setDatabases(new LinkedList<>(request.getDatabases()))
+        return HodQueryRestrictions.builder()
+                .queryText("*")
+                .databases(new LinkedList<>(request.getDatabases()))
                 .build();
     }
 
     @Override
-    public List<FieldAndValueDetails> getParametricDateFields(final HodFieldsRequest request) throws HodErrorException {
+    protected List<FieldAndValueDetails> getParametricDateFields(final HodFieldsRequest request) throws HodErrorException {
         // TODO: Remove this override once FIND-180 is complete; we are just preventing AUTN_DATE from showing up in HoD as it will cause performance problems
         return fetchParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, Collections.emptyList());
     }

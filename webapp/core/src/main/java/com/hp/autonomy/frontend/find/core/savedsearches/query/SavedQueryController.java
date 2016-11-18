@@ -10,7 +10,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.apache.commons.collections4.CollectionUtils;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 @RequestMapping(SavedQueryController.PATH)
@@ -81,32 +81,32 @@ public abstract class SavedQueryController<S extends Serializable, Q extends Que
 
         final SavedQuery savedQuery = service.get(id);
         final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
-        if(savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
+        if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
             final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                    .setQueryText(savedQuery.toQueryText())
-                    .setFieldText(fieldTextParser.toFieldText(savedQuery))
-                    .setDatabases(convertEmbeddableIndexes(savedQuery.getIndexes()))
-                    .setMinDate(dateDocsLastFetched)
-                    .setMinScore(savedQuery.getMinScore())
+                    .queryText(savedQuery.toQueryText())
+                    .fieldText(fieldTextParser.toFieldText(savedQuery))
+                    .databases(convertEmbeddableIndexes(savedQuery.getIndexes()))
+                    .minDate(dateDocsLastFetched)
+                    .minScore(savedQuery.getMinScore())
                     .build();
-            final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
-                    .setQueryRestrictions(queryRestrictions)
-                    .setMaxResults(1001)
-                    .setPrint(getNoResultsPrintParam())
-                    .setQueryType(SearchRequest.QueryType.MODIFIED)
+            final QueryRequest<S> queryRequest = QueryRequest.<S>builder()
+                    .queryRestrictions(queryRestrictions)
+                    .maxResults(1001)
+                    .print(getNoResultsPrintParam())
+                    .queryType(QueryRequest.QueryType.MODIFIED)
                     .build();
 
-            final Documents<?> searchResults = documentsService.queryTextIndex(searchRequest);
+            final Documents<?> searchResults = documentsService.queryTextIndex(queryRequest);
             newResults = searchResults.getTotalResults();
         }
 
         return newResults;
     }
 
-    private List<S> convertEmbeddableIndexes(final Iterable<EmbeddableIndex> embeddableIndexes) {
-        final List<S> indexes = new ArrayList<>(CollectionUtils.size(embeddableIndexes));
-        if(embeddableIndexes != null) {
-            for(final EmbeddableIndex embeddableIndex : embeddableIndexes) {
+    private Collection<S> convertEmbeddableIndexes(final Iterable<EmbeddableIndex> embeddableIndexes) {
+        final Collection<S> indexes = new ArrayList<>(CollectionUtils.size(embeddableIndexes));
+        if (embeddableIndexes != null) {
+            for (final EmbeddableIndex embeddableIndex : embeddableIndexes) {
                 indexes.add(convertEmbeddableIndex(embeddableIndex));
             }
         }

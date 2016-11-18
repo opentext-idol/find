@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -58,11 +59,11 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
 
     protected final ParametricValuesService<R, S, E> parametricValuesService;
     protected final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
-    private final ObjectFactory<ParametricRequest.Builder<R, S>> parametricRequestBuilderFactory;
+    private final ObjectFactory<ParametricRequest.ParametricRequestBuilder<R, S>> parametricRequestBuilderFactory;
 
     protected ParametricValuesController(final ParametricValuesService<R, S, E> parametricValuesService,
                                          final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory,
-                                         final ObjectFactory<ParametricRequest.Builder<R, S>> parametricRequestBuilderFactory) {
+                                         final ObjectFactory<ParametricRequest.ParametricRequestBuilder<R, S>> parametricRequestBuilderFactory) {
         this.parametricValuesService = parametricValuesService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.parametricRequestBuilderFactory = parametricRequestBuilderFactory;
@@ -75,7 +76,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
             @RequestParam(value = QUERY_TEXT_PARAM, defaultValue = "*") final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(DATABASES_PARAM) final List<S> databases,
+            @RequestParam(DATABASES_PARAM) final Collection<S> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
@@ -96,7 +97,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(BUCKET_MAX_PARAM) final Double bucketMax,
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(DATABASES_PARAM) final List<S> databases,
+            @RequestParam(DATABASES_PARAM) final Collection<S> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore
@@ -128,7 +129,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(DATABASES_PARAM) final List<S> databases,
+            @RequestParam(DATABASES_PARAM) final Collection<S> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
@@ -138,26 +139,26 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         return parametricValuesService.getDependentParametricValues(parametricRequest);
     }
 
-    protected R buildRequest(final List<String> fieldNames, final List<S> databases, final Integer maxValues, final SortParam sort) {
+    protected R buildRequest(final List<String> fieldNames, final Collection<S> databases, final Integer maxValues, final SortParam sort) {
         return buildRequest(fieldNames, "*", null, databases, null, null, null, null, maxValues, sort);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    private R buildRequest(final List<String> fieldNames, final String queryText, final String fieldText, final List<S> databases, final DateTime minDate, final DateTime maxDate, final Integer minScore, final List<String> stateTokens, final Integer maxValues, final SortParam sort) {
+    private R buildRequest(final List<String> fieldNames, final String queryText, final String fieldText, final Collection<S> databases, final DateTime minDate, final DateTime maxDate, final Integer minScore, final List<String> stateTokens, final Integer maxValues, final SortParam sort) {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                .setQueryText(queryText)
-                .setFieldText(fieldText)
-                .setDatabases(databases)
-                .setMinDate(minDate)
-                .setMaxDate(maxDate)
-                .setMinScore(minScore)
-                .setStateMatchId(ListUtils.emptyIfNull(stateTokens))
+                .queryText(queryText)
+                .fieldText(fieldText)
+                .databases(databases)
+                .minDate(minDate)
+                .maxDate(maxDate)
+                .minScore(minScore)
+                .stateMatchIds(ListUtils.emptyIfNull(stateTokens))
                 .build();
         return parametricRequestBuilderFactory.getObject()
-                .setFieldNames(ListUtils.emptyIfNull(fieldNames))
-                .setQueryRestrictions(queryRestrictions)
-                .setMaxValues(maxValues)
-                .setSort(sort)
+                .fieldNames(ListUtils.emptyIfNull(fieldNames))
+                .queryRestrictions(queryRestrictions)
+                .maxValues(maxValues)
+                .sort(sort)
                 .build();
     }
 

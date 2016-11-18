@@ -43,6 +43,7 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
     private static final String MAX_DATE_PARAM = "max_date";
     private static final String HIGHLIGHT_PARAM = "highlight";
     private static final String MIN_SCORE_PARAM = "min_score";
+
     protected final DocumentsService<S, R, E> documentsService;
     private final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
 
@@ -72,27 +73,27 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
             @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType
     ) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                .setQueryText(queryText)
-                .setFieldText(fieldText)
-                .setDatabases(ListUtils.emptyIfNull(databases))
-                .setMinDate(minDate)
-                .setMaxDate(maxDate)
-                .setMinScore(minScore)
+                .queryText(queryText)
+                .fieldText(fieldText)
+                .databases(ListUtils.emptyIfNull(databases))
+                .minDate(minDate)
+                .maxDate(maxDate)
+                .minScore(minScore)
                 .build();
 
-        final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
-                .setQueryRestrictions(queryRestrictions)
-                .setStart(resultsStart)
-                .setMaxResults(maxResults)
-                .setSummary(summary)
-                .setSummaryCharacters(MAX_SUMMARY_CHARACTERS)
-                .setSort(sort)
-                .setHighlight(highlight)
-                .setAutoCorrect(autoCorrect)
-                .setQueryType(SearchRequest.QueryType.valueOf(queryType))
+        final QueryRequest<S> queryRequest = QueryRequest.<S>builder()
+                .queryRestrictions(queryRestrictions)
+                .start(resultsStart)
+                .maxResults(maxResults)
+                .summary(summary)
+                .summaryCharacters(MAX_SUMMARY_CHARACTERS)
+                .sort(sort)
+                .highlight(highlight)
+                .autoCorrect(autoCorrect)
+                .queryType(QueryRequest.QueryType.valueOf(queryType))
                 .build();
 
-        return documentsService.queryTextIndex(searchRequest);
+        return documentsService.queryTextIndex(queryRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -112,22 +113,22 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
             @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore
     ) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                .setFieldText(fieldText)
-                .setDatabases(ListUtils.emptyIfNull(databases))
-                .setMinDate(minDate)
-                .setMaxDate(maxDate)
-                .setMinScore(minScore)
+                .fieldText(fieldText)
+                .databases(ListUtils.emptyIfNull(databases))
+                .minDate(minDate)
+                .maxDate(maxDate)
+                .minScore(minScore)
                 .build();
 
-        final SuggestRequest<S> suggestRequest = new SuggestRequest.Builder<S>()
-                .setReference(reference)
-                .setQueryRestrictions(queryRestrictions)
-                .setStart(resultsStart)
-                .setMaxResults(maxResults)
-                .setSummary(summary)
-                .setSummaryCharacters(MAX_SUMMARY_CHARACTERS)
-                .setSort(sort)
-                .setHighlight(highlight)
+        final SuggestRequest<S> suggestRequest = SuggestRequest.<S>builder()
+                .reference(reference)
+                .queryRestrictions(queryRestrictions)
+                .start(resultsStart)
+                .maxResults(maxResults)
+                .summary(summary)
+                .summaryCharacters(MAX_SUMMARY_CHARACTERS)
+                .sort(sort)
+                .highlight(highlight)
                 .build();
 
         return documentsService.findSimilar(suggestRequest);
@@ -143,6 +144,6 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
         final GetContentRequest<S> getContentRequest = new GetContentRequest<>(Collections.singleton(getContentRequestIndex), PrintParam.All.name());
         final List<R> results = documentsService.getDocumentContent(getContentRequest);
 
-        return results.isEmpty() ? this.throwException("No content found for document with reference " + reference + " in database " + database) : results.get(0);
+        return results.isEmpty() ? throwException("No content found for document with reference " + reference + " in database " + database) : results.get(0);
     }
 }

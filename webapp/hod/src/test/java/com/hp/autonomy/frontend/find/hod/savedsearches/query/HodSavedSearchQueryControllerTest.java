@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 public class HodSavedSearchQueryControllerTest extends SavedQueryControllerTest<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
     @Override
     protected SavedQueryController<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> constructController() {
-        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new HodQueryRestrictions.Builder());
+        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(HodQueryRestrictions.builder());
         return new HodSavedQueryController(savedQueryService, documentsService, fieldTextParser, queryRestrictionsBuilderFactory);
     }
 }

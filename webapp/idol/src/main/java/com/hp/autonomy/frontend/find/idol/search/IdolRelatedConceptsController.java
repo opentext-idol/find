@@ -24,7 +24,7 @@ public class IdolRelatedConceptsController extends RelatedConceptsController<QsE
     @Autowired
     public IdolRelatedConceptsController(final RelatedConceptsService<QsElement, String, AciErrorException> relatedConceptsService,
                                          final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory,
-                                         final ObjectFactory<RelatedConceptsRequest.Builder<IdolRelatedConceptsRequest, String>> relatedConceptsRequestBuilderFactory) {
+                                         final ObjectFactory<RelatedConceptsRequest.RelatedConceptsRequestBuilder<IdolRelatedConceptsRequest, String>> relatedConceptsRequestBuilderFactory) {
         super(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
     }
 }

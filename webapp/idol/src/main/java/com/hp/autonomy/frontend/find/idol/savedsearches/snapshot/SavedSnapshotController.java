@@ -112,14 +112,14 @@ class SavedSnapshotController {
             indexes.addAll(snapshot.getIndexes().stream().map(EmbeddableIndex::getName).collect(Collectors.toList()));
         }
 
-        final QueryRestrictions<String> restrictions = new IdolQueryRestrictions.Builder()
-                .setAnyLanguage(true)
-                .setDatabases(indexes)
-                .setQueryText(snapshot.toQueryText())
-                .setFieldText(fieldTextParser.toFieldText(snapshot))
-                .setMaxDate(snapshot.getMaxDate())
-                .setMinDate(snapshot.getMinDate())
-                .setMinScore(snapshot.getMinScore())
+        final QueryRestrictions<String> restrictions = IdolQueryRestrictions.builder()
+                .anyLanguage(true)
+                .databases(indexes)
+                .queryText(snapshot.toQueryText())
+                .fieldText(fieldTextParser.toFieldText(snapshot))
+                .maxDate(snapshot.getMaxDate())
+                .minDate(snapshot.getMinDate())
+                .minScore(snapshot.getMinScore())
                 .build();
 
         return documentsService.getStateTokenAndResultCount(restrictions, STATE_TOKEN_MAX_RESULTS, promotions);

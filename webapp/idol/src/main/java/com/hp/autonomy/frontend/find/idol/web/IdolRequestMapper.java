@@ -6,21 +6,22 @@
 package com.hp.autonomy.frontend.find.idol.web;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.web.AbstractRequestMapper;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsMixin;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class IdolRequestMapper extends AbstractRequestMapper<String> {
+class IdolRequestMapper extends AbstractRequestMapper<String> {
     @Override
     protected void addCustomMixins(final ObjectMapper objectMapper) {
-        objectMapper.addMixIn(IdolQueryRestrictions.Builder.class, IdolQueryRestrictionsMixins.class);
+        objectMapper.addMixIn(QueryRestrictions.class, IdolQueryRestrictionsMixin.class);
+        objectMapper.addMixIn(IdolQueryRestrictions.IdolQueryRestrictionsBuilder.class, IdolQueryRestrictionsBuilderMixins.class);
     }
 
     @Override
@@ -28,13 +29,8 @@ public class IdolRequestMapper extends AbstractRequestMapper<String> {
         return String.class;
     }
 
-    @Override
-    protected Class<? extends SearchRequestMixins> getSearchRequestMixinType() {
-        return IdolSearchRequestMixins.class;
-    }
-
     @SuppressWarnings("unused")
-    private abstract static class IdolQueryRestrictionsMixins {
+    private abstract static class IdolQueryRestrictionsBuilderMixins {
         @JsonProperty(value = "text", required = true)
         private String queryText;
         @JsonProperty("field_text")
@@ -47,11 +43,5 @@ public class IdolRequestMapper extends AbstractRequestMapper<String> {
         private DateTime maxDate;
         @JsonProperty("min_score")
         private Integer minScore;
-    }
-
-    @SuppressWarnings("unused")
-    private static class IdolSearchRequestMixins extends SearchRequestMixins {
-        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "queryRestrictions", defaultImpl = IdolQueryRestrictions.class)
-        private QueryRestrictions<String> queryRestrictions;
     }
 }

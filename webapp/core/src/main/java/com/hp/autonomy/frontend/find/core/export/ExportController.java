@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.core.export;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public abstract class ExportController<S extends Serializable, E extends Excepti
     static final String EXPORT_PATH = "/api/bi/export";
     static final String CSV_PATH = "/csv";
     static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
-    static final String SEARCH_REQUEST_PARAM = "searchRequest";
+    static final String QUERY_REQUEST_PARAM = "queryRequest";
     private static final String EXPORT_FILE_NAME = "query-results";
 
     private final ExportService<S, E> exportService;
@@ -45,19 +45,19 @@ public abstract class ExportController<S extends Serializable, E extends Excepti
     @RequestMapping(value = CSV_PATH, method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<byte[]> exportToCsv(
-            @RequestParam(SEARCH_REQUEST_PARAM) final String searchRequestJSON,
+            @RequestParam(QUERY_REQUEST_PARAM) final String queryRequestJSON,
             // required = false to prevent Spring errors if the user asks for a CSV with no fields marked for export.
             // The UI should not allow the User to send a request for a CSV with nothing in it.
             @RequestParam(value = SELECTED_EXPORT_FIELDS_PARAM, required = false) final Collection<String> selectedFieldNames
     ) throws IOException, E {
-        return export(searchRequestJSON, ExportFormat.CSV, selectedFieldNames);
+        return export(queryRequestJSON, ExportFormat.CSV, selectedFieldNames);
     }
 
-    private ResponseEntity<byte[]> export(final String searchRequestJSON, final ExportFormat exportFormat, final Collection<String> selectedFieldNames) throws IOException, E {
-        final SearchRequest<S> searchRequest = requestMapper.parseSearchRequest(searchRequestJSON);
+    private ResponseEntity<byte[]> export(final String queryRequestJSON, final ExportFormat exportFormat, final Collection<String> selectedFieldNames) throws IOException, E {
+        final QueryRequest<S> queryRequest = requestMapper.parseQueryRequest(queryRequestJSON);
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        exportService.export(outputStream, searchRequest, exportFormat, selectedFieldNames);
+        exportService.export(outputStream, queryRequest, exportFormat, selectedFieldNames);
         final byte[] output = outputStream.toByteArray();
 
         final HttpHeaders headers = new HttpHeaders();

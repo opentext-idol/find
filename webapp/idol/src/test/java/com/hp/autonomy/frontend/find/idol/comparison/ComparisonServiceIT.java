@@ -31,10 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ComparisonServiceIT extends AbstractFindIT {
     private static final String EMPTY_RESULT_SET_TOKEN = "NULL-0";
     private final ObjectMapper mapper = new ObjectMapper();
-    private final QueryRestrictions<String> queryRestrictions = new IdolQueryRestrictions.Builder()
-            .setQueryText("*")
-            .setFieldText("")
-            .setMinScore(0)
+    private final QueryRestrictions<String> queryRestrictions = IdolQueryRestrictions.builder()
+            .queryText("*")
+            .fieldText("")
+            .minScore(0)
             .build();
 
     @SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaAutowiredMembersInspection"})

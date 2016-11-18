@@ -8,11 +8,9 @@ package com.hp.autonomy.frontend.find.core.export;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -48,7 +46,7 @@ public abstract class ExportControllerTest<S extends Serializable, E extends Exc
     @Test
     public void exportToCsv() throws IOException, E {
         controller.exportToCsv("{}", Collections.emptyList());
-        verify(exportService).export(any(OutputStream.class), Matchers.<SearchRequest<S>>any(), eq(ExportFormat.CSV), eq(Collections.emptyList()));
+        verify(exportService).export(any(OutputStream.class), any(), eq(ExportFormat.CSV), eq(Collections.emptyList()));
     }
 
     @Test

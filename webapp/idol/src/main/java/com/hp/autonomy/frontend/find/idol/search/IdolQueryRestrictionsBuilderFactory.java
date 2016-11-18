@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class IdolQueryRestrictionsBuilderFactory implements QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> {
     @Override
-    public QueryRestrictions.Builder<IdolQueryRestrictions, String> createBuilder() {
-        return new IdolQueryRestrictions.Builder()
-                .setAnyLanguage(true);
+    public QueryRestrictions.QueryRestrictionsBuilder<IdolQueryRestrictions, String> createBuilder() {
+        return IdolQueryRestrictions.builder()
+                .anyLanguage(true);
     }
 }

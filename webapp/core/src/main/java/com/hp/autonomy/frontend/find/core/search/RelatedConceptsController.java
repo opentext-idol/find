@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -41,11 +42,11 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
 
     private final RelatedConceptsService<Q, S, E> relatedConceptsService;
     private final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory;
-    private final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory;
+    private final ObjectFactory<RelatedConceptsRequest.RelatedConceptsRequestBuilder<L, S>> relatedConceptsRequestBuilderFactory;
 
     protected RelatedConceptsController(final RelatedConceptsService<Q, S, E> relatedConceptsService,
                                         final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory,
-                                        final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory) {
+                                        final ObjectFactory<RelatedConceptsRequest.RelatedConceptsRequestBuilder<L, S>> relatedConceptsRequestBuilderFactory) {
         this.relatedConceptsService = relatedConceptsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.relatedConceptsRequestBuilderFactory = relatedConceptsRequestBuilderFactory;
@@ -57,7 +58,7 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
     public List<Q> findRelatedConcepts(
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(DATABASES_PARAM) final List<S> databases,
+            @RequestParam(DATABASES_PARAM) final Collection<S> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final Integer minScore,
@@ -66,20 +67,20 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
             @RequestParam(value = MAX_RESULTS, required = false) final Integer maxResults
     ) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                .setQueryText(queryText)
-                .setFieldText(fieldText)
-                .setDatabases(databases)
-                .setMinDate(minDate)
-                .setMaxDate(maxDate)
-                .setMinScore(minScore)
-                .setStateMatchId(ListUtils.emptyIfNull(stateMatchTokens))
-                .setStateDontMatchId(ListUtils.emptyIfNull(stateDontMatchTokens))
+                .queryText(queryText)
+                .fieldText(fieldText)
+                .databases(databases)
+                .minDate(minDate)
+                .maxDate(maxDate)
+                .minScore(minScore)
+                .stateMatchIds(ListUtils.emptyIfNull(stateMatchTokens))
+                .stateDontMatchIds(ListUtils.emptyIfNull(stateDontMatchTokens))
                 .build();
 
         final RelatedConceptsRequest<S> relatedConceptsRequest = relatedConceptsRequestBuilderFactory.getObject()
-                .setMaxResults(maxResults)
-                .setQuerySummaryLength(QUERY_SUMMARY_LENGTH)
-                .setQueryRestrictions(queryRestrictions)
+                .maxResults(maxResults)
+                .querySummaryLength(QUERY_SUMMARY_LENGTH)
+                .queryRestrictions(queryRestrictions)
                 .build();
         return relatedConceptsService.findRelatedConcepts(relatedConceptsRequest);
     }
