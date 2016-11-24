@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.*;
+import com.hp.autonomy.frontend.selenium.element.ChevronContainer;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.*;
@@ -180,6 +181,11 @@ public class FindPage extends AppElement implements AppPage,
         String javaScript = "return document.documentElement.scrollHeight>document.documentElement.clientHeight;";
         JavascriptExecutor executor = (JavascriptExecutor) getDriver();
         return (boolean) executor.executeScript(javaScript);
+    }
+
+    @Override
+    public ChevronContainer indexes() {
+        return filters().indexesTreeContainer();
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {

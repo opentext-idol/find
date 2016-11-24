@@ -16,7 +16,7 @@
     <version>${find.version}</version>
 
     <properties>
-        <qa.infrastructure.version>2.4.0</qa.infrastructure.version>
+        <qa.infrastructure.version>2.5.2</qa.infrastructure.version>
         <find.version>11.3.0-SNAPSHOT</find.version>
     </properties>
 
