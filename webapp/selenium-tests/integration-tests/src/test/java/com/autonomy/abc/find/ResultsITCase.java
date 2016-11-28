@@ -160,6 +160,31 @@ public class ResultsITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-719")
+    @Role(UserRole.FIND)
+    public void testNoResultsMessageHiddenAfterAutoCorrect() {
+        final String term = "eevrything";
+
+        search(term);
+        final ListView results = findPage.goToListView();
+        findPage.ensureTermNotAutoCorrected();
+        results.waitForResultsToLoad();
+        assertThat("Searching for " + term + " returns no results.", results.getTotalResultsNum(), is(0));
+
+        //Search for a random thing to allow re-search of the term
+        search("cat");
+
+        search(term);
+        results.waitForResultsToLoad();
+        findPage.waitForParametricValuesToLoad();
+        assumeThat(term + " has been auto-corrected to " + findPage.getCorrectedQuery() + " and this returns some results",
+                results.getTotalResultsNum(),
+                greaterThan(0));
+
+        assertThat("\"No more results\" message not present.", !findPage.resultsMessagePresent());
+    }
+
+    @Test
     @Role(UserRole.FIND)
     public void testRefreshWithSlash() {
         final String query = "foo/bar";
