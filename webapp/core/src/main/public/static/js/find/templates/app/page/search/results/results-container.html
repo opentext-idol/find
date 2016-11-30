@@ -1,7 +1,16 @@
-<% var promoted = data.isPromotion ? 'promoted-document' : ''; %>
+<%  var resultType;
+
+    if(data.isPromotion) {
+        resultType = 'promoted-document';
+    } else if(data.isAnsweredQuestion) {
+        resultType = 'answered-question';
+    } else {
+        resultType = '';
+    }
+%>
 <% var directAccessLink = data.directAccessLink ? 'direct-access' : ''; %>
 
-<div class="main-results-container m-b-sm <%-promoted%> <%-directAccessLink%>" data-cid="<%-model.cid %>">
+<div class="main-results-container m-b-sm <%-resultType%> <%-directAccessLink%>" data-cid="<%-model.cid %>">
     <span class="pull-left m-t-xs text-muted m-r-sm content-type">
         <i class="icomoon-file-<%-data.contentType%>"></i>
     </span>
@@ -10,6 +19,14 @@
         <% if (data.isPromotion) { %>
             <span class="pull-right m-t-xs text-muted promoted-label">
                 <i class="hp-icon hp-fw hp-favorite"></i> <%-i18n['search.promoted']%>
+            </span>
+        <% } else if (data.isAnsweredQuestion) { %>
+            <span class="pull-right m-t-xs text-muted promoted-label">
+                <span class="fa-stack">
+                    <i class="fa fa-comments-o fa-stack-2x"></i>
+                    <i class="fa fa-question fa-stack-1x"></i>
+                </span>
+                <%- i18n['search.answeredQuestion'] %>
             </span>
         <% } %>
         <h4 class="pull-left m-b-nil m-t-xs result-header">
@@ -32,7 +49,7 @@
             <%= data.highlightedSummary %>
         </p>
         <span class="text-right results-small-links">
-            <% if (!data.staticPromotion) { %>
+            <% if (!data.staticPromotion && !data.isAnsweredQuestion) { %>
                 <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
             <% }
             if (data.directAccessLink && data.enablePreview) { %>

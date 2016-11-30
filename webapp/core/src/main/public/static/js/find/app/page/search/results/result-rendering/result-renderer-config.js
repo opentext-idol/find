@@ -30,6 +30,7 @@ define([
             date: model.has('date') ? model.get('date').fromNow() : null,
             highlightedSummary: addLinksToSummary(model.get('summary')),
             isPromotion: isPromotion,
+            isAnsweredQuestion: null, //something to be passed here
             staticPromotion: model.get('promotionCategory') === 'STATIC_CONTENT_PROMOTION',
             enablePreview: enablePreview,
             directAccessLink: directAccessLink
