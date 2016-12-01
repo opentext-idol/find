@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.core.export;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +19,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.util.Collections;
 
 import static org.mockito.Matchers.any;
@@ -26,17 +26,17 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class ExportControllerTest<S extends Serializable, E extends Exception> {
+public abstract class ExportControllerTest<R extends QueryRequest<?>, E extends Exception> {
     @Mock
-    protected ExportService<S, E> exportService;
+    protected ExportService<R, E> exportService;
     @Mock
-    protected RequestMapper<S> requestMapper;
+    protected RequestMapper<R> requestMapper;
     @Mock
     protected ControllerUtils controllerUtils;
 
-    private ExportController<S, E> controller;
+    private ExportController<R, E> controller;
 
-    protected abstract ExportController<S, E> constructController();
+    protected abstract ExportController<R, E> constructController();
 
     @Before
     public void setUp() {

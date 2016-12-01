@@ -11,12 +11,14 @@ import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsRequest;
+import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsService;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
+import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricValuesService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import lombok.extern.slf4j.Slf4j;
@@ -35,24 +37,30 @@ import java.util.List;
 
 @Controller
 @Slf4j
-class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorException, ResourceIdentifier, HodQueryRestrictions, HodParametricRequest> {
+class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorException, HodQueryRestrictions, HodParametricRequest> {
     static final String DATABASES_PARAM = "databases";
 
-    @SuppressWarnings("TypeMayBeWeakened")
+    private final ObjectFactory<HodFieldsRequestBuilder> fieldsRequestBuilderFactory;
+    private final ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
+
+    @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
     HodFieldsController(
-            final FieldsService<HodFieldsRequest, HodErrorException> fieldsService,
-            final ParametricValuesService<HodParametricRequest, ResourceIdentifier, HodErrorException> parametricValuesService,
-            final ObjectFactory<ParametricRequest.ParametricRequestBuilder<HodParametricRequest, ResourceIdentifier>> parametricRequestBuilderFactory,
-            final ConfigService<? extends FindConfig> configService
-    ) {
+            final HodFieldsService fieldsService,
+            final HodParametricValuesService parametricValuesService,
+            final ObjectFactory<HodParametricRequestBuilder> parametricRequestBuilderFactory,
+            final ConfigService<? extends FindConfig> configService,
+            final ObjectFactory<HodFieldsRequestBuilder> fieldsRequestBuilderFactory,
+            final ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory) {
         super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, configService);
+        this.fieldsRequestBuilderFactory = fieldsRequestBuilderFactory;
+        this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
     }
 
     @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public List<TagName> getParametricFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases) throws HodErrorException {
-        return getParametricFields(HodFieldsRequest.builder()
+        return getParametricFields(fieldsRequestBuilderFactory.getObject()
                 .databases(databases)
                 .build());
     }
@@ -60,7 +68,7 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
     @RequestMapping(value = GET_PARAMETRIC_NUMERIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public List<FieldAndValueDetails> getParametricNumericFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases) throws HodErrorException {
-        return getParametricNumericFields(HodFieldsRequest.builder()
+        return getParametricNumericFields(fieldsRequestBuilderFactory.getObject()
                 .databases(databases)
                 .build());
     }
@@ -68,14 +76,14 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
     @RequestMapping(value = GET_PARAMETRIC_DATE_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public List<FieldAndValueDetails> getParametricDateFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases) throws HodErrorException {
-        return getParametricDateFields(HodFieldsRequest.builder()
+        return getParametricDateFields(fieldsRequestBuilderFactory.getObject()
                 .databases(databases)
                 .build());
     }
 
     @Override
     protected HodQueryRestrictions createValueDetailsQueryRestrictions(final HodFieldsRequest request) {
-        return HodQueryRestrictions.builder()
+        return queryRestrictionsBuilderFactory.getObject()
                 .queryText("*")
                 .databases(new LinkedList<>(request.getDatabases()))
                 .build();

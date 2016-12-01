@@ -28,6 +28,9 @@ import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfoConfigMixins;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.requests.IdolQueryRestrictionsMixin;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.user.UserService;
@@ -61,6 +64,8 @@ public class IdolConfiguration {
         final ObjectMapper mapper = builder
                 .createXmlMapper(false)
                 .mixIn(Authentication.class, IdolAuthenticationMixins.class)
+                .mixIn(QueryRestrictions.class, IdolQueryRestrictionsMixin.class)
+                .mixIn(IdolQueryRestrictions.class, IdolQueryRestrictionsMixin.class)
                 .build();
 
         mapper.setInjectableValues(new InjectableValues.Std().addValue(AuthenticationInformationRetriever.class, authenticationInformationRetriever));

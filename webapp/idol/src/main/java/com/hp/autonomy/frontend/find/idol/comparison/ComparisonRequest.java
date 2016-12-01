@@ -19,15 +19,15 @@ import java.io.Serializable;
 @Data
 @JsonDeserialize(builder = ComparisonRequest.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ComparisonRequest<S extends Serializable> implements Serializable {
+class ComparisonRequest<Q extends QueryRestrictions<?>> implements Serializable {
     private static final long serialVersionUID = -604283886267152277L;
 
-    private final QueryRestrictions<S> firstRestrictions;
-    private final QueryRestrictions<S> secondRestrictions;
+    private final Q firstRestrictions;
+    private final Q secondRestrictions;
     private final String firstQueryStateToken;
     private final String secondQueryStateToken;
 
-    private ComparisonRequest(final Builder<S> builder) {
+    private ComparisonRequest(final Builder<Q> builder) {
         firstRestrictions = builder.firstRestrictions;
         secondRestrictions = builder.secondRestrictions;
         firstQueryStateToken = builder.firstQueryStateToken;
@@ -37,13 +37,13 @@ public class ComparisonRequest<S extends Serializable> implements Serializable {
     @JsonPOJOBuilder(withPrefix = "set")
     @Setter
     @Accessors(chain = true)
-    public static class Builder<S extends Serializable> {
-        private QueryRestrictions<S> firstRestrictions;
-        private QueryRestrictions<S> secondRestrictions;
+    static class Builder<Q extends QueryRestrictions<?>> {
+        private Q firstRestrictions;
+        private Q secondRestrictions;
         private String firstQueryStateToken;
         private String secondQueryStateToken;
 
-        public ComparisonRequest<S> build() {
+        public ComparisonRequest<Q> build() {
             return new ComparisonRequest<>(this);
         }
     }

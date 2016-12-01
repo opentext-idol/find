@@ -21,14 +21,13 @@ public abstract class ExportControllerIT extends AbstractFindIT {
                 "\"text\": \"*\", \"indexes\": " + mvcIntegrationTestUtils.getDatabasesAsJson() +
                 "}," +
                 "\"max_results\": 5," +
-                "\"summary\": \"off\"}";
-
-        final String selectedField1 = "dateCreated";
-        final String selectedField2 = "WEIGHT";
+                "\"summary\": \"Off\"}";
 
         final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.CSV_PATH).with(authentication(biAuth()));
         requestBuilder.param(ExportController.QUERY_REQUEST_PARAM, json);
+        final String selectedField1 = "dateCreated";
         requestBuilder.param(ExportController.SELECTED_EXPORT_FIELDS_PARAM, selectedField1);
+        final String selectedField2 = "WEIGHT";
         requestBuilder.param(ExportController.SELECTED_EXPORT_FIELDS_PARAM, selectedField2);
 
         mockMvc.perform(requestBuilder)

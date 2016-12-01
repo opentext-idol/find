@@ -9,12 +9,12 @@ import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.export.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
 import com.hp.autonomy.frontend.find.core.export.MetadataNode;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldType;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.joda.time.DateTime;
@@ -38,7 +38,11 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HodExportServiceTest {
     @Mock
-    private DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService;
+    private HodDocumentsService documentsService;
+    @Mock
+    private HodQueryRequestBuilder queryRequestBuilder;
+    @Mock
+    private HodQueryRequest queryRequest;
     @Mock
     private ExportStrategy exportStrategy;
     @Mock
@@ -49,6 +53,10 @@ public class HodExportServiceTest {
 
     @Before
     public void setUp() {
+        when(queryRequest.toBuilder()).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.printFields(any())).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.build()).thenReturn(queryRequest);
+
         when(exportStrategy.getExportFormat()).thenReturn(ExportFormat.CSV);
         fieldNames = Arrays.asList(HodMetadataNode.REFERENCE.getDisplayName(), HodMetadataNode.DATABASE.getDisplayName(), HodMetadataNode.SUMMARY.getDisplayName(), HodMetadataNode.DATE.getDisplayName(), "authors", "categories", "books", "epic", "lastRead");
         when(exportStrategy.getFieldNames(any(MetadataNode[].class), eq(Collections.emptyList()))).thenReturn(fieldNames);
@@ -101,7 +109,6 @@ public class HodExportServiceTest {
         final Documents<HodSearchResult> results = new Documents<>(Arrays.asList(result1, result2), 2, null, null, null, null);
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(results);
 
-        final QueryRequest<ResourceIdentifier> queryRequest = QueryRequest.<ResourceIdentifier>builder().build();
         hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
         verify(exportStrategy, times(3)).exportRecord(eq(outputStream), anyListOf(String.class));
     }
@@ -121,7 +128,6 @@ public class HodExportServiceTest {
         when(exportStrategy.writeHeader()).thenReturn(true);
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
 
-        final QueryRequest<ResourceIdentifier> queryRequest = QueryRequest.<ResourceIdentifier>builder().build();
         hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
         verify(exportStrategy).exportRecord(outputStream, fieldNames);
     }
@@ -130,7 +136,6 @@ public class HodExportServiceTest {
     public void exportEmptyResultSetWithoutHeader() throws IOException, HodErrorException {
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
 
-        final QueryRequest<ResourceIdentifier> queryRequest = QueryRequest.<ResourceIdentifier>builder().build();
         hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
         verify(exportStrategy, never()).exportRecord(eq(outputStream), anyListOf(String.class));
     }
@@ -141,7 +146,6 @@ public class HodExportServiceTest {
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
         doThrow(new IOException("")).when(exportStrategy).exportRecord(eq(outputStream), anyListOf(String.class));
 
-        final QueryRequest<ResourceIdentifier> queryRequest = QueryRequest.<ResourceIdentifier>builder().build();
         hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
     }
 }

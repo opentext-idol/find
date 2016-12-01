@@ -8,11 +8,10 @@ package com.hp.autonomy.frontend.find.hod.export;
 import com.hp.autonomy.frontend.find.core.export.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
 import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +31,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-class HodExportService implements ExportService<ResourceIdentifier, HodErrorException> {
-    private final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService;
+class HodExportService implements ExportService<HodQueryRequest, HodErrorException> {
+    private final HodDocumentsService documentsService;
     private final Map<ExportFormat, ExportStrategy> exportStrategies;
 
     @Autowired
-    public HodExportService(final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService,
+    public HodExportService(final HodDocumentsService documentsService,
                             final ExportStrategy[] exportStrategies) {
         this.documentsService = documentsService;
 
@@ -48,7 +47,7 @@ class HodExportService implements ExportService<ResourceIdentifier, HodErrorExce
     }
 
     @Override
-    public void export(final OutputStream outputStream, final QueryRequest<ResourceIdentifier> queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds) throws HodErrorException {
+    public void export(final OutputStream outputStream, final HodQueryRequest queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds) throws HodErrorException {
         final ExportStrategy exportStrategy = exportStrategies.get(exportFormat);
         final List<String> fieldIds = exportStrategy.getFieldNames(HodMetadataNode.values(), selectedFieldIds);
         final Documents<HodSearchResult> documents = documentsService.queryTextIndex(queryRequest.toBuilder().printFields(fieldIds).build());

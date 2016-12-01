@@ -8,9 +8,8 @@ package com.hp.autonomy.frontend.find.core.web;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 @FunctionalInterface
-public interface RequestMapper<S extends Serializable> {
-    QueryRequest<S> parseQueryRequest(String json) throws IOException;
+public interface RequestMapper<R extends QueryRequest<?>> {
+    R parseQueryRequest(String json) throws IOException;
 }

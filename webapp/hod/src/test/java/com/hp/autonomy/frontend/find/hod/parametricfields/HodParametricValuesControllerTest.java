@@ -8,37 +8,75 @@ package com.hp.autonomy.frontend.find.hod.parametricfields;
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesControllerTest;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
+import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricValuesService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.ObjectFactory;
 
 import java.util.Collections;
 
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HodParametricValuesControllerTest extends AbstractParametricValuesControllerTest<HodParametricValuesController, HodQueryRestrictions, HodParametricRequest, ResourceIdentifier, HodErrorException> {
+    @Mock
+    private HodParametricValuesService hodParametricValuesService;
+    @Mock
+    private ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
+
+    @Mock
+    private HodQueryRestrictionsBuilder queryRestrictionsBuilder;
+
+    @Mock
+    private ObjectFactory<HodParametricRequestBuilder> parametricRequestBuilderFactory;
+
+    @Mock
+    private HodParametricRequestBuilder parametricRequestBuilder;
+
     @Override
     protected HodParametricValuesController newControllerInstance() {
-        return new HodParametricValuesController(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
+        return new HodParametricValuesController(hodParametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
+    }
+
+    @Override
+    protected ParametricValuesService<HodParametricRequest, HodQueryRestrictions, HodErrorException> newParametricValuesService() {
+        return hodParametricValuesService;
     }
 
     @Override
     @Before
     public void setUp() {
-        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(HodQueryRestrictions.builder());
-        when(parametricRequestBuilderFactory.getObject()).thenReturn(HodParametricRequest.builder());
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.fieldText(anyString())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.minDate(any())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.maxDate(any())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.minScore(anyInt())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.stateMatchIds(any())).thenReturn(queryRestrictionsBuilder);
+
+        when(parametricRequestBuilderFactory.getObject()).thenReturn(parametricRequestBuilder);
+        when(parametricRequestBuilder.fieldNames(any())).thenReturn(parametricRequestBuilder);
+        when(parametricRequestBuilder.queryRestrictions(any())).thenReturn(parametricRequestBuilder);
+        when(parametricRequestBuilder.maxValues(anyInt())).thenReturn(parametricRequestBuilder);
+        when(parametricRequestBuilder.sort(any())).thenReturn(parametricRequestBuilder);
+
         super.setUp();
     }
 
     @Test
     public void getParametricValues() throws HodErrorException {
         parametricValuesController.getParametricValues(Collections.singletonList("SomeParametricField"), Collections.emptyList());
-        verify(parametricValuesService).getAllParametricValues(Matchers.any());
+        verify(hodParametricValuesService).getAllParametricValues(any());
     }
 }

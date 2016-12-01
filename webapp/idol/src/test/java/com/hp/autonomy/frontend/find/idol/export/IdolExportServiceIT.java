@@ -15,18 +15,20 @@ import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolCo
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @SpringBootTest(classes = {HavenSearchIdolConfiguration.class, IdolExportServiceIT.ExportConfiguration.class}, value = "export.it=true", webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class IdolExportServiceIT extends ExportServiceIT<String, AciErrorException> {
+public class IdolExportServiceIT extends ExportServiceIT<IdolQueryRequest, IdolQueryRestrictions, AciErrorException> {
     @Configuration
     @ConditionalOnProperty("export.it")
     public static class ExportConfiguration {
         @Bean
-        public ExportService<String, AciErrorException> exportService(
+        public ExportService<IdolQueryRequest, AciErrorException> exportService(
                 final HavenSearchAciParameterHandler parameterHandler,
                 final AciServiceRetriever aciServiceRetriever,
                 final ExportStrategy[] exportStrategies) {

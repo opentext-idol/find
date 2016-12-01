@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,16 +19,20 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public abstract class RequestMapperTest<S extends Serializable> {
-    private RequestMapper<S> requestMapper;
+public abstract class RequestMapperTest<R extends QueryRequest<Q>, Q extends QueryRestrictions<S>, S extends Serializable> {
+    private RequestMapper<R> requestMapper;
 
-    protected abstract RequestMapper<S> constructRequestMapper();
+    protected abstract RequestMapper<R> constructRequestMapper();
 
     protected abstract String completeJsonObject() throws IOException;
 
     protected abstract String minimalJsonObject() throws IOException;
 
     protected abstract void validateDatabases(final List<S> databases);
+
+    protected abstract void validate(final R queryRequest);
+
+    protected abstract void validateMinimal(final R queryRequest);
 
     @Before
     public void setUp() {
@@ -37,7 +42,7 @@ public abstract class RequestMapperTest<S extends Serializable> {
     @Test
     public void jsonToQueryRequest() throws IOException {
         final String json = completeJsonObject();
-        final QueryRequest<S> queryRequest = requestMapper.parseQueryRequest(json);
+        final R queryRequest = requestMapper.parseQueryRequest(json);
 
         assertNotNull(queryRequest.getQueryRestrictions());
         assertThat(queryRequest.getQueryRestrictions().getQueryText(), is("Homer"));
@@ -49,17 +54,17 @@ public abstract class RequestMapperTest<S extends Serializable> {
 
         assertThat(queryRequest.getStart(), is(10));
         assertThat(queryRequest.getMaxResults(), is(30));
-        assertThat(queryRequest.getSummary(), is("off"));
-        assertThat(queryRequest.getSort(), is("DocumentCount"));
         assertThat(queryRequest.isHighlight(), is(true));
         assertThat(queryRequest.isAutoCorrect(), is(true));
         assertThat(queryRequest.getQueryType(), is(QueryRequest.QueryType.RAW));
+
+        validate(queryRequest);
     }
 
     @Test
     public void minimalJsonToQueryRequest() throws IOException {
         final String json = minimalJsonObject();
-        final QueryRequest<S> queryRequest = requestMapper.parseQueryRequest(json);
+        final R queryRequest = requestMapper.parseQueryRequest(json);
 
         assertNotNull(queryRequest.getQueryRestrictions());
         assertThat(queryRequest.getQueryRestrictions().getQueryText(), is("Homer"));
@@ -71,10 +76,10 @@ public abstract class RequestMapperTest<S extends Serializable> {
 
         assertThat(queryRequest.getStart(), is(1));
         assertThat(queryRequest.getMaxResults(), is(30));
-        assertThat(queryRequest.getSummary(), is("off"));
-        assertNull(queryRequest.getSort());
         assertThat(queryRequest.isHighlight(), is(false));
         assertThat(queryRequest.isAutoCorrect(), is(false));
         assertThat(queryRequest.getQueryType(), is(QueryRequest.QueryType.MODIFIED));
+
+        validateMinimal(queryRequest);
     }
 }

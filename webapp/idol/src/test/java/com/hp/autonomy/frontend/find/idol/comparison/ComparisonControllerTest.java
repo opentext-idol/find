@@ -6,8 +6,8 @@
 package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.autonomy.aci.client.services.AciErrorException;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,24 +31,24 @@ public class ComparisonControllerTest {
     private ComparisonService<IdolSearchResult, AciErrorException> comparisonService;
 
     @Mock
-    private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
+    private IdolDocumentsService documentsService;
 
-    private ComparisonController<String, IdolSearchResult, AciErrorException> comparisonController;
+    private ComparisonController<IdolQueryRestrictions, IdolSearchResult, AciErrorException> comparisonController;
 
     @Mock
-    private QueryRestrictions<String> queryRestrictions;
+    private IdolQueryRestrictions queryRestrictions;
 
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         comparisonController = new ComparisonController<>(comparisonService, documentsService);
-        when(documentsService.getStateToken(any(QueryRestrictions.class), anyInt(), anyBoolean()))
+        when(documentsService.getStateToken(any(), anyInt(), anyBoolean()))
                 .thenReturn(MOCK_STATE_TOKEN_1);
     }
 
     @Test
     public void compareStateTokens() throws AciErrorException {
-        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+        final ComparisonRequest<IdolQueryRestrictions> comparisonRequest = new ComparisonRequest.Builder<IdolQueryRestrictions>()
                 .setFirstQueryStateToken(MOCK_STATE_TOKEN_1)
                 .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
                 .build();
@@ -59,7 +59,7 @@ public class ComparisonControllerTest {
 
     @Test
     public void compareTokenAndRestriction() throws AciErrorException {
-        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+        final ComparisonRequest<IdolQueryRestrictions> comparisonRequest = new ComparisonRequest.Builder<IdolQueryRestrictions>()
                 .setFirstQueryStateToken(MOCK_STATE_TOKEN_1)
                 .setSecondRestrictions(queryRestrictions)
                 .build();
@@ -70,7 +70,7 @@ public class ComparisonControllerTest {
 
     @Test
     public void compareRestrictionAndToken() throws AciErrorException {
-        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+        final ComparisonRequest<IdolQueryRestrictions> comparisonRequest = new ComparisonRequest.Builder<IdolQueryRestrictions>()
                 .setFirstRestrictions(queryRestrictions)
                 .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
                 .build();
@@ -81,7 +81,7 @@ public class ComparisonControllerTest {
 
     @Test
     public void compareRestrictions() throws AciErrorException {
-        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+        final ComparisonRequest<IdolQueryRestrictions> comparisonRequest = new ComparisonRequest.Builder<IdolQueryRestrictions>()
                 .setFirstRestrictions(queryRestrictions)
                 .setSecondRestrictions(queryRestrictions)
                 .build();

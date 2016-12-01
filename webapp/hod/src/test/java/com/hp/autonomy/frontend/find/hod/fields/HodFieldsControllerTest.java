@@ -11,15 +11,21 @@ import com.hp.autonomy.frontend.find.core.fields.AbstractFieldsControllerTest;
 import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
+import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsRequest;
+import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsService;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
+import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricValuesService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.ValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
 
 import java.util.Collections;
@@ -29,20 +35,63 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFieldsController, HodFieldsRequest, HodErrorException, ResourceIdentifier, HodQueryRestrictions, HodParametricRequest> {
+    @Mock
+    private HodFieldsService hodFieldsService;
+    @Mock
+    private HodParametricValuesService hodParametricValuesService;
+    @Mock
+    private ObjectFactory<HodParametricRequestBuilder> parametricRequestBuilderFactory;
+
+    @Mock
+    private HodParametricRequestBuilder parametricRequestBuilder;
+
+    @Mock
+    private ObjectFactory<HodFieldsRequestBuilder> fieldsRequestBuilderFactory;
+
+    @Mock
+    private HodFieldsRequestBuilder fieldsRequestBuilder;
+
+    @Mock
+    private HodFieldsRequest fieldsRequest;
+
+    @Mock
+    private ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
+
+    @Mock
+    private HodQueryRestrictionsBuilder queryRestrictionsBuilder;
+
     @Override
     protected HodFieldsController constructController() {
-        @SuppressWarnings("unchecked")
-        final ObjectFactory<ParametricRequest.ParametricRequestBuilder<HodParametricRequest, ResourceIdentifier>> requestBuilderFactory = mock(ObjectFactory.class);
+        when(parametricRequestBuilderFactory.getObject()).thenReturn(parametricRequestBuilder);
+        when(parametricRequestBuilder.fieldNames(any())).thenReturn(parametricRequestBuilder);
+        when(parametricRequestBuilder.queryRestrictions(any())).thenReturn(parametricRequestBuilder);
 
-        final ParametricRequest.ParametricRequestBuilder<HodParametricRequest, ResourceIdentifier> builder = HodParametricRequest.builder();
-        when(requestBuilderFactory.getObject()).thenReturn(builder);
+        when(fieldsRequestBuilderFactory.getObject()).thenReturn(fieldsRequestBuilder);
+        when(fieldsRequestBuilder.databases(any())).thenReturn(fieldsRequestBuilder);
+        when(fieldsRequestBuilder.build()).thenReturn(fieldsRequest);
+        when(fieldsRequest.getDatabases()).thenReturn(Collections.singletonList(ResourceIdentifier.WIKI_ENG));
 
-        return new HodFieldsController(service, parametricValuesService, requestBuilderFactory, configService);
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
+
+        return new HodFieldsController(hodFieldsService, hodParametricValuesService, parametricRequestBuilderFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
+    }
+
+    @Override
+    protected FieldsService<HodFieldsRequest, HodErrorException> constructService() {
+        return hodFieldsService;
+    }
+
+    @Override
+    protected ParametricValuesService<HodParametricRequest, HodQueryRestrictions, HodErrorException> constructParametricValuesService() {
+        return hodParametricValuesService;
     }
 
     @Override
@@ -67,7 +116,7 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
         response.put(FieldTypeParam.NumericDate, ImmutableList.of(new TagName("DateField"), new TagName("ParametricDateField")));
         response.put(FieldTypeParam.Parametric, ImmutableList.of(new TagName("ParametricField"), new TagName("ParametricNumericField"), new TagName("ParametricDateField")));
-        when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
+        when(hodFieldsService.getFields(any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
 
         final ValueDetails valueDetails = new ValueDetails.Builder()
                 .setMin(146840000d)
@@ -81,7 +130,7 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
                 .put(new TagName("ParametricDateField"), valueDetails)
                 .build();
 
-        when(parametricValuesService.getValueDetails(Matchers.any())).thenReturn(valueDetailsOutput);
+        when(hodParametricValuesService.getValueDetails(any())).thenReturn(valueDetailsOutput);
 
         final List<FieldAndValueDetails> fields = getParametricDateFields();
         assertThat(fields, hasSize(1));

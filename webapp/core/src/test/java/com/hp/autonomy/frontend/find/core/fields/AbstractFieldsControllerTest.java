@@ -38,22 +38,22 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractFieldsControllerTest<C extends FieldsController<R, E, S, Q, P>, R extends FieldsRequest, E extends Exception, S extends Serializable, Q extends QueryRestrictions<S>, P extends ParametricRequest<S>> {
-    @Mock
-    protected FieldsService<R, E> service;
-
-    @Mock
-    protected ParametricValuesService<P, S, E> parametricValuesService;
-
+public abstract class AbstractFieldsControllerTest<C extends FieldsController<R, E, Q, P>, R extends FieldsRequest, E extends Exception, S extends Serializable, Q extends QueryRestrictions<S>, P extends ParametricRequest<Q>> {
     @Mock
     protected ConfigFileService<FindConfig> configService;
 
     @Mock
     private FindConfig config;
 
+    private FieldsService<R, E> service;
+    private ParametricValuesService<P, Q, E> parametricValuesService;
     protected C controller;
 
     protected abstract C constructController();
+
+    protected abstract FieldsService<R, E> constructService();
+
+    protected abstract ParametricValuesService<P, Q, E> constructParametricValuesService();
 
     protected abstract List<TagName> getParametricFields() throws E;
 
@@ -64,9 +64,11 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
     @Before
     public void setUp() throws E {
         when(configService.getConfig()).thenReturn(config);
-        when(config.getUiCustomization()).thenReturn(UiCustomization.builder().setParametricAlwaysShow(Collections.emptyList()).build());
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder().parametricAlwaysShow(Collections.emptyList()).build());
 
         controller = constructController();
+        service = constructService();
+        parametricValuesService = constructParametricValuesService();
     }
 
     @Test
@@ -87,7 +89,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         mockSimpleParametricResponse();
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .setParametricAlwaysShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .parametricAlwaysShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
                 .build());
 
         final List<TagName> fields = getParametricFields();
@@ -101,7 +103,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         mockSimpleParametricResponse();
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .setParametricNeverShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .parametricNeverShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
                 .build());
 
         final List<TagName> fields = getParametricFields();
@@ -114,8 +116,8 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         mockSimpleParametricResponse();
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .setParametricAlwaysShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
-                .setParametricNeverShow(Collections.singletonList("ParametricField1"))
+                .parametricAlwaysShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .parametricNeverShow(Collections.singletonList("ParametricField1"))
                 .build());
 
         final List<TagName> fields = getParametricFields();
@@ -131,7 +133,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .setParametricNeverShow(Collections.singletonList(ParametricValuesService.AUTN_DATE_FIELD))
+                .parametricNeverShow(Collections.singletonList(ParametricValuesService.AUTN_DATE_FIELD))
                 .build());
 
         final List<FieldAndValueDetails> output = getParametricDateFields();

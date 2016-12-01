@@ -11,10 +11,11 @@ import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.searchcomponents.core.view.ViewRequest;
-import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
 import com.hp.autonomy.searchcomponents.hod.view.HodViewRequest;
+import com.hp.autonomy.searchcomponents.hod.view.HodViewRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.view.HodViewServerService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.HttpStatus;
@@ -43,11 +44,12 @@ class HodViewController extends ViewController<HodViewRequest, ResourceIdentifie
 
     private final ControllerUtils controllerUtils;
 
+    @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
-    public HodViewController(final ViewServerService<HodViewRequest, ResourceIdentifier, HodErrorException> viewServerService,
-                             final ViewRequest.ViewRequestBuilder<HodViewRequest, ResourceIdentifier> viewRequestBuilder,
+    public HodViewController(final HodViewServerService viewServerService,
+                             final ObjectFactory<HodViewRequestBuilder> viewRequestBuilderFactory,
                              final ControllerUtils controllerUtils) {
-        super(viewServerService, viewRequestBuilder);
+        super(viewServerService, viewRequestBuilderFactory);
         this.controllerUtils = controllerUtils;
     }
 

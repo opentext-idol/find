@@ -9,17 +9,17 @@ import com.hp.autonomy.frontend.find.core.export.ExportController;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class HodExportController extends ExportController<ResourceIdentifier, HodErrorException> {
+class HodExportController extends ExportController<HodQueryRequest, HodErrorException> {
 
     @Autowired
-    public HodExportController(final ExportService<ResourceIdentifier, HodErrorException> exportService,
-                               final RequestMapper<ResourceIdentifier> requestMapper,
+    public HodExportController(final ExportService<HodQueryRequest, HodErrorException> exportService,
+                               final RequestMapper<HodQueryRequest> requestMapper,
                                final ControllerUtils controllerUtils) {
         super(exportService, requestMapper, controllerUtils);
     }

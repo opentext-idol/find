@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.Builder;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @SuppressWarnings("InstanceVariableOfConcreteClass")
-@Builder(fluent = false)
+@Builder
 @Getter
 @JsonDeserialize(builder = UiCustomization.UiCustomizationBuilder.class)
 public class UiCustomization implements ConfigurationComponent<UiCustomization> {
@@ -42,12 +42,12 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
             final Map<String, String> specialUrlPrefixes = new HashMap<>(uiCustomization.specialUrlPrefixes);
             specialUrlPrefixes.putAll(this.specialUrlPrefixes);
             return builder()
-                    .setOptions(Optional.ofNullable(options).map(o -> o.merge(uiCustomization.options)).orElse(uiCustomization.options))
-                    .setParametricNeverShow(parametricNeverShow != null ? parametricNeverShow : uiCustomization.parametricNeverShow)
-                    .setParametricAlwaysShow(parametricAlwaysShow != null ? parametricAlwaysShow : uiCustomization.parametricAlwaysShow)
-                    .setParametricOrder(parametricOrder != null ? parametricOrder : uiCustomization.parametricOrder)
-                    .setSpecialUrlPrefixes(specialUrlPrefixes)
-                    .setErrorCallSupportString(uiCustomization.errorCallSupportString)
+                    .options(Optional.ofNullable(options).map(o -> o.merge(uiCustomization.options)).orElse(uiCustomization.options))
+                    .parametricNeverShow(parametricNeverShow != null ? parametricNeverShow : uiCustomization.parametricNeverShow)
+                    .parametricAlwaysShow(parametricAlwaysShow != null ? parametricAlwaysShow : uiCustomization.parametricAlwaysShow)
+                    .parametricOrder(parametricOrder != null ? parametricOrder : uiCustomization.parametricOrder)
+                    .specialUrlPrefixes(specialUrlPrefixes)
+                    .errorCallSupportString(uiCustomization.errorCallSupportString)
                     .build();
         }
     }
@@ -57,7 +57,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
     }
 
     @SuppressWarnings("WeakerAccess")
-    @JsonPOJOBuilder(withPrefix = "set")
+    @JsonPOJOBuilder(withPrefix = "")
     public static class UiCustomizationBuilder {
         @SuppressWarnings("FieldMayBeFinal")
         private Map<String, String> specialUrlPrefixes = new HashMap<>();
