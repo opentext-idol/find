@@ -7,13 +7,15 @@ package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.Documents;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,16 +24,19 @@ import java.util.List;
 
 @Service
 public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult, AciErrorException> {
-    private final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
-    private final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory;
+    private final IdolDocumentsService documentsService;
+    private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
+    private final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory;
 
     @Autowired
     public ComparisonServiceImpl(
-            final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService,
-            final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory
+            final IdolDocumentsService documentsService,
+            final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
+            final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory
     ) {
         this.documentsService = documentsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
+        this.queryRequestBuilderFactory = queryRequestBuilderFactory;
     }
 
     private Documents<IdolSearchResult> getEmptyResults() {
@@ -39,7 +44,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
     }
 
     private String generateDifferenceStateToken(final String firstQueryStateToken, final String secondQueryStateToken) throws AciErrorException {
-        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
+        final IdolQueryRestrictions queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .queryText("*")
                 .fieldText("")
                 .minScore(0)
@@ -66,7 +71,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
             return getEmptyResults();
         }
 
-        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
+        final IdolQueryRestrictions queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .queryText(text)
                 .fieldText(fieldText)
                 .minScore(0)
@@ -74,7 +79,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .stateDontMatchIds(stateDontMatchIds)
                 .build();
 
-        final QueryRequest<String> queryRequest = QueryRequest.<String>builder()
+        final IdolQueryRequest queryRequest = queryRequestBuilderFactory.getObject()
                 .queryRestrictions(queryRestrictions)
                 .start(resultsStart)
                 .maxResults(maxResults)

@@ -28,6 +28,8 @@ import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
+import com.hp.autonomy.searchcomponents.hod.requests.HodQueryRestrictionsMixin;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
@@ -57,14 +59,16 @@ public class HodConfiguration {
     @Autowired
     public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder, final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever) {
         final ObjectMapper mapper = builder.createXmlMapper(false)
-            .mixIn(Authentication.class, HodAuthenticationMixins.class)
-            .build();
+                .mixIn(Authentication.class, HodAuthenticationMixins.class)
+                .mixIn(HodQueryRestrictions.class, HodQueryRestrictionsMixin.class)
+                .build();
 
         mapper.setInjectableValues(new InjectableValues.Std().addValue(AuthenticationInformationRetriever.class, authenticationInformationRetriever));
 
         return mapper;
     }
 
+    @SuppressWarnings("TypeMayBeWeakened")
     @Bean
     public SingleUserAuthenticationValidator singleUserAuthenticationValidator(final ConfigService<? extends AuthenticationConfig<?>> configService) {
         final SingleUserAuthenticationValidator singleUserAuthenticationValidator = new SingleUserAuthenticationValidator();

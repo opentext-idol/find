@@ -6,30 +6,35 @@
 package com.hp.autonomy.frontend.find.core.export;
 
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.test.TestUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.Serializable;
 import java.util.Collections;
 
 import static org.junit.Assert.assertNotNull;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
-public abstract class ExportServiceIT<S extends Serializable, E extends Exception> {
+public abstract class ExportServiceIT<R extends QueryRequest<Q>, Q extends QueryRestrictions<?>, E extends Exception> {
     @Autowired
-    protected ExportService<S, E> exportService;
+    protected ExportService<R, E> exportService;
 
     @Autowired
-    protected TestUtils<S> testUtils;
+    protected TestUtils<Q> testUtils;
+
+    @Autowired
+    protected ObjectFactory<QueryRequestBuilder<R, Q, ?>> queryRequestBuilderFactory;
 
     @Test
     public void exportToCsv() throws E {
-        final QueryRequest<S> queryRequest = QueryRequest.<S>builder()
+        final R queryRequest = queryRequestBuilderFactory.getObject()
                 .queryRestrictions(testUtils.buildQueryRestrictions())
                 .queryType(QueryRequest.QueryType.MODIFIED)
                 .build();

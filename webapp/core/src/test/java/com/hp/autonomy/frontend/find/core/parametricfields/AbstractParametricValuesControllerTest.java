@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
@@ -15,10 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.ObjectFactory;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -32,23 +29,18 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractParametricValuesControllerTest<C extends ParametricValuesController<Q, R, S, E>, Q extends QueryRestrictions<S>, R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
-    @Mock
-    protected ParametricValuesService<R, S, E> parametricValuesService;
-
-    @Mock
-    protected QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
-
-    @Mock
-    protected ObjectFactory<ParametricRequest.ParametricRequestBuilder<R, S>> parametricRequestBuilderFactory;
-
+public abstract class AbstractParametricValuesControllerTest<C extends ParametricValuesController<Q, R, S, E>, Q extends QueryRestrictions<S>, R extends ParametricRequest<Q>, S extends Serializable, E extends Exception> {
+    private ParametricValuesService<R, Q, E> parametricValuesService;
     protected C parametricValuesController;
 
     protected abstract C newControllerInstance();
 
+    protected abstract ParametricValuesService<R, Q, E> newParametricValuesService();
+
     @Before
     public void setUp() {
         parametricValuesController = newControllerInstance();
+        parametricValuesService = newParametricValuesService();
     }
 
     @Test

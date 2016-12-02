@@ -7,7 +7,9 @@ package com.hp.autonomy.frontend.find.core.view;
 
 import com.hp.autonomy.searchcomponents.core.view.ViewContentSecurityPolicy;
 import com.hp.autonomy.searchcomponents.core.view.ViewRequest;
+import com.hp.autonomy.searchcomponents.core.view.ViewRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,12 +31,12 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
     private static final String HIGHLIGHT_PARAM = "highlightExpressions";
 
     private final ViewServerService<R, S, E> viewServerService;
-    private final ViewRequest.ViewRequestBuilder<R, S> viewRequestBuilder;
+    private final ObjectFactory<? extends ViewRequestBuilder<R, S, ?>> viewRequestBuilderFactory;
 
     protected ViewController(final ViewServerService<R, S, E> viewServerService,
-                             final ViewRequest.ViewRequestBuilder<R, S> viewRequestBuilder) {
+                             final ObjectFactory<? extends ViewRequestBuilder<R, S, ?>> viewRequestBuilderFactory) {
         this.viewServerService = viewServerService;
-        this.viewRequestBuilder = viewRequestBuilder;
+        this.viewRequestBuilderFactory = viewRequestBuilderFactory;
     }
 
     @RequestMapping(value = VIEW_DOCUMENT_PATH, method = RequestMethod.GET)
@@ -46,7 +48,7 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
     ) throws E, IOException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         ViewContentSecurityPolicy.addContentSecurityPolicy(response);
-        final R request = viewRequestBuilder
+        final R request = viewRequestBuilderFactory.getObject()
                 .documentReference(reference)
                 .database(database)
                 .highlightExpression(highlightExpression)

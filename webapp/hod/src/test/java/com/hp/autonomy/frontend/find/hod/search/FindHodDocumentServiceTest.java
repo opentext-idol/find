@@ -12,25 +12,26 @@ import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
-import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
-import com.hp.autonomy.searchcomponents.core.test.TestUtils;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
+import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesService;
+import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
+import com.hp.autonomy.searchcomponents.hod.search.HodGetContentRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
-import com.hp.autonomy.searchcomponents.hod.test.HodTestUtils;
+import com.hp.autonomy.searchcomponents.hod.search.HodSuggestRequest;
 import com.hp.autonomy.types.requests.Documents;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
@@ -41,16 +42,41 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FindHodDocumentServiceTest {
     @Mock
-    private DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService;
+    private HodDatabasesService databasesService;
 
     @Mock
-    private DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService;
+    private HodDocumentsService documentsService;
+
+    @Mock
+    private ObjectFactory<HodDatabasesRequestBuilder> databasesRequestBuilderFactory;
+
+    @Mock
+    private HodDatabasesRequestBuilder databasesRequestBuilder;
+
+    @Mock
+    private HodQueryRequest queryRequest;
+
+    @Mock
+    private HodQueryRequestBuilder queryRequestBuilder;
+
+    @Mock
+    private HodSuggestRequest suggestRequest;
+
+    @Mock
+    private HodGetContentRequest getContentRequest;
+
+    @Mock
+    private HodQueryRestrictions queryRestrictions;
+
+    @Mock
+    private HodQueryRestrictionsBuilder queryRestrictionsBuilder;
 
     @Mock
     private ConfigService<HodFindConfig> findConfigService;
@@ -58,12 +84,19 @@ public class FindHodDocumentServiceTest {
     @Mock
     private HodFindConfig findConfig;
 
-    private DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> findDocumentsService;
-    private final TestUtils<ResourceIdentifier> testUtils = new HodTestUtils();
+    private HodDocumentsService findDocumentsService;
 
     @Before
     public void setUp() {
-        findDocumentsService = new FindHodDocumentService(databasesService, documentsService, findConfigService);
+        when(databasesRequestBuilderFactory.getObject()).thenReturn(databasesRequestBuilder);
+        when(databasesRequestBuilder.publicIndexesEnabled(anyBoolean())).thenReturn(databasesRequestBuilder);
+        when(queryRequest.getQueryRestrictions()).thenReturn(queryRestrictions);
+        when(queryRequest.toBuilder()).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.queryRestrictions(any())).thenReturn(queryRequestBuilder);
+        when(queryRestrictions.toBuilder()).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
+
+        findDocumentsService = new FindHodDocumentService(databasesService, documentsService, databasesRequestBuilderFactory, findConfigService);
 
         final QueryManipulationConfig config = QueryManipulationConfig.builder()
                 .profile("SomeProfile")
@@ -77,7 +110,7 @@ public class FindHodDocumentServiceTest {
 
     @Test
     public void invalidIndexName() throws HodErrorException {
-        final ResourceIdentifier goodIndex = testUtils.getDatabases().get(0);
+        final ResourceIdentifier goodIndex = new ResourceIdentifier("Good", "Good");
         final ResourceIdentifier badIndex = new ResourceIdentifier("bad", "bad");
 
         final HodError invalidIndexError = new HodError.Builder().setErrorCode(HodErrorCode.INDEX_NAME_INVALID).build();
@@ -90,22 +123,8 @@ public class FindHodDocumentServiceTest {
         final Database goodDatabase = Database.builder().name(goodIndex.getName()).domain(goodIndex.getDomain()).build();
         when(databasesService.getDatabases(any(HodDatabasesRequest.class))).thenReturn(Collections.singleton(goodDatabase));
 
-        final QueryRestrictions<ResourceIdentifier> queryRestrictions = HodQueryRestrictions.builder()
-                .queryText("*")
-                .databases(Arrays.asList(goodIndex, badIndex))
-                .anyLanguage(true)
-                .build();
-        final QueryRequest<ResourceIdentifier> queryRequest = QueryRequest.<ResourceIdentifier>builder()
-                .queryRestrictions(queryRestrictions)
-                .start(1)
-                .maxResults(30)
-                .summary("concept")
-                .summaryCharacters(250)
-                .sort(null)
-                .highlight(true)
-                .autoCorrect(false)
-                .queryType(QueryRequest.QueryType.MODIFIED)
-                .build();
+        when(queryRestrictions.getDatabases()).thenReturn(Arrays.asList(goodIndex, badIndex));
+
         final Documents<HodSearchResult> results = findDocumentsService.queryTextIndex(queryRequest);
         assertThat(results.getDocuments(), hasSize(1));
         assertNotNull(results.getWarnings());
@@ -118,38 +137,23 @@ public class FindHodDocumentServiceTest {
         final HodError miscellaneousError = new HodError.Builder().setErrorCode(HodErrorCode.UNKNOWN).build();
         when(documentsService.queryTextIndex(any())).thenThrow(new HodErrorException(miscellaneousError, HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
-        final QueryRestrictions<ResourceIdentifier> queryRestrictions = testUtils.buildQueryRestrictions();
-        final QueryRequest<ResourceIdentifier> queryRequest = QueryRequest.<ResourceIdentifier>builder()
-                .queryRestrictions(queryRestrictions)
-                .start(1)
-                .maxResults(30)
-                .summary("concept")
-                .summaryCharacters(250)
-                .sort(null)
-                .highlight(true)
-                .autoCorrect(false)
-                .queryType(QueryRequest.QueryType.MODIFIED)
-                .build();
         findDocumentsService.queryTextIndex(queryRequest);
     }
 
     @Test
     public void findSimilar() throws HodErrorException {
-        final SuggestRequest<ResourceIdentifier> request = SuggestRequest.<ResourceIdentifier>builder().build();
-        findDocumentsService.findSimilar(request);
-        verify(documentsService).findSimilar(request);
+        findDocumentsService.findSimilar(suggestRequest);
+        verify(documentsService).findSimilar(suggestRequest);
     }
 
     @Test
     public void getDocumentContent() throws HodErrorException {
-        final GetContentRequest<ResourceIdentifier> request = GetContentRequest.<ResourceIdentifier>builder().build();
-        findDocumentsService.getDocumentContent(request);
-        verify(documentsService).getDocumentContent(request);
+        findDocumentsService.getDocumentContent(getContentRequest);
+        verify(documentsService).getDocumentContent(getContentRequest);
     }
 
     @Test
     public void getStateToken() throws HodErrorException {
-        final HodQueryRestrictions queryRestrictions = HodQueryRestrictions.<ResourceIdentifier>builder().build();
         final int maxResults = 5;
         final boolean promotions = false;
         findDocumentsService.getStateToken(queryRestrictions, maxResults, promotions);
@@ -158,7 +162,6 @@ public class FindHodDocumentServiceTest {
 
     @Test
     public void getStateTokenAndResultCount() throws HodErrorException {
-        final HodQueryRestrictions queryRestrictions = HodQueryRestrictions.<ResourceIdentifier>builder().build();
         final int maxResults = 5;
         final boolean promotions = false;
         findDocumentsService.getStateTokenAndResultCount(queryRestrictions, maxResults, promotions);

@@ -13,6 +13,7 @@ import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +41,7 @@ public class IdolExportServiceTest {
     @Mock
     private OutputStream outputStream;
     @Mock
-    private QueryRequest<String> queryRequest;
+    private IdolQueryRequest queryRequest;
 
     private IdolExportService idolExportService;
 

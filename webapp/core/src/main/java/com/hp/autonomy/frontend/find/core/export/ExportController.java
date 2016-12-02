@@ -14,29 +14,33 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Collection;
 
 @RequestMapping(ExportController.EXPORT_PATH)
-public abstract class ExportController<S extends Serializable, E extends Exception> {
+public abstract class ExportController<R extends QueryRequest<?>, E extends Exception> {
     static final String EXPORT_PATH = "/api/bi/export";
     static final String CSV_PATH = "/csv";
     static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
     static final String QUERY_REQUEST_PARAM = "queryRequest";
     private static final String EXPORT_FILE_NAME = "query-results";
 
-    private final ExportService<S, E> exportService;
-    private final RequestMapper<S> requestMapper;
+    private final ExportService<R, E> exportService;
+    private final RequestMapper<R> requestMapper;
     private final ControllerUtils controllerUtils;
 
-    protected ExportController(final ExportService<S, E> exportService, final RequestMapper<S> requestMapper, final ControllerUtils controllerUtils) {
+    protected ExportController(final ExportService<R, E> exportService, final RequestMapper<R> requestMapper, final ControllerUtils controllerUtils) {
         this.exportService = exportService;
         this.requestMapper = requestMapper;
         this.controllerUtils = controllerUtils;
@@ -54,7 +58,7 @@ public abstract class ExportController<S extends Serializable, E extends Excepti
     }
 
     private ResponseEntity<byte[]> export(final String queryRequestJSON, final ExportFormat exportFormat, final Collection<String> selectedFieldNames) throws IOException, E {
-        final QueryRequest<S> queryRequest = requestMapper.parseQueryRequest(queryRequestJSON);
+        final R queryRequest = requestMapper.parseQueryRequest(queryRequestJSON);
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         exportService.export(outputStream, queryRequest, exportFormat, selectedFieldNames);
@@ -79,13 +83,13 @@ public abstract class ExportController<S extends Serializable, E extends Excepti
         response.reset();
 
         return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
-                                                              .setRequest(request)
-                                                              .setMainMessageCode("error.internalServerErrorMain")
-                                                              .setSubMessageCode("error.internalServerErrorSub")
-                                                              .setSubMessageArguments(null)
-                                                              .setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                                                              .setContactSupport(true)
-                                                              .setException(e)
-                                                              .build());
+                .setRequest(request)
+                .setMainMessageCode("error.internalServerErrorMain")
+                .setSubMessageCode("error.internalServerErrorSub")
+                .setSubMessageArguments(null)
+                .setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .setContactSupport(true)
+                .setException(e)
+                .build());
     }
 }

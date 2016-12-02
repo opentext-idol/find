@@ -7,11 +7,11 @@ package com.hp.autonomy.frontend.find.idol.parametricfields;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.parametricfields.ParametricValuesController;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
+import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricValuesService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.springframework.beans.factory.ObjectFactory;
@@ -29,10 +29,11 @@ import java.util.Set;
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
 class IdolParametricValuesController extends ParametricValuesController<IdolQueryRestrictions, IdolParametricRequest, String, AciErrorException> {
+    @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
-    public IdolParametricValuesController(final ParametricValuesService<IdolParametricRequest, String, AciErrorException> parametricValuesService,
-                                          final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory,
-                                          final ObjectFactory<ParametricRequest.ParametricRequestBuilder<IdolParametricRequest, String>> parametricRequestBuilderFactory) {
+    public IdolParametricValuesController(final IdolParametricValuesService parametricValuesService,
+                                          final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
+                                          final ObjectFactory<IdolParametricRequestBuilder> parametricRequestBuilderFactory) {
         super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
     }
 

@@ -11,26 +11,32 @@ import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
-class HodSavedQueryController extends SavedQueryController<ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
+class HodSavedQueryController extends SavedQueryController<HodQueryRequest, ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
+    @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
     public HodSavedQueryController(final SavedSearchService<SavedQuery> service,
-                                   final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService,
+                                   final HodDocumentsService documentsService,
                                    final FieldTextParser fieldTextParser,
-                                   final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory) {
-        super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory);
+                                   final ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
+                                   final ObjectFactory<HodQueryRequestBuilder> queryRequestBuilderFactory) {
+        super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory, queryRequestBuilderFactory);
     }
 
     @Override
@@ -39,7 +45,7 @@ class HodSavedQueryController extends SavedQueryController<ResourceIdentifier, H
     }
 
     @Override
-    protected String getNoResultsPrintParam() {
-        return Print.no_results.name();
+    protected void addParams(final QueryRequestBuilder<HodQueryRequest, HodQueryRestrictions, ?> queryRequestBuilder) {
+        queryRequestBuilder.print(Print.no_results.name());
     }
 }

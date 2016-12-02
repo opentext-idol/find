@@ -9,12 +9,8 @@ import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
-import com.hp.autonomy.searchcomponents.hod.databases.Database;
-import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
-import org.springframework.stereotype.Service;
+import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesService;
 
-@Service
-public interface FindHodDatabasesService extends DatabasesService<Database, HodDatabasesRequest, HodErrorException> {
+public interface FindHodDatabasesService extends HodDatabasesService {
     Resources getAllIndexes(final TokenProxy<?, TokenType.Simple> tokenProxy) throws HodErrorException;
 }

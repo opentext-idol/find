@@ -31,8 +31,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesServiceConstants.CONTENT_FLAVOURS;
-
 @Service
 class FindHodDatabasesServiceImpl implements FindHodDatabasesService {
     private final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService;

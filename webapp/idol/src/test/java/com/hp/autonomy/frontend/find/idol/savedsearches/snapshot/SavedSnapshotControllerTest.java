@@ -10,23 +10,22 @@ import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
+import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
+import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.ObjectFactory;
 
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,13 +35,19 @@ public class SavedSnapshotControllerTest {
     private SavedSnapshotService savedSnapshotService;
 
     @Mock
-    private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
+    private IdolDocumentsService documentsService;
 
     @Mock
     private FieldTextParser fieldTextParser;
 
     @Mock
     private TypedStateToken stateToken;
+
+    @Mock
+    private ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
+
+    @Mock
+    private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
 
     private SavedSnapshotController savedSnapshotController;
 
@@ -54,7 +59,17 @@ public class SavedSnapshotControllerTest {
 
     @Before
     public void setUp() {
-        savedSnapshotController = new SavedSnapshotController(documentsService, savedSnapshotService, fieldTextParser);
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.fieldText(anyString())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.minDate(any())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.maxDate(any())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.minScore(anyInt())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.stateMatchIds(any())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.stateDontMatchIds(any())).thenReturn(queryRestrictionsBuilder);
+
+        savedSnapshotController = new SavedSnapshotController(documentsService, savedSnapshotService, fieldTextParser, queryRestrictionsBuilderFactory);
     }
 
     @Test
@@ -71,7 +86,7 @@ public class SavedSnapshotControllerTest {
         when(savedSnapshotService.update(any(SavedSnapshot.class))).then(returnsFirstArg());
 
         final SavedSnapshot updatedQuery = savedSnapshotController.update(42, savedSnapshot);
-        verify(savedSnapshotService).update(Matchers.isA(SavedSnapshot.class));
+        verify(savedSnapshotService).update(isA(SavedSnapshot.class));
         assertEquals(new Long(42L), updatedQuery.getId());
     }
 

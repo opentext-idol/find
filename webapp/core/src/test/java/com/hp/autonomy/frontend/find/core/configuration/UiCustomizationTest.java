@@ -32,9 +32,9 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         uiCustomizationOptions.populateRules("option3", rule);
 
         return UiCustomization.builder()
-                .setOptions(uiCustomizationOptions)
-                .setSpecialUrlPrefixes(ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"))
-                .setErrorCallSupportString("Custom technical support message")
+                .options(uiCustomizationOptions)
+                .specialUrlPrefixes(ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"))
+                .errorCallSupportString("Custom technical support message")
                 .build();
     }
 

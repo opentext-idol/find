@@ -8,24 +8,23 @@ package com.hp.autonomy.frontend.find.core.export;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.util.Collection;
 
 /**
  * Service for exporting search result sets to some other format.
  *
- * @param <S> database/index object type
+ * @param <R> request type to use
  */
 @FunctionalInterface
-public interface ExportService<S extends Serializable, E extends Exception> {
+public interface ExportService<R extends QueryRequest<?>, E extends Exception> {
     /**
      * Performs query and exports the returned result set to the specified format.
      *
-     * @param outputStream the output to which the resulting format is written
-     * @param queryRequest the search request parameters
-     * @param exportFormat the format to export to
+     * @param outputStream     the output to which the resulting format is written
+     * @param queryRequest     the search request parameters
+     * @param exportFormat     the format to export to
      * @param selectedFieldIds only export fields with ids enumerated this collection. If empty, export all fields
-     * @exception E if an error is thrown by the underlying server, the corresponding thrown exception
+     * @throws E if an error is thrown by the underlying server, the corresponding thrown exception
      */
-    void export(OutputStream outputStream, QueryRequest<S> queryRequest, ExportFormat exportFormat, Collection<String> selectedFieldIds) throws E;
+    void export(OutputStream outputStream, R queryRequest, ExportFormat exportFormat, Collection<String> selectedFieldIds) throws E;
 }

@@ -10,15 +10,16 @@ import com.hp.autonomy.frontend.find.core.export.ExportController;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
-class IdolExportController extends ExportController<String, AciErrorException> {
+class IdolExportController extends ExportController<IdolQueryRequest, AciErrorException> {
 
     @Autowired
-    public IdolExportController(final ExportService<String, AciErrorException> exportService,
-                                final RequestMapper<String> requestMapper,
+    public IdolExportController(final ExportService<IdolQueryRequest, AciErrorException> exportService,
+                                final RequestMapper<IdolQueryRequest> requestMapper,
                                 final ControllerUtils controllerUtils) {
         super(exportService, requestMapper, controllerUtils);
     }

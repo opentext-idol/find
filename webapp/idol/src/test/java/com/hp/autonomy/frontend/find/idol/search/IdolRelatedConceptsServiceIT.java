@@ -5,14 +5,13 @@
 
 package com.hp.autonomy.frontend.find.idol.search;
 
-import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsServiceIT;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import org.junit.Test;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -28,14 +27,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsServiceIT {
     @Autowired
-    private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
+    private IdolDocumentsService documentsService;
 
     @Autowired
-    private IdolQueryRestrictions.IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
+    private ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilder;
 
     @Test
     public void findRelatedConceptsWithStateToken() throws Exception {
-        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilder
+        final IdolQueryRestrictions queryRestrictions = queryRestrictionsBuilder.getObject()
                 .queryText("*")
                 .fieldText("")
                 .databases(Arrays.asList(mvcIntegrationTestUtils.getDatabases()))

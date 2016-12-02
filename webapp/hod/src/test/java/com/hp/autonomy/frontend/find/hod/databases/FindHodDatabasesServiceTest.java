@@ -19,9 +19,8 @@ import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
-import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
+import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +40,9 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class FindHodDatabasesServiceTest {
     @Mock
-    private DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService;
+    private HodDatabasesService databasesService;
+    @Mock
+    private HodDatabasesRequest databasesRequest;
     @Mock
     private ResourcesService resourcesService;
     @Mock
@@ -72,9 +73,7 @@ public class FindHodDatabasesServiceTest {
                 .activeIndex(activeIndex)
                 .build();
         when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setHod(hodConfig).build());
-        final HodDatabasesRequest databasesRequest = HodDatabasesRequest.builder()
-                .publicIndexesEnabled(true)
-                .build();
+        when(databasesRequest.isPublicIndexesEnabled()).thenReturn(true);
         assertThat(findDatabasesService.getDatabases(databasesRequest), hasSize(1));
     }
 

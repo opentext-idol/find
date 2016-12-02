@@ -8,28 +8,68 @@ package com.hp.autonomy.frontend.find.idol.fields;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.fields.AbstractFieldsControllerTest;
 import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequest;
+import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsService;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
+import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricValuesService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
 
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolFieldsController, IdolFieldsRequest, AciErrorException, String, IdolQueryRestrictions, IdolParametricRequest> {
+    @Mock
+    private IdolFieldsService idolFieldsService;
+    @Mock
+    private IdolParametricValuesService idolParametricValuesService;
+    @Mock
+    private ObjectFactory<IdolParametricRequestBuilder> parametricRequestBuilderFactory;
+    @Mock
+    private IdolParametricRequestBuilder parametricRequestBuilder;
+    @Mock
+    private ObjectFactory<IdolFieldsRequestBuilder> fieldsRequestBuilderFactory;
+    @Mock
+    private IdolFieldsRequestBuilder fieldsRequestBuilder;
+    @Mock
+    private IdolFieldsRequest fieldsRequest;
+    @Mock
+    private ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
+    @Mock
+    private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
+
     @Override
     protected IdolFieldsController constructController() {
-        @SuppressWarnings("unchecked")
-        final ObjectFactory<ParametricRequest.ParametricRequestBuilder<IdolParametricRequest, String>> requestBuilderFactory = mock(ObjectFactory.class);
+        when(parametricRequestBuilderFactory.getObject()).thenReturn(parametricRequestBuilder);
+        when(parametricRequestBuilder.fieldNames(any())).thenReturn(parametricRequestBuilder);
+        when(parametricRequestBuilder.queryRestrictions(any())).thenReturn(parametricRequestBuilder);
 
-        final ParametricRequest.ParametricRequestBuilder<IdolParametricRequest, String> builder = IdolParametricRequest.builder();
-        when(requestBuilderFactory.getObject()).thenReturn(builder);
+        when(fieldsRequestBuilderFactory.getObject()).thenReturn(fieldsRequestBuilder);
+        when(fieldsRequestBuilder.build()).thenReturn(fieldsRequest);
 
-        return new IdolFieldsController(service, parametricValuesService, requestBuilderFactory, configService);
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
+
+        return new IdolFieldsController(idolFieldsService, idolParametricValuesService, parametricRequestBuilderFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
+    }
+
+    @Override
+    protected IdolFieldsService constructService() {
+        return idolFieldsService;
+    }
+
+    @Override
+    protected IdolParametricValuesService constructParametricValuesService() {
+        return idolParametricValuesService;
     }
 
     @Override

@@ -16,6 +16,7 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentica
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.*;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
+import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
@@ -39,6 +40,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final ServerConfig content;
     private final QueryManipulation queryManipulation;
     private final ViewConfig view;
+    private final AnswerServerConfig answerServer;
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
     private final MMAP mmap;
@@ -55,6 +57,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         content = builder.content;
         queryManipulation = builder.queryManipulation;
         view = builder.view;
+        answerServer = builder.answerServer;
         savedSearchConfig = builder.savedSearchConfig;
         mmap = builder.mmap;
         uiCustomization = builder.uiCustomization;
@@ -77,6 +80,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .setLogin(login == null ? other.login : login.merge(other.login))
                 .setQueryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
                 .setView(view == null ? other.view : view.merge(other.view))
+                .setAnswerServer(answerServer == null ? other.answerServer : answerServer.merge(other.answerServer))
                 .setSavedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
                 .setMmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
                 .setUiCustomization(uiCustomization == null ? other.uiCustomization : uiCustomization.merge(other.uiCustomization))
@@ -134,6 +138,10 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         if (queryManipulation != null) {
             queryManipulation.basicValidate(SECTION);
         }
+
+        if (answerServer != null) {
+            answerServer.basicValidate("AnswerServer");
+        }
     }
 
     @JsonIgnore
@@ -157,6 +165,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         private ServerConfig content;
         private QueryManipulation queryManipulation;
         private ViewConfig view;
+        private AnswerServerConfig answerServer;
         @JsonProperty("savedSearches")
         private SavedSearchConfig savedSearchConfig;
         private MMAP mmap;
@@ -173,6 +182,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             content = config.content;
             queryManipulation = config.queryManipulation;
             view = config.view;
+            answerServer = config.answerServer;
             savedSearchConfig = config.savedSearchConfig;
             mmap = config.mmap;
             uiCustomization = config.uiCustomization;

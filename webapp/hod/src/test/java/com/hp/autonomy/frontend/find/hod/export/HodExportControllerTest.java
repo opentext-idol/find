@@ -7,12 +7,12 @@ package com.hp.autonomy.frontend.find.hod.export;
 
 import com.hp.autonomy.frontend.find.core.export.ExportController;
 import com.hp.autonomy.frontend.find.core.export.ExportControllerTest;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
 
-public class HodExportControllerTest extends ExportControllerTest<ResourceIdentifier, HodErrorException> {
+public class HodExportControllerTest extends ExportControllerTest<HodQueryRequest, HodErrorException> {
     @Override
-    protected ExportController<ResourceIdentifier, HodErrorException> constructController() {
+    protected ExportController<HodQueryRequest, HodErrorException> constructController() {
         return new HodExportController(exportService, requestMapper, controllerUtils);
     }
 }

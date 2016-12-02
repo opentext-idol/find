@@ -6,12 +6,12 @@ import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
+import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,17 +35,20 @@ class SavedSnapshotController {
 
     private static final Integer STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
 
-    private final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
+    private final IdolDocumentsService documentsService;
     private final SavedSearchService<SavedSnapshot> service;
     private final FieldTextParser fieldTextParser;
+    private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
 
     @Autowired
-    public SavedSnapshotController(final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService,
+    public SavedSnapshotController(final IdolDocumentsService documentsService,
                                    final SavedSearchService<SavedSnapshot> service,
-                                   final FieldTextParser fieldTextParser) {
+                                   final FieldTextParser fieldTextParser,
+                                   final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory) {
         this.documentsService = documentsService;
         this.service = service;
         this.fieldTextParser = fieldTextParser;
+        this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -112,8 +115,7 @@ class SavedSnapshotController {
             indexes.addAll(snapshot.getIndexes().stream().map(EmbeddableIndex::getName).collect(Collectors.toList()));
         }
 
-        final QueryRestrictions<String> restrictions = IdolQueryRestrictions.builder()
-                .anyLanguage(true)
+        final IdolQueryRestrictions restrictions = queryRestrictionsBuilderFactory.getObject()
                 .databases(indexes)
                 .queryText(snapshot.toQueryText())
                 .fieldText(fieldTextParser.toFieldText(snapshot))

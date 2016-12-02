@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsRequest;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
@@ -19,7 +20,6 @@ import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -30,21 +30,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RequestMapping(FieldsController.FIELDS_PATH)
-public abstract class FieldsController<R extends FieldsRequest, E extends Exception, S extends Serializable, Q extends QueryRestrictions<S>, P extends ParametricRequest<S>> {
+public abstract class FieldsController<R extends FieldsRequest, E extends Exception, Q extends QueryRestrictions<?>, P extends ParametricRequest<Q>> {
     public static final String FIELDS_PATH = "/api/public/fields";
     public static final String GET_PARAMETRIC_FIELDS_PATH = "/parametric";
     protected static final String GET_PARAMETRIC_NUMERIC_FIELDS_PATH = "/parametric-numeric";
     public static final String GET_PARAMETRIC_DATE_FIELDS_PATH = "/parametric-date";
 
     private final FieldsService<R, E> fieldsService;
-    private final ParametricValuesService<P, S, E> parametricValuesService;
-    private final ObjectFactory<ParametricRequest.ParametricRequestBuilder<P, S>> parametricRequestBuilderFactory;
+    private final ParametricValuesService<P, Q, E> parametricValuesService;
+    private final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory;
     private final ConfigService<? extends FindConfig> configService;
 
     protected FieldsController(
             final FieldsService<R, E> fieldsService,
-            final ParametricValuesService<P, S, E> parametricValuesService,
-            final ObjectFactory<ParametricRequest.ParametricRequestBuilder<P, S>> parametricRequestBuilderFactory,
+            final ParametricValuesService<P, Q, E> parametricValuesService,
+            final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory,
             final ConfigService<? extends FindConfig> configService
     ) {
         this.fieldsService = fieldsService;

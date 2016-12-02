@@ -11,13 +11,15 @@ import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedExce
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
 import com.hp.autonomy.searchcomponents.hod.view.HodViewRequest;
+import com.hp.autonomy.searchcomponents.hod.view.HodViewRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.view.HodViewServerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -34,13 +36,22 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HodViewControllerTest extends AbstractViewControllerTest<HodViewController, HodViewRequest, ResourceIdentifier, HodErrorException> {
     @Mock
-    private ViewServerService<HodViewRequest, ResourceIdentifier, HodErrorException> hodViewService;
+    private HodViewServerService hodViewServerService;
+    @Mock
+    private ObjectFactory<HodViewRequestBuilder> viewRequestBuilderFactory;
+    @Mock
+    private HodViewRequestBuilder viewRequestBuilder;
 
     @Override
     @Before
     public void setUp() {
-        viewServerService = hodViewService;
-        viewController = new HodViewController(viewServerService, HodViewRequest.builder(), controllerUtils);
+        when(viewRequestBuilderFactory.getObject()).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.documentReference(any())).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.database(any())).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.highlightExpression(any())).thenReturn(viewRequestBuilder);
+
+        viewController = new HodViewController(hodViewServerService, viewRequestBuilderFactory, controllerUtils);
+        viewServerService = hodViewServerService;
         response = new MockHttpServletResponse();
         super.setUp();
     }

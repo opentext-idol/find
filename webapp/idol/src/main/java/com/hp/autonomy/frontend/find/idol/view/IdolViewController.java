@@ -11,15 +11,16 @@ import com.hp.autonomy.frontend.find.core.view.ViewController;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.logging.Markers;
-import com.hp.autonomy.searchcomponents.core.view.ViewRequest;
-import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.view.IdolViewRequest;
+import com.hp.autonomy.searchcomponents.idol.view.IdolViewRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.view.IdolViewServerService;
 import com.hp.autonomy.searchcomponents.idol.view.ReferenceFieldBlankException;
 import com.hp.autonomy.searchcomponents.idol.view.ViewDocumentNotFoundException;
 import com.hp.autonomy.searchcomponents.idol.view.ViewNoReferenceFieldException;
 import com.hp.autonomy.searchcomponents.idol.view.ViewServerErrorException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -38,9 +39,10 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
     private final ConfigService<? extends IdolSearchCapable> configService;
     private final ControllerUtils controllerUtils;
 
+    @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
-    public IdolViewController(final ViewServerService<IdolViewRequest, String, AciErrorException> viewServerService,
-                              final ViewRequest.ViewRequestBuilder<IdolViewRequest, String> viewRequestBuilder,
+    public IdolViewController(final IdolViewServerService viewServerService,
+                              final ObjectFactory<IdolViewRequestBuilder> viewRequestBuilder,
                               final ConfigService<? extends IdolSearchCapable> configService, final ControllerUtils controllerUtils) {
         super(viewServerService, viewRequestBuilder);
         this.configService = configService;

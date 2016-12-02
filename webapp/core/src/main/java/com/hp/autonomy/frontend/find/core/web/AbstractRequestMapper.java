@@ -5,42 +5,30 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 
 import java.io.IOException;
-import java.io.Serializable;
 
-public abstract class AbstractRequestMapper<S extends Serializable> implements RequestMapper<S> {
+public abstract class AbstractRequestMapper<R extends QueryRequest<?>> implements RequestMapper<R> {
     private final ObjectMapper objectMapper;
 
-    protected AbstractRequestMapper() {
+    protected AbstractRequestMapper(final QueryRestrictionsBuilder<?, ?, ?> queryRestrictionsBuilder,
+                                    final QueryRequestBuilder<?, ?, ?> queryRequestBuilder) {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JodaModule());
-        objectMapper.addMixIn(QueryRequest.QueryRequestBuilder.class, QueryRequestBuilderMixins.class);
-        addCustomMixins(objectMapper);
+        addCustomMixins(objectMapper, queryRestrictionsBuilder, queryRequestBuilder);
     }
 
-    protected abstract void addCustomMixins(final ObjectMapper objectMapper);
+    protected abstract void addCustomMixins(final ObjectMapper objectMapper, final QueryRestrictionsBuilder<?, ?, ?> queryRestrictionsBuilder, final QueryRequestBuilder<?, ?, ?> queryRequestBuilder);
 
-    protected abstract Class<S> getDatabaseType();
+    protected abstract Class<R> getType();
 
     @Override
-    public QueryRequest<S> parseQueryRequest(final String json) throws IOException {
-        final JavaType type = objectMapper.getTypeFactory().constructParametrizedType(QueryRequest.class, QueryRequest.class, getDatabaseType());
-        return objectMapper.readValue(json, type);
-    }
-
-    @SuppressWarnings("unused")
-    private static class QueryRequestBuilderMixins {
-        @JsonProperty(value = "max_results", required = true)
-        private Integer maxResults;
-        @JsonProperty(required = true)
-        private String summary;
-        @JsonProperty("auto_correct")
-        private Boolean autoCorrect;
+    public R parseQueryRequest(final String json) throws IOException {
+        return objectMapper.readValue(json, getType());
     }
 }

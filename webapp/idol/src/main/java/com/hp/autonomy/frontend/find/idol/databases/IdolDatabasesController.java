@@ -7,21 +7,28 @@ package com.hp.autonomy.frontend.find.idol.databases;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.databases.DatabasesController;
-import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.idol.databases.IdolDatabasesRequest;
+import com.hp.autonomy.searchcomponents.idol.databases.IdolDatabasesRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.databases.IdolDatabasesService;
 import com.hp.autonomy.types.idol.responses.Database;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class IdolDatabasesController extends DatabasesController<Database, IdolDatabasesRequest, AciErrorException> {
+class IdolDatabasesController extends DatabasesController<Database, IdolDatabasesRequest, AciErrorException> {
+    private final ObjectFactory<IdolDatabasesRequestBuilder> databasesRequestBuilderFactory;
+
+    @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
-    public IdolDatabasesController(final DatabasesService<Database, IdolDatabasesRequest, AciErrorException> databasesService) {
+    public IdolDatabasesController(final IdolDatabasesService databasesService,
+                                   final ObjectFactory<IdolDatabasesRequestBuilder> databasesRequestBuilderFactory) {
         super(databasesService);
+        this.databasesRequestBuilderFactory = databasesRequestBuilderFactory;
     }
 
     @Override
     protected IdolDatabasesRequest buildDatabasesRequest() {
-        return IdolDatabasesRequest.builder().build();
+        return databasesRequestBuilderFactory.getObject().build();
     }
 }

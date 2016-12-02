@@ -7,25 +7,47 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
+import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndex;
+import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndexBuilder;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequestBuilder;
+import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(DocumentsController.SEARCH_PATH)
-class IdolDocumentsController extends DocumentsController<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
+class IdolDocumentsController extends DocumentsController<IdolQueryRequest, IdolSuggestRequest, IdolGetContentRequest, String, IdolQueryRestrictions, IdolGetContentRequestIndex, IdolSearchResult, AciErrorException> {
+    @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
-    public IdolDocumentsController(final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService,
-                                   final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory) {
-        super(documentsService, queryRestrictionsBuilderFactory);
+    public IdolDocumentsController(final IdolDocumentsService documentsService,
+                                   final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
+                                   final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory,
+                                   final ObjectFactory<IdolSuggestRequestBuilder> suggestRequestBuilderFactory,
+                                   final ObjectFactory<IdolGetContentRequestBuilder> getContentRequestBuilderFactory,
+                                   final ObjectFactory<IdolGetContentRequestIndexBuilder> getContentRequestIndexBuilderFactory) {
+        super(documentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory);
     }
 
     @Override
     protected <T> T throwException(final String message) throws AciErrorException {
         throw new AciErrorException(message);
+    }
+
+    @Override
+    protected void addParams(final GetContentRequestBuilder<IdolGetContentRequest, IdolGetContentRequestIndex, ?> request) {
+        ((IdolGetContentRequestBuilder) request)
+                .print(PrintParam.All);
     }
 }

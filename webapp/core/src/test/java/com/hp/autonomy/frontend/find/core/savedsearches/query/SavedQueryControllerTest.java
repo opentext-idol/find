@@ -6,8 +6,8 @@ package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
@@ -29,26 +29,25 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class SavedQueryControllerTest<S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception> {
+public abstract class SavedQueryControllerTest<RQ extends QueryRequest<Q>, S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception> {
     private final SavedQuery savedQuery = new SavedQuery.Builder()
             .setTitle("Any old saved search")
             .build();
     @Mock
     protected SavedQueryService savedQueryService;
     @Mock
-    protected DocumentsService<S, D, E> documentsService;
-    @Mock
     protected FieldTextParser fieldTextParser;
     @Mock
-    protected QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
-    @Mock
     private Documents<D> searchResults;
-    private SavedQueryController<S, Q, D, E> savedQueryController;
+    private DocumentsService<RQ, ?, ?, Q, D, E> documentsService;
+    private SavedQueryController<RQ, S, Q, D, E> savedQueryController;
 
-    protected abstract SavedQueryController<S, Q, D, E> constructController();
+    protected abstract DocumentsService<RQ, ?, ?, Q, D, E> constructDocumentsService();
+    protected abstract SavedQueryController<RQ, S, Q, D, E> constructController();
 
     @Before
     public void setUp() {
+        documentsService = constructDocumentsService();
         savedQueryController = constructController();
     }
 
@@ -64,7 +63,7 @@ public abstract class SavedQueryControllerTest<S extends Serializable, Q extends
 
         final SavedQuery updatedQuery = savedQueryController.update(42, savedQuery);
         verify(savedQueryService).update(Matchers.isA(SavedQuery.class));
-        assertEquals(42L, (long)updatedQuery.getId());
+        assertEquals(42L, (long) updatedQuery.getId());
     }
 
     @Test
