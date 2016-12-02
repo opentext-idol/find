@@ -21,7 +21,7 @@ public abstract class ExportControllerIT extends AbstractFindIT {
                 "\"text\": \"*\", \"indexes\": " + mvcIntegrationTestUtils.getDatabasesAsJson() +
                 "}," +
                 "\"max_results\": 5," +
-                "\"summary\": \"Off\"}";
+                "\"summary\": \"off\"}";
 
         final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.CSV_PATH).with(authentication(biAuth()));
         requestBuilder.param(ExportController.QUERY_REQUEST_PARAM, json);

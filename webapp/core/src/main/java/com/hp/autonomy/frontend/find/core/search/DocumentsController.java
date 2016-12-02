@@ -13,8 +13,6 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequestBuilder;
@@ -80,8 +78,6 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
 
     protected abstract <EX> EX throwException(final String message) throws E;
 
-    protected abstract <SR extends SearchRequest<Q>> void addParams(final SearchRequestBuilder<SR, Q, ?> request, String summary, final String sort);
-
     protected abstract void addParams(final GetContentRequestBuilder<RC, T, ?> request);
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -111,16 +107,17 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
                 .minScore(minScore)
                 .build();
 
-        final QueryRequestBuilder<RQ, Q, ?> queryBuilder = queryRequestBuilderFactory.getObject()
+        final RQ queryRequest = queryRequestBuilderFactory.getObject()
                 .queryRestrictions(queryRestrictions)
                 .start(resultsStart)
                 .maxResults(maxResults)
                 .summaryCharacters(MAX_SUMMARY_CHARACTERS)
                 .highlight(highlight)
                 .autoCorrect(autoCorrect)
-                .queryType(QueryRequest.QueryType.valueOf(queryType));
-        addParams(queryBuilder, summary, sort);
-        final RQ queryRequest = queryBuilder.build();
+                .summary(summary)
+                .sort(sort)
+                .queryType(QueryRequest.QueryType.valueOf(queryType))
+                .build();
 
         return documentsService.queryTextIndex(queryRequest);
     }
@@ -149,15 +146,16 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
                 .minScore(minScore)
                 .build();
 
-        final SuggestRequestBuilder<RS, Q, ?> suggestBuilder = suggestRequestBuilderFactory.getObject()
+        final RS suggestRequest = suggestRequestBuilderFactory.getObject()
                 .reference(reference)
                 .queryRestrictions(queryRestrictions)
                 .start(resultsStart)
                 .maxResults(maxResults)
                 .summaryCharacters(MAX_SUMMARY_CHARACTERS)
-                .highlight(highlight);
-        addParams(suggestBuilder, summary, sort);
-        final RS suggestRequest = suggestBuilder.build();
+                .highlight(highlight)
+                .summary(summary)
+                .sort(sort)
+                .build();
 
         return documentsService.findSimilar(suggestRequest);
     }

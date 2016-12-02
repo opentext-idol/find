@@ -15,15 +15,12 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.Documents;
-import com.hp.autonomy.types.requests.idol.actions.query.params.SummaryParam;
-import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult, AciErrorException> {
@@ -86,9 +83,9 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .queryRestrictions(queryRestrictions)
                 .start(resultsStart)
                 .maxResults(maxResults)
-                .summary(SummaryParam.fromValue(summary, null))
+                .summary(summary)
                 .summaryCharacters(DocumentsController.MAX_SUMMARY_CHARACTERS)
-                .sort(Optional.ofNullable(sort).map(SortParam::fromValue).orElse(null))
+                .sort(sort)
                 .highlight(highlight)
                 .autoCorrect(false)
                 .queryType(QueryRequest.QueryType.RAW)

@@ -77,14 +77,14 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
         mockSearchRequestBuilder(queryRequestBuilder);
         when(queryRequestBuilder.autoCorrect(anyBoolean())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.queryType(any())).thenReturn(queryRequestBuilder);
-        when(queryRequestBuilder.summary(any())).thenReturn(queryRequestBuilder);
-        when(queryRequestBuilder.sort(any())).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.summary(anyString())).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.sort(anyString())).thenReturn(queryRequestBuilder);
 
         when(suggestRequestBuilderFactory.getObject()).thenReturn(suggestRequestBuilder);
         when(suggestRequestBuilder.reference(any())).thenReturn(suggestRequestBuilder);
         mockSearchRequestBuilder(suggestRequestBuilder);
-        when(suggestRequestBuilder.summary(any())).thenReturn(suggestRequestBuilder);
-        when(suggestRequestBuilder.sort(any())).thenReturn(suggestRequestBuilder);
+        when(suggestRequestBuilder.summary(anyString())).thenReturn(suggestRequestBuilder);
+        when(suggestRequestBuilder.sort(anyString())).thenReturn(suggestRequestBuilder);
 
         when(getContentRequestBuilderFactory.getObject()).thenReturn(getContentRequestBuilder);
         when(getContentRequestIndexBuilderFactory.getObject()).thenReturn(getContentRequestIndexBuilder);

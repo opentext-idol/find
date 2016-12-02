@@ -20,7 +20,6 @@ import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.hod.search.HodSearchRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +46,6 @@ class HodSavedQueryController extends SavedQueryController<HodQueryRequest, Reso
 
     @Override
     protected void addParams(final QueryRequestBuilder<HodQueryRequest, HodQueryRestrictions, ?> queryRequestBuilder) {
-        ((HodSearchRequestBuilder<?, ?>) queryRequestBuilder).print(Print.no_results);
+        queryRequestBuilder.print(Print.no_results.name());
     }
 }

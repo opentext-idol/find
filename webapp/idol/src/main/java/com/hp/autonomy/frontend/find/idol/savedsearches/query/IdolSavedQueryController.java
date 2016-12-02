@@ -18,7 +18,6 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import org.springframework.beans.factory.ObjectFactory;
@@ -46,6 +45,6 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
 
     @Override
     protected void addParams(final QueryRequestBuilder<IdolQueryRequest, IdolQueryRestrictions, ?> queryRequestBuilder) {
-        ((IdolSearchRequestBuilder<?, ?>) queryRequestBuilder).print(PrintParam.NoResults);
+        queryRequestBuilder.print(PrintParam.NoResults.name());
     }
 }

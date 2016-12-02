@@ -16,7 +16,6 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
-import com.hp.autonomy.types.requests.idol.actions.query.params.SummaryParam;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -68,7 +67,7 @@ class IdolRequestMapper extends AbstractRequestMapper<IdolQueryRequest> {
         IdolQueryRequestBuilder maxResults(int maxResults);
 
         @JsonProperty(required = true)
-        IdolQueryRequestBuilder summary(SummaryParam summary);
+        IdolQueryRequestBuilder summary(String summary);
 
         @JsonProperty("auto_correct")
         IdolQueryRequestBuilder autoCorrect(boolean autoCorrect);

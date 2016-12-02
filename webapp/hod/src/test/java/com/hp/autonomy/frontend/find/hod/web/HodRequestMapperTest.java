@@ -10,7 +10,6 @@ import com.hp.autonomy.frontend.find.core.web.RequestMapperTest;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Sort;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
-import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
 import com.hp.autonomy.searchcomponents.hod.requests.HodRequestBuilderConfiguration;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
@@ -27,7 +26,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import java.io.IOException;
 import java.util.List;
 
-import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -70,13 +68,13 @@ public class HodRequestMapperTest extends RequestMapperTest<HodQueryRequest, Hod
 
     @Override
     protected void validate(final HodQueryRequest queryRequest) {
-        assertThat(queryRequest.getSummary(), is(Summary.off));
-        assertThat(queryRequest.getSort(), is(Sort.relevance));
+        assertThat(queryRequest.getSummary(), is(Summary.off.name()));
+        assertThat(queryRequest.getSort(), is(Sort.relevance.name()));
     }
 
     @Override
     protected void validateMinimal(final HodQueryRequest queryRequest) {
-        assertThat(queryRequest.getSummary(), is(Summary.off));
+        assertThat(queryRequest.getSummary(), is(Summary.off.name()));
         assertNull(queryRequest.getSort());
     }
 }

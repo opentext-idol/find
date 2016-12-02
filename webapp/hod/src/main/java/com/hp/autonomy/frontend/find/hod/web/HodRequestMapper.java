@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.web.AbstractRequestMapper;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.hod.requests.HodQueryRequestMixin;
@@ -52,7 +51,7 @@ class HodRequestMapper extends AbstractRequestMapper<HodQueryRequest> {
         HodQueryRequestBuilder maxResults(int maxResults);
 
         @JsonProperty(required = true)
-        HodQueryRequestBuilder summary(Summary summary);
+        HodQueryRequestBuilder summary(String summary);
 
         @JsonProperty("auto_correct")
         HodQueryRequestBuilder autoCorrect(boolean autoCorrect);

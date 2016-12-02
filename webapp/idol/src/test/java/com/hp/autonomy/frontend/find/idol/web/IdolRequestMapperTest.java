@@ -66,13 +66,13 @@ public class IdolRequestMapperTest extends RequestMapperTest<IdolQueryRequest, I
 
     @Override
     protected void validate(final IdolQueryRequest queryRequest) {
-        assertThat(queryRequest.getSummary(), is(SummaryParam.Off));
-        assertThat(queryRequest.getSort(), is(SortParam.DocumentCount));
+        assertThat(queryRequest.getSummary(), is(SummaryParam.Off.name()));
+        assertThat(queryRequest.getSort(), is(SortParam.DocumentCount.name()));
     }
 
     @Override
     protected void validateMinimal(final IdolQueryRequest queryRequest) {
-        assertThat(queryRequest.getSummary(), is(SummaryParam.Off));
+        assertThat(queryRequest.getSummary(), is(SummaryParam.Off.name()));
         assertNull(queryRequest.getSort());
     }
 }

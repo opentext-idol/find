@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping(AnswerServerController.BASE_PATH)
 class AnswerServerController {
-    static final String BASE_PATH = "/api/public/answer/ask";
+    static final String BASE_PATH = "/api/public/answer";
     static final String ASK_PATH = "ask";
     static final String TEXT_PARAM = "text";
     static final String MAX_RESULTS_PARAM = "maxResults";
