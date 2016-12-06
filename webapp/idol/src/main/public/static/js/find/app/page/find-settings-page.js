@@ -4,8 +4,10 @@
  */
 
 define([
+    'underscore',
     'find/app/page/abstract-find-settings-page',
     'find/app/page/settings/aci-widget',
+    'find/app/page/settings/answer-server-widget',
     'find/app/page/settings/community-widget',
     'find/app/page/settings/map-widget',
     'find/app/page/settings/mmap-widget',
@@ -13,11 +15,13 @@ define([
     'find/app/page/settings/saved-search-widget',
     'find/app/page/settings/stats-server-widget',
     'find/app/page/settings/view-widget',
-    'i18n!find/nls/bundle'
-], function(SettingsPage, AciWidget, CommunityWidget, MapWidget, MmapWidget, QueryManipulationWidget, SavedSearchWidget, StatsServerWidget, ViewWidget, i18n) {
+    'i18n!find/nls/bundle',
+    'text!find/templates/app/page/settings/community-widget.html'
+], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, MapWidget, MmapWidget, QueryManipulationWidget,
+             SavedSearchWidget, StatsServerWidget, ViewWidget, i18n, dropdownTemplate) {
 
     return SettingsPage.extend({
-        initializeWidgets: function() {
+        initializeWidgets: function () {
             this.widgetGroups = [
                 [
                     new AciWidget({
@@ -32,6 +36,7 @@ define([
                         description: i18n['settings.community.description'],
                         isOpened: true,
                         securityTypesUrl: this.urlRoot + 'securitytypes',
+                        template: dropdownTemplate,
                         title: i18n['settings.community.title'],
                         strings: _.extend(this.serverStrings(), {
                             fetchSecurityTypes: i18n['settings.community.login.fetchTypes'],
@@ -71,6 +76,19 @@ define([
                             referenceFieldBlank: i18n['settings.view.referenceFieldBlank'],
                             referenceFieldPlaceholder: i18n['settings.view.referenceFieldPlaceholder'],
                             viewingMode: i18n['settings.view.viewingMode']
+                        })
+                    }),
+                    new AnswerServerWidget({
+                        configItem: 'answerServer',
+                        title: i18n['settings.answerServer.title'],
+                        isOpened: true,
+                        description: i18n['settings.answerServer.description'],
+                        strings: _.extend(this.serverStrings(), {
+                            enable: i18n['settings.answerServer.enable'],
+                            enabled: i18n['settings.answerServer.enabled'],
+                            disable: i18n['settings.answerServer.disable'],
+                            disabled: i18n['settings.answerServer.disabled'],
+                            loading: i18n['settings.answerServer.loading']
                         })
                     })
                 ], [
@@ -128,7 +146,7 @@ define([
                             enabled: i18n['settings.map.enabled'],
                             loading: i18n['settings.map.loading'],
                             url: i18n['settings.map.url'],
-                            resultsstep: i18n['settings.map.results.step'] 
+                            resultsstep: i18n['settings.map.results.step']
                         })
                     })
                 ]
