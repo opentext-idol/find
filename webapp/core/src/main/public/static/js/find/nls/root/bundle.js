@@ -29,6 +29,8 @@ define([
         'app.from': 'From',
         'app.loading': 'Loading\u2026',
         'app.logout': 'Logout',
+        'app.less': "less",
+        'app.more': "more",
         'app.name': "HPE Find",
         'app.ok': 'OK',
         'app.rename': 'Rename',
