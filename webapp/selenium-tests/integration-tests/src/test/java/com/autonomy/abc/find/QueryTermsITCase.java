@@ -4,7 +4,6 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.queryHelper.IdolQueryTestHelper;
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.find.Container;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.application.UserRole;
@@ -106,59 +105,47 @@ public class QueryTermsITCase extends FindTestBase {
         List<String> potentialTerms = new ArrayList<>(Arrays.asList("brevity", "tessellate", "hydrangea", "\"dearly departed\"", "abstruse", "lobotomy"));
         final String termOne = findService.termWithBetween1And30Results(potentialTerms);
         final String termTwo = findService.termWithBetween1And30Results(potentialTerms);
-
         assertThat("Test only works if query terms both have <=30 results ","",not(anyOf(is(termOne),is(termTwo))));
 
-        final ListView results = findService.search(termOne);
-        final List<String> musketeersSearchResults = results.getResultTitles();
-        final int numberOfMusketeersResults = musketeersSearchResults.size();
-        removeAllConcepts();
+        final List<String> resultsTermOne = getResultsList(termOne);
+        final int resultsNumberTermOne = resultsTermOne.size();
 
-        findService.search(termTwo);
-        final List<String> dearlyDepartedSearchResults = results.getResultTitles();
-        final int numberOfDearlyDepartedResults = dearlyDepartedSearchResults.size();
-        removeAllConcepts();
+        final List<String> resultsTermTwo = getResultsList(termTwo);
+        final int resultsNumberTermTwo = resultsTermTwo.size();
 
-        findService.search(termOne + " AND " + termTwo);
-        final List<String> andResults = results.getResultTitles();
+        final List<String> andResults = getResultsList(termOne + " AND " + termTwo);
         final int numberOfAndResults = andResults.size();
+        assertThat(numberOfAndResults, allOf(lessThanOrEqualTo(resultsNumberTermOne), lessThanOrEqualTo(resultsNumberTermTwo)));
+        assertThat(termOne + " results contain every results in the 'AND' results", resultsTermOne.containsAll(andResults));
+        assertThat(termTwo + " results contain every results in the 'AND' results", resultsTermTwo.containsAll(andResults));
 
-        assertThat(numberOfMusketeersResults, greaterThanOrEqualTo(numberOfAndResults));
-        assertThat(numberOfDearlyDepartedResults, greaterThanOrEqualTo(numberOfAndResults));
-        final String[] andResultsArray = andResults.toArray(new String[andResults.size()]);
-        assertThat(musketeersSearchResults, hasItems(andResultsArray));
-        assertThat(dearlyDepartedSearchResults, hasItems(andResultsArray));
-        removeAllConcepts();
+        final List<String> orResults = getResultsList(termOne + " OR " + termTwo);
+        final Set<String> concatenatedResults = new HashSet<>(ListUtils.union(resultsTermOne, resultsTermTwo));
+        assertThat(orResults, hasSize(concatenatedResults.size()));
+        assertThat("'OR' results contains all the results that are present for each term alone", orResults.containsAll(concatenatedResults));
 
-        findService.search(termOne + " OR " + termTwo);
-        final List<String> orResults = results.getResultTitles();
-        final Set<String> concatenatedResults = new HashSet<>(ListUtils.union(musketeersSearchResults, dearlyDepartedSearchResults));
-        assertThat(orResults.size(), is(concatenatedResults.size()));
-        assertThat(orResults, containsInAnyOrder(concatenatedResults.toArray()));
-        removeAllConcepts();
-
-        findService.search(termOne + " XOR " + termTwo);
-        final List<String> xorResults = results.getResultTitles();
+        final List<String> xorResults = getResultsList(termOne + " XOR " + termTwo);
         concatenatedResults.removeAll(andResults);
         assertThat(xorResults.size(), is(concatenatedResults.size()));
         assertThat(xorResults, containsInAnyOrder(concatenatedResults.toArray()));
-        removeAllConcepts();
 
-        findService.search(termOne + " NOT " + termTwo);
-        final List<String> notTermTwo = results.getResultTitles();
-        final Set<String> t1NotT2 = new HashSet<>(concatenatedResults);
-        t1NotT2.removeAll(dearlyDepartedSearchResults);
-        assertThat(notTermTwo.size(), is(t1NotT2.size()));
-        assertThat(notTermTwo, containsInAnyOrder(t1NotT2.toArray()));
-        removeAllConcepts();
+        checkANotB(termOne + " NOT " + termTwo, new HashSet<>(concatenatedResults), resultsTermTwo);
+        checkANotB(termTwo + " NOT " + termOne, new HashSet<>(concatenatedResults), resultsTermOne);
+    }
 
-        findService.search(termTwo + " NOT " + termOne);
-        final List<String> notTermOne = results.getResultTitles();
-        final Set<String> t2NotT1 = new HashSet<>(concatenatedResults);
-        t2NotT1.removeAll(musketeersSearchResults);
-        assertThat(notTermOne.size(), is(t2NotT1.size()));
-        assertThat(notTermOne, containsInAnyOrder(t2NotT1.toArray()));
+    private List<String> getResultsList(final String term) {
+        final ListView results = findService.search(term);
+        results.waitForResultsToLoad();
+        final List<String> searchResults = results.getResultTitles();
         removeAllConcepts();
+        return searchResults;
+    }
+
+    private void checkANotB(final String term, final Set<String> uniqueResults, final List<String> notIncludeResults) {
+        final List<String> notTermOne = getResultsList(term);
+        uniqueResults.removeAll(notIncludeResults);
+        assertThat(notTermOne.size(), is(uniqueResults.size()));
+        assertThat(notTermOne, containsInAnyOrder(uniqueResults.toArray()));
     }
 
     private void ensureOnCorrectView() {
