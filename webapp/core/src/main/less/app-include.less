@@ -823,8 +823,8 @@ input.find-input {
 }
 
 .preview-mode {
-  .main-results-container {
-    &:extend(.clickable);
+  .main-results-container:not(.answered-question) {
+    .clickable;
   }
 
   .main-results-container.direct-access {
@@ -878,6 +878,16 @@ input.find-input {
 }
 
 .content-type {
+  .fa-stack {
+    i.fa-question {
+      font-size: @fontSize;
+    }
+
+    i.fa-comments-o {
+      font-size: calc(@fontSize * 2);
+    }
+  }
+
   i {
     font-size: 23px;
   }

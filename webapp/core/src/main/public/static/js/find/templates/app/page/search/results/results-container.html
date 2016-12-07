@@ -12,7 +12,14 @@
 
 <div class="main-results-container m-b-sm <%-resultType%> <%-directAccessLink%>" data-cid="<%-model.cid %>">
     <span class="pull-left m-t-xs text-muted m-r-sm content-type">
-        <i class="icomoon-file-<%-data.contentType%>"></i>
+        <% if(data.contentType == 'answeredQuestion') { %>
+            <span class="fa-stack">
+                <i class="fa fa-comments-o fa-stack-2x"></i>
+                <i class="fa fa-question fa-stack-1x"></i>
+            </span>
+        <% } else { %>
+            <i class="icomoon-file-<%-data.contentType%>"></i>
+        <% } %>
     </span>
 
     <div class="results-contents">
@@ -45,8 +52,11 @@
         <% } else if (model.get('thumbnailUrl')) { %>
             <img class="document-thumbnail m-r-sm pull-left" src="<%=model.get('thumbnailUrl')%>"/>
         <% } %>
-        <p class="result-summary">
-            <%= data.highlightedSummary %>
+        <p class="summary">
+            <span class="result-summary summary-text"><%= data.highlightedSummary %></span>
+            <% if(data.isAnsweredQuestion) { %>
+                <a class="hyperlink read-more"><%-i18n['app.more']%></a>
+            <% } %>
         </p>
         <span class="text-right results-small-links">
             <% if (!data.staticPromotion && !data.isAnsweredQuestion) { %>
