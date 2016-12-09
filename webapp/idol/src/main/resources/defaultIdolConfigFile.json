@@ -80,7 +80,7 @@
         "ANSWERSERVER"
       ]
     },
-    "enabled": true
+    "enabled": false
   },
   "savedSearches": {
     "pollForUpdates": true,
