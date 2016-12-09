@@ -94,7 +94,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-666")
+    @ResolvedBug("FIND-666")
     public void testMultipleAdditionalConcepts() {
         searchAndWait(findService, "bongo");
 
@@ -117,7 +117,7 @@ public class RelatedConceptsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     @ResolvedBug("FIND-666")
-    @ActiveBug({"FIND-665"})
+    @ActiveBug("FIND-665 - Still relevant on hosted as of 09/12/16, WON'T BE CAUGHT BY TEST") //TODO write new test
     public void testAddRemoveConcepts() {
         final String queryTerm = "general";
         searchAndWait(findService, queryTerm);
