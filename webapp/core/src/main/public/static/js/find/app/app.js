@@ -80,7 +80,8 @@ define([
             }
 
             const baseURI = determineBaseURI();
-            const applicationPath = configuration().applicationPath;
+            const config = configuration();
+            const applicationPath = config.applicationPath;
             this.internalHrefRegexp = new RegExp('^' + escapeRegex(removeTrailingSlash(baseURI) + applicationPath));
 
             testBrowser().done(function() {
@@ -88,6 +89,7 @@ define([
                 var pageData = this.getPageData();
 
                 this.pages = new Pages({
+                    configuration: config,
                     defaultPage: this.defaultPage,
                     modelRegistry: modelRegistry,
                     pageData: pageData,

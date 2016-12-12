@@ -58,7 +58,8 @@ define([
                 queryModel: this.queryModel,
                 resultsView: this.resultsView,
                 scrollModel: this.scrollModel,
-                previewModeModel: previewModeModel
+                previewModeModel: previewModeModel,
+                mmapTab: options.mmapTab
             });
 
             this.listenTo(options.indexesCollection, 'update reset', function() {

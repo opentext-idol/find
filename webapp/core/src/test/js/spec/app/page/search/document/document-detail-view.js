@@ -11,7 +11,7 @@ define([
     'find/app/model/document-model',
     'find/app/configuration',
     'find/app/vent'
-], function(Backbone, $, DocumentDetailView, TabContentView, DocumentModel, configuration, vent) {
+], function (Backbone, $, DocumentDetailView, TabContentView, DocumentModel, configuration, vent) {
 
     var BACK_URL = 'search/goback';
     var DOCUMENT_MODEL_REF = 'reference';
@@ -20,41 +20,50 @@ define([
     var ANY_OLD_URL = 'www.example.com';
 
     var MOCK_TABS = [{
-        TabContentConstructor: TabContentView.extend({ TabSubContentConstructor: Backbone.View }),
+        TabContentConstructor: TabContentView.extend({TabSubContentConstructor: Backbone.View}),
         title: 'some title',
         shown: function (documentModel) {
             return documentModel.get('reference') === DOCUMENT_MODEL_REF;
         }
     },
-    {
-        TabContentConstructor: TabContentView.extend({ TabSubContentConstructor: Backbone.View }),
-        title: 'some other title',
-        shown: function () { return true; }
-    }];
+        {
+            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: Backbone.View}),
+            title: 'some other title',
+            shown: function () {
+                return true;
+            }
+        }];
+
+    const NO_MMAP = {
+        supported: function () {
+            return false;
+        }
+    };
 
     function getMockTabs(length) {
         return _.first(MOCK_TABS, length);
     }
 
-    describe('DocumentDetailView', function() {
-        beforeEach(function() {
+    describe('DocumentDetailView', function () {
+        beforeEach(function () {
             configuration.and.returnValue({
                 mmapBaseUrl: ANY_OLD_URL,
                 map: {enabled: false}
             });
         });
 
-        afterEach(function() {
+        afterEach(function () {
             vent.navigateToDetailRoute.calls.reset();
             vent.navigate.calls.reset();
         });
 
-        describe('when the back button is clicked', function() {
-            beforeEach(function() {
+        describe('when the back button is clicked', function () {
+            beforeEach(function () {
                 this.view = new DocumentDetailView({
                     model: new DocumentModel(),
                     backUrl: BACK_URL,
-                    indexesCollection: new Backbone.Collection()
+                    indexesCollection: new Backbone.Collection(),
+                    mmapTab: NO_MMAP
                 });
 
                 this.view.render();
@@ -67,14 +76,15 @@ define([
             });
         });
 
-        describe('when requirements for a tab to be rendered are met', function() {
-            describe('when the view renders with a single tab defined', function() {
-                beforeEach(function() {
+        describe('when requirements for a tab to be rendered are met', function () {
+            describe('when the view renders with a single tab defined', function () {
+                beforeEach(function () {
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
                         }),
-                        indexesCollection: new Backbone.Collection()
+                        indexesCollection: new Backbone.Collection(),
+                        mmapTab: NO_MMAP
                     });
 
                     this.view.tabs = this.view.filterTabs(getMockTabs(1));
@@ -91,13 +101,14 @@ define([
                 });
             });
 
-            describe('when the view renders with more than one tab defined', function() {
-                beforeEach(function() {
+            describe('when the view renders with more than one tab defined', function () {
+                beforeEach(function () {
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
                         }),
-                        indexesCollection: new Backbone.Collection()
+                        indexesCollection: new Backbone.Collection(),
+                        mmapTab: NO_MMAP
                     });
 
                     this.view.tabs = this.view.filterTabs(getMockTabs(2));
@@ -116,13 +127,14 @@ define([
             });
         });
 
-        describe('when requirements for a tab to be rendered are not met', function() {
-            beforeEach(function() {
+        describe('when requirements for a tab to be rendered are not met', function () {
+            beforeEach(function () {
                 this.view = new DocumentDetailView({
                     model: new DocumentModel({
                         reference: 'some other reference'
                     }),
-                    indexesCollection: new Backbone.Collection()
+                    indexesCollection: new Backbone.Collection(),
+                    mmapTab: NO_MMAP
                 });
 
                 this.view.tabs = this.view.filterTabs(getMockTabs(1));
@@ -138,15 +150,16 @@ define([
             });
         });
 
-        describe('when the view renders with a media document', function() {
-            beforeEach(function() {
+        describe('when the view renders with a media document', function () {
+            beforeEach(function () {
                 this.view = new DocumentDetailView({
                     model: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         media: 'audio',
                         url: 'www.example.com'
                     }),
-                    indexesCollection: new Backbone.Collection()
+                    indexesCollection: new Backbone.Collection(),
+                    mmapTab: NO_MMAP
                 });
                 this.view.render();
             });
@@ -156,14 +169,15 @@ define([
             });
         });
 
-        describe('when the view renders with a non-media document', function() {
-            beforeEach(function() {
+        describe('when the view renders with a non-media document', function () {
+            beforeEach(function () {
                 this.view = new DocumentDetailView({
                     model: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         url: ANY_OLD_URL
                     }),
-                    indexesCollection: new Backbone.Collection()
+                    indexesCollection: new Backbone.Collection(),
+                    mmapTab: NO_MMAP
                 });
                 this.view.render();
             });
@@ -173,83 +187,96 @@ define([
             });
         });
 
-            describe('when the view renders and the document has a url', function() {
-                beforeEach(function() {
-                    this.view = new DocumentDetailView({
-                        model: new DocumentModel({
-                            reference: DOCUMENT_MODEL_REF,
-                            url: ANY_OLD_URL
-                        }),
-                        indexesCollection: new Backbone.Collection()
-                    });
-                    this.view.render();
+        describe('when the view renders and the document has a url', function () {
+            beforeEach(function () {
+                this.view = new DocumentDetailView({
+                    model: new DocumentModel({
+                        reference: DOCUMENT_MODEL_REF,
+                        url: ANY_OLD_URL
+                    }),
+                    indexesCollection: new Backbone.Collection(),
+                    mmapTab: NO_MMAP
                 });
-
-                it('should render an open original button with the correct href', function () {
-                    expect(this.view.$('.document-detail-open-original-link')).toHaveLength(1);
-                    expect(this.view.$('.document-detail-open-original-link')).toHaveAttr('href', ANY_OLD_URL);
-                });
+                this.view.render();
             });
 
-            describe('when the view renders and the document has no url but a reference that could be a url', function() {
-                beforeEach(function() {
-                    this.view = new DocumentDetailView({
-                        model: new DocumentModel({
-                            url: URL_LIKE_REFERENCE
-                        }),
-                        indexesCollection: new Backbone.Collection()
-                    });
-                    this.view.render();
-                });
+            it('should render an open original button with the correct href', function () {
+                expect(this.view.$('.document-detail-open-original-link')).toHaveLength(1);
+                expect(this.view.$('.document-detail-open-original-link')).toHaveAttr('href', ANY_OLD_URL);
+            });
+        });
 
-                it('should render an open original button with the correct href', function () {
-                    expect(this.view.$('.document-detail-open-original-link')).toHaveLength(1);
-                    expect(this.view.$('.document-detail-open-original-link')).toHaveAttr('href', URL_LIKE_REFERENCE);
+        describe('when the view renders and the document has no url but a reference that could be a url', function () {
+            beforeEach(function () {
+                this.view = new DocumentDetailView({
+                    model: new DocumentModel({
+                        url: URL_LIKE_REFERENCE
+                    }),
+                    indexesCollection: new Backbone.Collection(),
+                    mmapTab: NO_MMAP
                 });
+                this.view.render();
             });
 
-            describe('when the view renders but the document has no url or url-like reference', function() {
-                beforeEach(function() {
-                    this.view = new DocumentDetailView({
-                        model: new DocumentModel({
-                            reference: DOCUMENT_MODEL_REF
-                        }),
-                        indexesCollection: new Backbone.Collection()
-                    });
-                    this.view.render();
-                });
+            it('should render an open original button with the correct href', function () {
+                expect(this.view.$('.document-detail-open-original-link')).toHaveLength(1);
+                expect(this.view.$('.document-detail-open-original-link')).toHaveAttr('href', URL_LIKE_REFERENCE);
+            });
+        });
 
-                it('should not render the open original button', function () {
-                    expect(this.view.$('.document-detail-open-original-link')).toHaveLength(0);
+        describe('when the view renders but the document has no url or url-like reference', function () {
+            beforeEach(function () {
+                this.view = new DocumentDetailView({
+                    model: new DocumentModel({
+                        reference: DOCUMENT_MODEL_REF
+                    }),
+                    indexesCollection: new Backbone.Collection(),
+                    mmapTab: NO_MMAP
                 });
-
-                it('should not render the mmap link', function () {
-                    expect(this.view.$('.document-detail-mmap-link')).toHaveLength(0);
-                });
+                this.view.render();
             });
 
-            describe('when the view renders and the document has mmap references', function() {
-                var mmapUrl = '/video/a-video';
-
-                beforeEach(function() {
-                    this.view = new DocumentDetailView({
-                        model: new DocumentModel({
-                            reference: DOCUMENT_MODEL_REF,
-                            mmapUrl: mmapUrl
-                        }),
-                        indexesCollection: new Backbone.Collection()
-                    });
-                    this.view.render();
-                });
-
-                it('should not render the open original button', function () {
-                    expect(this.view.$('.document-detail-open-original-link')).toHaveLength(0);
-                });
-
-                it('should render the open mmap button', function () {
-                    expect(this.view.$('.document-detail-mmap-link')).toHaveLength(1);
-                    expect(this.view.$('.document-detail-mmap-link')).toHaveAttr('href', ANY_OLD_URL + mmapUrl);
-                });
+            it('should not render the open original button', function () {
+                expect(this.view.$('.document-detail-open-original-link')).toHaveLength(0);
             });
+
+            it('should not render the mmap link', function () {
+                expect(this.view.$('.document-detail-mmap-button')).toHaveLength(0);
+            });
+        });
+
+        describe('when the view renders and the document has mmap references', function () {
+            var mmapUrl = '/video/a-video';
+
+            beforeEach(function () {
+                this.view = new DocumentDetailView({
+                    model: new DocumentModel({
+                        reference: DOCUMENT_MODEL_REF,
+                        mmapUrl: mmapUrl
+                    }),
+                    indexesCollection: new Backbone.Collection(),
+                    mmapTab: {
+                        open: jasmine.createSpy('open'),
+                        supported: function () {
+                            return true;
+                        }
+                    }
+                });
+                this.view.render();
+            });
+
+            it('should not render the open original button', function () {
+                expect(this.view.$('.document-detail-open-original-link')).toHaveLength(0);
+            });
+
+            it('should render the open mmap button', function () {
+                expect(this.view.$('.document-detail-mmap-button')).toHaveLength(1);
+            });
+
+            it('should trigger mmap tab functionality when the button is clicked', function () {
+                this.view.$('.document-detail-mmap-button').click();
+                expect(this.view.mmapTab.open).toHaveBeenCalled();
+            });
+        });
     });
 });

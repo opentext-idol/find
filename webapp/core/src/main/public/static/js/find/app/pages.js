@@ -5,13 +5,14 @@
 
 define([
     'backbone',
-    'underscore'
-], function(Backbone, _) {
+    'underscore',
+    'find/app/mmap-tab'
+], function(Backbone, _, mmapTab) {
 
     return Backbone.View.extend({
         initialize: function(options) {
             this.pages = _.mapObject(options.pageData, function(data) {
-                var viewOptions = {router: options.router};
+                var viewOptions = {router: options.router, mmapTab: mmapTab(options.configuration)};
 
                 _.each(data.models, function(modelName) {
                     viewOptions[modelName] = options.modelRegistry.get(modelName);

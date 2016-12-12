@@ -28,7 +28,8 @@ define([
                         model: documentModel,
                         previewModeModel: this.previewModeModel,
                         queryText: this.queryModel.get('queryText'),
-                        indexesCollection: options.indexesCollection
+                        indexesCollection: options.indexesCollection,
+                        mmapTab: options.mmapTab
                     });
 
                     this.$previewModeContainer.append(this.previewModeView.$el);

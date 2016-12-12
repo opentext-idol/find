@@ -223,7 +223,8 @@ define([
                         queryModel: this.queryModel,
                         indexesCollection: this.indexesCollection,
                         previewModeModel: this.previewModeModel,
-                        scrollModel: this.middleColumnScrollModel
+                        scrollModel: this.middleColumnScrollModel,
+                        mmapTab: options.mmapTab
                     },
                     events: {
                         // needs binding as the view container will be the eventual listener

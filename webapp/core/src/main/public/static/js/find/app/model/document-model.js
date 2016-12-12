@@ -80,6 +80,9 @@ define([
             response.thumbnailUrl = getFieldValue(response.fieldMap.thumbnailUrl);
             response.contentType = getFieldValue(response.fieldMap.contentType);            
             response.offset = getFieldValue(response.fieldMap.offset);
+            response.mmapEventSourceType = getFieldValue(response.fieldMap.mmapEventSourceType);
+            response.mmapEventSourceName = getFieldValue(response.fieldMap.mmapEventSourceName);
+            response.mmapEventTime = getFieldValue(response.fieldMap.mmapEventTime);
             response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);
             response.sourceType = getFieldValue(response.fieldMap.sourceType);
             response.transcript = getFieldValue(response.fieldMap.transcript);

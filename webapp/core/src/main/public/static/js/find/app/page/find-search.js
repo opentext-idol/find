@@ -94,6 +94,7 @@ define([
 
         initialize: function(options) {
             this.configuration = config();
+            this.mmapTab = options.mmapTab;
             const optionalViews = [{
                 enabled: !this.configuration.hasBiRole,
                 selector: '.input-view-container',
@@ -248,7 +249,8 @@ define([
                     this.documentDetailView = new DocumentDetailView({
                         backUrl: backURL,
                         model: documentModel,
-                        indexesCollection: this.indexesCollection
+                        indexesCollection: this.indexesCollection,
+                        mmapTab: this.mmapTab
                     });
 
                     this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
@@ -269,7 +271,8 @@ define([
                         documentModel: documentModel,
                         indexesCollection: this.indexesCollection,
                         scrollModel: this.windowScrollModel,
-                        configuration: config()
+                        configuration: config(),
+                        mmapTab: this.mmapTab
                     });
 
                     this.$('.suggest-service-view-container').append(this.suggestView.$el);
@@ -430,7 +433,8 @@ define([
                             savedSearchModel: savedSearchModel,
                             searchCollections: this.searchCollections,
                             searchTypes: this.searchTypes,
-                            selectedTabModel: this.selectedTabModel
+                            selectedTabModel: this.selectedTabModel,
+                            mmapTab: this.mmapTab
                         }, this.serviceViewOptions(cid)))
                     };
                     this.serviceViews[cid] = viewData;
