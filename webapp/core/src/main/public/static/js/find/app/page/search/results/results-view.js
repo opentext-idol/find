@@ -69,6 +69,18 @@ define([
                         documentModel = this.promotionsCollection.get(cid);
                     }
                     vent.navigateToSuggestRoute(documentModel);
+                },
+                'click .read-more': function(e) {
+                    var $target = $(e.currentTarget);
+                    var summaryText = $target.siblings('.summary-text');
+
+                    summaryText.toggleClass('result-summary');
+
+                    if(summaryText.hasClass('result-summary')) {
+                        $target.text(i18n['app.more']);
+                    } else {
+                        $target.text(i18n['app.less']);
+                    }
                 }
             };
 
