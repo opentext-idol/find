@@ -8,7 +8,7 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.FindTopNavBar;
+import com.autonomy.abc.selenium.find.NavBarSettings;
 import com.autonomy.abc.selenium.find.application.FindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
@@ -45,7 +45,7 @@ import static org.hamcrest.core.Is.is;
 public class RelatedConceptsITCase extends FindTestBase {
     private FindService findService;
     private ConceptsPanel conceptsPanel;
-    private FindTopNavBar navBar;
+    private NavBarSettings navBar;
 
     public RelatedConceptsITCase(final TestConfig config) {
         super(config);
@@ -80,7 +80,7 @@ public class RelatedConceptsITCase extends FindTestBase {
 
         topRelatedConcept.click();
         assertThat(conceptsPanel.selectedConceptHeaders(), hasItem(equalToIgnoringCase('"' + concept + '"')));
-        assertThat(navBar.getSearchBoxTerm(), is(query));
+        assertThat(getElementFactory().getSearchBox().getValue(), is(query));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class RelatedConceptsITCase extends FindTestBase {
             }
         }
 
-        verifyThat(navBar.getSearchBoxTerm(), is("bongo"));
+        verifyThat(getElementFactory().getSearchBox().getValue(), is("bongo"));
 
         final List<String> selectedConceptHeaders = conceptsPanel.selectedConceptHeaders();
         verifyThat(selectedConceptHeaders, hasSize(relatedConcepts.size()));
@@ -135,7 +135,7 @@ public class RelatedConceptsITCase extends FindTestBase {
         verifyThat(moreConcepts, hasSize(1));
         verifyThat(moreConcepts, not(hasItem(equalToIgnoringCase('"' + secondConcept + '"'))));
         verifyThat(moreConcepts, hasItem(equalToIgnoringCase('"' + firstConcept + '"')));
-        verifyThat(navBar.getSearchBoxTerm(), is(queryTerm));
+        verifyThat(getElementFactory().getSearchBox().getValue(), is(queryTerm));
     }
 
     @Test
@@ -188,7 +188,7 @@ public class RelatedConceptsITCase extends FindTestBase {
         getWindow().refresh();
         navBar = getElementFactory().getTopNavBar();
 
-        verifyThat(navBar.getSearchBoxTerm(), is("fresh"));
+        verifyThat(getElementFactory().getSearchBox().getValue(), is("fresh"));
         verifyThat(conceptsPanel.selectedConceptHeaders(), containsItems(concepts));
     }
 

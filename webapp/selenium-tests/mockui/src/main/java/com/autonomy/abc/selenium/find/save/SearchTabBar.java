@@ -100,7 +100,7 @@ public class SearchTabBar implements Iterable<SearchTab> {
     }
 
     public void waitUntilSavedSearchAppears() {
-        new WebDriverWait(driver, 60).until(ExpectedConditions.presenceOfElementLocated
+        new WebDriverWait(driver, 180).until(ExpectedConditions.presenceOfElementLocated
                 (By.cssSelector(".search-tab:nth-child(2) .search-tab-title .hp-new:not(.hide)")));
     }
 }

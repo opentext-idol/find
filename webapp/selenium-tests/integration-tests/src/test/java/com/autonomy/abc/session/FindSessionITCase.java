@@ -99,7 +99,7 @@ public class FindSessionITCase extends FindTestBase {
         navigateToAppUrl(findService.getQueryUrl(query));
 
         loginService.login(getInitialUser());
-        assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(query));
+        assertThat(getElementFactory().getSearchBox().getValue(), is(query));
     }
 
     private void deleteCookies(){

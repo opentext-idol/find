@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.find.login.FindHasLoggedIn;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class FindHodFindElementFactory extends HodFindElementFactory {
@@ -13,7 +14,7 @@ public class FindHodFindElementFactory extends HodFindElementFactory {
 
     @Override
     public FormInput getSearchBox() {
-        return getTopNavBar().getSearchBoxInput();
+        return new FormInput(getDriver().findElement(By.cssSelector(".input-view-container .find-input")), getDriver());
     }
 
     @Override
