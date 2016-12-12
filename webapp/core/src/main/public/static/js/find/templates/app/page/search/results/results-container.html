@@ -1,25 +1,9 @@
-<%  var resultType;
-
-    if(data.isPromotion) {
-        resultType = 'promoted-document';
-    } else if(data.isAnsweredQuestion) {
-        resultType = 'answered-question';
-    } else {
-        resultType = '';
-    }
-%>
+<% var promoted = data.isPromotion ? 'promoted-document' : ''; %>
 <% var directAccessLink = data.directAccessLink ? 'direct-access' : ''; %>
 
-<div class="main-results-container m-b-sm <%-resultType%> <%-directAccessLink%>" data-cid="<%-model.cid %>">
-    <span class="pull-left m-t-xs text-muted m-r-sm content-type">
-        <% if(data.contentType == 'answeredQuestion') { %>
-            <span class="fa-stack">
-                <i class="fa fa-comments-o fa-stack-2x"></i>
-                <i class="fa fa-question fa-stack-1x"></i>
-            </span>
-        <% } else { %>
-            <i class="icomoon-file-<%-data.contentType%>"></i>
-        <% } %>
+<div class="main-results-container m-b-sm <%-promoted%> <%-directAccessLink%>" data-cid="<%-model.cid %>">
+    <span class="pull-left m-t-sm text-muted m-r-sm content-type">
+        <i class="icomoon-file-<%-data.contentType%>"></i>
     </span>
 
     <div class="results-contents">
@@ -27,18 +11,12 @@
             <span class="pull-right m-t-xs text-muted promoted-label">
                 <i class="hp-icon hp-fw hp-favorite"></i> <%-i18n['search.promoted']%>
             </span>
-        <% } else if (data.isAnsweredQuestion) { %>
-            <span class="pull-right m-t-xs text-muted promoted-label">
-                <span class="fa-stack">
-                    <i class="fa fa-comments-o fa-stack-2x"></i>
-                    <i class="fa fa-question fa-stack-1x"></i>
-                </span>
-                <%- i18n['search.answeredQuestion'] %>
-            </span>
         <% } %>
         <h4 class="pull-left m-b-nil m-t-xs result-header">
         <% if (data.directAccessLink && href) {%>
-            <a class="pull-left m-b-nil m-t-xs result-header direct-access-title h4" href="<%= href %>" target="_blank"><%- model.get('title') %></a>
+            <a class="pull-left m-b-nil m-t-xs result-header direct-access-title h4" href="<%= href %>" target="_blank">
+                <%- model.get('title') %>
+            </a>
         <% } else { %>
             <%- model.get('title') %>
         <% } %>
@@ -52,14 +30,11 @@
         <% } else if (model.get('thumbnailUrl')) { %>
             <img class="document-thumbnail m-r-sm pull-left" src="<%=model.get('thumbnailUrl')%>"/>
         <% } %>
-        <p class="summary">
-            <span class="result-summary summary-text"><%= data.highlightedSummary %></span>
-            <% if(data.isAnsweredQuestion) { %>
-                <a class="hyperlink read-more"><%-i18n['app.more']%></a>
-            <% } %>
+        <p class="result-summary">
+            <%= data.highlightedSummary %>
         </p>
         <span class="text-right results-small-links">
-            <% if (!data.staticPromotion && !data.isAnsweredQuestion) { %>
+            <% if (!data.staticPromotion) { %>
                 <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
             <% }
             if (data.directAccessLink && data.enablePreview) { %>

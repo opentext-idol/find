@@ -77,6 +77,8 @@ define([
         'placeholder.hostname': 'hostname',
         'placeholder.ip': 'IP',
         'placeholder.port': 'port',
+        'search.answeredQuestion.question': 'Question: ',
+        'search.answeredQuestion.answer': 'Answer: ',
         'search.alsoSearchingFor': 'Also searching for',
         'search.concepts': 'Concepts',
         'search.concepts.empty': 'No concepts selected',
