@@ -12,7 +12,7 @@ define([
                 queryModel: new Backbone.Model({
                     queryText: 'This is some query text'
                 }),
-                loadingModel: {
+                loadingTracker: {
                     questionsFinished: true
                 },
                 clearLoadingSpinner: _.noop

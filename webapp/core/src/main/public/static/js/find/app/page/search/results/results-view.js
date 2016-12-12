@@ -34,7 +34,7 @@ define([
     function infiniteScroll() {
         var resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
 
-        if(resultsPresent && this.loadingModel.resultsFinished && !this.endOfResults) {
+        if(resultsPresent && this.loadingTracker.resultsFinished && !this.endOfResults) {
             this.start = this.maxResults + 1;
             this.maxResults += SCROLL_INCREMENT;
 
@@ -69,18 +69,6 @@ define([
                         documentModel = this.promotionsCollection.get(cid);
                     }
                     vent.navigateToSuggestRoute(documentModel);
-                },
-                'click .read-more': function(e) {
-                    var $target = $(e.currentTarget);
-                    var summaryText = $target.siblings('.summary-text');
-
-                    summaryText.toggleClass('result-summary');
-
-                    if(summaryText.hasClass('result-summary')) {
-                        $target.text(i18n['app.more']);
-                    } else {
-                        $target.text(i18n['app.less']);
-                    }
                 }
             };
 
@@ -99,7 +87,7 @@ define([
 
             this.indexesCollection = options.indexesCollection;
             this.scrollModel = options.scrollModel;
-            this.loadingModel = {
+            this.loadingTracker = {
                 resultsFinished: true,
                 promotionsFinished: true,
                 questionsFinished: true
@@ -123,7 +111,7 @@ define([
             if (this.QuestionsView) {
                 this.questionsView = new this.QuestionsView({
                     queryModel: this.queryModel,
-                    loadingModel: this.loadingModel,
+                    loadingTracker: this.loadingTracker,
                     clearLoadingSpinner: _.bind(this.clearLoadingSpinner, this)
                 });
             }
@@ -171,7 +159,7 @@ define([
                 });
 
                 this.listenTo(this.promotionsCollection, 'sync', function() {
-                    this.loadingModel.promotionsFinished = true;
+                    this.loadingTracker.promotionsFinished = true;
                     this.clearLoadingSpinner();
                 });
 
@@ -179,7 +167,7 @@ define([
                 // The Find User shouldn't hear about promotions, but the way we are doing it now, the DataAdmin or
                 // SysAdmin may never find out that promotions-related errors are affecting Users' searches.
                 this.listenTo(this.promotionsCollection, 'error', function() {
-                    this.loadingModel.promotionsFinished = true;
+                    this.loadingTracker.promotionsFinished = true;
                     this.clearLoadingSpinner();
                 });
             }
@@ -189,7 +177,7 @@ define([
             });
 
             this.listenTo(this.documentsCollection, 'sync reset', function() {
-                this.loadingModel.resultsFinished = true;
+                this.loadingTracker.resultsFinished = true;
                 this.clearLoadingSpinner();
 
                 this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
@@ -202,7 +190,7 @@ define([
             });
 
             this.listenTo(this.documentsCollection, 'error', function(collection, xhr) {
-                this.loadingModel.resultsFinished = true;
+                this.loadingTracker.resultsFinished = true;
                 this.clearLoadingSpinner();
                 this.handleError(xhr);
             });
@@ -243,8 +231,8 @@ define([
         },
 
         clearLoadingSpinner: function() {
-            if(this.loadingModel.resultsFinished && this.loadingModel.questionsFinished
-                && this.loadingModel.promotionsFinished || !this.showPromotions) {
+            if(this.loadingTracker.resultsFinished && this.loadingTracker.questionsFinished
+                && this.loadingTracker.promotionsFinished || !this.showPromotions) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
@@ -304,7 +292,7 @@ define([
                 this.questionsView.fetchData();
             }
 
-            this.loadingModel.resultsFinished = false;
+            this.loadingTracker.resultsFinished = false;
 
             var requestData = _.extend({
                 start: this.start,
@@ -341,7 +329,7 @@ define([
             });
 
             if(!infiniteScroll && this.showPromotions) {
-                this.loadingModel.promotionsFinished = false;
+                this.loadingTracker.promotionsFinished = false;
 
                 var promotionsRequestData = _.extend({
                     start: this.start,
@@ -363,7 +351,7 @@ define([
         openPreview: function(e) {
             var $target = $(e.currentTarget).closest('.main-results-container');
 
-            if($target.hasClass('selected-document') || $target.hasClass('answered-question')) {
+            if($target.hasClass('selected-document')) {
                 // disable preview mode
                 this.previewModeModel.set({document: null});
             } else {

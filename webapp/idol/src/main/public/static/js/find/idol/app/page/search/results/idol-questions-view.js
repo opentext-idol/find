@@ -1,10 +1,11 @@
 define([
     'backbone',
+    'jquery',
     'find/idol/app/model/answer-bank/idol-answered-questions-collection',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/results/questions-container.html',
     'i18n!find/nls/bundle'
-], function (Backbone, AnsweredQuestionsCollection, ListView, questionsTemplate, i18n) {
+], function (Backbone, $, AnsweredQuestionsCollection, ListView, questionsTemplate, i18n) {
     const MAX_SIZE = 1;
     const CROPPED_SUMMARY_CHAR_LENGTH = 300;
 
@@ -12,17 +13,17 @@ define([
         events: {
             'click .read-more': function (e) {
                 let $target = $(e.currentTarget);
-                let summary = $target.siblings('.summary-text');
-                let extendedAnswer = summary.children('.extendedAnswer');
+                let $summary = $target.siblings('.summary-text');
+                let $extendedAnswer = $summary.children('.extended-answer');
 
-                summary.toggleClass('result-summary');
-                if (summary.hasClass('result-summary')) {
+                $summary.toggleClass('result-summary');
+                if ($summary.hasClass('result-summary')) {
                     $target.text(i18n['app.more']);
-                    extendedAnswer.addClass('hide');
+                    $extendedAnswer.addClass('hide');
                     $target.siblings('.summary-text').children('.ellipsis').removeClass('hide');
                 } else {
                     $target.text(i18n['app.less']);
-                    extendedAnswer.removeClass('hide');
+                    $extendedAnswer.removeClass('hide');
                     $target.siblings('.summary-text').children('.ellipsis').addClass('hide');
                 }
             }
@@ -31,7 +32,7 @@ define([
         initialize: function (options) {
             this.answeredQuestionsCollection = new AnsweredQuestionsCollection();
             this.queryModel = options.queryModel;
-            this.loadingModel = options.loadingModel;
+            this.loadingTracker = options.loadingTracker;
             this.clearLoadingSpinner = options.clearLoadingSpinner;
 
             this.template = _.template(questionsTemplate);
@@ -56,7 +57,7 @@ define([
         },
 
         fetchData: function () {
-            this.loadingModel.questionsFinished = false;
+            this.loadingTracker.questionsFinished = false;
 
             let questionsRequestData = {
                 text: this.queryModel.get('queryText'),
@@ -68,11 +69,11 @@ define([
                 reset: true,
                 success: _.bind(function() {
                     this.render();
-                    this.loadingModel.questionsFinished = true;
+                    this.loadingTracker.questionsFinished = true;
                     this.clearLoadingSpinner();
                 }, this),
                 error: _.bind(function() {
-                    this.loadingModel.questionsFinished = true;
+                    this.loadingTracker.questionsFinished = true;
                     this.clearLoadingSpinner();
                 })
             }, this);
