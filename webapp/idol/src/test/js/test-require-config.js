@@ -18,7 +18,8 @@ require.config({
             'find/app/configuration': 'mock/configuration',
             'find/lib/backbone/backbone-extensions': 'backbone',
             'find/idol/app/model/comparison/comparison-model': 'mock/idol/model/comparison/comparison-model',
-            'find/app/page/search/results/map-view': 'mock/page/search/results/map-view'
+            'find/app/page/search/results/map-view': 'mock/page/search/results/map-view',
+            'find/idol/app/model/answer-bank/idol-answered-questions-collection': 'mock/idol/model/answer-bank/idol-answered-questions-collection'
         }
     }
 });
