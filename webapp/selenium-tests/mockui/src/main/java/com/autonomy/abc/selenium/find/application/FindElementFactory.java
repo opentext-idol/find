@@ -5,7 +5,7 @@
 package com.autonomy.abc.selenium.find.application;
 
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.FindTopNavBar;
+import com.autonomy.abc.selenium.find.NavBarSettings;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.AppliedFiltersPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
@@ -35,8 +35,8 @@ public abstract class FindElementFactory extends ElementFactoryBase {
         return new FindPage.Factory().create(getDriver());
     }
 
-    public FindTopNavBar getTopNavBar() {
-        return new FindTopNavBar(getDriver());
+    public NavBarSettings getTopNavBar() {
+        return new NavBarSettings(getDriver());
     }
 
     public ListView getListView() {

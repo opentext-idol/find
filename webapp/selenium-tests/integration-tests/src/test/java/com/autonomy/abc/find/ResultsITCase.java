@@ -193,7 +193,7 @@ public class ResultsITCase extends FindTestBase {
         getDriver().navigate().refresh();
 
         // This could fail because %2F can be blocked by Tomcat
-        assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(query));
+        assertThat(getElementFactory().getSearchBox().getValue(), is(query));
     }
 
     @Test

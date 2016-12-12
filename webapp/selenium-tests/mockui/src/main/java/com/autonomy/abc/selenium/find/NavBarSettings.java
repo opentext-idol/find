@@ -7,28 +7,26 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class FindTopNavBar implements LoginService.LogoutHandler {
+public class NavBarSettings implements LoginService.LogoutHandler {
     private final WebElement header;
-    private final FormInput input;
 
-    public FindTopNavBar(final WebDriver driver) {
+    public NavBarSettings(final WebDriver driver) {
         header = driver.findElement(By.className("header"));
-        input = new FormInput(driver.findElement(By.cssSelector(".input-view-container .find-input")), driver);
     }
 
     @Override
     public void logOut() {
-        header.findElement(By.className("hp-settings")).click();
+        openSettings();
         header.findElement(By.className("navigation-logout")).click();
         Waits.loadOrFadeWait();
     }
 
-    public String getSearchBoxTerm() {
-        return input.getValue();
+    protected void openSettings() {
+        header.findElement(By.className("hp-settings")).click();
     }
 
-    public FormInput getSearchBoxInput() {
-        return input;
+    protected WebElement header() {
+        return header;
     }
 
     public String getCurrentUsername() {

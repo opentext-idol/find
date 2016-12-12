@@ -53,7 +53,7 @@ public class QueryTermsITCase extends FindTestBase {
 
         final String searchTerm = "Fred is a chimpanzee";
         final ListView results = findService.search(searchTerm);
-        assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(searchTerm));
+        assertThat(getElementFactory().getSearchBox().getValue(), is(searchTerm));
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
     }
@@ -66,7 +66,7 @@ public class QueryTermsITCase extends FindTestBase {
 
         final String searchTerm = "*";
         final ListView results = findService.search(searchTerm);
-        assertThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(searchTerm));
+        assertThat(getElementFactory().getSearchBox().getValue(), is(searchTerm));
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
     }
@@ -233,7 +233,7 @@ public class QueryTermsITCase extends FindTestBase {
         getWindow().refresh();
         findPage = getElementFactory().getFindPage();
 
-        verifyThat(getElementFactory().getTopNavBar().getSearchBoxTerm(), is(""));
+        verifyThat(getElementFactory().getSearchBox().getValue(), is(""));
         verifyThat("taken back to landing page after refresh", findPage.footerLogo(), displayed());
     }
 
