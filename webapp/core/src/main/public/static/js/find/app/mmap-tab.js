@@ -12,7 +12,7 @@ define([
             && attributes.mmapEventTime;
     }
 
-    const baseUrlRegex = /(?:\w+:\/\/)?([^:]+:\d+)(?:\/[^/]+)*/;
+    const baseUrlRegex = /(?:\w+:\/\/)?([^:/]+(?::\d+)?)(?:\/[^/]+)*/;
 
     function canBeReused (configuration) {
         return baseUrlRegex.exec(configuration.mmapBaseUrl)[1] === baseUrlRegex.exec(location.host())[1];
@@ -23,6 +23,7 @@ define([
 
         return {
             supported: _.partial(supported, configuration),
+            canBeReused: _.partial(canBeReused, configuration),
             open: function (attributes) {
                 if (supported(configuration, attributes)) {
                     if (canBeReused(configuration) && childWindow && !childWindow.closed) {

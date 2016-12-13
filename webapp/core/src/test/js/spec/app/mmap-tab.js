@@ -47,14 +47,17 @@ define([
                     expect(this.open).toHaveBeenCalled();
                 });
 
-                describe('but is not accessible, opening another tab', function() {
+                describe('but is not accessible', function() {
                     beforeEach(function() {
                         spyOn(location, 'host').and.returnValue('http://some-other-host:8080');
-
-                        this.mmapTab.open(VALID_ATTRIBUTES);
                     });
 
-                    it('should open a new tab', function () {
+                    it('should not be reusable', function () {
+                        expect(this.mmapTab.canBeReused()).toBeFalsy();
+                    });
+
+                    it('should open a new tab when opened again', function () {
+                        this.mmapTab.open(VALID_ATTRIBUTES);
                         expect(this.open).toHaveBeenCalledTimes(2);
                     });
                 });
@@ -62,6 +65,10 @@ define([
                 describe('and is accessible', function() {
                     beforeEach(function() {
                         spyOn(location, 'host').and.returnValue('http://some-host:8080');
+                    });
+
+                    it('should be reusable', function () {
+                        expect(this.mmapTab.canBeReused()).toBeTruthy();
                     });
 
                     const sourceTypeTests = [{
@@ -96,6 +103,17 @@ define([
             });
         });
 
+        describe('with configuration on port 80', function() {
+            beforeEach(function() {
+                this.mmapTab = mmapTabGenerator({mmapBaseUrl: 'http://some-host/'});
+                spyOn(location, 'host').and.returnValue('some-host');
+            });
+
+            it('should be reusable', function () {
+                expect(this.mmapTab.canBeReused()).toBeTruthy();
+            });
+        });
+
         describe('Without valid configuration', function() {
             beforeEach(function() {
                 this.mmapTab = mmapTabGenerator({});
@@ -103,6 +121,10 @@ define([
 
             it('should not be supported', function () {
                 expect(this.mmapTab.supported(VALID_ATTRIBUTES)).toBeFalsy();
+            });
+
+            it('should not be reusable', function () {
+                expect(this.mmapTab.canBeReused()).toBeFalsy();
             });
         });
     });
