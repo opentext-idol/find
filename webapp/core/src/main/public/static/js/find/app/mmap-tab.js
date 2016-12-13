@@ -15,7 +15,9 @@ define([
     const baseUrlRegex = /(?:\w+:\/\/)?([^:/]+(?::\d+)?)(?:\/[^/]+)*/;
 
     function canBeReused (configuration) {
-        return baseUrlRegex.exec(configuration.mmapBaseUrl)[1] === baseUrlRegex.exec(location.host())[1];
+        return configuration.mmapBaseUrl
+            && location.host()
+            && baseUrlRegex.exec(configuration.mmapBaseUrl)[1] === baseUrlRegex.exec(location.host())[1];
     }
 
     return function (configuration) {
