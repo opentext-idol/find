@@ -35,6 +35,9 @@ define([
                 // the link itself is responsible for opening the window
                 events().original();
             },
+            'click .document-detail-mmap-button': function () {
+                this.mmapTab.open(this.model.attributes);
+            },
             'shown.bs.tab a[data-toggle=tab]': function (event) {
                 var tab = this.tabs[$(event.target).parent().index()];
                 tab.view.render();
@@ -45,6 +48,7 @@ define([
             this.model = options.model;
             this.backUrl = options.backUrl;
             this.indexesCollection = options.indexesCollection;
+            this.mmapTab = options.mmapTab;
 
             this.tabs = this.filterTabs(tabs);
 
@@ -62,8 +66,7 @@ define([
                 href: this.documentHref,
                 tabs: this.tabs,
                 relatedConcepts: configuration().enableRelatedConcepts,
-                mmapBaseUrl: configuration().mmapBaseUrl,
-                mmapUrl: this.model.get('mmapUrl')
+                mmap: this.mmapTab.supported(this.model.attributes)
             }));
 
             this.renderDocument();

@@ -200,6 +200,24 @@
       ],
       "type": "Date"
     },
+    "mmapEventSourceType": {
+      "names": [
+        "MMAP_EVENT_SOURCE_TYPE"
+      ],
+      "advanced": true
+    },
+    "mmapEventSourceName": {
+      "names": [
+        "MMAP_EVENT_SOURCE_NAME"
+      ],
+      "advanced": true
+    },
+    "mmapEventTime": {
+      "names": [
+        "MMAP_EVENT_TIME"
+      ],
+      "advanced": true
+    },
     "mmapUrl": {
       "names": [
         "MMAP_PROXY_URL"
