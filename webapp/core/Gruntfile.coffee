@@ -62,6 +62,9 @@ module.exports = (grunt) ->
           template: jasmineRequireTemplate
           templateOptions:
             requireConfigFile: testRequireConfig
+          junit:
+            path: "target/jasmine-tests"
+            consolidate: true
       'browser-test':
         src: sourcePath
         options:
