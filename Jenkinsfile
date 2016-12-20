@@ -29,7 +29,7 @@ node {
 		env.PATH="${tool 'Maven3'}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
 
 		// Verify is needed to run some basic integration tests but these are not the selenium tests
-		sh "mvn -f webapp/pom.xml -Dtest.agentstore.host=abc-dev.hpswlabs.hp.com -Dtest.content.host=abc-dev.hpswlabs.hp.com -Dtest.community.host=abc-dev.hpswlabs.hp.com -Dtest.qms.host=abc-dev.hpswlabs.hp.com -Dtest.stats.host=abc-dev.hpswlabs.hp.com -Dtest.view.host=abc-dev.hpswlabs.hp.com -Dtest.answer.host=abc-dev.hpswlabs.hp.com -Dapplication.buildNumber=${gitCommit} clean verify -P production -U -pl idol -am"
+		sh "mvn ${getMavenArguments} -f webapp/pom.xml -Dapplication.buildNumber=${gitCommit} clean verify -P production -U -pl idol -am"
 	}
 
 	stage 'Archive output'
@@ -117,4 +117,11 @@ def getOrgRepoName() {
 		script: "git remote -v | head -1 | perl -pe 's~^.*?(?:git@|https?://)([^:/]*?)[:/](.*?)(?:\\.git)?\\s*\\((?:fetch|push)\\)\$~\\1/\\2~p'",
 		returnStdout: true
 	).trim()
+}
+
+def getMavenArguments() {
+    sh (
+        script: "bash /home/fenkins/resources/apps/find-maven-arguments.sh"
+        returnStdout: true
+    ).trim()
 }
