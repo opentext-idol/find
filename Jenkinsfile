@@ -28,8 +28,10 @@ node {
 		env.JAVA_HOME="${tool 'Java 8 OpenJDK'}"
 		env.PATH="${tool 'Maven3'}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
 
+        mavenArguments = getMavenArguments()
+
 		// Verify is needed to run some basic integration tests but these are not the selenium tests
-		sh "mvn ${getMavenArguments} -f webapp/pom.xml -Dapplication.buildNumber=${gitCommit} clean verify -P production -U -pl idol -am"
+		sh "mvn ${mavenArguments} -f webapp/pom.xml -Dapplication.buildNumber=${gitCommit} clean verify -P production -U -pl idol -am"
 	}
 
 	stage 'Archive output'
