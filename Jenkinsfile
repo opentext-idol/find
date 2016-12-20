@@ -121,7 +121,7 @@ def getOrgRepoName() {
 
 def getMavenArguments() {
     sh (
-        script: "bash /home/fenkins/resources/apps/find-maven-arguments.sh"
+        script: "bash /home/fenkins/resources/apps/find-maven-arguments.sh",
         returnStdout: true
     ).trim()
 }
