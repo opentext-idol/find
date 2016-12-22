@@ -3,7 +3,7 @@ package com.hp.autonomy.frontend.find.idol.answer;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
-import com.hp.autonomy.types.idol.responses.answer.Answer;
+import com.hp.autonomy.types.idol.responses.answer.AskAnswer;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,16 +26,16 @@ class AnswerServerController {
 
     @Autowired
     AnswerServerController(final AskAnswerServerService askAnswerServerService,
-                                  final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory) {
+                           final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory) {
         this.askAnswerServerService = askAnswerServerService;
         this.requestBuilderFactory = requestBuilderFactory;
     }
 
     @RequestMapping(value = ASK_PATH, method = RequestMethod.GET)
-    public List<Answer> ask(@RequestParam(TEXT_PARAM)
-                            final String text,
-                            @RequestParam(value = MAX_RESULTS_PARAM, required = false)
-                            final Integer maxResults) {
+    public List<AskAnswer> ask(@RequestParam(TEXT_PARAM)
+                               final String text,
+                               @RequestParam(value = MAX_RESULTS_PARAM, required = false)
+                               final Integer maxResults) {
         final AskAnswerServerRequest request = requestBuilderFactory.getObject()
                 .text(text)
                 .maxResults(maxResults)
