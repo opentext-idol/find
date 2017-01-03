@@ -55,19 +55,19 @@ node {
 			def uploadSpec = """{
 				"files": [
 					{
-						"pattern": "idol/target/*.war",
+						"pattern": "webapp/idol/target/*.war",
 						"target": "${artifactLocation}"
 					},
 					{
-						"pattern": "hod/target/*.war",
+						"pattern": "webapp/hod/target/*.war",
 						"target": "${artifactLocation}"
 					},
 					{
-						"pattern": "on-prem-dist/target/*.zip",
+						"pattern": "webapp/on-prem-dist/target/*.zip",
 						"target": "${artifactLocation}"
 					},
 					{
-						"pattern": "hsod-dist/target/*.zip",
+						"pattern": "webapp/hsod-dist/target/*.zip",
 						"target": "${artifactLocation}"
 					}
 				]
@@ -83,7 +83,12 @@ node {
 
     stage 'Deploy'
     node {
-        sh 'node /opt/deployer-client/index.js --config ~/deployer-client/config.json --path /find --debug'
+        sh '''
+            source /home/fenkins/ansible/hacking/env-setup
+            python tools-apothecary/apothecary.py --dir /home/fenkins/app-playbook/roles/ -c /home/fenkins/tools-apothecary/apothecary.yml
+            cd /home/fenkins/app-playbook
+            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook find.yml -vv -i find_hosts
+        '''
     }
 
 	stage 'Notifications'
