@@ -100,6 +100,18 @@ define([
                 }, {
                     key: referenceKey,
                     value: this.model.get(referenceKey)
+                }, {
+                    key: 'comment',
+                    edit: true,
+                    value: this.model.get('comment')
+                }, {
+                    key: 'workflow',
+                    edit: 'unspecified|escalate|ignore|manager',
+                    value: this.model.get('workflow')
+                }, {
+                    key: 'valid',
+                    edit: 'unvalidated|validated|invalidated',
+                    value: this.model.get('valid')
                 }]
             }));
 
