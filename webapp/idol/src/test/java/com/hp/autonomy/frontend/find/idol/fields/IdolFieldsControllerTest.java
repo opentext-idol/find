@@ -6,8 +6,12 @@
 package com.hp.autonomy.frontend.find.idol.fields;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.google.common.collect.ImmutableList;
+import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.frontend.find.core.fields.AbstractFieldsControllerTest;
 import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
+import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolConfiguration;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequest;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsService;
@@ -17,15 +21,27 @@ import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricValu
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+@SpringBootTest(classes = HavenSearchIdolConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolFieldsController, IdolFieldsRequest, AciErrorException, String, IdolQueryRestrictions, IdolParametricRequest> {
     @Mock
     private IdolFieldsService idolFieldsService;
@@ -59,7 +75,7 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
         when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
 
-        return new IdolFieldsController(idolFieldsService, idolParametricValuesService, parametricRequestBuilderFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
+        return new IdolFieldsController(idolFieldsService, idolParametricValuesService, parametricRequestBuilderFactory, fieldPathNormaliser, tagNameFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
     }
 
     @Override
@@ -85,5 +101,54 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
     @Override
     protected List<FieldAndValueDetails> getParametricNumericFields() {
         return controller.getParametricNumericFields();
+    }
+
+    @Test
+    public void getParametricFieldsWithAlwaysShowList() {
+        mockSimpleParametricResponse();
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .parametricAlwaysShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .build());
+
+        final List<TagName> fields = getParametricFields();
+        assertThat(fields, hasSize(2));
+        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("/DOCUMENT/ParametricField1"))));
+        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("/DOCUMENT/ParametricField2"))));
+    }
+
+    @Test
+    public void getParametricFieldsWithNeverShowList() {
+        mockSimpleParametricResponse();
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .parametricNeverShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .build());
+
+        final List<TagName> fields = getParametricFields();
+        assertThat(fields, hasSize(1));
+        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("/DOCUMENT/ParametricField3"))));
+    }
+
+    @Test
+    public void getParametricFieldsWithAlwaysShowListAndNeverShowList() {
+        mockSimpleParametricResponse();
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .parametricAlwaysShow(Arrays.asList("ParametricField1", "DOCUMENT/ParametricField2"))
+                .parametricNeverShow(Collections.singletonList("ParametricField1"))
+                .build());
+
+        final List<TagName> fields = getParametricFields();
+        assertThat(fields, hasSize(1));
+        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("/DOCUMENT/ParametricField2"))));
+    }
+
+    private void mockSimpleParametricResponse() {
+        final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
+        response.put(FieldTypeParam.Numeric, Collections.emptyList());
+        response.put(FieldTypeParam.NumericDate, Collections.emptyList());
+        response.put(FieldTypeParam.Parametric, ImmutableList.of(tagNameFactory.buildTagName("DOCUMENT/ParametricField1"), tagNameFactory.buildTagName("DOCUMENT/ParametricField2"), tagNameFactory.buildTagName("DOCUMENT/ParametricField3")));
+        when(service.getFields(any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
     }
 }

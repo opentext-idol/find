@@ -14,6 +14,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
+import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -23,6 +25,8 @@ import java.io.IOException;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
+@JsonTest
+@AutoConfigureJsonTesters(enabled = false)
 @SpringBootTest(classes = {
         ConfigFileConfiguration.class, InMemoryConfiguration.class, IdolConfiguration.class, TestConfiguration.class, HavenSearchIdolConfiguration.class
 }, value = "hp.find.persistentState = INMEMORY", webEnvironment = SpringBootTest.WebEnvironment.NONE)

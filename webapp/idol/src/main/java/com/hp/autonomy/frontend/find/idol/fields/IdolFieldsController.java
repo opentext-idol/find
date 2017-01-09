@@ -10,6 +10,8 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
+import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequest;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsService;
@@ -39,9 +41,11 @@ class IdolFieldsController extends FieldsController<IdolFieldsRequest, AciErrorE
             final IdolFieldsService fieldsService,
             final IdolParametricValuesService parametricValuesService,
             final ObjectFactory<IdolParametricRequestBuilder> parametricRequestBuilderFactory,
+            final FieldPathNormaliser fieldPathNormaliser,
+            final TagNameFactory tagNameFactory,
             final ConfigService<? extends FindConfig> configService,
             final ObjectFactory<IdolFieldsRequestBuilder> fieldsRequestBuilderFactory, final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory) {
-        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, configService);
+        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, fieldPathNormaliser, tagNameFactory, configService);
         this.fieldsRequestBuilderFactory = fieldsRequestBuilderFactory;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
     }

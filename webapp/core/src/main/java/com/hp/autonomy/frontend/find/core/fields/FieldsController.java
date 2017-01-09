@@ -8,8 +8,10 @@ package com.hp.autonomy.frontend.find.core.fields;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsRequest;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
+import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
@@ -22,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -39,17 +40,24 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     private final FieldsService<R, E> fieldsService;
     private final ParametricValuesService<P, Q, E> parametricValuesService;
     private final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory;
+    private final FieldPathNormaliser fieldPathNormaliser;
+    private final TagNameFactory tagNameFactory;
     private final ConfigService<? extends FindConfig> configService;
 
+    @SuppressWarnings("ConstructorWithTooManyParameters")
     protected FieldsController(
             final FieldsService<R, E> fieldsService,
             final ParametricValuesService<P, Q, E> parametricValuesService,
             final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory,
+            final FieldPathNormaliser fieldPathNormaliser,
+            final TagNameFactory tagNameFactory,
             final ConfigService<? extends FindConfig> configService
     ) {
         this.fieldsService = fieldsService;
         this.parametricValuesService = parametricValuesService;
         this.parametricRequestBuilderFactory = parametricRequestBuilderFactory;
+        this.fieldPathNormaliser = fieldPathNormaliser;
+        this.tagNameFactory = tagNameFactory;
         this.configService = configService;
     }
 
@@ -95,17 +103,15 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
 
         // Also include #additionalFields that match the always and never show lists
         final Stream<TagName> additionalStream = additionalFields.stream()
-                .map(TagName::new)
+                .map(tagNameFactory::buildTagName)
                 .filter(alwaysAndNeverShowFilter);
 
         final Collection<TagName> parametricFields = Stream.concat(parametricStream, additionalStream)
                 .collect(Collectors.toList());
 
         // Fetch the value details for the fields
-        final List<String> fieldNames = parametricFields.stream().map(TagName::getId).collect(Collectors.toCollection(LinkedList::new));
-
         final P parametricRequest = parametricRequestBuilderFactory.getObject()
-                .fieldNames(fieldNames)
+                .fieldNames(parametricFields)
                 .queryRestrictions(createValueDetailsQueryRestrictions(request))
                 .build();
 
@@ -139,29 +145,12 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
 
         final Collection<String> parametricAlwaysShow = uiCustomization == null || uiCustomization.getParametricAlwaysShow() == null
                 ? Collections.emptyList()
-                : uiCustomization.getParametricAlwaysShow().stream().map(this::normaliseFieldName).collect(Collectors.toList());
+                : uiCustomization.getParametricAlwaysShow().stream().map(fieldPathNormaliser::normaliseFieldPath).collect(Collectors.toList());
 
         final Collection<String> parametricNeverShow = uiCustomization == null || uiCustomization.getParametricNeverShow() == null
                 ? Collections.emptyList()
-                : uiCustomization.getParametricNeverShow().stream().map(this::normaliseFieldName).collect(Collectors.toList());
+                : uiCustomization.getParametricNeverShow().stream().map(fieldPathNormaliser::normaliseFieldPath).collect(Collectors.toList());
 
         return tagName -> (parametricAlwaysShow.isEmpty() || parametricAlwaysShow.contains(tagName.getId())) && !parametricNeverShow.contains(tagName.getId());
-    }
-
-    //TODO: this logic should be in haven-search-components or somewhere similar
-
-    private static final String FULL_PATH_IDENTIFIER = "DOCUMENT/";
-
-    private String normaliseFieldName(final String fieldName) {
-        String normalisedFieldName = fieldName;
-        if (fieldName.contains(FULL_PATH_IDENTIFIER)) {
-            if (!fieldName.startsWith("/")) {
-                normalisedFieldName = '/' + fieldName;
-            }
-        } else if (!fieldName.equals(ParametricValuesService.AUTN_DATE_FIELD)) {
-            normalisedFieldName = '/' + FULL_PATH_IDENTIFIER + fieldName;
-        }
-
-        return normalisedFieldName;
     }
 }
