@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +68,7 @@ public class SavedSearchService {
             elementFactory.getSearchTabBar().tab(title).activate();
             elementFactory.getFindPage().waitForLoad();
             deleteCurrentSearch();
+            tabBar.waitUntilTabGone(title);
         }
     }
 

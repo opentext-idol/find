@@ -91,7 +91,7 @@ public class SearchTabBar implements Iterable<SearchTab> {
     }
 
     public void waitUntilTabGone(final String title) {
-        new WebDriverWait(driver, 10).withMessage("deleted tab to disappear").until(new ExpectedCondition<Boolean>() {
+        new WebDriverWait(driver, 300).withMessage("deleted tab to disappear").until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(final WebDriver driver) {
                 return bar.findElements(By.xpath(".//*[contains(normalize-space(),'"+title+"')]")).isEmpty();
@@ -100,7 +100,8 @@ public class SearchTabBar implements Iterable<SearchTab> {
     }
 
     public void waitUntilSavedSearchAppears() {
-        new WebDriverWait(driver, 180).until(ExpectedConditions.presenceOfElementLocated
-                (By.cssSelector(".search-tab:nth-child(2) .search-tab-title .hp-new:not(.hide)")));
+        new WebDriverWait(driver, 400).until(ExpectedConditions.presenceOfElementLocated
+                (By.cssSelector(".search-tab:nth-child(3) .search-tab-title")));
     }
+
 }
