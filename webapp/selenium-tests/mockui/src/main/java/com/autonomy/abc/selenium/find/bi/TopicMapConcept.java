@@ -30,7 +30,8 @@ public class TopicMapConcept {
         Double[][] boundaries = {{10000000., -1.}, {10000000., -1.}};
 
         for(String value : coordinatesAsStrings) {
-            List<Double> pair = Arrays.asList(value.split(","))
+            //In IE coordinates are separated by a space vs. a comma in other browsers.
+            List<Double> pair = Arrays.asList(value.trim().split(",|\\s"))
                     .stream()
                     .map(Double::parseDouble)
                     .collect(Collectors.toList());

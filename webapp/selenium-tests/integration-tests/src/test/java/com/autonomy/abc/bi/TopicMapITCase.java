@@ -121,7 +121,6 @@ public class TopicMapITCase extends IdolFindTestBase {
     }
 
     @Test
-    //TODO: SO BRITTLE
     public void testClickingOnMapEntities() {
         search("m");
 

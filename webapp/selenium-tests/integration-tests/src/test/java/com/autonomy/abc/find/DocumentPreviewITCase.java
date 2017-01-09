@@ -22,6 +22,9 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
@@ -86,17 +89,28 @@ public class DocumentPreviewITCase extends FindTestBase {
             final Window original = session.getActiveWindow();
 
             assertThat("Link does not contain 'undefined'",detailedPreviewPage.originalDocLink(),not(containsString("undefined")));
+            assertThat("Page not blank", detailedPreviewPage.frameExists());
 
             detailedPreviewPage.openOriginalDoc();
             final Window newWindow = session.switchWindow(session.countWindows() - 1);
             newWindow.activate();
             Waits.loadOrFadeWait();
-            verifyThat(session.getDriver().getCurrentUrl(), containsString(reformatReference(reference)));
+            final String decodedURL = decodeURL(session.getDriver().getCurrentUrl());
+            verifyThat(decodedURL, containsString(reformatReference(reference)));
 
             newWindow.close();
             original.activate();
 
             detailedPreviewPage.goBackToSearch();
+        }
+    }
+
+    private String decodeURL(final String encoded) {
+        try {
+            return URLDecoder.decode(encoded,"UTF8");
+        } catch (final UnsupportedEncodingException e) {
+            LOGGER.info("Could not unencode the URL");
+            return encoded;
         }
     }
 

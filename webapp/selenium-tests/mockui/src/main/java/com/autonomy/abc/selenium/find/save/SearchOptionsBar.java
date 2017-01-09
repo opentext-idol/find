@@ -27,7 +27,7 @@ public class SearchOptionsBar {
         return findElement(By.cssSelector(".show-save-as[data-search-type='"+type+"']"));
     }
 
-    public FormInput searchTitleInput() {
+    FormInput searchTitleInput() {
         return new FormInput(findElement(By.className("search-title-input")), driver);
     }
 
@@ -38,7 +38,7 @@ public class SearchOptionsBar {
     void confirmSave() {
         final WebElement confirmButton = saveConfirmButton();
         confirmButton.click();
-        new WebDriverWait(driver, 20)
+        new WebDriverWait(driver, 120)
                 .withMessage("saving a search")
                 .until(new ExpectedCondition<Boolean>() {
                 @Override

@@ -152,7 +152,7 @@ public class MapITCase extends IdolFindTestBase {
 
         finally {
             findPage.goBackToSearch();
-            savedSearchService.deleteAll();
+            savedSearchService.waitForSomeTabsAndDelete();
         }
     }
 

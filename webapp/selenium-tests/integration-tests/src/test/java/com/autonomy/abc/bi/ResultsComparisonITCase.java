@@ -66,8 +66,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         findPage = elementFactory.getFindPage();
         getDriver().get(getConfig().getAppUrl(getApplication()));
         getElementFactory().getFindPage().waitUntilDatabasesLoaded();
-        findPage.waitUntilSearchTabsLoaded();
-        savedSearchService.deleteAll();
+        savedSearchService.waitForSomeTabsAndDelete();
     }
 
     private TopicMapView compareAndGetTopicMap(final String firstSearch, final String secondSearch) {

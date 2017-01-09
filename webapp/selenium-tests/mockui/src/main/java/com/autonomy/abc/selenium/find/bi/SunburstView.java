@@ -3,17 +3,18 @@ package com.autonomy.abc.selenium.find.bi;
 
 import com.autonomy.abc.selenium.find.Container;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
-import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 
 public class SunburstView extends ParametricFieldView {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SunburstView.class);
 
     public SunburstView(final WebDriver driver) {
         super(driver, By.xpath(".//*[contains(@class,'parametric-content') and contains(@class,'sunburst')]/../.."));
@@ -34,19 +35,25 @@ public class SunburstView extends ParametricFieldView {
     }
 
     public void waitForSunburst() {
-        new WebDriverWait(getDriver(), 35).withMessage("waiting for sunburst or sunburst message")
+        new WebDriverWait(getDriver(), 60).withMessage("waiting for sunburst or sunburst message")
                 .until(new ExpectedCondition<Boolean>() {
                     @Override
                     public Boolean apply(final WebDriver driver) {
-                        return (!driver.findElements(By.cssSelector(".query-service-view-container > :not(.hide):not(.search-tabs-container) .sunburst svg")).isEmpty()
-                                || driver.findElement(By.cssSelector(".query-service-view-container > :not(.hide):not(.search-tabs-container) .parametric-view-message")).isDisplayed())
-                                && !driver.findElement(By.cssSelector(".parametric-loading")).isDisplayed();
+                        final WebElement sunburstView = driver.findElement(By.xpath(".//*[contains(@class,'parametric-content') and contains(@class,'sunburst')]/../.."));
+                        return (!sunburstView.findElements(By.cssSelector("svg")).isEmpty()
+                                || sunburstView.findElement(By.cssSelector(".parametric-view-message")).isDisplayed())
+                                && !sunburstView.findElement(By.cssSelector(".parametric-loading")).isDisplayed();
                     }
                 });
     }
 
+    //TODO: IE specific stale element exception: may be IE driver related or bug.
     public String getSunburstCentreName() {
-        return findElement(By.className("sunburst-sector-name")).getText();
+        return sunburstCentre().getText();
+    }
+
+    public WebElement sunburstCentre() {
+        return findElement(By.className("sunburst-sector-name"));
     }
 
     private boolean sunburstCentreHasText() {
@@ -76,6 +83,7 @@ public class SunburstView extends ParametricFieldView {
 
     public void segmentHover(final WebElement segment) {
         DriverUtil.hover(getDriver(), segment);
+
         if (!sunburstCentreHasText() || (sunburstCentreHasText() && getSunburstCentreName().equals("Parametric Distribution"))) {
             specialHover(segment);
         }

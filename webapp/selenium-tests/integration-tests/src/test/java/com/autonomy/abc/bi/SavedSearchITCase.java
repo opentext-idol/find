@@ -68,7 +68,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
     @After
     public void tearDown() {
-        saveService.deleteAll();
+        saveService.waitForSomeTabsAndDelete();
     }
 
     @Test
@@ -211,7 +211,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-269")
     public void testSearchesWithNumericFilters() {
         final NumericWidgetService widgetService = ((BIIdolFind) getApplication()).numericWidgetService();
-        DriverUtil.clickAndDrag(100, widgetService.searchAndSelectNthGraph(0, "saint").graph(), getDriver());
+        DriverUtil.clickAndDrag(100, widgetService.searchAndSelectNthGraph(0, "saint", getDriver()).graph(), getDriver());
 
         elementFactory.getListView().waitForResultsToLoad();
         saveService.saveCurrentAs("saaaaved", SearchType.QUERY);

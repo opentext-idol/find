@@ -39,7 +39,9 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
         return findElement(By.className("loading-spinner"));
     }
 
-    public WebElement frame(){return findElement(By.tagName("iframe"));}
+    public WebElement frame(){ return findElement(By.tagName("iframe")); }
+
+    public boolean frameExists() { return !findElements(By.tagName("iframe")).isEmpty(); }
 
     public WebElement similarDatesTab(){
         return findElement(By.xpath("//span[contains(text(),'Similar dates')]"));

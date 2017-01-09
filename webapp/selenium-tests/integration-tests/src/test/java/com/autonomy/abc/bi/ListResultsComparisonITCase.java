@@ -67,8 +67,6 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         savedSearchService = getApplication().savedSearchService();
         elementFactory = getElementFactory();
 
-        savedSearchService.waitForSomeTabsAndDelete();
-
         findPage = getElementFactory().getFindPage();
         findPage.goToListView();
         elementFactory.getListView().waitForResultsToLoad();
