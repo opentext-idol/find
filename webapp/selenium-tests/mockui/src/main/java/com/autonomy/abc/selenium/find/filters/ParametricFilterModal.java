@@ -32,7 +32,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
     }
 
     public static ParametricFilterModal getParametricModal(final WebDriver driver) {
-        final WebElement $el = new WebDriverWait(driver, 30)
+        final WebElement $el = new WebDriverWait(driver, 40)
                 .withMessage("Parametric filter modal did not open within 30 seconds ")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
         return new ParametricFilterModal($el, driver);
@@ -194,7 +194,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
     }
 
     private static void waitUntilModalGone(final WebDriver driver) {
-        new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
+        new WebDriverWait(driver, 30).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
     }
 
     private static boolean isBigEnough(final int thisCount, final int totalResults) {

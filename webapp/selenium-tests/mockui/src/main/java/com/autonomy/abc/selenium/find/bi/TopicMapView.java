@@ -99,6 +99,7 @@ public class TopicMapView {
         return findElements(CONCEPT_CLUSTER_LOCATOR);
     }
 
+    //TODO: In IE this does not always reveal the lower layer
     private void clickConceptClusters() {
         conceptClusters().stream().forEach(this::offCentreClick);
     }
