@@ -24,6 +24,7 @@ define([
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
+    'find/app/page/search/results/dategraph/dategraph-view',
     'find/app/page/search/results/table/table-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
@@ -33,7 +34,7 @@ define([
 ], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel,
             ParametricCollection, ParametricFieldsCollection, NumericParametricFieldsCollection, queryStrategy,
             stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, addChangeListener,
-            SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, TableView, TimeBarView,
+            SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, DateGraphView, TableView, TimeBarView,
             configuration, prettifyFieldName, i18n, templateString) {
     'use strict';
 
@@ -263,6 +264,15 @@ define([
                     selector: {
                         displayNameKey: 'table',
                         icon: 'hp-table'
+                    }
+                },
+                dategraph: {
+                    Constructor: DateGraphView,
+                    constructorArguments: subViewArguments,
+                    shown: hasBiRole && this.displayDependentParametricViews,
+                    selector: {
+                        displayNameKey: 'dategraph',
+                        icon: 'hp-analytics'
                     }
                 }
             };

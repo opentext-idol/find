@@ -121,7 +121,7 @@
           "bi": false
         },
         "resultViewOrder": {
-          "bi": ["topic-map", "list", "sunburst", "table", "map"],
+          "bi": ["topic-map", "list", "sunburst", "table", "map", "dategraph"],
           "user": ["list"]
         }
       },
