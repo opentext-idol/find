@@ -16,8 +16,9 @@ import java.security.Principal;
 import java.util.*;
 
 @Controller
-public class HodFindController extends FindController<HodFindConfig> {
+public class HodFindController extends FindController<HodFindConfig, HodFindConfig.HodFindConfigBuilder> {
 
+    @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
     public HodFindController(final ControllerUtils controllerUtils,
                              final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,

@@ -7,9 +7,9 @@ package com.hp.autonomy.frontend.find.hod.fields;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.frontend.find.core.fields.AbstractFieldsControllerTest;
 import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
@@ -31,7 +31,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
@@ -44,8 +43,8 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-@SpringBootTest(classes = HavenSearchHodConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFieldsController, HodFieldsRequest, HodErrorException, ResourceIdentifier, HodQueryRestrictions, HodParametricRequest> {
+@SpringBootTest(classes = HavenSearchHodConfiguration.class, properties = {"mock.authentication=false", "mock.authenticationRetriever=false"}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFieldsController, HodFieldsRequest, HodErrorException, ResourceIdentifier, HodQueryRestrictions, HodParametricRequest, HodFindConfig> {
     @Mock
     private HodFieldsService hodFieldsService;
     @Mock
@@ -71,6 +70,9 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
     @Mock
     private HodQueryRestrictionsBuilder queryRestrictionsBuilder;
 
+    @Mock
+    private HodFindConfig hodFindConfig;
+
     @Override
     protected HodFieldsController constructController() {
         when(parametricRequestBuilderFactory.getObject()).thenReturn(parametricRequestBuilder);
@@ -86,7 +88,7 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
         when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
 
-        return new HodFieldsController(hodFieldsService, hodParametricValuesService, parametricRequestBuilderFactory, fieldPathNormaliser, tagNameFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
+        return new HodFieldsController(hodFieldsService, hodParametricValuesService, parametricRequestBuilderFactory, tagNameFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
     }
 
     @Override
@@ -97,6 +99,11 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
     @Override
     protected ParametricValuesService<HodParametricRequest, HodQueryRestrictions, HodErrorException> constructParametricValuesService() {
         return hodParametricValuesService;
+    }
+
+    @Override
+    protected HodFindConfig mockConfig() {
+        return hodFindConfig;
     }
 
     @Override
@@ -140,54 +147,5 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
         final List<FieldAndValueDetails> fields = getParametricDateFields();
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(is(new FieldAndValueDetails("parametric_date_field", "Parametric Date Field", 146840000d, 146860000d, 1000))));
-    }
-
-    @Test
-    public void getParametricFieldsWithAlwaysShowList() throws HodErrorException {
-        mockSimpleParametricResponse();
-
-        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricAlwaysShow(Arrays.asList("ParametricField1", "ParametricField2"))
-                .build());
-
-        final List<TagName> fields = getParametricFields();
-        assertThat(fields, hasSize(2));
-        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("ParametricField1"))));
-        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("ParametricField2"))));
-    }
-
-    @Test
-    public void getParametricFieldsWithNeverShowList() throws HodErrorException {
-        mockSimpleParametricResponse();
-
-        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricNeverShow(Arrays.asList("ParametricField1", "ParametricField2"))
-                .build());
-
-        final List<TagName> fields = getParametricFields();
-        assertThat(fields, hasSize(1));
-        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("ParametricField3"))));
-    }
-
-    @Test
-    public void getParametricFieldsWithAlwaysShowListAndNeverShowList() throws HodErrorException {
-        mockSimpleParametricResponse();
-
-        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricAlwaysShow(Arrays.asList("ParametricField1", "ParametricField2"))
-                .parametricNeverShow(Collections.singletonList("ParametricField1"))
-                .build());
-
-        final List<TagName> fields = getParametricFields();
-        assertThat(fields, hasSize(1));
-        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("ParametricField2"))));
-    }
-
-    private void mockSimpleParametricResponse() throws HodErrorException {
-        final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
-        response.put(FieldTypeParam.Numeric, Collections.emptyList());
-        response.put(FieldTypeParam.NumericDate, Collections.emptyList());
-        response.put(FieldTypeParam.Parametric, ImmutableList.of(tagNameFactory.buildTagName("ParametricField1"), tagNameFactory.buildTagName("ParametricField2"), tagNameFactory.buildTagName("ParametricField3")));
-        when(service.getFields(any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
     }
 }

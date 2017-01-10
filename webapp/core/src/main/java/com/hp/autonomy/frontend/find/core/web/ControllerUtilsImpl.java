@@ -35,10 +35,10 @@ class ControllerUtilsImpl implements ControllerUtils {
     private final ObjectMapper objectMapper;
     private final MessageSource messageSource;
     private final String commit;
-    private final ConfigService<? extends FindConfig> configService;
+    private final ConfigService<? extends FindConfig<?, ?>> configService;
 
     @Autowired
-    public ControllerUtilsImpl(final ObjectMapper objectMapper, final MessageSource messageSource, @Value(AppConfiguration.GIT_COMMIT_PROPERTY) final String commit, final ConfigService<? extends FindConfig> configService) {
+    public ControllerUtilsImpl(final ObjectMapper objectMapper, final MessageSource messageSource, @Value(AppConfiguration.GIT_COMMIT_PROPERTY) final String commit, final ConfigService<? extends FindConfig<?, ?>> configService) {
         this.objectMapper = objectMapper;
         this.messageSource = messageSource;
         this.commit = commit;

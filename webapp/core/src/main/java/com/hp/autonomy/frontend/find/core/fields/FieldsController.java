@@ -8,7 +8,6 @@ package com.hp.autonomy.frontend.find.core.fields;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
-import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsRequest;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
@@ -26,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,23 +40,20 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     private final FieldsService<R, E> fieldsService;
     private final ParametricValuesService<P, Q, E> parametricValuesService;
     private final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory;
-    private final FieldPathNormaliser fieldPathNormaliser;
     private final TagNameFactory tagNameFactory;
-    private final ConfigService<? extends FindConfig> configService;
+    private final ConfigService<? extends FindConfig<?, ?>> configService;
 
     @SuppressWarnings("ConstructorWithTooManyParameters")
     protected FieldsController(
             final FieldsService<R, E> fieldsService,
             final ParametricValuesService<P, Q, E> parametricValuesService,
             final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory,
-            final FieldPathNormaliser fieldPathNormaliser,
             final TagNameFactory tagNameFactory,
-            final ConfigService<? extends FindConfig> configService
+            final ConfigService<? extends FindConfig<?, ?>> configService
     ) {
         this.fieldsService = fieldsService;
         this.parametricValuesService = parametricValuesService;
         this.parametricRequestBuilderFactory = parametricRequestBuilderFactory;
-        this.fieldPathNormaliser = fieldPathNormaliser;
         this.tagNameFactory = tagNameFactory;
         this.configService = configService;
     }
@@ -141,16 +138,14 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
      * @return A function which returns true if the TagName matches should be displayed after applying the always and never show lists
      */
     private Predicate<TagName> getAlwaysAndNeverShowFilter() {
-        final UiCustomization uiCustomization = configService.getConfig().getUiCustomization();
+        final UiCustomization maybeUiCustomization = configService.getConfig().getUiCustomization();
+        final Collection<TagName> parametricAlwaysShow = Optional.ofNullable(maybeUiCustomization)
+                .map(UiCustomization::getParametricAlwaysShow)
+                .orElse(Collections.emptyList());
+        final Collection<TagName> parametricNeverShow = Optional.ofNullable(maybeUiCustomization)
+                .map(UiCustomization::getParametricNeverShow)
+                .orElse(Collections.emptyList());
 
-        final Collection<String> parametricAlwaysShow = uiCustomization == null || uiCustomization.getParametricAlwaysShow() == null
-                ? Collections.emptyList()
-                : uiCustomization.getParametricAlwaysShow().stream().map(fieldPathNormaliser::normaliseFieldPath).collect(Collectors.toList());
-
-        final Collection<String> parametricNeverShow = uiCustomization == null || uiCustomization.getParametricNeverShow() == null
-                ? Collections.emptyList()
-                : uiCustomization.getParametricNeverShow().stream().map(fieldPathNormaliser::normaliseFieldPath).collect(Collectors.toList());
-
-        return tagName -> (parametricAlwaysShow.isEmpty() || parametricAlwaysShow.contains(tagName.getId())) && !parametricNeverShow.contains(tagName.getId());
+        return tagName -> (parametricAlwaysShow.isEmpty() || parametricAlwaysShow.contains(tagName)) && !parametricNeverShow.contains(tagName);
     }
 }

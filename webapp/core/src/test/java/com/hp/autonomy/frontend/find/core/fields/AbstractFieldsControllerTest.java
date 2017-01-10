@@ -10,7 +10,6 @@ import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
-import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsRequest;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
@@ -25,7 +24,6 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +40,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -49,25 +48,21 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @JsonTest
 @AutoConfigureJsonTesters(enabled = false)
-public abstract class AbstractFieldsControllerTest<C extends FieldsController<R, E, Q, P>, R extends FieldsRequest, E extends Exception, S extends Serializable, Q extends QueryRestrictions<S>, P extends ParametricRequest<Q>> {
+public abstract class AbstractFieldsControllerTest<C extends FieldsController<R, E, Q, P>, R extends FieldsRequest, E extends Exception, S extends Serializable, Q extends QueryRestrictions<S>, P extends ParametricRequest<Q>, F extends FindConfig<?, ?>> {
     @ClassRule
     public static final SpringClassRule SCR = new SpringClassRule();
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Mock
-    protected ConfigFileService<FindConfig> configService;
-
-    @Mock
-    protected FindConfig config;
-
-    @Autowired
-    protected FieldPathNormaliser fieldPathNormaliser;
+    protected ConfigFileService<F> configService;
 
     @Autowired
     protected TagNameFactory tagNameFactory;
 
-    protected FieldsService<R, E> service;
+    protected F config;
+
+    private FieldsService<R, E> service;
     private ParametricValuesService<P, Q, E> parametricValuesService;
     protected C controller;
 
@@ -83,8 +78,11 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
 
     protected abstract List<FieldAndValueDetails> getParametricNumericFields() throws E;
 
+    protected abstract F mockConfig();
+
     @Before
     public void setUp() throws E {
+        config = mockConfig();
         when(configService.getConfig()).thenReturn(config);
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder().parametricAlwaysShow(Collections.emptyList()).build());
 
@@ -99,7 +97,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         response.put(FieldTypeParam.Numeric, ImmutableList.of(tagNameFactory.buildTagName("numeric_field"), tagNameFactory.buildTagName("parametric_numeric_field")));
         response.put(FieldTypeParam.NumericDate, ImmutableList.of(tagNameFactory.buildTagName("date_field"), tagNameFactory.buildTagName("parametric_date_field")));
         response.put(FieldTypeParam.Parametric, ImmutableList.of(tagNameFactory.buildTagName("parametric_field"), tagNameFactory.buildTagName("parametric_numeric_field"), tagNameFactory.buildTagName("parametric_date_field")));
-        when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
+        when(service.getFields(any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
 
         final List<TagName> fields = getParametricFields();
         assertThat(fields, hasSize(1));
@@ -111,10 +109,10 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
         response.put(FieldTypeParam.NumericDate, Collections.emptyList());
         response.put(FieldTypeParam.Parametric, Collections.emptyList());
-        when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
+        when(service.getFields(any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricNeverShow(Collections.singletonList(ParametricValuesService.AUTN_DATE_FIELD))
+                .parametricNeverShowItem(tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD))
                 .build());
 
         final List<FieldAndValueDetails> output = getParametricDateFields();
@@ -128,7 +126,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
         response.put(FieldTypeParam.Numeric, ImmutableList.of(tagNameFactory.buildTagName("numeric_field"), tagNameFactory.buildTagName(fieldName)));
         response.put(FieldTypeParam.Parametric, ImmutableList.of(tagNameFactory.buildTagName("parametric_field"), tagNameFactory.buildTagName(fieldName), tagNameFactory.buildTagName("parametric_date_field")));
-        when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric))).thenReturn(response);
+        when(service.getFields(any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric))).thenReturn(response);
 
         final ValueDetails valueDetails = new ValueDetails.Builder()
                 .setMin(1.4)
@@ -142,7 +140,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .put(tagNameFactory.buildTagName(fieldName), valueDetails)
                 .build();
 
-        when(parametricValuesService.getValueDetails(Matchers.any())).thenReturn(valueDetailsOutput);
+        when(parametricValuesService.getValueDetails(any())).thenReturn(valueDetailsOutput);
 
         final List<FieldAndValueDetails> fields = getParametricNumericFields();
         assertThat(fields, hasSize(1));
@@ -154,7 +152,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
         response.put(FieldTypeParam.NumericDate, ImmutableList.of(tagNameFactory.buildTagName("date_field"), tagNameFactory.buildTagName("parametric_date_field")));
         response.put(FieldTypeParam.Parametric, ImmutableList.of(tagNameFactory.buildTagName("parametric_field"), tagNameFactory.buildTagName("parametric_numeric_field"), tagNameFactory.buildTagName("parametric_date_field")));
-        when(service.getFields(Matchers.any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
+        when(service.getFields(any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
 
         final ValueDetails valueDetails = new ValueDetails.Builder()
                 .setMin(146840000d)
@@ -177,11 +175,63 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .put(tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD), autnDateValueDetails)
                 .build();
 
-        when(parametricValuesService.getValueDetails(Matchers.any())).thenReturn(valueDetailsOutput);
+        when(parametricValuesService.getValueDetails(any())).thenReturn(valueDetailsOutput);
 
         final List<FieldAndValueDetails> fields = getParametricDateFields();
         assertThat(fields, hasSize(2));
         assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.buildTagName("parametric_date_field").getId(), "Parametric Date Field", 146840000d, 146860000d, 1000))));
         assertThat(fields, hasItem(is(new FieldAndValueDetails(ParametricValuesService.AUTN_DATE_FIELD, "Autn Date", 100000000d, 150000000d, 15000))));
+    }
+
+    @Test
+    public void getParametricFieldsWithAlwaysShowList() throws E {
+        mockSimpleParametricResponse();
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .parametricAlwaysShowItem(tagNameFactory.buildTagName("ParametricField1"))
+                .parametricAlwaysShowItem(tagNameFactory.buildTagName("ParametricField2"))
+                .build());
+
+        final List<TagName> fields = getParametricFields();
+        assertThat(fields, hasSize(2));
+        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("ParametricField1"))));
+        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("ParametricField2"))));
+    }
+
+    @Test
+    public void getParametricFieldsWithNeverShowList() throws E {
+        mockSimpleParametricResponse();
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .parametricNeverShowItem(tagNameFactory.buildTagName("ParametricField1"))
+                .parametricNeverShowItem(tagNameFactory.buildTagName("ParametricField2"))
+                .build());
+
+        final List<TagName> fields = getParametricFields();
+        assertThat(fields, hasSize(1));
+        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("ParametricField3"))));
+    }
+
+    @Test
+    public void getParametricFieldsWithAlwaysShowListAndNeverShowList() throws E {
+        mockSimpleParametricResponse();
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .parametricAlwaysShowItem(tagNameFactory.buildTagName("ParametricField1"))
+                .parametricAlwaysShowItem(tagNameFactory.buildTagName("ParametricField2"))
+                .parametricNeverShowItem(tagNameFactory.buildTagName("ParametricField1"))
+                .build());
+
+        final List<TagName> fields = getParametricFields();
+        assertThat(fields, hasSize(1));
+        assertThat(fields, hasItem(is(tagNameFactory.buildTagName("ParametricField2"))));
+    }
+
+    private void mockSimpleParametricResponse() throws E {
+        final Map<FieldTypeParam, List<TagName>> response = new EnumMap<>(FieldTypeParam.class);
+        response.put(FieldTypeParam.Numeric, Collections.emptyList());
+        response.put(FieldTypeParam.NumericDate, Collections.emptyList());
+        response.put(FieldTypeParam.Parametric, ImmutableList.of(tagNameFactory.buildTagName("ParametricField1"), tagNameFactory.buildTagName("ParametricField2"), tagNameFactory.buildTagName("ParametricField3")));
+        when(service.getFields(any(), eq(FieldTypeParam.Parametric), eq(FieldTypeParam.Numeric), eq(FieldTypeParam.NumericDate))).thenReturn(response);
     }
 }

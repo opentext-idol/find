@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.configuration.LoginTypes;
 import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.export.MetadataNode;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +27,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class FindController<C extends FindConfig> {
+public abstract class FindController<C extends FindConfig<C, B>, B extends FindConfigBuilder<C, B>> {
     public static final String APP_PATH = "/public";
     public static final String LOGIN_PATH = "/login";
     public static final String DEFAULT_LOGIN_PAGE = "/loginPage";
@@ -72,7 +73,7 @@ public abstract class FindController<C extends FindConfig> {
 
         final Collection<String> roles = authenticationInformationRetriever.getAuthentication().getAuthorities().stream().map((Function<GrantedAuthority, String>)GrantedAuthority::getAuthority).collect(Collectors.toCollection(LinkedList::new));
 
-        final FindConfig findConfig = configService.getConfig();
+        final FindConfig<C, B> findConfig = configService.getConfig();
 
         final Map<String, Object> config = new HashMap<>();
         config.put(MvcConstants.APPLICATION_PATH.value(), APP_PATH);
