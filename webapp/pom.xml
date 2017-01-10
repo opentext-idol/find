@@ -28,7 +28,7 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.31.4</haven.search.components.version>
+        <haven.search.components.version>0.32.1</haven.search.components.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <!-- Disabling integration tests by default until we figure out how to run them on the build servers (CCUK-3480) -->
         <skipITs>true</skipITs>
@@ -138,6 +138,11 @@
             <groupId>com.github.springtestdbunit</groupId>
             <artifactId>spring-test-dbunit</artifactId>
             <version>1.2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -51,11 +51,11 @@ public class HodFindMockConfigConfiguration {
                 .endpointUrl(endpoint)
                 .build();
 
-        final HodFindConfig config = new HodFindConfig.Builder()
-                .setQueryManipulation(queryManipulationConfig)
-                .setHsod(hsodConfig)
-                .setHod(hodConfig)
-                .setFieldsInfo(FieldsInfo.builder().build())
+        final HodFindConfig config = HodFindConfig.builder()
+                .queryManipulation(queryManipulationConfig)
+                .hsod(hsodConfig)
+                .hod(hodConfig)
+                .fieldsInfo(FieldsInfo.builder().build())
                 .build();
 
         when(baseConfigFileService.getConfig()).thenReturn(config);

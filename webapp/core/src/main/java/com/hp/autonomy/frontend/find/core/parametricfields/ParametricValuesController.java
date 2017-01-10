@@ -14,6 +14,7 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.types.idol.responses.RecursiveField;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
 import com.hp.autonomy.types.requests.idol.actions.tags.RangeInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.apache.commons.collections4.ListUtils;
 import org.joda.time.DateTime;
@@ -27,8 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -74,7 +73,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @RequestMapping(method = RequestMethod.GET, path = RESTRICTED_PARAMETRIC_VALUES_PATH)
     @ResponseBody
     public Set<QueryTagInfo> getRestrictedParametricValues(
-            @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
+            @RequestParam(FIELD_NAMES_PARAM) final List<TagName> fieldNames,
             @RequestParam(value = QUERY_TEXT_PARAM, defaultValue = "*") final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(DATABASES_PARAM) final Collection<S> databases,
@@ -92,7 +91,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @ResponseBody
     public RangeInfo getNumericParametricValuesInBucketsForField(
             @SuppressWarnings("MVCPathVariableInspection")
-            @PathVariable("encodedField") final String encodedField,
+            @PathVariable("encodedField") final TagName fieldName,
             @RequestParam(TARGET_NUMBER_OF_BUCKETS_PARAM) final Integer targetNumberOfBuckets,
             @RequestParam(BUCKET_MIN_PARAM) final Double bucketMin,
             @RequestParam(BUCKET_MAX_PARAM) final Double bucketMax,
@@ -103,8 +102,6 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore
     ) throws E {
-        final String fieldName = decodeUriComponent(encodedField);
-
         final R parametricRequest = buildRequest(
                 Collections.singletonList(fieldName),
                 queryText,
@@ -119,7 +116,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         );
 
         final BucketingParams bucketingParams = new BucketingParams(targetNumberOfBuckets, bucketMin, bucketMax);
-        final Map<String, BucketingParams>  bucketingParamsPerField = Collections.singletonMap(fieldName, bucketingParams);
+        final Map<TagName, BucketingParams> bucketingParamsPerField = Collections.singletonMap(fieldName, bucketingParams);
         return parametricValuesService.getNumericParametricValuesInBuckets(parametricRequest, bucketingParamsPerField).get(0);
     }
 
@@ -127,7 +124,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @RequestMapping(method = RequestMethod.GET, value = DEPENDENT_VALUES_PATH)
     @ResponseBody
     public List<RecursiveField> getDependentParametricValues(
-            @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
+            @RequestParam(FIELD_NAMES_PARAM) final List<TagName> fieldNames,
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(DATABASES_PARAM) final Collection<S> databases,
@@ -140,12 +137,12 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         return parametricValuesService.getDependentParametricValues(parametricRequest);
     }
 
-    protected R buildRequest(final List<String> fieldNames, final Collection<S> databases, final Integer maxValues, final SortParam sort) {
+    protected R buildRequest(final List<TagName> fieldNames, final Collection<S> databases, final Integer maxValues, final SortParam sort) {
         return buildRequest(fieldNames, "*", null, databases, null, null, null, null, maxValues, sort);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    private R buildRequest(final List<String> fieldNames, final String queryText, final String fieldText, final Collection<S> databases, final DateTime minDate, final DateTime maxDate, final Integer minScore, final List<String> stateTokens, final Integer maxValues, final SortParam sort) {
+    private R buildRequest(final List<TagName> fieldNames, final String queryText, final String fieldText, final Collection<S> databases, final DateTime minDate, final DateTime maxDate, final Integer minScore, final List<String> stateTokens, final Integer maxValues, final SortParam sort) {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .queryText(queryText)
                 .fieldText(fieldText)
@@ -161,18 +158,5 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
                 .maxValues(maxValues)
                 .sort(sort)
                 .build();
-    }
-
-    /**
-     * Auxiliary method for when forward slash-containing parameters need to be passed to the server.
-     * Spring rejects URLs containing %2F, need to double encode field IDs.
-     */
-    private String decodeUriComponent(final String component) {
-        try {
-            return URLDecoder.decode(component, "UTF-8");
-        } catch (final UnsupportedEncodingException ignored) {
-            // Should not happen
-            throw new IllegalStateException("You don't have a standard JVM");
-        }
     }
 }

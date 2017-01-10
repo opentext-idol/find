@@ -14,6 +14,7 @@ import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricValues
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ class HodParametricValuesController extends ParametricValuesController<HodQueryR
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public Set<QueryTagInfo> getParametricValues(
-            @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames,
+            @RequestParam(FIELD_NAMES_PARAM) final List<TagName> fieldNames,
             @RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases
     ) throws HodErrorException {
         final HodParametricRequest parametricRequest = buildRequest(fieldNames, databases, MAX_VALUES_DEFAULT, SortParam.DocumentCount);

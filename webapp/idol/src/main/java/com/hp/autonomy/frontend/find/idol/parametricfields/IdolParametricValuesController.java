@@ -13,6 +13,7 @@ import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricValu
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ class IdolParametricValuesController extends ParametricValuesController<IdolQuer
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public Set<QueryTagInfo> getParametricValues(
-            @RequestParam(FIELD_NAMES_PARAM) final List<String> fieldNames
+            @RequestParam(FIELD_NAMES_PARAM) final List<TagName> fieldNames
     ) throws AciErrorException {
         final IdolParametricRequest parametricRequest = buildRequest(fieldNames, Collections.emptyList(), MAX_VALUES_DEFAULT, SortParam.DocumentCount);
         return parametricValuesService.getAllParametricValues(parametricRequest);

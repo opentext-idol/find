@@ -68,7 +68,7 @@ public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewC
 
     @Test
     public void noReferenceField() {
-        when(configService.getConfig()).thenReturn(new IdolFindConfig.Builder().setView(ViewConfig.builder().build()).build());
+        when(configService.getConfig()).thenReturn(IdolFindConfig.builder().view(ViewConfig.builder().build()).build());
 
         assertNotNull(viewController.handleViewNoReferenceFieldException(new ViewNoReferenceFieldException("some reference", "some field"), new MockHttpServletRequest(), new MockHttpServletResponse()));
     }

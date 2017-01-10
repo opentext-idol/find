@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class IdolFindController extends FindController<IdolFindConfig> {
+public class IdolFindController extends FindController<IdolFindConfig, IdolFindConfig.IdolFindConfigBuilder> {
     private static final String MMAP_BASE_URL = "mmapBaseUrl";
     private static final String VIEW_HIGHLIGHTING = "viewHighlighting";
 
+    @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
     protected IdolFindController(final ControllerUtils controllerUtils,
                                  final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,

@@ -8,6 +8,8 @@ package com.hp.autonomy.frontend.find.idol.fields;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.fields.AbstractFieldsControllerTest;
 import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolConfiguration;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequest;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsService;
@@ -19,6 +21,7 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
@@ -26,7 +29,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolFieldsController, IdolFieldsRequest, AciErrorException, String, IdolQueryRestrictions, IdolParametricRequest> {
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+@SpringBootTest(classes = HavenSearchIdolConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolFieldsController, IdolFieldsRequest, AciErrorException, String, IdolQueryRestrictions, IdolParametricRequest, IdolFindConfig> {
     @Mock
     private IdolFieldsService idolFieldsService;
     @Mock
@@ -45,6 +50,8 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
     private ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
     @Mock
     private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
+    @Mock
+    private IdolFindConfig idolFindConfig;
 
     @Override
     protected IdolFieldsController constructController() {
@@ -59,7 +66,7 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
         when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
 
-        return new IdolFieldsController(idolFieldsService, idolParametricValuesService, parametricRequestBuilderFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
+        return new IdolFieldsController(idolFieldsService, idolParametricValuesService, parametricRequestBuilderFactory, tagNameFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
     }
 
     @Override
@@ -70,6 +77,11 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
     @Override
     protected IdolParametricValuesService constructParametricValuesService() {
         return idolParametricValuesService;
+    }
+
+    @Override
+    protected IdolFindConfig mockConfig() {
+        return idolFindConfig;
     }
 
     @Override

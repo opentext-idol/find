@@ -9,6 +9,7 @@ import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricVal
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
+import com.hp.autonomy.searchcomponents.hod.beanconfiguration.HavenSearchHodConfiguration;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricValuesService;
@@ -16,10 +17,9 @@ import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collections;
 
@@ -27,7 +27,8 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+@SpringBootTest(classes = HavenSearchHodConfiguration.class, properties = {"mock.authentication=false", "mock.authenticationRetriever=false"}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class HodParametricValuesControllerTest extends AbstractParametricValuesControllerTest<HodParametricValuesController, HodQueryRestrictions, HodParametricRequest, ResourceIdentifier, HodErrorException> {
     @Mock
     private HodParametricValuesService hodParametricValuesService;
@@ -76,7 +77,7 @@ public class HodParametricValuesControllerTest extends AbstractParametricValuesC
 
     @Test
     public void getParametricValues() throws HodErrorException {
-        parametricValuesController.getParametricValues(Collections.singletonList("SomeParametricField"), Collections.emptyList());
+        parametricValuesController.getParametricValues(Collections.singletonList(tagNameFactory.buildTagName("SomeParametricField")), Collections.emptyList());
         verify(hodParametricValuesService).getAllParametricValues(any());
     }
 }

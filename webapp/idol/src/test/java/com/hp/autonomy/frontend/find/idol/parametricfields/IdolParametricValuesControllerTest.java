@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.parametricfields;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesControllerTest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
+import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolConfiguration;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricValuesService;
@@ -17,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collections;
 
@@ -26,6 +28,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+@SpringBootTest(classes = HavenSearchIdolConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class IdolParametricValuesControllerTest extends AbstractParametricValuesControllerTest<IdolParametricValuesController, IdolQueryRestrictions, IdolParametricRequest, String, AciErrorException> {
     @Mock
     private IdolParametricValuesService idolParametricValuesService;
@@ -74,7 +78,7 @@ public class IdolParametricValuesControllerTest extends AbstractParametricValues
 
     @Test
     public void getParametricValues() throws AciErrorException {
-        parametricValuesController.getParametricValues(Collections.singletonList("SomeParametricField"));
+        parametricValuesController.getParametricValues(Collections.singletonList(tagNameFactory.buildTagName("SomeParametricField")));
         verify(idolParametricValuesService).getAllParametricValues(any());
     }
 }

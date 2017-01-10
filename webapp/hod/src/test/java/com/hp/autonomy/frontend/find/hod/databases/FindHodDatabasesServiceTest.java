@@ -55,7 +55,7 @@ public class FindHodDatabasesServiceTest {
         findDatabasesService = new FindHodDatabasesServiceImpl(databasesService, resourcesService, configService);
 
         final HodConfig hodConfig = HodConfig.builder().build();
-        when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setHod(hodConfig).build());
+        when(configService.getConfig()).thenReturn(HodFindConfig.builder().hod(hodConfig).build());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class FindHodDatabasesServiceTest {
         final HodConfig hodConfig = HodConfig.builder()
                 .activeIndex(activeIndex)
                 .build();
-        when(configService.getConfig()).thenReturn(new HodFindConfig.Builder().setHod(hodConfig).build());
+        when(configService.getConfig()).thenReturn(HodFindConfig.builder().hod(hodConfig).build());
         when(databasesRequest.isPublicIndexesEnabled()).thenReturn(true);
         assertThat(findDatabasesService.getDatabases(databasesRequest), hasSize(1));
     }
