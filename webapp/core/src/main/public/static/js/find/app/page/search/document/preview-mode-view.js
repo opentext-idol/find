@@ -44,7 +44,8 @@ define([
             'click .preview-mode-mmap-button': function () {
                 this.mmapTab.open(this.model.attributes);
             },
-            'click .close-preview-mode': 'triggerClose'
+            'click .close-preview-mode': 'triggerClose',
+            'change .editable-field': 'updateDocument'
         },
 
         initialize: function(options) {
@@ -101,10 +102,6 @@ define([
                     key: referenceKey,
                     value: this.model.get(referenceKey)
                 }, {
-                    key: 'comment',
-                    edit: true,
-                    value: this.model.get('comment')
-                }, {
                     key: 'workflow',
                     edit: 'unspecified|escalate|ignore|manager',
                     value: this.model.get('workflow')
@@ -112,6 +109,10 @@ define([
                     key: 'valid',
                     edit: 'unvalidated|validated|invalidated',
                     value: this.model.get('valid')
+                }, {
+                    key: 'comment',
+                    edit: true,
+                    value: this.model.get('comment')
                 }]
             }));
 
@@ -182,6 +183,20 @@ define([
 
         updateHighlighting: function() {
             this.$contentDocumentBody.toggleClass('haven-search-view-document-highlighting-on', this.highlightingModel.get('highlighting'));
+        },
+
+        updateDocument: function(evt) {
+            var tgt = $(evt.currentTarget);
+            var val = tgt.val()
+            var field = tgt.attr('name')
+            var ref = this.model.get('reference')
+
+            $.post('api/public/search/edit-document', {
+                reference: ref,
+                database: this.model.get('index'),
+                field: field,
+                value: val
+            })
         }
     });
 
