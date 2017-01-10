@@ -188,7 +188,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
         new IndexingServiceImpl(new ServerDetails(tgtHost, tgtPort), client).executeCommand(command);
 
         final String srcHost = System.getProperty("content.source.host", "localhost");
-        final int srcPort = Integer.valueOf(System.getProperty("content.source.port", "9000"));
+        final int srcPort = Integer.valueOf(System.getProperty("content.source.port", "9020"));
 
         final AciParameters deleteParams = new AciParameters("query");
         deleteParams.put("text", "*");
