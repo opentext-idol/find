@@ -260,6 +260,24 @@
       ],
       "type": "NUMBER",
       "advanced": true
+    },
+    "valid": {
+      "names": [
+        "VALID"
+      ],
+      "type": "STRING"
+    },
+    "workflow": {
+      "names": [
+        "WORKFLOW"
+      ],
+      "type": "STRING"
+    },
+    "comment": {
+      "names": [
+        "COMMENT"
+      ],
+      "type": "STRING"
     }
   }
 }

@@ -89,6 +89,8 @@ define([
 
             this.$('.preview-mode-document-title').text(this.model.get('title'));
 
+            var flattened = _.reduce(this.model.get('fields'), function(acc, field){ acc[field.id] = field.values && field.values[0]; return acc }, {})
+
             var referenceKey = this.model.get('url') ? 'url' : 'reference';
             //noinspection JSUnresolvedFunction
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
@@ -104,15 +106,15 @@ define([
                 }, {
                     key: 'workflow',
                     edit: 'unspecified|escalate|ignore|manager',
-                    value: this.model.get('workflow')
+                    value: flattened['workflow']
                 }, {
                     key: 'valid',
                     edit: 'unvalidated|validated|invalidated',
-                    value: this.model.get('valid')
+                    value: flattened['valid']
                 }, {
                     key: 'comment',
                     edit: true,
-                    value: this.model.get('comment')
+                    value: flattened['comment']
                 }]
             }));
 
@@ -191,11 +193,24 @@ define([
             var field = tgt.attr('name')
             var ref = this.model.get('reference')
 
+            var fields = this.model.get('fields')
+
             $.post('api/public/search/edit-document', {
                 reference: ref,
                 database: this.model.get('index'),
                 field: field,
                 value: val
+            }).done(function(success){
+                if (success) {
+                    var existing = _.find(fields, {id: field});
+
+                    if (existing) {
+                        existing.values = [val]
+                    }
+                    else {
+                        fields.push({ id: field, values: [val] })
+                    }
+                }
             })
         }
     });

@@ -6,11 +6,17 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.services.impl.AbstractStAXProcessor;
+import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.services.impl.ErrorProcessor;
+import com.autonomy.aci.client.transport.AciHttpException;
+import com.autonomy.aci.client.transport.AciServerDetails;
+import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.autonomy.aci.client.transport.impl.HttpClientFactory;
 import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.AciURLCodec;
 import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreAddDataCommand;
 import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
@@ -30,12 +36,14 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequestBuilder;
+import com.hp.autonomy.types.idol.marshalling.processors.NoopProcessor;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import java.io.IOException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.HttpClient;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -80,13 +88,15 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
             @RequestParam("database") final String database,
             @RequestParam("field") final String field,
             @RequestParam("value") final String value
-    ) {
+    ) throws IOException, AciHttpException {
 
         final AciParameters params = new AciParameters("getcontent");
         params.add("reference", reference);
         params.add("databasematch", database);
 
-        final String idx = aciServiceRetriever.getAciService(QueryRequest.QueryType.RAW).executeAction(params, new AbstractStAXProcessor<String>() {
+        final AciService aciService = aciServiceRetriever.getAciService(QueryRequest.QueryType.RAW);
+
+        final String idx = aciService.executeAction(params, new AbstractStAXProcessor<String>() {
             @Override
             public String process(final XMLStreamReader aciResponse) {
                 try {
@@ -174,9 +184,20 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
         command.setDreDbName(database);
         command.setKillDuplicates("reference");
         command.setPostData(idx);
-        new IndexingServiceImpl(new ServerDetails(tgtHost, tgtPort), new HttpClientFactory().createInstance()).executeCommand(command);
+        final HttpClient client = new HttpClientFactory().createInstance();
+        new IndexingServiceImpl(new ServerDetails(tgtHost, tgtPort), client).executeCommand(command);
 
-        // TODO: remove it from the original engine with delete=true as well
+        final String srcHost = System.getProperty("content.source.host", "localhost");
+        final int srcPort = Integer.valueOf(System.getProperty("content.source.port", "9000"));
+
+        final AciParameters deleteParams = new AciParameters("query");
+        deleteParams.put("text", "*");
+        deleteParams.put("databasematch", database);
+        deleteParams.put("matchreference", AciURLCodec.getInstance().encode(reference));
+        deleteParams.put("delete", "true");
+        deleteParams.put("maxresults", 1);
+
+        new AciServiceImpl(new AciHttpClientImpl(client), new AciServerDetails(srcHost, srcPort)).executeAction(deleteParams, new NoopProcessor());
         return true;
     }
 }
