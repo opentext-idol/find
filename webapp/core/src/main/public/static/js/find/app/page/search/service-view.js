@@ -268,7 +268,9 @@ define([
                 },
                 dategraph: {
                     Constructor: DateGraphView,
-                    constructorArguments: subViewArguments,
+                    constructorArguments: _.extend({
+                        timeBarModel: this.timeBarModel
+                    }, subViewArguments),
                     shown: hasBiRole && this.displayDependentParametricViews,
                     selector: {
                         displayNameKey: 'dategraph',

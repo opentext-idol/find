@@ -52,7 +52,8 @@
     "datatables.net-fixedcolumns": "3.2.2",
     "datatables.net-fixedcolumns-bs": "3.2.2",
     "hp-autonomy-about-page": "0.3.0",
-    "bootstrap": "3.3.7"
+    "bootstrap": "3.3.7",
+    "Flot": "flot#~0.8.3"
   },
   "devDependencies": {
     "hp-autonomy-js-testing-utils": "2.2.0",

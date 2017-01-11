@@ -198,6 +198,8 @@ define([
         'search.resultsView.amount.shown.no.increment': 'Showing the top <strong>{0}</strong> results of <strong>{1}</strong>',
         'search.resultsView.amount.shown.no.results': 'There are no results with the location field selected',
         'search.resultsView.dategraph': 'Date',
+        'search.resultsView.dategraph.error': 'Failed to load data',
+        'search.resultsView.dategraph.noValues': 'No values',
         'search.answeredQuestion': 'Answered question',
         'search.promoted': 'Promoted',
         'search.savedSearchControl.save': 'Save',
