@@ -5,6 +5,7 @@
 define([
     'backbone',
     'underscore',
+    'd3',
     'find/app/util/topic-map-view',
     'find/app/model/entity-collection',
     'i18n!find/nls/bundle',
@@ -19,12 +20,14 @@ define([
     'iCheck',
     'slider/bootstrap-slider',
     'flot.time'
-], function(Backbone, _, TopicMapView, EntityCollection, i18n, configuration, calibrateBuckets, FieldSelectionView,
+], function(Backbone, _, d3, TopicMapView, EntityCollection, i18n, configuration, calibrateBuckets, FieldSelectionView,
             BucketedParametricCollection, toFieldTextNode, generateErrorHtml, template,
             loadingTemplate) {
     'use strict';
 
     var loadingHtml = _.template(loadingTemplate)({i18n: i18n, large: true});
+
+    var category10 = d3.scale.category10();
 
     function rangeModelMatching(fieldName, dataType) {
         return function(model) {
@@ -96,11 +99,14 @@ define([
 
             if(!hadError && !noValues && !showLoadingIndicator && width > 0) {
                 var data = [{
+                    color: '#00B388',
                     label: 'Documents',
                     data: transform(modelBuckets)
                 }].concat(_.map(this.plots, function(plot, idx, plots){
+                    var label = plot.field.replace(/^.*\//, '').replace(/_/g, '\u00A0') + ': ' + plot.value;
                     return {
-                        label: plot.field.replace(/^.*\//, '').replace(/_/g, '\u00A0') + ': ' + plot.value,
+                        color: category10(label),
+                        label: label,
                         data: transform(plot.model.get('values')),
                         yaxis: plots.length > 1 ? 2 : 1
                     }
