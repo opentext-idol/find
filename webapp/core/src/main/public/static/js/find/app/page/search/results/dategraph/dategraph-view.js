@@ -65,7 +65,7 @@ define([
                 var subPlot = { field: field, value: value, model: model };
                 this.plots.push(subPlot);
                 this.listenTo(model, 'change:values', this.updateGraph)
-                this.fetchSubPlot(subPlot)
+                this.lastOtherSelectedValues && this.fetchSubPlot(subPlot)
             }
         },
 
@@ -98,15 +98,17 @@ define([
                 var data = [{
                     label: 'Documents',
                     data: transform(modelBuckets)
-                }].concat(_.map(this.plots, function(plot){
+                }].concat(_.map(this.plots, function(plot, idx, plots){
                     return {
-                        label: plot.field + ': ' + plot.value,
-                        data: transform(plot.model.get('values'))
+                        label: plot.field.replace(/^.*\//, '').replace(/_/g, '\u00A0') + ': ' + plot.value,
+                        data: transform(plot.model.get('values')),
+                        yaxis: plots.length > 1 ? 2 : 1
                     }
                 }))
 
                 $.plot($contentEl[0], data, {
-                    xaxis: {mode: 'time'}
+                    xaxis: {mode: 'time'},
+                    yaxes: this.plots.length > 1 ? [ {}, { position: 'right' } ] : {}
                 })
             }
         },
@@ -169,6 +171,16 @@ define([
                 loadingHtml: loadingHtml,
                 cid: this.cid
             }));
+
+            this.$('.dategraph-content').on('click .legendColorBox', _.bind(function(evt){
+                var idx = $(evt.target).closest('tr').index()
+
+                if (idx > 0) {
+                    var removed = this.plots.splice(idx - 1, 1)
+                    this.stopListening(removed[0].model)
+                    this.updateGraph();
+                }
+            }, this))
 
             this.fetchBuckets();
         }
