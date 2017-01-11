@@ -32,7 +32,9 @@ define([
                     value: $target.attr('data-value')
                 };
 
-                if (this.selectedParametricValues.get(attributes)) {
+                if ($(e.target).closest('.parametric-value-graph-cell').length) {
+                    this.selectedParametricValues.trigger('graph', attributes.field, attributes.value);
+                } else if (this.selectedParametricValues.get(attributes)) {
                     this.selectedParametricValues.remove(attributes);
                 } else {
                     this.selectedParametricValues.add(attributes);

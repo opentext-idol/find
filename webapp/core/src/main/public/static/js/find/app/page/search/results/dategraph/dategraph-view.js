@@ -10,6 +10,7 @@ define([
     'i18n!find/nls/bundle',
     'find/app/configuration',
     'find/app/page/search/filters/parametric/calibrate-buckets',
+    'find/app/page/search/results/field-selection-view',
     'find/app/model/bucketed-parametric-collection',
     'parametric-refinement/to-field-text-node',
     'find/app/util/generate-error-support-message',
@@ -18,7 +19,8 @@ define([
     'iCheck',
     'slider/bootstrap-slider',
     'flot.time'
-], function(Backbone, _, TopicMapView, EntityCollection, i18n, configuration, calibrateBuckets, BucketedParametricCollection, toFieldTextNode, generateErrorHtml, template,
+], function(Backbone, _, TopicMapView, EntityCollection, i18n, configuration, calibrateBuckets, FieldSelectionView,
+            BucketedParametricCollection, toFieldTextNode, generateErrorHtml, template,
             loadingTemplate) {
     'use strict';
 
@@ -51,6 +53,20 @@ define([
             this.listenTo(this.queryModel, 'change', this.fetchBuckets);
 
             this.listenTo(this.bucketModel, 'change:values request sync error', this.updateGraph);
+
+            this.listenTo(this.selectedParametricValues, 'graph', this.graphRequest)
+
+            this.plots = []
+        },
+
+        graphRequest: function(field, value){
+            if (!_.where(this.plots, { field: field, value: value }).length) {
+                var model = new BucketedParametricCollection.Model({id: this.fieldName});
+                var subPlot = { field: field, value: value, model: model };
+                this.plots.push(subPlot);
+                this.listenTo(model, 'change:values', this.updateGraph)
+                this.fetchSubPlot(subPlot)
+            }
         },
 
         update: function() {
@@ -72,11 +88,24 @@ define([
             var $contentEl = this.$('.dategraph-content');
             var width = $contentEl.width();
 
-            if(!hadError && !noValues && !showLoadingIndicator && width > 0) {
-
-                $.plot($contentEl[0], [_.map(modelBuckets, function(a){
+            function transform(values) {
+                return values.map(function (a) {
                     return [0.5e3 * (a.min + a.max), a.count]
-                })], {
+                })
+            }
+
+            if(!hadError && !noValues && !showLoadingIndicator && width > 0) {
+                var data = [{
+                    label: 'Documents',
+                    data: transform(modelBuckets)
+                }].concat(_.map(this.plots, function(plot){
+                    return {
+                        label: plot.field + ': ' + plot.value,
+                        data: transform(plot.model.get('values'))
+                    }
+                }))
+
+                $.plot($contentEl[0], data, {
                     xaxis: {mode: 'time'}
                 })
             }
@@ -98,21 +127,39 @@ define([
                 var minDate = this.queryModel.getIsoDate('minDate');
                 var maxDate = this.queryModel.getIsoDate('maxDate');
 
+                var baseParams = {
+                    queryText: this.queryModel.get('queryText'),
+                    fieldText: toFieldTextNode(otherSelectedValues),
+                    minDate: minDate,
+                    maxDate: maxDate,
+                    minScore: this.queryModel.get('minScore'),
+                    databases: this.queryModel.get('indexes'),
+                    targetNumberOfBuckets: Math.floor(width / this.pixelsPerBucket),
+                    // TODO: do this properly
+                    bucketMin: Math.floor((new Date().getTime() - 86400e3*4*365)/1000),
+                    bucketMax: Math.floor(new Date().getTime()/1000)
+                };
+
+                this.lastBaseParams = baseParams;
+                this.lastOtherSelectedValues = otherSelectedValues;
+
                 this.bucketModel.fetch({
-                    data: {
-                        queryText: this.queryModel.get('queryText'),
-                        fieldText: toFieldTextNode(otherSelectedValues),
-                        minDate: minDate,
-                        maxDate: maxDate,
-                        minScore: this.queryModel.get('minScore'),
-                        databases: this.queryModel.get('indexes'),
-                        targetNumberOfBuckets: Math.floor(width / this.pixelsPerBucket),
-                        // TODO: do this properly
-                        bucketMin: Math.floor((new Date().getTime() - 86400e3*4*365)/1000),
-                        bucketMax: Math.floor(new Date().getTime()/1000)
-                    }
+                    data: baseParams
                 });
+
+                _.each(this.plots, this.fetchSubPlot, this)
             }
+        },
+
+        fetchSubPlot: function(plot){
+            var plotSelectedValues = this.lastOtherSelectedValues.concat({field: plot.field, value: plot.value});
+
+            plot.model.set([])
+            plot.model.fetch({
+                data: _.defaults({
+                    fieldText: toFieldTextNode(plotSelectedValues)
+                }, this.lastBaseParams)
+            })
         },
 
         render: function() {
