@@ -119,12 +119,14 @@ define([
             // If the SVG has no width or there are no values, there is no point fetching new data
             // if(width !== 0 && this.model.get('totalValues') !== 0) {
             if(width) {
-                // Exclude any restrictions for this field from the field text
+                var rangeFilter = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.dataType))
+
                 var otherSelectedValues = this.selectedParametricValues
-                    .reject(rangeModelMatching(this.fieldName, this.dataType))
                     .map(function(model) {
                         return model.toJSON();
                     });
+
+                var dateRange = rangeFilter && rangeFilter.get('range')
 
                 var minDate = this.queryModel.getIsoDate('minDate');
                 var maxDate = this.queryModel.getIsoDate('maxDate');
@@ -137,9 +139,9 @@ define([
                     minScore: this.queryModel.get('minScore'),
                     databases: this.queryModel.get('indexes'),
                     targetNumberOfBuckets: Math.floor(width / this.pixelsPerBucket),
-                    // TODO: do this properly
-                    bucketMin: Math.floor((new Date().getTime() - 86400e3*4*365)/1000),
-                    bucketMax: Math.floor(new Date().getTime()/1000)
+                    // TODO: better upper/lower default ranges?
+                    bucketMin: dateRange ? dateRange[0] : Math.floor((new Date().getTime() - 86400e3*4*365)/1000),
+                    bucketMax: dateRange ? dateRange[1] : Math.floor(new Date().getTime()/1000)
                 };
 
                 this.lastBaseParams = baseParams;
