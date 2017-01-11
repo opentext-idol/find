@@ -154,12 +154,13 @@ define([
         },
 
         fetchSubPlot: function(plot){
-            var plotSelectedValues = this.lastOtherSelectedValues.concat({field: plot.field, value: plot.value});
+            var newFieldText = toFieldTextNode([{field: plot.field, value: plot.value}])
+            var plotSelectedValues = toFieldTextNode(this.lastOtherSelectedValues);
 
             plot.model.set([])
             plot.model.fetch({
                 data: _.defaults({
-                    fieldText: toFieldTextNode(plotSelectedValues)
+                    fieldText: plotSelectedValues ? '(' + plotSelectedValues + ') AND (' + newFieldText + ')': newFieldText
                 }, this.lastBaseParams)
             })
         },
