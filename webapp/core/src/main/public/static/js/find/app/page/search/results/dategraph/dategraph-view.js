@@ -75,7 +75,7 @@ define([
             if(!hadError && !noValues && !showLoadingIndicator && width > 0) {
 
                 $.plot($contentEl[0], [_.map(modelBuckets, function(a){
-                    return [0.5 * (a.min + a.max), a.count]
+                    return [0.5e3 * (a.min + a.max), a.count]
                 })], {
                     xaxis: {mode: 'time'}
                 })
