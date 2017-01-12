@@ -98,23 +98,25 @@ define([
             }
 
             if(!hadError && !noValues && !showLoadingIndicator && width > 0) {
-                var data = [{
+                var multiAxes = !this.hideMainPlot && this.plots.length > 1;
+
+                var data = (this.hideMainPlot ? [] : [{
                     color: '#00B388',
                     label: 'Documents',
                     data: transform(modelBuckets)
-                }].concat(_.map(this.plots, function(plot, idx, plots){
+                }]).concat(_.map(this.plots, function(plot, idx, plots){
                     var label = plot.field.replace(/^.*\//, '').replace(/_/g, '\u00A0') + ': ' + plot.value;
                     return {
                         color: category10(label),
                         label: label,
                         data: transform(plot.model.get('values')),
-                        yaxis: plots.length > 1 ? 2 : 1
+                        yaxis: multiAxes ? 2 : 1
                     }
                 }))
 
                 $.plot($contentEl[0], data, {
                     xaxis: {mode: 'time'},
-                    yaxes: this.plots.length > 1 ? [ {}, { position: 'right' } ] : {}
+                    yaxes: multiAxes ? [ {}, { position: 'right' } ] : {}
                 })
             }
         },
@@ -153,6 +155,8 @@ define([
                 this.lastBaseParams = baseParams;
                 this.lastOtherSelectedValues = otherSelectedValues;
 
+                this.hideMainPlot = false;
+
                 this.bucketModel.fetch({
                     data: baseParams
                 });
@@ -182,12 +186,29 @@ define([
             }));
 
             this.$('.dategraph-content').on('click .legendColorBox', _.bind(function(evt){
-                var idx = $(evt.target).closest('tr').index()
+                var idx = $(evt.target).closest('tr').index(), removed
 
-                if (idx > 0) {
-                    var removed = this.plots.splice(idx - 1, 1)
-                    this.stopListening(removed[0].model)
-                    this.updateGraph();
+                if (idx >= 0) {
+                    if (this.hideMainPlot) {
+                        removed = this.plots.splice(idx, 1)
+                        this.stopListening(removed[0].model)
+
+                        if (!this.plots.length) {
+                            this.hideMainPlot = false;
+                        }
+
+                        this.updateGraph();
+                    }
+                    else if (idx) {
+                        removed = this.plots.splice(idx - 1, 1)
+                        this.stopListening(removed[0].model)
+
+                        this.updateGraph();
+                    }
+                    else if (this.plots.length) {
+                        this.hideMainPlot = true;
+                        this.updateGraph();
+                    }
                 }
             }, this))
 
