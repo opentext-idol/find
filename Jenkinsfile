@@ -10,8 +10,7 @@ def repository
 def branch
 
 node {
-	stage 'Checkout'
-	node {
+	stage 'Checkout' {
 		checkout scm
 
 		sh 'git clean -ffdx' // Clean workspace: ultra-force (ff), untracked directories as well as files (d), don't use .gitignore (x)
@@ -23,8 +22,7 @@ node {
 		echo "Building ${gitCommit}, from ${repository}, branch ${branch}"
 	}
 
-	stage 'Maven Build'
-	node {
+	stage 'Maven Build' {
 		env.JAVA_HOME="${tool 'Java 8 OpenJDK'}"
 		env.PATH="${tool 'Maven3'}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
 
@@ -34,8 +32,7 @@ node {
 		sh "mvn ${mavenArguments} -f webapp/pom.xml -Dapplication.buildNumber=${gitCommit} clean verify -P production -U -pl idol -am"
 	}
 
-	stage 'Archive output'
-	node {
+	stage 'Archive output' {
 		archive 'idol/target/find.war'
 		archive 'on-prem-dist/target/find.zip'
 
@@ -46,8 +43,7 @@ node {
 		step([$class: 'JUnitResultArchiver', testResults: '**/target/jasmine-tests/TEST-*.xml'])
 	}
 
-	stage 'Artifactory'
-	node {
+	stage 'Artifactory' {
 		try {
 			def server = Artifactory.server "idol" // "idol" is the name of the Artifactory server configured in Jenkins
 			def artifactLocation = "applications/find/${repository}/${branch}/"
@@ -81,8 +77,7 @@ node {
 		}
 	}
 
-    stage 'Deploy'
-    node {
+    stage 'Deploy' {
         sh '''
             source /home/fenkins/ansible/hacking/env-setup
             python tools-apothecary/apothecary.py --dir /home/fenkins/app-playbook/roles/ -c /home/fenkins/tools-apothecary/apothecary.yml
@@ -91,8 +86,7 @@ node {
         '''
     }
 
-	stage 'Notifications'
-	node {
+	stage 'Notifications' {
 		emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'
 	}
 }
