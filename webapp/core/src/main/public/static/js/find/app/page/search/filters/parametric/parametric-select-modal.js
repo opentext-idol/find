@@ -13,13 +13,6 @@ define([
 
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
 
-        events: {
-            'click .parametric-value-graph': function(e){
-                var $checkboxEl = $(e.currentTarget).prev()
-                this.selectedParametricValues.trigger('graph', $checkboxEl.data().fieldId, $checkboxEl.find('.field-value').text());
-            }
-        },
-
         initialize: function(options) {
             this.selectCollection = new SelectedValuesCollection();
             this.parametricDisplayCollection = options.parametricDisplayCollection;
@@ -48,6 +41,10 @@ define([
             });
 
             this.$el.on('shown.bs.modal', _.bind(this.parametricSelectView.renderFields, this));
+            this.$el.on('click', '.parametric-value-graph', _.bind(function(e){
+                var $checkboxEl = $(e.currentTarget).prev()
+                this.selectedParametricValues.trigger('graph', $checkboxEl.data().fieldId, $checkboxEl.find('.field-value').text());
+            }, this));
         }
     });
 
