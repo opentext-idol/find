@@ -97,7 +97,7 @@ define([
 
             function transform(values) {
                 return values.map(function (a) {
-                    return [0.5e3 * (a.min + a.max), a.count]
+                    return [0.5e3 * (a.min + a.max), a.count, a.min, a.max]
                 })
             }
 
@@ -216,13 +216,30 @@ define([
                     }
                 }
             }, this)).on('plothover', _.bind(function(evt, pos, item){
+                function lPad2(num) {
+                    return num < 10 ? '0' + num : num;
+                }
+
+                function formatDate(epochSeconds){
+                    var date = new Date(1000 * epochSeconds);
+                    return [
+                        [date.getFullYear(), lPad2(date.getMonth() + 1), lPad2(date.getDate())].join('-'),
+                        [lPad2(date.getHours()), lPad2(date.getMinutes())].join(':')
+                    ]
+                }
+
                 if (item) {
                     if (!this.$tooltip) {
-                        this.$tooltip = $('<div class="tooltip top" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>').appendTo(this.$el)
+                        this.$tooltip = $('<div class="tooltip top" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner" style="text-align: center; white-space: nowrap"></div></div>').appendTo(this.$el)
                     }
-                    this.$tooltip.find('.tooltip-inner').text(item.series.label + ': ' + item.datapoint[1])
+                    var origPt = item.series.data[item.dataIndex]
+                    var minStr = formatDate(origPt[2]), maxStr = formatDate(origPt[3])
+
+                    var timeStr = minStr[0] === maxStr[0] ? maxStr[0] + ' ' + minStr[1] + ' to ' + maxStr[1] : minStr[0] + ' to ' + maxStr[0];
+
+                    this.$tooltip.find('.tooltip-inner').html(timeStr + '<br>' + _.escape(item.series.label) + ': ' + item.datapoint[1])
                     this.$tooltip.show()
-                        .css({ top: item.pageY - 20 - this.$tooltip.height(), left: item.pageX - 0.5 * this.$tooltip.width(), opacity: 1, 'whitespace': 'no-wrap' })
+                        .css({ top: item.pageY - 20 - this.$tooltip.height(), left: item.pageX - 0.5 * this.$tooltip.width(), opacity: 1 })
                 }
                 else if (this.$tooltip) {
                     this.$tooltip.hide()
