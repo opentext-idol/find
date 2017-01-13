@@ -76,6 +76,10 @@ define([
         },
 
         updateGraph: function() {
+            if (this.$tooltip) {
+                this.$tooltip.hide()
+            }
+
             var hadError = this.bucketModel.error;
             var fetching = this.bucketModel.fetching;
             var modelBuckets = this.bucketModel.get('values');
@@ -221,6 +225,10 @@ define([
                         .css({ top: item.pageY - 20 - this.$tooltip.height(), left: item.pageX - 0.5 * this.$tooltip.width(), opacity: 1, 'whitespace': 'no-wrap' })
                 }
                 else if (this.$tooltip) {
+                    this.$tooltip.hide()
+                }
+            }, this)).on('mouseout', _.bind(function(){
+                if (this.$tooltip) {
                     this.$tooltip.hide()
                 }
             }, this))
