@@ -115,6 +115,7 @@ define([
                 }))
 
                 $.plot($contentEl[0], data, {
+                    grid: { hoverable: true },
                     xaxis: {mode: 'time'},
                     yaxes: multiAxes ? [ {}, { position: 'right' } ] : {}
                 })
@@ -209,6 +210,18 @@ define([
                         this.hideMainPlot = true;
                         this.updateGraph();
                     }
+                }
+            }, this)).on('plothover', _.bind(function(evt, pos, item){
+                if (item) {
+                    if (!this.$tooltip) {
+                        this.$tooltip = $('<div class="tooltip top" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>').appendTo(this.$el)
+                    }
+                    this.$tooltip.find('.tooltip-inner').text(item.series.label + ': ' + item.datapoint[1])
+                    this.$tooltip.show()
+                        .css({ top: item.pageY - 20 - this.$tooltip.height(), left: item.pageX - 0.5 * this.$tooltip.width(), opacity: 1, 'whitespace': 'no-wrap' })
+                }
+                else if (this.$tooltip) {
+                    this.$tooltip.hide()
                 }
             }, this))
 
