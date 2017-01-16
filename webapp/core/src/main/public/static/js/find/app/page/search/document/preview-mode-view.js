@@ -91,6 +91,13 @@ define([
 
             var flattened = _.reduce(this.model.get('fields'), function(acc, field){ acc[field.id] = field.values && field.values[0]; return acc }, {})
 
+            var config = configuration()
+            console.log(config)
+            // config.fieldsInfo
+            var editableFields = _.filter(config.fieldsInfo, function(field){
+                return field.editable.length
+            })
+
             var referenceKey = this.model.get('url') ? 'url' : 'reference';
             //noinspection JSUnresolvedFunction
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
@@ -103,19 +110,13 @@ define([
                 }, {
                     key: referenceKey,
                     value: this.model.get(referenceKey)
-                }, {
-                    key: 'workflow',
-                    edit: 'unspecified|escalate|ignore|manager',
-                    value: flattened['workflow']
-                }, {
-                    key: 'valid',
-                    edit: 'unvalidated|validated|invalidated',
-                    value: flattened['valid']
-                }, {
-                    key: 'comment',
-                    edit: true,
-                    value: flattened['comment']
-                }]
+                }].concat(_.map(editableFields, function(field){
+                    return {
+                        key: field.id,
+                        editable: field.editable,
+                        value: flattened[field.id]
+                    }
+                }))
             }));
 
             var $preview = this.$('.preview-mode-document');

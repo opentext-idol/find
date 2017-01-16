@@ -265,19 +265,22 @@
       "names": [
         "VALID"
       ],
-      "type": "STRING"
+      "type": "STRING",
+      "editable": [ "unvalidated", "validated", "invalidated" ]
     },
     "workflow": {
       "names": [
         "WORKFLOW"
       ],
-      "type": "STRING"
+      "type": "STRING",
+      "editable": [ "unspecified", "escalate", "ignore", "manager" ]
     },
     "comment": {
       "names": [
         "COMMENT"
       ],
-      "type": "STRING"
+      "type": "STRING",
+      "editable": ["*"]
     }
   }
 }

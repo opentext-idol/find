@@ -1,10 +1,10 @@
 <% _.each(fields, function(field) { %>
-    <% if (field.value || field.edit) { %>
+    <% if (field.value || field.editable) { %>
         <tr>
             <th class="font-bold"><%-i18n['search.document.' + field.key] || i18nIndexes['search.document.' + field.key]%></th>
-            <td class="break-all"><% if (field.edit === true) { %><input class="editable-field" name="<%=field.key%>" value="<%-field.value || '' %>"><%
-                } else if (field.edit) { %><select class="editable-field" name="<%=field.key%>"><%
-                    _.each(field.edit.split('|'), function(value, idx){
+            <td class="break-all"><% if (field.editable && field.editable[0] === '*') { %><input class="editable-field" name="<%=field.key%>" value="<%-field.value || '' %>"><%
+                } else if (field.editable) { %><select class="editable-field" name="<%=field.key%>"><%
+                    _.each(field.editable, function(value, idx){
                     %><option value="<%-(idx ? value : '') %>" <%= value.toLowerCase() === (field.value||'').toLowerCase() ? 'selected': ''%>><%-value%></option><%
                     })
                 %></select><%
