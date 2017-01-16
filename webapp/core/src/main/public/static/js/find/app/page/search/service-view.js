@@ -325,6 +325,8 @@ define([
             $window
                 .scroll(this.updateScrollParameters)
                 .resize(this.updateScrollParameters);
+
+            this.listenTo(this.previewModeModel, 'parametric-edit', _.throttle(this.fetchRestrictedParametricCollection, 5000, {leading: false}), this)
         },
 
         render: function() {

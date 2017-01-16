@@ -190,6 +190,7 @@ define([
 
         updateDocument: function(evt) {
             var tgt = $(evt.currentTarget);
+            var isParametric = tgt.is('.editable-parametric-field')
             var val = tgt.val()
             var field = tgt.attr('name')
             var ref = this.model.get('reference')
@@ -201,7 +202,7 @@ define([
                 database: this.model.get('index'),
                 field: field,
                 value: val
-            }).done(function(success){
+            }).done(_.bind(function(success){
                 if (success) {
                     var existing = _.find(fields, {id: field});
 
@@ -211,8 +212,12 @@ define([
                     else {
                         fields.push({ id: field, values: [val] })
                     }
+
+                    if (isParametric) {
+                        this.previewModeModel.trigger('parametric-edit', field)
+                    }
                 }
-            })
+            }, this))
         }
     });
 
