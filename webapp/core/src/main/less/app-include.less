@@ -39,6 +39,7 @@
 @color44: rgba(255, 192, 35, 0.6);
 @color45: rgba(132, 197, 55, 0.6);
 @color46: rgba(225, 97, 85, 0.6);
+@hpeNavBarColour: #333333;
 
 // Colours for side panel labels (eg concepts and selected filters)
 @sidePanelLabelColour: #435663;
@@ -741,10 +742,23 @@ fieldset.radio-fieldset > label {
   width: 240px;
 }
 
+.side-menu {
+  margin-top: 13px;
+}
+
 .find-logo-small {
   background: url('../img/Find_Logo_sml.png') no-repeat 0 0/100px 20px;
   height: 20px;
   width: 100px;
+  &.top-nav {
+    margin-top: -20px;
+    margin-left: 60px;
+  }
+  &.side-nav {
+    float: right;
+    padding-right: 165px;
+    margin-top: 0;
+  }
 }
 
 .hp-logo-footer {
@@ -1295,7 +1309,7 @@ input.find-input {
   &:extend(.m-b-nil);
 
   -webkit-transition: @transitAllFast;
-  background-color: @color1;
+  background-color: @hpeNavBarColour;
   color: @white;
   height: @navBarHeight;
   transition: @transitAllFast;
@@ -1324,14 +1338,14 @@ input.find-input {
 
 .navbar .navbar-nav .open .dropdown-menu > .active > a,
 .navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
-  background-color: @color1;
+  background-color: @hpeNavBarColour;
   background-image: none;
 }
 
 .dropdown-menu > .active > a,
 .dropdown-menu > .active > a:hover,
 .dropdown-menu > .active > a:focus {
-  background-color: @color1;
+  background-color: @hpeNavBarColour;
   background-image: none;
 }
 
@@ -1999,7 +2013,7 @@ h4.similar-dates-message {
 
   .navbar .navbar-nav .open .dropdown-menu > .active > a,
   .navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
-    background-color: @color1;
+    background-color: @hpeNavBarColour;
     background-image: none;
   }
 }

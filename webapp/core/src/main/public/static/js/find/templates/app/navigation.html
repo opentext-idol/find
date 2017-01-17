@@ -1,5 +1,10 @@
 <div class="find-navbar navbar navbar-static-top">
-    <span class="find-logo-small navbar-brand m-l-sm m-t-sm"></span>
+    <div class="nav-menu-btn-container top-nav-menu-button nav-menu-btn-container-top-light hidden">
+        <a class="nav-menu-toggle-btn" href="">
+            <i class="hp-icon hp-menu-skinny"></i>
+        </a>
+    </div>
+    <span class="find-logo-small top-nav navbar-brand m-l-sm m-t-sm navbar-hidden hidden"></span>
     <% if(data.username) { %>
         <span class="nav navbar-nav navbar-right navbar-username shorten"><%-data.username%></span>
     <% } %>

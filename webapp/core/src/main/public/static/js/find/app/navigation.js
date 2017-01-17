@@ -12,8 +12,14 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/navigation.html'
 ], function(_, Backbone, $, vent, configuration, i18n, template) {
-
+    "use strict";
     return Backbone.View.extend({
+        events: {
+            'click .top-nav-menu-button': function (event) {
+                event.preventDefault();
+                this.sideBarModel.set('collapsed', false);
+            }
+        },
 
         template: _.template(template, {variable: 'data'}),
 
@@ -21,6 +27,7 @@ define([
 
         initialize: function(options) {
             this.pageData = options.pageData;
+            this.sideBarModel = options.sideBarModel;
             this.listenTo(options.router, 'route:page', this.selectPage);
         },
 
