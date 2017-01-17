@@ -1,7 +1,8 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'backbone',
     'jquery',
@@ -24,7 +25,6 @@ define([
 ], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, rounder, numericWidget,
             BucketedParametricCollection, toFieldTextNode, datePicker, addChangeListener,
             template, numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
-
     'use strict';
 
     function sum(a, b) {
@@ -97,7 +97,8 @@ define([
 
             this.widget = numericWidget({formattingFn: this.formatValue});
 
-            // The view's this.model contains the current and absolute ranges, the bucketModel contains the values
+            // The view's this.model contains the current and
+            // absolute ranges, the bucketModel contains the values
             this.bucketModel = new BucketedParametricCollection.Model({id: this.model.get('id')});
 
             // Bind the selection rectangle to the selected parametric range
@@ -108,19 +109,21 @@ define([
             });
 
             addChangeListener(this, this.model, ['currentMin', 'currentMax'], function() {
-                // Immediately update the graph for the new range; we calibrate the buckets to remove buckets outside of the range
+                // Immediately update the graph for the new range; we calibrate
+                // the buckets to remove buckets outside of the range
                 this.updateGraph();
 
                 // Fetch new buckets when the range changes
                 this.fetchBuckets();
             });
 
-            addChangeListener(this, this.queryModel, ['queryText', 'fieldText', 'indexes', 'minDate', 'maxDate', 'minScore'], function() {
-                // Existing buckets are incorrect when the query changes
-                this.bucketModel.set({values: []});
-
-                this.fetchBuckets();
-            });
+            addChangeListener(this, this.queryModel,
+                ['queryText', 'fieldText', 'indexes', 'minDate', 'maxDate', 'minScore'],
+                function() {
+                    // Existing buckets are incorrect when the query changes
+                    this.bucketModel.set({values: []});
+                    this.fetchBuckets();
+                });
 
             // TODO: Only update graph rather than render?
             this.listenTo(vent, 'vent:resize', this.render);
@@ -158,7 +161,8 @@ define([
             this.fetchBuckets();
         },
 
-        // Draw the graph with the current data and ranges, or display the loading spinner if we don't have any data yet
+        // Draw the graph with the current data and ranges, or display
+        // the loading spinner if we don't have any data yet
         updateGraph: function() {
             var hadError = this.bucketModel.error;
             var fetching = this.bucketModel.fetching;
@@ -179,10 +183,14 @@ define([
                 var $chart = $(this.svgTemplate({selectionEnabled: this.selectionEnabled}));
                 $chartRow.append($chart);
 
-                var buckets = calibrateBuckets(modelBuckets, [this.model.get('currentMin'), this.model.get('currentMax')]);
+                var buckets = calibrateBuckets(
+                    modelBuckets,
+                    [this.model.get('currentMin'), this.model.get('currentMax')]
+                );
 
-                // Update the inputs as the user drags a selection on the graph. Note that this means the value in the input
-                // does not depend on just the selected parametric range model.
+                // Update the inputs as the user drags a selection on the graph.
+                // Note that this means the value in the input does not depend
+                // on just the selected parametric range model.
                 var updateCallback = function(x1, x2) {
                     // rounding to one decimal place
                     this.updateMinInput(x1);
@@ -237,10 +245,12 @@ define([
             });
         },
 
-        // Update the rendered selection rectangle and inputs to match the selected parametric range model
+        // Update the rendered selection rectangle and
+        // inputs to match the selected parametric range model
         updateSelection: function() {
             if(this.graph) {
-                var rangeModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.dataType));
+                var rangeModel = this.selectedParametricValues
+                    .find(rangeModelMatching(this.fieldName, this.dataType));
 
                 if(rangeModel) {
                     var range = rangeModel.get('range');
@@ -260,7 +270,8 @@ define([
         // Apply a new range selection; a null boundary will not be updated
         // Should be called with values that are already parsed
         updateRestrictions: function(newRange) {
-            var existingModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.dataType));
+            var existingModel = this.selectedParametricValues
+                .find(rangeModelMatching(this.fieldName, this.dataType));
             var existingRange = existingModel ? existingModel.get('range') : [this.model.get('min'), this.model.get('max')];
 
             var newAttributes = {
@@ -373,5 +384,4 @@ define([
     });
 
     return NumericParametricFieldView;
-
 });

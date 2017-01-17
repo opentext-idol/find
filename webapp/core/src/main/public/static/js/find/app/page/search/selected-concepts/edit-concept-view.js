@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -10,7 +10,7 @@ define([
     'text!find/templates/app/page/search/selected-concepts/edit-concept-view.html',
     'i18n!find/nls/bundle'
 ], function(Backbone, _, $, template, i18n) {
-    "use strict";
+    'use strict';
 
     return Backbone.View.extend({
         className: 'edit-concept-form',
@@ -31,7 +31,7 @@ define([
                 const regex = new RegExp('("[^"]+"|[^"\n]+)\s*\n', 'g');
 
                 let match = regex.exec(newConceptsString);
-                while (match != null) {
+                while(match != null) {
                     concepts.push(match[1]);
                     match = regex.exec(newConceptsString);
                 }
@@ -69,5 +69,4 @@ define([
             this.$confirmButton.toggleClass('disabled not-clickable', disabled).prop('disabled', disabled);
         }
     });
-
 });

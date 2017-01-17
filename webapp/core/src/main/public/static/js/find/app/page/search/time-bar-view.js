@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -12,6 +12,7 @@ define([
     'parametric-refinement/prettify-field-name',
     'text!find/templates/app/page/search/time-bar-view.html'
 ], function(Backbone, _, $, i18n, NumericParametricFieldView, prettifyFieldName, timeBarTemplate) {
+    'use strict';
 
     var PIXELS_PER_BUCKET = 20;
 

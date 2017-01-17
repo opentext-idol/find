@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -8,7 +8,7 @@ define([
     'underscore',
     'js-whatever/js/location'
 ], function(mmapTabGenerator, _, location) {
-    "use strict";
+    'use strict';
 
     const VALID_ATTRIBUTES = {
         mmapUrl: '/media/channels?channel=BBC News&start=2008-03-01T13:00:00Z',
@@ -128,5 +128,4 @@ define([
             });
         });
     });
-
 });

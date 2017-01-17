@@ -1,11 +1,12 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'underscore'
 ], function(_) {
+    'use strict';
 
     function emptyBucket(range) {
         return {min: range[0], max: range[1], count: 0};
@@ -29,7 +30,7 @@ define([
             return value.min >= range[0] && value.max <= range[1];
         });
 
-        if (filteredBuckets.length === 0) {
+        if(filteredBuckets.length === 0) {
             // None of the given buckets with in the range
             return [emptyBucket(range)];
         } else {
@@ -44,5 +45,4 @@ define([
     }
 
     return calibrateBuckets;
-
 });

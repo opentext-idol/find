@@ -1,7 +1,8 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'backbone',
     'jquery',
@@ -26,7 +27,7 @@ define([
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
             ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration,
             generateErrorHtml, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
-    "use strict";
+    'use strict';
 
     const SCROLL_INCREMENT = 30;
     const INFINITE_SCROLL_POSITION_PIXELS = 500;
