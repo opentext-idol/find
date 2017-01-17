@@ -115,7 +115,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     }
 
     private String reformatReference(final String badFormatReference) {
-        return badFormatReference.replace(" ", "_").split("://")[1];
+        return badFormatReference.replace(" ", "_").split("://")[1].split("/")[0];
     }
 
     @Test
