@@ -23,11 +23,11 @@ define([
                 this.mmapTab = mmapTabGenerator({mmapBaseUrl: 'http://some-host:8080'});
             });
 
-            it('should not be supported without valid attributes', function () {
+            it('should not be supported without valid attributes', function() {
                 expect(this.mmapTab.supported({})).toBeFalsy();
             });
 
-            it('should be supported with valid attributes', function () {
+            it('should be supported with valid attributes', function() {
                 expect(this.mmapTab.supported(VALID_ATTRIBUTES)).toBeTruthy();
             });
 
@@ -43,7 +43,7 @@ define([
                     this.mmapTab.open(VALID_ATTRIBUTES);
                 });
 
-                it('should open a new tab', function () {
+                it('should open a new tab', function() {
                     expect(this.open).toHaveBeenCalled();
                 });
 
@@ -52,11 +52,11 @@ define([
                         spyOn(location, 'host').and.returnValue('http://some-other-host:8080');
                     });
 
-                    it('should not be reusable', function () {
+                    it('should not be reusable', function() {
                         expect(this.mmapTab.canBeReused()).toBeFalsy();
                     });
 
-                    it('should open a new tab when opened again', function () {
+                    it('should open a new tab when opened again', function() {
                         this.mmapTab.open(VALID_ATTRIBUTES);
                         expect(this.open).toHaveBeenCalledTimes(2);
                     });
@@ -67,7 +67,7 @@ define([
                         spyOn(location, 'host').and.returnValue('http://some-host:8080');
                     });
 
-                    it('should be reusable', function () {
+                    it('should be reusable', function() {
                         expect(this.mmapTab.canBeReused()).toBeTruthy();
                     });
 
@@ -80,21 +80,21 @@ define([
                         attributes: _.defaults({mmapEventSourceType: 'Camera'}, VALID_ATTRIBUTES),
                         loadFunction: 'loadCamera'
                     }];
-                    sourceTypeTests.forEach(function (sourceTypeTest) {
+                    sourceTypeTests.forEach(function(sourceTypeTest) {
                         describe('when the tab is opened again with type ' + sourceTypeTest.sourceType, function() {
                             beforeEach(function() {
                                 this.mmapTab.open(sourceTypeTest.attributes);
                             });
 
-                            it('should not open a new tab', function () {
+                            it('should not open a new tab', function() {
                                 expect(this.open).toHaveBeenCalledTimes(1);
                             });
 
-                            it('should load the correct source', function () {
+                            it('should load the correct source', function() {
                                 expect(this.childWindow[sourceTypeTest.loadFunction]).toHaveBeenCalledWith(VALID_ATTRIBUTES.mmapEventSourceName, VALID_ATTRIBUTES.mmapEventTime);
                             });
 
-                            it('should transfer focus to the child window', function () {
+                            it('should transfer focus to the child window', function() {
                                 expect(this.childWindow.focus).toHaveBeenCalled();
                             });
                         });
@@ -109,7 +109,7 @@ define([
                 spyOn(location, 'host').and.returnValue('some-host');
             });
 
-            it('should be reusable', function () {
+            it('should be reusable', function() {
                 expect(this.mmapTab.canBeReused()).toBeTruthy();
             });
         });
@@ -119,11 +119,11 @@ define([
                 this.mmapTab = mmapTabGenerator({});
             });
 
-            it('should not be supported', function () {
+            it('should not be supported', function() {
                 expect(this.mmapTab.supported(VALID_ATTRIBUTES)).toBeFalsy();
             });
 
-            it('should not be reusable', function () {
+            it('should not be reusable', function() {
                 expect(this.mmapTab.canBeReused()).toBeFalsy();
             });
         });

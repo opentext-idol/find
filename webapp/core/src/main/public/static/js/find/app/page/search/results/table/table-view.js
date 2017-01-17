@@ -1,16 +1,19 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'jquery',
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/table/table-collection',
     'find/app/util/generate-error-support-message',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/results/table/table-view.html',
+    'underscore',
     'datatables.net-bs',
     'datatables.net-fixedColumns'
-], function(ParametricResultsView, TableCollection, generateErrorHtml, i18n, tableTemplate) {
+], function($, ParametricResultsView, TableCollection, generateErrorHtml, i18n, tableTemplate, _) {
     'use strict';
 
     var strings = {

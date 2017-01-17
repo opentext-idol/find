@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -11,8 +11,10 @@ define([
     'find/app/vent',
     'find/app/router',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/settings-page.html'
-], function(SettingsPage, ValidateOnSaveModal, Confirm, configModel, vent, router, i18n, template) {
+    'text!find/templates/app/page/settings-page.html',
+    'underscore'
+], function(SettingsPage, ValidateOnSaveModal, Confirm, configModel, vent, router, i18n, template, _) {
+    'use strict';
 
     var urlRoot = /\bconfig$/.test(window.location.pathname) ? '../api/config/config/' : 'api/admin/config/';
 
@@ -106,8 +108,6 @@ define([
                     this.loadFromConfig();
                 }, this)
             });
-
         }
     });
-
 });

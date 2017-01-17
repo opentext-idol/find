@@ -6,8 +6,9 @@
 define([
     'backbone',
     'find/app/model/find-base-collection',
-    'find/app/configuration'
-], function(Backbone, FindBaseCollection, configuration) {
+    'find/app/configuration',
+    'underscore'
+], function(Backbone, FindBaseCollection, configuration, _) {
     'use strict';
 
     return FindBaseCollection.extend({

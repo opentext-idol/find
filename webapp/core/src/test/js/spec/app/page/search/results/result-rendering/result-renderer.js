@@ -1,12 +1,14 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'find/app/page/search/results/result-rendering/result-renderer',
-    'backbone'
-], function (ResultRenderer, Backbone) {
+    'backbone',
+    'underscore'
+], function(ResultRenderer, Backbone, _) {
+    'use strict';
 
     /*
      * This config array represents how to configure the results renderer to render document models

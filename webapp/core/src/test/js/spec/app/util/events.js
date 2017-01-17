@@ -4,9 +4,11 @@
  */
 
 define([
+    'jquery',
     'find/app/util/events',
+    'underscore',
     'jasmine-ajax'
-], function(events) {
+], function($, events, _) {
     'use strict';
 
     describe('Events', function() {

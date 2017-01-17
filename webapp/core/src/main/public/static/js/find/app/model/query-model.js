@@ -1,15 +1,15 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'backbone',
-    'find/app/util/search-data-util'
-], function(Backbone, searchDataUtil) {
-    
+    'find/app/util/search-data-util',
+    'underscore'
+], function(Backbone, searchDataUtil, _) {
     'use strict';
-    
+
     /**
      * @readonly
      * @enum {String}
@@ -22,7 +22,7 @@ define([
     var DEBOUNCE_WAIT_MILLISECONDS = 500;
 
     var collectionBuildIndexes = function(collection) {
-        return searchDataUtil.buildIndexes(collection.map(function (model) {
+        return searchDataUtil.buildIndexes(collection.map(function(model) {
             return model.pick('domain', 'name');
         }));
     };
@@ -52,10 +52,10 @@ define([
         initialize: function(attributes, options) {
             this.queryState = options.queryState;
 
-            this.listenTo(this.queryState.conceptGroups, 'change:concepts update reset', function () {
+            this.listenTo(this.queryState.conceptGroups, 'change:concepts update reset', function() {
                 var queryText = makeQueryText(this.queryState);
 
-                if (queryText) {
+                if(queryText) {
                     this.set({
                         // Reset auto-correct whenever the search text changes
                         autoCorrect: true,
@@ -95,7 +95,7 @@ define([
         getIsoDate: function(type) {
             var date = this.get(type);
 
-            if (date) {
+            if(date) {
                 return date.toISOString();
             } else {
                 return null;
@@ -104,5 +104,4 @@ define([
     }, {
         Sort: Sort
     });
-
 });

@@ -1,8 +1,15 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'find/app/model/document-model',
     'find/app/configuration',
-    'moment'
-], function(DocumentModel, configuration, moment) {
+    'moment',
+    'underscore'
+], function(DocumentModel, configuration, moment, _) {
+    'use strict';
 
     var THUMBNAIL = 'VGhlIGJhc2UgNjQgZW5jb2RlZCB0aHVtYm5haWw=';
     var TITLE = 'My Document';
@@ -99,7 +106,7 @@ define([
             it('parses the transcript from the field map', function() {
                 expect(this.parse(fullResponse()).transcript).toBe(TRANSCRIPT);
             });
-            
+
             it('parses the field map into an array, converting date values to formatted strings and number values to javascript numbers', function() {
                 var fields = this.parse(fullResponse()).fields;
                 expect(fields.length).toBe(7);
@@ -128,5 +135,4 @@ define([
             });
         });
     });
-
 });
