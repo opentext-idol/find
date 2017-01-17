@@ -75,6 +75,8 @@ public class FindSessionITCase extends FindTestBase {
     @Test
     @Role(UserRole.FIND)
     public void testRelatedConcepts(){
+        //TODO try to update qa-infrastructure with assumeThat(reason, Matcher<Bool>)
+            //At the moment getting ambiguous call errors via this method
         assumeThat("Runs only on-prem", !isHosted());
 
         findService.search("Come and Gone");

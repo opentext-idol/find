@@ -61,6 +61,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     @Role(UserRole.FIND)
+    @ActiveBug(value = "FIND-784 -> it's possible there's another bug to do with Selenium submit", type = ApplicationType.ON_PREM)
     public void testSearchForAll() {
         findPage.goToListView();
 
@@ -157,6 +158,7 @@ public class QueryTermsITCase extends FindTestBase {
 
     @Test
     @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM, against = Deployment.DEVELOP)
+    //TODO Hosted -> is "An error occurred" a good enough error here?
     public void testCorrectErrorMessageDisplayed() {
         ensureOnCorrectView();
         new QueryTestHelper<>(findService)
@@ -173,6 +175,7 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
+    //TODO Hosted -> is "An error occurred" a good enough error here?
     public void testSearchParentheses() {
         ensureOnCorrectView();
         //noinspection AnonymousInnerClassWithTooManyMethods

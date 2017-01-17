@@ -219,6 +219,7 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-563")
     public void testQueryHighlightingForNonLatin() {
+        //TODO investigate hod not enjoying searching for some of these terms -> also add data to all deployments
         search("*");
 
         final ConceptsPanel conceptsPanel = getElementFactory().getConceptsPanel();
