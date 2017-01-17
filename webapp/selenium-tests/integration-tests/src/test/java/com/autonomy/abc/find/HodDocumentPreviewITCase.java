@@ -77,6 +77,7 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
 
     @Test
     @ResolvedBug("CCUK-3647")
+    //TODO possiblity that scrolling isn't working on vm
     public void testMessageWhenRunOutOfResults(){
         ListView results = findService.search(new Query("connectors"));
         getElementFactory().getFilterPanel().indexesTreeContainer().expand();
@@ -130,7 +131,7 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
             result.title().click();
             assertThat("Link does not contain 'undefined'",result.link(),not(containsString("undefined")));
             final Window newWindow = getMainSession().switchWindow(getMainSession().countWindows() - 1);
-            verifyThat(getDriver().getCurrentUrl(), containsString(reference));
+            verifyThat(getDriver().getCurrentUrl(), containsString(reference.split("://")[1]));
 
             if(!newWindow.equals(original)) {
                 newWindow.close();

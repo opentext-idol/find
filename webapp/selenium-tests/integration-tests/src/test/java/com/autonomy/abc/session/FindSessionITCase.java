@@ -22,7 +22,6 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -76,7 +75,7 @@ public class FindSessionITCase extends FindTestBase {
     @Test
     @Role(UserRole.FIND)
     public void testRelatedConcepts(){
-        assumeThat("Runs only on-prem", not(isHosted()));
+        assumeThat("Runs only on-prem", !isHosted());
 
         findService.search("Come and Gone");
 
