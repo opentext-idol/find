@@ -19,8 +19,7 @@ define([
     'find/app/vent',
     'find/app/router',
     'js-whatever/js/escape-regex',
-    'text!find/templates/app/app.html',
-    'metisMenu'
+    'text!find/templates/app/app.html'
 ], function($, Backbone, _, testBrowser, WindowScrollModel, SavedQueryCollection, parseUrl, ModelRegistry,
             Navigation, configuration, Pages, logout, vent, router, escapeRegex, template) {
     "use strict";
@@ -70,21 +69,6 @@ define([
                     }
 
                 }
-            },
-            'click .navbar-static-side > ul > li': function (event) {
-                $('.navbar-static-side').find('li.active').removeClass('active');
-                $(event.target).closest('li').addClass('active');
-
-                if ($(event.target).closest('ul').hasClass('nav-second-level')) {
-                    $(event.target).closest('ul').parent().addClass('active');
-                }
-            },
-            'hidden.metisMenu': function(event) {
-                $(event.target).parent().removeClass('active');
-            },
-            'click .side-nav-menu-button': function(event) {
-                event.preventDefault();
-                this.sideBarModel.set('collapsed', true);
             }
         },
 
@@ -99,7 +83,6 @@ define([
             const baseURI = determineBaseURI();
             const config = configuration();
             const applicationPath = config.applicationPath;
-            this.sideBarModel = new Backbone.Model({collapsed: false});
             this.internalHrefRegexp = new RegExp('^' + escapeRegex(removeTrailingSlash(baseURI) + applicationPath));
 
             testBrowser().done(function() {
@@ -116,8 +99,7 @@ define([
 
                 this.navigation = new this.Navigation({
                     pageData: pageData,
-                    router: router,
-                    sideBarModel: this.sideBarModel
+                    router: router
                 });
 
                 this.render();
@@ -144,33 +126,6 @@ define([
             this.navigation.render();
 
             this.$('.header').prepend(this.navigation.el);
-            this.$('.side-menu').metisMenu();
-            this.listenTo(this.sideBarModel, 'change:collapsed', function(model) {
-                this.toggleSideBar(model.get('collapsed'));
-            });
-
-            this.listenTo(vent, 'vent:resize', function () {
-                if ($(window).width() <= 785 && !this.sideBarModel.get('collapsed')) {
-                    this.sideBarModel.set('collapsed', true);
-                    this.sideBarModel.set('collapsedFromResize', true);
-                }
-                else if (this.sideBarModel.get('collapsedFromResize')) {
-                    this.sideBarModel.set('collapsed', false);
-                    this.sideBarModel.set('collapsedFromResize', false);
-                }
-            });
-
-            this.sideBarModel.set('collapsed', true);
-        },
-
-        toggleSideBar: function (collapsed) { // side is for when not collapsed
-            $(document.body).toggleClass('mini-navbar', collapsed);
-            this.$('.navbar-static-side-container').toggleClass('navbar-static-side-hidden', collapsed);
-            this.$('.page-content').toggleClass('page-wrapper-cover', collapsed);
-            this.$('.find-logo-small.top-nav').toggleClass('hidden', !collapsed);
-            this.$('.find-logo-small.side-nav').toggleClass('hidden', collapsed);
-            this.$('.top-nav-menu-button').toggleClass('hidden', !collapsed);
-            this.$('.side-nav-menu-button').toggleClass('hidden', collapsed);
         },
 
         // Can be overridden
