@@ -1,8 +1,15 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
+    'jquery',
     'backbone',
     'text!find/templates/app/util/collapsible.html',
+    'underscore',
     'bootstrap'
-], function(Backbone, collapsibleTemplate) {
+], function($, Backbone, collapsibleTemplate, _) {
     'use strict';
 
     return Backbone.View.extend({
@@ -22,7 +29,7 @@ define([
                 this.trigger('show');
             },
             'shown.bs.collapse': function() {
-                if (this.renderOnOpen) {
+                if(this.renderOnOpen) {
                     this.view.render();
                 }
 
@@ -72,7 +79,7 @@ define([
             // The "collapsed" class controls the icons with class "rotating-chevron"
             this.$header.toggleClass('collapsed', this.collapsed);
         },
-        
+
         setSubTitle: function(subtitle) {
             this.subtitle = subtitle;
             this.$('.collapsible-subtitle').text(subtitle);
@@ -83,7 +90,7 @@ define([
         },
 
         show: function() {
-            if (this.collapsed) {
+            if(this.collapsed) {
                 this.$collapse.collapse('show');
             }
         },
@@ -91,19 +98,19 @@ define([
         setTitle: function(title) {
             this.title = title;
 
-            if (this.$header) {
+            if(this.$header) {
                 this.$header.text(this.title);
             }
         },
 
         hide: function() {
-            if (!this.collapsed) {
+            if(!this.collapsed) {
                 this.$collapse.collapse('hide');
             }
         },
 
         toggle: function(state) {
-            if (state) {
+            if(state) {
                 this.show();
             } else {
                 this.hide();

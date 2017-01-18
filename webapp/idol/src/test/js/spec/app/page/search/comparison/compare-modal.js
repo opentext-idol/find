@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -8,17 +8,19 @@ define([
     'js-whatever/js/modal',
     'find/idol/app/model/comparison/comparison-model',
     'jquery',
-    'backbone'
-], function (CompareModal, Modal, ComparisonModel, $, Backbone) {
+    'backbone',
+    'underscore'
+], function(CompareModal, Modal, ComparisonModel, $, Backbone, _) {
+    'use strict';
 
     function waitFor(predicate, message, done, fail, timeout) {
         var start = Date.now();
 
         var intervalId = setInterval(function() {
-            if (predicate()) {
+            if(predicate()) {
                 clearInterval(intervalId);
                 done();
-            } else if (Date.now() - start > (timeout || 1000)) {
+            } else if(Date.now() - start > (timeout || 1000)) {
                 clearInterval(intervalId);
                 fail('Timed out waiting for ' + message);
             }
@@ -33,8 +35,8 @@ define([
         return $('.modal').length === 0;
     }
 
-    describe('Compare Modal', function () {
-        beforeEach(function (done) {
+    describe('Compare Modal', function() {
+        beforeEach(function(done) {
             var savedSearchModel = new Backbone.Model({
                 id: 1,
                 title: 'Pegasus'
@@ -73,7 +75,7 @@ define([
             }, this), done.fail);
         }, 2000);
 
-        afterEach(function (done) {
+        afterEach(function(done) {
             ComparisonModel.reset();
 
             this.view.hide();
@@ -81,21 +83,21 @@ define([
             waitFor(modalToClose, 'modal to close', done, done.fail);
         });
 
-        it('opens a modal', function () {
+        it('opens a modal', function() {
             expect($('.modal')).toHaveLength(1);
         });
 
-        describe('after a selection', function () {
-            beforeEach(function () {
+        describe('after a selection', function() {
+            beforeEach(function() {
                 this.$bElement.click();
             });
 
-            it('enables the confirm button', function () {
+            it('enables the confirm button', function() {
                 expect(this.$confirmButton).not.toHaveClass('disabled');
             });
 
-            describe('then the confirm button is clicked', function () {
-                beforeEach(function () {
+            describe('then the confirm button is clicked', function() {
+                beforeEach(function() {
                     spyOn(this.view, 'hide').and.callThrough();
 
                     this.$confirmButton.click();
@@ -109,12 +111,12 @@ define([
                     expect(this.view.$('.compare-modal-error-spinner')).not.toHaveClass('hide');
                 });
 
-                it('calls save on the comparison model', function () {
+                it('calls save on the comparison model', function() {
                     expect(ComparisonModel.instances[0].save).toHaveBeenCalled();
                 });
 
-                describe('then the request succeeds', function () {
-                    beforeEach(function () {
+                describe('then the request succeeds', function() {
+                    beforeEach(function() {
                         var comparisonModel = ComparisonModel.instances[0];
                         comparisonModel.save.calls.argsFor(0)[1].success();
                     });
@@ -128,8 +130,8 @@ define([
                     })
                 });
 
-                describe('then the request fails', function () {
-                    beforeEach(function () {
+                describe('then the request fails', function() {
+                    beforeEach(function() {
                         var comparisonModel = ComparisonModel.instances[0];
                         comparisonModel.save.calls.argsFor(0)[1].error();
                     });
@@ -147,8 +149,8 @@ define([
                     });
                 });
 
-                describe('then the cancel button is clicked', function () {
-                    beforeEach(function (done) {
+                describe('then the cancel button is clicked', function() {
+                    beforeEach(function(done) {
                         this.view.$('[data-dismiss="modal"]')[1].click();
 
                         waitFor(modalToClose, 'modal to close', done, done.fail);
@@ -161,6 +163,4 @@ define([
             });
         });
     });
-
-
 });

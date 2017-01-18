@@ -1,12 +1,12 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'find/app/page/search/filters/parametric/numeric-parametric-field-collapsible-view',
     'backbone'
-], function(NumericParametricFieldCollapsibleView) {
+], function(NumericParametricFieldCollapsibleView, Backbone) {
     'use strict';
 
     describe('Numeric Parametric Field Collapsible View', function() {
@@ -44,5 +44,4 @@ define([
             expect(this.view.collapsible.toggle.calls.argsFor(0)[0]).toBe(false);
         });
     })
-
 });

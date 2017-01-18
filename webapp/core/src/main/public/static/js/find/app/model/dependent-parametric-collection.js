@@ -1,16 +1,16 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/model/find-base-collection'
-], function (BaseCollection) {
-
+    'find/app/model/find-base-collection',
+    'underscore'
+], function(BaseCollection, _) {
     'use strict';
 
     function getArrayTotal(array) {
-        return _.reduce(array, function (mem, val) {
+        return _.reduce(array, function(mem, val) {
             return mem + Number(val.count)
         }, 0);
     }
@@ -22,7 +22,7 @@ define([
             .filter(function(element) {
                 return element.value !== '';
             })
-            .map(function (entry) {
+            .map(function(entry) {
                 var entryHash = {
                     hidden: false,
                     text: entry.value,
@@ -31,7 +31,9 @@ define([
                 return _.isEmpty(entry.field) ? entryHash : _.extend(entryHash, {children: parseResult(entry.field, entry.count)}); // recurse for children
             })
             .sortBy('id')
-            .sortBy(function(x) { return -x.count})
+            .sortBy(function(x) {
+                return -x.count
+            })
             .value();
 
         // Always show the highest 20 results
@@ -46,11 +48,11 @@ define([
 
         var sunburstData = _.union(alwaysShownValues, filteredSunburstData);
 
-        if (!_.isEmpty(sunburstData)) { //if there are items being displayed
+        if(!_.isEmpty(sunburstData)) { //if there are items being displayed
             var childCount = getArrayTotal(sunburstData); // get total displayed document count
             var remaining = total - childCount; // get the total hidden document count
             var hiddenFilterCount = initialSunburstData.length - sunburstData.length;  // get the number of hidden values
-            if(remaining > 0){
+            if(remaining > 0) {
                 sunburstData.push({
                     text: '',
                     hidden: true,
@@ -65,11 +67,10 @@ define([
     return BaseCollection.extend({
         url: 'api/public/parametric/dependent-values',
 
-        parse: function (results) {
+        parse: function(results) {
             var totalCount = getArrayTotal(results);
 
             return parseResult(results, totalCount);
         }
     });
-
 });

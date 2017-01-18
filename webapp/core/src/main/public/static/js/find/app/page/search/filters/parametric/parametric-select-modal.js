@@ -1,12 +1,18 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'js-whatever/js/modal',
-    'jquery',
     'find/app/page/search/filters/parametric/parametric-select-modal-view',
     'parametric-refinement/selected-values-collection',
     'text!find/templates/app/page/loading-spinner.html',
-    'i18n!find/nls/bundle'
-], function(Backbone, Modal, $, ParametricSelectView, SelectedValuesCollection, loadingSpinnerTemplate, i18n) {
+    'i18n!find/nls/bundle',
+    'underscore'
+], function(Backbone, Modal, ParametricSelectView, SelectedValuesCollection, loadingSpinnerTemplate, i18n, _) {
+    'use strict';
 
     return Modal.extend({
         className: Modal.prototype.className + ' fixed-height-modal',
@@ -43,5 +49,4 @@ define([
             this.$el.on('shown.bs.modal', _.bind(this.parametricSelectView.renderFields, this));
         }
     });
-
 });

@@ -1,13 +1,15 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'find/app/page/search/results/parametric-results-view',
     'backbone',
     'find/app/configuration',
     'jasmine-ajax'
 ], function(ParametricResultsView, Backbone, configuration) {
+    'use strict';
 
     var DEPENDENT_EMPTY_MESSAGE = 'No dependent fields';
     var EMPTY_MESSAGE = 'No fields';

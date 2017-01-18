@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'find/app/page/search/results/parametric-results-view',
     'underscore',
@@ -9,8 +10,9 @@ define([
     'i18n!find/nls/bundle',
     'sunburst/js/sunburst',
     'find/app/util/generate-error-support-message',
-    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html'
-], function(ParametricResultsView, _, $, i18n, Sunburst, generateErrorHtml, labelTemplate) {
+    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
+    'd3'
+], function(ParametricResultsView, _, $, i18n, Sunburst, generateErrorHtml, labelTemplate, d3) {
     'use strict';
 
     var SUNBURST_NAME_ATTR = 'text';
@@ -106,7 +108,7 @@ define([
         },
 
         update: function() {
-            if (!this.parametricCollection.isEmpty()) {
+            if(!this.parametricCollection.isEmpty()) {
                 drawSunburst.call(this, this.$content, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
 
                 var noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
@@ -115,7 +117,7 @@ define([
                     .isEmpty()
                     .value();
 
-                if (this.fieldsCollection.at(1).get('field') !== '' && noValidChildren) {
+                if(this.fieldsCollection.at(1).get('field') !== '' && noValidChildren) {
                     this.$message.text(i18n['search.resultsView.sunburst.error.noSecondFieldValues']);
                 } else {
                     this.$message.empty();

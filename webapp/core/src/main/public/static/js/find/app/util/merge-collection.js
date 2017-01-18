@@ -1,12 +1,14 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 // TODO: Move this to js-whatever
 define([
-    'backbone'
-], function(Backbone) {
+    'backbone',
+    'underscore'
+], function(Backbone, _) {
+    'use strict';
 
     /**
      * @typedef {Object} MergeCollectionOptions
@@ -60,5 +62,4 @@ define([
     });
 
     return MergeCollection;
-
 });

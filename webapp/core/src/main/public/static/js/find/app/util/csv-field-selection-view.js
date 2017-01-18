@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'backbone',
     'underscore',
@@ -11,7 +12,7 @@ define([
     'find/app/configuration',
     'text!find/templates/app/util/csv-export-form-template.html'
 ], function(Backbone, _, $, ListView, ItemView, configuration, exportFormTemplate) {
-    "use strict";
+    'use strict';
 
     return Backbone.View.extend({
         formTemplate: _.template(exportFormTemplate),

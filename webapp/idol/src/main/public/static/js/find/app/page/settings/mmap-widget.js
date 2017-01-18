@@ -1,14 +1,17 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'jquery',
     'settings/js/widget',
     'find/app/page/settings/enable-view',
     'text!find/templates/app/page/settings/widget.html',
-    'text!find/templates/app/page/settings/mmap-widget.html'
-], function(Widget, EnableView, widgetTemplate, template) {
+    'text!find/templates/app/page/settings/mmap-widget.html',
+    'underscore'
+], function($, Widget, EnableView, widgetTemplate, template, _) {
+    'use strict';
 
     return Widget.extend({
         widgetTemplate: _.template(widgetTemplate),
@@ -51,5 +54,4 @@ define([
             this.$url.val(config.baseUrl);
         }
     });
-
 });

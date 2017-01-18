@@ -1,10 +1,15 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'underscore',
     'js-whatever/js/location'
-], function (_, location) {
-    "use strict";
+], function(_, location) {
+    'use strict';
 
-    function supported (configuration, attributes) {
+    function supported(configuration, attributes) {
         return configuration.mmapBaseUrl
             && attributes.mmapUrl
             && attributes.mmapEventSourceType
@@ -14,25 +19,25 @@ define([
 
     const baseUrlRegex = /(?:\w+:\/\/)?([^:/]+(?::\d+)?)(?:\/[^/]+)*/;
 
-    function canBeReused (configuration) {
+    function canBeReused(configuration) {
         return configuration.mmapBaseUrl
             && location.host()
             && baseUrlRegex.exec(configuration.mmapBaseUrl)[1] === baseUrlRegex.exec(location.host())[1];
     }
 
-    return function (configuration) {
+    return function(configuration) {
         let childWindow;
 
         return {
             supported: _.partial(supported, configuration),
             canBeReused: _.partial(canBeReused, configuration),
-            open: function (attributes) {
-                if (supported(configuration, attributes)) {
-                    if (canBeReused(configuration) && childWindow && !childWindow.closed) {
+            open: function(attributes) {
+                if(supported(configuration, attributes)) {
+                    if(canBeReused(configuration) && childWindow && !childWindow.closed) {
                         const sourceType = attributes.mmapEventSourceType;
                         const sourceName = attributes.mmapEventSourceName;
                         const startTime = attributes.mmapEventTime;
-                        if (sourceType === 'Camera') {
+                        if(sourceType === 'Camera') {
                             //noinspection JSUnresolvedFunction
                             childWindow.loadCamera(sourceName, startTime);
                         } else {
