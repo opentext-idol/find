@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {MetricsConfiguration.class, FindGaugeService.class})
+@SpringBootTest(classes = {MetricsConfiguration.class, FindGaugeService.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class FindGaugeServiceTest {
     @Autowired
     private GaugeService gaugeService;

@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.comparison;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
@@ -23,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@IdolService
 public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult, AciErrorException> {
     private final IdolDocumentsService documentsService;
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
