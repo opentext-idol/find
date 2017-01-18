@@ -67,6 +67,8 @@ define([
         },
 
         initialize: function(options) {
+            this.fetchBuckets = _.debounce(this.immediateFetchBuckets, 500);
+
             this.inputTemplate = options.inputTemplate || NumericParametricFieldView.numericInputTemplate;
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.selectedParametricValues;
@@ -307,7 +309,7 @@ define([
             );
         },
 
-        fetchBuckets: function() {
+        immediateFetchBuckets: function() {
             var width = this.$('.numeric-parametric-chart-row').width();
 
             // If the SVG has no width or there are no values, there is no point fetching new data
