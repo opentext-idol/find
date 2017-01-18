@@ -1,6 +1,11 @@
 package com.hp.autonomy.frontend.find.idol.metrics;
 
+import com.autonomy.aci.client.transport.AciHttpClient;
+import com.autonomy.aci.client.transport.AciHttpException;
+import com.autonomy.aci.client.transport.AciServerDetails;
+import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;
+import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +18,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
+
 import static com.hp.autonomy.frontend.find.idol.metrics.PerformanceMonitoringAspectTest.UNIQUE_PROPERTY;
 import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
@@ -31,10 +39,19 @@ public class PerformanceMonitoringAspectTest {
     private GaugeService gaugeService;
     @Autowired
     private TestService testService;
+    @Autowired
+    private AciHttpClient aciHttpClient;
 
     @Test
     public void monitorServiceMethodPerformance() {
         testService.testMethod();
+        verify(gaugeService).submit(anyString(), anyDouble());
+    }
+
+    @SuppressWarnings("resource")
+    @Test
+    public void monitorIdolRequestPerformance() throws IOException, AciHttpException {
+        aciHttpClient.executeAction(new AciServerDetails("localhost", 5678), new AciParameters(QueryActions.Query.name()));
         verify(gaugeService).submit(anyString(), anyDouble());
     }
 
@@ -51,6 +68,11 @@ public class PerformanceMonitoringAspectTest {
         @Bean
         TestService testService() {
             return new TestService();
+        }
+
+        @Bean
+        AciHttpClient aciHttpClient() {
+            return mock(AciHttpClient.class);
         }
     }
 }
