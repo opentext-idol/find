@@ -1,0 +1,20 @@
+{
+  "dashboards": [{
+    "dashboardName": "Default Dashboard",
+    "enabled": false,
+    "width": 3,
+    "height": 3,
+    "widgets": [{
+      "name": "Sample Widget",
+      "type": "staticContentWidget",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "savedSearchId": null,
+      "widgetSettings": {
+        "content": "Hello World!"
+      }
+    }]
+  }]
+}
