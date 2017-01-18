@@ -19,8 +19,9 @@ define([
      * @property {Number} count
      */
     /**
-     * Fill the specified range with buckets. Uses the given buckets if they lie within the range, the rest of the range
-     * is padded with empty buckets. Note that the bucket size is not respected.
+     * Fill the specified range with buckets. Uses the given buckets if they lie
+     * within the range, the rest of the range is padded with empty buckets. Note
+     * that the bucket size is not respected.
      * @param {Buckets[]} buckets Must be ordered and have no gaps
      * @param {Number[]} range Must have length 2 ([min, max])
      * @return {Buckets[]} Ordered, complete buckets filling the given range exactly
@@ -35,10 +36,14 @@ define([
             return [emptyBucket(range)];
         } else {
             var filteredMin = _.first(filteredBuckets).min;
-            var preBuckets = filteredMin > range[0] ? [emptyBucket([range[0], filteredMin])] : [];
+            var preBuckets = filteredMin > range[0]
+                ? [emptyBucket([range[0], filteredMin])]
+                : [];
 
             var filteredMax = _.last(filteredBuckets).max;
-            var postBuckets = filteredMax < range[1] ? [emptyBucket([filteredMax, range[1]])] : [];
+            var postBuckets = filteredMax < range[1]
+                ? [emptyBucket([filteredMax, range[1]])]
+                : [];
 
             return preBuckets.concat(filteredBuckets).concat(postBuckets);
         }

@@ -31,12 +31,6 @@ define([
         return a + b;
     }
 
-    function rangeModelMatching(fieldName, dataType) {
-        return function(model) {
-            return model.get('field') === fieldName && model.get('range') && model.get('dataType') === dataType;
-        };
-    }
-
     // This view must be visible before it is rendered
     var NumericParametricFieldView = Backbone.View.extend({
         className: 'animated fadeIn',
@@ -80,14 +74,16 @@ define([
             this.selectionEnabled = options.selectionEnabled;
             this.zoomEnabled = options.zoomEnabled;
             this.buttonsEnabled = options.selectionEnabled && options.buttonsEnabled;
-            this.coordinatesEnabled = options.coordinatesEnabled === undefined ? true : options.coordinatesEnabled;
+            this.coordinatesEnabled = _.isUndefined(options.coordinatesEnabled) || options.coordinatesEnabled;
             this.hideTitle = options.hideTitle;
             this.dataType = options.dataType;
             this.clickCallback = options.clickCallback;
 
             this.fieldName = this.model.id;
 
-            var formatting = this.dataType === 'date' ? options.formatting : NumericParametricFieldView.defaultFormatting;
+            var formatting = this.dataType === 'date'
+                ? options.formatting
+                : NumericParametricFieldView.defaultFormatting;
             this.formatValue = function(value) {
                 return formatting.format(value, this.model.get('currentMin'), this.model.get('currentMax'));
             }.bind(this);
@@ -99,11 +95,11 @@ define([
 
             // The view's this.model contains the current and
             // absolute ranges, the bucketModel contains the values
-            this.bucketModel = new BucketedParametricCollection.Model({id: this.model.get('id')});
+            this.bucketModel = new BucketedParametricCollection.Model({id: this.fieldName});
 
             // Bind the selection rectangle to the selected parametric range
             this.listenTo(this.selectedParametricValues, 'add remove change', function(model) {
-                if(rangeModelMatching(this.fieldName, this.dataType)(model)) {
+                if(this.isTargetModel(model)) {
                     this.updateSelection();
                 }
             });
@@ -132,9 +128,6 @@ define([
         },
 
         render: function() {
-            var inputColumnClass = this.selectionEnabled ? (this.coordinatesEnabled ? 'col-xs-4' : 'col-xs-6') : 'hide';
-            var coordinatesColumnClass = this.coordinatesEnabled ? (this.selectionEnabled ? 'col-xs-4' : 'col-xs-12') : 'hide';
-
             this.$el
                 .empty()
                 .append(this.template({
@@ -143,10 +136,14 @@ define([
                     clickable: Boolean(this.clickCallback),
                     buttonsEnabled: this.buttonsEnabled,
                     inputsRowClass: this.selectionEnabled || this.coordinatesEnabled ? '' : 'hide',
-                    inputColumnClass: inputColumnClass,
+                    inputColumnClass: this.selectionEnabled
+                        ? (this.coordinatesEnabled ? 'col-xs-4' : 'col-xs-6')
+                        : 'hide',
                     inputTemplate: this.inputTemplate,
                     loadingSpinnerHtml: this.loadingSpinnerHtml,
-                    coordinatesColumnClass: coordinatesColumnClass
+                    coordinatesColumnClass: this.coordinatesEnabled
+                        ? (this.selectionEnabled ? 'col-xs-4' : 'col-xs-12')
+                        : 'hide'
                 }));
 
             if(this.selectionEnabled) {
@@ -164,22 +161,22 @@ define([
         // Draw the graph with the current data and ranges, or display
         // the loading spinner if we don't have any data yet
         updateGraph: function() {
-            var hadError = this.bucketModel.error;
+            var noError = !this.bucketModel.error;
             var fetching = this.bucketModel.fetching;
-            var noValues = this.model.get('totalValues') === 0;
+            var hasValues = this.model.get('totalValues') !== 0;
             var modelBuckets = this.bucketModel.get('values');
 
-            this.$('.numeric-parametric-error-text').toggleClass('hide', !hadError);
-            this.$('.numeric-parametric-empty-text').toggleClass('hide', hadError || !noValues);
+            this.$('.numeric-parametric-error-text').toggleClass('hide', noError);
+            this.$('.numeric-parametric-empty-text').toggleClass('hide', !noError || hasValues);
 
-            var showLoadingIndicator = !hadError && !noValues && (fetching && modelBuckets.length === 0);
-            this.$('.numeric-parametric-loading-indicator').toggleClass('hide', !showLoadingIndicator);
+            var hideLoadingIndicator = !(noError && hasValues && fetching && modelBuckets.length === 0);
+            this.$('.numeric-parametric-loading-indicator').toggleClass('hide', hideLoadingIndicator);
 
             var $chartRow = this.$('.numeric-parametric-chart-row');
             $chartRow.find('.chart').remove();
             var width = $chartRow.width();
 
-            if(!hadError && !noValues && !showLoadingIndicator && width > 0) {
+            if(noError && hasValues && hideLoadingIndicator && width > 0) {
                 var $chart = $(this.svgTemplate({selectionEnabled: this.selectionEnabled}));
                 $chartRow.append($chart);
 
@@ -250,7 +247,7 @@ define([
         updateSelection: function() {
             if(this.graph) {
                 var rangeModel = this.selectedParametricValues
-                    .find(rangeModelMatching(this.fieldName, this.dataType));
+                    .find(this.isTargetModel.bind(this));
 
                 if(rangeModel) {
                     var range = rangeModel.get('range');
@@ -271,8 +268,10 @@ define([
         // Should be called with values that are already parsed
         updateRestrictions: function(newRange) {
             var existingModel = this.selectedParametricValues
-                .find(rangeModelMatching(this.fieldName, this.dataType));
-            var existingRange = existingModel ? existingModel.get('range') : [this.model.get('min'), this.model.get('max')];
+                .find(this.isTargetModel.bind(this));
+            var existingRange = existingModel
+                ? existingModel.get('range')
+                : [this.model.get('min'), this.model.get('max')];
 
             var newAttributes = {
                 field: this.fieldName,
@@ -302,17 +301,19 @@ define([
         },
 
         clearRestrictions: function() {
-            this.selectedParametricValues.remove(this.selectedParametricValues.filter(rangeModelMatching(this.fieldName, this.dataType)));
+            this.selectedParametricValues.remove(
+                this.selectedParametricValues.filter(this.isTargetModel.bind(this))
+            );
         },
 
         fetchBuckets: function() {
             var width = this.$('.numeric-parametric-chart-row').width();
 
             // If the SVG has no width or there are no values, there is no point fetching new data
-            if(width !== 0 && this.model.get('totalValues') !== 0) {
+            if(!(width === 0 || this.model.get('totalValues') === 0)) {
                 // Exclude any restrictions for this field from the field text
                 var otherSelectedValues = this.selectedParametricValues
-                    .reject(rangeModelMatching(this.fieldName, this.dataType))
+                    .reject(this.isTargetModel.bind(this))
                     .map(function(model) {
                         return model.toJSON();
                     });
@@ -351,6 +352,12 @@ define([
             if(this.selectionEnabled) {
                 this.$maxInput.val(this.formatValue(newValue));
             }
+        },
+
+        isTargetModel: function(model) {
+            return model.get('field') === this.fieldName &&
+                model.get('range') &&
+                model.get('dataType') === this.dataType;
         }
     }, {
         dateInputTemplate: _.template(dateInputTemplate),
@@ -373,12 +380,14 @@ define([
                 return Math.round(input);
             },
             render: function($el) {
-                datePicker.render($el.find('.results-filter-date[data-date-attribute="min-date"]'), function() {
-                    this.updateRestrictions([this.readMinInput(), null]);
-                }.bind(this));
-                datePicker.render($el.find('.results-filter-date[data-date-attribute="max-date"]'), function() {
-                    this.updateRestrictions([null, this.readMaxInput()]);
-                }.bind(this));
+                datePicker.render($el.find('.results-filter-date[data-date-attribute="min-date"]'),
+                    function() {
+                        this.updateRestrictions([this.readMinInput(), null]);
+                    }.bind(this));
+                datePicker.render($el.find('.results-filter-date[data-date-attribute="max-date"]'),
+                    function() {
+                        this.updateRestrictions([null, this.readMaxInput()]);
+                    }.bind(this));
             }
         }
     });

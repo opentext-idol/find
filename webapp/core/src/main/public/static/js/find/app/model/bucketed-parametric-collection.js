@@ -16,7 +16,9 @@ define([
         url: function() {
             var base = this.collection ? this.collection.url() : URL_ROOT;
             // Double encode since Spring doesn't like %2F in URLs
-            return this.isNew() ? base : base.replace(/[^\/]$/, '$&/') + encodeURIComponent(encodeURIComponent(this.id));
+            return this.isNew()
+                ? base
+                : base.replace(/[^\/]$/, '$&/') + encodeURIComponent(encodeURIComponent(this.id));
         },
 
         defaults: {
