@@ -75,7 +75,7 @@ define([
                 error: _.bind(function() {
                     this.loadingTracker.questionsFinished = true;
                     this.clearLoadingSpinner();
-                })
+                }, this)
             }, this);
         }
     });
