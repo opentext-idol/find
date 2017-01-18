@@ -54,19 +54,14 @@ define([
                 empty: this.collection.isEmpty()
             });
 
-            //noinspection JSUnresolvedFunction
             this.listenTo(this.model, 'change:processing', this.updateProcessing);
-            //noinspection JSUnresolvedFunction
             this.listenTo(this.model, 'change:error', this.updateError);
-            //noinspection JSUnresolvedFunction
             this.listenTo(this.model, 'change', this.updateEmpty);
 
-            //noinspection JSUnresolvedFunction
             this.listenTo(this.restrictedParametricCollection, 'request', function() {
                 this.model.set({processing: true, error: false});
             });
 
-            //noinspection JSUnresolvedFunction
             this.listenTo(this.restrictedParametricCollection, 'error', function(collection, xhr) {
                 if(xhr.status === 0) {
                     this.model.set({processing: Boolean(this.restrictedParametricCollection.currentRequest)});
@@ -76,12 +71,10 @@ define([
                 }
             });
 
-            //noinspection JSUnresolvedFunction
             this.listenTo(this.restrictedParametricCollection, 'sync', function() {
                 this.model.set({processing: false});
             });
 
-            //noinspection JSUnresolvedFunction
             this.listenTo(this.collection, 'update reset', function() {
                 this.model.set('empty', this.collection.isEmpty());
             });
@@ -91,9 +84,7 @@ define([
             var isCollapsed = function(model) {
                 if(this.filterModel && this.filterModel.get('text')) {
                     return false;
-                }
-                else {
-                    //noinspection JSUnresolvedFunction
+                } else {
                     return _.isUndefined(collapsed[model.id]) || collapsed[model.id];
                 }
             }.bind(this);
@@ -145,23 +136,19 @@ define([
                 }
             });
 
-            //noinspection JSUnresolvedFunction
-            // Would ideally use model.cid but on refresh display Collection creates new models with different cids
+            // Would ideally use model.cid, but on refresh the Display
+            // Collection creates new models with different cids
             this.listenTo(this.fieldNamesListView, 'item:toggle', function(model, newState) {
                 collapsed[model.id] = newState;
             });
         },
 
         render: function() {
-            //noinspection JSUnresolvedVariable
             this.$el.html(this.template).prepend(this.fieldNamesListView.$el);
             this.fieldNamesListView.render();
 
-            //noinspection JSUnresolvedFunction
             this.$emptyMessage = this.$('.parametric-empty');
-            //noinspection JSUnresolvedFunction
             this.$errorMessage = this.$('.parametric-error');
-            //noinspection JSUnresolvedFunction
             this.$processing = this.$('.parametric-processing-indicator');
 
             this.updateProcessing();
@@ -177,8 +164,8 @@ define([
         updateEmpty: function() {
             if(this.$emptyMessage) {
                 var showEmptyMessage = this.model.get('empty') &&
-                    this.collection.isEmpty() &&
-                    !(this.model.get('error') || this.model.get('processing'));
+                    this.collection.isEmpty() && !(this.model.get('error') ||
+                    this.model.get('processing'));
                 this.$emptyMessage.toggleClass('hide', !showEmptyMessage);
             }
         },

@@ -1,13 +1,12 @@
 define([
     'backbone',
     'underscore',
-    'jquery',
     'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
     'find/app/util/collapsible',
     'find/app/page/search/filters/parametric/parametric-select-modal',
     'find/app/page/search/filters/parametric/parametric-value-view'
-], function(Backbone, _, $, i18n, ListView, Collapsible, ParametricModal, ValueView) {
+], function(Backbone, _, i18n, ListView, Collapsible, ParametricModal, ValueView) {
     'use strict';
 
     var MAX_SIZE = 5;

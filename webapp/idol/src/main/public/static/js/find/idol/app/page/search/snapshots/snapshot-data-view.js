@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -12,7 +12,9 @@ define([
     './data-panel-view',
     './snapshot-detail',
     './snapshot-restrictions'
-], function(Backbone, _, i18n, snapshotsI18n, Collapsible, DataPanelView, snapshotDetail, snapshotRestrictions) {
+], function(Backbone, _, i18n, snapshotsI18n, Collapsible, DataPanelView,
+            snapshotDetail, snapshotRestrictions) {
+    'use strict';
 
     /**
      * Contents of the left side panel for a saved snapshot.
@@ -51,5 +53,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-
 });

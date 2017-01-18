@@ -5,15 +5,13 @@
 
 define([
     'backbone',
-    'jquery',
     'underscore',
     'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/util/collapsible',
     'find/app/vent'
-], function(Backbone, $, _, i18n, NumericParametricFieldView, rounder, Collapsible, vent) {
-
+], function(Backbone, _, i18n, NumericParametricFieldView, rounder, Collapsible, vent) {
     'use strict';
 
     function getSubtitle() {

@@ -302,7 +302,8 @@ define([
 
         clearRestrictions: function() {
             this.selectedParametricValues.remove(
-                this.selectedParametricValues.filter(this.isTargetModel.bind(this))
+                this.selectedParametricValues
+                    .filter(this.isTargetModel.bind(this))
             );
         },
 

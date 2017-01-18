@@ -68,7 +68,6 @@ define([
 
                     this.$emptyMessage = $('<p class="hide">' + i18n['search.filters.empty'] + '</p>');
 
-                    //noinspection JSUnresolvedFunction
                     this.listenTo(this.filterModel, 'change', function() {
                         this.updateDatesVisibility();
                         this.updateParametricVisibility();
@@ -96,7 +95,6 @@ define([
                     this.indexesEmpty = false;
                     this.collapsed.indexes = true;
 
-                    //noinspection JSUnresolvedFunction
                     var indexesView = new IndexesView({
                         delayedSelection: options.delayedIndexesSelection,
                         filterModel: this.filterModel,
@@ -117,7 +115,6 @@ define([
                     });
 
                     // only track user triggered changes, not automatic ones
-                    //noinspection JSUnresolvedFunction
                     this.listenTo(this.indexesViewWrapper, 'toggle', function(newState) {
                         this.collapsed.indexes = newState;
                     });
@@ -148,7 +145,6 @@ define([
                         title: datesTitle
                     });
 
-                    //noinspection JSUnresolvedFunction
                     this.listenTo(this.dateViewWrapper, 'toggle', function(newState) {
                         this.collapsed.dates = newState;
                     });
@@ -208,7 +204,6 @@ define([
                     });
 
                     if(this.filterModel) {
-                        //noinspection JSUnresolvedFunction
                         this.listenTo(this.mergedParametricCollection, 'update reset', function() {
                             this.updateParametricVisibility();
                             this.updateEmptyMessage();
@@ -245,35 +240,27 @@ define([
                 }.bind(this)
             }];
 
-            //noinspection JSUnresolvedFunction
             this.views = _.where(views, {shown: true});
-
-            //noinspection JSUnresolvedFunction
             _.invoke(this.views, 'initialize');
         },
 
         render: function() {
             AbstractSectionView.prototype.render.apply(this, arguments);
 
-            //noinspection JSUnresolvedVariable
             this.getViewContainer().empty();
             this.views.forEach(function(view) {
                 view.get$els().forEach(function($el) {
-                    //noinspection JSUnresolvedVariable
                     this.getViewContainer().append($el);
                 }.bind(this));
             }.bind(this));
 
-            //noinspection JSUnresolvedFunction
             _.invoke(this.views, 'render');
-            //noinspection JSUnresolvedFunction
             _.invoke(this.views, 'postRender');
 
             return this;
         },
 
         remove: function() {
-            //noinspection JSUnresolvedFunction
             _.invoke(this.views, 'remove');
 
             AbstractSectionView.prototype.remove.call(this);

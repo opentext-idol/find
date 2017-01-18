@@ -6,12 +6,11 @@
 define([
     'backbone',
     'underscore',
-    'jquery',
     'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'parametric-refinement/prettify-field-name',
     'text!find/templates/app/page/search/time-bar-view.html'
-], function(Backbone, _, $, i18n, NumericParametricFieldView, prettifyFieldName, timeBarTemplate) {
+], function(Backbone, _, i18n, NumericParametricFieldView, prettifyFieldName, timeBarTemplate) {
     'use strict';
 
     var PIXELS_PER_BUCKET = 20;

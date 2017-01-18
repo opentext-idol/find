@@ -4,12 +4,11 @@
  */
 
 define([
-    'jquery',
     'backbone',
     'text!find/templates/app/util/collapsible.html',
     'underscore',
     'bootstrap'
-], function($, Backbone, collapsibleTemplate, _) {
+], function(Backbone, collapsibleTemplate, _) {
     'use strict';
 
     return Backbone.View.extend({
