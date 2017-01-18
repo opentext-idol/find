@@ -25,7 +25,7 @@ node {
 		env.JAVA_HOME="${tool 'Java 8 OpenJDK'}"
 		env.PATH="${tool 'Maven3'}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
 
-		mavenArguments = getMavenArguments()
+        mavenArguments = getMavenArguments()
 
 		// Verify is needed to run some basic integration tests but these are not the selenium tests
 		sh "mvn ${mavenArguments} -f webapp/pom.xml -Dapplication.buildNumber=${gitCommit} clean verify -P production -U -pl idol -am"
@@ -70,14 +70,15 @@ node {
 		} catch (org.acegisecurity.acls.NotFoundException e) {
 			echo "No Artifactory 'idol' server configured, skipping stage"
 		} catch (groovy.lang.MissingPropertyException e) {
-			echo "No Artifactory plugin installed, skipping stage"
+		    echo "No Artifactory plugin installed, skipping stage"
 		}
 
-	stage 'Deploy'
-		sh (
-			script: './deploy-script.sh',
-			returnStdout: true
-	).trim()
+    stage 'Deploy'
+        sh '''
+            source /home/fenkins/ansible/hacking/env-setup
+            FPLAYBOOKDIR=/home/fenkins/frontend-playbook/vagrant/ansible/frontendslave-playbook/
+            ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_ROLES_PATH=${FPLAYBOOKDIR}roles ansible-playbook ${FPLAYBOOKDIR}app-playbook.yml -vv -i ${FPLAYBOOKDIR}hosts --ask-sudo-pass --ask-vault-pass -k --extra-vars "docker_build_location=/home/fenkins/docker_build"
+        '''
 
 	stage 'Notifications'
 		emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'
@@ -113,8 +114,8 @@ def getOrgRepoName() {
 }
 
 def getMavenArguments() {
-	sh (
-		script: "bash /home/fenkins/resources/apps/find-maven-arguments.sh",
-		returnStdout: true
-	).trim()
+    sh (
+        script: "bash /home/fenkins/resources/apps/find-maven-arguments.sh",
+        returnStdout: true
+    ).trim()
 }
