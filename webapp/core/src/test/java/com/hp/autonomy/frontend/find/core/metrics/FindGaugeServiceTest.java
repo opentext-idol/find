@@ -9,12 +9,16 @@ import org.springframework.boot.actuate.metrics.buffer.BufferMetricReader;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_PROPERTY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {MetricsConfiguration.class, FindGaugeService.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(
+        classes = {MetricsConfiguration.class, FindGaugeService.class},
+        properties = FIND_METRICS_PROPERTY,
+        webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class FindGaugeServiceTest {
     @Autowired
     private GaugeService gaugeService;

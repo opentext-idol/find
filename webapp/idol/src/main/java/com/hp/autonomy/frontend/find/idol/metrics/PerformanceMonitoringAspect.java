@@ -15,11 +15,14 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.GaugeService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_PROPERTY;
 
 /**
  * Default implementation of {@link AciErrorExceptionAspect}
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("ProhibitedExceptionDeclared")
 @Aspect
 @Component
+@ConditionalOnProperty(FIND_METRICS_PROPERTY)
 class PerformanceMonitoringAspect {
     static final char METRIC_NAME_SEPARATOR = '.';
     static final String IDOL_REQUEST_METRIC_NAME_PREFIX = "idol" + METRIC_NAME_SEPARATOR;

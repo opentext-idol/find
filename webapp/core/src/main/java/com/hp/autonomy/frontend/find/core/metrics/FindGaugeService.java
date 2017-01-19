@@ -1,9 +1,7 @@
 package com.hp.autonomy.frontend.find.core.metrics;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.boot.actuate.metrics.buffer.GaugeBuffers;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,8 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Custom implementation of {@link GaugeService} which provides maxTime/minTime/averageTime
  */
-@Component
-public class FindGaugeService implements GaugeService {
+class FindGaugeService implements GaugeService {
     private static final String MAX_TIME_SUFFIX = ".max-time";
     private static final String MIN_TIME_SUFFIX = ".min-time";
     private static final String AVERAGE_TIME_SUFFIX = ".average-time";
@@ -25,8 +22,7 @@ public class FindGaugeService implements GaugeService {
 
     private final GaugeBuffers buffers;
 
-    @Autowired
-    public FindGaugeService(final GaugeBuffers buffers) {
+    FindGaugeService(final GaugeBuffers buffers) {
         this.buffers = buffers;
     }
 

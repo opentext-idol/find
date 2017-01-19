@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.util.Set;
 
+import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_PROPERTY;
 import static com.hp.autonomy.frontend.find.idol.metrics.PerformanceMonitoringAspect.*;
 import static com.hp.autonomy.frontend.find.idol.metrics.PerformanceMonitoringAspectTest.UNIQUE_PROPERTY;
 import static org.mockito.Matchers.*;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         classes = {PerformanceMonitoringAspect.class, PerformanceMonitoringAspectTest.TestConfiguration.class},
-        properties = UNIQUE_PROPERTY,
+        properties = {UNIQUE_PROPERTY, FIND_METRICS_PROPERTY},
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class PerformanceMonitoringAspectTest {
     static final String UNIQUE_PROPERTY = "performance-monitor-aspect-test";
