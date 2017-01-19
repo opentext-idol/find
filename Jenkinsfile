@@ -76,7 +76,7 @@ node {
     stage 'Deploy'
         sh '''
             FPLAYBOOKDIR=/home/fenkins/frontend-playbook/vagrant/ansible/frontendslave-playbook/
-            ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_ROLES_PATH=${FPLAYBOOKDIR}roles ansible-playbook ${FPLAYBOOKDIR}app-playbook.yml -vv -i ${FPLAYBOOKDIR}hosts -k --extra-vars "docker_build_location=/home/fenkins/docker_build"
+            ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_ROLES_PATH=${FPLAYBOOKDIR}roles ansible-playbook ${FPLAYBOOKDIR}app-playbook.yml -vv -i ${FPLAYBOOKDIR}hosts --extra-vars "docker_build_location=/home/fenkins/docker_build"
         '''
 
 	stage 'Notifications'
