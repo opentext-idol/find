@@ -2,10 +2,13 @@ package com.hp.autonomy.frontend.find.idol.metrics;
 
 import com.autonomy.aci.client.transport.AciHttpClient;
 import com.autonomy.aci.client.transport.AciHttpException;
+import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;
+import com.hp.autonomy.types.requests.idol.actions.params.ActionParams;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
+import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +22,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.Set;
 
+import static com.hp.autonomy.frontend.find.idol.metrics.PerformanceMonitoringAspect.*;
 import static com.hp.autonomy.frontend.find.idol.metrics.PerformanceMonitoringAspectTest.UNIQUE_PROPERTY;
-import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -45,14 +49,30 @@ public class PerformanceMonitoringAspectTest {
     @Test
     public void monitorServiceMethodPerformance() {
         testService.testMethod();
-        verify(gaugeService).submit(anyString(), anyDouble());
+        final String expectedMetricName = "com.hp.autonomy.frontend.find.idol.metrics.PerformanceMonitoringAspectTest$TestService" + CLASS_METHOD_SEPARATOR + "testMethod";
+        verify(gaugeService).submit(eq(expectedMetricName), anyDouble());
     }
 
     @SuppressWarnings("resource")
     @Test
     public void monitorIdolRequestPerformance() throws IOException, AciHttpException {
-        aciHttpClient.executeAction(new AciServerDetails("localhost", 5678), new AciParameters(QueryActions.Query.name()));
-        verify(gaugeService).submit(anyString(), anyDouble());
+        final Set<AciParameter> parameters = new AciParameters(QueryActions.Query.name());
+        final String text = "*";
+        parameters.add(new AciParameter(QueryParams.Text.name(), text));
+        final String database = "Test";
+        parameters.add(new AciParameter(QueryParams.DatabaseMatch.name(), database));
+
+        final String host = "localhost";
+        final int port = 5678;
+        aciHttpClient.executeAction(new AciServerDetails(host, port), parameters);
+        final String expectedMetricName =
+                IDOL_REQUEST_METRIC_NAME_PREFIX
+                        + host + METRIC_NAME_SEPARATOR
+                        + port + METRIC_NAME_SEPARATOR
+                        + ActionParams.Action.name() + NAME_VALUE_SEPARATOR + QueryActions.Query.name()
+                        + PARAMETER_SEPARATOR + QueryParams.DatabaseMatch.name() + NAME_VALUE_SEPARATOR + database
+                        + PARAMETER_SEPARATOR + QueryParams.Text.name() + NAME_VALUE_SEPARATOR + text;
+        verify(gaugeService).submit(eq(expectedMetricName), anyDouble());
     }
 
     @IdolService
