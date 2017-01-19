@@ -45,7 +45,8 @@ define([
                     Constructor: BasePage,
                     icon: 'hp-icon hp-fw hp-dashboard',
                     title: i18n[dash.dashboardName] || dash.dashboardName,
-                    order: index
+                    order: index,
+                    constructorArguments: dash
                 };
 
                 return acc;

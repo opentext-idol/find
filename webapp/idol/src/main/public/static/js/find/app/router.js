@@ -11,6 +11,7 @@ define([
     //noinspection LocalVariableNamingConventionJS
     var Router = RouterConstructor.extend({
         routes: _.extend({
+            'dashboards/:dashboardName': 'dashboards',
             'search/document/:database/:reference': 'documentDetail',
             'search/suggest/:database/:reference': 'suggest'
         }, RouterConstructor.prototype.routes)
