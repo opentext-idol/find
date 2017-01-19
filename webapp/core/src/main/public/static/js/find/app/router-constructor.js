@@ -6,7 +6,8 @@
 define([
     'backbone'
 ], function(Backbone) {
-    
+    'use strict';
+
     return Backbone.Router.extend({
         routes: {
             'search/query(/:text)': 'search',
@@ -34,6 +35,10 @@ define([
 
         searchSplash: function() {
             this.trigger('route:page', 'search');
+        },
+
+        dashboards: function(dashboardName) {
+            this.trigger('route:page', 'dashboards/' + dashboardName)
         }
     });
 

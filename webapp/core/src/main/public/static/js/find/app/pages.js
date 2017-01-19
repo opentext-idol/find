@@ -18,6 +18,8 @@ define([
                     viewOptions[modelName] = options.modelRegistry.get(modelName);
                 });
 
+                _.extend(viewOptions, data.constructorArguments);
+
                 return {
                     hasRendered: false,
                     view: new data.Constructor(viewOptions)
