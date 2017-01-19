@@ -6,16 +6,16 @@ define([
     'find/app/app',
     'underscore',
     'find/app/configuration',
-    'js-whatever/js/base-page',
     'find/idol/app/model/idol-indexes-collection',
     'find/idol/app/model/saved-searches/saved-snapshot-collection',
     'find/idol/app/idol-navigation',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
+    'find/idol/app/page/dashboard-page',
     'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
-], function(BaseApp, _, configuration, BasePage, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage,
-            SettingsPage, i18n) {
+], function(BaseApp, _, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage,
+            DashboardPage, SettingsPage, i18n) {
     'use strict';
 
     return BaseApp.extend({
@@ -42,7 +42,7 @@ define([
 
             const pageData = _.reduce(dashboards, function(acc, dash, index) {
                 acc['dashboards/' + dash.dashboardName] =  {
-                    Constructor: BasePage,
+                    Constructor: DashboardPage,
                     icon: 'hp-icon hp-fw hp-dashboard',
                     title: i18n[dash.dashboardName] || dash.dashboardName,
                     order: index,
