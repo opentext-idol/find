@@ -102,7 +102,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 .build());
     }
 
-    @RequestMapping(value = PPT_TOPICMAP_PATH, method = RequestMethod.POST)
+    @RequestMapping(value = PPT_TOPICMAP_PATH)
     public HttpEntity<byte[]> update(
             @RequestParam("paths") final String pathStr
     ) throws IOException {

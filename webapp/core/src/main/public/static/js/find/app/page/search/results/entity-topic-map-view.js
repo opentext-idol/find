@@ -52,10 +52,8 @@ define([
                 var paths = this.topicMap.exportPaths();
 
                 if (paths) {
-                    // TODO: URL goes here
-                    var $form = $('<form method="post" target="_blank" action="../api/bi/export/ppt/topicmap"><input name="paths"></form>');
-                    $form[0].paths.value = JSON.stringify(_.flatten(paths.slice(1).reverse()))
-                    $form.submit()
+                    // Firefox doesn't allow the POST to open a download, so we have to use a GET to window.open
+                    window.open('../api/bi/export/ppt/topicmap?paths=' + encodeURIComponent(JSON.stringify(_.flatten(paths.slice(1).reverse()))), '_blank')
                 }
 
                 return false
