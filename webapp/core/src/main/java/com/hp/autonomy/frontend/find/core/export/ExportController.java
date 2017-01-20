@@ -25,6 +25,11 @@ import org.apache.poi.xslf.usermodel.XSLFFreeformShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStop;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStopList;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -133,9 +138,6 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             path.closePath();
 
             shape.setPath(path);
-            final Color color = Color.decode(reqPath.getColor());
-
-            shape.setFillColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), Math.min(255, Math.max(0, (int) (256 * reqPath.getOpacity())))));
             shape.setStrokeStyle(2);
             shape.setLineColor(Color.GRAY);
             shape.setHorizontalCentered(true);
@@ -147,6 +149,27 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             textRun.setText(reqPath.name);
             textRun.setFontColor(Color.WHITE);
             textRun.setBold(true);
+
+            final int opacity = (int) (100000 * reqPath.getOpacity());
+            final Color c1 = Color.decode(reqPath.getColor());
+            final Color c2 = Color.decode(reqPath.getColor2());
+
+            final CTShape cs = (CTShape) shape.getXmlObject();
+            final CTGradientFillProperties gFill = cs.getSpPr().addNewGradFill();
+            gFill.addNewLin().setAng(1800000);
+            final CTGradientStopList list = gFill.addNewGsLst();
+
+            final CTGradientStop stop1 = list.addNewGs();
+            stop1.setPos(0);
+            final CTSRgbColor color1 = stop1.addNewSrgbClr();
+            color1.setVal(new byte[]{(byte) c1.getRed(), (byte) c1.getGreen(), (byte) c1.getBlue()});
+            color1.addNewAlpha().setVal(opacity);
+
+            final CTGradientStop stop2 = list.addNewGs();
+            stop2.setPos(100000);
+            final CTSRgbColor color2 = stop2.addNewSrgbClr();
+            color2.setVal(new byte[]{(byte) c2.getRed(), (byte) c2.getGreen(), (byte) c2.getBlue()});
+            color2.addNewAlpha().setVal(opacity);
         }
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
