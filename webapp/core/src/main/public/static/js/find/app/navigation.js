@@ -20,6 +20,9 @@ define([
                 event.preventDefault();
                 const collapsed = this.sideBarModel.get('collapsed');
                 this.sideBarModel.set('collapsed', !collapsed);
+            },
+            'click a[data-pagename]': function() {
+                this.sideBarModel.set('collapsed', true);
             }
         },
 
