@@ -23,6 +23,8 @@ import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFFreeformShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
+import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -136,10 +138,15 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             shape.setFillColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), Math.min(255, Math.max(0, (int) (256 * reqPath.getOpacity())))));
             shape.setStrokeStyle(2);
             shape.setLineColor(Color.GRAY);
-            shape.setText(reqPath.name);
             shape.setHorizontalCentered(true);
             shape.setVerticalAlignment(VerticalAlignment.MIDDLE);
             shape.setTextAutofit(TextShape.TextAutofit.NORMAL);
+
+            final XSLFTextParagraph text = shape.addNewTextParagraph();
+            final XSLFTextRun textRun = text.addNewTextRun();
+            textRun.setText(reqPath.name);
+            textRun.setFontColor(Color.WHITE);
+            textRun.setBold(true);
         }
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
