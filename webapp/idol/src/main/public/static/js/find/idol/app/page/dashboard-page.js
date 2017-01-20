@@ -6,9 +6,9 @@
 define([
     'underscore',
     'js-whatever/js/base-page',
-    './dashboard/static-content',
+    './dashboard/widget-registry',
     'text!find/idol/templates/app/page/dashboard-page.html'
-], function (_, BasePage, StaticContentWidget, template) {
+], function (_, BasePage, widgetRegistry, template) {
     'use strict';
 
     return BasePage.extend({
@@ -20,8 +20,10 @@ define([
         initialize: function (options) {
             this.dashboardName = options.dashboardName;
             this.widgetViews = _.map(options.widgets, function (widget) {
+                const WidgetConstructor = widgetRegistry(widget.type).Constructor;
+                
                 return {
-                    view: new StaticContentWidget(widget.widgetSettings),
+                    view: new WidgetConstructor(widget.widgetSettings),
                     position: {
                         x: widget.x,
                         y: widget.y,
