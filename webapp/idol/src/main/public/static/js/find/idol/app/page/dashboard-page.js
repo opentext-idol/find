@@ -4,27 +4,60 @@
  */
 
 define([
+    'underscore',
     'js-whatever/js/base-page',
+    './dashboard/static-content',
     'text!find/idol/templates/app/page/dashboard-page.html'
-], function(BasePage, template) {
+], function (_, BasePage, StaticContentWidget, template) {
     'use strict';
 
     return BasePage.extend({
 
-        className: 'container-fluid',
+        className: 'dashboard',
 
         template: _.template(template),
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.dashboardName = options.dashboardName;
+            this.widgetViews = _.map(options.widgets, function (widget) {
+                return {
+                    view: new StaticContentWidget(widget.widgetSettings),
+                    position: {
+                        x: widget.x,
+                        y: widget.y,
+                        width: widget.width,
+                        height: widget.height
+                    }
+                };
+            });
+
+            this.widthPerUnit = 100 / options.width;
+            this.heightPerUnit = 100 / options.height;
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(this.template({
                 dashboardName: this.dashboardName
             }));
-        }
 
+            _.each(this.widgetViews, function (widget) {
+                const $div = this.generateWidgetDiv(widget.position);
+                this.$el.append($div);
+                widget.view.setElement($div).render();
+            }.bind(this));
+        },
+
+        generateWidgetDiv: function (position) {
+            const widgetElement = $('<div class="widget"></div>');
+            widgetElement.css({
+                'left': position.x * this.widthPerUnit + '%',
+                'top': position.y * this.heightPerUnit + '%',
+                'width': position.width * this.widthPerUnit + '%',
+                'height': position.height * this.heightPerUnit + '%'
+            });
+
+            return widgetElement;
+        }
     });
 
 });

@@ -49,7 +49,7 @@ define([
         },
 
         render: function() {
-            var pages = _.chain(this.pageData)
+            const pages = _.chain(this.pageData)
                 .map(function(data, name) {
                     return _.extend({pageName: name}, data);
                 })
