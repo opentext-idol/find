@@ -148,7 +148,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.presentationml.presentation"));
-        headers.set("Content-Disposition", "attachment; filename=topicmap.pptx");
+        headers.set("Content-Disposition", "inline; filename=topicmap.pptx");
         return new HttpEntity<>(baos.toByteArray(), headers);
     }
 
