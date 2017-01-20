@@ -52,8 +52,11 @@ define([
                 var paths = this.topicMap.exportPaths();
 
                 if (paths) {
-                    // Firefox doesn't allow the POST to open a download, so we have to use a GET to window.open
-                    window.open('../api/bi/export/ppt/topicmap?paths=' + encodeURIComponent(JSON.stringify(_.flatten(paths.slice(1).reverse()))), '_blank')
+                    // We need to append the temporary form to the document.body or Firefox and IE11 won't download the file.
+                    // Previously used GET; but IE11 has a limited GET url length and loses data.
+                    var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/topicmap"><input name="paths"><input type="submit"></form>');
+                    $form[0].paths.value = JSON.stringify(_.flatten(paths.slice(1).reverse()))
+                    $form.appendTo(document.body).submit().remove()
                 }
             }
         },
