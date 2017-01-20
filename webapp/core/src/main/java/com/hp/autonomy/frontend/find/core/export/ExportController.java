@@ -156,7 +156,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
             final CTShape cs = (CTShape) shape.getXmlObject();
             final CTGradientFillProperties gFill = cs.getSpPr().addNewGradFill();
-            gFill.addNewLin().setAng(1800000);
+            gFill.addNewLin().setAng(3300000);
             final CTGradientStopList list = gFill.addNewGsLst();
 
             final CTGradientStop stop1 = list.addNewGs();
