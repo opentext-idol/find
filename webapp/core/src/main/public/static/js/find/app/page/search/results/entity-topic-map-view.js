@@ -55,8 +55,6 @@ define([
                     // Firefox doesn't allow the POST to open a download, so we have to use a GET to window.open
                     window.open('../api/bi/export/ppt/topicmap?paths=' + encodeURIComponent(JSON.stringify(_.flatten(paths.slice(1).reverse()))), '_blank')
                 }
-
-                return false
             }
         },
 
