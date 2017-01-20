@@ -69,6 +69,10 @@ define([
                 size: 1.0,
                 children: this.data
             });
+        },
+
+        exportPaths: function(){
+            return this.$el.topicmap('exportPaths');
         }
     });
 });

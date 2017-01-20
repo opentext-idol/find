@@ -46,6 +46,19 @@ define([
                 var maxResults = event.value;
 
                 this.model.set('maxResults', maxResults);
+            },
+            'click .entity-topic-map-pptx': function(evt){
+                evt.preventDefault()
+                var paths = this.topicMap.exportPaths();
+
+                if (paths) {
+                    // TODO: URL goes here
+                    var $form = $('<form method="post" target="_blank" action="../api/bi/export/ppt/topicmap"><input name="paths"></form>');
+                    $form[0].paths.value = JSON.stringify(_.flatten(paths.slice(1).reverse()))
+                    $form.submit()
+                }
+
+                return false
             }
         },
 

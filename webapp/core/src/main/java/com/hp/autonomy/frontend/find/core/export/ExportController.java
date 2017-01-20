@@ -5,11 +5,25 @@
 
 package com.hp.autonomy.frontend.find.core.export;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Collection;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFFreeformShape;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,16 +36,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Collection;
-
 @RequestMapping(ExportController.EXPORT_PATH)
 public abstract class ExportController<R extends QueryRequest<?>, E extends Exception> {
     static final String EXPORT_PATH = "/api/bi/export";
     static final String CSV_PATH = "/csv";
+    static final String PPT_TOPICMAP_PATH = "/ppt/topicmap";
     static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
     static final String QUERY_REQUEST_PARAM = "queryRequest";
     private static final String EXPORT_FILE_NAME = "query-results";
@@ -92,4 +101,55 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 .setException(e)
                 .build());
     }
+
+    @RequestMapping(value = PPT_TOPICMAP_PATH, method = RequestMethod.POST)
+    public HttpEntity<byte[]> update(
+            @RequestParam("paths") final String pathStr
+    ) throws IOException {
+        final Path[] paths = new ObjectMapper().readValue(pathStr, Path[].class);
+
+        final XMLSlideShow ppt = new XMLSlideShow();
+        final XSLFSlide sl = ppt.createSlide();
+
+        for(final Path reqPath : paths) {
+            final XSLFFreeformShape shape = sl.createFreeform();
+            final Path2D.Double path = new Path2D.Double();
+
+            boolean first = true;
+
+            for(double[] point : reqPath.getPoints()) {
+                final double x = point[0] * 720;
+                final double y = point[1] * 540;
+                if (first) {
+                    path.moveTo(x, y);
+                    first = false;
+                }
+                else {
+                    path.lineTo(x, y);
+                }
+            }
+            path.closePath();
+
+            shape.setPath(path);
+            final Color color = Color.decode(reqPath.getColor());
+
+            shape.setFillColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), Math.min(255, Math.max(0, (int) (256 * reqPath.getOpacity())))));
+            shape.setStrokeStyle(2);
+            shape.setLineColor(Color.GRAY);
+            shape.setText(reqPath.name);
+            shape.setHorizontalCentered(true);
+            shape.setVerticalAlignment(VerticalAlignment.MIDDLE);
+            shape.setTextAutofit(TextShape.TextAutofit.NORMAL);
+        }
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ppt.write(baos);
+        ppt.close();
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.presentationml.presentation"));
+        headers.set("Content-Disposition", "attachment; filename=topicmap.pptx");
+        return new HttpEntity<>(baos.toByteArray(), headers);
+    }
+
 }
