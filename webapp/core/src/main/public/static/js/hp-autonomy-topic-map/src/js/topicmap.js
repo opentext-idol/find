@@ -306,6 +306,26 @@
                     pluginMeta.animate(animate, singleStep);
                 }
             });
+        },
+        /**
+         * Exports the path data from the topic map .
+         *
+         * @example
+         *      <pre><code>
+         $('#paper').exportPaths();
+         *      </code></pre>
+         */
+        exportPaths: function() {
+            var toReturn
+
+            $(this).each(function(){
+                var dom = $(this), pluginMeta = dom.data('topicmap');
+                if (pluginMeta) {
+                    toReturn = pluginMeta.exportPaths();
+                }
+            });
+
+            return toReturn
         }
     };
 
@@ -349,6 +369,9 @@
         var enforceLabelBounds = options.enforceLabelBounds;
 
         pluginMeta.renderData = renderData;
+        pluginMeta.exportPaths = function(){
+            return mesh && mesh.exportPaths()
+        };
         pluginMeta.animate = function(animate, singleStep){
             if (!mesh) {
                 return;
@@ -695,6 +718,22 @@
 
             function throwError(err) {
                 throw new Error(arguments[0] || 'should not happen');
+            }
+
+            this.exportPaths = function() {
+                return depthPolyMeta.map(function(meta, depth){
+                    return meta.polygons.map(function(polygon){
+                        return {
+                            name: polygon.name,
+                            color: polygon.color,
+                            color2: polygon.color2,
+                            opacity: depth > 1 ? 1 : 0.8,
+                            points: polygon.vertices.map(function(vtx){
+                                return [vtx.x/width, vtx.y/height]
+                            })
+                        }
+                    })
+                })
             }
 
             this.step = function() {

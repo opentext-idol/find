@@ -36,7 +36,7 @@ require.config({
         slider: '../bower_components/seiyria-bootstrap-slider/dist',
         text: '../bower_components/requirejs-text/text',
         sunburst: '../bower_components/hp-autonomy-sunburst/src',
-        topicmap: '../bower_components/hp-autonomy-topic-map/src',
+        topicmap: 'hp-autonomy-topic-map/src',
         underscore: '../bower_components/underscore/underscore',
         typeahead: '../bower_components/corejs-typeahead/dist/typeahead.jquery',
         'flot': '../bower_components/Flot/jquery.flot',
