@@ -4,11 +4,11 @@
  */
 
 define([
-    'backbone'
-], function(Backbone) {
+    './widget'
+], function(Widget) {
     'use strict';
 
-    return Backbone.View.extend({
+    return Widget.extend({
 
         initialize: function(options) {
             this.html = options.html;

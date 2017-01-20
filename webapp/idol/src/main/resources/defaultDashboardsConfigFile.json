@@ -13,7 +13,7 @@
       "height": 1,
       "savedSearchId": null,
       "widgetSettings": {
-        "content": "Hello World!"
+        "html": "Hello World!"
       }
     }]
   }]
