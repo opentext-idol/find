@@ -10,10 +10,12 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;
 import com.hp.autonomy.searchcomponents.idol.exceptions.AciErrorExceptionAspect;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -22,7 +24,9 @@ import org.springframework.util.StopWatch;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_PROPERTY;
+import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_ENABLED_PROPERTY_KEY;
+import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_TYPE_PROPERTY;
+import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.METRIC_NAME_SEPARATOR;
 
 /**
  * Default implementation of {@link AciErrorExceptionAspect}
@@ -30,24 +34,27 @@ import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FI
 @SuppressWarnings("ProhibitedExceptionDeclared")
 @Aspect
 @Component
-@ConditionalOnProperty(FIND_METRICS_PROPERTY)
+@ConditionalOnProperty(FIND_METRICS_ENABLED_PROPERTY_KEY)
 class PerformanceMonitoringAspect {
-    static final char METRIC_NAME_SEPARATOR = '.';
-    static final String IDOL_REQUEST_METRIC_NAME_PREFIX = "idol" + METRIC_NAME_SEPARATOR;
+    static final String SERVICE_METRIC_NAME_PREFIX = METRIC_NAME_SEPARATOR + "service" + METRIC_NAME_SEPARATOR;
+    static final String IDOL_REQUEST_METRIC_NAME_PREFIX = METRIC_NAME_SEPARATOR + "idol" + METRIC_NAME_SEPARATOR;
     static final char CLASS_METHOD_SEPARATOR = ':';
     static final String PARAMETER_SEPARATOR = "&";
     static final char NAME_VALUE_SEPARATOR = '=';
 
     private final GaugeService gaugeService;
+    private final String metricType;
 
     @Autowired
-    public PerformanceMonitoringAspect(final GaugeService gaugeService) {
+    public PerformanceMonitoringAspect(final GaugeService gaugeService,
+                                       @Value(FIND_METRICS_TYPE_PROPERTY) final String metricType) {
         this.gaugeService = gaugeService;
+        this.metricType = metricType;
     }
 
     @Around("@within(idolService)")
     public Object monitorServiceMethodPerformance(final ProceedingJoinPoint joinPoint, final IdolService idolService) throws Throwable {
-        final String metricName = joinPoint.getSignature().getDeclaringTypeName() + CLASS_METHOD_SEPARATOR + joinPoint.getSignature().getName();
+        final String metricName = metricType + SERVICE_METRIC_NAME_PREFIX + joinPoint.getSignature().getDeclaringTypeName() + CLASS_METHOD_SEPARATOR + joinPoint.getSignature().getName();
         return monitorMethodPerformance(joinPoint, metricName);
     }
 
@@ -57,10 +64,10 @@ class PerformanceMonitoringAspect {
             final ProceedingJoinPoint joinPoint,
             final AciServerDetails serverDetails,
             final Collection<? extends AciParameter> parameters) throws Throwable {
-        final StringBuilder metricNameBuilder = new StringBuilder(IDOL_REQUEST_METRIC_NAME_PREFIX + serverDetails.getHost() + METRIC_NAME_SEPARATOR + serverDetails.getPort() + METRIC_NAME_SEPARATOR);
+        final StringBuilder metricNameBuilder = new StringBuilder(metricType + IDOL_REQUEST_METRIC_NAME_PREFIX + serverDetails.getHost() + METRIC_NAME_SEPARATOR + serverDetails.getPort() + METRIC_NAME_SEPARATOR);
         final Collection<String> sortedParameters = parameters.stream()
-                .filter(parameter -> !QueryParams.SecurityInfo.name().equalsIgnoreCase(parameter.getName()))
-                .map(parameter -> parameter.getName() + NAME_VALUE_SEPARATOR + parameter.getValue())
+                .filter(parameter -> !QueryParams.SecurityInfo.name().equalsIgnoreCase(parameter.getName()) && StringUtils.isNotEmpty(parameter.getValue()))
+                .map(parameter -> parameter.getName() + NAME_VALUE_SEPARATOR + tweakParameterValueInMetricName(parameter))
                 .sorted()
                 .collect(Collectors.toList());
         metricNameBuilder.append(String.join(PARAMETER_SEPARATOR, sortedParameters));
@@ -77,5 +84,9 @@ class PerformanceMonitoringAspect {
             stopWatch.stop();
             gaugeService.submit(metricName, stopWatch.getTotalTimeMillis());
         }
+    }
+
+    private String tweakParameterValueInMetricName(final AciParameter parameter) {
+        return QueryParams.Text.name().equalsIgnoreCase(parameter.getName()) && !"*".equals(parameter.getValue()) ? "[any]" : parameter.getValue();
     }
 }

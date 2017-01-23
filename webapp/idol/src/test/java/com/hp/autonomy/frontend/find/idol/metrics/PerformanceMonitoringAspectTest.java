@@ -12,6 +12,7 @@ import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,10 +25,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.util.Set;
 
-import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_PROPERTY;
+import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.*;
 import static com.hp.autonomy.frontend.find.idol.metrics.PerformanceMonitoringAspect.*;
 import static com.hp.autonomy.frontend.find.idol.metrics.PerformanceMonitoringAspectTest.UNIQUE_PROPERTY;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.anyDouble;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -35,7 +37,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         classes = {PerformanceMonitoringAspect.class, PerformanceMonitoringAspectTest.TestConfiguration.class},
-        properties = {UNIQUE_PROPERTY, FIND_METRICS_PROPERTY},
+        properties = {UNIQUE_PROPERTY, FIND_METRICS_ENABLED_PROPERTY_KEY},
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class PerformanceMonitoringAspectTest {
     static final String UNIQUE_PROPERTY = "performance-monitor-aspect-test";
@@ -46,11 +48,17 @@ public class PerformanceMonitoringAspectTest {
     private TestService testService;
     @Autowired
     private AciHttpClient aciHttpClient;
+    @Value(FIND_METRICS_TYPE_PROPERTY)
+    private String metricType;
 
     @Test
     public void monitorServiceMethodPerformance() {
         testService.testMethod();
-        final String expectedMetricName = "com.hp.autonomy.frontend.find.idol.metrics.PerformanceMonitoringAspectTest$TestService" + CLASS_METHOD_SEPARATOR + "testMethod";
+        final String expectedMetricName = metricType
+                + SERVICE_METRIC_NAME_PREFIX
+                + "com.hp.autonomy.frontend.find.idol.metrics.PerformanceMonitoringAspectTest$TestService"
+                + CLASS_METHOD_SEPARATOR
+                + "testMethod";
         verify(gaugeService).submit(eq(expectedMetricName), anyDouble());
     }
 
@@ -67,7 +75,8 @@ public class PerformanceMonitoringAspectTest {
         final int port = 5678;
         aciHttpClient.executeAction(new AciServerDetails(host, port), parameters);
         final String expectedMetricName =
-                IDOL_REQUEST_METRIC_NAME_PREFIX
+                metricType
+                        + IDOL_REQUEST_METRIC_NAME_PREFIX
                         + host + METRIC_NAME_SEPARATOR
                         + port + METRIC_NAME_SEPARATOR
                         + ActionParams.Action.name() + NAME_VALUE_SEPARATOR + QueryActions.Query.name()
