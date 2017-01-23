@@ -1,13 +1,27 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
-import com.autonomy.abc.selenium.query.*;
+import com.autonomy.abc.selenium.query.DatePickerFilter;
+import com.autonomy.abc.selenium.query.IndexFilter;
+import com.autonomy.abc.selenium.query.ParametricFilter.Filterable;
+import com.autonomy.abc.selenium.query.QueryFilter;
+import com.autonomy.abc.selenium.query.StringDateFilter;
 import com.hp.autonomy.frontend.selenium.element.ChevronContainer;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
-import com.hp.autonomy.frontend.selenium.util.*;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
+import com.hp.autonomy.frontend.selenium.util.DriverUtil;
+import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -24,14 +38,14 @@ public class FindPage extends AppElement implements AppPage,
         IndexFilter.Filterable,
         DatePickerFilter.Filterable,
         StringDateFilter.Filterable,
-        ParametricFilter.Filterable {
+        Filterable {
 
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     FindPage(final WebDriver driver) {
         super(new WebDriverWait(driver, 30)
-                .withMessage("loading Find page")
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container"))), driver);
+                      .withMessage("loading Find page")
+                      .until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container"))), driver);
     }
 
     //WAITS
@@ -45,15 +59,15 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     public void waitUntilParametricModalGone() {
-        new WebDriverWait(getDriver(),10)
+        new WebDriverWait(getDriver(), 10)
                 .until(ExpectedConditions.invisibilityOfElementLocated(By.className(".parametric-modal")));
     }
 
     public void waitUntilDatabasesLoaded() {
-        new WebDriverWait(getDriver(),20)
+        new WebDriverWait(getDriver(), 20)
                 .withMessage("databases not loaded message to disappear")
                 .until(ExpectedConditions.invisibilityOfElementWithText(By.cssSelector(".main-results-list .results")
-                        ,"The list of databases has not yet been retrieved"));
+                        , "The list of databases has not yet been retrieved"));
     }
 
     //RESULTS
@@ -119,8 +133,8 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     @Override
-    public void openContainer(WebElement container) {
-        WebElement list = container.findElement(By.className("collapse"));
+    public void openContainer(final WebElement container) {
+        final WebElement list = container.findElement(By.className("collapse"));
 
         if(list.getAttribute("aria-expanded").equals("false")) {
             container.click();
@@ -137,7 +151,7 @@ public class FindPage extends AppElement implements AppPage,
         return findElements(By.className("filter-label"));
     }
 
-    public void removeFilterLabel(WebElement filter) {
+    public void removeFilterLabel(final WebElement filter) {
         filter.findElement(By.cssSelector(".filters-remove-icon")).click();
     }
 
@@ -154,7 +168,8 @@ public class FindPage extends AppElement implements AppPage,
 
     public boolean hasAutoCorrected() {
         final List<WebElement> originalQuery = findElements(By.className("original-query"));
-        return !originalQuery.isEmpty() && originalQuery.get(0).isDisplayed(); }
+        return !originalQuery.isEmpty() && originalQuery.get(0).isDisplayed();
+    }
 
     public void ensureTermNotAutoCorrected() {
         if(hasAutoCorrected()) {
@@ -178,9 +193,9 @@ public class FindPage extends AppElement implements AppPage,
     }
 
     public boolean verticalScrollBarPresent() {
-        String javaScript = "return document.documentElement.scrollHeight>document.documentElement.clientHeight;";
-        JavascriptExecutor executor = (JavascriptExecutor) getDriver();
-        return (boolean) executor.executeScript(javaScript);
+        final String javaScript = "return document.documentElement.scrollHeight>document.documentElement.clientHeight;";
+        final JavascriptExecutor executor = (JavascriptExecutor)getDriver();
+        return (boolean)executor.executeScript(javaScript);
     }
 
     @Override

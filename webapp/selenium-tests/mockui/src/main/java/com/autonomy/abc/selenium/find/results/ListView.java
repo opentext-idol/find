@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.results;
 
 import com.autonomy.abc.selenium.find.Container;
@@ -8,7 +13,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
@@ -38,8 +42,8 @@ public class ListView extends AppElement implements QueryResultsPage {
     }
 
     public boolean errorContainerShown() {
-        List<WebElement> errorWells = findElements(By.cssSelector(".well"));
-        return errorWells.size()>0 && errorWells.get(0).isDisplayed();
+        final List<WebElement> errorWells = findElements(By.cssSelector(".well"));
+        return errorWells.size() > 0 && errorWells.get(0).isDisplayed();
     }
 
     public List<String> getResultTitles() {
@@ -101,7 +105,7 @@ public class ListView extends AppElement implements QueryResultsPage {
             int loadingSpinners = driver.findElements(By.cssSelector(".loading-spinner:not(.hide)")).size();
             loadingSpinners -= driver.findElements(By.cssSelector(".hide .loading-spinner")).size();
 
-            return  loadingSpinners == 0
+            return loadingSpinners == 0
                     && !driver.findElements(By.cssSelector(".results > div")).isEmpty()
                     && (driver.findElements(By.cssSelector(".results-view-error.hide")).isEmpty()
                     || !driver.findElements(By.cssSelector(".main-results-list.results .result-message")).isEmpty()

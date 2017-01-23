@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.base;
 
 import com.autonomy.abc.selenium.find.application.UserRole;
@@ -8,10 +13,10 @@ public class TestUserRole extends TestWatcher {
     private Role userRole;
 
     @Override
-    protected void starting(Description description) {
+    protected void starting(final Description description) {
         userRole = description.getTestClass().getAnnotation(Role.class);
 
-        Role methodAnnotation = description.getAnnotation(Role.class);
+        final Role methodAnnotation = description.getAnnotation(Role.class);
         if(methodAnnotation != null) {
             userRole = methodAnnotation;
         }

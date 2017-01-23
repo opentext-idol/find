@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.filters;
 
 import org.openqa.selenium.By;
@@ -15,13 +20,13 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
     }
 
     @Override
-    public String filterCategoryName(){
+    public String filterCategoryName() {
         expand();
         return filterCategory().getText().split(" \\(")[0];
     }
 
     public int getFilterNumber() {
-        return Integer.parseInt(filterCategory().getText().split(" \\(")[1].replaceAll("[()]",""));
+        return Integer.parseInt(filterCategory().getText().split(" \\(")[1].replaceAll("[()]", ""));
     }
 
     public List<FindParametricFilter> getFilters() {
@@ -32,18 +37,18 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
 
     @Override
     public List<String> getFilterNames() {
-        final boolean startedCollapsed = this.isCollapsed();
+        final boolean startedCollapsed = isCollapsed();
 
         // text cannot be read if it is not visible
-        if (startedCollapsed) {
-            this.expand();
+        if(startedCollapsed) {
+            expand();
         }
 
-        List<String> filterNames = getFilters().stream().map(FindParametricFilter::getName).collect(Collectors.toList());
+        final List<String> filterNames = getFilters().stream().map(FindParametricFilter::getName).collect(Collectors.toList());
 
         // restore collapsed state
-        if (startedCollapsed) {
-            this.collapse();
+        if(startedCollapsed) {
+            collapse();
         }
 
         return filterNames;
@@ -55,7 +60,7 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
     }
 
     //TODO: expanding reloads the parametric filter container so if have to expand them it will be stale
-    public void seeAll(){
+    public void seeAll() {
         expand();
         getContainer().findElement(By.cssSelector(".show-all")).click();
     }
