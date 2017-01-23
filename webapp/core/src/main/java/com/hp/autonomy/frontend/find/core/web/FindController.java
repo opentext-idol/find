@@ -23,9 +23,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_ENABLED_PROPERTY;
 
 public abstract class FindController<C extends FindConfig<C, B>, B extends FindConfigBuilder<C, B>> {
     public static final String APP_PATH = "/public";
@@ -41,6 +47,9 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
 
     @Value(AppConfiguration.APPLICATION_RELEASE_VERSION_PROPERTY)
     private String releaseVersion;
+
+    @Value(FIND_METRICS_ENABLED_PROPERTY)
+    private String metricsEnabled;
 
     protected FindController(final ControllerUtils controllerUtils,
                              final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
@@ -60,7 +69,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     public void index(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         final String contextPath = request.getContextPath();
 
-        if(LoginTypes.DEFAULT.equals(authenticationConfigService.getConfig().getAuthentication().getMethod())) {
+        if (LoginTypes.DEFAULT.equals(authenticationConfigService.getConfig().getAuthentication().getMethod())) {
             response.sendRedirect(contextPath + DEFAULT_LOGIN_PAGE);
         } else {
             response.sendRedirect(contextPath + APP_PATH);
@@ -71,7 +80,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     public ModelAndView mainPage(final HttpServletRequest request) throws JsonProcessingException {
         final String username = authenticationInformationRetriever.getAuthentication().getName();
 
-        final Collection<String> roles = authenticationInformationRetriever.getAuthentication().getAuthorities().stream().map((Function<GrantedAuthority, String>)GrantedAuthority::getAuthority).collect(Collectors.toCollection(LinkedList::new));
+        final Collection<String> roles = authenticationInformationRetriever.getAuthentication().getAuthorities().stream().map((Function<GrantedAuthority, String>) GrantedAuthority::getAuthority).collect(Collectors.toCollection(LinkedList::new));
 
         final FindConfig<C, B> findConfig = configService.getConfig();
 
@@ -81,6 +90,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         config.put(MvcConstants.ROLES.value(), roles);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
+        config.put(MvcConstants.METRICS_ENABLED.value(), metricsEnabled);
         config.put(MvcConstants.MAP.value(), findConfig.getMap());
         config.put(MvcConstants.UI_CUSTOMIZATION.value(), findConfig.getUiCustomization());
         config.put(MvcConstants.SAVED_SEARCH_CONFIG.value(), findConfig.getSavedSearchConfig());
