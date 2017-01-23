@@ -99,7 +99,8 @@ define([
 
                 this.navigation = new this.Navigation({
                     pageData: pageData,
-                    router: router
+                    router: router,
+                    sidebarModel: modelRegistry.get('sidebarModel')
                 });
 
                 this.render();
@@ -133,6 +134,13 @@ define([
             var modelData = {
                 indexesCollection: {
                     Constructor: this.IndexesCollection
+                },
+                sidebarModel: {
+                    Constructor: Backbone.Model,
+                    fetch: false,
+                    attributes: {
+                        collapsed: false
+                    }
                 },
                 windowScrollModel: {
                     Constructor: WindowScrollModel,

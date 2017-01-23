@@ -21,6 +21,8 @@ define([
 
         initialize: function (options) {
             this.dashboardName = options.dashboardName;
+            this.sidebarModel = options.sidebarModel;
+
             this.widgetViews = _.map(options.widgets, function (widget) {
                 const widgetDefinition = widgetRegistry(widget.type);
                 const WidgetConstructor = widgetDefinition ? widgetDefinition.Constructor : WidgetNotFoundWidget;
@@ -51,11 +53,8 @@ define([
                 widget.view.setElement($div).render();
             }.bind(this));
 
-            this.listenTo(vent, 'vent:resize', function() {
-                _.each(this.widgetViews, function(widget) {
-                    widget.view.onResize();
-                });
-            });
+            this.listenTo(vent, 'vent:resize', this.onResize);
+            this.listenTo(this.sidebarModel, 'change:collapsed', this.onResize);
         },
 
         generateWidgetDiv: function (position) {
@@ -68,6 +67,12 @@ define([
             });
 
             return widgetElement;
+        },
+
+        onResize: function() {
+            _.each(this.widgetViews, function(widget) {
+                widget.view.onResize();
+            });
         }
     });
 
