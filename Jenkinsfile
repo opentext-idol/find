@@ -43,7 +43,7 @@ node {
 	stage 'Artifactory'
 		try {
 			def server = Artifactory.server "idol" // "idol" is the name of the Artifactory server configured in Jenkins
-			def artifactLocation = "applications/find/${repository}/${branch}/"
+			def artifactLocation = "applications/find/${repository}/${branch}/".toLowerCase()
 
 			def uploadSpec = """{
 				"files": [
