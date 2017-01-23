@@ -67,6 +67,9 @@ define([
         },
 
         initialize: function(options) {
+            this.delayedFetchBuckets = _.debounce(this.fetchBuckets, 500);
+            this.collapseModel = options.collapseModel || null;
+
             this.inputTemplate = options.inputTemplate || NumericParametricFieldView.numericInputTemplate;
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.selectedParametricValues;
@@ -121,8 +124,7 @@ define([
                     this.fetchBuckets();
                 });
 
-            // TODO: Only update graph rather than render?
-            this.listenTo(vent, 'vent:resize', this.render);
+            this.listenTo(vent, 'vent:resize', this.delayedFetchBucketsAndUpdate);
 
             this.listenTo(this.bucketModel, 'change:values request sync error', this.updateGraph);
         },
@@ -254,7 +256,6 @@ define([
 
                     this.updateMinInput(range[0]);
                     this.updateMaxInput(range[1]);
-
                     this.graph.setSelection(range);
                 } else {
                     this.updateMinInput(this.model.get('min'));
@@ -302,36 +303,44 @@ define([
 
         clearRestrictions: function() {
             this.selectedParametricValues.remove(
-                this.selectedParametricValues.filter(this.isTargetModel.bind(this))
+                this.selectedParametricValues
+                    .filter(this.isTargetModel.bind(this))
             );
         },
 
         fetchBuckets: function() {
-            var width = this.$('.numeric-parametric-chart-row').width();
+            if(!(this.collapseModel && this.collapseModel.get('collapsed'))) {
+                var width = this.$('.numeric-parametric-chart-row').width();
 
-            // If the SVG has no width or there are no values, there is no point fetching new data
-            if(!(width === 0 || this.model.get('totalValues') === 0)) {
-                // Exclude any restrictions for this field from the field text
-                var otherSelectedValues = this.selectedParametricValues
-                    .reject(this.isTargetModel.bind(this))
-                    .map(function(model) {
-                        return model.toJSON();
+                // If the SVG has no width or there are no values, there is no point fetching new data
+                if(!(width === 0 || this.model.get('totalValues') === 0)) {
+                    // Exclude any restrictions for this field from the field text
+                    var otherSelectedValues = this.selectedParametricValues
+                        .reject(this.isTargetModel.bind(this))
+                        .map(function(model) {
+                            return model.toJSON();
+                        });
+
+                    this.bucketModel.fetch({
+                        data: {
+                            queryText: this.queryModel.get('queryText'),
+                            fieldText: toFieldTextNode(otherSelectedValues),
+                            minDate: this.queryModel.getIsoDate('minDate'),
+                            maxDate: this.queryModel.getIsoDate('maxDate'),
+                            minScore: this.queryModel.get('minScore'),
+                            databases: this.queryModel.get('indexes'),
+                            targetNumberOfBuckets: Math.floor(width / this.pixelsPerBucket),
+                            bucketMin: this.model.get('currentMin'),
+                            bucketMax: this.model.get('currentMax')
+                        }
                     });
-
-                this.bucketModel.fetch({
-                    data: {
-                        queryText: this.queryModel.get('queryText'),
-                        fieldText: toFieldTextNode(otherSelectedValues),
-                        minDate: this.queryModel.getIsoDate('minDate'),
-                        maxDate: this.queryModel.getIsoDate('maxDate'),
-                        minScore: this.queryModel.get('minScore'),
-                        databases: this.queryModel.get('indexes'),
-                        targetNumberOfBuckets: Math.floor(width / this.pixelsPerBucket),
-                        bucketMin: this.model.get('currentMin'),
-                        bucketMax: this.model.get('currentMax')
-                    }
-                });
+                }
             }
+        },
+
+        delayedFetchBucketsAndUpdate: function() {
+            this.updateGraph();
+            this.delayedFetchBuckets();
         },
 
         readMinInput: function() {

@@ -5,15 +5,13 @@
 
 define([
     'backbone',
-    'jquery',
     'underscore',
     'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/util/collapsible',
     'find/app/vent'
-], function(Backbone, $, _, i18n, NumericParametricFieldView, rounder, Collapsible, vent) {
-
+], function(Backbone, _, i18n, NumericParametricFieldView, rounder, Collapsible, vent) {
     'use strict';
 
     function getSubtitle() {
@@ -46,11 +44,11 @@ define([
             this.timeBarModel = options.timeBarModel;
             this.filterModel = options.filterModel;
 
-            if(_.isFunction(options.collapsed)) {
-                this.collapsed = options.collapsed(options.model);
-            } else {
-                this.collapsed = _.isUndefined(options.collapsed) || options.collapsed;
-            }
+            this.collapseModel = new Backbone.Model({
+                collapsed: Boolean(_.isFunction(options.collapsed)
+                    ? options.collapsed(options.model)
+                    : _.isUndefined(options.collapsed) || options.collapsed)
+            });
 
             var clickCallback = null;
 
@@ -65,25 +63,28 @@ define([
                 }.bind(this);
             }
 
-            this.fieldView = new NumericParametricFieldView(_.extend({
-                hideTitle: true,
-                clickCallback: clickCallback,
-                dataType: this.dataType
-            }, options));
+            this.fieldView = new NumericParametricFieldView(
+                _.extend({
+                    hideTitle: true,
+                    clickCallback: clickCallback,
+                    dataType: this.dataType,
+                    collapseModel: this.collapseModel
+                }, options)
+            );
 
             this.collapsible = new Collapsible({
                 title: this.model.get('displayName'),
                 subtitle: getSubtitle.call(this),
                 view: this.fieldView,
-                collapsed: this.collapsed,
+                collapseModel: this.collapseModel,
                 renderOnOpen: true
             });
 
             this.listenTo(this.timeBarModel, 'change', this.updateHighlightState);
             this.listenTo(this.selectedParametricValues,
                 'update change:range',
-                this.setFieldSelectedValues);
-            this.listenTo(vent, 'vent:resize', this.fieldView.render.bind(this.fieldView));
+                this.setFieldSelectedValues
+            );
 
             this.listenTo(this.collapsible, 'show', function() {
                 this.collapsible.toggleSubtitle(true);
@@ -94,7 +95,7 @@ define([
             });
 
             this.listenTo(this.collapsible, 'toggle', function(newState) {
-                this.collapsed = newState;
+                this.collapseModel.set('collapsed', newState);
                 this.trigger('toggle', this.model, newState);
             });
 
@@ -102,9 +103,8 @@ define([
                 this.listenTo(this.filterModel, 'change', function() {
                     if(this.filterModel.get('text')) {
                         this.collapsible.show();
-                    }
-                    else {
-                        this.collapsible.toggle(!this.collapsed);
+                    } else {
+                        this.collapsible.toggle(!this.collapseModel.get('collapsed'));
                     }
                 });
             }
@@ -113,7 +113,6 @@ define([
         render: function() {
             this.$el.append(this.collapsible.$el);
             this.collapsible.render();
-
             this.toggleSubtitle();
             this.updateHighlightState();
         },
@@ -139,13 +138,11 @@ define([
 
         setFieldSelectedValues: function() {
             this.collapsible.setSubTitle(getSubtitle.call(this));
-
             this.toggleSubtitle();
         },
 
         remove: function() {
             this.collapsible.remove();
-
             Backbone.View.prototype.remove.call(this);
         }
     });

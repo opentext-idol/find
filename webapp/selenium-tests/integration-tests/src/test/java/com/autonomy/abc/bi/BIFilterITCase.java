@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
@@ -36,7 +41,7 @@ public class BIFilterITCase extends IdolFindTestBase {
     @Before
     public void setUp() {
         findService = getApplication().findService();
-        findPage = ((BIIdolFindElementFactory) getElementFactory()).getFindPage();
+        findPage = ((BIIdolFindElementFactory)getElementFactory()).getFindPage();
         findPage.goToListView();
     }
 
@@ -79,13 +84,13 @@ public class BIFilterITCase extends IdolFindTestBase {
     }
 
     private int getContainerWithoutThatFilter(final String target, final int alreadyUsedIndex) {
-        IdolFilterPanel filters = filters();
+        final IdolFilterPanel filters = filters();
         final int max = filters.parametricFieldContainers().size() - 1;
         int index = 0;
 
         while(filters.containerContainsFilter(target, index) && index <= max) {
             if(index == (alreadyUsedIndex - 1)) {
-                index+=2;
+                index += 2;
             }
             index++;
         }
@@ -96,7 +101,7 @@ public class BIFilterITCase extends IdolFindTestBase {
     public void testSearchForParametricFieldValue() {
         findService.search("face");
 
-        int index = filters().nonZeroParamFieldContainer(0);
+        final int index = filters().nonZeroParamFieldContainer(0);
         final ListFilterContainer goodField = filters().parametricField(index);
         final String goodFieldName = goodField.filterCategoryName();
         final String badFieldValue = goodField.getFilterNames().get(0);
@@ -128,7 +133,7 @@ public class BIFilterITCase extends IdolFindTestBase {
     public void testNumericWidgetsDefaultCollapsed() {
         findService.search("swim");
 
-        for(GraphFilterContainer container : filters().graphContainers()) {
+        for(final GraphFilterContainer container : filters().graphContainers()) {
             verifyThat("Widget is collapsed", container.isCollapsed());
         }
     }
@@ -137,7 +142,7 @@ public class BIFilterITCase extends IdolFindTestBase {
     public void testParametricFiltersOpenWhenMatchingFilter() {
         searchAndWait("haven");
         final IdolFilterPanel filterPanel = filters();
-        int index = filterPanel.nonZeroParamFieldContainer(0);
+        final int index = filterPanel.nonZeroParamFieldContainer(0);
 
         final String firstValue = filterPanel.parametricField(index).getFilterNames().get(0);
 
@@ -155,7 +160,7 @@ public class BIFilterITCase extends IdolFindTestBase {
         searchAndWait("haven");
         final IdolFilterPanel filterPanel = filters();
 
-        int index = filterPanel.nonZeroParamFieldContainer(0);
+        final int index = filterPanel.nonZeroParamFieldContainer(0);
         final String firstValue = filterPanel.parametricField(index).getFilterNames().get(0);
 
         filterPanel.parametricField(index).expand();
@@ -204,7 +209,6 @@ public class BIFilterITCase extends IdolFindTestBase {
         indexesTreeContainer.collapse();
         verifyThat(indexesTreeContainer.isCollapsed(), is(true));
 
-
         filterPanel.searchFilters(firstValue);
         verifyThat(indexesTreeContainer.isCollapsed(), is(false));
 
@@ -215,5 +219,4 @@ public class BIFilterITCase extends IdolFindTestBase {
     private IdolFilterPanel filters() {
         return getElementFactory().getFilterPanel();
     }
-
 }

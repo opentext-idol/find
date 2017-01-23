@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.results;
 
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
@@ -9,7 +14,7 @@ import org.openqa.selenium.WebElement;
 import java.util.Calendar;
 
 public class FindResult extends QueryResult {
-    FindResult(final WebElement result, final WebDriver driver){
+    FindResult(final WebElement result, final WebDriver driver) {
         super(result, driver);
     }
 
@@ -31,23 +36,23 @@ public class FindResult extends QueryResult {
         return findElement(By.className("document-reference")).getText();
     }
 
-    public String getDate(){return findElement(By.className("document-date")).getText();}
+    public String getDate() {return findElement(By.className("document-date")).getText();}
 
     public WebElement similarDocuments() {
         return findElement(By.className("similar-documents-trigger"));
     }
 
-    private WebElement previewButton(){
+    private WebElement previewButton() {
         return findElement(By.className("preview-link"));
     }
 
-    private Boolean previewButtonExists(){
+    private Boolean previewButtonExists() {
         return !findElements(By.className("preview-link")).isEmpty();
     }
 
     @Override
-    public InlinePreview openDocumentPreview(){
-        if (previewButtonExists()){
+    public InlinePreview openDocumentPreview() {
+        if(previewButtonExists()) {
             previewButton().click();
         } else {
             title().click();
@@ -56,26 +61,25 @@ public class FindResult extends QueryResult {
         return InlinePreview.make(getDriver());
     }
 
-    public String convertDate(){
-        String badFormatDate = getDate();
+    public String convertDate() {
+        final String badFormatDate = getDate();
         final String[] words = badFormatDate.split(" ");
         final int timeAmount;
         final String timeUnit;
-        if(words[0].equals("a")||words[0].equals("an")){
-            timeAmount=1;
+        if(words[0].equals("a") || words[0].equals("an")) {
+            timeAmount = 1;
             timeUnit = words[1];
-        }
-        else{
-            timeAmount= Integer.parseInt(words[0]);
+        } else {
+            timeAmount = Integer.parseInt(words[0]);
             timeUnit = words[1];
         }
 
         final Calendar date = Calendar.getInstance();
 
-        switch (timeUnit) {
+        switch(timeUnit) {
             case "minute":
             case "minutes":
-                date.add(Calendar.MINUTE,-timeAmount);
+                date.add(Calendar.MINUTE, -timeAmount);
                 break;
 
             case "hour":
@@ -85,21 +89,20 @@ public class FindResult extends QueryResult {
 
             case "day":
             case "days":
-                date.add(Calendar.DAY_OF_MONTH,-timeAmount);
+                date.add(Calendar.DAY_OF_MONTH, -timeAmount);
                 break;
 
             case "month":
             case "months":
-                date.add(Calendar.MONTH,-timeAmount);
+                date.add(Calendar.MONTH, -timeAmount);
                 break;
 
             case "year":
             case "years":
-                date.add(Calendar.YEAR,-timeAmount);
+                date.add(Calendar.YEAR, -timeAmount);
                 break;
         }
-        date.set(Calendar.SECOND,0);
+        date.set(Calendar.SECOND, 0);
         return date.getTime().toString();
     }
-
 }

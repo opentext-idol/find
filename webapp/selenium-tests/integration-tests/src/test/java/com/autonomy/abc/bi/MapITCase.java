@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
@@ -21,7 +26,9 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.not;
@@ -40,7 +47,7 @@ public class MapITCase extends IdolFindTestBase {
 
     @Override
     public BIIdolFindElementFactory getElementFactory() {
-        return (BIIdolFindElementFactory) super.getElementFactory();
+        return (BIIdolFindElementFactory)super.getElementFactory();
     }
 
     @Before
@@ -66,11 +73,11 @@ public class MapITCase extends IdolFindTestBase {
         checkMarkersPresent(mapView);
     }
 
-    private int checkMarkersPresent(MapView mapView) {
+    private int checkMarkersPresent(final MapView mapView) {
         assertThat("Test requires there to be location results for the query", !mapView.noResults());
 
-        int numberMarkers = mapView.markers().size() + mapView.markerClusters().size();
-        assertThat("Markers present on map",numberMarkers,greaterThan(0));
+        final int numberMarkers = mapView.markers().size() + mapView.markerClusters().size();
+        assertThat("Markers present on map", numberMarkers, greaterThan(0));
         return numberMarkers;
     }
 
@@ -84,12 +91,12 @@ public class MapITCase extends IdolFindTestBase {
         Waits.loadOrFadeWait();
         clickClustersUntilMarker();
 
-        WebElement popover = mapView.popover();
+        final WebElement popover = mapView.popover();
         verifyThat(popover.getText(), not(containsString("QueryText-Placeholder")));
     }
 
     private void clickClustersUntilMarker() {
-        List<WebElement> markers = mapView.markers();
+        final List<WebElement> markers = mapView.markers();
         if(!markers.isEmpty()) {
             mapView.clickMarker(markers.get(0));
             return;
@@ -104,13 +111,13 @@ public class MapITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-156")
     public void testOnlyDocsWithLocationHaveMetaDataTab() {
         mapView = search("\"car AND house\"");
-        assumeThat("There are no location results for this search",mapView.noResults());
+        assumeThat("There are no location results for this search", mapView.noResults());
 
         findPage.goToListView();
 
-        InlinePreview documentViewer = getElementFactory().getListView().searchResult(1).openDocumentPreview();
+        final InlinePreview documentViewer = getElementFactory().getListView().searchResult(1).openDocumentPreview();
         final DetailedPreviewPage detailedPreviewPage = documentViewer.openPreview();
-        verifyThat("There is no location tab",!detailedPreviewPage.locationTabExists());
+        verifyThat("There is no location tab", !detailedPreviewPage.locationTabExists());
     }
 
     @Test
@@ -121,7 +128,7 @@ public class MapITCase extends IdolFindTestBase {
         final String secondSearch = "Mr Hyde";
         mapView = search("saint");
         mapView.waitForMarkers();
-        int firstResults = mapView.numberResults();
+        final int firstResults = mapView.numberResults();
 
         try {
             savedSearchService.saveCurrentAs(firstSearch, SearchType.QUERY);
@@ -131,7 +138,7 @@ public class MapITCase extends IdolFindTestBase {
             mapView = search("bear");
             mapView.waitForMarkers();
 
-            int secondResults = mapView.numberResults();
+            final int secondResults = mapView.numberResults();
 
             savedSearchService.saveCurrentAs(secondSearch, SearchType.QUERY);
             savedSearchService.compareCurrentWith(firstSearch);
@@ -146,22 +153,19 @@ public class MapITCase extends IdolFindTestBase {
             final int comparee = mapView.countLocationsForComparee() + common;
             final int comparer = mapView.countLocationsForComparer() + common;
 
-            verifyThat("First search has same number results",comparee,is(firstResults));
-            verifyThat("Second search has same number results",comparer,is(secondResults));
-        }
-
-        finally {
+            verifyThat("First search has same number results", comparee, is(firstResults));
+            verifyThat("Second search has same number results", comparer, is(secondResults));
+        } finally {
             findPage.goBackToSearch();
             savedSearchService.waitForSomeTabsAndDelete();
         }
     }
 
-    private MapView search(String searchTerm) {
+    private MapView search(final String searchTerm) {
         findService.searchAnyView(searchTerm);
         findPage.goToMap();
-        MapView map = getElementFactory().getMap();
+        final MapView map = getElementFactory().getMap();
         map.waitForMarkers();
         return map;
     }
-
 }

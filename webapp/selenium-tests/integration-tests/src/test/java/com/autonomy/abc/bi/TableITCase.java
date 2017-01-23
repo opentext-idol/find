@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
@@ -8,6 +13,7 @@ import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TableView;
+import com.autonomy.abc.selenium.find.bi.TableView.SortDirection;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -18,23 +24,33 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.autonomy.abc.selenium.find.bi.TableView.EntryCount.TWENTY_FIVE;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disabled;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 @Role(UserRole.BIFHI)
 public class TableITCase extends IdolFindTestBase {
 
+    private static final int NUMBER_PER_PAGE = 10;
     private BIIdolFindElementFactory elementFactory;
     private TableView tableView;
     private FindService findService;
-    private static final int NUMBER_PER_PAGE = 10;
 
     public TableITCase(final TestConfig config) {
         super(config);
@@ -42,13 +58,13 @@ public class TableITCase extends IdolFindTestBase {
 
     @Before
     public void setUp() {
-        elementFactory = (BIIdolFindElementFactory) getElementFactory();
+        elementFactory = (BIIdolFindElementFactory)getElementFactory();
         findService = getApplication().findService();
     }
 
     @Test
     @ResolvedBug("FIND-251")
-    public void testTableTabShowsTable(){
+    public void testTableTabShowsTable() {
         init("s");
 
         tableView.waitForTable();
@@ -58,7 +74,7 @@ public class TableITCase extends IdolFindTestBase {
         elementFactory.getConceptsPanel().removeAllConcepts();
         findService.searchAnyView("shambolicwolic");
 
-        IdolFindPage findPage = elementFactory.getFindPage();
+        final IdolFindPage findPage = elementFactory.getFindPage();
         assumeThat("There are no results for this", findPage.goToListView().getTotalResultsNum(), is(0));
 
         //TODO: this doesn't work - dunno why though
@@ -87,7 +103,7 @@ public class TableITCase extends IdolFindTestBase {
         final FilterPanel filters = filters();
         final int reasonableFilterNumber = 10;
         final int goodCategory = filters.nthParametricThatSatisfiedCondition(0,
-                (Integer x) -> x < reasonableFilterNumber && x > 0);
+                                                                             (Integer x) -> x < reasonableFilterNumber && x > 0);
 
         assertThat("There is a filter category with between 1 & " + reasonableFilterNumber + " filters", goodCategory, greaterThan(0));
 
@@ -98,7 +114,7 @@ public class TableITCase extends IdolFindTestBase {
         tableView.parametricSelectionDropdown(1).select(WordUtils.capitalize(categoryName.toLowerCase()));
         tableView.waitForTable();
 
-        for(String key : filterCounts.keySet()) {
+        for(final String key : filterCounts.keySet()) {
             tableView.parametricSelectionDropdown(2).select(WordUtils.capitalize(key.toLowerCase()));
             tableView.waitForTable();
             verifyThat("Number of columns is: " + tableView.columnCount() + " for main category " + categoryName + " with second category " + key
@@ -123,7 +139,7 @@ public class TableITCase extends IdolFindTestBase {
             tableView.waitForTable();
             findPage.waitForParametricValuesToLoad();
 
-            for(ParametricFieldContainer cont : filters.parametricFieldContainers()) {
+            for(final ParametricFieldContainer cont : filters.parametricFieldContainers()) {
                 final String filterCat = cont.filterCategoryName();
                 if(!filterCat.equals(categoryName)) {
                     final Integer filterNum = filterCounts.get(filterCat);
@@ -141,8 +157,8 @@ public class TableITCase extends IdolFindTestBase {
     private void checkRowNumber(final int index) {
         final int filterNumber = filters().parametricField(index).getFilterNumber();
         verifyThat("Number of rows equals number of filters in filter type (or max per page)",
-                tableView.rowCount(),
-                anyOf(is(NUMBER_PER_PAGE), is(filterNumber)));
+                   tableView.rowCount(),
+                   anyOf(is(NUMBER_PER_PAGE), is(filterNumber)));
     }
 
     @Test
@@ -170,13 +186,13 @@ public class TableITCase extends IdolFindTestBase {
         init("*");
 
         tableView.waitForTable();
-        tableView.sort(1, TableView.SortDirection.DESCENDING);
+        tableView.sort(1, SortDirection.DESCENDING);
 
         final int rowCount = tableView.rowCount();
 
         final List<Integer> values = new ArrayList<>(rowCount);
 
-        for (int i = 1; i <= rowCount; i++) {
+        for(int i = 1; i <= rowCount; i++) {
             values.add(Integer.parseInt(tableView.text(i, 1)));
         }
 
@@ -208,8 +224,8 @@ public class TableITCase extends IdolFindTestBase {
         tableView.waitForTable();
 
         assumeThat("Table needs at least " + NUMBER_PER_PAGE + " rows to test increasing the number to view",
-                tableView.maxRow(),
-                is(NUMBER_PER_PAGE));
+                   tableView.maxRow(),
+                   is(NUMBER_PER_PAGE));
 
         tableView.showEntries(TWENTY_FIVE);
 
@@ -218,13 +234,13 @@ public class TableITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-383")
-    public void testSideBarFiltersChangeTable(){
+    public void testSideBarFiltersChangeTable() {
         init("lashing");
 
         tableView.waitForTable();
 
-        FilterPanel filters = filters();
-        final String parametricSelectionFirst= tableView.getSelectedFieldName(1);
+        final FilterPanel filters = filters();
+        final String parametricSelectionFirst = tableView.getSelectedFieldName(1);
 
         filters.parametricContainer(parametricSelectionFirst).getFilters().get(0).check();
 
@@ -234,10 +250,10 @@ public class TableITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-405")
-    public void testParametricSelectors(){
+    public void testParametricSelectors() {
         init("wild horses");
 
-        int index = filters().nonZeroParamFieldContainer(0);
+        final int index = filters().nonZeroParamFieldContainer(0);
         final String firstParametric = filters().parametricField(index).filterCategoryName();
         verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(tableView.getSelectedFieldName(1).toUpperCase()));
 
