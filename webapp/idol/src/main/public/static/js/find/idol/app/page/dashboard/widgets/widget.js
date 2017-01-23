@@ -7,9 +7,15 @@ define([
     'backbone',
     'underscore',
     'jquery',
+    'find/app/model/saved-searches/saved-search-model',
     'text!find/idol/templates/app/page/dashboards/widget.html'
-], function(Backbone, _, $, template) {
+], function(Backbone, _, $, SavedSearchModel, template) {
     'use strict';
+
+    const DashboardSearchModel = SavedSearchModel.extend({
+        urlRoot: 'api/bi/saved-query'
+    });
+
 
     return Backbone.View.extend({
 
@@ -17,6 +23,13 @@ define([
 
         initialize: function(options) {
             this.name = options.name;
+
+            if (options.savedSearchId) {
+                this.savedSearchModel = new DashboardSearchModel({
+                    id: options.savedSearchId
+                });
+                this.savedSearchModel.fetch();
+            }
         },
 
         render: function() {
