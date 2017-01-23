@@ -76,12 +76,12 @@ node {
 		}
 
     stage 'Deploy'
-        sh '''
+        sh """
             FPLAYBOOKDIR=/home/fenkins/frontend-playbook/vagrant/ansible/frontendslave-playbook/
             config_template_name=onprem-config.json.j2
-            config_template_location=$(realpath webapp/hsod-dist/src/ansible/${webapp}/templates/$config_template_name)
-            ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_ROLES_PATH=${FPLAYBOOKDIR}roles ansible-playbook ${FPLAYBOOKDIR}/playbooks/app-playbook.yml -vv -i ${FPLAYBOOKDIR}hosts --become-user=fenkins --extra-vars "webapp=${webapp} repository_location=${repository,,} branch=${branch,,} docker_build_location=/home/fenkins/docker_build config_template_location=$config_template_location config_template_name=$config_template_name"
-        '''
+            config_template_location=$(realpath webapp/hsod-dist/src/ansible/${webapp}/templates/\$config_template_name)
+            ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_ROLES_PATH=\${FPLAYBOOKDIR}roles ansible-playbook \${FPLAYBOOKDIR}/playbooks/app-playbook.yml -vv -i \${FPLAYBOOKDIR}hosts --become-user=fenkins --extra-vars "webapp=${webapp} repository_location=${repository,,} branch=${branch,,} docker_build_location=/home/fenkins/docker_build config_template_location=\$config_template_location config_template_name=\$config_template_name"
+        """
 
 	stage 'Notifications'
 		emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'
