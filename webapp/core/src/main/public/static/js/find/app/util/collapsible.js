@@ -19,10 +19,10 @@ define([
                 this.$collapse.collapse('toggle');
 
                 // other handlers called before this trigger
-                this.trigger('toggle', this.collapsed);
+                this.trigger('toggle', this.collapseModel.get('collapsed'));
             },
             'show.bs.collapse': function() {
-                this.collapsed = false;
+                this.collapseModel.set('collapsed', false);
                 this.updateHeaderState();
 
                 this.trigger('show');
@@ -35,7 +35,7 @@ define([
                 this.trigger('shown');
             },
             'hide.bs.collapse': function() {
-                this.collapsed = true;
+                this.collapseModel.set('collapsed', true);
                 this.updateHeaderState();
 
                 this.trigger('hide');
@@ -44,7 +44,7 @@ define([
 
         initialize: function(options) {
             this.view = options.view;
-            this.collapsed = options.collapsed || false;
+            this.collapseModel = options.collapseModel || new Backbone.Model({collapsed: false});
             this.title = options.title;
             this.subtitle = options.subtitle;
             this.renderOnOpen = options.renderOnOpen || false;
@@ -61,7 +61,7 @@ define([
 
             // activate plugin manually for greater control of click handlers
             this.$collapse = this.$('.collapse').collapse({
-                toggle: !this.collapsed
+                toggle: !this.collapseModel.get('collapsed')
             });
 
             // Render after appending to the DOM since graph views must measure element dimensions
@@ -76,7 +76,7 @@ define([
 
         updateHeaderState: function() {
             // The "collapsed" class controls the icons with class "rotating-chevron"
-            this.$header.toggleClass('collapsed', this.collapsed);
+            this.$header.toggleClass('collapsed', this.collapseModel.get('collapsed'));
         },
 
         setSubTitle: function(subtitle) {
@@ -89,7 +89,7 @@ define([
         },
 
         show: function() {
-            if(this.collapsed) {
+            if(this.collapseModel.get('collapsed')) {
                 this.$collapse.collapse('show');
             }
         },
@@ -103,7 +103,7 @@ define([
         },
 
         hide: function() {
-            if(!this.collapsed) {
+            if(!this.collapseModel.get('collapsed')) {
                 this.$collapse.collapse('hide');
             }
         },

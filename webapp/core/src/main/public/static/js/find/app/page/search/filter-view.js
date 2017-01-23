@@ -110,7 +110,7 @@ define([
 
                     this.indexesViewWrapper = new Collapsible({
                         view: indexesView,
-                        collapsed: this.collapsed.indexes,
+                        collapseModel: new Backbone.Model({collapsed: this.collapsed.indexes}),
                         title: i18nIndexes['search.indexes']
                     });
 
@@ -141,7 +141,7 @@ define([
 
                     this.dateViewWrapper = new Collapsible({
                         view: dateView,
-                        collapsed: this.collapsed.dates,
+                        collapseModel: new Backbone.Model({collapsed: this.collapsed.dates}),
                         title: datesTitle
                     });
 
@@ -294,7 +294,6 @@ define([
 
         updateIndexesVisibility: function() {
             this.indexesViewWrapper.$el.toggleClass('hide', this.indexesEmpty);
-
             this.indexesViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.indexes);
         }
     });

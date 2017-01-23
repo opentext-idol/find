@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'underscore',
@@ -14,7 +19,8 @@ define([
     var ValuesView = Backbone.View.extend({
         className: 'table parametric-fields-table',
         tagName: 'table',
-        seeAllButtonTemplate: _.template('<tr class="show-all clickable"><td></td><td> <span class="toggle-more-text text-muted"><%-i18n["app.seeAll"]%></span></td></tr>'),
+        seeAllButtonTemplate: _.template('<tr class="show-all clickable"><td></td>' +
+            '<td> <span class="toggle-more-text text-muted"><%-i18n["app.seeAll"]%></span></td></tr>'),
 
         events: {
             'click .show-all': function() {
@@ -35,7 +41,7 @@ define([
 
             this.listView = new ListView({
                 collection: this.collection,
-                footerHtml: this.seeAllButtonTemplate({i18n:i18n}),
+                footerHtml: this.seeAllButtonTemplate({i18n: i18n}),
                 ItemView: ValueView,
                 maxSize: MAX_SIZE,
                 tagName: 'tbody',
@@ -65,30 +71,31 @@ define([
             this.selectedParametricValues = options.selectedParametricValues;
             this.parametricCollection = options.parametricCollection;
 
-            var collapsed;
+            this.collapseModel = new Backbone.Model();
 
-            if (_.isFunction(options.collapsed)) {
-                collapsed = options.collapsed(options.model);
-            }
-            else {
-                collapsed = options.collapsed;
+            if(_.isFunction(options.collapsed)) {
+                this.collapseModel.set('collapsed', Boolean(options.collapsed(options.model)));
+            } else {
+                this.collapseModel.set('collapsed', Boolean(options.collapsed));
             }
 
             this.collapsible = new Collapsible({
-                collapsed: collapsed,
+                collapseModel: this.collapseModel,
                 subtitle: null,
                 title: this.model.get('displayName') + ' (' + this.calculateSelectedCount() + ')',
                 view: new ValuesView({
                     collection: this.model.fieldValues,
                     model: this.model,
-                    parametricCollection:this.parametricCollection,
+                    parametricCollection: this.parametricCollection,
                     parametricDisplayCollection: this.parametricDisplayCollection,
                     selectedParametricValues: this.selectedParametricValues
                 })
             });
 
             this.listenTo(this.model.fieldValues, 'update change', function() {
-                this.collapsible.setTitle(this.model.get('displayName') + ' (' + this.calculateSelectedCount() + ')');
+                this.collapsible.setTitle(
+                    this.model.get('displayName') + ' (' + this.calculateSelectedCount() + ')'
+                );
             });
 
             this.listenTo(this.collapsible, 'toggle', function(newState) {
@@ -102,13 +109,15 @@ define([
                 .attr('data-field-display-name', this.model.get('displayName'))
                 .empty()
                 .append(this.collapsible.$el);
-            
+
             this.collapsible.render();
         },
 
         calculateSelectedCount: function() {
             var selectedCount = this.getFieldSelectedValuesLength();
-            return selectedCount ? selectedCount + ' / ' + this.model.fieldValues.length : this.model.fieldValues.length;
+            return selectedCount
+                ? selectedCount + ' / ' + this.model.fieldValues.length
+                : this.model.fieldValues.length;
         },
 
         getFieldSelectedValuesLength: function() {
