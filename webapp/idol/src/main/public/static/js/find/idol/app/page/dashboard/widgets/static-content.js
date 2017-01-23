@@ -11,11 +11,15 @@ define([
     return Widget.extend({
 
         initialize: function(options) {
-            this.html = options.html;
+            Widget.prototype.initialize.apply(this, arguments);
+
+            this.html = options.widgetSettings.html;
         },
 
         render: function() {
-            this.$el.html(this.html);
+            Widget.prototype.render.apply(this, arguments);
+
+            this.$content.html(this.html);
         }
     });
 

@@ -6,9 +6,10 @@
 define([
     'underscore',
     'js-whatever/js/base-page',
+    'find/app/vent',
     './dashboard/widget-registry',
     'text!find/idol/templates/app/page/dashboard-page.html'
-], function (_, BasePage, widgetRegistry, template) {
+], function (_, BasePage, vent, widgetRegistry, template) {
     'use strict';
 
     return BasePage.extend({
@@ -23,7 +24,7 @@ define([
                 const WidgetConstructor = widgetRegistry(widget.type).Constructor;
                 
                 return {
-                    view: new WidgetConstructor(widget.widgetSettings),
+                    view: new WidgetConstructor(widget),
                     position: {
                         x: widget.x,
                         y: widget.y,
@@ -47,6 +48,12 @@ define([
                 this.$el.append($div);
                 widget.view.setElement($div).render();
             }.bind(this));
+
+            this.listenTo(vent, 'vent:resize', function() {
+                _.each(this.widgetViews, function(widget) {
+                    widget.view.onResize();
+                });
+            });
         },
 
         generateWidgetDiv: function (position) {
