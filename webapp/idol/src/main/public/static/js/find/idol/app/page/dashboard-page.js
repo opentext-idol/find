@@ -6,9 +6,11 @@
 define([
     'underscore',
     'js-whatever/js/base-page',
+    'find/app/vent',
     './dashboard/widget-registry',
+    './dashboard/widgets/widget-not-found',
     'text!find/idol/templates/app/page/dashboard-page.html'
-], function (_, BasePage, widgetRegistry, template) {
+], function (_, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, template) {
     'use strict';
 
     return BasePage.extend({
@@ -19,11 +21,14 @@ define([
 
         initialize: function (options) {
             this.dashboardName = options.dashboardName;
+            this.sidebarModel = options.sidebarModel;
+
             this.widgetViews = _.map(options.widgets, function (widget) {
-                const WidgetConstructor = widgetRegistry(widget.type).Constructor;
+                const widgetDefinition = widgetRegistry(widget.type);
+                const WidgetConstructor = widgetDefinition ? widgetDefinition.Constructor : WidgetNotFoundWidget;
                 
                 return {
-                    view: new WidgetConstructor(widget.widgetSettings),
+                    view: new WidgetConstructor(widget),
                     position: {
                         x: widget.x,
                         y: widget.y,
@@ -47,6 +52,9 @@ define([
                 this.$el.append($div);
                 widget.view.setElement($div).render();
             }.bind(this));
+
+            this.listenTo(vent, 'vent:resize', this.onResize);
+            this.listenTo(this.sidebarModel, 'change:collapsed', this.onResize);
         },
 
         generateWidgetDiv: function (position) {
@@ -59,6 +67,12 @@ define([
             });
 
             return widgetElement;
+        },
+
+        onResize: function() {
+            _.each(this.widgetViews, function(widget) {
+                widget.view.onResize();
+            });
         }
     });
 

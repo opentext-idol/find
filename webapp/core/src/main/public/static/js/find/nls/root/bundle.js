@@ -46,6 +46,7 @@ define([
         'app.until': 'Until',
         'app.user': 'User',
         'app.users': 'Users',
+        'dashboards.widget.notFound': 'Widget of type "{0}" could not be found. Please check your configuration and try again',
         'datepicker.language': 'en',
         'default.title': 'Page Unavailable',
         'default.message': "We can't find the page you requested.",

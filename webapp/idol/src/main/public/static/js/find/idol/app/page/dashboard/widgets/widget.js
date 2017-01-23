@@ -4,11 +4,40 @@
  */
 
 define([
-    'backbone'
-], function(Backbone) {
+    'backbone',
+    'underscore',
+    'jquery',
+    'text!find/idol/templates/app/page/dashboards/widget.html'
+], function(Backbone, _, $, template) {
     'use strict';
 
     return Backbone.View.extend({
+
+        template: _.template(template),
+
+        initialize: function(options) {
+            this.name = options.name;
+        },
+
+        render: function() {
+            this.$el.html(this.template({
+                name: this.name
+            }));
+
+            this.$content = this.$('.content');
+        },
+
+        contentHeight: function() {
+            return this.$content.height();
+        },
+
+        contentWidth: function() {
+            return this.$content.width();
+        },
+
+        update: $.noop,
+
+        onResize: $.noop
 
     });
 
