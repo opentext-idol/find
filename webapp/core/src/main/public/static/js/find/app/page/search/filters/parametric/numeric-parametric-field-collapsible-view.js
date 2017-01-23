@@ -44,15 +44,11 @@ define([
             this.timeBarModel = options.timeBarModel;
             this.filterModel = options.filterModel;
 
-            this.collapseModel = new Backbone.Model();
-
-            if(_.isFunction(options.collapsed)) {
-                this.collapseModel.set('collapsed',
-                    Boolean(options.collapsed(options.model)));
-            } else {
-                this.collapseModel.set('collapsed',
-                    Boolean(_.isUndefined(options.collapsed) || options.collapsed));
-            }
+            this.collapseModel = new Backbone.Model({
+                collapsed: Boolean(_.isFunction(options.collapsed)
+                    ? options.collapsed(options.model)
+                    : _.isUndefined(options.collapsed) || options.collapsed)
+            });
 
             var clickCallback = null;
 
@@ -89,7 +85,6 @@ define([
                 'update change:range',
                 this.setFieldSelectedValues
             );
-            this.listenTo(vent, 'vent:resize', this.fieldView.render.bind(this.fieldView));
 
             this.listenTo(this.collapsible, 'show', function() {
                 this.collapsible.toggleSubtitle(true);

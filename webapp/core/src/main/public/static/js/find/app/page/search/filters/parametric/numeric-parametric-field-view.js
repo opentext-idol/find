@@ -67,7 +67,7 @@ define([
         },
 
         initialize: function(options) {
-            this.fetchBuckets = _.debounce(this.originalFetchBuckets, 500);
+            this.delayedFetchBuckets = _.debounce(this.fetchBuckets, 500);
             this.collapseModel = options.collapseModel || null;
 
             this.inputTemplate = options.inputTemplate || NumericParametricFieldView.numericInputTemplate;
@@ -124,8 +124,7 @@ define([
                     this.fetchBuckets();
                 });
 
-            // TODO: Only update graph rather than render?
-            this.listenTo(vent, 'vent:resize', this.render);
+            this.listenTo(vent, 'vent:resize', this.delayedFetchBucketsAndUpdate);
 
             this.listenTo(this.bucketModel, 'change:values request sync error', this.updateGraph);
         },
@@ -309,7 +308,7 @@ define([
             );
         },
 
-        originalFetchBuckets: function() {
+        fetchBuckets: function() {
             if(!(this.collapseModel && this.collapseModel.get('collapsed'))) {
                 var width = this.$('.numeric-parametric-chart-row').width();
 
@@ -337,6 +336,11 @@ define([
                     });
                 }
             }
+        },
+
+        delayedFetchBucketsAndUpdate: function() {
+            this.updateGraph();
+            this.delayedFetchBuckets();
         },
 
         readMinInput: function() {

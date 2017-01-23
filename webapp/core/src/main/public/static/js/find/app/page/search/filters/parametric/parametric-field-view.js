@@ -71,13 +71,11 @@ define([
             this.selectedParametricValues = options.selectedParametricValues;
             this.parametricCollection = options.parametricCollection;
 
-            this.collapseModel = new Backbone.Model();
-
-            if(_.isFunction(options.collapsed)) {
-                this.collapseModel.set('collapsed', Boolean(options.collapsed(options.model)));
-            } else {
-                this.collapseModel.set('collapsed', Boolean(options.collapsed));
-            }
+            this.collapseModel = new Backbone.Model({
+                collapsed: Boolean(_.isFunction(options.collapsed)
+                    ? options.collapsed(options.model)
+                    : options.collapsed)
+            });
 
             this.collapsible = new Collapsible({
                 collapseModel: this.collapseModel,
