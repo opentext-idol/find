@@ -21,7 +21,7 @@ node {
 
 		echo "Building ${gitCommit}, from ${repository}, branch ${branch}"
 
-		webapp = "${webapp}"
+		webapp = "find"
 
 	stage 'Maven Build'
 		env.JAVA_HOME="${tool 'Java 8 OpenJDK'}"
