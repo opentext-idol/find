@@ -8,8 +8,9 @@ define([
     'js-whatever/js/base-page',
     'find/app/vent',
     './dashboard/widget-registry',
+    './dashboard/widgets/widget-not-found',
     'text!find/idol/templates/app/page/dashboard-page.html'
-], function (_, BasePage, vent, widgetRegistry, template) {
+], function (_, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, template) {
     'use strict';
 
     return BasePage.extend({
@@ -21,7 +22,8 @@ define([
         initialize: function (options) {
             this.dashboardName = options.dashboardName;
             this.widgetViews = _.map(options.widgets, function (widget) {
-                const WidgetConstructor = widgetRegistry(widget.type).Constructor;
+                const widgetDefinition = widgetRegistry(widget.type);
+                const WidgetConstructor = widgetDefinition ? widgetDefinition.Constructor : WidgetNotFoundWidget;
                 
                 return {
                     view: new WidgetConstructor(widget),
