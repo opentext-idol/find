@@ -265,9 +265,9 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 numericPoint.setIdx(idx);
                 numericPoint.setV(Double.toString(values[idx]));
 
-                XSSFRow row = sheet.createRow(idx);
-                row.createCell(0).setCellValue(categories[0]);
-                row.createCell(1).setCellValue(values[0]);
+                XSSFRow row = sheet.createRow(idx + 1);
+                row.createCell(0).setCellValue(categories[idx]);
+                row.createCell(1).setCellValue(values[idx]);
             }
             categoryData.getPtCount().setVal(categories.length);
             numericData.getPtCount().setVal(values.length);
