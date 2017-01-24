@@ -13,7 +13,6 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import java.awt.*;
 import java.awt.geom.Path2D;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -210,7 +209,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         return new HttpEntity<>(baos.toByteArray(), headers);
     }
 
-    @Value(value = "classpath:/sunburst.pptx")
+    @Value(value = "classpath:/templates/sunburst.pptx")
     private Resource sunburstTemplate;
 
     @RequestMapping(value = PPT_SUNBURST_PATH)
@@ -219,10 +218,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             @RequestParam("values") final double[] values,
             @RequestParam("title") final String title
     ) throws IOException {
-        // TODO: why does the class loader mess up the file? the version from the fileinputstream doesn't match the version from the class loader
-//        try(final InputStream template = getClass().getResourceAsStream("/templates/sunburst.pptx")) {
-//        try(final InputStream template = sunburstTemplate.getInputStream()) {
-        try(final InputStream template = new FileInputStream("/home/tungj/git/github/find/webapp/core/src/main/resources/sunburst.pptx")) {
+        try(final InputStream template = sunburstTemplate.getInputStream()) {
             final XMLSlideShow ppt = new XMLSlideShow(template);
 
             final XSLFSlide slide = ppt.getSlides().get(0);
