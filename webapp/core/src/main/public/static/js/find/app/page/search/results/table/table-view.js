@@ -49,18 +49,19 @@ define([
                 var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/table"><input name="title"><input name="rows"><input name="cols"><input type="submit"></form>');
                 $form[0].title.value = 'Breakdown by ' + this.fieldsCollection.at(0).get('displayValue')
 
-                var datatables = this.$table.dataTable()
-
-                var rows = this.$table.find('tbody tr');
+                var rows = this.$table.find('tr'), nCols = 0;
 
                 rows.each(function(idx, el){
-                    var data = datatables.fnGetData(el);
-                    $('<input name="d">').attr('value', data.text).appendTo($form)
-                    $('<input name="d">').attr('value', data.count).appendTo($form)
+                    var tds = $(el).find('th,td');
+                    nCols = tds.length;
+
+                    tds.each(function (idx, el) {
+                        $('<input name="d">').attr('value', $(el).text()).appendTo($form);
+                    })
                 })
 
                 $form[0].rows.value = rows.length
-                $form[0].cols.value = 2
+                $form[0].cols.value = nCols
 
                 $form.appendTo(document.body).submit().remove()
             }, this))
