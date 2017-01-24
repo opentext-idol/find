@@ -13,23 +13,46 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import java.awt.*;
 import java.awt.geom.Path2D;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFChart;
 import org.apache.poi.xslf.usermodel.XSLFFreeformShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDoughnutChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumRef;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieSer;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStop;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStopList;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -48,6 +71,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     static final String EXPORT_PATH = "/api/bi/export";
     static final String CSV_PATH = "/csv";
     static final String PPT_TOPICMAP_PATH = "/ppt/topicmap";
+    static final String PPT_SUNBURST_PATH = "/ppt/sunburst";
     static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
     static final String QUERY_REQUEST_PARAM = "queryRequest";
     private static final String EXPORT_FILE_NAME = "query-results";
@@ -110,7 +134,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     }
 
     @RequestMapping(value = PPT_TOPICMAP_PATH)
-    public HttpEntity<byte[]> update(
+    public HttpEntity<byte[]> topicmap(
             @RequestParam("paths") final String pathStr
     ) throws IOException {
         final Path[] paths = new ObjectMapper().readValue(pathStr, Path[].class);
@@ -127,7 +151,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             for(double[] point : reqPath.getPoints()) {
                 final double x = point[0] * 720;
                 final double y = point[1] * 540;
-                if (first) {
+                if(first) {
                     path.moveTo(x, y);
                     first = false;
                 }
@@ -172,14 +196,101 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             color2.addNewAlpha().setVal(opacity);
         }
 
+        return writePPT(ppt, "topicmap.pptx");
+    }
+
+    private HttpEntity<byte[]> writePPT(final XMLSlideShow ppt, final String filename) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ppt.write(baos);
         ppt.close();
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.presentationml.presentation"));
-        headers.set("Content-Disposition", "inline; filename=topicmap.pptx");
+        headers.set("Content-Disposition", "inline; filename=" + filename);
         return new HttpEntity<>(baos.toByteArray(), headers);
     }
 
+    @Value(value = "classpath:/sunburst.pptx")
+    private Resource sunburstTemplate;
+
+    @RequestMapping(value = PPT_SUNBURST_PATH)
+    public HttpEntity<byte[]> sunburst(
+            @RequestParam("categories") final String[] categories,
+            @RequestParam("values") final double[] values,
+            @RequestParam("title") final String title
+    ) throws IOException {
+        // TODO: why does the class loader mess up the file? the version from the fileinputstream doesn't match the version from the class loader
+//        try(final InputStream template = getClass().getResourceAsStream("/templates/sunburst.pptx")) {
+//        try(final InputStream template = sunburstTemplate.getInputStream()) {
+        try(final InputStream template = new FileInputStream("/home/tungj/git/github/find/webapp/core/src/main/resources/sunburst.pptx")) {
+            final XMLSlideShow ppt = new XMLSlideShow(template);
+
+            final XSLFSlide slide = ppt.getSlides().get(0);
+
+            XSLFChart chart = null;
+            for(POIXMLDocumentPart part : slide.getRelations()) {
+                if(part instanceof XSLFChart) {
+                    chart = (XSLFChart) part;
+                    break;
+                }
+            }
+
+            if(chart == null) throw new IllegalStateException("Chart required in template");
+
+            final XSSFWorkbook workbook = new XSSFWorkbook();
+            final XSSFSheet sheet = workbook.createSheet();
+
+            final CTChart ctChart = chart.getCTChart();
+            final CTPlotArea plotArea = ctChart.getPlotArea();
+
+            final CTDoughnutChart donutChart = plotArea.getDoughnutChartArray(0);
+
+            final CTPieSer series = donutChart.getSerArray(0);
+
+            final CTStrRef strRef = series.getTx().getStrRef();
+            strRef.getStrCache().getPtArray(0).setV(title);
+            sheet.createRow(0).createCell(1).setCellValue(title);
+            strRef.setF(new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString());
+
+            final CTStrRef categoryRef = series.getCat().getStrRef();
+            final CTStrData categoryData = categoryRef.getStrCache();
+            final CTNumRef numRef = series.getVal().getNumRef();
+            final CTNumData numericData = numRef.getNumCache();
+
+            categoryData.setPtArray(null);
+            numericData.setPtArray(null);
+
+            for(int idx = 0; idx < values.length; ++idx) {
+                final CTStrVal categoryPoint = categoryData.addNewPt();
+                categoryPoint.setIdx(idx);
+                categoryPoint.setV(categories[idx]);
+
+                final CTNumVal numericPoint = numericData.addNewPt();
+                numericPoint.setIdx(idx);
+                numericPoint.setV(Double.toString(values[idx]));
+
+                XSSFRow row = sheet.createRow(idx);
+                row.createCell(0).setCellValue(categories[0]);
+                row.createCell(1).setCellValue(values[0]);
+            }
+            categoryData.getPtCount().setVal(categories.length);
+            numericData.getPtCount().setVal(values.length);
+
+            categoryRef.setF(new CellRangeAddress(1, values.length, 0, 0).formatAsString(sheet.getSheetName(), true));
+            numRef.setF(new CellRangeAddress(1, values.length, 1, 1).formatAsString(sheet.getSheetName(), true));
+
+            for(final POIXMLDocumentPart part : chart.getRelations()) {
+                final PackagePart pkg = part.getPackagePart();
+                if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
+                    // We have to rewrite the chart data; OpenOffice doesn't use it but Powerpoint does when you click 'Edit Data'
+                    try(final OutputStream xlsOut = pkg.getOutputStream()) {
+                        workbook.write(xlsOut);
+                    }
+                    break;
+                }
+            }
+
+            return writePPT(ppt, "sunburst.pptx");
+        }
+    }
 }
