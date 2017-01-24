@@ -9,7 +9,9 @@ import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;
 import com.hp.autonomy.searchcomponents.idol.exceptions.AciErrorExceptionAspect;
+import com.hp.autonomy.types.requests.idol.actions.params.ActionParams;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
+import com.hp.autonomy.types.requests.idol.actions.user.UserActions;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -21,13 +23,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_ENABLED_PROPERTY_KEY;
-import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_TYPE_PROPERTY;
-import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.METRIC_NAME_SEPARATOR;
+import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.*;
 
 /**
  * Default implementation of {@link AciErrorExceptionAspect}
@@ -79,14 +81,19 @@ class PerformanceMonitoringAspect {
                 .append(METRIC_NAME_SEPARATOR)
                 .append(serverDetails.getPort())
                 .append(METRIC_NAME_SEPARATOR);
-        final Collection<String> sortedParameters = parameters.stream()
+        final Map<String, String> parameterMap = parameters.stream()
                 .filter(parameter -> !QueryParams.SecurityInfo.name().equalsIgnoreCase(parameter.getName()) && StringUtils.isNotEmpty(parameter.getValue()))
-                .map(parameter -> parameter.getName() + NAME_VALUE_SEPARATOR + sanitiseMetricNameComponent(tweakParameterValueInMetricName(parameter)))
+                .collect(Collectors.toMap(AciParameter::getName, AciParameter::getValue));
+        final Collection<String> parameterKeyValueStrings = parameterMap.entrySet().stream()
+                .map(e -> e.getKey() + NAME_VALUE_SEPARATOR + sanitiseMetricNameComponent(tweakParameterValueInMetricName(e.getKey(), e.getValue())))
                 .sorted()
                 .collect(Collectors.toList());
-        metricNameBuilder.append(String.join(PARAMETER_SEPARATOR, sortedParameters));
+        metricNameBuilder.append(String.join(PARAMETER_SEPARATOR, parameterKeyValueStrings));
 
-        return monitorMethodPerformance(joinPoint, sanitiseMetricName(metricNameBuilder.toString()));
+        return Arrays.stream(UserActions.values()).anyMatch(a ->
+                a.name().equalsIgnoreCase(parameterMap.get(ActionParams.Action.name())))
+                ? joinPoint.proceed()
+                : monitorMethodPerformance(joinPoint, sanitiseMetricName(metricNameBuilder.toString()));
     }
 
     private Object monitorMethodPerformance(final ProceedingJoinPoint joinPoint, final String metricName) throws Throwable {
@@ -108,7 +115,7 @@ class PerformanceMonitoringAspect {
         return ILLEGAL_COMPONENT_CHARACTERS.matcher(metricNameBuilder).replaceAll(ILLEGAL_CHARACTER_REPLACEMENT);
     }
 
-    private CharSequence tweakParameterValueInMetricName(final AciParameter parameter) {
-        return QueryParams.Text.name().equalsIgnoreCase(parameter.getName()) && !"*".equals(parameter.getValue()) ? "[any]" : parameter.getValue();
+    private CharSequence tweakParameterValueInMetricName(final String name, final CharSequence value) {
+        return QueryParams.Text.name().equalsIgnoreCase(name) && !"*".equals(value) ? "[any]" : value;
     }
 }
