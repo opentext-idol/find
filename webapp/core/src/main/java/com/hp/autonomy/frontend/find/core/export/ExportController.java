@@ -330,7 +330,6 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         for(int row = 0; row < rows; ++row) {
             for(int col = 0; col < cols; ++col) {
                 final XSLFTableCell cell = table.getCell(row, col);
-                cell.setTextAutofit(TextShape.TextAutofit.SHAPE);
                 cell.setText(data[idx++]);
 
                 for(final TableCell.BorderEdge edge : TableCell.BorderEdge.values()) {
@@ -350,7 +349,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             tableH += table.getRowHeight(row);
         }
 
-        table.setAnchor(new Rectangle2D.Double(0.5 * (PPT_WIDTH - tableW), Math.min(textBounds.getMaxY(), 0.5 * (PPT_HEIGHT - tableH)), tableW, tableH));
+        table.setAnchor(new Rectangle2D.Double(0.5 * (PPT_WIDTH - tableW), textBounds.getMaxY(), tableW, Math.min(tableH, PPT_HEIGHT - textBounds.getMaxY())));
 
         return writePPT(ppt, "table.pptx");
     }

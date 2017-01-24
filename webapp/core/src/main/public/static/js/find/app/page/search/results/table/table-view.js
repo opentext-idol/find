@@ -41,6 +41,30 @@ define([
         render: function() {
             ParametricResultsView.prototype.render.apply(this, arguments);
 
+            this.$('.col-md-12').prepend('<a class="btn btn-default pull-right table-pptx" href="#"><i class="hp-icon hp-document-download"></i> PPTX</a>');
+
+            this.$el.on('click', '.table-pptx', _.bind(function(evt){
+                evt.preventDefault();
+
+                var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/table"><input name="title"><input name="rows"><input name="cols"><input type="submit"></form>');
+                $form[0].title.value = 'Breakdown by ' + this.fieldsCollection.at(0).get('displayValue')
+
+                var datatables = this.$table.dataTable()
+
+                var rows = this.$table.find('tbody tr');
+
+                rows.each(function(idx, el){
+                    var data = datatables.fnGetData(el);
+                    $('<input name="d">').attr('value', data.text).appendTo($form)
+                    $('<input name="d">').attr('value', data.count).appendTo($form)
+                })
+
+                $form[0].rows.value = rows.length
+                $form[0].cols.value = 2
+
+                $form.appendTo(document.body).submit().remove()
+            }, this))
+
             this.$content.html(this.tableTemplate());
 
             this.$table = this.$('table');
