@@ -134,7 +134,7 @@ define([
                 evt.preventDefault();
 
                 var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/sunburst"><input name="title"><input type="submit"></form>');
-                $form[0].title.value = 'Count by ' + this.fieldsCollection.at(0).get('displayValue')
+                $form[0].title.value = 'Breakdown by ' + this.fieldsCollection.at(0).get('displayValue')
 
                 this.dependentParametricCollection.each(function(model){
                     $('<input name="categories">').attr('value', model.get('text') || 'Others').appendTo($form)

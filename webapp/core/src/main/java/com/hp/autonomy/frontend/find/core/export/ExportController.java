@@ -218,6 +218,10 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             @RequestParam("values") final double[] values,
             @RequestParam("title") final String title
     ) throws IOException {
+        if (values.length != categories.length) {
+            throw new IllegalArgumentException("Number of values should match the number of categories");
+        }
+
         try(final InputStream template = sunburstTemplate.getInputStream()) {
             final XMLSlideShow ppt = new XMLSlideShow(template);
 
