@@ -126,7 +126,23 @@ define([
         render: function() {
             ParametricResultsView.prototype.render.apply(this, arguments);
 
+            this.$('.col-md-12').prepend('<a class="btn btn-default pull-right sunburst-pptx" href="#"><i class="hp-icon hp-document-download"></i> PPTX</a>');
+
             this.$content.addClass('sunburst');
+
+            this.$el.on('click', '.sunburst-pptx', _.bind(function(evt){
+                evt.preventDefault();
+
+                var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/sunburst"><input name="title"><input type="submit"></form>');
+                $form[0].title.value = 'Count by ' + this.fieldsCollection.at(0).get('displayValue')
+
+                this.dependentParametricCollection.each(function(model){
+                    $('<input name="categories">').attr('value', model.get('text') || 'Others').appendTo($form)
+                    $('<input name="values">').attr('value', model.get('count')).appendTo($form)
+                })
+
+                $form.appendTo(document.body).submit().remove()
+            }, this))
 
             $(window).resize(_.bind(function() {
                 if(this.sunburst) {
