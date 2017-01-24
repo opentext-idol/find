@@ -12,6 +12,7 @@ import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import java.awt.*;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -30,6 +32,9 @@ import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFChart;
 import org.apache.poi.xslf.usermodel.XSLFFreeformShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFTable;
+import org.apache.poi.xslf.usermodel.XSLFTableCell;
+import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -71,6 +76,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     static final String CSV_PATH = "/csv";
     static final String PPT_TOPICMAP_PATH = "/ppt/topicmap";
     static final String PPT_SUNBURST_PATH = "/ppt/sunburst";
+    static final String PPT_TABLE_PATH = "/ppt/table";
     static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
     static final String QUERY_REQUEST_PARAM = "queryRequest";
     private static final String EXPORT_FILE_NAME = "query-results";
@@ -78,6 +84,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     private final ExportService<R, E> exportService;
     private final RequestMapper<R> requestMapper;
     private final ControllerUtils controllerUtils;
+    private int PPT_WIDTH = 720;
+    private int PPT_HEIGHT = 540;
 
     protected ExportController(final ExportService<R, E> exportService, final RequestMapper<R> requestMapper, final ControllerUtils controllerUtils) {
         this.exportService = exportService;
@@ -148,8 +156,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             boolean first = true;
 
             for(double[] point : reqPath.getPoints()) {
-                final double x = point[0] * 720;
-                final double y = point[1] * 540;
+                final double x = point[0] * PPT_WIDTH;
+                final double y = point[1] * PPT_HEIGHT;
                 if(first) {
                     path.moveTo(x, y);
                     first = false;
@@ -218,7 +226,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             @RequestParam("values") final double[] values,
             @RequestParam("title") final String title
     ) throws IOException {
-        if (values.length != categories.length) {
+        if(values.length != categories.length) {
             throw new IllegalArgumentException("Number of values should match the number of categories");
         }
 
@@ -281,7 +289,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
             for(final POIXMLDocumentPart part : chart.getRelations()) {
                 final PackagePart pkg = part.getPackagePart();
-                if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
+                if("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
                     // We have to rewrite the chart data; OpenOffice doesn't use it but Powerpoint does when you click 'Edit Data'
                     try(final OutputStream xlsOut = pkg.getOutputStream()) {
                         workbook.write(xlsOut);
@@ -292,5 +300,58 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
             return writePPT(ppt, "sunburst.pptx");
         }
+    }
+
+    @RequestMapping(value = PPT_TABLE_PATH)
+    public HttpEntity<byte[]> table(
+            @RequestParam("title") final String title,
+            @RequestParam("rows") final int rows,
+            @RequestParam("cols") final int cols,
+            @RequestParam("d") final String[] data
+    ) throws IOException {
+        if(data.length != rows * cols) {
+            throw new IllegalArgumentException("Number of data points does not match the number of columns");
+        }
+
+        final XMLSlideShow ppt = new XMLSlideShow();
+        final XSLFSlide sl = ppt.createSlide();
+
+        final XSLFTextBox textBox = sl.createTextBox();
+        textBox.setText(title);
+        textBox.setHorizontalCentered(true);
+        textBox.setTextAutofit(TextShape.TextAutofit.SHAPE);
+        final Rectangle2D.Double textBounds = new Rectangle2D.Double(0, 0.05 * PPT_HEIGHT, PPT_WIDTH, 0.1 * PPT_HEIGHT);
+        textBox.setAnchor(textBounds);
+
+        final XSLFTable table = sl.createTable(rows, cols);
+
+        int idx = 0;
+
+        for(int row = 0; row < rows; ++row) {
+            for(int col = 0; col < cols; ++col) {
+                final XSLFTableCell cell = table.getCell(row, col);
+                cell.setTextAutofit(TextShape.TextAutofit.SHAPE);
+                cell.setText(data[idx++]);
+
+                for(final TableCell.BorderEdge edge : TableCell.BorderEdge.values()) {
+                    cell.setBorderColor(edge, Color.BLACK);
+                }
+            }
+        }
+
+        double tableW = 0, tableH = 0;
+
+        for(int col = 0; col < cols; ++col) {
+            table.setColumnWidth(col, PPT_WIDTH / cols * 0.8);
+            tableW += table.getColumnWidth(col);
+        }
+
+        for(int row = 0; row < rows; ++row) {
+            tableH += table.getRowHeight(row);
+        }
+
+        table.setAnchor(new Rectangle2D.Double(0.5 * (PPT_WIDTH - tableW), Math.min(textBounds.getMaxY(), 0.5 * (PPT_HEIGHT - tableH)), tableW, tableH));
+
+        return writePPT(ppt, "table.pptx");
     }
 }
