@@ -56,7 +56,7 @@ public class PerformanceMonitoringAspectTest {
         testService.testMethod();
         final String expectedMetricName = metricType
                 + SERVICE_METRIC_NAME_PREFIX
-                + "com.hp.autonomy.frontend.find.idol.metrics.PerformanceMonitoringAspectTest$TestService"
+                + "com_hp_autonomy_frontend_find_idol_metrics_PerformanceMonitoringAspectTest$TestService"
                 + CLASS_METHOD_SEPARATOR
                 + "testMethod";
         verify(gaugeService).submit(eq(expectedMetricName), anyDouble());

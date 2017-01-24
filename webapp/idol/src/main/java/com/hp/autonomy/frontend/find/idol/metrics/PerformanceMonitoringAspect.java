@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 import java.util.Collection;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_ENABLED_PROPERTY_KEY;
@@ -42,6 +43,10 @@ class PerformanceMonitoringAspect {
     static final String PARAMETER_SEPARATOR = "&";
     static final char NAME_VALUE_SEPARATOR = '=';
 
+    private static final Pattern ILLEGAL_COMPONENT_CHARACTERS = Pattern.compile("\\.");
+    private static final Pattern ILLEGAL_CHARACTERS = Pattern.compile("[/\\\\]");
+    private static final String ILLEGAL_CHARACTER_REPLACEMENT = "_";
+
     private final GaugeService gaugeService;
     private final String metricType;
 
@@ -54,8 +59,12 @@ class PerformanceMonitoringAspect {
 
     @Around("@within(idolService)")
     public Object monitorServiceMethodPerformance(final ProceedingJoinPoint joinPoint, final IdolService idolService) throws Throwable {
-        final String metricName = metricType + SERVICE_METRIC_NAME_PREFIX + joinPoint.getSignature().getDeclaringTypeName() + CLASS_METHOD_SEPARATOR + joinPoint.getSignature().getName();
-        return monitorMethodPerformance(joinPoint, metricName);
+        final String metricName = metricType
+                + SERVICE_METRIC_NAME_PREFIX
+                + sanitiseMetricNameComponent(joinPoint.getSignature().getDeclaringTypeName())
+                + CLASS_METHOD_SEPARATOR
+                + sanitiseMetricNameComponent(joinPoint.getSignature().getName());
+        return monitorMethodPerformance(joinPoint, sanitiseMetricName(metricName));
     }
 
     @Around(value = "execution(* com.autonomy.aci.client.transport.AciHttpClient.executeAction(..)) && args(serverDetails, parameters)",
@@ -64,15 +73,20 @@ class PerformanceMonitoringAspect {
             final ProceedingJoinPoint joinPoint,
             final AciServerDetails serverDetails,
             final Collection<? extends AciParameter> parameters) throws Throwable {
-        final StringBuilder metricNameBuilder = new StringBuilder(metricType + IDOL_REQUEST_METRIC_NAME_PREFIX + serverDetails.getHost() + METRIC_NAME_SEPARATOR + serverDetails.getPort() + METRIC_NAME_SEPARATOR);
+        final StringBuilder metricNameBuilder = new StringBuilder(metricType)
+                .append(IDOL_REQUEST_METRIC_NAME_PREFIX)
+                .append(sanitiseMetricNameComponent(serverDetails.getHost()))
+                .append(METRIC_NAME_SEPARATOR)
+                .append(serverDetails.getPort())
+                .append(METRIC_NAME_SEPARATOR);
         final Collection<String> sortedParameters = parameters.stream()
                 .filter(parameter -> !QueryParams.SecurityInfo.name().equalsIgnoreCase(parameter.getName()) && StringUtils.isNotEmpty(parameter.getValue()))
-                .map(parameter -> parameter.getName() + NAME_VALUE_SEPARATOR + tweakParameterValueInMetricName(parameter))
+                .map(parameter -> parameter.getName() + NAME_VALUE_SEPARATOR + sanitiseMetricNameComponent(tweakParameterValueInMetricName(parameter)))
                 .sorted()
                 .collect(Collectors.toList());
         metricNameBuilder.append(String.join(PARAMETER_SEPARATOR, sortedParameters));
 
-        return monitorMethodPerformance(joinPoint, metricNameBuilder.toString());
+        return monitorMethodPerformance(joinPoint, sanitiseMetricName(metricNameBuilder.toString()));
     }
 
     private Object monitorMethodPerformance(final ProceedingJoinPoint joinPoint, final String metricName) throws Throwable {
@@ -86,7 +100,15 @@ class PerformanceMonitoringAspect {
         }
     }
 
-    private String tweakParameterValueInMetricName(final AciParameter parameter) {
+    private String sanitiseMetricName(final CharSequence metricNameBuilder) {
+        return ILLEGAL_CHARACTERS.matcher(metricNameBuilder).replaceAll(ILLEGAL_CHARACTER_REPLACEMENT);
+    }
+
+    private String sanitiseMetricNameComponent(final CharSequence metricNameBuilder) {
+        return ILLEGAL_COMPONENT_CHARACTERS.matcher(metricNameBuilder).replaceAll(ILLEGAL_CHARACTER_REPLACEMENT);
+    }
+
+    private CharSequence tweakParameterValueInMetricName(final AciParameter parameter) {
         return QueryParams.Text.name().equalsIgnoreCase(parameter.getName()) && !"*".equals(parameter.getValue()) ? "[any]" : parameter.getValue();
     }
 }
