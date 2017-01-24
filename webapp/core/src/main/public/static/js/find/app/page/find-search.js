@@ -168,6 +168,8 @@ define([
                     var lastModel = this.savedQueryCollection.last();
 
                     if(lastModel) {
+                        const route = lastModel.get('id') ? 'search/tab/' + lastModel.get('type') + ':' + lastModel.get('id') : 'search/query';
+                        vent.navigate(route, {trigger: false});
                         this.selectedTabModel.set('selectedSearchCid', lastModel.cid);
                     } else {
                         // If the user closes their last tab, run a search for *
@@ -232,6 +234,19 @@ define([
                 if(this.isExpanded()) {
                     this.$('.service-view-container').addClass('hide');
                     this.$('.query-service-view-container').removeClass('hide');
+                }
+            }, this);
+
+            this.listenTo(router, 'route:savedSearch', function(tab) {
+                if (this.savedSearchCollection.get(tab)) {
+                    this.selectedTabModel.set('selectedSearchCid', this.savedSearchCollection.get(tab).cid);
+                }
+                else {
+                    this.listenToOnce(options.savedQueryCollection, 'update', function() {
+                        if (this.savedSearchCollection.get(tab)) {
+                            this.selectedTabModel.set('selectedSearchCid', this.savedSearchCollection.get(tab).cid);
+                        }
+                    });
                 }
             }, this);
 

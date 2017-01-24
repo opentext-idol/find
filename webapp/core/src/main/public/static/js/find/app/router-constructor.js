@@ -38,8 +38,12 @@ define([
         },
 
         dashboards: function(dashboardName) {
-            this.trigger('route:page', 'dashboards/' + dashboardName)
-        }
+            this.trigger('route:page', 'dashboards/' + dashboardName);
+        },
+
+        savedSearch: function() {
+            this.trigger('route:page', 'search');
+        },
     });
 
 });
