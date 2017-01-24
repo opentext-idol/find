@@ -278,7 +278,7 @@ define([
                     }, resultsViewsMap[viewId]);
                 });
 
-            var resultsViewSelectionModel = new Backbone.Model({
+            this.resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
                 selectedTab: this.resultsViews[0].id
             });
@@ -287,13 +287,17 @@ define([
             if (this.resultsViews.length > 1) {
                 this.resultsViewSelection = new ResultsViewSelection({
                     views: this.resultsViews,
-                    model: resultsViewSelectionModel
+                    model: this.resultsViewSelectionModel
                 });
             }
 
             this.resultsViewContainer = new ResultsViewContainer({
                 views: this.resultsViews,
-                model: resultsViewSelectionModel
+                model: this.resultsViewSelectionModel
+            });
+
+            this.listenTo(this.resultsViewSelectionModel, 'change:selectedTab', function(model, selectedTab) {
+                this.trigger('updateRouting', selectedTab);
             });
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
@@ -458,6 +462,14 @@ define([
 
         rightSideContainerHideToggle: function(toggle) {
             this.$('.right-side-container').toggle(toggle);
+        },
+
+        changeTab: function(tab) {
+            this.resultsViewSelection.switchTab(tab);
+        },
+
+        getSelectedTab: function() {
+            return this.resultsViewSelectionModel.get('selectedTab');
         },
 
         remove: function() {

@@ -43,7 +43,7 @@ define([
 
         savedSearch: function() {
             this.trigger('route:page', 'search');
-        },
+        }
     });
 
 });

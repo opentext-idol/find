@@ -24,9 +24,6 @@ define([
                 const currentQueryModel = this.savedSearchCollection.get(currentModelCid);
                 this.model.set('selectedSearchCid', currentModelCid);
 
-                const route = currentQueryModel.get('id') ? 'search/tab/' + currentQueryModel.get('type') + ':' + currentQueryModel.get('id') : 'search/query';
-                vent.navigate(route, {trigger: false});
-
                 if (currentQueryModel.get('newDocuments') !== 0) {
                     currentQueryModel.trigger('refresh');
                 }
