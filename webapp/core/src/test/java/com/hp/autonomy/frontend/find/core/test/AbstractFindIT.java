@@ -38,7 +38,8 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
         "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
         "find.https.proxyPort: 8080",
         "spring.datasource.url = jdbc:h2:mem:find-db;DB_CLOSE_ON_EXIT=FALSE",
-        "mock.authenticationRetriever=false"
+        "mock.authenticationRetriever=false",
+        "find.metrics.enabled=true"
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/clean-database.sql")
 public abstract class AbstractFindIT {

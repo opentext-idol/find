@@ -8,13 +8,14 @@ define([
     'jquery',
     'underscore',
     'js-whatever/js/list-view',
+    'find/app/metrics',
     'find/app/page/search/filters/parametric/parametric-field-view',
     'find/app/page/search/filters/parametric/proxy-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-collapsible-view',
     'parametric-refinement/display-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
-], function(Backbone, $, _, ListView, FieldView, ProxyView, CollapsibleNumericFieldView,
+], function(Backbone, $, _, ListView, metrics, FieldView, ProxyView, CollapsibleNumericFieldView,
             DisplayCollection, i18n, template) {
     'use strict';
 
@@ -24,7 +25,7 @@ define([
         template: _.template(template)({i18n: i18n}),
 
         events: {
-            'click [data-field] [data-value]': function(e) {
+            'click [data-field] [data-value]': function (e) {
                 var $target = $(e.currentTarget);
                 var $field = $target.closest('[data-field]');
 
@@ -33,7 +34,7 @@ define([
                     value: $target.attr('data-value')
                 };
 
-                if(this.selectedParametricValues.get(attributes)) {
+                if (this.selectedParametricValues.get(attributes)) {
                     this.selectedParametricValues.remove(attributes);
                 } else {
                     this.selectedParametricValues.add(attributes);
@@ -41,7 +42,7 @@ define([
             }
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.restrictedParametricCollection = options.restrictedParametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.displayCollection = options.displayCollection;
@@ -54,16 +55,21 @@ define([
                 empty: this.collection.isEmpty()
             });
 
+            //noinspection JSUnresolvedFunction
             this.listenTo(this.model, 'change:processing', this.updateProcessing);
+            //noinspection JSUnresolvedFunction
             this.listenTo(this.model, 'change:error', this.updateError);
+            //noinspection JSUnresolvedFunction
             this.listenTo(this.model, 'change', this.updateEmpty);
 
+            //noinspection JSUnresolvedFunction
             this.listenTo(this.restrictedParametricCollection, 'request', function() {
                 this.model.set({processing: true, error: false});
             });
 
+            //noinspection JSUnresolvedFunction
             this.listenTo(this.restrictedParametricCollection, 'error', function(collection, xhr) {
-                if(xhr.status === 0) {
+                if (xhr.status === 0) {
                     this.model.set({processing: Boolean(this.restrictedParametricCollection.currentRequest)});
                 } else {
                     // The request was not aborted, so there isn't another request in flight
@@ -71,20 +77,28 @@ define([
                 }
             });
 
+            //noinspection JSUnresolvedFunction
             this.listenTo(this.restrictedParametricCollection, 'sync', function() {
                 this.model.set({processing: false});
+
+                if (!this.restrictedParametricCollection.isEmpty() && !this.parametricValuesLoaded) {
+                    this.parametricValuesLoaded = true;
+                    metrics.addTimeSincePageLoad('parametric-values-first-loaded');
+                }
             });
 
+            //noinspection JSUnresolvedFunction
             this.listenTo(this.collection, 'update reset', function() {
                 this.model.set('empty', this.collection.isEmpty());
             });
 
             var collapsed = {};
 
-            var isCollapsed = function(model) {
-                if(this.filterModel && this.filterModel.get('text')) {
+            var isCollapsed = function (model) {
+                if (this.filterModel && this.filterModel.get('text')) {
                     return false;
                 } else {
+                    //noinspection JSUnresolvedFunction
                     return _.isUndefined(collapsed[model.id]) || collapsed[model.id];
                 }
             }.bind(this);
@@ -136,48 +150,50 @@ define([
                 }
             });
 
-            // Would ideally use model.cid, but on refresh the Display
-            // Collection creates new models with different cids
-            this.listenTo(this.fieldNamesListView, 'item:toggle', function(model, newState) {
+            //noinspection JSUnresolvedFunction
+            // Would ideally use model.cid but on refresh the display Collection creates new models with different cids
+            this.listenTo(this.fieldNamesListView, 'item:toggle', function (model, newState) {
                 collapsed[model.id] = newState;
             });
         },
 
         render: function() {
+            //noinspection JSUnresolvedVariable
             this.$el.html(this.template).prepend(this.fieldNamesListView.$el);
             this.fieldNamesListView.render();
 
+            //noinspection JSUnresolvedFunction
             this.$emptyMessage = this.$('.parametric-empty');
+            //noinspection JSUnresolvedFunction
             this.$errorMessage = this.$('.parametric-error');
+            //noinspection JSUnresolvedFunction
             this.$processing = this.$('.parametric-processing-indicator');
 
             this.updateProcessing();
             return this;
         },
 
-        remove: function() {
+        remove: function () {
             this.fieldNamesListView.remove();
             this.displayCollection.stopListening();
             Backbone.View.prototype.remove.call(this);
         },
 
-        updateEmpty: function() {
-            if(this.$emptyMessage) {
-                var showEmptyMessage = this.model.get('empty') &&
-                    this.collection.isEmpty() && !(this.model.get('error') ||
-                    this.model.get('processing'));
+        updateEmpty: function () {
+            if (this.$emptyMessage) {
+                var showEmptyMessage = this.model.get('empty') && this.collection.isEmpty() && !(this.model.get('error') || this.model.get('processing'));
                 this.$emptyMessage.toggleClass('hide', !showEmptyMessage);
             }
         },
 
         updateProcessing: function() {
-            if(this.$processing) {
+            if (this.$processing) {
                 this.$processing.toggleClass('hide', !this.model.get('processing'));
             }
         },
 
         updateError: function() {
-            if(this.$errorMessage) {
+            if (this.$errorMessage) {
                 this.$errorMessage.toggleClass('hide', !this.model.get('error'));
             }
         }
