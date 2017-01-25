@@ -21,7 +21,8 @@ import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FI
 @ConditionalOnProperty(FIND_METRICS_ENABLED_PROPERTY_KEY)
 public class MetricsConfiguration {
     public static final String FIND_METRICS_ENABLED_PROPERTY_KEY = "find.metrics.enabled";
-    public static final String FIND_METRICS_ENABLED_PROPERTY = "${" + FIND_METRICS_ENABLED_PROPERTY_KEY + '}';
+    private static final boolean FIND_METRICS_ENABLED_DEFAULT = false;
+    public static final String FIND_METRICS_ENABLED_PROPERTY = "${" + FIND_METRICS_ENABLED_PROPERTY_KEY + ':' + FIND_METRICS_ENABLED_DEFAULT + '}';
     private static final String FIND_METRICS_TYPE_PROPERTY_KEY = "find.metrics.type";
     private static final String FIND_METRICS_TYPE_DEFAULT = "timer";
     public static final String FIND_METRICS_TYPE_PROPERTY = "${" + FIND_METRICS_TYPE_PROPERTY_KEY + ':' + FIND_METRICS_TYPE_DEFAULT + '}';
