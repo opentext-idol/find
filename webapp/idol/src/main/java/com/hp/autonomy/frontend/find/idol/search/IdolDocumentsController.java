@@ -89,9 +89,9 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
             @RequestParam("field") final String field,
             @RequestParam("value") final String value
     ) throws IOException, AciHttpException {
-
+        final String encodedRef = AciURLCodec.getInstance().encode(reference);
         final AciParameters params = new AciParameters("getcontent");
-        params.add("reference", reference);
+        params.add("reference", encodedRef);
         params.add("databasematch", database);
 
         final AciService aciService = aciServiceRetriever.getAciService(QueryRequest.QueryType.RAW);
@@ -182,6 +182,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
 
         final DreAddDataCommand command = new DreAddDataCommand();
         command.setDreDbName(database);
+        command.put("CreateDatabase", "true");
         command.setKillDuplicates("reference");
         command.setPostData(idx);
         final HttpClient client = new HttpClientFactory().createInstance();
@@ -193,7 +194,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
         final AciParameters deleteParams = new AciParameters("query");
         deleteParams.put("text", "*");
         deleteParams.put("databasematch", database);
-        deleteParams.put("matchreference", AciURLCodec.getInstance().encode(reference));
+        deleteParams.put("matchreference", encodedRef);
         deleteParams.put("delete", "true");
         deleteParams.put("maxresults", 1);
 
