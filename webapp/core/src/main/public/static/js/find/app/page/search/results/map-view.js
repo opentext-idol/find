@@ -38,8 +38,7 @@ define([
             });
 
             leaflet
-                // .tileLayer(configuration().map.tileUrlTemplate)
-                .tileLayer('../api/public/map/tile?x={x}&y={y}&z={z}')
+                .tileLayer(configuration().map.tileUrlTemplate)
                 .addTo(map);
 
             var attributionText = configuration().map.attribution;

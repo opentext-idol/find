@@ -1,13 +1,9 @@
-package com.hp.autonomy.frontend.find.core.map;
-
 /*
- * $Id:$
- *
- * Copyright (c) 2017, Autonomy Systems Ltd.
- *
- * Last modified by $Author$ on $Date$ 
+ * Copyright 2017 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
+package com.hp.autonomy.frontend.find.core.map;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
@@ -16,14 +12,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import lombok.Data;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.method.annotation.AbstractJsonpResponseBodyAdvice;
 
 @Controller
 @RequestMapping(MapController.MAP_PATH)
@@ -38,24 +37,38 @@ public class MapController {
 
     private final ConfigService<? extends FindConfig> configService;
 
+    @ControllerAdvice
+    static class JsonpAdvice extends AbstractJsonpResponseBodyAdvice {
+        public JsonpAdvice() {
+            super("callback");
+        }
+    }
+
     @RequestMapping(value = TILE_PATH, method = RequestMethod.GET)
-    public ResponseEntity<byte[]> tile(
-            @RequestParam("x") final String x,
-            @RequestParam("y") final String y,
-            @RequestParam("z") final String z
+    @ResponseBody
+    public ProxyResponse tile(
+            @RequestParam("url") final String url
     ) throws IOException {
         final String tileUrlTemplate = configService.getConfig().getMap().getTileUrlTemplate();
-        final String url = tileUrlTemplate.replace("{x}", x).replace("{y}", y).replace("{z}", z);
 
-        final URLConnection urlConnection = new URL(url).openConnection();
+        final URL target = new URL(url), validate = new URL(tileUrlTemplate);
+
+        if (!validate.getProtocol().equals(target.getProtocol()) || !validate.getHost().equals(target.getHost()) || validate.getPort() != target.getPort()) {
+            throw new IllegalArgumentException("We only allow proxying to the tile server");
+        }
+
+        final URLConnection urlConnection = target.openConnection();
         final String contentType = urlConnection.getContentType();
         try (final InputStream is = urlConnection.getInputStream(); final ByteArrayOutputStream baos = new ByteArrayOutputStream();) {
             IOUtils.copyLarge(is, baos);
 
-            return ResponseEntity
-                    .ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .body(baos.toByteArray());
+            return new ProxyResponse(contentType, new String(Base64.encodeBase64(baos.toByteArray(), false, true)));
         }
+    }
+
+    @Data
+    public static class ProxyResponse {
+        final String type;
+        final String content;
     }
 }
