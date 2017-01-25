@@ -26,6 +26,7 @@ public class Dashboard extends SimpleComponent<Dashboard> implements OptionalCon
     private final Boolean enabled;
     private final Integer width;
     private final Integer height;
+    private final Integer updateInterval;
 
     @Singular
     private final Collection<Widget> widgets;

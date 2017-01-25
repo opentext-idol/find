@@ -4,6 +4,7 @@
     "enabled": false,
     "width": 3,
     "height": 3,
+    "updateInterval": 60,
     "widgets": [{
       "name": "Sample Widget",
       "type": "staticContentWidget",
