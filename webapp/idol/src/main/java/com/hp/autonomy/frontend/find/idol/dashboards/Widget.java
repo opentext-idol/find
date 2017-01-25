@@ -27,7 +27,7 @@ public class Widget extends SimpleComponent<Widget> {
     private final Integer y;
     private final Integer width;
     private final Integer height;
-    private final Long savedSearchId;
+    private final WidgetSearchId savedSearch;
 
     @Singular
     private final Map<String, Object> widgetSettings;

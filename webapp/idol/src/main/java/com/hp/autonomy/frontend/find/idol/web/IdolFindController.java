@@ -38,7 +38,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
         }
     }
 
-    private final ConfigFileService<IdolDashboardConfig> dashConfig;
+    private final ConfigService<IdolDashboardConfig> dashConfig;
 
 
     @SuppressWarnings("TypeMayBeWeakened")
@@ -46,7 +46,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
     protected IdolFindController(final ControllerUtils controllerUtils,
                                  final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
                                  final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService,
-                                 final ConfigService<IdolFindConfig> configService, final ConfigFileService<IdolDashboardConfig> dashConfig) {
+                                 final ConfigService<IdolFindConfig> configService, final ConfigService<IdolDashboardConfig> dashConfig) {
         super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService);
         this.dashConfig = dashConfig;
     }

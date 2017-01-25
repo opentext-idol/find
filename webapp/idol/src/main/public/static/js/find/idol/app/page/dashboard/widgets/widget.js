@@ -7,26 +7,37 @@ define([
     'backbone',
     'underscore',
     'jquery',
+    'find/app/vent',
     'find/app/model/saved-searches/saved-search-model',
     'text!find/idol/templates/app/page/dashboards/widget.html'
-], function(Backbone, _, $, SavedSearchModel, template) {
+], function(Backbone, _, $, vent, SavedSearchModel, template) {
     'use strict';
 
     const DashboardSearchModel = SavedSearchModel.extend({
-        urlRoot: 'api/bi/saved-query'
+        urlRoot: function() {
+            return 'api/bi/' + (this.get('type') === 'QUERY' ? 'saved-query': 'saved-snapshot');
+        }
     });
 
 
     return Backbone.View.extend({
+
+        viewType: '',
+
+        clickable: false,
 
         template: _.template(template),
 
         initialize: function(options) {
             this.name = options.name;
 
-            if (options.savedSearchId) {
+            if (options.savedSearch) {
+                if (this.clickable) {
+                    this.savedSearchRoute = '/search/tab/' + options.savedSearch.type + ':' + options.savedSearch.id + (this.viewType ? '/view/' + this.viewType : '');
+                }
                 this.savedSearchModel = new DashboardSearchModel({
-                    id: options.savedSearchId
+                    id: options.savedSearch.id,
+                    type: options.savedSearch.type
                 });
                 this.savedSearchModel.fetch();
             }
@@ -36,6 +47,14 @@ define([
             this.$el.html(this.template({
                 name: this.name
             }));
+
+            if (this.clickable) {
+                this.$el.click(function () {
+                    if (this.savedSearchRoute) {
+                        vent.navigate(this.savedSearchRoute);
+                    }
+                }.bind(this));
+            }
 
             this.$content = this.$('.content');
         },

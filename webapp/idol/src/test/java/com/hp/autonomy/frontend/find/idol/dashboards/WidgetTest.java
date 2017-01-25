@@ -31,7 +31,7 @@ public class WidgetTest extends ConfigurationComponentTest<Widget> {
                 .y(1)
                 .width(1)
                 .height(1)
-                .savedSearchId(123L)
+                .savedSearch(new WidgetSearchId(123L, WidgetSearchId.Type.QUERY))
                 .widgetSetting("content", "Hello World!")
                 .build();
     }
@@ -50,7 +50,8 @@ public class WidgetTest extends ConfigurationComponentTest<Widget> {
                 .hasJsonPathNumberValue("$.y", 1)
                 .hasJsonPathNumberValue("$.width", 1)
                 .hasJsonPathNumberValue("$.height", 1)
-                .hasJsonPathNumberValue("$.savedSearchId", 123)
+                .hasJsonPathNumberValue("$.savedSearch.id", 123)
+                .hasJsonPathStringValue("$.savedSearch.type", "QUERY")
                 .hasJsonPathStringValue("$.widgetSettings.content", "Hello World!");
     }
 
@@ -75,7 +76,7 @@ public class WidgetTest extends ConfigurationComponentTest<Widget> {
                 .y(1)
                 .width(1)
                 .height(1)
-                .savedSearchId(123L)
+                .savedSearch(new WidgetSearchId(123L, WidgetSearchId.Type.QUERY))
                 .widgetSetting("content", "Hello World!")
                 .build());
     }

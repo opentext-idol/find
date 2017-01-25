@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.idol.savedsearches.query;
 
 import com.autonomy.aci.client.services.AciErrorException;
-import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
@@ -15,7 +14,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
-import com.hp.autonomy.frontend.find.idol.dashboards.Widget;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetSearchId;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
@@ -51,7 +50,9 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
         super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory, queryRequestBuilderFactory);
 
         validIds = dashConfig.getConfig().getDashboards().stream()
-                .flatMap(dashboard -> dashboard.getWidgets().stream().map(Widget::getSavedSearchId))
+                .flatMap(dashboard -> dashboard.getWidgets().stream()
+                        .filter(widget -> widget.getSavedSearch() != null && widget.getSavedSearch().getType() == WidgetSearchId.Type.QUERY)
+                        .map(widget -> widget.getSavedSearch().getId()))
                 .collect(Collectors.toSet());
     }
 
