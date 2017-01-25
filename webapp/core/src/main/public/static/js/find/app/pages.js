@@ -6,8 +6,9 @@
 define([
     'backbone',
     'underscore',
+    'find/app/vent',
     'find/app/mmap-tab'
-], function(Backbone, _, mmapTab) {
+], function(Backbone, _, vent, mmapTab) {
 
     return Backbone.View.extend({
         initialize: function(options) {
@@ -49,8 +50,12 @@ define([
                         this.pages[pageName].view.render();
                         this.pages[pageName].hasRendered = true;
                     }
-                    
+
                     this.currentPage = pageName;
+
+                    if (view.getSelectedRoute()) {
+                        vent.navigate(view.getSelectedRoute(), {trigger: false, replace: true});
+                    }
                 }
             });
         }

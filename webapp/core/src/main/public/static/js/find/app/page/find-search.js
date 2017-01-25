@@ -591,6 +591,12 @@ define([
             else {
                 vent.navigate('/search/query', {trigger: false});
             }
+
+            this.currentRoute = Backbone.history.getFragment();
+        },
+
+        getSelectedRoute: function() {
+            return this.currentRoute;
         }
     });
 });
