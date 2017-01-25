@@ -67,7 +67,7 @@ define([
             return this.$content.width();
         },
 
-        update: $.noop,
+        isUpdating: _.constant(false),
 
         onResize: $.noop
 
