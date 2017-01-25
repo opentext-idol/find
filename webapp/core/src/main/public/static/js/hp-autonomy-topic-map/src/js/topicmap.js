@@ -1026,12 +1026,12 @@
                         setTimeout(function(){
                             for (depth = Math.min(2, maxDepth); depth >= 1; --depth) {
                                 var polygons = depthPolyMeta[depth].polygons;
-                                var baseDelay = Math.min(300, 3000 / polygons.length);
+                                var baseDelay = Math.min(20, 300 / polygons.length);
                                 depthPolyMeta[depth].polygons.forEach(function (node, nodeIdx) {
                                     node.animating = true;
 
                                     if (node.textEl) {
-                                        node.textEl.animate(Raphael.animation({opacity: 1}, 1000, undefined, function(){
+                                        node.textEl.animate(Raphael.animation({opacity: 1}, 300, undefined, function(){
                                             node.animating = false;
                                         }).delay(baseDelay * nodeIdx));
                                     }
@@ -1267,7 +1267,7 @@
             }
 
             if (continuousAnimate && !finished) {
-                animateTimeout = setTimeout(animateLoop, 25);
+                animateTimeout = setTimeout(animateLoop, 5);
             }
         }
     }
