@@ -168,7 +168,7 @@ define([
         },
 
         destroy: function(options) {
-            return Backbone.Model.prototype.destroy.call(this, _.extend(options || options, {
+            return Backbone.Model.prototype.destroy.call(this, _.extend(options || {}, {
                 // The server returns an empty body (ie: not JSON)
                 // TODO: check for collision of names
                 dataType: 'text'
