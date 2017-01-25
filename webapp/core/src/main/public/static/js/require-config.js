@@ -40,7 +40,8 @@ require.config({
         underscore: '../bower_components/underscore/underscore',
         typeahead: '../bower_components/corejs-typeahead/dist/typeahead.jquery',
         'flot': '../bower_components/Flot/jquery.flot',
-        'flot.time': '../bower_components/Flot/jquery.flot.time'
+        'flot.time': '../bower_components/Flot/jquery.flot.time',
+        'html2canvas': '../bower_components/html2canvas/build/html2canvas'
     },
     shim: {
         'backbone-base': {

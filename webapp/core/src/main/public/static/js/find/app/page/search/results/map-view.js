@@ -6,8 +6,8 @@ define([
     'find/app/vent',
     'leaflet',
     'Leaflet.awesome-markers',
-    'leaflet.markercluster'
-
+    'leaflet.markercluster',
+    'html2canvas'
 ], function (Backbone, _, $, configuration, vent, leaflet) {
 
     'use strict';
@@ -38,7 +38,8 @@ define([
             });
 
             leaflet
-                .tileLayer(configuration().map.tileUrlTemplate)
+                // .tileLayer(configuration().map.tileUrlTemplate)
+                .tileLayer('../api/public/map/tile?x={x}&y={y}&z={z}')
                 .addTo(map);
 
             var attributionText = configuration().map.attribution;
