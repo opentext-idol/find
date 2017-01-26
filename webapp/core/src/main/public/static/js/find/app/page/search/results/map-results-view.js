@@ -35,12 +35,10 @@ define([
                 e.preventDefault();
 
                 var $mapEl = this.$('.location-results-map'),
-                    mapW = $mapEl.width(),
-                    mapH = $mapEl.height(),
-                    mapPos = $mapEl.position(),
-                    map = this.mapResultsView.map;
+                    map = this.mapResultsView.map,
+                    mapSize = map.getSize();
 
-                var $objs = $mapEl.find('.leaflet-objects-pane')
+                var visible = {}, markers = [];
 
                 function lPad(str) {
                     return str.length < 2 ? '0' + str : str
@@ -61,37 +59,33 @@ define([
                     return str
                 }
 
-                // marker drawing code, but the translate3ds are messing up the calculations
-                var markers = _.map($objs.find('.marker-cluster'), function(el){
-                    var $el = $(el);
-                    var pos = $el.position(), w = $el.width(), h = $el.height()
-                    return {
-                        x: (pos.left - mapPos.left + 0.5 * w)/mapW,
-                        y: (pos.top - mapPos.top + 0.5 * h)/mapH,
-                        text: $el.text(),
-                        cluster: true,
-                        color: hexColor($el.css('background-color'))
-                    }
-                }).concat(_.map($objs.find('.awesome-marker'), function(el){
-                    var $el = $(el);
-                    var pos = $el.position(), w = $el.width(), h = $el.height()
-                    return {
-                        x: (pos.left - mapPos.left + 0.5 * w)/mapW,
-                        y: (pos.top - mapPos.top + h)/mapH,
-                        text: $el.text(),
-                        cluster: false,
-                        color: hexColor('rgba(55, 168, 218, 1)')
-                    }
-                }))
+                _.each(this.markers, function(marker){
+                    var merged = this.mapResultsView.clusterMarkers.getVisibleParent(marker);
 
-                // markers = [
-                //     { x: 0, y:0, text:'0,0', cluster: true, color: '#FF0000' },
-                //     { x: 0, y:1, text:'0,1', cluster: true, color: '#FFFF00' },
-                //     { x: 1, y:1, text:'1,1', cluster: true, color: '#00FFFF' },
-                //     { x: 1, y:0, text:'1,0', cluster: true, color: '#FF00FF' }
-                // ]
+                    if (merged && !visible.hasOwnProperty(merged._leaflet_id)) {
+                        visible[merged._leaflet_id] = merged;
 
-                $objs.addClass('hide')
+                        var pos = this.mapResultsView.map.latLngToContainerPoint(merged.getLatLng())
+
+                        var isCluster = merged.getChildCount
+
+                        var xFraction = pos.x / mapSize.x;
+                        var yFraction = pos.y / mapSize.y;
+                        var tolerance = 0.01;
+
+                        if (xFraction > -tolerance && xFraction < 1 + tolerance && yFraction > -tolerance && yFraction < 1 + tolerance) {
+                            markers.push({
+                                x: xFraction,
+                                y: yFraction,
+                                text: isCluster ? merged.getChildCount() :  $(merged.getPopup()._content).find('.map-popup-title').text(),
+                                cluster: !!isCluster,
+                                color: isCluster ? hexColor($(merged._icon).css('background-color')) : hexColor('rgba(55, 168, 218, 1)')
+                            })
+                        }
+                    }
+                }, this)
+
+                var $objs = $mapEl.find('.leaflet-objects-pane').addClass('hide')
 
                 html2canvas($mapEl, {
                     logging: true,
