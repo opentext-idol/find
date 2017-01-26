@@ -40,7 +40,7 @@ define([
                     // Both Firefox and IE11 seem to have issues with drag-scrolling though. Chrome is fine.
                     width: $mapEl.width() * 2,
                     height: $mapEl.height() * 2,
-                    proxy: '../api/public/map/tile',
+                    proxy: '../api/public/map/proxy',
                     onrendered: _.bind(function(canvas) {
                         var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/map"><input name="title"><input name="image"><input type="submit"></form>');
                         $form[0].title.value = 'Showing field ' + this.fieldSelectionView.model.get('displayValue')
