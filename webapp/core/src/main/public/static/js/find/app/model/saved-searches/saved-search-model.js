@@ -3,9 +3,11 @@ define([
     'moment',
     'underscore',
     'find/app/util/array-equality',
+    'find/app/model/query-model',
+    'parametric-refinement/selected-values-collection',
     'find/app/util/database-name-resolver',
     'find/app/model/dates-filter-model'
-], function(Backbone, moment, _, arraysEqual, databaseNameResolver, DatesFilterModel) {
+], function(Backbone, moment, _, arraysEqual, QueryModel, SelectedParametricValuesCollection, databaseNameResolver, DatesFilterModel) {
     "use strict";
 
     /**
@@ -238,6 +240,23 @@ define([
 
         toSelectedIndexes: function() {
             return this.get('indexes');
+        },
+
+        toQueryModel: function(IndexesCollection, autoCorrect) {
+            const queryState = {
+                conceptGroups: new Backbone.Collection(this.toConceptGroups()),
+                minScoreModel: new Backbone.Model({minScore: 0}),
+                datesFilterModel: new DatesFilterModel(this.toDatesFilterModelAttributes()),
+                selectedIndexes: new IndexesCollection(this.get('indexes')),
+                selectedParametricValues: new SelectedParametricValuesCollection(this.toSelectedParametricValues())
+            };
+
+            return new QueryModel({
+                autoCorrect: autoCorrect,
+                stateMatchIds: this.get('queryStateTokens'),
+                promotionsStateMatchIds: this.get('promotionsStateTokens')
+            }, {queryState: queryState});
+
         }
     }, {
         Type: Type,
