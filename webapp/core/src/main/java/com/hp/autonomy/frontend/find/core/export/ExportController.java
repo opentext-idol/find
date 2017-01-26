@@ -25,6 +25,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.TableCell;
@@ -38,6 +40,7 @@ import org.apache.poi.xslf.usermodel.XSLFChart;
 import org.apache.poi.xslf.usermodel.XSLFFreeformShape;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
+import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTable;
 import org.apache.poi.xslf.usermodel.XSLFTableCell;
@@ -60,6 +63,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStop;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStopList;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.springframework.beans.factory.annotation.Value;
@@ -447,6 +451,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                     offsetY + marker.y * tgtH,
                     mark,
                     mark));
+
+                // We create a hyperlink which links back to this slide; so we get hover-over-detail-text on the marker
+                final CTHyperlink link = ((CTShape) shape.getXmlObject()).getNvSpPr().getCNvPr().addNewHlinkClick();
+                link.setTooltip(marker.getText());
+                final PackageRelationship rel = shape.getSheet().getPackagePart().addRelationship(sl.getPackagePart().getPartName(),
+                    TargetMode.INTERNAL, XSLFRelation.SLIDE.getRelation());
+                link.setId(rel.getId());
+                link.setAction("ppaction://hlinksldjump");
             }
         }
 
