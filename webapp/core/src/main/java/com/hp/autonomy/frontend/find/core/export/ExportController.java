@@ -419,29 +419,32 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         for(Marker marker : markers) {
             final XSLFAutoShape shape = sl.createAutoShape();
             shape.setFillColor(Color.decode(marker.color));
+            shape.setHorizontalCentered(true);
+            shape.setWordWrap(false);
 
             if (marker.isCluster()) {
                 shape.setShapeType(ShapeType.ELLIPSE);
+                shape.setVerticalAlignment(VerticalAlignment.MIDDLE);
+                shape.clearText();
                 final XSLFTextParagraph para = shape.addNewTextParagraph();
                 para.setTextAlign(TextParagraph.TextAlign.CENTER);
                 final XSLFTextRun text = para.addNewTextRun();
                 text.setFontSize(6.0);
                 text.setText(marker.getText());
-                double halfMark = 10;
-                double mark = 2 * halfMark;
+                double mark = 20;
                 shape.setAnchor(new Rectangle2D.Double(
-                    offsetX + marker.x * tgtW - halfMark,
-                    offsetY + marker.y * tgtH - halfMark,
+                    offsetX + marker.x * tgtW,
+                    offsetY + marker.y * tgtH,
                     mark,
                     mark));
             }
             else {
                 shape.setShapeType(ShapeType.TEARDROP);
-                double halfMark = 8;
-                double mark = 2 * halfMark;
+                shape.setVerticalAlignment(VerticalAlignment.BOTTOM);
+                double mark = 20;
                 shape.setAnchor(new Rectangle2D.Double(
-                    offsetX + marker.x * tgtW - halfMark,
-                    offsetY + marker.y * tgtH - mark,
+                    offsetX + marker.x * tgtW,
+                    offsetY + marker.y * tgtH,
                     mark,
                     mark));
             }
