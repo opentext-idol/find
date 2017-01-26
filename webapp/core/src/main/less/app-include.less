@@ -1994,12 +1994,15 @@ h4.similar-dates-message {
   height: calc(100vh - @navBarHeight);
   position: relative;
   width: 100%;
+  overflow: hidden;
 }
 
 .widget {
   box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
   padding: 0.5em;
   position: absolute;
+  display: flex;
+  flex-direction: column;
   &:hover {
     transform: scale(1.05);
     transition: 0.3s;
@@ -2007,10 +2010,11 @@ h4.similar-dates-message {
 
   .title {
     &:extend(.m-t-nil);
+    flex: 0 0 auto;
   }
 
   .content {
-    height: 100%;
+    flex: 1 0 auto;
   }
 }
 
