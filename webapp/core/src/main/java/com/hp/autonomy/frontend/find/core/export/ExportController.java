@@ -26,11 +26,14 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.TableCell;
+import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFChart;
 import org.apache.poi.xslf.usermodel.XSLFFreeformShape;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
@@ -359,12 +362,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         return writePPT(ppt, "table.pptx");
     }
 
-
     @RequestMapping(value = PPT_MAP_PATH)
     public HttpEntity<byte[]> map(
             @RequestParam("title") final String title,
-            @RequestParam("image") final String image
+            @RequestParam("image") final String image,
+            @RequestParam(value = "markers", defaultValue = "[]") final String markerStr
     ) throws IOException {
+        final Marker[] markers = new ObjectMapper().readValue(markerStr, Marker[].class);
+
         final XMLSlideShow ppt = new XMLSlideShow();
         final XSLFSlide sl = ppt.createSlide();
 
@@ -406,7 +411,41 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             tgtW = tgtH * ratio;
         }
 
-        canvas.setAnchor(new Rectangle2D.Double(0.5 * (PPT_WIDTH - tgtW) , textBounds.getMaxY(), tgtW, tgtH));
+        final double offsetX = 0.5 * (PPT_WIDTH - tgtW);
+        final double offsetY = textBounds.getMaxY();
+
+        canvas.setAnchor(new Rectangle2D.Double(offsetX, offsetY, tgtW, tgtH));
+
+        for(Marker marker : markers) {
+            final XSLFAutoShape shape = sl.createAutoShape();
+            shape.setFillColor(Color.decode(marker.color));
+
+            if (marker.isCluster()) {
+                shape.setShapeType(ShapeType.ELLIPSE);
+                final XSLFTextParagraph para = shape.addNewTextParagraph();
+                para.setTextAlign(TextParagraph.TextAlign.CENTER);
+                final XSLFTextRun text = para.addNewTextRun();
+                text.setFontSize(6.0);
+                text.setText(marker.getText());
+                double halfMark = 10;
+                double mark = 2 * halfMark;
+                shape.setAnchor(new Rectangle2D.Double(
+                    offsetX + marker.x * tgtW - halfMark,
+                    offsetY + marker.y * tgtH - halfMark,
+                    mark,
+                    mark));
+            }
+            else {
+                shape.setShapeType(ShapeType.TEARDROP);
+                double halfMark = 8;
+                double mark = 2 * halfMark;
+                shape.setAnchor(new Rectangle2D.Double(
+                    offsetX + marker.x * tgtW - halfMark,
+                    offsetY + marker.y * tgtH - mark,
+                    mark,
+                    mark));
+            }
+        }
 
         return writePPT(ppt, "map.pptx");
     }

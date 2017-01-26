@@ -34,17 +34,79 @@ define([
             'click .map-pptx': function(e){
                 e.preventDefault();
 
-                var $mapEl = this.$('.location-results-map');
+                var $mapEl = this.$('.location-results-map'),
+                    mapW = $mapEl.width(),
+                    mapH = $mapEl.height(),
+                    mapPos = $mapEl.position(),
+                    map = this.mapResultsView.map;
+
+                var $objs = $mapEl.find('.leaflet-objects-pane')
+
+                function lPad(str) {
+                    return str.length < 2 ? '0' + str : str
+                }
+
+                function hexColor(str){
+                    var match;
+                    if (match = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/.exec(str)) {
+                        return '#' + lPad(Number(match[1]).toString(16))
+                            + lPad(Number(match[2]).toString(16))
+                            + lPad(Number(match[3]).toString(16))
+                    }
+                    else if (match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)) {
+                        return '#' + lPad(Number(match[1]).toString(16))
+                            + lPad(Number(match[2]).toString(16))
+                            + lPad(Number(match[3]).toString(16))
+                    }
+                    return str
+                }
+
+                // marker drawing code, but the translate3ds are messing up the calculations
+                var markers = _.map($objs.find('.marker-cluster'), function(el){
+                    var $el = $(el);
+                    var pos = $el.position(), w = $el.width(), h = $el.height()
+                    return {
+                        x: (pos.left - mapPos.left + 0.5 * w)/mapW,
+                        y: (pos.top - mapPos.top + 0.5 * h)/mapH,
+                        text: $el.text(),
+                        cluster: true,
+                        color: hexColor($el.css('background-color'))
+                    }
+                }).concat(_.map($objs.find('.awesome-marker'), function(el){
+                    var $el = $(el);
+                    var pos = $el.position(), w = $el.width(), h = $el.height()
+                    return {
+                        x: (pos.left - mapPos.left + 0.5 * w)/mapW,
+                        y: (pos.top - mapPos.top + h)/mapH,
+                        text: $el.text(),
+                        cluster: false,
+                        color: hexColor('rgba(55, 168, 218, 1)')
+                    }
+                }))
+
+                // markers = [
+                //     { x: 0, y:0, text:'0,0', cluster: true, color: '#FF0000' },
+                //     { x: 0, y:1, text:'0,1', cluster: true, color: '#FFFF00' },
+                //     { x: 1, y:1, text:'1,1', cluster: true, color: '#00FFFF' },
+                //     { x: 1, y:0, text:'1,0', cluster: true, color: '#FF00FF' }
+                // ]
+
+                $objs.addClass('hide')
+
                 html2canvas($mapEl, {
+                    logging: true,
                     // This seems to avoid issues with IE11 only rendering a small portion of the map the size of the window
                     // Both Firefox and IE11 seem to have issues with drag-scrolling though. Chrome is fine.
                     width: $mapEl.width() * 2,
                     height: $mapEl.height() * 2,
                     proxy: '../api/public/map/proxy',
                     onrendered: _.bind(function(canvas) {
-                        var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/map"><input name="title"><input name="image"><input type="submit"></form>');
+                        $objs.removeClass('hide')
+
+                        var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/map"><input name="title"><input name="image"><input name="markers"><input type="submit"></form>');
                         $form[0].title.value = 'Showing field ' + this.fieldSelectionView.model.get('displayValue')
                         $form[0].image.value = canvas.toDataURL('image/jpeg')
+                        $form[0].markers.value = JSON.stringify(markers)
                         $form.appendTo(document.body).submit().remove()
                     }, this)
                 });
