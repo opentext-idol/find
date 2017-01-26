@@ -34,7 +34,12 @@ define([
             'click .map-pptx': function(e){
                 e.preventDefault();
 
-                html2canvas(this.$('.location-results-map'), {
+                var $mapEl = this.$('.location-results-map');
+                html2canvas($mapEl, {
+                    // This seems to avoid issues with IE11 only rendering a small portion of the map the size of the window
+                    // Both Firefox and IE11 seem to have issues with drag-scrolling though. Chrome is fine.
+                    width: $mapEl.width() * 2,
+                    height: $mapEl.height() * 2,
                     proxy: '../api/public/map/tile',
                     onrendered: _.bind(function(canvas) {
                         var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/map"><input name="title"><input name="image"><input type="submit"></form>');
