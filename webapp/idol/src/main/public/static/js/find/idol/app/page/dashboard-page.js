@@ -11,7 +11,7 @@ define([
     'find/idol/app/page/dashboard/widget-registry',
     './dashboard/widgets/widget-not-found',
     './dashboard/update-tracker-model',
-    'text!find/idol/templates/app/page/dashboard-page.html'
+    'text!find/idol/templates/page/dashboard-page.html'
 ], function (_, BasePage, Backbone, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel, template) {
     'use strict';
 
