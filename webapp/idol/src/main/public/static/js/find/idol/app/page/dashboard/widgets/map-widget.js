@@ -49,10 +49,12 @@ define([
                 if (!_.isEmpty(this.markers)) {
                     this.mapResultsView.clearMarkers(true);
                     this.mapResultsView.addMarkers(this.markers, options.widgetSettings.clusterMarkers || false);
+                    if(this.updateCallback) {
+                        this.updateCallback();
+                        delete this.updateCallback;
+                    }
                 }
             }, this));
-
-            this.html = options.widgetSettings.html;
         },
 
         render: function() {
@@ -67,7 +69,8 @@ define([
 
         doUpdate: function(done) {
             if (this.queryModel) {
-                this.getData(done);
+                this.getData();
+                this.updateCallback = done;
             }
         },
 
@@ -76,7 +79,7 @@ define([
             return this.mapResultsView.getIcon(locationField.iconName, locationField.iconColor, locationField.markerColor);
         },
 
-        getData: function(callback) {
+        getData: function() {
             const locationField = _.findWhere(configuration().map.locationFields, {displayName: this.locationFieldPair});
 
             const latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
@@ -89,7 +92,7 @@ define([
 
             const newFieldText = this.queryModel.get('fieldText') ? this.queryModel.get('fieldText') + ' AND ' + exists : exists;
 
-            this.documentsCollection.fetch({
+            this.updatePromise = this.documentsCollection.fetch({
                 data: {
                     text: this.queryModel.get('queryText'),
                     max_results: this.maxResults,
@@ -101,13 +104,16 @@ define([
                     summary: 'context',
                     queryType: 'MODIFIED'
                 },
-                reset: false,
-                success: function() {
-                    if (callback) {
-                        callback();
-                    }
-                }
-            });
+                reset: false
+            }).done(function() {
+                delete this.updatePromise;
+            }.bind(this));
+        },
+
+        onCancelled: function() {
+            if (this.updatePromise && this.updatePromise.abort) {
+                this.updatePromise.abort();
+            }
         }
     });
 });
