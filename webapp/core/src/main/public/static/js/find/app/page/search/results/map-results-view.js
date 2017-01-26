@@ -11,7 +11,8 @@ define([
     'text!find/templates/app/page/search/results/map-results-view.html',
     'text!find/templates/app/page/search/results/map-popover.html',
     'text!find/templates/app/page/loading-spinner.html',
-    'find/app/vent'
+    'find/app/vent',
+    'html2canvas'
 
 ], function (Backbone, _, $, configuration, FieldSelectionView, MapView, i18n, DocumentsCollection, addLinksToSummary, template, popoverTemplate, loadingSpinnerTemplate, vent) {
 
@@ -29,6 +30,19 @@ define([
             },
             'click .map-popup-title': function (e) {
                 vent.navigateToDetailRoute(this.documentsCollection.get(e.currentTarget.getAttribute('cid')));
+            },
+            'click .map-pptx': function(e){
+                e.preventDefault();
+
+                html2canvas(this.$('.location-results-map'), {
+                    proxy: '../api/public/map/tile',
+                    onrendered: _.bind(function(canvas) {
+                        var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/map"><input name="title"><input name="image"><input type="submit"></form>');
+                        $form[0].title.value = 'Showing field ' + this.fieldSelectionView.model.get('displayValue')
+                        $form[0].image.value = canvas.toDataURL('image/jpeg')
+                        $form.appendTo(document.body).submit().remove()
+                    }, this)
+                });
             }
         },
 

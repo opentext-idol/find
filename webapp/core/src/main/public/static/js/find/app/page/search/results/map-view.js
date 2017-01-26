@@ -6,8 +6,7 @@ define([
     'find/app/vent',
     'leaflet',
     'Leaflet.awesome-markers',
-    'leaflet.markercluster',
-    'html2canvas'
+    'leaflet.markercluster'
 ], function (Backbone, _, $, configuration, vent, leaflet) {
 
     'use strict';

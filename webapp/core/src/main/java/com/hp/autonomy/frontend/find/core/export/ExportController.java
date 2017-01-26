@@ -20,10 +20,12 @@ import java.io.OutputStream;
 import java.util.Collection;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
@@ -31,6 +33,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFChart;
 import org.apache.poi.xslf.usermodel.XSLFFreeformShape;
+import org.apache.poi.xslf.usermodel.XSLFPictureData;
+import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTable;
 import org.apache.poi.xslf.usermodel.XSLFTableCell;
@@ -77,6 +81,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     static final String PPT_TOPICMAP_PATH = "/ppt/topicmap";
     static final String PPT_SUNBURST_PATH = "/ppt/sunburst";
     static final String PPT_TABLE_PATH = "/ppt/table";
+    static final String PPT_MAP_PATH = "/ppt/map";
     static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
     static final String QUERY_REQUEST_PARAM = "queryRequest";
     private static final String EXPORT_FILE_NAME = "query-results";
@@ -352,5 +357,57 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         table.setAnchor(new Rectangle2D.Double(0.5 * (PPT_WIDTH - tableW), textBounds.getMaxY(), tableW, Math.min(tableH, PPT_HEIGHT - textBounds.getMaxY())));
 
         return writePPT(ppt, "table.pptx");
+    }
+
+
+    @RequestMapping(value = PPT_MAP_PATH)
+    public HttpEntity<byte[]> map(
+            @RequestParam("title") final String title,
+            @RequestParam("image") final String image
+    ) throws IOException {
+        final XMLSlideShow ppt = new XMLSlideShow();
+        final XSLFSlide sl = ppt.createSlide();
+
+        final XSLFTextBox textBox = sl.createTextBox();
+        textBox.setText(title);
+        textBox.setHorizontalCentered(true);
+        textBox.setTextAutofit(TextShape.TextAutofit.SHAPE);
+        final Rectangle2D.Double textBounds = new Rectangle2D.Double(0, 0.05 * PPT_HEIGHT, PPT_WIDTH, 0.1 * PPT_HEIGHT);
+        textBox.setAnchor(textBounds);
+
+        final PictureData.PictureType type;
+        if (image.startsWith("data:image/png;base64,")) {
+            type = PictureData.PictureType.PNG;
+        }
+        else if (image.startsWith("data:image/jpeg;base64,")) {
+            type = PictureData.PictureType.JPEG;
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported image type");
+        }
+
+        final byte[] bytes = Base64.decodeBase64(image.split(",")[1]);
+
+        final XSLFPictureData picture = ppt.addPicture(bytes, type);
+
+        final XSLFPictureShape canvas = sl.createPicture(picture);
+
+        final Dimension size = picture.getImageDimension();
+        final double ratio = size.getWidth()/size.getHeight();
+
+        double tgtW = PPT_WIDTH;
+        double tgtH = PPT_HEIGHT - textBounds.getMaxY();
+
+        if (ratio > tgtW / tgtH) {
+            // source image is wider than target, clip fixed width variable height
+            tgtH = tgtW / ratio;
+        }
+        else {
+            tgtW = tgtH * ratio;
+        }
+
+        canvas.setAnchor(new Rectangle2D.Double(0.5 * (PPT_WIDTH - tgtW) , textBounds.getMaxY(), tgtW, tgtH));
+
+        return writePPT(ppt, "map.pptx");
     }
 }
