@@ -39,7 +39,8 @@ define([
                     id: options.savedSearch.id,
                     type: options.savedSearch.type
                 });
-                this.fetchPromise = this.savedSearchModel.fetch();
+
+                this.fetchPromise = this.savedSearchModel.fetch().promise();
             }
         },
 
