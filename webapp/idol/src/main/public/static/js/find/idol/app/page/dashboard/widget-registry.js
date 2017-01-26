@@ -4,13 +4,17 @@
  */
 
 define([
-    './widgets/static-content'
-], function(StaticContentWidget) {
+    './widgets/static-content',
+    './widgets/map-widget'
+], function(StaticContentWidget, MapWidget) {
     'use strict';
 
     const registry = {
         staticContentWidget: {
             Constructor: StaticContentWidget
+        },
+        mapWidget: {
+            Constructor: MapWidget
         }
     };
 
