@@ -24,8 +24,9 @@ define([
             this.locationFieldPair = options.widgetSettings.locationFieldPair;
             this.maxResults = options.widgetSettings.maxResults || 1000;
             this.documentsCollection = new DocumentsCollection();
+            this.clusterMarkers = options.widgetSettings.clusterMarkers || false;
 
-            this.mapResultsView = new MapView({
+            this.mapView = new MapView({
                 addControl: false,
                 centerCoordinates: options.widgetSettings.centerCoordinates,
                 initialZoom: options.widgetSettings.zoomLevel,
@@ -40,15 +41,15 @@ define([
                     const longitude = location.longitude;
                     const latitude = location.latitude;
                     const title = model.get('title');
-                    const marker = this.mapResultsView.getMarker(latitude, longitude, this.getIcon(), title);
+                    const marker = this.mapView.getMarker(latitude, longitude, this.getIcon(), title);
                     this.markers.push(marker);
                 }
             });
 
             this.listenTo(this.documentsCollection, 'sync', _.bind(function () {
                 if (!_.isEmpty(this.markers)) {
-                    this.mapResultsView.clearMarkers(true);
-                    this.mapResultsView.addMarkers(this.markers, options.widgetSettings.clusterMarkers || false);
+                    this.mapView.clearMarkers(true);
+                    this.mapView.addMarkers(this.markers, this.clusterMarkers);
                     if(this.updateCallback) {
                         this.updateCallback();
                         delete this.updateCallback;
@@ -59,7 +60,7 @@ define([
 
         render: function() {
             UpdatingWidget.prototype.render.apply(this, arguments);
-            this.mapResultsView.setElement(this.$content).render();
+            this.mapView.setElement(this.$content).render();
 
             this.fetchPromise.done(function() {
                 this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
@@ -76,10 +77,12 @@ define([
 
         getIcon: function () {
             const locationField = _.findWhere(configuration().map.locationFields, {displayName: this.locationFieldPair});
-            return this.mapResultsView.getIcon(locationField.iconName, locationField.iconColor, locationField.markerColor);
+            return this.mapView.getIcon(locationField.iconName, locationField.iconColor, locationField.markerColor);
         },
 
         getData: function() {
+            this.markers = [];
+            this.mapView.clearMarkers(this.clusterMarkers);
             const locationField = _.findWhere(configuration().map.locationFields, {displayName: this.locationFieldPair});
 
             const latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
