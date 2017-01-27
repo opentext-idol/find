@@ -429,17 +429,19 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             if (marker.isCluster()) {
                 shape.setShapeType(ShapeType.ELLIPSE);
                 shape.setVerticalAlignment(VerticalAlignment.MIDDLE);
-                shape.setFillColor(color);
+                shape.setFillColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 154));
                 shape.clearText();
                 final XSLFTextParagraph para = shape.addNewTextParagraph();
                 para.setTextAlign(TextParagraph.TextAlign.CENTER);
                 final XSLFTextRun text = para.addNewTextRun();
                 text.setFontSize(6.0);
                 text.setText(marker.getText());
-                double mark = 20;
+                double halfMark = 10;
+                double mark = halfMark * 2;
+                // align these so the middle is the latlng position
                 shape.setAnchor(new Rectangle2D.Double(
-                    offsetX + marker.x * tgtW,
-                    offsetY + marker.y * tgtH,
+                    offsetX + marker.x * tgtW - halfMark,
+                    offsetY + marker.y * tgtH - halfMark,
                     mark,
                     mark));
             }
@@ -449,11 +451,13 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 shape.setRotation(135);
                 shape.setLineWidth(1.0);
                 shape.setLineColor(color.darker());
-                shape.setFillColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 154));
-                double mark = 16;
+                shape.setFillColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 210));
+                double halfMark = 8;
+                double mark = halfMark * 2;
+                // align these so the pointy end at the bottom is the latlng position
                 shape.setAnchor(new Rectangle2D.Double(
-                    offsetX + marker.x * tgtW,
-                    offsetY + marker.y * tgtH,
+                    offsetX + marker.x * tgtW - halfMark,
+                    offsetY + marker.y * tgtH - mark,
                     mark,
                     mark));
 
