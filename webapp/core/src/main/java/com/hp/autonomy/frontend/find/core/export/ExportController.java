@@ -378,7 +378,10 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final XSLFSlide sl = ppt.createSlide();
 
         final XSLFTextBox textBox = sl.createTextBox();
-        textBox.setText(title);
+        textBox.clearText();
+        final XSLFTextParagraph paragraph = textBox.addNewTextParagraph();
+        paragraph.setTextAlign(TextParagraph.TextAlign.CENTER);
+        paragraph.addNewTextRun().setText(title);
         textBox.setHorizontalCentered(true);
         textBox.setTextAutofit(TextShape.TextAutofit.SHAPE);
         final Rectangle2D.Double textBounds = new Rectangle2D.Double(0, 0.05 * PPT_HEIGHT, PPT_WIDTH, 0.1 * PPT_HEIGHT);
