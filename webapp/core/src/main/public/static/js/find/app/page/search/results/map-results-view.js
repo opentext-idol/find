@@ -71,7 +71,7 @@ define([
 
                         var xFraction = pos.x / mapSize.x;
                         var yFraction = pos.y / mapSize.y;
-                        var tolerance = 0.01;
+                        var tolerance = 0.001;
 
                         if (xFraction > -tolerance && xFraction < 1 + tolerance && yFraction > -tolerance && yFraction < 1 + tolerance) {
                             markers.push({
@@ -90,7 +90,8 @@ define([
                 html2canvas($mapEl, {
                     logging: true,
                     // This seems to avoid issues with IE11 only rendering a small portion of the map the size of the window
-                    // Both Firefox and IE11 seem to have issues with drag-scrolling though. Chrome is fine.
+                    // If width and height are undefined, Firefox sometimes renders black areas.
+                    // If width and height are equal to the $mapEl.width()/height(), then Chrome has the same problem as IE11.
                     width: $mapEl.width() * 2,
                     height: $mapEl.height() * 2,
                     proxy: '../api/public/map/proxy',
