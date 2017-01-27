@@ -38,6 +38,7 @@ import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFChart;
 import org.apache.poi.xslf.usermodel.XSLFFreeformShape;
+import org.apache.poi.xslf.usermodel.XSLFGroupShape;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
@@ -424,31 +425,48 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         canvas.setAnchor(new Rectangle2D.Double(offsetX, offsetY, tgtW, tgtH));
 
         for(Marker marker : markers) {
-            final XSLFAutoShape shape = sl.createAutoShape();
             final Color color = Color.decode(marker.color);
-            shape.setHorizontalCentered(true);
-            shape.setWordWrap(false);
+            final double centerX = offsetX + marker.x * tgtW;
+            final double centerY = offsetY + marker.y * tgtH;
 
             if (marker.isCluster()) {
+                final XSLFGroupShape group = sl.createGroup();
+                double halfMark = 10;
+                double mark = halfMark * 2;
+                double innerHalfMark = 7;
+                double innerMark = innerHalfMark * 2;
+                // align these so the middle is the latlng position
+                final Rectangle2D.Double anchor = new Rectangle2D.Double(centerX - halfMark,centerY - halfMark, mark, mark);
+
+                group.setAnchor(anchor);
+                group.setInteriorAnchor(anchor);
+
+                final XSLFAutoShape shape = group.createAutoShape();
                 shape.setShapeType(ShapeType.ELLIPSE);
-                shape.setVerticalAlignment(VerticalAlignment.MIDDLE);
                 shape.setFillColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 154));
-                shape.clearText();
-                final XSLFTextParagraph para = shape.addNewTextParagraph();
+                shape.setAnchor(anchor);
+
+                final XSLFAutoShape inner = group.createAutoShape();
+                inner.setFillColor(color);
+                inner.setLineWidth(0.1);
+                inner.setLineColor(new Color((int)(color.getRed() * 0.9), (int)(color.getGreen() * 0.9), (int)(color.getBlue() * 0.9)));
+                inner.setShapeType(ShapeType.ELLIPSE);
+                inner.setHorizontalCentered(true);
+                inner.setWordWrap(false);
+                inner.setVerticalAlignment(VerticalAlignment.MIDDLE);
+                inner.clearText();
+                final XSLFTextParagraph para = inner.addNewTextParagraph();
                 para.setTextAlign(TextParagraph.TextAlign.CENTER);
                 final XSLFTextRun text = para.addNewTextRun();
                 text.setFontSize(6.0);
+                text.setFontColor(Color.WHITE);
                 text.setText(marker.getText());
-                double halfMark = 10;
-                double mark = halfMark * 2;
-                // align these so the middle is the latlng position
-                shape.setAnchor(new Rectangle2D.Double(
-                    offsetX + marker.x * tgtW - halfMark,
-                    offsetY + marker.y * tgtH - halfMark,
-                    mark,
-                    mark));
+                inner.setAnchor(new Rectangle2D.Double(centerX - innerHalfMark, centerY - innerHalfMark, innerMark, innerMark));
             }
             else {
+                final XSLFAutoShape shape = sl.createAutoShape();
+                shape.setHorizontalCentered(true);
+                shape.setWordWrap(false);
                 shape.setShapeType(ShapeType.TEARDROP);
                 shape.setVerticalAlignment(VerticalAlignment.BOTTOM);
                 shape.setRotation(135);
@@ -458,11 +476,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 double halfMark = 8;
                 double mark = halfMark * 2;
                 // align these so the pointy end at the bottom is the latlng position
-                shape.setAnchor(new Rectangle2D.Double(
-                    offsetX + marker.x * tgtW - halfMark,
-                    offsetY + marker.y * tgtH - mark,
-                    mark,
-                    mark));
+                shape.setAnchor(new Rectangle2D.Double(centerX - halfMark,centerY - mark, mark, mark));
 
                 // We create a hyperlink which links back to this slide; so we get hover-over-detail-text on the marker
                 final CTHyperlink link = ((CTShape) shape.getXmlObject()).getNvSpPr().getCNvPr().addNewHlinkClick();
