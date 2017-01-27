@@ -26,6 +26,14 @@ define([
             'click .map-popup-title': function (e) {
                 var allCollections = _.chain(this.comparisons).pluck('collection').pluck('models').flatten().value();
                 vent.navigateToDetailRoute(_.findWhere(allCollections, {cid: e.currentTarget.getAttribute('cid')}));
+            },
+            'click .map-pptx': function(e){
+                e.preventDefault();
+                this.mapView.exportPPT(
+                    'Exclusive to \'' + this.searchModels.first.get('title') + '\': '+ this.firstSelectionView.model.get('displayValue')
+                    + '\nCommon to both: ' + this.bothSelectionView.model.get('displayValue')
+                    + '\nExclusive to \'' + this.searchModels.second.get('title') + '\': '+ this.secondSelectionView.model.get('displayValue')
+                )
             }
         },
 
