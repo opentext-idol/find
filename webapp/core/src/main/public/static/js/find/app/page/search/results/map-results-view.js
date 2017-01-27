@@ -34,8 +34,8 @@ define([
             'click .map-pptx': function(e){
                 e.preventDefault();
 
-                var $mapEl = this.$('.location-results-map'),
-                    map = this.mapResultsView.map,
+                var map = this.mapResultsView.map,
+                    $mapEl = $(map.getContainer()),
                     mapSize = map.getSize();
 
                 var visible = {}, markers = [];
@@ -92,8 +92,8 @@ define([
                     // This seems to avoid issues with IE11 only rendering a small portion of the map the size of the window
                     // If width and height are undefined, Firefox sometimes renders black areas.
                     // If width and height are equal to the $mapEl.width()/height(), then Chrome has the same problem as IE11.
-                    width: $mapEl.width() * 2,
-                    height: $mapEl.height() * 2,
+                    width: mapSize.x * 2,
+                    height: mapSize.y * 2,
                     proxy: '../api/public/map/proxy',
                     onrendered: _.bind(function(canvas) {
                         $objs.removeClass('hide')
