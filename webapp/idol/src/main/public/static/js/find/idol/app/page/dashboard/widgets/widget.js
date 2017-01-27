@@ -58,7 +58,7 @@ define([
                 }.bind(this));
             }
 
-            this.$content = this.$('.content');
+            this.$content = this.$('.widget-content');
         },
 
         contentHeight: function() {
