@@ -422,13 +422,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         for(Marker marker : markers) {
             final XSLFAutoShape shape = sl.createAutoShape();
-            shape.setFillColor(Color.decode(marker.color));
+            final Color color = Color.decode(marker.color);
             shape.setHorizontalCentered(true);
             shape.setWordWrap(false);
 
             if (marker.isCluster()) {
                 shape.setShapeType(ShapeType.ELLIPSE);
                 shape.setVerticalAlignment(VerticalAlignment.MIDDLE);
+                shape.setFillColor(color);
                 shape.clearText();
                 final XSLFTextParagraph para = shape.addNewTextParagraph();
                 para.setTextAlign(TextParagraph.TextAlign.CENTER);
@@ -445,7 +446,11 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             else {
                 shape.setShapeType(ShapeType.TEARDROP);
                 shape.setVerticalAlignment(VerticalAlignment.BOTTOM);
-                double mark = 20;
+                shape.setRotation(135);
+                shape.setLineWidth(1.0);
+                shape.setLineColor(color.darker());
+                shape.setFillColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 154));
+                double mark = 16;
                 shape.setAnchor(new Rectangle2D.Double(
                     offsetX + marker.x * tgtW,
                     offsetY + marker.y * tgtH,
