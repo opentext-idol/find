@@ -12,9 +12,9 @@ define([
     'text!find/templates/app/page/search/results/map-popover.html',
     'text!find/templates/app/page/loading-spinner.html',
     'find/app/vent',
+    'leaflet',
     'html2canvas'
-
-], function (Backbone, _, $, configuration, FieldSelectionView, MapView, i18n, DocumentsCollection, addLinksToSummary, template, popoverTemplate, loadingSpinnerTemplate, vent) {
+], function (Backbone, _, $, configuration, FieldSelectionView, MapView, i18n, DocumentsCollection, addLinksToSummary, template, popoverTemplate, loadingSpinnerTemplate, vent, leaflet) {
 
     'use strict';
 
@@ -38,7 +38,7 @@ define([
                     $mapEl = $(map.getContainer()),
                     mapSize = map.getSize();
 
-                var visible = {}, markers = [];
+                var markers = [];
 
                 function lPad(str) {
                     return str.length < 2 ? '0' + str : str
@@ -59,13 +59,10 @@ define([
                     return str
                 }
 
-                _.each(this.markers, function(marker){
-                    var merged = this.mapResultsView.clusterMarkers.getVisibleParent(marker);
-
-                    if (merged && !visible.hasOwnProperty(merged._leaflet_id)) {
-                        visible[merged._leaflet_id] = merged;
-
-                        var pos = this.mapResultsView.map.latLngToContainerPoint(merged.getLatLng())
+                map.eachLayer(function(layer){
+                    if (layer instanceof leaflet.Marker) {
+                        var merged = layer;
+                        var pos = map.latLngToContainerPoint(merged.getLatLng())
 
                         var isCluster = merged.getChildCount
 
@@ -83,7 +80,7 @@ define([
                             })
                         }
                     }
-                }, this)
+                })
 
                 var $objs = $mapEl.find('.leaflet-objects-pane').addClass('hide')
 
