@@ -6,7 +6,8 @@ define([
     'find/app/vent',
     'leaflet',
     'Leaflet.awesome-markers',
-    'leaflet.markercluster'
+    'leaflet.markercluster',
+    'html2canvas'
 ], function (Backbone, _, $, configuration, vent, leaflet) {
 
     'use strict';
@@ -129,6 +130,75 @@ define([
             if (this.map) {
                 this.map.remove();
             }
+        },
+
+        exportPPT: function(title) {
+            var map = this.map,
+                mapSize = map.getSize(),
+                $mapEl = $(map.getContainer()),
+                markers = [];
+
+            function lPad(str) {
+                return str.length < 2 ? '0' + str : str
+            }
+
+            function hexColor(str){
+                var match;
+                if (match = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/.exec(str)) {
+                    return '#' + lPad(Number(match[1]).toString(16))
+                        + lPad(Number(match[2]).toString(16))
+                        + lPad(Number(match[3]).toString(16))
+                }
+                else if (match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)) {
+                    return '#' + lPad(Number(match[1]).toString(16))
+                        + lPad(Number(match[2]).toString(16))
+                        + lPad(Number(match[3]).toString(16))
+                }
+                return str
+            }
+
+            map.eachLayer(function(layer){
+                if (layer instanceof leaflet.Marker) {
+                    var pos = map.latLngToContainerPoint(layer.getLatLng())
+
+                    var isCluster = layer.getChildCount
+
+                    var xFraction = pos.x / mapSize.x;
+                    var yFraction = pos.y / mapSize.y;
+                    var tolerance = 0.001;
+
+                    if (xFraction > -tolerance && xFraction < 1 + tolerance && yFraction > -tolerance && yFraction < 1 + tolerance) {
+                        markers.push({
+                            x: xFraction,
+                            y: yFraction,
+                            text: isCluster ? layer.getChildCount() :  $(layer.getPopup()._content).find('.map-popup-title').text(),
+                            cluster: !!isCluster,
+                            color: isCluster ? hexColor($(layer._icon).css('background-color')) : hexColor('rgba(55, 168, 218, 1)')
+                        })
+                    }
+                }
+            })
+
+            var $objs = $mapEl.find('.leaflet-objects-pane').addClass('hide')
+
+            html2canvas($mapEl, {
+                logging: true,
+                // This seems to avoid issues with IE11 only rendering a small portion of the map the size of the window
+                // If width and height are undefined, Firefox sometimes renders black areas.
+                // If width and height are equal to the $mapEl.width()/height(), then Chrome has the same problem as IE11.
+                width: mapSize.x * 2,
+                height: mapSize.y * 2,
+                proxy: '../api/public/map/proxy',
+                onrendered: function(canvas) {
+                    $objs.removeClass('hide')
+
+                    var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/map"><input name="title"><input name="image"><input name="markers"><input type="submit"></form>');
+                    $form[0].title.value = title
+                    $form[0].image.value = canvas.toDataURL('image/jpeg')
+                    $form[0].markers.value = JSON.stringify(markers)
+                    $form.appendTo(document.body).submit().remove()
+                }
+            });
         }
     });
 });
