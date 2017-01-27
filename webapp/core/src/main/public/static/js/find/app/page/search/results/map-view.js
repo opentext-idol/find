@@ -182,7 +182,6 @@ define([
             var $objs = $mapEl.find('.leaflet-objects-pane').addClass('hide')
 
             html2canvas($mapEl, {
-                logging: true,
                 // This seems to avoid issues with IE11 only rendering a small portion of the map the size of the window
                 // If width and height are undefined, Firefox sometimes renders black areas.
                 // If width and height are equal to the $mapEl.width()/height(), then Chrome has the same problem as IE11.
