@@ -32,6 +32,7 @@ define([
             this.name = options.name;
 
             if (options.savedSearch) {
+                this.savedSearch = options.savedSearch;
                 if (this.clickable) {
                     this.savedSearchRoute = '/search/tab/' + options.savedSearch.type + ':' + options.savedSearch.id + (this.viewType ? '/view/' + this.viewType : '');
                 }

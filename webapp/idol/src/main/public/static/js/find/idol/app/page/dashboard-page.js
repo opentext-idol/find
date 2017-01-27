@@ -98,7 +98,7 @@ define([
             const updatingViews = _.chain(this.widgetViews)
                 .pluck('view')
                 .filter(function(view) {
-                    return view.isUpdating();
+                    return view.isUpdating() && view.savedSearch && view.savedSearch.type === 'QUERY';
                 })
                 .value();
 
