@@ -30,9 +30,10 @@ define([
             'click .map-pptx': function(e){
                 e.preventDefault();
                 this.mapView.exportPPT(
-                    'Exclusive to \'' + this.searchModels.first.get('title') + '\': '+ this.firstSelectionView.model.get('displayValue')
-                    + '\nCommon to both: ' + this.bothSelectionView.model.get('displayValue')
-                    + '\nExclusive to \'' + this.searchModels.second.get('title') + '\': '+ this.secondSelectionView.model.get('displayValue')
+                    '\'' + this.searchModels.first.get('title') + '\' v.s. \'' + this.searchModels.second.get('title') + '\''
+                    + '\n' + '(' +  _.unique(_.map([this.firstSelectionView, this.bothSelectionView, this.secondSelectionView], function(view){
+                        return view.model.get('displayValue');
+                    })).join(', ') + ')'
                 )
             }
         },

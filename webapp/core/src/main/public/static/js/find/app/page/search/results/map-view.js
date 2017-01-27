@@ -13,6 +13,13 @@ define([
     'use strict';
     var INITIAL_ZOOM = 3;
 
+    var leafletMarkerColorMap = {
+        'green': '#70ad25',
+        'orange': '#f0932f',
+        'red': '#d33d2a',
+        'blue': '#37a8da'
+    }
+
     return Backbone.View.extend({
         initialize: function (options) {
             this.addControl = options.addControl || false;
@@ -168,12 +175,22 @@ define([
                     var tolerance = 0.001;
 
                     if (xFraction > -tolerance && xFraction < 1 + tolerance && yFraction > -tolerance && yFraction < 1 + tolerance) {
+                        var color = '#37a8da', match;
+
+                        if (isCluster) {
+                            color = hexColor($(layer._icon).css('background-color'));
+                        } else if (match=/awesome-marker-icon-(\w+)/.exec(layer._icon.classList)) {
+                            if (leafletMarkerColorMap.hasOwnProperty(match[1])) {
+                                color = leafletMarkerColorMap[match[1]]
+                            }
+                        }
+
                         markers.push({
                             x: xFraction,
                             y: yFraction,
                             text: isCluster ? layer.getChildCount() :  $(layer.getPopup()._content).find('.map-popup-title').text(),
                             cluster: !!isCluster,
-                            color: isCluster ? hexColor($(layer._icon).css('background-color')) : hexColor('rgba(55, 168, 218, 1)')
+                            color: color
                         })
                     }
                 }
