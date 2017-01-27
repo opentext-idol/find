@@ -31,9 +31,13 @@ define([
             this.widgetViews = _.map(options.widgets, function (widget) {
                 const widgetDefinition = widgetRegistry(widget.type);
                 const WidgetConstructor = widgetDefinition ? widgetDefinition.Constructor : WidgetNotFoundWidget;
-                
+
+                const widgetOptions = _.extend({
+                    updateInterval: this.updateInterval
+                }, widget);
+
                 return {
-                    view: new WidgetConstructor(widget),
+                    view: new WidgetConstructor(widgetOptions),
                     position: {
                         x: widget.x,
                         y: widget.y,
@@ -41,7 +45,7 @@ define([
                         height: widget.height
                     }
                 };
-            });
+            }, this);
 
             this.widthPerUnit = 100 / options.width;
             this.heightPerUnit = 100 / options.height;
