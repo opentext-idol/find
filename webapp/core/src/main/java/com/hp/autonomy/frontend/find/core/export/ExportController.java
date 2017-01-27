@@ -22,6 +22,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -459,7 +460,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 para.setTextAlign(TextParagraph.TextAlign.CENTER);
                 final XSLFTextRun text = para.addNewTextRun();
                 text.setFontSize(6.0);
-                text.setFontColor(Color.WHITE);
+                text.setFontColor(Color.decode(StringUtils.defaultString(marker.getFontColor(), "#000000")));
                 text.setText(marker.getText());
                 inner.setAnchor(new Rectangle2D.Double(centerX - innerHalfMark, centerY - innerHalfMark, innerMark, innerMark));
             }

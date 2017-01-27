@@ -15,4 +15,5 @@ public class Marker {
     String text;
     boolean cluster;
     String color;
+    String fontColor;
 }
