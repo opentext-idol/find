@@ -191,7 +191,7 @@ define([
                 onrendered: function(canvas) {
                     $objs.removeClass('hide')
 
-                    var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/map"><input name="title"><input name="image"><input name="markers"><input type="submit"></form>');
+                    var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/map"><textarea name="title"></textarea><input name="image"><input name="markers"><input type="submit"></form>');
                     $form[0].title.value = title
                     $form[0].image.value = canvas.toDataURL('image/jpeg')
                     $form[0].markers.value = JSON.stringify(markers)

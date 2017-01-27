@@ -31,7 +31,7 @@ define([
             },
             'click .map-pptx': function(e){
                 e.preventDefault();
-                this.mapResultsView.exportPPT(this.fieldSelectionView.model.get('displayValue'))
+                this.mapResultsView.exportPPT('Showing field ' + this.fieldSelectionView.model.get('displayValue'))
             }
         },
 
