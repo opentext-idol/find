@@ -67,7 +67,7 @@ define([
                     .addTo(map);
             }
             
-            var initialLatitude = this.centerCoordinates ? this.centerCoordinates.lattitude : configuration().map.initialLocation.latitude;
+            var initialLatitude = this.centerCoordinates ? this.centerCoordinates.latitude : configuration().map.initialLocation.latitude;
             var initialLongitude = this.centerCoordinates ? this.centerCoordinates.longitude : configuration().map.initialLocation.longitude;
 
             map.setView([initialLatitude, initialLongitude], this.initialZoom ? this.initialZoom : INITIAL_ZOOM);
