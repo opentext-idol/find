@@ -11,7 +11,7 @@ define([
     'find/idol/app/page/dashboard/widget-registry',
     './dashboard/widgets/widget-not-found',
     './dashboard/update-tracker-model',
-    'text!find/idol/templates/app/page/dashboard-page.html'
+    'text!find/idol/templates/page/dashboard-page.html'
 ], function (_, BasePage, Backbone, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel, template) {
     'use strict';
 
@@ -31,9 +31,13 @@ define([
             this.widgetViews = _.map(options.widgets, function (widget) {
                 const widgetDefinition = widgetRegistry(widget.type);
                 const WidgetConstructor = widgetDefinition ? widgetDefinition.Constructor : WidgetNotFoundWidget;
-                
+
+                const widgetOptions = _.extend({
+                    updateInterval: this.updateInterval
+                }, widget);
+
                 return {
-                    view: new WidgetConstructor(widget),
+                    view: new WidgetConstructor(widgetOptions),
                     position: {
                         x: widget.x,
                         y: widget.y,
@@ -41,7 +45,7 @@ define([
                         height: widget.height
                     }
                 };
-            });
+            }, this);
 
             this.widthPerUnit = 100 / options.width;
             this.heightPerUnit = 100 / options.height;

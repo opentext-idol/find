@@ -9,7 +9,7 @@ define([
     'jquery',
     'find/app/vent',
     'find/app/model/saved-searches/saved-search-model',
-    'text!find/idol/templates/app/page/dashboards/widget.html'
+    'text!find/idol/templates/page/dashboards/widget.html'
 ], function(Backbone, _, $, vent, SavedSearchModel, template) {
     'use strict';
 
@@ -58,7 +58,7 @@ define([
                 }.bind(this));
             }
 
-            this.$content = this.$('.content');
+            this.$content = this.$('.widget-content');
         },
 
         contentHeight: function() {

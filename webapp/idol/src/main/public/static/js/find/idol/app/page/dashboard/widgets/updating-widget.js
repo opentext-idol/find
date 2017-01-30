@@ -53,11 +53,11 @@ define([
                 this.toggleSpinner(false);
 
                 updateTracker.increment();
-            }.bind(this));
+            }.bind(this), updateTracker);
         },
 
         // override this with your update code
-        doUpdate: function(done) {
+        doUpdate: function(done, updateTracker) {
             done();
         }
 
