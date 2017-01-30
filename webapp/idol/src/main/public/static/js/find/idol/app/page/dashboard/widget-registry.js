@@ -5,16 +5,20 @@
 
 define([
     './widgets/static-content',
+    './widgets/static-image-widget',
     './widgets/map-widget',
     './widgets/topic-map-widget',
     './widgets/time-last-refreshed-widget',
     './widgets/current-time'
-], function(StaticContentWidget, MapWidget, TopicMapWidget, TimeLastRefreshedWidget, CurrentTime) {
+], function(StaticContentWidget, StaticImageWidget, MapWidget, TopicMapWidget, TimeLastRefreshedWidget, CurrentTime) {
     'use strict';
 
     const registry = {
         staticContentWidget: {
             Constructor: StaticContentWidget
+        },
+        staticImageWidget: {
+            Constructor: StaticImageWidget
         },
         mapWidget: {
             Constructor: MapWidget
