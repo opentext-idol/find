@@ -11,6 +11,7 @@ import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;
 import com.hp.autonomy.searchcomponents.idol.exceptions.AciErrorExceptionAspect;
 import com.hp.autonomy.types.requests.idol.actions.params.ActionParams;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
+import com.hp.autonomy.types.requests.idol.actions.tags.params.GetQueryTagValuesParams;
 import com.hp.autonomy.types.requests.idol.actions.user.UserActions;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -48,6 +49,7 @@ class PerformanceMonitoringAspect {
     private static final Pattern ILLEGAL_COMPONENT_CHARACTERS = Pattern.compile("\\.");
     private static final Pattern ILLEGAL_CHARACTERS = Pattern.compile("[/\\\\]");
     private static final String ILLEGAL_CHARACTER_REPLACEMENT = "_";
+    private static final String VALUE_PLACEHOLDER = "[any]";
 
     private final GaugeService gaugeService;
     private final String metricType;
@@ -116,6 +118,8 @@ class PerformanceMonitoringAspect {
     }
 
     private CharSequence tweakParameterValueInMetricName(final String name, final CharSequence value) {
-        return QueryParams.Text.name().equalsIgnoreCase(name) && !"*".equals(value) ? "[any]" : value;
+        return QueryParams.Text.name().equalsIgnoreCase(name) && !"*".equals(value) || GetQueryTagValuesParams.Ranges.name().equalsIgnoreCase(name)
+                ? VALUE_PLACEHOLDER
+                : value;
     }
 }
