@@ -54,7 +54,7 @@ define([
                 if (paths) {
                     // We need to append the temporary form to the document.body or Firefox and IE11 won't download the file.
                     // Previously used GET; but IE11 has a limited GET url length and loses data.
-                    var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/topicmap"><input name="paths"><input type="submit"></form>');
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="../api/bi/export/ppt/topicmap"><input name="paths"><input type="submit"></form>');
                     $form[0].paths.value = JSON.stringify(_.flatten(paths.slice(1).reverse()))
                     $form.appendTo(document.body).submit().remove()
                 }

@@ -46,7 +46,7 @@ define([
             this.$el.on('click', '.table-pptx', _.bind(function(evt){
                 evt.preventDefault();
 
-                var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/table"><input name="title"><input name="rows"><input name="cols"><input type="submit"></form>');
+                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="../api/bi/export/ppt/table"><input name="title"><input name="rows"><input name="cols"><input type="submit"></form>');
                 $form[0].title.value = 'Breakdown by ' + this.fieldsCollection.at(0).get('displayValue')
 
                 var rows = this.$table.find('tr'), nCols = 0;
