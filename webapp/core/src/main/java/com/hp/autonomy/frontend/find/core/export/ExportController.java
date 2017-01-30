@@ -154,7 +154,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 .build());
     }
 
-    @RequestMapping(value = PPT_TOPICMAP_PATH)
+    @RequestMapping(value = PPT_TOPICMAP_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> topicmap(
             @RequestParam("paths") final String pathStr
     ) throws IOException {
@@ -234,7 +234,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @Value(value = "classpath:/templates/sunburst.pptx")
     private Resource sunburstTemplate;
 
-    @RequestMapping(value = PPT_SUNBURST_PATH)
+    @RequestMapping(value = PPT_SUNBURST_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> sunburst(
             @RequestParam("categories") final String[] categories,
             @RequestParam("values") final double[] values,
@@ -316,7 +316,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         }
     }
 
-    @RequestMapping(value = PPT_TABLE_PATH)
+    @RequestMapping(value = PPT_TABLE_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> table(
             @RequestParam("title") final String title,
             @RequestParam("rows") final int rows,
@@ -368,7 +368,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         return writePPT(ppt, "table.pptx");
     }
 
-    @RequestMapping(value = PPT_MAP_PATH)
+    @RequestMapping(value = PPT_MAP_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> map(
             @RequestParam("title") final String title,
             @RequestParam("image") final String image,
