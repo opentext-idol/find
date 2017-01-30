@@ -216,7 +216,7 @@ define([
                     var $form = $('<form class="hide" method="post" target="_blank" action="../api/bi/export/ppt/map"><textarea name="title"></textarea><input name="image"><input name="markers"><input type="submit"></form>');
                     $form[0].title.value = title
                     // ask for the highest-quality image available
-                    $form[0].image.value = canvas.toDataURL('image/jpeg', 1.0)
+                    $form[0].image.value = canvas.toDataURL('image/jpeg', 0.92)
                     $form[0].markers.value = JSON.stringify(markers)
                     $form.appendTo(document.body).submit().remove()
                 }
