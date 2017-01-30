@@ -218,8 +218,8 @@ define([
                     // See https://bugs.webkit.org/show_bug.cgi?id=44883
                     var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="../api/bi/export/ppt/map"><textarea name="title"></textarea><textarea name="image"></textarea><input name="markers"><input type="submit"></form>');
                     $form[0].title.value = title
-                    // ask for the highest-quality image available
-                    $form[0].image.value = canvas.toDataURL('image/jpeg', 1.0)
+                    // ask for lossless PNG image
+                    $form[0].image.value = canvas.toDataURL('image/png')
                     $form[0].markers.value = JSON.stringify(markers)
                     $form.appendTo(document.body).submit().remove()
                 }
