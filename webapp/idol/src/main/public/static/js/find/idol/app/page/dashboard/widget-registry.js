@@ -7,8 +7,9 @@ define([
     './widgets/static-content',
     './widgets/map-widget',
     './widgets/topic-map-widget',
-    './widgets/time-last-refreshed-widget'
-], function(StaticContentWidget, MapWidget, TopicMapWidget, TimeLastRefreshedWidget) {
+    './widgets/time-last-refreshed-widget',
+    './widgets/current-time'
+], function(StaticContentWidget, MapWidget, TopicMapWidget, TimeLastRefreshedWidget, CurrentTime) {
     'use strict';
 
     const registry = {
@@ -23,6 +24,9 @@ define([
         },
         timeLastRefreshedWidget: {
             Constructor: TimeLastRefreshedWidget
+        },
+        currentTimeWidget: {
+            Constructor: CurrentTime
         }
     };
 
