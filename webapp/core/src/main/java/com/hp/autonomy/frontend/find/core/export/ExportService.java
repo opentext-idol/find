@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -26,5 +26,8 @@ public interface ExportService<R extends QueryRequest<?>, E extends Exception> {
      * @param selectedFieldIds only export fields with ids enumerated this collection. If empty, export all fields
      * @throws E if an error is thrown by the underlying server, the corresponding thrown exception
      */
-    void export(OutputStream outputStream, R queryRequest, ExportFormat exportFormat, Collection<String> selectedFieldIds) throws E;
+    void export(OutputStream outputStream,
+                R queryRequest,
+                ExportFormat exportFormat,
+                Collection<String> selectedFieldIds) throws E;
 }

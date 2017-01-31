@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
@@ -20,6 +21,7 @@ import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
@@ -39,8 +41,8 @@ import java.util.Optional;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Builder(toBuilder = true)
-@JsonDeserialize(builder = IdolFindConfig.IdolFindConfigBuilder.class)
-public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, IdolSearchCapable, FindConfig<IdolFindConfig, IdolFindConfig.IdolFindConfigBuilder> {
+@JsonDeserialize(builder = IdolFindConfigBuilder.class)
+public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, IdolSearchCapable, FindConfig<IdolFindConfig, IdolFindConfigBuilder> {
     private static final String SECTION = "Find Config Root";
 
     private final CommunityAuthentication login;
@@ -120,15 +122,15 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         content.basicValidate("content");
         savedSearchConfig.basicValidate(SECTION);
 
-        if (map != null) {
+        if(map != null) {
             map.basicValidate("map");
         }
 
-        if (queryManipulation != null) {
+        if(queryManipulation != null) {
             queryManipulation.basicValidate(SECTION);
         }
 
-        if (answerServer != null) {
+        if(answerServer != null) {
             answerServer.basicValidate("AnswerServer");
         }
     }

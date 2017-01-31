@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -28,12 +28,12 @@ public abstract class AutoCreatingEhCacheCacheManager extends EhCacheCacheManage
     protected Cache getMissingCache(final String name) {
         final Cache missingCache = super.getMissingCache(name);
 
-        if (missingCache == null) {
+        if(missingCache == null) {
             final CacheConfiguration cacheConfiguration = defaults.clone().name(name);
 
             final String cacheName = getCacheName(name);
 
-            if (FindCacheNames.CACHE_EXPIRES.containsKey(cacheName)) {
+            if(FindCacheNames.CACHE_EXPIRES.containsKey(cacheName)) {
                 cacheConfiguration.setTimeToLiveSeconds(FindCacheNames.CACHE_EXPIRES.get(cacheName));
             }
 

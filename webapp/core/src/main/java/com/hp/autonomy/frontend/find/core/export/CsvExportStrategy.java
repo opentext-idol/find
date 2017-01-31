@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -18,7 +18,11 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -67,8 +71,8 @@ public class CsvExportStrategy implements ExportStrategy {
     public Map<String, FieldInfo<?>> getConfiguredFieldsByName() {
         final Map<String, FieldInfo<?>> configuredFieldINames = new LinkedHashMap<>();
         final Collection<FieldInfo<?>> fieldConfig = getFieldConfig();
-        for (final FieldInfo<?> field : fieldConfig) {
-            for (final String name : field.getNames()) {
+        for(final FieldInfo<?> field : fieldConfig) {
+            for(final String name : field.getNames()) {
                 configuredFieldINames.put(name, field);
             }
         }

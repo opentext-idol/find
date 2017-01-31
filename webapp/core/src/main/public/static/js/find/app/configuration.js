@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -14,7 +14,8 @@ define([
     var parseBooleanOption = function(config, uiCustomization, option) {
         var optionRules = uiCustomization.options[option];
 
-        return optionRules.user && (!config.hasBiRole || optionRules.bi !== false) || optionRules.bi && config.hasBiRole;
+        return optionRules.user && !(config.hasBiRole && optionRules.bi === false) ||
+            optionRules.bi && config.hasBiRole;
     };
 
     return function() {

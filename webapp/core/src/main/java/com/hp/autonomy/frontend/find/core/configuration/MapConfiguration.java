@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -38,7 +38,7 @@ public class MapConfiguration {
     }
 
     public MapConfiguration merge(final MapConfiguration other) {
-        if (other == null) {
+        if(other == null) {
             return this;
         } else {
             return new MapConfiguration(
@@ -53,8 +53,8 @@ public class MapConfiguration {
     }
 
     public void basicValidate(final String configSection) throws ConfigException {
-        if (enabled) {
-            if (StringUtils.isBlank(tileUrlTemplate)) {
+        if(enabled) {
+            if(StringUtils.isBlank(tileUrlTemplate)) {
                 throw new ConfigException(configSection, "tileUrlTemplate must be provided");
             }
         }

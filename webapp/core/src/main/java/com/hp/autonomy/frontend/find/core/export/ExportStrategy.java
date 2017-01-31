@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -27,7 +27,7 @@ public interface ExportStrategy {
     /**
      * Retrieves the names of all the fields to export
      *
-     * @param metadataNodes hard metadata (HoD/Idol specific)
+     * @param metadataNodes    hard metadata (HoD/Idol specific)
      * @param selectedFieldIds only export fields with ids in this collection. If empty, export all fields
      * @return the names of all the metadata/fields to export
      */
@@ -51,7 +51,7 @@ public interface ExportStrategy {
      * Exports all the data corresponding to an individual document to the given {@link OutputStream}
      *
      * @param outputStream the stream to which the formatted data will be written
-     * @param fieldNames the names of the metadata/fields being exported
+     * @param fieldNames   the names of the metadata/fields being exported
      * @throws IOException any I/O error
      */
     void exportRecord(OutputStream outputStream, Iterable<String> fieldNames) throws IOException;
