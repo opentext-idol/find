@@ -191,7 +191,7 @@ define([
                             }
                         }
 
-                        markers.push({
+                        var marker = {
                             x: xFraction,
                             y: yFraction,
                             text: isCluster ? layer.getChildCount() :  $(layer.getPopup()._content).find('.map-popup-title').text(),
@@ -199,7 +199,14 @@ define([
                             color: color,
                             fontColor: fontColor,
                             fade: fade
-                        })
+                        };
+
+                        if (isCluster) {
+                            markers.unshift(marker)
+                        }
+                        else {
+                            markers.push(marker)
+                        }
                     }
                 }
             })
