@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,7 +50,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     private String releaseVersion;
 
     @Value(FIND_METRICS_ENABLED_PROPERTY)
-    private String metricsEnabled;
+    private boolean metricsEnabled;
 
     protected FindController(final ControllerUtils controllerUtils,
                              final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
@@ -69,7 +70,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     public void index(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         final String contextPath = request.getContextPath();
 
-        if (LoginTypes.DEFAULT.equals(authenticationConfigService.getConfig().getAuthentication().getMethod())) {
+        if(LoginTypes.DEFAULT.equals(authenticationConfigService.getConfig().getAuthentication().getMethod())) {
             response.sendRedirect(contextPath + DEFAULT_LOGIN_PAGE);
         } else {
             response.sendRedirect(contextPath + APP_PATH);
@@ -80,7 +81,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     public ModelAndView mainPage(final HttpServletRequest request) throws JsonProcessingException {
         final String username = authenticationInformationRetriever.getAuthentication().getName();
 
-        final Collection<String> roles = authenticationInformationRetriever.getAuthentication().getAuthorities().stream().map((Function<GrantedAuthority, String>) GrantedAuthority::getAuthority).collect(Collectors.toCollection(LinkedList::new));
+        final Collection<String> roles = authenticationInformationRetriever.getAuthentication().getAuthorities().stream().map((Function<GrantedAuthority, String>)GrantedAuthority::getAuthority).collect(Collectors.toCollection(LinkedList::new));
 
         final FindConfig<C, B> findConfig = configService.getConfig();
 
