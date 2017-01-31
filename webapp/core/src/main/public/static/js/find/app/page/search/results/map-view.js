@@ -180,8 +180,8 @@ define([
                             match,
                             fade = false;
 
+                        var $iconEl = $(layer._icon);
                         if (isCluster) {
-                            var $iconEl = $(layer._icon);
                             color = hexColor($iconEl.css('background-color'));
                             fontColor = hexColor($iconEl.children('div').css('color'))
                             fade = +$iconEl.css('opacity') < 1
@@ -198,15 +198,11 @@ define([
                             cluster: !!isCluster,
                             color: color,
                             fontColor: fontColor,
-                            fade: fade
+                            fade: fade,
+                            z: +$iconEl.css('z-index')
                         };
 
-                        if (isCluster) {
-                            markers.unshift(marker)
-                        }
-                        else {
-                            markers.push(marker)
-                        }
+                        markers.push(marker)
                     }
                 }
             })
@@ -230,7 +226,11 @@ define([
                     $form[0].title.value = title
                     // ask for lossless PNG image
                     $form[0].image.value = canvas.toDataURL('image/png')
-                    $form[0].markers.value = JSON.stringify(markers)
+                    $form[0].markers.value = JSON.stringify(markers.sort(function(a, b){
+                        return a.z - b.z;
+                    }).map(function(a){
+                        return _.omit(a, 'z')
+                    }))
                     $form.appendTo(document.body).submit().remove()
                 }
             });
