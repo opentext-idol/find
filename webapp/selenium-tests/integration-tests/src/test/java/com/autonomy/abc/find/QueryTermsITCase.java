@@ -177,8 +177,7 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM, against = Deployment.DEVELOP)
-    //TODO Hosted -> is "An error occurred" a good enough error here?
+    @ActiveBug({"CORE-2925","FIND-853"})
     public void testCorrectErrorMessageDisplayed() {
         ensureOnCorrectView();
         new QueryTestHelper<>(findService)
@@ -195,7 +194,7 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    //TODO Hosted -> is "An error occurred" a good enough error here?
+    @ActiveBug("FIND-853")
     public void testSearchParentheses() {
         ensureOnCorrectView();
         //noinspection AnonymousInnerClassWithTooManyMethods
