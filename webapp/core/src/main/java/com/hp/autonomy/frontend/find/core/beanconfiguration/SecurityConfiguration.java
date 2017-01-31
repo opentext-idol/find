@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -20,7 +20,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity web) {
         web.ignoring()
-            .antMatchers("/static-*/**");
+                .antMatchers("/static-*/**");
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
@@ -30,18 +30,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         requestCache.setRequestMatcher(new AntPathRequestMatcher(FindController.APP_PATH + "/**"));
 
         http
-            .authorizeRequests()
+                .authorizeRequests()
                 .antMatchers("/api/public/**").hasRole(FindRole.USER.name())
                 .antMatchers("/api/admin/**").hasRole(FindRole.ADMIN.name())
                 .antMatchers("/api/config/**").hasRole(FindRole.CONFIG.name())
                 .antMatchers("/api/bi/**").hasRole(FindRole.BI.name())
                 .and()
-            .requestCache()
+                .requestCache()
                 .requestCache(requestCache)
                 .and()
-            .csrf()
+                .csrf()
                 .disable()
-            .headers()
+                .headers()
                 .defaultsDisabled()
                 .frameOptions()
                 .sameOrigin();

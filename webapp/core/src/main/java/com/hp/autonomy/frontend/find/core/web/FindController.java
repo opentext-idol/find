@@ -81,7 +81,11 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     public ModelAndView mainPage(final HttpServletRequest request) throws JsonProcessingException {
         final String username = authenticationInformationRetriever.getAuthentication().getName();
 
-        final Collection<String> roles = authenticationInformationRetriever.getAuthentication().getAuthorities().stream().map((Function<GrantedAuthority, String>)GrantedAuthority::getAuthority).collect(Collectors.toCollection(LinkedList::new));
+        final Collection<String> roles = authenticationInformationRetriever.getAuthentication()
+                .getAuthorities()
+                .stream()
+                .map((Function<GrantedAuthority, String>)GrantedAuthority::getAuthority)
+                .collect(Collectors.toCollection(LinkedList::new));
 
         final FindConfig<C, B> findConfig = configService.getConfig();
 

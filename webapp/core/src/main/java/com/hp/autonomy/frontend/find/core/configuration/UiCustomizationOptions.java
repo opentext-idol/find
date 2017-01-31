@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -30,9 +30,9 @@ public class UiCustomizationOptions implements ConfigurationComponent<UiCustomiz
 
     @Override
     public UiCustomizationOptions merge(final UiCustomizationOptions options) {
-        if (options != null) {
-            for (final Map.Entry<String, UiCustomizationRule> entry : options.rules.entrySet()) {
-                if (rules.containsKey(entry.getKey())) {
+        if(options != null) {
+            for(final Map.Entry<String, UiCustomizationRule> entry : options.rules.entrySet()) {
+                if(rules.containsKey(entry.getKey())) {
                     rules.get(entry.getKey()).merge(entry.getValue());
                 } else {
                     rules.put(entry.getKey(), entry.getValue());

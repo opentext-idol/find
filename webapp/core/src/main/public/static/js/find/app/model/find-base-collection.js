@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -7,6 +7,7 @@ define([
     'backbone',
     'underscore'
 ], function(Backbone, _) {
+    'use strict';
 
     function createFetch(prototype) {
         // Fetch tracks in-flight requests and cancels them when a new one is run

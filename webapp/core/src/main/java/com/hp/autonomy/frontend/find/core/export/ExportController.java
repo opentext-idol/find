@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -82,14 +82,16 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     ) {
         response.reset();
 
-        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
-                .setRequest(request)
-                .setMainMessageCode("error.internalServerErrorMain")
-                .setSubMessageCode("error.internalServerErrorSub")
-                .setSubMessageArguments(null)
-                .setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .setContactSupport(true)
-                .setException(e)
-                .build());
+        return controllerUtils.buildErrorModelAndView(
+                new ErrorModelAndViewInfo.Builder()
+                        .setRequest(request)
+                        .setMainMessageCode("error.internalServerErrorMain")
+                        .setSubMessageCode("error.internalServerErrorSub")
+                        .setSubMessageArguments(null)
+                        .setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .setContactSupport(true)
+                        .setException(e)
+                        .build()
+        );
     }
 }

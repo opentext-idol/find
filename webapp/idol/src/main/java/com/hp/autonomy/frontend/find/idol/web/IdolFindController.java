@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.idol.web;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -6,6 +11,7 @@ import com.hp.autonomy.frontend.find.core.export.MetadataNode;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
 import com.hp.autonomy.frontend.find.idol.export.IdolMetadataNode;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
@@ -20,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class IdolFindController extends FindController<IdolFindConfig, IdolFindConfig.IdolFindConfigBuilder> {
+public class IdolFindController extends FindController<IdolFindConfig, IdolFindConfigBuilder> {
     private static final String MMAP_BASE_URL = "mmapBaseUrl";
     private static final String VIEW_HIGHLIGHTING = "viewHighlighting";
 

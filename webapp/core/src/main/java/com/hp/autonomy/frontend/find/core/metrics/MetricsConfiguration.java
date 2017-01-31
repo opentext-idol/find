@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.core.metrics;
 
 import com.codahale.metrics.MetricRegistry;
@@ -21,12 +26,12 @@ import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FI
 @ConditionalOnProperty(FIND_METRICS_ENABLED_PROPERTY_KEY)
 public class MetricsConfiguration {
     public static final String FIND_METRICS_ENABLED_PROPERTY_KEY = "find.metrics.enabled";
+    public static final char METRIC_NAME_SEPARATOR = '.';
     private static final boolean FIND_METRICS_ENABLED_DEFAULT = false;
     public static final String FIND_METRICS_ENABLED_PROPERTY = "${" + FIND_METRICS_ENABLED_PROPERTY_KEY + ':' + FIND_METRICS_ENABLED_DEFAULT + '}';
     private static final String FIND_METRICS_TYPE_PROPERTY_KEY = "find.metrics.type";
     private static final String FIND_METRICS_TYPE_DEFAULT = "timer";
     public static final String FIND_METRICS_TYPE_PROPERTY = "${" + FIND_METRICS_TYPE_PROPERTY_KEY + ':' + FIND_METRICS_TYPE_DEFAULT + '}';
-
     private static final String GRAPHITE_HOST_PROPERTY_KEY = "graphite.host";
     private static final String GRAPHITE_HOST_PROPERTY = "${" + GRAPHITE_HOST_PROPERTY_KEY + '}';
     private static final String GRAPHITE_PORT_PROPERTY_KEY = "graphite.port";
@@ -35,10 +40,7 @@ public class MetricsConfiguration {
     private static final String GRAPHITE_SCHEDULE_INTERVAL_PROPERTY_KEY = "graphite.schedule-interval";
     private static final int GRAPHITE_SCHEDULE_INTERVAL_DEFAULT = 1000;
     private static final String GRAPHITE_SCHEDULE_INTERVAL_PROPERTY = "${" + GRAPHITE_SCHEDULE_INTERVAL_PROPERTY_KEY + ':' + GRAPHITE_SCHEDULE_INTERVAL_DEFAULT + '}';
-
     private static final String GRAPHITE_PREFIX = "find";
-
-    public static final char METRIC_NAME_SEPARATOR = '.';
 
     @Bean
     @ConditionalOnProperty(GRAPHITE_HOST_PROPERTY_KEY)
