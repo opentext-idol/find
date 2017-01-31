@@ -444,13 +444,16 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
                 final XSLFAutoShape shape = group.createAutoShape();
                 shape.setShapeType(ShapeType.ELLIPSE);
-                shape.setFillColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 154));
+                final boolean fade = marker.isFade();
+                // There's a 0.3 alpha transparency (255 * 0.3 is 76) when a marker is faded out
+                final int FADE_ALPHA = 76;
+                shape.setFillColor(transparentColor(color, fade ? 47 : 154));
                 shape.setAnchor(anchor);
 
                 final XSLFAutoShape inner = group.createAutoShape();
-                inner.setFillColor(color);
+                inner.setFillColor(fade ? transparentColor(color, FADE_ALPHA) : color);
                 inner.setLineWidth(0.1);
-                inner.setLineColor(new Color((int)(color.getRed() * 0.9), (int)(color.getGreen() * 0.9), (int)(color.getBlue() * 0.9)));
+                inner.setLineColor(new Color((int)(color.getRed() * 0.9), (int)(color.getGreen() * 0.9), (int)(color.getBlue() * 0.9), fade ? FADE_ALPHA : 255));
                 inner.setShapeType(ShapeType.ELLIPSE);
                 inner.setHorizontalCentered(true);
                 inner.setWordWrap(false);
@@ -460,7 +463,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 para.setTextAlign(TextParagraph.TextAlign.CENTER);
                 final XSLFTextRun text = para.addNewTextRun();
                 text.setFontSize(6.0);
-                text.setFontColor(Color.decode(StringUtils.defaultString(marker.getFontColor(), "#000000")));
+                final Color fontColor = Color.decode(StringUtils.defaultString(marker.getFontColor(), "#000000"));
+                text.setFontColor(fade ? transparentColor(fontColor, FADE_ALPHA) : fontColor);
                 text.setText(marker.getText());
                 inner.setAnchor(new Rectangle2D.Double(centerX - innerHalfMark, centerY - innerHalfMark, innerMark, innerMark));
             }
@@ -473,7 +477,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 shape.setRotation(135);
                 shape.setLineWidth(1.0);
                 shape.setLineColor(color.darker());
-                shape.setFillColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 210));
+                shape.setFillColor(transparentColor(color, 210));
                 double halfMark = 8;
                 double mark = halfMark * 2;
                 // align these so the pointy end at the bottom is the latlng position
@@ -490,5 +494,9 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         }
 
         return writePPT(ppt, "map.pptx");
+    }
+
+    private static Color transparentColor(final Color color, final int a) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), a);
     }
 }

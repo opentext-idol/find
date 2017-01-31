@@ -16,4 +16,5 @@ public class Marker {
     boolean cluster;
     String color;
     String fontColor;
+    boolean fade;
 }

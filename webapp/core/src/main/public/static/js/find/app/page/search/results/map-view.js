@@ -177,12 +177,14 @@ define([
                     if (xFraction > -tolerance && xFraction < 1 + tolerance && yFraction > -tolerance && yFraction < 1 + tolerance) {
                         var fontColor = '#000000',
                             color = '#37a8da',
-                            match;
+                            match,
+                            fade = false;
 
                         if (isCluster) {
                             var $iconEl = $(layer._icon);
                             color = hexColor($iconEl.css('background-color'));
                             fontColor = hexColor($iconEl.children('div').css('color'))
+                            fade = +$iconEl.css('opacity') < 1
                         } else if (match=/awesome-marker-icon-(\w+)/.exec(layer._icon.classList)) {
                             if (leafletMarkerColorMap.hasOwnProperty(match[1])) {
                                 color = leafletMarkerColorMap[match[1]]
@@ -195,7 +197,8 @@ define([
                             text: isCluster ? layer.getChildCount() :  $(layer.getPopup()._content).find('.map-popup-title').text(),
                             cluster: !!isCluster,
                             color: color,
-                            fontColor: fontColor
+                            fontColor: fontColor,
+                            fade: fade
                         })
                     }
                 }
