@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfi
 import com.hp.autonomy.frontend.find.core.export.MetadataNode;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
+import com.hp.autonomy.frontend.find.core.web.MvcConstants;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
@@ -51,6 +52,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
         }
 
         publicConfig.put(VIEW_HIGHLIGHTING, config.getViewConfig().getHighlighting());
+        publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), config.getAnswerServer().getEnabled());
 
         return publicConfig;
     }

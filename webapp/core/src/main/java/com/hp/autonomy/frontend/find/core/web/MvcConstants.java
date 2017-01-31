@@ -23,6 +23,7 @@ public enum MvcConstants {
     FIELDS_INFO("fieldsInfo"),
     TOPIC_MAP_MAX_RESULTS("topicMapMaxResults"),
     METADATA_FIELD_IDS("metadataFieldIds"),
+    ANSWER_SERVER_ENABLED("answerServerEnabled"),
     PUBLIC_INDEXES_ENABLED("publicIndexesEnabled");
 
     private final String value;

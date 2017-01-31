@@ -1,17 +1,17 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
+    'underscore',
     'jquery',
+    'backbone',
     'find/idol/app/model/answer-bank/idol-answered-questions-collection',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/results/questions-container.html',
-    'i18n!find/nls/bundle',
-    'underscore'
-], function(Backbone, $, AnsweredQuestionsCollection, ListView, questionsTemplate, i18n, _) {
+    'i18n!find/nls/bundle'
+], function(_, $, Backbone, AnsweredQuestionsCollection, ListView, questionsTemplate, i18n) {
     'use strict';
 
     const MAX_SIZE = 1;
