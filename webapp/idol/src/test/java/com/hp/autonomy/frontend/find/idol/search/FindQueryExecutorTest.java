@@ -9,6 +9,7 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.QueryExecutor;
+import com.hp.autonomy.types.idol.responses.GetQueryTagValuesResponseData;
 import com.hp.autonomy.types.idol.responses.QueryResponseData;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -62,5 +66,23 @@ public class FindQueryExecutorTest {
         final QueryRequest.QueryType queryType = QueryRequest.QueryType.RAW;
         findQueryExecutor.executeSuggest(parameters, queryType);
         verify(queryExecutor).executeSuggest(parameters, queryType);
+    }
+
+    @Test
+    public void testParametricValuesWithNoBlacklist() {
+        final GetQueryTagValuesResponseData responseData = new GetQueryTagValuesResponseData();
+
+        final AciErrorException blacklistError = new AciErrorException();
+        blacklistError.setErrorString(FindQueryExecutor.MISSING_RULE_ERROR);
+
+        when(queryExecutor.executeGetQueryTagValues(any(), any())).thenThrow(blacklistError).thenReturn(responseData);
+
+        assertThat(findQueryExecutor.executeGetQueryTagValues(new AciParameters(), QueryRequest.QueryType.MODIFIED), is(responseData));
+    }
+
+    @Test(expected = AciErrorException.class)
+    public void testParametricValuesWithUnexpectedError() {
+        when(queryExecutor.executeGetQueryTagValues(any(), any())).thenThrow(new AciErrorException());
+        findQueryExecutor.executeGetQueryTagValues(new AciParameters(), QueryRequest.QueryType.MODIFIED);
     }
 }
