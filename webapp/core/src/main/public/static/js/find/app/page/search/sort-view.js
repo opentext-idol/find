@@ -34,6 +34,13 @@ define([
             if (this.$currentSort) {
                 this.$currentSort.text(i18n['search.resultsSort.' + this.queryModel.get('sort')]);
             }
+        },
+
+        getText: function() {
+            if (this.$currentSort) {
+                return i18n['search.resultsSort'] + ' ' + i18n['search.resultsSort.' + this.queryModel.get('sort')];
+            }
+            return '';
         }
     });
 

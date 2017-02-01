@@ -91,6 +91,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     static final String PPT_SUNBURST_PATH = "/ppt/sunburst";
     static final String PPT_TABLE_PATH = "/ppt/table";
     static final String PPT_MAP_PATH = "/ppt/map";
+    static final String PPT_LIST_PATH = "/ppt/list";
     static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
     static final String QUERY_REQUEST_PARAM = "queryRequest";
     private static final String EXPORT_FILE_NAME = "query-results";
@@ -390,10 +391,10 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         textBox.setAnchor(textBounds);
 
         final PictureData.PictureType type;
-        if (image.startsWith("data:image/png;base64,")) {
+        if(image.startsWith("data:image/png;base64,")) {
             type = PictureData.PictureType.PNG;
         }
-        else if (image.startsWith("data:image/jpeg;base64,")) {
+        else if(image.startsWith("data:image/jpeg;base64,")) {
             type = PictureData.PictureType.JPEG;
         }
         else {
@@ -407,12 +408,12 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final XSLFPictureShape canvas = sl.createPicture(picture);
 
         final Dimension size = picture.getImageDimension();
-        final double ratio = size.getWidth()/size.getHeight();
+        final double ratio = size.getWidth() / size.getHeight();
 
         double tgtW = PPT_WIDTH;
         double tgtH = PPT_HEIGHT - textBounds.getMaxY();
 
-        if (ratio > tgtW / tgtH) {
+        if(ratio > tgtW / tgtH) {
             // source image is wider than target, clip fixed width variable height
             tgtH = tgtW / ratio;
         }
@@ -430,14 +431,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             final double centerX = offsetX + marker.x * tgtW;
             final double centerY = offsetY + marker.y * tgtH;
 
-            if (marker.isCluster()) {
+            if(marker.isCluster()) {
                 final XSLFGroupShape group = sl.createGroup();
                 double halfMark = 10;
                 double mark = halfMark * 2;
                 double innerHalfMark = 7;
                 double innerMark = innerHalfMark * 2;
                 // align these so the middle is the latlng position
-                final Rectangle2D.Double anchor = new Rectangle2D.Double(centerX - halfMark,centerY - halfMark, mark, mark);
+                final Rectangle2D.Double anchor = new Rectangle2D.Double(centerX - halfMark, centerY - halfMark, mark, mark);
 
                 group.setAnchor(anchor);
                 group.setInteriorAnchor(anchor);
@@ -453,7 +454,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 final XSLFAutoShape inner = group.createAutoShape();
                 inner.setFillColor(fade ? transparentColor(color, FADE_ALPHA) : color);
                 inner.setLineWidth(0.1);
-                inner.setLineColor(new Color((int)(color.getRed() * 0.9), (int)(color.getGreen() * 0.9), (int)(color.getBlue() * 0.9), fade ? FADE_ALPHA : 255));
+                inner.setLineColor(new Color((int) (color.getRed() * 0.9), (int) (color.getGreen() * 0.9), (int) (color.getBlue() * 0.9), fade ? FADE_ALPHA : 255));
                 inner.setShapeType(ShapeType.ELLIPSE);
                 inner.setHorizontalCentered(true);
                 inner.setWordWrap(false);
@@ -481,13 +482,13 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 double halfMark = 8;
                 double mark = halfMark * 2;
                 // align these so the pointy end at the bottom is the latlng position
-                shape.setAnchor(new Rectangle2D.Double(centerX - halfMark,centerY - mark, mark, mark));
+                shape.setAnchor(new Rectangle2D.Double(centerX - halfMark, centerY - mark, mark, mark));
 
                 // We create a hyperlink which links back to this slide; so we get hover-over-detail-text on the marker
                 final CTHyperlink link = ((CTShape) shape.getXmlObject()).getNvSpPr().getCNvPr().addNewHlinkClick();
                 link.setTooltip(marker.getText());
                 final PackageRelationship rel = shape.getSheet().getPackagePart().addRelationship(sl.getPackagePart().getPartName(),
-                    TargetMode.INTERNAL, XSLFRelation.SLIDE.getRelation());
+                        TargetMode.INTERNAL, XSLFRelation.SLIDE.getRelation());
                 link.setId(rel.getId());
                 link.setAction("ppaction://hlinksldjump");
             }
@@ -499,4 +500,124 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     private static Color transparentColor(final Color color, final int a) {
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), a);
     }
+
+    @RequestMapping(value = PPT_LIST_PATH, method = RequestMethod.POST)
+    public HttpEntity<byte[]> list(
+            @RequestParam("results") final String results,
+            @RequestParam("sortBy") final String sortBy,
+            @RequestParam(value = "docs", defaultValue = "[]") final String docsStr
+    ) throws IOException {
+        final Document[] docs = new ObjectMapper().readValue(docsStr, Document[].class);
+
+        final XMLSlideShow ppt = new XMLSlideShow();
+        final Dimension pageSize = ppt.getPageSize();
+        final double
+                pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight(),
+                // How much space to leave at the left and right edge of the slide
+                xMargin = 20,
+                // Size of the icon
+                iconWidth = 20, iconHeight = 24,
+                // Space between list items
+                listItemMargin = 5.;
+
+        XSLFSlide sl = null;
+        double yCursor = 0, xCursor = 0;
+
+        int docsOnPage = 0;
+
+        for(int ii = 0; ii < docs.length; ++ii) {
+            final Document doc = docs[ii];
+
+            if(sl == null) {
+                sl = ppt.createSlide();
+                yCursor = 5;
+                xCursor = xMargin;
+                docsOnPage = 0;
+
+                final XSLFTextBox textBox = sl.createTextBox();
+                textBox.clearText();
+                final Rectangle2D.Double textBounds = new Rectangle2D.Double(xMargin, yCursor, pageWidth - xMargin, 20);
+                textBox.setAnchor(textBounds);
+                final XSLFTextRun textBoxRun = textBox.addNewTextParagraph().addNewTextRun();
+                textBoxRun.setText(results);
+                textBoxRun.setFontSize(12.);
+                textBoxRun.setFontColor(Color.LIGHT_GRAY);
+
+                final XSLFTextBox sortByEl = sl.createTextBox();
+                sortByEl.clearText();
+                final XSLFTextParagraph sortByText = sortByEl.addNewTextParagraph();
+                sortByText.setTextAlign(TextParagraph.TextAlign.RIGHT);
+                final XSLFTextRun sortByTextRun = sortByText.addNewTextRun();
+                sortByTextRun.setText(sortBy);
+                sortByTextRun.setFontSize(12.);
+                sortByTextRun.setFontColor(Color.LIGHT_GRAY);
+
+                sortByEl.setAnchor(new Rectangle2D.Double(xMargin, yCursor, pageWidth - xMargin, 20));
+
+                yCursor += listItemMargin + Math.max(
+                        textBox.getTextHeight() + textBox.getAnchor().getY(),
+                        sortByEl.getTextHeight() + sortByEl.getAnchor().getY());
+            }
+
+            final XSLFAutoShape icon = sl.createAutoShape();
+            icon.setShapeType(ShapeType.SNIP_1_RECT);
+            icon.setAnchor(new Rectangle2D.Double(xCursor, yCursor + listItemMargin, iconWidth, iconHeight));
+            icon.setLineColor(Color.decode("#888888"));
+            icon.setLineWidth(2.0);
+
+            xCursor += iconWidth;
+
+            final XSLFTextBox listEl = sl.createTextBox();
+            listEl.clearText();
+            listEl.setAnchor(new Rectangle2D.Double(xCursor, yCursor, pageWidth - xCursor - xMargin, pageHeight - yCursor));
+
+            final XSLFTextParagraph test = listEl.addNewTextParagraph();
+            final XSLFTextRun titleEl = test.addNewTextRun();
+            titleEl.setText(doc.getTitle());
+            titleEl.setFontSize(14.0);
+            titleEl.setBold(true);
+
+            test.addLineBreak();
+
+            final XSLFTextRun dateEl = test.addNewTextRun();
+            dateEl.setFontColor(Color.GRAY);
+            dateEl.setText(" " + doc.getDate());
+            dateEl.setFontSize(10.0);
+            dateEl.setItalic(true);
+
+            test.addLineBreak();
+
+            final XSLFTextRun reference = test.addNewTextRun();
+            reference.setFontColor(Color.GRAY);
+            reference.setText(doc.getRef());
+            reference.setFontSize(12.);
+
+            test.addLineBreak();
+
+            final XSLFTextRun summary = test.addNewTextRun();
+            summary.setFontColor(Color.DARK_GRAY);
+            summary.setText(doc.getSummary());
+            summary.setFontSize(12.);
+
+            yCursor += Math.max(listEl.getTextHeight(), iconHeight) + listItemMargin;
+            xCursor = xMargin;
+
+            docsOnPage++;
+
+            if(yCursor > pageHeight) {
+                if(docsOnPage > 1) {
+                    // If we drew more than one list element on this page; and we exceeded the available space,
+                    //   delete the last text shape and redraw it on the next page.
+                    sl.removeShape(listEl);
+                    sl.removeShape(icon);
+                    --ii;
+                }
+
+                sl = null;
+            }
+        }
+
+        return writePPT(ppt, "list.pptx");
+    }
+
 }

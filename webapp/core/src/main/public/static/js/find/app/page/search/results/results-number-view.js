@@ -31,6 +31,10 @@ define([
                 this.$totalNumber.text(this.documentsCollection.totalResults || 0);
                 this.$firstNumber.text(this.documentsCollection.length ? 1 : 0);
             }
+        },
+
+        getText: function() {
+            return $.trim(this.$el.text().replace(/\s+/g, ' '));
         }
     });
 
