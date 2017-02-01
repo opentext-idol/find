@@ -9,6 +9,8 @@ def repository
 @Field
 def branch
 
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: ''))])
+
 node {
 	stage 'Checkout'
 		checkout scm
