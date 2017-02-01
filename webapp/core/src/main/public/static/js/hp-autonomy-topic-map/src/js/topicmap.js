@@ -56,6 +56,16 @@
          *      If set, animations will be skipped. There may be a noticeable pause if we skip animation,
          *      since javascript is single threaded and it'll take a while to compute the final positions. The browser
          *      may also give a warning if it takes too long.
+         * @param {number} [options.animationDelay=25]
+         *      The time (in ms) between animation frames; if skipAnimation=true is not set.
+         * @param {number} [options.animationStepIncrement=1]
+         *      How many layout calculation steps to take before each redraw when animating.
+         * @param {number} [options.textFadeStartDelay=300]
+         *      The time (in ms) to wait after node animation completes before showing the text of the first node.
+         * @param {number} [options.textFadeEndDelay=3000]
+         *      The time (in ms) to wait after node animation completes before showing the text of the last node.
+         * @param {number} [options.textFadeDuration=1000]
+         *      The time (in ms) the text for a node should take to fade in.
          * @param {external:jQuery.external:fn.topicmap~onLeafClick} [options.onLeafClick]
          *      Click handler when a node is left-clicked.
          * @param {external:jQuery.external:fn.topicmap~onLayoutCreation} [options.onLayoutCreation]
@@ -75,7 +85,13 @@
          * @param {string} [options.i18n.autn.vis.topicmap.noResultsAvailable='No results available, please try a different query'] string shown when no results are available.
          * @example
          *      <pre><code>
-         $('#paper').topicmap({});
+         $('#paper').topicmap({
+    textFadeStartDelay: 0,
+    textFadeEndDelay: 100,
+    textFadeDuration: 100,
+    animationDelay: 5,
+    animationStepIncrement: 3
+});
          *      </code></pre>
          * */
         init: function(options) {
@@ -367,6 +383,11 @@
         var maxLeafFont = options.maxLeafFont;
         var minAreaSize = options.minAreaSize;
         var enforceLabelBounds = options.enforceLabelBounds;
+        var textFadeStartDelay = _.isNumber(options.textFadeStartDelay) ? options.textFadeStartDelay : 300;
+        var textFadeEndDelay = _.isNumber(options.textFadeEndDelay) ? options.textFadeEndDelay : 3000;
+        var textFadeDuration = _.isNumber(options.textFadeDuration) ? options.textFadeDuration : 1000;
+        var animationDelay = options.animationDelay || 25;
+        var animationStepIncrement = options.animationStepIncrement || 1;
 
         pluginMeta.renderData = renderData;
         pluginMeta.exportPaths = function(){
@@ -1026,12 +1047,12 @@
                         setTimeout(function(){
                             for (depth = Math.min(2, maxDepth); depth >= 1; --depth) {
                                 var polygons = depthPolyMeta[depth].polygons;
-                                var baseDelay = Math.min(0, 100 / polygons.length);
+                                var baseDelay = Math.min(textFadeStartDelay, textFadeEndDelay / polygons.length);
                                 depthPolyMeta[depth].polygons.forEach(function (node, nodeIdx) {
                                     node.animating = true;
 
                                     if (node.textEl) {
-                                        node.textEl.animate(Raphael.animation({opacity: 1}, 100, undefined, function(){
+                                        node.textEl.animate(Raphael.animation({opacity: 1}, textFadeDuration, undefined, function(){
                                             node.animating = false;
                                         }).delay(baseDelay * nodeIdx));
                                     }
@@ -1262,15 +1283,16 @@
             var finished;
 
             if (!isDragging) {
-                // Take multiple steps before each redraw
-                mesh.step();
-                mesh.step();
+                // Optionally take multiple steps before each redraw
+                for (var ii = 1; ii < animationStepIncrement; ++ii) {
+                    mesh.step();
+                }
                 finished = mesh.step();
                 mesh.redraw();
             }
 
             if (continuousAnimate && !finished) {
-                animateTimeout = setTimeout(animateLoop, 5);
+                animateTimeout = setTimeout(animateLoop, animationDelay);
             }
         }
     }
