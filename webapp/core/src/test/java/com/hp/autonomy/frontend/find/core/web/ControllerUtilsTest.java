@@ -26,19 +26,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ControllerUtilsTest {
+public class ControllerUtilsTest<C extends FindConfig<?, ?>> {
     @Mock
     private MessageSource messageSource;
 
     @Mock
-    private ConfigService<FindConfig> configService;
+    private ConfigService<C> configService;
 
     @Mock
     private UiCustomization uiCustomisation;
+
+    @Mock
+    private C config;
 
     private ControllerUtils controllerUtils;
 
@@ -48,7 +50,6 @@ public class ControllerUtilsTest {
 
         when(messageSource.getMessage(anyString(), any(Object[].class), any(Locale.class))).thenReturn("Some Message");
 
-        final FindConfig config = mock(FindConfig.class);
         when(configService.getConfig()).thenReturn(config);
         when(config.getUiCustomization()).thenReturn(uiCustomisation);
     }

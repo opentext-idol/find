@@ -1,24 +1,26 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.base;
 
 import com.autonomy.abc.selenium.find.application.UserRole;
-import com.hp.autonomy.frontend.selenium.application.Application;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
-import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
 import com.hp.autonomy.frontend.selenium.base.SeleniumTest;
-import com.hp.autonomy.frontend.selenium.framework.environment.Deployment;
-import com.hp.autonomy.frontend.selenium.framework.inclusion.RunOnlyIfDescription;
+import com.hp.autonomy.frontend.selenium.framework.inclusion.RunOnlyIfDescription.Acceptable;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.runner.Description;
 
-public class UserRoleStrategy implements RunOnlyIfDescription.Acceptable {
+public class UserRoleStrategy implements Acceptable {
 
-    private final SeleniumTest<?,?> test;
+    private final SeleniumTest<?, ?> test;
     private final UserRole configUserRole;
 
-    public UserRoleStrategy(SeleniumTest<?, ?> test) {
+    public UserRoleStrategy(final SeleniumTest<?, ?> test) {
         this.test = test;
-        String userRole = System.getProperty("userRole");
+        final String userRole = System.getProperty("userRole");
         configUserRole = userRole == null ? null : UserRole.fromString(userRole);
     }
 
@@ -27,31 +29,30 @@ public class UserRoleStrategy implements RunOnlyIfDescription.Acceptable {
 
         return new TypeSafeMatcher<Description>() {
             @Override
-            protected boolean matchesSafely(Description item) {
-                TestUserRole userRole = new TestUserRole();
+            protected boolean matchesSafely(final Description item) {
+                final TestUserRole userRole = new TestUserRole();
                 userRole.starting(item);
 
-                ApplicationType applicationType = test.getConfig().getType();
+                final ApplicationType applicationType = test.getConfig().getType();
 
                 //Test not annotated
-                if(userRole.isNull()){
+                if(userRole.isNull()) {
                     return true;
                 }
-                UserRole testUserRole = userRole.getUserRoleValue();
+                final UserRole testUserRole = userRole.getUserRoleValue();
 
-                return applicationType.equals(ApplicationType.HOSTED) ?
-                        runAgainst(testUserRole, UserRole.FIND) : runAgainst(testUserRole, UserRole.BIFHI);
+                return runAgainst(testUserRole, applicationType.equals(ApplicationType.HOSTED) ? UserRole.FIND : UserRole.BIFHI);
 
             }
 
-            private boolean runAgainst(UserRole testUserRole, UserRole against) {
-                return (configUserRole==null && testUserRole.equals(against)) ||
-                        (configUserRole!=null && configUserRole.equals(testUserRole)) ||
+            private boolean runAgainst(final UserRole testUserRole, final UserRole against) {
+                return (configUserRole == null && testUserRole.equals(against)) ||
+                        (configUserRole != null && configUserRole.equals(testUserRole)) ||
                         testUserRole.equals(UserRole.BOTH);
             }
 
             @Override
-            public void describeTo(org.hamcrest.Description description) {
+            public void describeTo(final org.hamcrest.Description description) {
                 description.appendText("match between current user role and test");
             }
         };

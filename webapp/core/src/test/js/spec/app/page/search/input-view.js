@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -10,7 +10,7 @@ define([
     'find/app/page/search/input-view-concept-strategy',
     'find/app/page/search/input-view-query-text-strategy'
 ], function(Backbone, $, InputView, conceptStrategy, queryTextStrategy) {
-    "use strict";
+    'use strict';
 
     describe('Input view', function() {
         const model = new Backbone.Model({inputText: 'cat'});
@@ -25,10 +25,10 @@ define([
                 changedModel: 'dog',
                 onModelUpdate: $.noop
             },
-            changeModel: function () {
+            changeModel: function() {
                 model.set('inputText', 'dog');
             },
-            getFirstValue: function () {
+            getFirstValue: function() {
                 return model.get('inputText');
             }
         }, {
@@ -39,20 +39,20 @@ define([
             expectations: {
                 initialText: '',
                 changedModel: '',
-                onModelUpdate: function () {
+                onModelUpdate: function() {
                     expect(collection.length).toBeGreaterThan(1);
                 }
             },
-            changeModel: function () {
+            changeModel: function() {
                 collection.unshift({concepts: ['dog']});
             },
-            getFirstValue: function () {
+            getFirstValue: function() {
                 return collection.first().get('concepts')[0];
             }
         }];
-        
-        configurations.forEach(function (configuration) {
-            describe(configuration.description, function () {
+
+        configurations.forEach(function(configuration) {
+            describe(configuration.description, function() {
                 beforeEach(function() {
                     this.view = new InputView(configuration.options);
                     this.view.render();

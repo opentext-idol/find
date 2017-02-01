@@ -14,6 +14,7 @@ define([
     './model-registry',
     'find/app/navigation',
     'find/app/configuration',
+    'find/app/metrics',
     'find/app/pages',
     'find/app/util/logout',
     'find/app/vent',
@@ -21,7 +22,7 @@ define([
     'js-whatever/js/escape-regex',
     'text!find/templates/app/app.html'
 ], function($, Backbone, _, testBrowser, WindowScrollModel, SavedQueryCollection, parseUrl, ModelRegistry,
-            Navigation, configuration, Pages, logout, vent, router, escapeRegex, template) {
+            Navigation, configuration, metrics, Pages, logout, vent, router, escapeRegex, template) {
 
     function removeTrailingSlash(string) {
         return string.replace(/\/$/, '');
@@ -112,6 +113,8 @@ define([
                 if (!matchedRoute) {
                     vent.navigate(configuration().hasBiRole ? 'search/query/*' : 'search/splash');
                 }
+
+                metrics.addTimeSincePageLoad('page-responsive-after-reload');
             }.bind(this));
         },
 

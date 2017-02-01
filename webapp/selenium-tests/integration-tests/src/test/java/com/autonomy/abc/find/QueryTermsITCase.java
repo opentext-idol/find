@@ -1,9 +1,14 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.queryHelper.IdolQueryTestHelper;
-import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.error.Errors.Search;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.application.UserRole;
@@ -24,11 +29,26 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.openqa.selenium.WebDriverException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class QueryTermsITCase extends FindTestBase {
@@ -61,6 +81,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Test
     @Category(CoreFeature.class)
     @Role(UserRole.FIND)
+    @ActiveBug(value = "FIND-784 -> it's possible there's another bug to do with Selenium submit", type = ApplicationType.ON_PREM)
     public void testSearchForAll() {
         findPage.goToListView();
 
@@ -102,10 +123,10 @@ public class QueryTermsITCase extends FindTestBase {
     public void testBooleanOperators() {
         findPage.goToListView();
 
-        List<String> potentialTerms = new ArrayList<>(Arrays.asList("brevity", "tessellate", "hydrangea", "\"dearly departed\"", "abstruse", "lobotomy"));
+        final List<String> potentialTerms = new ArrayList<>(Arrays.asList("brevity", "tessellate", "hydrangea", "\"dearly departed\"", "abstruse", "lobotomy"));
         final String termOne = findService.termWithBetween1And30Results(potentialTerms);
         final String termTwo = findService.termWithBetween1And30Results(potentialTerms);
-        assertThat("Test only works if query terms both have <=30 results ","",not(anyOf(is(termOne),is(termTwo))));
+        assertThat("Test only works if query terms both have <=30 results ", "", not(anyOf(is(termOne), is(termTwo))));
 
         final List<String> resultsTermOne = getResultsList(termOne);
         final int resultsNumberTermOne = resultsTermOne.size();
@@ -151,18 +172,18 @@ public class QueryTermsITCase extends FindTestBase {
     private void ensureOnCorrectView() {
         findService.searchAnyView("get rid of");
         removeAllConcepts();
-        ListView results = findPage.goToListView();
+        final ListView results = findPage.goToListView();
         results.waitForResultsToLoad();
     }
 
     @Test
-    @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM, against = Deployment.DEVELOP)
+    @ActiveBug({"CORE-2925","FIND-853"})
     public void testCorrectErrorMessageDisplayed() {
         ensureOnCorrectView();
         new QueryTestHelper<>(findService)
-                .booleanOperatorQueryText(Errors.Search.OPERATORS, Errors.Search.OPENING_BOOL, Errors.Search.GENERIC_HOSTED_ERROR);
+                .booleanOperatorQueryText(Search.OPERATORS, Search.OPENING_BOOL, Search.GENERIC_HOSTED_ERROR);
         new QueryTestHelper<>(findService)
-                .emptyQueryText(Errors.Search.STOPWORDS, Errors.Search.NO_TEXT,Errors.Search.GENERIC_HOSTED_ERROR, Errors.Search.HOSTED_INVALID);
+                .emptyQueryText(Search.STOPWORDS, Search.NO_TEXT, Search.GENERIC_HOSTED_ERROR, Search.HOSTED_INVALID);
     }
 
     @Test
@@ -173,6 +194,7 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
+    @ActiveBug("FIND-853")
     public void testSearchParentheses() {
         ensureOnCorrectView();
         //noinspection AnonymousInnerClassWithTooManyMethods
@@ -194,7 +216,7 @@ public class QueryTermsITCase extends FindTestBase {
     @ResolvedBug("HOD-2170")
     @ActiveBug("CCUK-3634")
     public void testSearchQuotationMarks() {
-        new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
+        new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Search.QUOTES);
     }
 
     @Test
@@ -206,7 +228,7 @@ public class QueryTermsITCase extends FindTestBase {
 
         try {
             findService.search("       ");
-        } catch (final WebDriverException ignored) { /* Expected behaviour */ }
+        } catch(final WebDriverException ignored) { /* Expected behaviour */ }
 
         assertThat(findPage.footerLogo(), displayed());
 
@@ -240,5 +262,4 @@ public class QueryTermsITCase extends FindTestBase {
     private void removeAllConcepts() {
         getElementFactory().getConceptsPanel().removeAllConcepts();
     }
-
 }

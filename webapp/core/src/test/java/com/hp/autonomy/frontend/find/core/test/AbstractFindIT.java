@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.jdbc.Sql;
@@ -24,8 +25,9 @@ import java.io.IOException;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
-@SuppressWarnings("UtilityClass")
+@SuppressWarnings({"UtilityClass", "SpringJavaAutowiredMembersInspection"})
 @RunWith(SpringRunner.class)
+@AutoConfigureJsonTesters(enabled = false)
 @SpringBootTest(properties = {
         "application.buildNumber=test",
         "hp.find.persistentState = INMEMORY",
@@ -36,7 +38,8 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
         "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
         "find.https.proxyPort: 8080",
         "spring.datasource.url = jdbc:h2:mem:find-db;DB_CLOSE_ON_EXIT=FALSE",
-        "mock.authenticationRetriever=false"
+        "mock.authenticationRetriever=false",
+        "find.metrics.enabled=true"
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/clean-database.sql")
 public abstract class AbstractFindIT {
@@ -54,7 +57,6 @@ public abstract class AbstractFindIT {
         FileUtils.forceDelete(new File(TEST_DIR));
     }
 
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
     protected WebApplicationContext wac;
 

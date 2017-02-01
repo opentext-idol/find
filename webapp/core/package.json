@@ -1,6 +1,6 @@
 {
   "name": "hp-find-core",
-  "repository": "https://github.com/hpautonomy/find",
+  "repository": "https://github.com/hpe-idol/find",
   "private": true,
   "license": "MIT",
   "devDependencies": {

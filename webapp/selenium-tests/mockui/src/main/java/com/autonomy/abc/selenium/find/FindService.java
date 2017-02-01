@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.find.application.FindApplication;
@@ -29,7 +34,7 @@ public class FindService implements QueryService<ListView> {
     }
 
     @Override
-    public ListView search(final String query){
+    public ListView search(final String query) {
         return search(new Query(query));
     }
 
@@ -38,14 +43,15 @@ public class FindService implements QueryService<ListView> {
         submitSearch(query.getTerm());
         elementFactory.getFilterPanel().waitForIndexes();
         findPage.filterBy(new AggregateQueryFilter(query.getFilters()));
-        LoggerFactory.getLogger(this.getClass()).info("'search' expects you to already be on the listview, if it fails " +
-                "try 'searchAnyView'.");
+        LoggerFactory.getLogger(getClass()).info("'search' expects you to already be on the listview, if it fails " +
+                                                         "try 'searchAnyView'.");
         return elementFactory.getListView();
     }
 
     public void searchAnyView(final String term) {
         searchAnyView(new Query(term));
     }
+
     public void searchAnyView(final Query query) {
         submitSearch(query.getTerm());
         elementFactory.getFilterPanel().waitForIndexes();
@@ -61,20 +67,20 @@ public class FindService implements QueryService<ListView> {
     public SimilarDocumentsView goToSimilarDocuments(final int resultNumber) {
         final ListView resultsPage = elementFactory.getListView();
         resultsPage.getResult(resultNumber).similarDocuments().click();
-        SimilarDocumentsView similarDocuments = elementFactory.getSimilarDocumentsView();
+        final SimilarDocumentsView similarDocuments = elementFactory.getSimilarDocumentsView();
         similarDocuments.waitForLoad();
         return similarDocuments;
     }
 
-    public String termWithBetween1And30Results(List<String> candidates) {
-        for(String term : candidates) {
+    public String termWithBetween1And30Results(final List<String> candidates) {
+        for(final String term : candidates) {
             final ListView results = search(term);
             findPage.waitForLoad();
             final int resultsNum = results.getTotalResultsNum();
             elementFactory.getConceptsPanel().removeAllConcepts();
 
-            if (resultsNum > 0 && resultsNum <= 30 ) {
-                candidates.subList(0, candidates.indexOf(term)+1).clear();
+            if(resultsNum > 0 && resultsNum <= 30) {
+                candidates.subList(0, candidates.indexOf(term) + 1).clear();
                 return term;
             }
         }
@@ -83,22 +89,22 @@ public class FindService implements QueryService<ListView> {
 
     public ImmutablePair<String, String> getPairOfTermsThatDoNotShareResults() {
         final List<ImmutablePair<String, String>> potentialTerms = Arrays.asList(
-                new ImmutablePair("\"polar bear\"","\"opposable thumbs\""),
-                new ImmutablePair("\"upshot\"","\"space invaders\""),
-                new ImmutablePair("\"animalistic\"","\"freefall\""));
+                new ImmutablePair("\"polar bear\"", "\"opposable thumbs\""),
+                new ImmutablePair("\"upshot\"", "\"space invaders\""),
+                new ImmutablePair("\"animalistic\"", "\"freefall\""));
 
-        for (ImmutablePair<String, String> pair : potentialTerms) {
-            Set<String> results1 = searchAndGetResults(pair.getLeft());
-            Set<String> results2 = searchAndGetResults(pair.getRight());
+        for(final ImmutablePair<String, String> pair : potentialTerms) {
+            final Set<String> results1 = searchAndGetResults(pair.getLeft());
+            final Set<String> results2 = searchAndGetResults(pair.getRight());
 
             if(results1.size() > 0 && results2.size() > 0) {
                 results1.retainAll(results2);
-                if (results1.size() == 0) {
+                if(results1.size() == 0) {
                     return pair;
                 }
             }
         }
-        return new ImmutablePair<>("","");
+        return new ImmutablePair<>("", "");
     }
 
     private Set<String> searchAndGetResults(final String term) {
@@ -107,7 +113,7 @@ public class FindService implements QueryService<ListView> {
         final ListView listView = elementFactory.getListView();
         listView.waitForResultsToLoad();
 
-        Set<String> results = new HashSet<>(listView.getResultTitles());
+        final Set<String> results = new HashSet<>(listView.getResultTitles());
         elementFactory.getConceptsPanel().removeAllConcepts();
         return results;
     }
@@ -119,7 +125,7 @@ public class FindService implements QueryService<ListView> {
     public String getQueryUrl(final String query) {
         try {
             return "public/search/query/" + URLEncoder.encode(query, StandardCharsets.UTF_8.name());
-        } catch (final UnsupportedEncodingException e) {
+        } catch(final UnsupportedEncodingException e) {
             throw new IllegalStateException("UTF-8 not supported", e);
         }
     }

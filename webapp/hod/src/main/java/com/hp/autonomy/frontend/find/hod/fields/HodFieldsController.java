@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsRequest;
 import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsService;
@@ -49,10 +50,11 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
             final HodFieldsService fieldsService,
             final HodParametricValuesService parametricValuesService,
             final ObjectFactory<HodParametricRequestBuilder> parametricRequestBuilderFactory,
-            final ConfigService<? extends FindConfig> configService,
+            final TagNameFactory tagNameFactory,
+            final ConfigService<? extends FindConfig<?, ?>> configService,
             final ObjectFactory<HodFieldsRequestBuilder> fieldsRequestBuilderFactory,
             final ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory) {
-        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, configService);
+        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, tagNameFactory, configService);
         this.fieldsRequestBuilderFactory = fieldsRequestBuilderFactory;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
     }

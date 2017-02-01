@@ -1,3 +1,8 @@
+#
+# Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+# Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+#
+
 module.exports = (grunt) ->
   jasmineRequireTemplate = require 'grunt-template-jasmine-requirejs'
 
@@ -29,7 +34,7 @@ module.exports = (grunt) ->
       options:
         plugins: ['transform-es2015-block-scoping']
       transform:
-        files: [ {
+        files: [{
           expand: true
           cwd: 'target/classes/static/js'
           src: ['find/**/*.js']
@@ -41,7 +46,7 @@ module.exports = (grunt) ->
           src: ['**/*.js']
           dest: 'target/es5-jasmine-test-specs'
           ext: '.js'
-        } ]
+        }]
     clean: [
       jasmineSpecRunner
       'bin'

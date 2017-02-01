@@ -1,15 +1,18 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'jquery',
     'find/idol/app/page/search/results/comparison-map',
     'find/app/page/search/results/map-view',
     'find/app/configuration',
     'backbone',
+    'underscore',
     'jasmine-jquery'
-], function(ComparisonMap, MockMapView, configuration, Backbone) {
+], function($, ComparisonMap, MockMapView, configuration, Backbone, _) {
+    'use strict';
 
     describe('Comparison Map view', function() {
         beforeEach(function() {
@@ -18,7 +21,7 @@ define([
                     enabled: true,
                     initialLocation: {
                         latitude: 51.5074,
-                        longitude:  0.1278
+                        longitude: 0.1278
                     },
                     locationFields: [{
                         displayName: 'test',
@@ -116,18 +119,18 @@ define([
                 });
 
             });
-            
+
             it('should disable the show more button when the collections are fetching', function() {
                 var $showMore = this.view.$('.location-comparison-show-more');
                 expect($showMore).toExist();
                 expect($showMore).toBeDisabled();
-            });            
-            
+            });
+
             it('should show the loading spinner when the collections are fetching', function() {
                 var $showMore = this.view.$('.location-comparison-show-more');
                 expect($showMore).toExist();
                 expect($showMore).toBeDisabled();
-            });            
+            });
         });
 
         describe('after adding a model', function() {

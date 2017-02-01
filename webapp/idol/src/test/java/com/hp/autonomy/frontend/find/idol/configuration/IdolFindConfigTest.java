@@ -43,12 +43,12 @@ public class IdolFindConfigTest {
 
     @Before
     public void setUp() {
-        idolFindConfig = new IdolFindConfig.Builder()
-                .setContent(serverConfig)
-                .setLogin(communityAuthentication)
-                .setQueryManipulation(queryManipulation)
-                .setSavedSearchConfig(savedSearchConfig)
-                .setView(viewConfig)
+        idolFindConfig = IdolFindConfig.builder()
+                .content(serverConfig)
+                .login(communityAuthentication)
+                .queryManipulation(queryManipulation)
+                .savedSearchConfig(savedSearchConfig)
+                .view(viewConfig)
                 .build();
     }
 
@@ -71,7 +71,7 @@ public class IdolFindConfigTest {
         when(savedSearchConfig.merge(any(SavedSearchConfig.class))).thenReturn(savedSearchConfig);
         when(viewConfig.merge(any(ViewConfig.class))).thenReturn(viewConfig);
 
-        final IdolFindConfig defaults = new IdolFindConfig.Builder().setContent(mock(ServerConfig.class)).build();
+        final IdolFindConfig defaults = IdolFindConfig.builder().content(mock(ServerConfig.class)).build();
         final IdolFindConfig mergedConfig = idolFindConfig.merge(defaults);
         assertEquals(serverConfig, mergedConfig.getContent());
         assertEquals(communityAuthentication, mergedConfig.getLogin());

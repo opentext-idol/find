@@ -1,10 +1,9 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 package com.hp.autonomy.frontend.find.core.configuration;
-
 
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepository;
@@ -16,9 +15,9 @@ import java.security.Principal;
 /**
  * Implements {@link AuditorAware<UserEntity>} which means it will automatically be picked up by
  * spring jpa via {@link org.springframework.data.jpa.domain.support.AuditingEntityListener}.
- * <p/>
+ *
  * Defines the current auditor, that is the user to be added to the field annotated with {@link org.springframework.data.annotation.CreatedBy}.
- * <p/>
+ *
  * Abstract so that a {@link UserEntity} can be constructed for various principals.
  */
 public abstract class AbstractFindSpringSecurityAuditorAware<P extends Principal> implements AuditorAware<UserEntity> {
@@ -44,7 +43,7 @@ public abstract class AbstractFindSpringSecurityAuditorAware<P extends Principal
     public UserEntity getCurrentAuditor() {
         final P principal = authenticationInformationRetriever.getPrincipal();
 
-        if (principal == null) {
+        if(principal == null) {
             return null;
         }
 
@@ -57,7 +56,7 @@ public abstract class AbstractFindSpringSecurityAuditorAware<P extends Principal
                 currentUser.getUid()
         );
 
-        if (persistedUser != null) {
+        if(persistedUser != null) {
             currentUser = persistedUser;
         } else {
             userRepository.save(currentUser);

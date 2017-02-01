@@ -9,9 +9,10 @@ def repository
 @Field
 def branch
 
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: ''))])
+
 node {
 	stage 'Checkout'
-	node {
 		checkout scm
 
 		sh 'git clean -ffdx' // Clean workspace: ultra-force (ff), untracked directories as well as files (d), don't use .gitignore (x)
@@ -21,10 +22,8 @@ node {
 		branch = getBranchName(gitCommit)
 
 		echo "Building ${gitCommit}, from ${repository}, branch ${branch}"
-	}
 
 	stage 'Maven Build'
-	node {
 		env.JAVA_HOME="${tool 'Java 8 OpenJDK'}"
 		env.PATH="${tool 'Maven3'}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
 
@@ -32,10 +31,8 @@ node {
 
 		// Verify is needed to run some basic integration tests but these are not the selenium tests
 		sh "mvn ${mavenArguments} -f webapp/pom.xml -Dapplication.buildNumber=${gitCommit} clean verify -P production -U -pl idol -am"
-	}
 
 	stage 'Archive output'
-	node {
 		archive 'idol/target/find.war'
 		archive 'on-prem-dist/target/find.zip'
 
@@ -44,10 +41,8 @@ node {
 
 		// These are the Jasmine tests
 		step([$class: 'JUnitResultArchiver', testResults: '**/target/jasmine-tests/TEST-*.xml'])
-	}
 
 	stage 'Artifactory'
-	node {
 		try {
 			def server = Artifactory.server "idol" // "idol" is the name of the Artifactory server configured in Jenkins
 			def artifactLocation = "applications/find/${repository}/${branch}/"
@@ -79,22 +74,17 @@ node {
 		} catch (groovy.lang.MissingPropertyException e) {
 		    echo "No Artifactory plugin installed, skipping stage"
 		}
-	}
 
     stage 'Deploy'
-    node {
         sh '''
             source /home/fenkins/ansible/hacking/env-setup
             python tools-apothecary/apothecary.py --dir /home/fenkins/app-playbook/roles/ -c /home/fenkins/tools-apothecary/apothecary.yml
             cd /home/fenkins/app-playbook
             ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook find.yml -vv -i find_hosts
         '''
-    }
 
 	stage 'Notifications'
-	node {
 		emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'
-	}
 }
 
 def getGitCommit() {

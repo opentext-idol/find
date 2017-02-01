@@ -1,7 +1,8 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'backbone',
     'jquery',
@@ -26,7 +27,7 @@ define([
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
             ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration,
             generateErrorHtml, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
-    "use strict";
+    'use strict';
 
     const SCROLL_INCREMENT = 30;
     const INFINITE_SCROLL_POSITION_PIXELS = 500;
@@ -46,7 +47,7 @@ define([
 
     return Backbone.View.extend({
         // Overridden for HoD and IDOL implementations
-        QuestionsView: null,
+        getQuestionsViewConstructor: _.constant(null),
 
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         messageTemplate: _.template('<div class="result-message span10"><%-message%></div>'),
@@ -108,8 +109,10 @@ define([
                 this.promotionsCollection = new PromotionsCollection();
             }
 
-            if (this.QuestionsView) {
-                this.questionsView = new this.QuestionsView({
+            const QuestionsView = this.getQuestionsViewConstructor();
+
+            if(QuestionsView) {
+                this.questionsView = new QuestionsView({
                     queryModel: this.queryModel,
                     loadingTracker: this.loadingTracker,
                     clearLoadingSpinner: _.bind(this.clearLoadingSpinner, this)
@@ -149,7 +152,7 @@ define([
             this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
-            if (this.questionsView) {
+            if(this.questionsView) {
                 this.questionsView.setElement(this.$('.main-results-content .answered-questions')).render();
             }
 
@@ -278,7 +281,7 @@ define([
             this.$('.main-results-content .results').toggleClass('hide', on);
             this.$('.main-results-content .results-view-error').toggleClass('hide', !on);
 
-            if (this.questionsView) {
+            if(this.questionsView) {
                 this.questionsView.$el.toggleClass('hide', on);
             }
         },
@@ -288,7 +291,7 @@ define([
                 this.$loadingSpinner.removeClass('hide');
             }
 
-            if(this.questionsView && !infiniteScroll){
+            if(this.questionsView && !infiniteScroll) {
                 this.questionsView.fetchData();
             }
 
@@ -372,7 +375,7 @@ define([
             this.sortView.remove();
             this.resultsNumberView.remove();
 
-            if (this.questionsView) {
+            if(this.questionsView) {
                 this.questionsView.remove();
             }
 

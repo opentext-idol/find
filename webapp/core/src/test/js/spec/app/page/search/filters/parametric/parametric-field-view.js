@@ -1,8 +1,7 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 
 define([
     'find/app/page/search/filters/parametric/parametric-field-view',
@@ -49,7 +48,7 @@ define([
             });
 
             it('should set the collapsed property', function() {
-                expect(this.fieldView.collapsible.collapsed).toBe(false);
+                expect(this.fieldView.collapsible.collapseModel.get('collapsed')).toBe(false);
             });
         });
 
@@ -80,7 +79,7 @@ define([
             });
 
             it('should set the collapsed property', function() {
-                expect(this.fieldView.collapsible.collapsed).toBe(true);
+                expect(this.fieldView.collapsible.collapseModel.get('collapsed')).toBe(true);
             });
         });
 
@@ -88,7 +87,8 @@ define([
             beforeEach(function() {
                 this.fieldView = new FieldView({
                     model: this.model,
-                    selectedParametricValues: new Backbone.Collection(this.model.fieldValues.where({selected: true}).map(function(valueModel) {
+                    selectedParametricValues: new Backbone.Collection(
+                        this.model.fieldValues.where({selected: true}).map(function(valueModel) {
                         return {field: this.model.id, value: valueModel.id};
                     }.bind(this))),
                     collapsed: false
@@ -106,9 +106,6 @@ define([
                 });
                 expect(this.fieldView.$el).toContainText('(3)');
             });
-
         });
-
     });
-
 });

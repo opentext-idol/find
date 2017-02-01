@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -49,14 +49,13 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T>> imple
 
     }
 
-    private T getSearch(long id) throws IllegalArgumentException {
+    private T getSearch(final long id) throws IllegalArgumentException {
         final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
         final T byIdAndUser_userId = crudRepository.findByActiveTrueAndIdAndUser_UserId(id, userId);
 
-        if (null != byIdAndUser_userId) {
+        if(null != byIdAndUser_userId) {
             return byIdAndUser_userId;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Saved search not found");
         }
     }

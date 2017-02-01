@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.bi;
 
 import org.openqa.selenium.WebElement;
@@ -9,12 +14,11 @@ import java.util.stream.Collectors;
 
 public class TopicMapConcept {
     private final WebElement entity;
-    private Double[][] boundaries;
+    private final Double[][] boundaries;
 
-
-    TopicMapConcept(WebElement element) {
+    TopicMapConcept(final WebElement element) {
         entity = element;
-        boundaries = this.getEntityCoordinates();
+        boundaries = getEntityCoordinates();
     }
 
     Double[][] getBoundaries() {
@@ -24,13 +28,14 @@ public class TopicMapConcept {
     private Double[][] getEntityCoordinates() {
         final String path = entity.getAttribute("d");
 
-        List<String> coordinatesAsStrings = new LinkedList<>(Arrays.asList(path.split("M|L|Z")));
+        final List<String> coordinatesAsStrings = new LinkedList<>(Arrays.asList(path.split("M|L|Z")));
         coordinatesAsStrings.remove("");
 
-        Double[][] boundaries = {{10000000., -1.}, {10000000., -1.}};
+        final Double[][] boundaries = {{10000000., -1.}, {10000000., -1.}};
 
-        for(String value : coordinatesAsStrings) {
-            List<Double> pair = Arrays.asList(value.split(","))
+        for(final String value : coordinatesAsStrings) {
+            //In IE coordinates are separated by a space vs. a comma in other browsers.
+            final List<Double> pair = Arrays.asList(value.trim().split(",|\\s"))
                     .stream()
                     .map(Double::parseDouble)
                     .collect(Collectors.toList());
@@ -43,11 +48,10 @@ public class TopicMapConcept {
         return boundaries;
     }
 
-    private void findBoundaryValues(final Double value, Double[] boundaries) {
+    private void findBoundaryValues(final Double value, final Double[] boundaries) {
         if(value > boundaries[1]) {
             boundaries[1] = value;
-        }
-        else if(value < boundaries[0]) {
+        } else if(value < boundaries[0]) {
             boundaries[0] = value;
         }
     }

@@ -14,9 +14,4 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 @Configuration
 @ConditionalOnProperty(value = "mock.configuration", matchIfMissing = true)
 public class TestConfiguration {
-    @ConditionalOnMissingBean
-    @Bean
-    public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
-        return new Jackson2ObjectMapperBuilder();
-    }
 }

@@ -1,11 +1,12 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'jquery'
-], function($) {
+    'jquery',
+    'underscore'
+], function($, _) {
     'use strict';
 
     // holds all previously generated modules
@@ -54,9 +55,9 @@ define([
         };
 
         var logAbandonments = function() {
-            if (abandonments != null) {
+            if(abandonments != null) {
                 _.each(abandonments, function(value, type) {
-                    if (value) {
+                    if(value) {
                         log({
                             'click-type': type,
                             search: search,
@@ -71,7 +72,7 @@ define([
 
         this.reset = function(text, abandon) {
             // allows argument to be omitted
-            if (abandon !== false) {
+            if(abandon !== false) {
                 logAbandonments();
             }
 
@@ -91,13 +92,13 @@ define([
         };
 
         this.fullPreview = function() {
-            if (position !== -1) {
+            if(position !== -1) {
                 unAbandon(clickTypes.FULL_PREVIEW);
             }
         };
 
         this.original = function() {
-            if (position !== -1) {
+            if(position !== -1) {
                 unAbandon(clickTypes.ORIGINAL);
             }
         };
@@ -116,12 +117,12 @@ define([
 
             delete cache[id];
 
-            if (this === active) {
+            if(this === active) {
                 active = defaultModule;
             }
 
             // we've logged these abandonments, so don't log them again on unload
-            if (this !== defaultModule) {
+            if(this !== defaultModule) {
                 $(window).off('unload', logAbandonments);
             }
         }
@@ -130,9 +131,9 @@ define([
     defaultModule = new EventsModule();
 
     return function(id) {
-        if (id) {
+        if(id) {
             // if we've not seen this id before, create a new module
-            if (!cache[id]) {
+            if(!cache[id]) {
                 cache[id] = new EventsModule(id);
             }
 
@@ -140,11 +141,10 @@ define([
         }
 
         // if no active module, return the default module
-        if (!active) {
+        if(!active) {
             active = defaultModule;
         }
 
         return active;
     };
-
 });

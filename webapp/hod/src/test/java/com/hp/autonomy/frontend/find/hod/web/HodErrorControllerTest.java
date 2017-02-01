@@ -40,7 +40,7 @@ public class HodErrorControllerTest extends AbstractErrorControllerTest<HodError
                 .landingPageUrl(new URL("https://search.havenondemand.com"))
                 .build();
 
-        final HodFindConfig config = new HodFindConfig.Builder().setHsod(hsodConfig).build();
+        final HodFindConfig config = HodFindConfig.builder().hsod(hsodConfig).build();
         when(configService.getConfig()).thenReturn(config);
     }
 

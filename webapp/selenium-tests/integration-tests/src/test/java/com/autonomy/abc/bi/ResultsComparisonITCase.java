@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
@@ -24,9 +29,11 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
-import static org.openqa.selenium.lift.match.DisplayedMatcher.displayed;
 
 //The result comparisons for non-list view
 @Role(UserRole.BIFHI)
@@ -43,9 +50,9 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
     @Before
     public void setUp() {
-        findService = (BIFindService) getApplication().findService();
+        findService = (BIFindService)getApplication().findService();
         savedSearchService = getApplication().savedSearchService();
-        elementFactory = (BIIdolFindElementFactory) getElementFactory();
+        elementFactory = (BIIdolFindElementFactory)getElementFactory();
         findPage = elementFactory.getFindPage();
         findService.searchAnyView("careful now");
 
@@ -55,7 +62,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
             savedSearchService.deleteAll();
 
             elementFactory.getConceptsPanel().removeAllConcepts();
-        } catch (final TimeoutException ignored) {
+        } catch(final TimeoutException ignored) {
             //no-op
         }
         elementFactory.getTopicMap().waitForMapLoaded();
@@ -66,12 +73,11 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         findPage = elementFactory.getFindPage();
         getDriver().get(getConfig().getAppUrl(getApplication()));
         getElementFactory().getFindPage().waitUntilDatabasesLoaded();
-        findPage.waitUntilSearchTabsLoaded();
-        savedSearchService.deleteAll();
+        savedSearchService.waitForSomeTabsAndDelete();
     }
 
     private TopicMapView compareAndGetTopicMap(final String firstSearch, final String secondSearch) {
-        saveTwoSearches(firstSearch,secondSearch);
+        saveTwoSearches(firstSearch, secondSearch);
         savedSearchService.compareCurrentWith(firstSearch);
 
         Waits.loadOrFadeWait();
@@ -94,7 +100,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         try {
             mapEntity.click();
             fail("Map should have reloaded but did not");
-        } catch (Exception e) {
+        } catch(final Exception e) {
             verifyThat("Map reloaded after using slider", mapView.topicMapVisible());
         }
     }
@@ -115,14 +121,14 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-402")
     public void testCannotCompareUnsavedSearchWithSelf() {
-        saveTwoSearches("meep","eep");
+        saveTwoSearches("meep", "eep");
 
         savedSearchService.openNewTab();
         final ComparisonModal modal = findPage.openCompareModal();
 
         final List<String> possibleComparees = modal.getItems();
         verifyThat("2 items to compare with", possibleComparees, hasSize(2));
-        verifyThat("Does not contain itself",possibleComparees, not(contains("New Search")));
+        verifyThat("Does not contain itself", possibleComparees, not(contains("New Search")));
         modal.close();
     }
 
@@ -136,8 +142,8 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
 
         final String clickedCluster = mapView.clickNthClusterHeading(1);
         verifyThat("Clicking has revealed child concepts",
-                mapView.conceptClusterNames(),
-                not(hasItem(clickedCluster.toLowerCase())));
+                   mapView.conceptClusterNames(),
+                   not(hasItem(clickedCluster.toLowerCase())));
     }
 
     @Test
@@ -154,9 +160,8 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         final TopicMapView mapView = elementFactory.getTopicMap();
         mapView.waitForMapLoaded();
 
-        ResultsComparisonView resultsComparison = elementFactory.getResultsComparison();
-        TopicMapView map = resultsComparison.topicMapView(AppearsInTopicMap.BOTH);
+        final ResultsComparisonView resultsComparison = elementFactory.getResultsComparison();
+        final TopicMapView map = resultsComparison.topicMapView(AppearsInTopicMap.BOTH);
         verifyThat("Map not present", !map.topicMapPresent());
     }
-
 }

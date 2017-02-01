@@ -1,8 +1,10 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'jquery',
     'backbone',
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/comparisons',
@@ -12,10 +14,11 @@ define([
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
-    'text!find/idol/templates/comparison/topic-map-comparison-view.html'
-
-], function(Backbone, i18n, comparisonsI18n, stateTokenStrategy, searchDataUtil, EntityCollection, TopicMapView,
-            ResultsViewContainer, ResultsViewSelection, html) {
+    'text!find/idol/templates/comparison/topic-map-comparison-view.html',
+    'underscore'
+], function($, Backbone, i18n, comparisonsI18n, stateTokenStrategy, searchDataUtil, EntityCollection,
+            TopicMapView, ResultsViewContainer, ResultsViewSelection, html, _) {
+    'use strict';
 
     return Backbone.View.extend({
         className: 'service-view-container',
@@ -26,7 +29,7 @@ define([
             var bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
             var firstQueryModel = this.createQueryModel(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
             var secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
-            
+
             var resultsViews = [
                 {
                     Constructor: TopicMapView,

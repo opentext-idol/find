@@ -1,12 +1,13 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.base.Role;
-import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.error.Errors.Find;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFind;
@@ -18,7 +19,12 @@ import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.NumericWidgetService;
 import com.autonomy.abc.selenium.find.results.ListView;
-import com.autonomy.abc.selenium.find.save.*;
+import com.autonomy.abc.selenium.find.save.SavedSearchPanel;
+import com.autonomy.abc.selenium.find.save.SavedSearchService;
+import com.autonomy.abc.selenium.find.save.SearchOptionsBar;
+import com.autonomy.abc.selenium.find.save.SearchTab;
+import com.autonomy.abc.selenium.find.save.SearchTabBar;
+import com.autonomy.abc.selenium.find.save.SearchType;
 import com.autonomy.abc.selenium.query.Query;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
@@ -39,7 +45,13 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.checked;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 @Role(UserRole.BIFHI)
 public class SavedSearchITCase extends IdolFindTestBase {
@@ -68,7 +80,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
     @After
     public void tearDown() {
-        saveService.deleteAll();
+        saveService.waitForSomeTabsAndDelete();
     }
 
     @Test
@@ -133,14 +145,14 @@ public class SavedSearchITCase extends IdolFindTestBase {
         Waits.loadOrFadeWait();
         final SearchOptionsBar options = saveService.nameSavedSearch(searchName, type);
         options.saveConfirmButton().click();
-        assertThat(options.getSaveErrorMessage(), isError(Errors.Find.DUPLICATE_SEARCH));
+        assertThat(options.getSaveErrorMessage(), isError(Find.DUPLICATE_SEARCH));
         options.cancelSave();
     }
 
     @Test
     public void testSavedSearchVisibleInNewSession() {
         findService.search(new Query("live forever"));
-        ListView results = elementFactory.getListView();
+        final ListView results = elementFactory.getListView();
         results.waitForResultsToLoad();
 
         final FilterPanel filterPanel = elementFactory.getFilterPanel();
@@ -210,8 +222,8 @@ public class SavedSearchITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-269")
     public void testSearchesWithNumericFilters() {
-        final NumericWidgetService widgetService = ((BIIdolFind) getApplication()).numericWidgetService();
-        DriverUtil.clickAndDrag(100, widgetService.searchAndSelectNthGraph(0, "saint").graph(), getDriver());
+        final NumericWidgetService widgetService = ((BIIdolFind)getApplication()).numericWidgetService();
+        DriverUtil.clickAndDrag(100, widgetService.searchAndSelectNthGraph(0, "saint", getDriver()).graph(), getDriver());
 
         elementFactory.getListView().waitForResultsToLoad();
         saveService.saveCurrentAs("saaaaved", SearchType.QUERY);
@@ -255,27 +267,12 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat("Save button is disabled", !searchOptions.saveConfirmButton().isEnabled());
     }
 
-    private static class ModifiedMatcher extends TypeSafeMatcher<SearchTab> {
-        private static final Matcher<SearchTab> INSTANCE = new ModifiedMatcher();
-
-        @Override
-        protected boolean matchesSafely(final SearchTab searchTab) {
-            return searchTab.isNew();
-        }
-
-        @Override
-        public void describeTo(final Description description) {
-            description.appendText("a modified tab");
-        }
-    }
-
-
     @Test
     public void testDeletingATab() {
         saveService.deleteAll();
-        saveManySearchesWithSameNameAsSearchText(new String[] {"yellow", "red"}, SearchType.QUERY);
+        saveManySearchesWithSameNameAsSearchText(new String[]{"yellow", "red"}, SearchType.QUERY);
 
-        SearchTabBar bar = elementFactory.getSearchTabBar();
+        final SearchTabBar bar = elementFactory.getSearchTabBar();
         final String title = bar.currentTab().getTitle();
 
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
@@ -287,14 +284,28 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
     private void saveManySearchesWithSameNameAsSearchText(final String[] searchNames, final SearchType saveType) {
         boolean firstSearch = true;
-        for (final String name : searchNames) {
-            if (!firstSearch){
+        for(final String name : searchNames) {
+            if(!firstSearch) {
                 saveService.openNewTab();
             }
             firstSearch = false;
             findService.searchAnyView(name);
             elementFactory.getFindPage().waitUntilSaveButtonsActive();
             saveService.saveCurrentAs(name, saveType);
+        }
+    }
+
+    private static class ModifiedMatcher extends TypeSafeMatcher<SearchTab> {
+        private static final Matcher<SearchTab> INSTANCE = new ModifiedMatcher();
+
+        @Override
+        protected boolean matchesSafely(final SearchTab searchTab) {
+            return searchTab.isNew();
+        }
+
+        @Override
+        public void describeTo(final Description description) {
+            description.appendText("a modified tab");
         }
     }
 }

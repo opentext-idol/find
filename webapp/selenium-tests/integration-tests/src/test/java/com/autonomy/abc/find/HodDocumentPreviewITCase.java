@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.HodFindTestBase;
@@ -40,17 +45,17 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
     }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
     }
 
     @Test
     @ResolvedBug("CSA-1767 - footer not hidden properly")
-    public void testViewDocumentsOpenFromFind(){
-        ListView results = findService.search("Review");
+    public void testViewDocumentsOpenFromFind() {
+        final ListView results = findService.search("Review");
 
-        for(final FindResult result : results.getResults(5)){
+        for(final FindResult result : results.getResults(5)) {
             final DocumentViewer docViewer = result.openDocumentPreview();
             verifyDocumentViewer(docViewer);
             docViewer.close();
@@ -77,8 +82,9 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
 
     @Test
     @ResolvedBug("CCUK-3647")
-    public void testMessageWhenRunOutOfResults(){
-        ListView results = findService.search(new Query("connectors"));
+    //TODO possiblity that scrolling isn't working on vm
+    public void testMessageWhenRunOutOfResults() {
+        final ListView results = findService.search(new Query("connectors"));
         getElementFactory().getFilterPanel().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter("Site Search"));
 
@@ -94,9 +100,9 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
     @Test
     @ResolvedBug("CSA-1767 - footer not hidden properly")
     @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
-    public void testDocumentPreview(){
+    public void testDocumentPreview() {
         final Index index = new Index("fifa");
-        ListView results = findService.search(new Query("document preview"));
+        final ListView results = findService.search(new Query("document preview"));
         getElementFactory().getFilterPanel().indexesTreeContainer().expand();
         findPage.filterBy(new IndexFilter(index));
 
@@ -119,18 +125,18 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
 
     @Test
     @ResolvedBug("FIND-497")
-    public void testOpenDocumentFromSearch(){
+    public void testOpenDocumentFromSearch() {
         final Window original = getWindow();
 
-        ListView results = findService.search("Window");
+        final ListView results = findService.search("Window");
 
-        for(int i = 1; i <= 5; i++){
+        for(int i = 1; i <= 5; i++) {
             final FindResult result = results.getResult(i);
             final String reference = result.getReference();
             result.title().click();
-            assertThat("Link does not contain 'undefined'",result.link(),not(containsString("undefined")));
+            assertThat("Link does not contain 'undefined'", result.link(), not(containsString("undefined")));
             final Window newWindow = getMainSession().switchWindow(getMainSession().countWindows() - 1);
-            verifyThat(getDriver().getCurrentUrl(), containsString(reference));
+            verifyThat(getDriver().getCurrentUrl(), containsString(reference.split("://")[1]));
 
             if(!newWindow.equals(original)) {
                 newWindow.close();

@@ -15,11 +15,19 @@ import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
@@ -103,15 +111,22 @@ public class SunburstITCase extends IdolFindTestBase {
 
     @Test
     public void testHoveringOverSegmentCausesTextToChange() {
-        results = search("elephant");
+        results = search("b");
+        getElementFactory().getFindPage().waitForParametricValuesToLoad();
+        //If this test is taking too long, try changing this to avoid filter category w/ 1000+ filters
+        final int indexOfFilterCategory = 1;
 
-        final String filterCategory = filters().formattedNameOfNonZeroField(0);
+        final String filterCategory = filters().formattedNameOfNonZeroField(indexOfFilterCategory);
         final List<String> bigEnough = getFilterResultsBigEnoughToDisplay(filterCategory);
+        results.parametricSelectionDropdown(1).select(filterCategory);
+        results.waitForSunburst();
+        Waits.loadOrFadeWait();
 
         for (final WebElement segment : results.findSunburstSegments()) {
             results.segmentHover(segment);
+
             final String name = results.getSunburstCentreName();
-            verifyThat(name, not(isEmptyOrNullString()));
+            verifyThat(name + " is visible/present", name, not(isEmptyOrNullString()));
             verifyThat(name, isIn(bigEnough));
         }
     }

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
@@ -34,9 +39,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
-import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.*;
-import static org.hamcrest.Matchers.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.disabled;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasClass;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 /**
  * Because comparisons are so slow, these rely on quite specific data
@@ -58,7 +73,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
 
     @Override
     public BIIdolFindElementFactory getElementFactory() {
-        return (BIIdolFindElementFactory) super.getElementFactory();
+        return (BIIdolFindElementFactory)super.getElementFactory();
     }
 
     @Before
@@ -66,8 +81,6 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         findService = getApplication().findService();
         savedSearchService = getApplication().savedSearchService();
         elementFactory = getElementFactory();
-
-        savedSearchService.waitForSomeTabsAndDelete();
 
         findPage = getElementFactory().getFindPage();
         findPage.goToListView();
@@ -172,7 +185,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         try {
             // server appears to cancel comparison request after 90s
             modal.waitForComparisonToLoad(100);
-        } catch (final TimeoutException e) {
+        } catch(final TimeoutException e) {
             thrown = e;
         }
         assertThat(thrown, nullValue());
@@ -226,7 +239,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         final String firstTitle = listView.getResult(1).getTitleString();
 
         savedSearchService.compareCurrentWith(comparedTabName);
-        ResultsComparisonView resultsComparison = elementFactory.getResultsComparison();
+        final ResultsComparisonView resultsComparison = elementFactory.getResultsComparison();
         resultsComparison.goToListView();
 
         resultsComparison.resultsView(AppearsIn.THIS_ONLY)
@@ -289,8 +302,6 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
 
         verifyThat(resultsComparison.getResults(AppearsIn.THIS_ONLY).get(0).getTitleString(), not(originalFirstResult));
     }
-
-
 
     private void searchAndSave(final Query query, final String saveAs) {
         searchAndSave(query, saveAs, SearchType.QUERY);

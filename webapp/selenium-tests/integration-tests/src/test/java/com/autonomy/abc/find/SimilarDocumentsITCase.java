@@ -91,7 +91,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
     @Test
     public void testPreviewSeed() throws InterruptedException {
-        findService.search(new Query("bart"));
+        findService.search(new Query("moon"));
 
         for (int i = 1; i <= 5; i++) {
             Waits.loadOrFadeWait();

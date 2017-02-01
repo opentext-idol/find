@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.results;
 
 import com.autonomy.abc.selenium.find.Container;
@@ -18,9 +23,9 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
 
     public RelatedConceptsPanel(final WebDriver driver) {
         this.driver = driver;
-        this.panel = Container.RIGHT.findUsing(driver);
+        panel = Container.RIGHT.findUsing(driver);
     }
-    
+
     @Override
     public Iterator<WebElement> iterator() {
         return relatedConcepts().iterator();
@@ -40,8 +45,8 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
         return panel.findElements(By.cssSelector("a[data-entity-cluster]"));
     }
 
-    public List<WebElement> membersOfCluster(int i) {
-        WebElement container = ElementUtil.ancestor(relatedConceptsClusters().get(i),2);
+    public List<WebElement> membersOfCluster(final int i) {
+        final WebElement container = ElementUtil.ancestor(relatedConceptsClusters().get(i), 2);
         return container.findElements(By.cssSelector(".entity-text"));
     }
 
@@ -66,11 +71,10 @@ public class RelatedConceptsPanel implements Iterable<WebElement> {
     }
 
     private void waitForPopoverToLoad(final WebElement popover) {
-        new WebDriverWait(driver,10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
+        new WebDriverWait(driver, 10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
     }
 
     private void waitForRelatedConceptsToLoad() {
         Container.RIGHT.waitForLoad(driver);
     }
-
 }

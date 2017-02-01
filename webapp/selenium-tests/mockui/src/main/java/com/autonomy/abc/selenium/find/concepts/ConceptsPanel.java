@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -10,7 +10,13 @@ import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.HPRemovable;
 import com.hp.autonomy.frontend.selenium.element.Removable;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -26,7 +32,6 @@ import java.util.stream.Collectors;
 public class ConceptsPanel {
     private static final String SELECTED_RELATED_CONCEPT_CLASS = "selected-related-concept";
     final By POPOVER_LOCATOR = By.cssSelector(".selected-concept-container .popover");
-
 
     private final WebElement panel;
     private final WebDriver driver;
@@ -59,7 +64,7 @@ public class ConceptsPanel {
      */
     public List<String> selectedConceptHeaders() {
         return selectedConcepts().stream()
-                .map(((Function<WebElement, String>) WebElement::getText).andThen(String::toLowerCase))
+                .map(((Function<WebElement, String>)WebElement::getText).andThen(String::toLowerCase))
                 .collect(Collectors.toList());
     }
 
@@ -83,7 +88,7 @@ public class ConceptsPanel {
                 .filter(element -> element.getText().toLowerCase().contains(lowerCaseHeader))
                 .findFirst();
 
-        if (match.isPresent()) {
+        if(match.isPresent()) {
             return new HPRemovable(match.get(), driver);
         } else {
             throw new IllegalStateException("Concept not found");
@@ -96,7 +101,7 @@ public class ConceptsPanel {
     public void removeFirstConceptCluster() {
         final List<Removable> removables = selectedConceptRemovables();
 
-        if (removables.isEmpty()) {
+        if(removables.isEmpty()) {
             throw new IllegalStateException("There are no concepts to remove");
         } else {
             removables.get(0).removeAndWait();
@@ -107,10 +112,10 @@ public class ConceptsPanel {
         selectedConceptRemovables().stream().forEach(Removable::removeAndWait);
     }
 
-    public EditPopover editPopover(Removable concept) {
+    public EditPopover editPopover(final Removable concept) {
         concept.click();
 
-        new WebDriverWait(driver,5)
+        new WebDriverWait(driver, 5)
                 .withMessage("Popover did not open")
                 .until(ExpectedConditions.visibilityOfElementLocated(POPOVER_LOCATOR));
 
@@ -119,10 +124,9 @@ public class ConceptsPanel {
 
     public EditPopover editConcept(final int i) {
         //Necessary due to tooltip
-        try{
+        try {
             return editPopover(selectedConceptRemovables().get(i));
-        }
-        catch (NoSuchElementException | TimeoutException | StaleElementReferenceException e) {
+        } catch(NoSuchElementException | TimeoutException | StaleElementReferenceException e) {
             return editPopover(selectedConceptRemovables().get(i));
         }
     }
@@ -138,12 +142,12 @@ public class ConceptsPanel {
     }
 
     public class EditPopover extends AppElement {
-        private FormInput editBox;
+        private final FormInput editBox;
 
         private EditPopover(final WebElement element) {
-            super(element,driver);
-            editBox =  new FormInput(findElement(By.cssSelector(".edit-concept-form .form-group textarea")), driver);
-        };
+            super(element, driver);
+            editBox = new FormInput(findElement(By.cssSelector(".edit-concept-form .form-group textarea")), driver);
+        }
 
         public void cancelEdit() {
             findElement(By.cssSelector(".edit-concept-cancel-button")).click();
@@ -166,7 +170,7 @@ public class ConceptsPanel {
         }
 
         public boolean containsValue(final String value) {
-            return editBox.getValue().replaceAll("\\s+","").contains(value);
+            return editBox.getValue().replaceAll("\\s+", "").contains(value);
         }
 
         public void setValue(final String value) {
@@ -177,12 +181,11 @@ public class ConceptsPanel {
             editBox.clear();
             final WebElement box = editBox.getElement();
 
-            for(String concept : concepts) {
+            for(final String concept : concepts) {
                 box.sendKeys(concept);
                 box.sendKeys(Keys.ENTER);
             }
             saveEdit();
         }
     }
-
 }

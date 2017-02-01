@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.filters;
 
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -32,10 +37,18 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
     }
 
     public static ParametricFilterModal getParametricModal(final WebDriver driver) {
-        final WebElement $el = new WebDriverWait(driver, 30)
+        final WebElement $el = new WebDriverWait(driver, 40)
                 .withMessage("Parametric filter modal did not open within 30 seconds ")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
         return new ParametricFilterModal($el, driver);
+    }
+
+    private static void waitUntilModalGone(final WebDriver driver) {
+        new WebDriverWait(driver, 30).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
+    }
+
+    private static boolean isBigEnough(final int thisCount, final int totalResults) {
+        return (double)thisCount / totalResults >= 0.05;
     }
 
     public boolean loadingIndicatorPresent() {
@@ -43,7 +56,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
     }
 
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),15).withMessage("loading indicator to disappear").until(new ExpectedCondition<Boolean>() {
+        new WebDriverWait(getDriver(), 15).withMessage("loading indicator to disappear").until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(final WebDriver driver) {
                 return !loadingIndicatorPresent();
@@ -53,8 +66,8 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
     public void cancel() {
         findElement(new Locator()
-            .withTagName("button")
-            .containingText("Cancel")
+                            .withTagName("button")
+                            .containingText("Cancel")
         ).click();
 
         waitUntilModalGone(driver);
@@ -62,8 +75,8 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
     public void apply() {
         findElement(new Locator()
-            .withTagName("button")
-            .containingText("Apply")
+                            .withTagName("button")
+                            .containingText("Apply")
         ).click();
         waitUntilModalGone(driver);
     }
@@ -101,23 +114,26 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         int previousNumber = -1;
         int twicePreviousNumber = -1;
 
-        while( i < limit && filtersWithNoResults(pane) < 1 && twicePreviousNumber < numberOfCategories) {
+        while(i < limit && filtersWithNoResults(pane) < 1 && twicePreviousNumber < numberOfCategories) {
             DriverUtil.scrollToBottom(driver);
             twicePreviousNumber = previousNumber;
             previousNumber = numberOfCategories;
             numberOfCategories = pane.findElements(By.cssSelector(".checkbox.parametric-field-label")).size();
             i++;
         }
-        if( i >= limit ) {
+        if(i >= limit) {
             LOGGER.info("Loop reached limit of " + limit + " , " +
-                    "but if there is v large number of categories the limit may need to be higher");
+                                "but if there is v large number of categories the limit may need to be higher");
         }
     }
 
     private int filtersWithNoResults(final WebElement pane) {
-        return pane.findElements(By.xpath(".//*[contains(@class, 'checkbox') and contains(@class, 'parametric-field-label') and contains(.,'(0)')]")).size();
+        return pane.findElements(
+                By.xpath(
+                        ".//*[contains(@class, 'checkbox') and " +
+                                "contains(@class, 'parametric-field-label') and contains(.,'(0)')]"
+                )).size();
     }
-
 
     public List<WebElement> allFilters() {
         return findElements(By.cssSelector(".checkbox.parametric-field-label"));
@@ -131,29 +147,31 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
     public List<String> checkedFiltersAllPanes() {
         final List<String> allCheckedFilters = new ArrayList<>();
-        for (final WebElement tab : tabs()) {
+        for(final WebElement tab : tabs()) {
             tab.click();
-            allCheckedFilters.addAll(ElementUtil.getTexts(activePane().findElements(By.cssSelector(".icheckbox-hp.checked + span"))));
+            allCheckedFilters.addAll(ElementUtil.getTexts(activePane().findElements(
+                    By.cssSelector(".icheckbox-hp.checked + span")))
+            );
         }
         return allCheckedFilters;
     }
 
+    @Override
     public Iterator<ParametricModalCheckbox> iterator() {
         return values().iterator();
     }
 
-    public List<ParametricModalCheckbox> values(){
+    public List<ParametricModalCheckbox> values() {
         return activePaneFilterList().stream().map(ParametricModalCheckbox::new).collect(Collectors.toList());
     }
 
-    private int totalResultsInPane(final Iterable<ParametricModalCheckbox> checkboxes){
+    private int totalResultsInPane(final Iterable<ParametricModalCheckbox> checkboxes) {
         int totalResults = 0;
 
-        for (final ParametricModalCheckbox checkbox: checkboxes){
-            if (checkbox.getResultsCount()!=0) {
+        for(final ParametricModalCheckbox checkbox : checkboxes) {
+            if(checkbox.getResultsCount() != 0) {
                 totalResults += checkbox.getResultsCount();
-            }
-            else{
+            } else {
                 break;
             }
         }
@@ -164,11 +182,10 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         final Iterable<ParametricModalCheckbox> checkboxes = values();
         int count = 0;
 
-        for (final ParametricModalCheckbox checkbox : checkboxes) {
-            if(checkbox.getResultsCount()!=0) {
+        for(final ParametricModalCheckbox checkbox : checkboxes) {
+            if(checkbox.getResultsCount() != 0) {
                 count++;
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -176,28 +193,20 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         return count;
     }
 
-    public List<String> expectedParametricValues(){
+    public List<String> expectedParametricValues() {
         final Iterable<ParametricModalCheckbox> checkboxes = values();
         final List<String> expected = new ArrayList<>();
 
-        int totalResults = totalResultsInPane(checkboxes);
+        final int totalResults = totalResultsInPane(checkboxes);
 
-        for (final ParametricModalCheckbox checkbox : checkboxes) {
+        for(final ParametricModalCheckbox checkbox : checkboxes) {
             final int thisCount = checkbox.getResultsCount();
-            if ((expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) && thisCount!=0) {
+            if((expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) && thisCount != 0) {
                 expected.add(checkbox.getName());
             } else {
                 break;
             }
         }
         return expected;
-    }
-
-    private static void waitUntilModalGone(final WebDriver driver) {
-        new WebDriverWait(driver,5).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
-    }
-
-    private static boolean isBigEnough(final int thisCount, final int totalResults) {
-        return (double) thisCount /totalResults >= 0.05;
     }
 }
