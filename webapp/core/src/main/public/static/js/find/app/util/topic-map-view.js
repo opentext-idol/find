@@ -33,7 +33,7 @@ define([
                 hideLegend: false,
                 skipAnimation: false,
                 textFadeStartDelay: 0,
-                textFadeEndDelay: 100,
+                textFadeMaxDelay: 100,
                 textFadeDuration: 100,
                 animationDelay: 5,
                 animationStepIncrement: 3,

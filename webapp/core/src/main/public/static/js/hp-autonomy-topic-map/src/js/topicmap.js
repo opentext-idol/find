@@ -61,9 +61,11 @@
          * @param {number} [options.animationStepIncrement=1]
          *      How many layout calculation steps to take before each redraw when animating.
          * @param {number} [options.textFadeStartDelay=300]
-         *      The time (in ms) to wait after node animation completes before showing the text of the first node.
-         * @param {number} [options.textFadeEndDelay=3000]
-         *      The time (in ms) to wait after node animation completes before showing the text of the last node.
+         *      After node animation completes, we fade in the text, starting from the first node.
+         *      textFadeStartDelay controls the delay (in ms) between starting to fade in each text node.
+         * @param {number} [options.textFadeMaxDelay=3000]
+         *      If there are many nodes, textFadeStartDelay may take a long time to fade in all the text, so
+         *      textFadeMaxDelay puts an maximum limit on the time before fading in all the text (in ms).
          * @param {number} [options.textFadeDuration=1000]
          *      The time (in ms) the text for a node should take to fade in.
          * @param {external:jQuery.external:fn.topicmap~onLeafClick} [options.onLeafClick]
@@ -87,7 +89,7 @@
          *      <pre><code>
          $('#paper').topicmap({
     textFadeStartDelay: 0,
-    textFadeEndDelay: 100,
+    textFadeMaxDelay: 100,
     textFadeDuration: 100,
     animationDelay: 5,
     animationStepIncrement: 3
@@ -384,7 +386,7 @@
         var minAreaSize = options.minAreaSize;
         var enforceLabelBounds = options.enforceLabelBounds;
         var textFadeStartDelay = _.isNumber(options.textFadeStartDelay) ? options.textFadeStartDelay : 300;
-        var textFadeEndDelay = _.isNumber(options.textFadeEndDelay) ? options.textFadeEndDelay : 3000;
+        var textFadeMaxDelay = _.isNumber(options.textFadeMaxDelay) ? options.textFadeMaxDelay : 3000;
         var textFadeDuration = _.isNumber(options.textFadeDuration) ? options.textFadeDuration : 1000;
         var animationDelay = options.animationDelay || 25;
         var animationStepIncrement = options.animationStepIncrement || 1;
@@ -1047,7 +1049,7 @@
                         setTimeout(function(){
                             for (depth = Math.min(2, maxDepth); depth >= 1; --depth) {
                                 var polygons = depthPolyMeta[depth].polygons;
-                                var baseDelay = Math.min(textFadeStartDelay, textFadeEndDelay / polygons.length);
+                                var baseDelay = Math.min(textFadeStartDelay, textFadeMaxDelay / polygons.length);
                                 depthPolyMeta[depth].polygons.forEach(function (node, nodeIdx) {
                                     node.animating = true;
 
