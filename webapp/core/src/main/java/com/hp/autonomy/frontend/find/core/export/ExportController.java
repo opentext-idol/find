@@ -607,9 +607,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                     picture.setAnchor(new Rectangle2D.Double(xCursor, yCursor + thumbnailOffset + thumbMargin, thumbW, thumbH));
                     contentPara.setLeftMargin(thumbW);
                 }
-                catch(Exception e) {
+                catch(RuntimeException e) {
                     // if there's any errors, we'll just ignore the image
-                    e.printStackTrace();
                 }
             }
 
