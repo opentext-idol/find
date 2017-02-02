@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesControllerTest;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.hod.beanconfiguration.HavenSearchHodConfiguration;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @SpringBootTest(classes = HavenSearchHodConfiguration.class, properties = {"mock.authentication=false", "mock.authenticationRetriever=false"}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class HodParametricValuesControllerTest extends AbstractParametricValuesControllerTest<HodParametricValuesController, HodQueryRestrictions, HodParametricRequest, ResourceIdentifier, HodErrorException> {
+public class HodParametricValuesControllerTest extends AbstractParametricValuesControllerTest<HodParametricValuesController, HodQueryRestrictions, HodParametricRequest, ResourceName, HodErrorException> {
     @Mock
     private HodParametricValuesService hodParametricValuesService;
     @Mock

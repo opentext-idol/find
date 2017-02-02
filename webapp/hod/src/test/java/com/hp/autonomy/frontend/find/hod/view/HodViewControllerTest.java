@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.hod.view;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerTest;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.hod.view.HodViewRequest;
@@ -34,7 +34,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HodViewControllerTest extends AbstractViewControllerTest<HodViewController, HodViewRequest, ResourceIdentifier, HodErrorException> {
+public class HodViewControllerTest extends AbstractViewControllerTest<HodViewController, HodViewRequest, ResourceName, HodErrorException> {
     @Mock
     private HodViewServerService hodViewServerService;
     @Mock
@@ -57,8 +57,8 @@ public class HodViewControllerTest extends AbstractViewControllerTest<HodViewCon
     }
 
     @Override
-    protected ResourceIdentifier getSampleDatabase() {
-        return ResourceIdentifier.WIKI_ENG;
+    protected ResourceName getSampleDatabase() {
+        return ResourceName.WIKI_ENG;
     }
 
     @Test

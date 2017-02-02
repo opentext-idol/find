@@ -6,20 +6,9 @@
 package com.hp.autonomy.frontend.find.hod.search;
 
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentsControllerTest;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
-import com.hp.autonomy.searchcomponents.hod.search.HodGetContentRequest;
-import com.hp.autonomy.searchcomponents.hod.search.HodGetContentRequestBuilder;
-import com.hp.autonomy.searchcomponents.hod.search.HodGetContentRequestIndex;
-import com.hp.autonomy.searchcomponents.hod.search.HodGetContentRequestIndexBuilder;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
-import com.hp.autonomy.searchcomponents.hod.search.HodSuggestRequest;
-import com.hp.autonomy.searchcomponents.hod.search.HodSuggestRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.search.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +20,7 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HodDocumentsControllerTest extends AbstractDocumentsControllerTest<HodQueryRequest, HodSuggestRequest, HodGetContentRequest, ResourceIdentifier, HodQueryRestrictions, HodGetContentRequestIndex, HodSearchResult, HodErrorException> {
+public class HodDocumentsControllerTest extends AbstractDocumentsControllerTest<HodQueryRequest, HodSuggestRequest, HodGetContentRequest, ResourceName, HodQueryRestrictions, HodGetContentRequestIndex, HodSearchResult, HodErrorException> {
     @Mock
     private HodDocumentsService hodDocumentsService;
 
@@ -99,7 +88,7 @@ public class HodDocumentsControllerTest extends AbstractDocumentsControllerTest<
 
         documentsController = new HodDocumentsController(hodDocumentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory);
         documentsService = hodDocumentsService;
-        databaseType = ResourceIdentifier.class;
+        databaseType = ResourceName.class;
     }
 
     @Override

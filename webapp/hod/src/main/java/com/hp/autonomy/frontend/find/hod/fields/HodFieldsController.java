@@ -9,7 +9,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.hod.fields.HodFieldsRequest;
@@ -61,7 +61,7 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
 
     @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<TagName> getParametricFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases) throws HodErrorException {
+    public List<TagName> getParametricFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceName> databases) throws HodErrorException {
         return getParametricFields(fieldsRequestBuilderFactory.getObject()
                 .databases(databases)
                 .build());
@@ -69,7 +69,7 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
 
     @RequestMapping(value = GET_PARAMETRIC_NUMERIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<FieldAndValueDetails> getParametricNumericFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases) throws HodErrorException {
+    public List<FieldAndValueDetails> getParametricNumericFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceName> databases) throws HodErrorException {
         return getParametricNumericFields(fieldsRequestBuilderFactory.getObject()
                 .databases(databases)
                 .build());
@@ -77,7 +77,7 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
 
     @RequestMapping(value = GET_PARAMETRIC_DATE_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<FieldAndValueDetails> getParametricDateFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases) throws HodErrorException {
+    public List<FieldAndValueDetails> getParametricDateFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceName> databases) throws HodErrorException {
         return getParametricDateFields(fieldsRequestBuilderFactory.getObject()
                 .databases(databases)
                 .build());

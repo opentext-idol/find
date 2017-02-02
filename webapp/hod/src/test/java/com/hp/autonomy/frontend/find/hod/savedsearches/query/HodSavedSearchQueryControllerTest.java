@@ -6,24 +6,17 @@
 package com.hp.autonomy.frontend.find.hod.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryControllerTest;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
+import com.hp.autonomy.searchcomponents.hod.search.*;
 import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
-public class HodSavedSearchQueryControllerTest extends SavedQueryControllerTest<HodQueryRequest, ResourceIdentifier, HodQueryRestrictions, HodSearchResult, HodErrorException> {
+public class HodSavedSearchQueryControllerTest extends SavedQueryControllerTest<HodQueryRequest, ResourceName, HodQueryRestrictions, HodSearchResult, HodErrorException> {
     @Mock
     private HodDocumentsService hodDocumentsService;
 

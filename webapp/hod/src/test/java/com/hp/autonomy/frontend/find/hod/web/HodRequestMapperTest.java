@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.hod.web;
 
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.frontend.find.core.web.RequestMapperTest;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Sort;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
 import com.hp.autonomy.searchcomponents.hod.requests.HodRequestBuilderConfiguration;
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNull;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @SpringBootTest(classes = HodRequestBuilderConfiguration.class)
-public class HodRequestMapperTest extends RequestMapperTest<HodQueryRequest, HodQueryRestrictions, ResourceIdentifier> {
+public class HodRequestMapperTest extends RequestMapperTest<HodQueryRequest, HodQueryRestrictions, ResourceName> {
     @ClassRule
     public static final SpringClassRule SCR = new SpringClassRule();
     @Rule
@@ -61,9 +61,9 @@ public class HodRequestMapperTest extends RequestMapperTest<HodQueryRequest, Hod
     }
 
     @Override
-    protected void validateDatabases(final List<ResourceIdentifier> databases) {
-        assertThat(databases, hasItem(is(new ResourceIdentifier("ClassicalDomain", "ClassicalLiterature"))));
-        assertThat(databases, hasItem(is(new ResourceIdentifier("ClassicalDomain", "EpicLiterature"))));
+    protected void validateDatabases(final List<ResourceName> databases) {
+        assertThat(databases, hasItem(is(new ResourceName("ClassicalDomain", "ClassicalLiterature"))));
+        assertThat(databases, hasItem(is(new ResourceName("ClassicalDomain", "EpicLiterature"))));
     }
 
     @Override

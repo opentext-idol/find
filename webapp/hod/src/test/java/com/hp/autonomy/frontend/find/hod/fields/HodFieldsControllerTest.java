@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.fields.AbstractFieldsControllerTest;
 import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @SpringBootTest(classes = HavenSearchHodConfiguration.class, properties = {"mock.authentication=false", "mock.authenticationRetriever=false"}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFieldsController, HodFieldsRequest, HodErrorException, ResourceIdentifier, HodQueryRestrictions, HodParametricRequest, HodFindConfig> {
+public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFieldsController, HodFieldsRequest, HodErrorException, ResourceName, HodQueryRestrictions, HodParametricRequest, HodFindConfig> {
     @Mock
     private HodFieldsService hodFieldsService;
     @Mock
@@ -82,7 +82,7 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
         when(fieldsRequestBuilderFactory.getObject()).thenReturn(fieldsRequestBuilder);
         when(fieldsRequestBuilder.databases(any())).thenReturn(fieldsRequestBuilder);
         when(fieldsRequestBuilder.build()).thenReturn(fieldsRequest);
-        when(fieldsRequest.getDatabases()).thenReturn(Collections.singletonList(ResourceIdentifier.WIKI_ENG));
+        when(fieldsRequest.getDatabases()).thenReturn(Collections.singletonList(ResourceName.WIKI_ENG));
 
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
@@ -108,17 +108,17 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
 
     @Override
     protected List<TagName> getParametricFields() throws HodErrorException {
-        return controller.getParametricFields(Collections.singleton(ResourceIdentifier.WIKI_ENG));
+        return controller.getParametricFields(Collections.singleton(ResourceName.WIKI_ENG));
     }
 
     @Override
     protected List<FieldAndValueDetails> getParametricNumericFields() throws HodErrorException {
-        return controller.getParametricNumericFields(Collections.singleton(ResourceIdentifier.WIKI_ENG));
+        return controller.getParametricNumericFields(Collections.singleton(ResourceName.WIKI_ENG));
     }
 
     @Override
     protected List<FieldAndValueDetails> getParametricDateFields() throws HodErrorException {
-        return controller.getParametricDateFields(Collections.singleton(ResourceIdentifier.WIKI_ENG));
+        return controller.getParametricDateFields(Collections.singleton(ResourceName.WIKI_ENG));
     }
 
     // TODO: Remove this override once we can support autn date in HOD (FIND-180)
