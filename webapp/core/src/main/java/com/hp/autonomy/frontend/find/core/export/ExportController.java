@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
@@ -529,13 +531,15 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 // Space between list items
                 listItemMargin = 5.;
 
+        final Pattern highlightPattern = Pattern.compile("<HavenSearch-QueryText-Placeholder>(.*?)</HavenSearch-QueryText-Placeholder>");
+
         XSLFSlide sl = null;
         double yCursor = 0, xCursor = 0;
 
         int docsOnPage = 0;
 
-        for(int ii = 0; ii < docs.length; ++ii) {
-            final Document doc = docs[ii];
+        for(int docIdx = 0; docIdx < docs.length; ++docIdx) {
+            final Document doc = docs[docIdx];
 
             if(sl == null) {
                 sl = ppt.createSlide();
@@ -547,19 +551,15 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 textBox.clearText();
                 final Rectangle2D.Double textBounds = new Rectangle2D.Double(xMargin, yCursor, pageWidth - xMargin, 20);
                 textBox.setAnchor(textBounds);
-                final XSLFTextRun textBoxRun = textBox.addNewTextParagraph().addNewTextRun();
-                textBoxRun.setText(results);
-                textBoxRun.setFontSize(12.);
-                textBoxRun.setFontColor(Color.LIGHT_GRAY);
+
+                addTextRun(textBox.addNewTextParagraph(), results, 12., Color.LIGHT_GRAY);
 
                 final XSLFTextBox sortByEl = sl.createTextBox();
                 sortByEl.clearText();
                 final XSLFTextParagraph sortByText = sortByEl.addNewTextParagraph();
                 sortByText.setTextAlign(TextParagraph.TextAlign.RIGHT);
-                final XSLFTextRun sortByTextRun = sortByText.addNewTextRun();
-                sortByTextRun.setText(sortBy);
-                sortByTextRun.setFontSize(12.);
-                sortByTextRun.setFontColor(Color.LIGHT_GRAY);
+
+                addTextRun(sortByText, sortBy, 12., Color.LIGHT_GRAY);
 
                 sortByEl.setAnchor(new Rectangle2D.Double(xMargin, yCursor, pageWidth - xMargin, 20));
 
@@ -581,26 +581,16 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             listEl.setAnchor(new Rectangle2D.Double(xCursor, yCursor, pageWidth - xCursor - xMargin, pageHeight - yCursor));
 
             final XSLFTextParagraph titlePara = listEl.addNewTextParagraph();
-            final XSLFTextRun titleEl = titlePara.addNewTextRun();
-            titleEl.setText(doc.getTitle());
-            titleEl.setFontSize(14.0);
-            titleEl.setBold(true);
+            addTextRun(titlePara, doc.getTitle(), 14.0, Color.BLACK).setBold(true);
 
             if (StringUtils.isNotBlank(doc.getDate())) {
                 final XSLFTextParagraph datePara = listEl.addNewTextParagraph();
                 datePara.setLeftMargin(5.);
-                final XSLFTextRun dateEl = datePara.addNewTextRun();
-                dateEl.setFontColor(Color.GRAY);
-                dateEl.setText(doc.getDate());
-                dateEl.setFontSize(10.0);
-                dateEl.setItalic(true);
+                addTextRun(datePara, doc.getDate(), 10., Color.GRAY).setItalic(true);
             }
 
             if (StringUtils.isNotBlank(doc.getRef())) {
-                final XSLFTextRun reference = listEl.addNewTextParagraph().addNewTextRun();
-                reference.setFontColor(Color.GRAY);
-                reference.setText(doc.getRef());
-                reference.setFontSize(12.);
+                addTextRun(listEl.addNewTextParagraph(), doc.getRef(), 12., Color.GRAY);
             }
 
             final double thumbnailOffset = listEl.getTextHeight();
@@ -623,10 +613,28 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 }
             }
 
-            final XSLFTextRun summary = contentPara.addNewTextRun();
-            summary.setFontColor(Color.DARK_GRAY);
-            summary.setText(doc.getSummary());
-            summary.setFontSize(12.);
+            final String rawSummary = doc.getSummary();
+            if (StringUtils.isNotBlank(rawSummary)) {
+                // HTML treats newlines and multiple whitespace as a single whitespace.
+                final String summary = rawSummary.replaceAll("\\s+", " ");
+                final Matcher matcher = highlightPattern.matcher(summary);
+                int idx = 0;
+
+                while(matcher.find()) {
+                    final int start = matcher.start();
+
+                    if (idx < start) {
+                        addTextRun(contentPara, summary.substring(idx, start), 12., Color.DARK_GRAY);
+                    }
+
+                    addTextRun(contentPara, matcher.group(1), 12., Color.DARK_GRAY).setBold(true);
+                    idx = matcher.end();
+                }
+
+                if (idx < summary.length()) {
+                    addTextRun(contentPara, summary.substring(idx), 12., Color.DARK_GRAY);
+                }
+            }
 
             double elHeight = Math.max(listEl.getTextHeight(), iconHeight);
             if (picture != null) {
@@ -651,7 +659,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                         // Workaround is to just hide the image out of view.
                         picture.setAnchor(new Rectangle2D.Double(pageWidth, pageHeight, 0.1, 0.1));
                     }
-                    --ii;
+                    --docIdx;
                 }
 
                 sl = null;
@@ -662,6 +670,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         }
 
         return writePPT(ppt, "list.pptx");
+    }
+
+    private static XSLFTextRun addTextRun(final XSLFTextParagraph paragraph, final String text, final double fontSize, final Color color) {
+        final XSLFTextRun summary = paragraph.addNewTextRun();
+        summary.setFontColor(color);
+        summary.setText(text);
+        summary.setFontSize(fontSize);
+        return summary;
     }
 
 }
