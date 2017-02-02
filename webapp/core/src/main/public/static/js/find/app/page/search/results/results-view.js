@@ -81,7 +81,7 @@ define([
                     $form[0].docs.value = JSON.stringify(this.documentsCollection.map(function(model){
                         return {
                             title: model.get('title'),
-                            date: model.get('date') || '',
+                            date: model.has('date') ? model.get('date').fromNow() : '',
                             ref: model.get('reference'),
                             summary: model.get('summary'),
                             thumbnail: model.get('thumbnail')
