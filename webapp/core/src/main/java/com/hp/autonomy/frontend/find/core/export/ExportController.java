@@ -599,7 +599,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             summary.setText(doc.getSummary());
             summary.setFontSize(12.);
 
-            yCursor += Math.max(listEl.getTextHeight(), iconHeight) + listItemMargin;
+            yCursor += Math.max(listEl.getTextHeight(), iconHeight);
             xCursor = xMargin;
 
             docsOnPage++;
@@ -614,6 +614,9 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 }
 
                 sl = null;
+            }
+            else {
+                yCursor += listItemMargin;
             }
         }
 
