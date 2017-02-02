@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
 import com.hp.autonomy.frontend.find.core.parametricfields.ParametricValuesController;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequestBuilder;
@@ -30,7 +30,7 @@ import java.util.Set;
 
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
-class HodParametricValuesController extends ParametricValuesController<HodQueryRestrictions, HodParametricRequest, ResourceIdentifier, HodErrorException> {
+class HodParametricValuesController extends ParametricValuesController<HodQueryRestrictions, HodParametricRequest, ResourceName, HodErrorException> {
     @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
     public HodParametricValuesController(final HodParametricValuesService parametricValuesService,
@@ -43,7 +43,7 @@ class HodParametricValuesController extends ParametricValuesController<HodQueryR
     @ResponseBody
     public Set<QueryTagInfo> getParametricValues(
             @RequestParam(FIELD_NAMES_PARAM) final List<TagName> fieldNames,
-            @RequestParam(DATABASES_PARAM) final Collection<ResourceIdentifier> databases
+            @RequestParam(DATABASES_PARAM) final Collection<ResourceName> databases
     ) throws HodErrorException {
         final HodParametricRequest parametricRequest = buildRequest(fieldNames, databases, MAX_VALUES_DEFAULT, SortParam.DocumentCount);
         return parametricValuesService.getAllParametricValues(parametricRequest);

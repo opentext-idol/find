@@ -9,7 +9,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.caching.CachingConfiguration;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
@@ -18,12 +18,7 @@ import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesService;
-import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
-import com.hp.autonomy.searchcomponents.hod.search.HodGetContentRequest;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
-import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
-import com.hp.autonomy.searchcomponents.hod.search.HodSuggestRequest;
+import com.hp.autonomy.searchcomponents.hod.search.*;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.Warnings;
 import org.springframework.beans.factory.ObjectFactory;
@@ -33,11 +28,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Primary
 @Service
@@ -73,15 +64,15 @@ class FindHodDocumentService implements HodDocumentsService {
 
                 final Set<Database> updatedDatabases = databasesService.getDatabases(databasesRequest);
 
-                final QueryRestrictions<ResourceIdentifier> queryRestrictions = queryRequest.getQueryRestrictions();
-                final Set<ResourceIdentifier> badIndexes = new HashSet<>(queryRestrictions.getDatabases());
+                final QueryRestrictions<ResourceName> queryRestrictions = queryRequest.getQueryRestrictions();
+                final Set<ResourceName> badIndexes = new HashSet<>(queryRestrictions.getDatabases());
 
                 for (final Database database : updatedDatabases) {
-                    final ResourceIdentifier resourceIdentifier = new ResourceIdentifier(database.getDomain(), database.getName());
+                    final ResourceName resourceIdentifier = new ResourceName(database.getDomain(), database.getName());
                     badIndexes.remove(resourceIdentifier);
                 }
 
-                final Collection<ResourceIdentifier> goodIndexes = new ArrayList<>(queryRestrictions.getDatabases());
+                final Collection<ResourceName> goodIndexes = new ArrayList<>(queryRestrictions.getDatabases());
                 goodIndexes.removeAll(badIndexes);
 
                 final HodQueryRequest queryRequestWithoutBadIndexes = queryRequest.toBuilder()

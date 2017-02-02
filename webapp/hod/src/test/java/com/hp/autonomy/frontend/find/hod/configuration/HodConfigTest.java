@@ -4,7 +4,7 @@ import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomizationOptionsTest;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.springframework.boot.test.json.JsonContent;
@@ -30,7 +30,7 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
     protected HodConfig constructComponent() {
         try {
             return HodConfig.builder()
-                    .activeIndexes(Collections.singletonList(ResourceIdentifier.WIKI_CHI))
+                    .activeIndexes(Collections.singletonList(ResourceName.WIKI_CHI))
                     .publicIndexesEnabled(true)
                     .apiKey(new ApiKey("api-key-abc"))
                     .ssoPageGetUrl(new URL("https://dev.havenapps.io/sso.html"))
@@ -50,8 +50,8 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
 
     @Override
     protected void validateJson(final JsonContent<HodConfig> jsonContent) {
-        jsonContent.assertThat().hasJsonPathStringValue("@.activeIndexes[0].domain", ResourceIdentifier.WIKI_CHI.getDomain());
-        jsonContent.assertThat().hasJsonPathStringValue("@.activeIndexes[0].name", ResourceIdentifier.WIKI_CHI.getName());
+        jsonContent.assertThat().hasJsonPathStringValue("@.activeIndexes[0].domain", ResourceName.WIKI_CHI.getDomain());
+        jsonContent.assertThat().hasJsonPathStringValue("@.activeIndexes[0].name", ResourceName.WIKI_CHI.getName());
         jsonContent.assertThat().hasJsonPathBooleanValue("@.publicIndexesEnabled", true);
 //        jsonContent.assertThat().hasJsonPathStringValue("@.apiKey", "api-key-abc"); TODO: see other to-do comment below
         jsonContent.assertThat().hasJsonPathStringValue("@.ssoPageGetUrl", "https://dev.havenapps.io/sso.html");
@@ -74,7 +74,7 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
         final HodConfig mergedComponent = objectContent.getObject();
         assertThat(mergedComponent.getApiKey(), is(new ApiKey("api-key-abc")));
         assertThat(mergedComponent.getPublicIndexesEnabled(), is(true));
-        assertThat(mergedComponent.getActiveIndexes(), hasItem(ResourceIdentifier.WIKI_CHI));
+        assertThat(mergedComponent.getActiveIndexes(), hasItem(ResourceName.WIKI_CHI));
         assertThat(mergedComponent.getSsoPageGetUrl().toString(), is("https://dev.havenapps.io/sso.html"));
         assertThat(mergedComponent.getEndpointUrl().toString(), is("https://api.int.havenondemand.com"));
     }

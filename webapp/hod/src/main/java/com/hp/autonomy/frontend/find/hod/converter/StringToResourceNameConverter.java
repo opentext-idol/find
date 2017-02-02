@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.converter;
 
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -13,12 +13,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 @Component
-public class StringToResourceIdentifierConverter implements Converter<String, ResourceIdentifier> {
+public class StringToResourceNameConverter implements Converter<String, ResourceName> {
     @Override
-    public ResourceIdentifier convert(final String s) {
+    public ResourceName convert(final String s) {
         final String[] parts = s.split(":");
 
-        return new ResourceIdentifier(decodeUriComponent(parts[0]), decodeUriComponent(parts[1]));
+        return new ResourceName(decodeUriComponent(parts[0]), decodeUriComponent(parts[1]));
     }
 
     private String decodeUriComponent(final String part) {

@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.hod.search;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.hod.configuration.HodConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
@@ -17,14 +17,7 @@ import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesService;
-import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
-import com.hp.autonomy.searchcomponents.hod.search.HodGetContentRequest;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
-import com.hp.autonomy.searchcomponents.hod.search.HodSuggestRequest;
+import com.hp.autonomy.searchcomponents.hod.search.*;
 import com.hp.autonomy.types.requests.Documents;
 import org.junit.Before;
 import org.junit.Test;
@@ -110,8 +103,8 @@ public class FindHodDocumentServiceTest {
 
     @Test
     public void invalidIndexName() throws HodErrorException {
-        final ResourceIdentifier goodIndex = new ResourceIdentifier("Good", "Good");
-        final ResourceIdentifier badIndex = new ResourceIdentifier("bad", "bad");
+        final ResourceName goodIndex = new ResourceName("Good", "Good");
+        final ResourceName badIndex = new ResourceName("bad", "bad");
 
         final HodError invalidIndexError = new HodError.Builder().setErrorCode(HodErrorCode.INDEX_NAME_INVALID).build();
         final HodSearchResult result = HodSearchResult.builder()
