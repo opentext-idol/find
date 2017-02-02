@@ -517,6 +517,11 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 xMargin = 20,
                 // Size of the icon
                 iconWidth = 20, iconHeight = 24,
+                // Find's thumbnail height is 97px by 55px, hardcoded in the CSS in .document-thumbnail
+                thumbScale = 0.4,
+                thumbW = 97 * thumbScale, thumbH = 55 * thumbScale,
+                // Margin around the thumbnail
+                thumbMargin = 4.,
                 // Space between list items
                 listItemMargin = 5.;
 
@@ -592,24 +597,54 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             reference.setText(doc.getRef());
             reference.setFontSize(12.);
 
-            test.addLineBreak();
+            final double thumbnailOffset = listEl.getTextHeight();
 
-            final XSLFTextRun summary = test.addNewTextRun();
+            final XSLFTextParagraph contentPara = listEl.addNewTextParagraph();
+
+            XSLFPictureShape picture = null;
+
+            if (doc.getThumbnail() != null) {
+                try {
+                    final byte[] imageData = Base64.decodeBase64(doc.getThumbnail());
+                    // Picture reuse is automatic
+                    picture = sl.createPicture(ppt.addPicture(imageData, PictureData.PictureType.JPEG));
+                    picture.setAnchor(new Rectangle2D.Double(xCursor, yCursor + thumbnailOffset + thumbMargin, thumbW, thumbH));
+                    contentPara.setLeftMargin(thumbW);
+                }
+                catch(Exception e) {
+                    // if there's any errors, we'll just ignore the image
+                    e.printStackTrace();
+                }
+            }
+
+            final XSLFTextRun summary = contentPara.addNewTextRun();
             summary.setFontColor(Color.DARK_GRAY);
             summary.setText(doc.getSummary());
             summary.setFontSize(12.);
 
-            yCursor += Math.max(listEl.getTextHeight(), iconHeight);
+            double elHeight = Math.max(listEl.getTextHeight(), iconHeight);
+            if (picture != null) {
+                elHeight = Math.max(elHeight, picture.getAnchor().getMaxY() - yCursor);
+            }
+
+            yCursor += elHeight;
             xCursor = xMargin;
 
             docsOnPage++;
 
-            if(yCursor > pageHeight) {
-                if(docsOnPage > 1) {
+            if (yCursor > pageHeight) {
+                if (docsOnPage > 1) {
                     // If we drew more than one list element on this page; and we exceeded the available space,
-                    //   delete the last text shape and redraw it on the next page.
+                    //   delete the last element's shapes and redraw it on the next page.
                     sl.removeShape(listEl);
                     sl.removeShape(icon);
+
+                    if (picture != null) {
+                        // Technically we want to remove the shape, but that also removes the related image data,
+                        //   which will be shared with other images; causing problems when trying to render them.
+                        // Workaround is to just hide the image out of view.
+                        picture.setAnchor(new Rectangle2D.Double(pageWidth, pageHeight, 0.1, 0.1));
+                    }
                     --ii;
                 }
 

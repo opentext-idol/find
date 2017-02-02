@@ -83,7 +83,8 @@ define([
                             title: model.get('title'),
                             date: model.get('date') || '',
                             ref: model.get('reference'),
-                            summary: model.get('summary')
+                            summary: model.get('summary'),
+                            thumbnail: model.get('thumbnail')
                         }
                     }))
                     $form.appendTo(document.body).submit().remove()

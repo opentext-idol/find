@@ -13,14 +13,5 @@ public class Document {
     String date;
     String ref;
     String summary;
-
-    public Document() {
-    }
-
-    public Document(final String title, final String date, final String ref, final String summary) {
-        this.title = title;
-        this.date = date;
-        this.ref = ref;
-        this.summary = summary;
-    }
+    String thumbnail;
 }
