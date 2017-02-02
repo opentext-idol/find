@@ -168,10 +168,8 @@ define([
             this.sortView.setElement($sortEl).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
-            if (true) {
-                // TODO: bifhi state check
-                $('<a class="btn btn-default pull-right results-view-pptx" href="#"><i class="hp-icon hp-document-download"></i> PPTX</a>').insertBefore($sortEl);
-
+            if (!_.contains(configuration().roles, 'ROLE_BI')) {
+                this.$('.results-view-pptx').addClass('hide');
             }
 
             if (this.questionsView) {
