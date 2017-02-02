@@ -60,7 +60,8 @@ define([
                 collection: this.filteredCollection,
                 ItemView: ItemView,
                 itemOptions: {
-                    field: options.field
+                    field: options.field,
+                    showGraphButtons: options.showGraphButtons
                 }
             });
 

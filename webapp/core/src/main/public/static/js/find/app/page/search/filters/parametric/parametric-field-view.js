@@ -24,7 +24,8 @@ define([
                     currentFieldGroup: this.model.id,
                     parametricCollection: this.parametricCollection,
                     parametricDisplayCollection: this.parametricDisplayCollection,
-                    selectedParametricValues: this.selectedParametricValues
+                    selectedParametricValues: this.selectedParametricValues,
+                    showGraphButtons: this.showGraphButtons
                 });
             }
         },
@@ -33,6 +34,7 @@ define([
             this.parametricDisplayCollection = options.parametricDisplayCollection;
             this.selectedParametricValues = options.selectedParametricValues;
             this.parametricCollection = options.parametricCollection;
+            this.showGraphButtons = options.showGraphButtons;
 
             this.listView = new ListView({
                 collection: this.collection,
@@ -43,6 +45,9 @@ define([
                 collectionChangeEvents: {
                     count: 'updateCount',
                     selected: 'updateSelected'
+                },
+                itemOptions: {
+                    showGraphButtons: options.showGraphButtons
                 }
             });
         },
@@ -84,7 +89,8 @@ define([
                     model: this.model,
                     parametricCollection:this.parametricCollection,
                     parametricDisplayCollection: this.parametricDisplayCollection,
-                    selectedParametricValues: this.selectedParametricValues
+                    selectedParametricValues: this.selectedParametricValues,
+                    showGraphButtons: options.showGraphButtons
                 })
             });
 
