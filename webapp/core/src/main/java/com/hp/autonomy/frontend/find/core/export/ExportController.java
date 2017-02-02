@@ -518,7 +518,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 // Size of the icon
                 iconWidth = 20, iconHeight = 24,
                 // Find's thumbnail height is 97px by 55px, hardcoded in the CSS in .document-thumbnail
-                thumbScale = 0.4,
+                thumbScale = 0.8,
                 thumbW = 97 * thumbScale, thumbH = 55 * thumbScale,
                 // Margin around the thumbnail
                 thumbMargin = 4.,
@@ -576,26 +576,28 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             listEl.clearText();
             listEl.setAnchor(new Rectangle2D.Double(xCursor, yCursor, pageWidth - xCursor - xMargin, pageHeight - yCursor));
 
-            final XSLFTextParagraph test = listEl.addNewTextParagraph();
-            final XSLFTextRun titleEl = test.addNewTextRun();
+            final XSLFTextParagraph titlePara = listEl.addNewTextParagraph();
+            final XSLFTextRun titleEl = titlePara.addNewTextRun();
             titleEl.setText(doc.getTitle());
             titleEl.setFontSize(14.0);
             titleEl.setBold(true);
 
-            test.addLineBreak();
+            if (StringUtils.isNotBlank(doc.getDate())) {
+                final XSLFTextParagraph datePara = listEl.addNewTextParagraph();
+                datePara.setLeftMargin(5.);
+                final XSLFTextRun dateEl = datePara.addNewTextRun();
+                dateEl.setFontColor(Color.GRAY);
+                dateEl.setText(doc.getDate());
+                dateEl.setFontSize(10.0);
+                dateEl.setItalic(true);
+            }
 
-            final XSLFTextRun dateEl = test.addNewTextRun();
-            dateEl.setFontColor(Color.GRAY);
-            dateEl.setText(" " + doc.getDate());
-            dateEl.setFontSize(10.0);
-            dateEl.setItalic(true);
-
-            test.addLineBreak();
-
-            final XSLFTextRun reference = test.addNewTextRun();
-            reference.setFontColor(Color.GRAY);
-            reference.setText(doc.getRef());
-            reference.setFontSize(12.);
+            if (StringUtils.isNotBlank(doc.getRef())) {
+                final XSLFTextRun reference = listEl.addNewTextParagraph().addNewTextRun();
+                reference.setFontColor(Color.GRAY);
+                reference.setText(doc.getRef());
+                reference.setFontSize(12.);
+            }
 
             final double thumbnailOffset = listEl.getTextHeight();
 
@@ -603,7 +605,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
             XSLFPictureShape picture = null;
 
-            if (doc.getThumbnail() != null) {
+            if (StringUtils.isNotBlank(doc.getThumbnail())) {
                 try {
                     final byte[] imageData = Base64.decodeBase64(doc.getThumbnail());
                     // Picture reuse is automatic
