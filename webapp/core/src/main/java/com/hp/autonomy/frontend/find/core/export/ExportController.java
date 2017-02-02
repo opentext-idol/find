@@ -99,8 +99,6 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     private final ExportService<R, E> exportService;
     private final RequestMapper<R> requestMapper;
     private final ControllerUtils controllerUtils;
-    private int PPT_WIDTH = 720;
-    private int PPT_HEIGHT = 540;
 
     protected ExportController(final ExportService<R, E> exportService, final RequestMapper<R> requestMapper, final ControllerUtils controllerUtils) {
         this.exportService = exportService;
@@ -162,6 +160,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final Path[] paths = new ObjectMapper().readValue(pathStr, Path[].class);
 
         final XMLSlideShow ppt = new XMLSlideShow();
+        final Dimension pageSize = ppt.getPageSize();
+        final double pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight();
         final XSLFSlide sl = ppt.createSlide();
 
         for(final Path reqPath : paths) {
@@ -171,8 +171,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             boolean first = true;
 
             for(double[] point : reqPath.getPoints()) {
-                final double x = point[0] * PPT_WIDTH;
-                final double y = point[1] * PPT_HEIGHT;
+                final double x = point[0] * pageWidth;
+                final double y = point[1] * pageHeight;
                 if(first) {
                     path.moveTo(x, y);
                     first = false;
@@ -329,13 +329,15 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         }
 
         final XMLSlideShow ppt = new XMLSlideShow();
+        final Dimension pageSize = ppt.getPageSize();
+        final double pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight();
         final XSLFSlide sl = ppt.createSlide();
 
         final XSLFTextBox textBox = sl.createTextBox();
         textBox.setText(title);
         textBox.setHorizontalCentered(true);
         textBox.setTextAutofit(TextShape.TextAutofit.SHAPE);
-        final Rectangle2D.Double textBounds = new Rectangle2D.Double(0, 0.05 * PPT_HEIGHT, PPT_WIDTH, 0.1 * PPT_HEIGHT);
+        final Rectangle2D.Double textBounds = new Rectangle2D.Double(0, 0.05 * pageHeight, pageWidth, 0.1 * pageHeight);
         textBox.setAnchor(textBounds);
 
         final XSLFTable table = sl.createTable(rows, cols);
@@ -356,7 +358,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         double tableW = 0, tableH = 0;
 
         for(int col = 0; col < cols; ++col) {
-            table.setColumnWidth(col, PPT_WIDTH / cols * 0.8);
+            table.setColumnWidth(col, pageWidth / cols * 0.8);
             tableW += table.getColumnWidth(col);
         }
 
@@ -364,7 +366,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             tableH += table.getRowHeight(row);
         }
 
-        table.setAnchor(new Rectangle2D.Double(0.5 * (PPT_WIDTH - tableW), textBounds.getMaxY(), tableW, Math.min(tableH, PPT_HEIGHT - textBounds.getMaxY())));
+        table.setAnchor(new Rectangle2D.Double(0.5 * (pageWidth - tableW), textBounds.getMaxY(), tableW, Math.min(tableH, pageHeight - textBounds.getMaxY())));
 
         return writePPT(ppt, "table.pptx");
     }
@@ -378,6 +380,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final Marker[] markers = new ObjectMapper().readValue(markerStr, Marker[].class);
 
         final XMLSlideShow ppt = new XMLSlideShow();
+        final Dimension pageSize = ppt.getPageSize();
+        final double pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight();
         final XSLFSlide sl = ppt.createSlide();
 
         final XSLFTextBox textBox = sl.createTextBox();
@@ -387,7 +391,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         paragraph.addNewTextRun().setText(title);
         textBox.setHorizontalCentered(true);
         textBox.setTextAutofit(TextShape.TextAutofit.SHAPE);
-        final Rectangle2D.Double textBounds = new Rectangle2D.Double(0, 0.05 * PPT_HEIGHT, PPT_WIDTH, 0.1 * PPT_HEIGHT);
+        final Rectangle2D.Double textBounds = new Rectangle2D.Double(0, 0.05 * pageHeight, pageWidth, 0.1 * pageHeight);
         textBox.setAnchor(textBounds);
 
         final PictureData.PictureType type;
@@ -410,8 +414,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final Dimension size = picture.getImageDimension();
         final double ratio = size.getWidth() / size.getHeight();
 
-        double tgtW = PPT_WIDTH;
-        double tgtH = PPT_HEIGHT - textBounds.getMaxY();
+        double tgtW = pageWidth;
+        double tgtH = pageHeight - textBounds.getMaxY();
 
         if(ratio > tgtW / tgtH) {
             // source image is wider than target, clip fixed width variable height
@@ -421,7 +425,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             tgtW = tgtH * ratio;
         }
 
-        final double offsetX = 0.5 * (PPT_WIDTH - tgtW);
+        final double offsetX = 0.5 * (pageWidth - tgtW);
         final double offsetY = textBounds.getMaxY();
 
         canvas.setAnchor(new Rectangle2D.Double(offsetX, offsetY, tgtW, tgtH));
