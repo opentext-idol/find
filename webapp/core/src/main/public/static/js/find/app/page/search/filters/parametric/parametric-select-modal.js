@@ -23,7 +23,8 @@ define([
                 currentFieldGroup: options.currentFieldGroup,
                 parametricCollection: options.parametricCollection,
                 parametricDisplayCollection: this.parametricDisplayCollection,
-                selectCollection: this.selectCollection
+                selectCollection: this.selectCollection,
+                showGraphButtons: options.showGraphButtons
             });
 
             Modal.prototype.initialize.call(this, {
