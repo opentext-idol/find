@@ -28,7 +28,7 @@ node {
         mavenArguments = getMavenArguments()
 
 		// Verify is needed to run some basic integration tests but these are not the selenium tests
-		sh "mvn ${mavenArguments} -f webapp/pom.xml -Dapplication.buildNumber=${gitCommit} clean verify -P production -U -pl idol -am"
+		sh "mvn ${mavenArguments} -DskipTests=true -f webapp/pom.xml -Dapplication.buildNumber=${gitCommit} clean verify -P production -U -pl idol -am"
 
 	stage 'Archive output'
 		archive 'idol/target/find.war'
