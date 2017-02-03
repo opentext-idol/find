@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.ServletResponse;
@@ -36,6 +37,8 @@ import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
@@ -51,11 +54,14 @@ import org.apache.poi.xslf.usermodel.XSLFTableCell;
 import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDoughnutChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumRef;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
@@ -69,6 +75,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStop;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStopList;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -94,6 +101,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     static final String PPT_TABLE_PATH = "/ppt/table";
     static final String PPT_MAP_PATH = "/ppt/map";
     static final String PPT_LIST_PATH = "/ppt/list";
+    static final String PPT_DATEGRAPH_PATH = "/ppt/dategraph";
     static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
     static final String QUERY_REQUEST_PARAM = "queryRequest";
     private static final String EXPORT_FILE_NAME = "query-results";
@@ -677,6 +685,209 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         summary.setText(text);
         summary.setFontSize(fontSize);
         return summary;
+    }
+
+    @Value(value = "classpath:/templates/dategraph.pptx")
+    private Resource dategraphTemplate;
+
+    @RequestMapping(value = PPT_DATEGRAPH_PATH, method = RequestMethod.POST)
+    public HttpEntity<byte[]> graph(
+            @RequestParam("data") final String dataStr
+    ) throws IOException {
+        final ChartData data = new ObjectMapper().readValue(dataStr, ChartData.class);
+
+        if (!data.validateInput()) {
+            throw new IllegalArgumentException("Invalid data provided");
+        }
+
+        boolean useSecondaryAxis = data.rows.stream().anyMatch(ChartData.Row::isSecondaryAxis);
+
+        if (data.rows.stream().allMatch(ChartData.Row::isSecondaryAxis)) {
+            // If everything is on the secondary axis; just use the primary axis
+            data.rows.forEach(row -> row.setSecondaryAxis(false));
+            useSecondaryAxis = false;
+        }
+
+        final XSSFWorkbook wb = writeChart(data);
+
+        try(InputStream inputStream = dategraphTemplate.getInputStream()) {
+            final XMLSlideShow ppt = new XMLSlideShow(inputStream);
+
+            final XSLFSlide slide = ppt.getSlides().get(0);
+
+            XSLFChart chart = null;
+
+            for(POIXMLDocumentPart part : slide.getRelations()) {
+                if (part instanceof XSLFChart) {
+                    chart = (XSLFChart) part;
+                    break;
+                }
+            }
+
+            if (chart == null) {
+                throw new IllegalArgumentException("Invalid template supplied");
+            }
+
+            final CTChart ctChart = chart.getCTChart();
+            final CTPlotArea plotArea = ctChart.getPlotArea();
+            final XSSFSheet sheet = wb.getSheetAt(0);
+
+            // In the template, we have two <c:lineChart> objects, one for the primary axis, one for the secondary.
+            if (!useSecondaryAxis) {
+                // Discard the extra axes
+                // OpenOffice is happy enough if you remove the line chart, but PowerPoint will complain it's a corrupt
+                //   file and unhelpfully delete the entire chart when you choose 'repair' if any orphan axes remain.
+                plotArea.removeLineChart(1);
+                plotArea.removeValAx(1);
+                plotArea.removeDateAx(1);
+            }
+
+            final CTLineChart primaryChart = plotArea.getLineChartArray()[0];
+            final CTLineSer[] primarySeries = primaryChart.getSerArray();
+            primarySeries[0].getDPtList().clear();
+
+            int primarySeriesCount = 0;
+            int secondarySeriesCount = 0;
+
+            for (int seriesIdx = 0; seriesIdx < data.rows.size(); ++seriesIdx) {
+                final ChartData.Row row = data.rows.get(seriesIdx);
+
+                final CTLineChart tgtChart = plotArea.getLineChartArray(row.isSecondaryAxis() ? 1 : 0);
+
+                final CTLineSer[] serArray = tgtChart.getSerArray();
+                final int createdSeriesIdx = row.isSecondaryAxis() ? secondarySeriesCount++ : primarySeriesCount++;
+
+                final CTLineSer curSeries;
+
+                if (createdSeriesIdx < serArray.length) {
+                    curSeries = serArray[createdSeriesIdx];
+                }
+                else {
+                    curSeries = tgtChart.addNewSer();
+                    curSeries.set(serArray[0].copy());
+                }
+
+                updateCTLineSer(data, sheet, seriesIdx, curSeries);
+            }
+
+            for(final POIXMLDocumentPart rel : chart.getRelations()) {
+                final PackagePart pkg = rel.getPackagePart();
+                if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
+                    wb.write(pkg.getOutputStream());
+                }
+            }
+
+            return writePPT(ppt, "dategraph.pptx");
+        }
+    }
+
+    private static void updateCTLineSer(final ChartData data, final XSSFSheet sheet, final int seriesIdx, final CTLineSer series) {
+        final String sheetName = sheet.getSheetName();
+
+        // the series idx starts from 0
+        final ChartData.Row row = data.getRows().get(seriesIdx);
+        final String title = row.getLabel();
+        final Color color = Color.decode(row.getColor());
+
+        series.getOrder().setVal(seriesIdx);
+        series.getIdx().setVal(seriesIdx);
+
+        final CTSolidColorFillProperties fill = series.getSpPr().getLn().getSolidFill();
+
+        // We have to set any possible colour type, PowerPoint throws an error if there's multiple fills, and we don't
+        //   know what colour type the user may have used in their template slide.
+        if (fill.getSchemeClr() != null) {
+            fill.unsetSchemeClr();
+        }
+        if (fill.getSrgbClr() != null) {
+            fill.unsetSrgbClr();
+        }
+        if (fill.getHslClr() != null) {
+            fill.unsetHslClr();
+        }
+        if (fill.getPrstClr() != null) {
+            fill.unsetPrstClr();
+        }
+        if (fill.getScrgbClr() != null) {
+            fill.unsetScrgbClr();
+        }
+        if (fill.getPrstClr() != null) {
+            fill.unsetPrstClr();
+        }
+
+        final CTSRgbColor fillClr = fill.addNewSrgbClr();
+        fillClr.setVal(new byte[]{ (byte) color.getRed(), (byte) color.getBlue(), (byte) color.getGreen()});
+
+        final CTStrRef strRef = series.getTx().getStrRef();
+        strRef.getStrCache().getPtArray()[0].setV(title);
+
+        strRef.setF(new CellReference(sheetName, 0, seriesIdx + 1, true, true).formatAsString());
+
+        {
+            final CTNumRef timestampCatNumRef = series.getCat().getNumRef();
+            timestampCatNumRef.setF(new AreaReference(
+                new CellReference(sheetName, 1, 0, true, true),
+                new CellReference(sheetName, 1 + data.timestamps.length, 0, true, true)
+            ).formatAsString());
+
+            final CTNumData timeStampCatNumCache = timestampCatNumRef.getNumCache();
+            timeStampCatNumCache.getPtCount().setVal(data.timestamps.length);
+            timeStampCatNumCache.setPtArray(null);
+
+            for(int ii = 0; ii < data.timestamps.length; ++ii) {
+                final CTNumVal pt = timeStampCatNumCache.addNewPt();
+                pt.setIdx(ii);
+                pt.setV(sheet.getRow(1 + ii).getCell(0).getRawValue());
+            }
+        }
+
+        {
+            final double[] seriesData = row.getValues();
+
+            final CTNumRef valuesNumRef = series.getVal().getNumRef();
+            valuesNumRef.setF(new AreaReference(
+                new CellReference(sheetName, 1, seriesIdx + 1, true, true),
+                new CellReference(sheetName, 1 + data.timestamps.length, seriesIdx + 1, true, true)
+            ).formatAsString());
+
+            final CTNumData valuesNumCache = valuesNumRef.getNumCache();
+            valuesNumCache.getPtCount().setVal(data.timestamps.length);
+            valuesNumCache.setPtArray(null);
+
+            for(int ii = 0; ii < data.timestamps.length; ++ii) {
+                final CTNumVal pt = valuesNumCache.addNewPt();
+                pt.setIdx(ii);
+                pt.setV(Double.toString(seriesData[ii]));
+            }
+        }
+    }
+
+    private static XSSFWorkbook writeChart(final ChartData data) {
+        final XSSFWorkbook wb = new XSSFWorkbook();
+        final XSSFSheet sheet = wb.createSheet("Sheet1");
+
+        final CellStyle cellStyle = wb.createCellStyle();
+        cellStyle.setDataFormat((short) 14);
+
+        final XSSFRow header = sheet.createRow(0);
+        header.createCell(0).setCellValue("Timestamp");
+        for (int ii = 0; ii < data.rows.size(); ++ii) {
+            header.createCell(ii + 1).setCellValue(data.rows.get(ii).getLabel());
+        }
+
+        for (int rowIdx = 0; rowIdx < data.timestamps.length; ++rowIdx) {
+            final XSSFRow row = sheet.createRow(rowIdx + 1);
+
+            final XSSFCell cell = row.createCell(0);
+            cell.setCellStyle(cellStyle);
+            cell.setCellValue(new Date(data.timestamps[rowIdx] * 1000));
+
+            for (int ii = 0; ii < data.rows.size(); ++ii) {
+                row.createCell(ii + 1).setCellValue(data.rows.get(ii).getValues()[rowIdx]);
+            }
+        }
+
+        return wb;
     }
 
 }

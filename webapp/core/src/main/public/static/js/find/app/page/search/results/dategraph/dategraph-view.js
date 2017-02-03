@@ -39,6 +39,44 @@ define([
         template: _.template(template),
 
         events: {
+            'click .dategraph-view-pptx': function(evt){
+                evt.preventDefault();
+
+                var modelBuckets = this.bucketModel.get('values');
+                var rows = [];
+                var multiAxes = !this.hideMainPlot && this.plots.length > 1;
+
+                if (!this.hideMainPlot) {
+                    rows.push({
+                        color: '#00B388',
+                        label: 'Documents',
+                        secondaryAxis: false,
+                        values: _.pluck(modelBuckets, 'count')
+                    })
+                }
+
+                _.each(this.plots, function(plot){
+                    var label = plot.field.replace(/^.*\//, '').replace(/_/g, '\u00A0') + ': ' + plot.value;
+
+                    rows.push({
+                        color: category10(label),
+                        label: label,
+                        secondaryAxis: multiAxes,
+                        values: _.pluck(plot.model.get('values'), 'count')
+                    })
+                })
+
+                var data = {
+                    rows: rows,
+                    timestamps: _.map(modelBuckets, function(a) {
+                        return Math.round(0.5*(a.min+a.max));
+                    })
+                }
+
+                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="../api/bi/export/ppt/dategraph"><textarea name="data"></textarea><input type="submit"></form>');
+                $form[0].data.value = JSON.stringify(data)
+                $form.appendTo(document.body).submit().remove()
+            }
         },
 
         initialize: function(options) {
