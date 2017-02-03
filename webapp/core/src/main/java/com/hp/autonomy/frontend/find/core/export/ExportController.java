@@ -816,7 +816,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         }
 
         final CTSRgbColor fillClr = fill.addNewSrgbClr();
-        fillClr.setVal(new byte[]{ (byte) color.getRed(), (byte) color.getBlue(), (byte) color.getGreen()});
+        fillClr.setVal(new byte[]{ (byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue()});
 
         final CTStrRef strRef = series.getTx().getStrRef();
         strRef.getStrCache().getPtArray()[0].setV(title);
