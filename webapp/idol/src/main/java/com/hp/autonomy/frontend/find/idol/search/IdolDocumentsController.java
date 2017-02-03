@@ -23,6 +23,7 @@ import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequest;
@@ -39,6 +40,7 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequestBuilder;
 import com.hp.autonomy.types.idol.marshalling.processors.NoopProcessor;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import java.io.IOException;
+import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
@@ -66,9 +68,11 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
         super(documentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory);
     }
 
-    // For a proper demo, you'd want to add this to the constructor
+    // For a proper demo, you'd want to add these to the constructor
     @Autowired
     private AciServiceRetriever aciServiceRetriever;
+    @Autowired
+    private DocumentFieldsService documentFieldsService;
 
     @Override
     protected <T> T throwException(final String message) throws AciErrorException {
@@ -89,6 +93,16 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
             @RequestParam("field") final String field,
             @RequestParam("value") final String value
     ) throws IOException, AciHttpException {
+        // Check that the user is actually allowed to edit this field
+        final Set<String> idolFields = documentFieldsService.getEditableIdolFields(field);
+
+        if (idolFields.isEmpty()) {
+            throw new IllegalArgumentException("Specified field is not editable");
+        }
+
+        final String firstIdolField = idolFields.iterator().next();
+
+
         final String encodedRef = AciURLCodec.getInstance().encode(reference);
         final AciParameters params = new AciParameters("getcontent");
         params.add("reference", encodedRef);
@@ -148,14 +162,14 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
                         else if (inDOCUMENT) {
                             if("DRECONTENT".equals(nodeName)) {
                                 if (!fieldPresent && StringUtils.isNotBlank(value)) {
-                                    builder.append("#DREFIELD ").append(field).append("=\"").append(value).append("\"\n");
+                                    builder.append("#DREFIELD ").append(firstIdolField).append("=\"").append(value).append("\"\n");
                                 }
 
                                 builder.append("#DRECONTENT\n").append(aciResponse.getElementText()).append("\n#DREENDDOC\n");
                                 break;
                             }
                             else {
-                                if(!field.equalsIgnoreCase(nodeName)) {
+                                if(!idolFields.contains(nodeName)) {
                                     builder.append("#DREFIELD ").append(nodeName).append("=\"").append(aciResponse.getElementText()).append("\"\n");
                                 }
                                 else if (!fieldPresent && StringUtils.isNotBlank(value)) {
