@@ -60,7 +60,8 @@ define([
 
                     rows.push({
                         color: category10(label),
-                        label: label,
+                        // Workaround for encoding issues; multipart/form doesn't pick up as UTF-8
+                        label: label.replace(/\s+/g, ' '),
                         secondaryAxis: multiAxes,
                         values: _.pluck(plot.model.get('values'), 'count')
                     })
