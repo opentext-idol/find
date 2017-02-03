@@ -35,10 +35,10 @@ node {
 		archive 'on-prem-dist/target/find.zip'
 
 		// These are the JUnit tests as outputted by the surefire maven plugin
-		step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+		//step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
 
 		// These are the Jasmine tests
-		step([$class: 'JUnitResultArchiver', testResults: '**/target/jasmine-tests/TEST-*.xml'])
+		//step([$class: 'JUnitResultArchiver', testResults: '**/target/jasmine-tests/TEST-*.xml'])
 
 	stage 'Artifactory'
 		try {
@@ -73,13 +73,13 @@ node {
 		    echo "No Artifactory plugin installed, skipping stage"
 		}
 
-    stage 'Deploy'
-        sh '''
-            source /home/fenkins/ansible/hacking/env-setup
-            python tools-apothecary/apothecary.py --dir /home/fenkins/app-playbook/roles/ -c /home/fenkins/tools-apothecary/apothecary.yml
-            cd /home/fenkins/app-playbook
-            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook find.yml -vv -i find_hosts
-        '''
+//    stage 'Deploy'
+//        sh '''
+//            source /home/fenkins/ansible/hacking/env-setup
+//            python tools-apothecary/apothecary.py --dir /home/fenkins/app-playbook/roles/ -c /home/fenkins/tools-apothecary/apothecary.yml
+//            cd /home/fenkins/app-playbook
+//            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook find.yml -vv -i find_hosts
+//        '''
 
 	stage 'Notifications'
 		emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'
