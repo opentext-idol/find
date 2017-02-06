@@ -222,7 +222,9 @@ define([
                     // We use a textarea for the title so we can have newlines, and a textarea for the image to work
                     //   around a hard 524288 limit imposed by a WebKit bug (affects Chrome 55).
                     // See https://bugs.webkit.org/show_bug.cgi?id=44883
-                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/map"><textarea name="title"></textarea><textarea name="image"></textarea><input name="markers"><input type="submit"></form>');
+                    // We open in _self (despite the chance of having errors) since otherwise the popup blocker
+                    ///  will block it, since it's a javascript object which doesn't originate directly from a user event.
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_self" action="api/bi/export/ppt/map"><textarea name="title"></textarea><textarea name="image"></textarea><input name="markers"><input type="submit"></form>');
                     $form[0].title.value = title
                     // ask for lossless PNG image
                     $form[0].image.value = canvas.toDataURL('image/png')
